@@ -10,9 +10,9 @@
 Twinkle.warn = function twinklewarn() {
 	if( mw.config.get('wgNamespaceNumber') === 3 ) {
 		if(twinkleUserAuthorized) {
-			$(twAddPortletLink("#", "Warn", "tw-warn", "Warn/notify user", "")).click(Twinkle.warn.callback);
+			$(twAddPortletLink("#", "警告", "tw-warn", "警告或提醒用户", "")).click(Twinkle.warn.callback);
 		} else {
-			$(twAddPortletLink("#", "Warn", "tw-warn", "Warn/notify user", "")).click(function() {
+			$(twAddPortletLink("#", "警告", "tw-warn", "警告或提醒用户", "")).click(function() {
 				alert("Your account is too new to use Twinkle.");
 			});
 		}

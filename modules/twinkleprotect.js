@@ -13,11 +13,11 @@ Twinkle.protect = function twinkleprotect() {
 	}
 
 	if ( userIsInGroup( 'sysop' ) ) {
-		$(twAddPortletLink("#", "PP", "tw-rpp", "Protect page", "")).click(Twinkle.protect.callback);
+		$(twAddPortletLink("#", "保护", "tw-rpp", "保护页面", "")).click(Twinkle.protect.callback);
 	} else if (twinkleUserAuthorized) {
-		$(twAddPortletLink("#", "RPP", "tw-rpp", "Request page protection", "")).click(Twinkle.protect.callback);
+		$(twAddPortletLink("#", "保护", "tw-rpp", "请求保护页面", "")).click(Twinkle.protect.callback);
 	} else {
-		$(twAddPortletLink("#", 'RPP', 'tw-rpp', 'Request page protection', '')).click(function() {
+		$(twAddPortletLink("#", '保护', 'tw-rpp', '请求保护页面', '')).click(function() {
 			alert("Your account is too new to use Twinkle.");
 		});
 	}

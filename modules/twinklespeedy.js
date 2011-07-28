@@ -21,11 +21,11 @@ Twinkle.speedy = function twinklespeedy() {
 	}
 
 	if ( userIsInGroup( 'sysop' ) ) {
-		$(twAddPortletLink("#", "CSD", "tw-csd", "Delete page according to WP:CSD", "")).click(Twinkle.speedy.callback);
+		$(twAddPortletLink("#", "速删", "tw-csd", "快速删除", "")).click(Twinkle.speedy.callback);
 	} else if (twinkleUserAuthorized) {
-		$(twAddPortletLink("#", "CSD", "tw-csd", "Request speedy deletion according to WP:CSD", "")).click(Twinkle.speedy.callback);
+		$(twAddPortletLink("#", "速删", "tw-csd", "请求快速删除", "")).click(Twinkle.speedy.callback);
 	} else {
-		$(twAddPortletLink("#", 'CSD', 'tw-csd', 'Request speedy deletion according to WP:CSD', '')).click(function() {
+		$(twAddPortletLink("#", '速删', 'tw-csd', '请求快速删除', '')).click(function() {
 			alert("Your account is too new to use Twinkle.");
 		});
 	}

@@ -13,9 +13,9 @@ Twinkle.image = function twinkleimage() {
 	    document.getElementById("mw-imagepage-section-filehistory"))
 	{
 		if(twinkleUserAuthorized) {
-			$(twAddPortletLink("#", "DI", "tw-di", "Nominate file for delayed speedy deletion", "")).click(Twinkle.image.callback);
+			$(twAddPortletLink("#", "速删", "tw-di", "提交文件快速删除", "")).click(Twinkle.image.callback);
 		} else {
-			$(twAddPortletLink("#", "DI", "tw-di", "Nominate file for delayed speedy deletion", "")).click(function(){
+			$(twAddPortletLink("#", "速删", "tw-di", "提交文件快速删除", "")).click(function(){
 				alert("Your account is too new to use Twinkle.");
 			});
 		}

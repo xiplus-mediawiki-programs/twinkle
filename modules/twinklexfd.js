@@ -17,9 +17,9 @@ Twinkle.xfd = function twinklexfd() {
 		return;
 	}
 	if (twinkleUserAuthorized) {
-		$(twAddPortletLink("#", "XFD", "tw-xfd", "Nominate for deletion", "")).click(Twinkle.xfd.callback);
+		$(twAddPortletLink("#", "提删", "tw-xfd", "提交删除讨论", "")).click(Twinkle.xfd.callback);
 	} else {
-		$(twAddPortletLink("#", 'XFD', 'tw-xfd', 'Nominate for deletion', '')).click(function() {
+		$(twAddPortletLink("#", '提删', 'tw-xfd', '提交删除讨论', '')).click(function() {
 			alert("Your account is too new to use Twinkle.");
 		});
 	}
