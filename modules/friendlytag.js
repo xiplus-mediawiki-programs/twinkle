@@ -12,17 +12,19 @@ Twinkle.tag = function friendlytag() {
 	// redirect tagging
 	if( Wikipedia.isPageRedirect() ) {
 		Twinkle.tag.mode = 'redirect';
-		$(twAddPortletLink("#", "Tag", "friendly-tag", "Tag redirect", "")).click(Twinkle.tag.callback);
+		$(twAddPortletLink("#", "标记", "friendly-tag", "标记重定向", "")).click(Twinkle.tag.callback);
 	}
 	// file tagging
+	/*
 	else if( mw.config.get('wgNamespaceNumber') === 6 && !document.getElementById("mw-sharedupload") && document.getElementById("mw-imagepage-section-filehistory") ) {
 		Twinkle.tag.mode = 'file';
-		$(twAddPortletLink("#", "Tag", "friendly-tag", "Add maintenance tags to file", "")).click(Twinkle.tag.callback);
+		$(twAddPortletLink("#", "标记", "friendly-tag", "标记文件", "")).click(Twinkle.tag.callback);
 	}
+	*/
 	// article tagging
 	else if( mw.config.get('wgNamespaceNumber') === 0 && mw.config.get('wgCurRevisionId') ) {
 		Twinkle.tag.mode = 'article';
-		$(twAddPortletLink("#", "Tag", "friendly-tag", "Add maintenance tags to article", "")).click(Twinkle.tag.callback);
+		$(twAddPortletLink("#", "标记", "friendly-tag", "标记条目", "")).click(Twinkle.tag.callback);
 	}
 };
 
@@ -30,79 +32,79 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 	var Window = new SimpleWindow( 630, 400 );
 	Window.setScriptName( "Twinkle" );
 	// anyone got a good policy/guideline/info page/instructional page link??
-	Window.addFooterLink( "Twinkle help", "WP:TW/DOC#tag" );
+	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#tag" );
 
 	var form = new QuickForm( Twinkle.tag.callback.evaluate );
 
 	switch( Twinkle.tag.mode ) {
 		case 'article':
-			Window.setTitle( "Article maintenance tagging" );
+			Window.setTitle( "条目维护标记" );
 
 			form.append( {
 					type: 'checkbox',
 					list: [
 						{
-							label: 'Group into {{multiple issues}} if possible',
+							label: '如可能，合并到{{multiple issues}}',
 							value: 'group',
 							name: 'group',
-							tooltip: 'If applying three or more templates supported by {{multiple issues}} and this box is checked, all supported templates will be grouped into a single {{multiple issues}} template.',
+							tooltip: '如果添加{{multiple issues}}支持的三个以上的模板，所有支持的模板都会被合并至一个{{multiple issues}}模板中。',
 							checked: Twinkle.getFriendlyPref('groupByDefault')
 						}
 					]
 				}
 			);
 
-			form.append( { type:'header', label:'Maintenance templates' } );
+			form.append( { type:'header', label:'维护模板' } );
 			form.append( { type:'checkbox', name: 'maintenance', list: Twinkle.tag.maintenanceList } );
 
-			form.append( { type:'header', label:'Problem templates' } );
+			form.append( { type:'header', label:'问题模板' } );
 			form.append( { type:'checkbox', name: 'problem', list: Twinkle.tag.problemList } );
 
-			form.append( { type:'header', label:'Notice templates' } );
+			form.append( { type:'header', label:'提示模板' } );
 			form.append( { type:'checkbox', name: 'notice', list: Twinkle.tag.noticeList } );
 
 			if( Twinkle.getFriendlyPref('customTagList').length ) {
-				form.append( { type:'header', label:'Custom templates' } );
+				form.append( { type:'header', label:'自定义模板' } );
 				form.append( { type: 'checkbox', name: 'custom', list: Twinkle.getFriendlyPref('customTagList') } );
 			}
 			break;
-
+/*
 		case 'file':
-			Window.setTitle( "File maintenance tagging" );
+			Window.setTitle( "文件维护标记" );
 
 			// TODO: perhaps add custom tags TO list of checkboxes
 
-			form.append({ type: 'header', label: 'License and sourcing problem tags' });
+			form.append({ type: 'header', label: '版权和来源问题模板' });
 			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.licenseList } );
 
-			form.append({ type: 'header', label: 'Cleanup tags' } );
+			form.append({ type: 'header', label: '清理模板' } );
 			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.cleanupList } );
 
-			form.append({ type: 'header', label: 'Image quality tags' } );
+			form.append({ type: 'header', label: '图片质量模板' } );
 			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.qualityList } );
 
-			form.append({ type: 'header', label: 'Wikimedia Commons-related tags' });
+			form.append({ type: 'header', label: '维基媒体相关模板' });
 			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.commonsList } );
 
-			form.append({ type: 'header', label: 'Replacement tags' });
+			form.append({ type: 'header', label: '替换模板' });
 			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.replacementList } );
 			break;
-
+*/
 		case 'redirect':
-			Window.setTitle( "Redirect tagging" );
+			Window.setTitle( "重定向标记" );
 
-			form.append({ type: 'header', label:'Spelling, misspelling, tense and capitalization templates' });
+			form.append({ type: 'header', label:'拼写、错误拼写、时态和大小写模板' });
 			form.append({ type: 'checkbox', name: 'spelling', list: Twinkle.tag.spellingList });
 
-			form.append({ type: 'header', label:'Alternative name templates' });
+			form.append({ type: 'header', label:'其他名称模板' });
 			form.append({ type: 'checkbox', name: 'alternative', list: Twinkle.tag.alternativeList });
 
-			form.append({ type: 'header', label:'Miscellaneous and administrative redirect templates' });
+			form.append({ type: 'header', label:'杂项和管理用重定向模板' });
 			form.append({ type: 'checkbox', name: 'administrative', list: Twinkle.tag.administrativeList });
 			break;
 
 		default:
-			alert("Twinkle.tag: unknown mode " + Twinkle.tag.mode);
+			alert("Twinkle.tag：未知模式 " + Twinkle.tag.mode);
 			break;
 	}
 
@@ -117,131 +119,99 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 
 Twinkle.tag.maintenanceList = [
 	{
-		label: '{{allplot}}: article is almost entirely a plot summary',
-		value: 'allplot' 
+		label: wgUVS("{{attention}}: 此条目需要您的关注", "{{attention}}: 此條目需要您的關注"),
+		value: 'attention'
 	},
 	{
-		label: '{{catimprove}}: article may require additional categories.',
-		value: 'catimprove'
-	},
-	{
-		label: '{{cleanup}}: article may require cleanup',
+		label: wgUVS("{{cleanup}}: 条目可能需要进行清理", "{{cleanup}}: 條目可能需要進行清理"),
 		value: 'cleanup'
 	},
 	{
-		label: '{{confusing}}: article may be confusing or unclear',
-		value: 'confusing'
-	},
-	{
-		label: '{{copyedit}}: article needs copy editing for grammar, style, cohesion, tone, and/or spelling',
+		label: wgUVS("{{copyedit}}: 条目需要校对，以确保语法、用语、语气、风格及表达恰当", "{{copyedit}}: 條目需要校對，以確保語法、用語、語氣、風格及表達恰當"),
 		value: 'copyedit'
 	},
 	{
-		label: '{{citation style}}: article has unclear or inconsistent inline citations',
-		value: 'citation style'
+		label: wgUVS("{{expand}}: 此条目需要扩充", "{{expand}}: 此條目需要擴充"),
+		value: 'expand'
 	},
 	{
-		label: '{{deadend}}: article has few or no links to other articles',
-		value: 'deadend'
-	},
-	{
-		label: '{{essay-like}}: article is written like an essay and needs cleanup',
-		value: 'essay-like'
-	},
-	{
-		label: '{{expert}}: article needs attention from an expert on the subject',
+		label: wgUVS("{{expert}}: 此条目需要精通或熟悉本主题的专家参与编辑", "{{expert}}: 此條目需要精通或熟悉本主題的專家參與編輯"),
 		value: 'expert'
 	},
 	{
-		label: '{{fansite}}: article  resembles a fansite',
+		label: wgUVS("{{fansite}}: 此条目类似爱好者站点", "{{fansite}}: 此條目類似愛好者站點"),
 		value: 'fansite'
 	},
 	{
-		label: '{{in-universe}}: article subject is fictional and needs rewriting from a non-fictional perspective',
+		label: wgUVS("{{grammar}}: 此条目或章节的文法需要改善", "{{grammar}}: 此條目或章節的文法需要改善"),
+		value: 'grammar'
+	},
+	{
+		label: wgUVS("{{howto}}: 此条目或章节包含指南或教学内容", "{{howto}}: 此條目或章節包含指南或教學內容"),
+		value: 'howto'
+	},
+	{
+		label: wgUVS("{{in-universe}}: 本条目以小说作品原始的写作风格叙述一个小说作品或情节", "{{in-universe}}: 本條目以小說作品原始的寫作風格敍述一個小說作品或情節"),
 		value: 'in-universe'
 	},
 	{
-		label: '{{lead missing}}: article has no lead section and one should be written',
-		value: 'lead missing'
+		label: wgUVS("{{infoboxneeded}}: 此条目需要加上一个合适的信息框模板，或是现有的信息框需要更新", "{{infoboxneeded}}: 此條目需要加上一個合適的訊息框模板，或是現有的訊息框需要更新"),
+		value: 'infoboxneeded'
 	},
 	{
-		label: '{{lead too long}}: article lead section is too long and should be shortened',
-		value: 'lead too long'
+		label: wgUVS("{{intro-missing}}: 这个条目的导言过于短小", "{{intro-missing}}: 這個條目的導言過於短小"),
+		value: 'intromissing'
 	},
 	{
-		label: '{{lead too short}}: article lead section is too short and should be expanded',
-		value: 'lead too short'
+		label: wgUVS("{{newsrelease}}: 本条目或章节阅读起来像是新闻稿，或包含过度的宣传性语调", "{{newsrelease}}: 本條目或章節閱讀起來像是新聞稿，或包含過度的宣傳性語調"),
+		value: 'newsrelease'
 	},
 	{
-		label: '{{lead rewrite}}: article lead section needs to be rewritten to comply with guidelines',
-		value: 'lead rewrite'
-	},
-	{
-		label: '{{linkrot}}: article uses bare URLs for references, which are prone to link rot',
-		value: 'linkrot'
-	},
-	{
-		label: '{{merge}}: article should be merged with another given article',
-		value: 'merge'
-	},
-	{
-		label: '{{merge from}}: another given article should be merged into this one',
-		value: 'merge from'
-	},
-	{
-		label: '{{merge to}}: article should be merged into another given article',
-		value: 'merge to'
-	},
-	{
-		label: '{{morefootnotes}}: article has some references, but insufficient in-text citations',
-		value: 'morefootnotes'
-	},
-	{
-		label: '{{nofootnotes}}: article has references, but no in-text citations',
+		label: wgUVS("{{nofootnotes}}: 本条目包含了一些参考来源或外部链接，但由于条目内部缺少内文脚注，本条目的来源仍然不明确", "{{nofootnotes}}: 本條目包含了一些參考來源或外部鏈結，但由於條目內部缺乏內文腳注，本條目的來源仍然不明確"),
 		value: 'nofootnotes'
 	},
 	{
-		label: '{{notenglish}}: article is written in a language other than English and needs translation',
-		value: 'notenglish'
+		label: wgUVS("{{notchinese}}: 此条目包含过多不是现代标准汉语的内容", "{{notchinese}}: 此條目包含過多不是現代標準漢語的內容"),
+		value: 'notchinese'
 	},
 	{
-		label: '{{orphan}}: article has few or no other articles that link to it',
-		value: 'orphan' 
+		label: wgUVS("{{notchinesetitle}}: 据命名常规，本条目标题应使用中文", "{{notchinesetitle}}: 據命名常規，本條目標題應使用中文"),
+		value: 'notchinesetitle'
 	},
 	{
-		label: '{{plot}}: plot summary in article is too long',
-		value: 'plot' 
+		label: wgUVS("{{orphan}}: 这个条目只有或没有很少链入页面", "{{orphan}}: 這個條目只有或沒有很少鏈入頁面"),
+		value: 'orphan'
 	},
 	{
-		label: '{{prose}}: article is in a list format that may be better presented using prose',
-		value: 'prose'
+		label: wgUVS("{{prosetimeline}}: 此条目或章节可能包含不适当的条列式年代表", "{{prosetimeline}}: 此條目或章節可能包含不適當的條列式年代表"),
+		value: 'prosetimeline'
 	},
 	{
-		label: '{{pov-check}}: nominate article to be checked for neutrality',
-		value: 'pov-check'
+		label: wgUVS("{{roughtranslation}}: 此条目或章节翻译粗劣", "{{roughtranslation}}: 此條目或章節翻譯粗劣"),
+		value: 'roughtranslation'
 	},
 	{
-		label: '{{sections}}: article needs to be broken into sections',
-		value: 'sections'
-	},
-	{
-		label: '{{tense}}: article is written in an incorrect tense',
-		value: 'tense'
-	},
-	{
-		label: '{{tone}}: tone of article is not appropriate',
+		label: wgUVS("{{tone}}: 此条目的语调或风格可能不适合百科全书的写作方式", "{{tone}}: 此條目的語調或風格可能不適合百科全書的寫作方式"),
 		value: 'tone'
 	},
 	{
-		label: '{{uncategorized}}: article is uncategorized',
+		label: wgUVS("{{translating}}: 此条目仍有文字未被翻译成中文", "{{translating}}: 此條目仍有文字未被翻譯成中文"),
+		value: 'translating'
+	},
+	{
+		label: wgUVS("{{trivia}}: 应避免有陈列杂项资料的章节", "{{trivia}}: 應避免有陳列雜項資料的章節"),
+		value: 'trivia'
+	},
+	{
+		label: wgUVS("{{uncategorized}}: 此条目缺少页面分类", "{{uncategorized}: 此條目缺乏頁面分類"),
 		value: 'uncategorized'
 	},
 	{
-		label: '{{verylong}}: article is too long',
+		label: wgUVS("{{verylong}}: 此条目可能过于冗长", "{{verylong}}: 此條目可能過於冗長"),
 		value: 'verylong'
 	},
 	{
-		label: '{{wikify}}: article needs to be wikified',
+		label: wgUVS("{{wikify}}: 此条目格式需要被修正以符合维基标准", "{{wikify}}: 此條目格式需要被修正以符合維基標準"),
 		value: 'wikify'
 	}
 ];
@@ -249,122 +219,229 @@ Twinkle.tag.maintenanceList = [
 
 Twinkle.tag.problemList = [
 	{
-		label: '{{advert}}: article is written like an advertisement',
+		label: wgUVS("{{advert}}: 此条目类似广告", "{{advert}}: 此條目類似廣告"),
 		value: 'advert'
 	},
 	{
-		label: '{{autobiography}}: article is an autobiography and may not be of NPOV',
-		value: 'autobiography'
+		label: wgUVS("{{blpdispute}}: 此条目可能违反了生者传记方针", "{{blpdispute}}: 此條目可能違反了生者傳記方針"),
+		value: 'blpdispute'
 	},
 	{
-		label: '{{close paraphrase}}: article contains close paraphrasing of a non-free copyrighted source',
-		value: 'close paraphrase'
+		label: wgUVS("{{blpsource}}: 此传记条目需要补充性的引用以供查证", "{{blpsource}}: 此傳記條目需要附加來源資料以供查證"),
+		value: 'blpsource'
 	},
 	{
-		label: '{{coi}}: article creator or major contributor may have a conflict of interest',
-		value: 'coi'
-	},
-	{
-		label: '{{context}}: article provides insufficient context',
-		value: 'context'
-	},
-	{
-		label: '{{copypaste}}: article appears to have been copied and pasted from a source',
-		value: 'copypaste'
-	},
-	{
-		label: '{{disputed}}: article has questionable factual accuracy',
+		label: wgUVS("{{disputed}}: 此条目的准确性有争议", "{{disputed}}: 此條目的準確性有爭議"),
 		value: 'disputed'
 	},
 	{
-		label: '{{external links}}: article\'s external links may not follow content policies or guidelines',
-		value: 'external links'
+		label: wgUVS("{{globalize}}: 此条目仅具一部分地域的观点或资料，尚需补充世界性的内容", "{{globalize}}: 此條目僅具一部份地域的觀點或資料，尚需補充世界性的內容"),
+		value: 'globalize',
 	},
 	{
-		label: '{{globalize}}: article may not represent a worldwide view of the subject',
-		value: 'globalize',
+		label: wgUVS("{{hoax}}: 此条目真实性成疑", "{{hoax}}: 此條目真實性成疑"),
+		value: 'hoax'
+	},
+	{
+		label: wgUVS("{{non-free}}: 此条目可能过多或不当地使用了受版权保护的文字、图像或/及多媒体文件", "{{non-free}}: 此條目可能過多或不當地使用了受版權保護的文字、圖像或/及多媒體檔案"),
+		value: 'non-free'
+	},
+	{
+		label: wgUVS("{{notability}}: 此条目可能不符合通用关注度指引", "{{notability}}: 此條目可能不符合通用關注度指引"),
+		value: 'notability',
 		subgroup: {
-			name: 'globalize',
+			name: 'notability',
 			type: 'select',
 			list: [
 				{
-					label: "{{globalize}}: article may not represent a worldwide view of the subject",
-					value: "globalize"
+					label: wgUVS("{{notability}}: 通用的知名度标准", "{{notability}}: 通用的知名度標準"),
+					value: "none"
 				},
 				{
-					label: "Region-specific {{globalize}} subtemplates",
+					label: wgUVS("{{notability|Biographies}}: 人物传记", "{{notability|Biographies}}: 人物傳記"),
+					value: "Biographies"
+				},
+				{
+					label: wgUVS("{{notability|Fiction}}: 虚构事物", "{{notability|Fiction}}: 虛構事物"),
+					value: "Fiction"
+				},
+				{
+					label: wgUVS("{{notability|Neologisms}}: 发明、研究", "{{notability|Neologisms}}: 發明或研究"),
+					value: "Neologisms"
+				},
+				{
+					label: wgUVS("{{notability|Web}}: 网站、网络内容", "{{notability|Web}}: 網站或網絡內容"),
+					value: "Web"
+				}
+			]
+		}
+	},
+	{
+		label: wgUVS("{{notability unreferenced}}: 此条目也许具备关注度，但需要可靠的来源来加以彰显", "{{notability unreferenced}}: 此條目也許具備關注度，但需要可靠的來源加以彰顯"),
+		value: 'notability unreferenced'
+	},
+	{
+		label: wgUVS("{{npov}}: 此条目的中立性有争议。内容、语调可能带有明显的个人观点或地方色彩", "{{npov}}: 此條目的中立性有爭議。內容、語調可能帶有明顯的個人觀點或地方色彩"),
+		value: 'npov'
+	},
+	{
+		label: wgUVS("{{off-topic}}: 这篇文章的内容文不对题", "{{off-topic}}: 這篇文章的內容文不對題"),
+		value: 'off-topic'
+	},
+	{
+		label: wgUVS("{{original research}}: 此条目可能包含原创研究或未查证内容", "{{original research}}: 此條目可能包含原創研究或未查證內容"),
+		value: 'original research'
+	},
+	{
+		label: wgUVS("{{primarysources}}: 此条目需要可靠、公开、第三方的来源", "{{primarysources}}: 此條目需要可靠、公開、第三方的來源"),
+		value: 'primarysources'
+	},
+	{
+		label: wgUVS("{{refimprove}}: 此条目需要补充更多来源", "{{refimprove}}: 此條目需要補充更多來源"),
+		value: 'refimprove'
+	},
+	{
+		label: wgUVS("{{review}}: 此条目或章节阅读起来类似评论", "{{review}}: 此條目或章節閱讀起來類似評論"),
+		value: 'review'
+	},
+	{
+		label: wgUVS("{{rewrite}}: 此条目或段落的质量低劣，需要完全重写", "{{rewrite}}: 此條目或段落的質量低劣，需要完全重寫"),
+		value: 'rewrite'
+	},
+	{
+		label: wgUVS("{{substub}}: 这篇是过于短小的文章", "{{substub}}: 這篇是過於短小的文章"),
+		value: 'substub'
+	},
+	{
+		label: wgUVS("{{unencyclopedic}}: 此条目可能不适合写入百科全书", "{{unencyclopedic}}: 此條目可能不適合寫入百科全書"),
+		value: 'unencyclopedic'
+	},
+	{
+		label: wgUVS("{{unreferenced}}: 此条目没有列出任何参考或来源", "{{unreferenced}}: 此條目沒有列出任何參考或來源"),
+		value: 'unreferenced'
+	},
+	{
+		label: wgUVS("{{update}}: 这个条目需要更新", "{{update}}: 這個條目需要更新"),
+		value: 'update'
+	},
+	{
+		label: wgUVS("{{weasel}}: 此条目可能因为语意模棱两可而损及其中立性", "{{weasel}}: 此條目可能因為語意模稜兩可而損及其中立性"),
+		value: 'weasel'
+	}
+];
+
+Twinkle.tag.noticeList = [
+	{
+		label: wgUVS("{{current}}: 本文记述一项新闻动态", "{{current}}: 本文記述一項新聞動態"),
+		value: 'current',
+		subgroup: {
+			name: 'current',
+			type: 'select',
+			list: [
+				{
+					label: wgUVS("{{current}}: 本文记述一项新闻动态", "{{current}}: 本文記述一項新聞動態"),
+					value: "current"
+				},
+				{
+					label: wgUVS("{{current spaceflight}}: 本文或本章节是关于目前或最近的太空任务", "{{current spaceflight}}: 本文或本章節是關於目前或最近的太空任務"),
+					value: "current spaceflight"
+				},
+				{
+					label: wgUVS("{{current sport}}: 此条目记述一项近期体育赛事", "{{current sport}}: 此條目記述一項近期體育賽事"),
+					value: "current sport"
+				},
+				{
+					label: wgUVS("{{current related}}: 本条目和一项新闻动态相关", "{{current related}}: 本條目和一項新聞動態相關"),
+					value: "current related"
+				},
+				{
+					label: wgUVS("{{recent death}}: 这是一篇关于最近逝世人物的文章", "{{recent death}}: 這是一篇關於最近逝世人物的文章"),
+					value: "recent death"
+				}
+			]
+		}
+	},
+	{
+		label: wgUVS("{{future}}: 此条目是关于未来已定或预期会发生的事件", "{{future}}: 此條目是關於未來已定或預期會發生的事件"),
+		value: 'future',
+		subgroup: {
+			name: 'future',
+			type: 'select',
+			list: [
+				{
+					label: wgUVS("{{future}}: 此条目是关于未来已定或预期会发生的事件", "{{future}}: 此條目關於未來已定或預期會發生的事件"),
+					value: "future"
+				},
+				{
+					label: "工程",
 					list: [
 						{
-							label: "{{globalize/Australia}}: article deals primarily with the Australian viewpoint",
-							value: "globalize/Australia"
+							label: wgUVS("{{future infrastructure}}: 此条目是关于未来的建设或计划", "{{future infrastructure}}: 此條目是關於未來的建設或計劃"),
+							value: "future infrastructure"
 						},
 						{
-							label: "{{globalize/Belgium}}: article deals primarily with the Belgian viewpoint",
-							value: "globalize/Belgium"
+							label: wgUVS("{{future software}}: 此条目包含计划中或预期会发布的未来软件", "{{future software}}: 此條目包含計劃中或預期會發布的未來軟件"),
+							value: "future software"
 						},
 						{
-							label: "{{globalize/Canada}}: article deals primarily with the Canadian viewpoint",
-							value: "globalize/Canada"
+							label: wgUVS("{{future spaceflight}}: 本条目为已列入计划或可能进行的航天活动", "{{future spaceflight}}: 本條目為已列入計劃或可能進行的航天活動"),
+							value: "future spaceflight"
+						}
+					]
+				},
+				{
+					label: "娱乐",
+					list: [
+						{
+							label: wgUVS("{{future film}}: 此条目是关于正在计划或拍摄中的电影", "{{future film}}: 此條目是關於正在計劃或拍攝中的電影"),
+							value: "future film"
 						},
 						{
-							label: "{{globalize/Common law}}: article deals primarily with the viewpoint of common law countries",
-							value: "globalize/Common law"
+							label: wgUVS("{{future game}}: 此条目是关于尚未发行的电子游戏", "{{future game}}: 此條目是關於尚未發行的電子遊戲"),
+							value: "future game"
 						},
 						{
-							label: "{{globalize/Eng}}: article deals primarily with the English-speaking viewpoint",
-							value: "globalize/Eng"
+							label: wgUVS("{{future tvshow}}: 此条目包含有关正在计划、拍摄中或有待播出的电视节目的信息", "{{future tvshow}}: 此條目包含有關正在計劃、拍攝中或有待播出之電視節目訊息"),
+							value: "future tvshow"
 						},
 						{
-							label: "{{globalize/Europe}}: article deals primarily with the European viewpoint",
-							value: "globalize/Europe"
+							label: wgUVS("{{future tvshow information}}: 此条目包含有关正在播出的电视系列节目的信息", "{{future tvshow information}}: 此條目包含有關正在播出的電視系列節目之訊息"),
+							value: "future tvshow information"
+						}
+					]
+				},
+				{
+					label: "杂项",
+					list: [
+						{
+							label: wgUVS("{{future election}}: 此条目是关于将举办或进行中的选举", "{{future election}}: 此條目是關於將舉辦或進行中的選舉"),
+							value: "future election"
 						},
 						{
-							label: "{{globalize/France}}: article deals primarily with the French viewpoint",
-							value: "globalize/France"
+							label: wgUVS("{{future product}}: 此条目是关于未上市产品的信息", "{{future product}}: 此條目是關於未上市產品的訊息"),
+							value: "future product"
+						}
+					]
+				},
+				{
+					label: "运输",
+					list: [
+						{
+							label: wgUVS("{{future public transportation}}: 本文是关于未来的公共运输建设或计划", "{{future public transportation}}: 本文是關於未來的公共運輸建設或計劃"),
+							value: "future public transportation"
+						}
+					]
+				},
+				{
+					label: "运动",
+					list: [
+						{
+							label: wgUVS("{{future go}}: 此条目是关于一项预定进行的围棋赛", "{{future go}}: 此條目是關於一項預定進行的圍棋賽"),
+							value: "future go"
 						},
 						{
-							label: "{{globalize/Germany}}: article deals primarily with the German viewpoint",
-							value: "globalize/Germany"
-						},
-						{
-							label: "{{globalize/Greece}}: article deals primarily with the Greek viewpoint",
-							value: "globalize/Greece"
-						},
-						{
-							label: "{{globalize/Luxembourg}}: article deals primarily with the Luxembourgish viewpoint",
-							value: "globalize/Luxembourg"
-						},
-						{
-							label: "{{globalize/Netherlands}}: article deals primarily with the Dutch viewpoint",
-							value: "globalize/Netherlands"
-						},
-						{
-							label: "{{globalize/North America}}: article deals primarily with the North American viewpoint",
-							value: "globalize/North America"
-						},
-						{
-							label: "{{globalize/Northern}}: article deals primarily with the northern hemisphere viewpoint",
-							value: "globalize/Northern"
-						},
-						{
-							label: "{{globalize/Russia}}: article deals primarily with the Russian viewpoint",
-							value: "globalize/Russia"
-						},
-						{
-							label: "{{globalize/Southern}}: article deals primarily with the southern hemisphere viewpoint",
-							value: "globalize/Southern"
-						},
-						{
-							label: "{{globalize/UK}}: article deals primarily with the British viewpoint",
-							value: "globalize/UK"
-						},
-						{
-							label: "{{globalize/UK and Canada}}: article deals primarily with the British and Canadian viewpoints",
-							value: "globalize/UK and Canada"
-						},
-						{
-							label: "{{globalize/USA}}: article deals primarily with the American viewpoint",
-							value: "globalize/USA"
+							label: wgUVS("{{future sport}}: 此条目是关于一项预定进行的体育竞赛", "{{future sport}}: 此條目是關於一項預定進行的體育競賽"),
+							value: "future sport"
 						}
 					]
 				}
@@ -372,296 +449,108 @@ Twinkle.tag.problemList = [
 		}
 	},
 	{
-		label: '{{hoax}}: article may be a complete hoax',
-		value: 'hoax'
+		label: wgUVS("{{inuse}}: 这篇文章正在进行重大修改", "{{inuse}}: 這篇文章正在進行重大修改"),
+		value: 'inuse'
 	},
 	{
-		label: '{{non-free}}: article may contain excessive or improper use of copyrighted materials',
-		value: 'non-free'
-	},
-	{
-		label: '{{notability}}: article\'s subject may not meet the notability guideline',
-		value: 'notability',
-		subgroup: {
-			name: 'notability',
-			type: 'select',
-			list: [
-				{
-					label: "{{notability}}: article\'s subject may not meet the notability guideline",
-					value: "none"
-				},
-				{
-					label: "{{notability|Academics}}: notability guideline for academics",
-					value: "Academics"
-				},
-				{
-					label: "{{notability|Biographies}}: notability guideline for biographies",
-					value: "Biographies"
-				},
-				{
-					label: "{{notability|Books}}: notability guideline for books",
-					value: "Books"
-				},
-				{
-					label: "{{notability|Companies}}: notability guideline for companies and organizations",
-					value: "Companies"
-				},
-				{
-					label: "{{notability|Episode}}: notability guideline for television episodes",
-					value: "Episode"
-				},
-				{
-					label: "{{notability|Fiction}}: notability guideline for fiction",
-					value: "Fiction"
-				},
-				{
-					label: "{{notability|Films}}: notability guideline for films",
-					value: "Films"
-				},
-				{
-					label: "{{notability|Institutions}}: synonym of \"Companies\"",
-					value: "Institutions"
-				},
-				{
-					label: "{{notability|Music}}: notability guideline for music",
-					value: "Music"
-				},
-				{
-					label: "{{notability|Neologisms}}: notability guideline for neologisms",
-					value: "Neologisms"
-				},
-				{
-					label: "{{notability|Numbers}}: notability guideline for numbers",
-					value: "Numbers"
-				},
-				{
-					label: "{{notability|Organizations}}: synonym of \"Companies\"",
-					value: "Organizations"
-				},
-				{
-					label: "{{notability|Products}}: notability guideline for products and services",
-					value: "Products"
-				},
-				{
-					label: "{{notability|Web}}: notability guideline for web content",
-					value: "Web"
-				}
-			]
-		}
-	},
-	{
-		label: '{{npov}}: article does not maintain a neutral point of view',
-		value: 'npov'
-	},
-	{
-		label: '{{one source}}: article relies largely or entirely upon a single source',
-		value: 'one source'
-	},
-	{
-		label: '{{original research}}: article has original research or unverified claims',
-		value: 'original research'
-	},
-	{
-		label: '{{overcoverage}}: Examples and perspectives in the article might have an extensive bias or disproportional coverage towards one or more specific regions',
-		value: 'overcoverage'
-	},
-	{
-		label: '{{peacock}}: article may contain peacock terms that promotes the subject in a subjective manner without adding information',
-		value: 'peacock'
-	},
-	{
-		label: '{{primarysources}}: article needs reliable, third-party sources',
-		value: 'primarysources'
-	},
-	{
-		label: "{{overdetailed}}: article contains an excessive amount of intricate detail",
-		value: "overdetailed"
-	},
-	{
-		label: "{{recentism}}: article is slanted towards recent events",
-		value: "recentism"
-	},
-	{ 
-		label: '{{refimprove}}: article needs additional references or sources for verification',
-		value: 'refimprove' 
-	},
-	{ 
-		label: '{{refimproveBLP}}: BLP article needs additional references or sources for verification',
-		value: 'refimproveBLP' 
-	},
-	{
-		label: '{{self-published}}: article may contain improper references to self-published sources',
-		value: 'self-published'
-	},
-	{
-		label: '{{synthesis}}: article may contain unpublished synthesis of published material that conveys unattributable ideas',
-		value: 'synthesis'
-	},
-	{
-		label: "{{toofewopinions}}: article may not include all significant viewpoints",
-		value: "toofewopinions"
-	},
-	{
-		label: '{{unencyclopedic}}: article contains unencyclopedic material',
-		value: 'unencyclopedic'
-	},
-	{
-		label: '{{unreferenced}}: article has no references at all',
-		value: 'unreferenced'
-	},
-	{
-		label: '{{unreferencedBLP}}: BLP article has no references at all',
-		value: 'unreferencedBLP'
-	},
-	{
-		label: '{{update}}: article information is out of date',
-		value: 'update'
-	},
-	{
-		label: '{{weasel}}: article quality may be compromised by the use of weasel words',
-		value: 'weasel'
+		label: wgUVS("{{underconstruction}}: 这个条目是一个扩展或大修改，它并未供使用", "{{underconstruction}}: 這個條目是一個擴展或大修改，它並未供使用"),
+		value: 'underconstruction'
 	}
-];
-
-Twinkle.tag.noticeList = [
-	{
-		label: '{{goceinuse}}: article is currently undergoing a major copy edit by the Guild of Copy Editors',
-		value: 'goceinuse' },
-	{
-		label: '{{inuse}}: article is undergoing a major edit for a short while',
-		value: 'inuse' },
-	{
-		label: '{{new unreviewed article}}: mark article for later review',
-		value: 'new unreviewed article' },
-	{
-		label: '{{underconstruction}}: article is currently in the middle of an expansion or major revamping',
-		value: 'underconstruction' }
 ];
 
 // Tags for REDIRECTS start here
 
 Twinkle.tag.spellingList = [
 	{
-		label: '{{R from abbreviation}}: redirect from a title with an abbreviation',
-		value: 'R from abbreviation' 
+		label: "{{簡繁重定向}}: 引导简体至繁体，或繁体至简体",
+		value: '簡繁重定向'
 	},
 	{
-		label: '{{R to list entry}}: redirect to a \"list of minor entities\"-type article which is a collection of brief descriptions for subjects not notable enough to have separate articles',
-		value: 'R to list entry' 
+		label: "{{模板重定向}}: 指向模板",
+		value: '模板重定向'
 	},
 	{
-		label: '{{R to section}}: sames as {{R to list entry}}, but when list is more sectionlike in organization, such as list of fictional characters in a fictional universe.',
-		value: 'R to section' 
+		label: "{{别名重定向}}: 标题的其他名称、笔名、绰号、同义字等",
+		value: '别名重定向'
 	},
 	{
-		label: '{{R from misspelling}}: redirect from a misspelling or typographical error',
-		value: 'R from misspelling' 
+		label: "{{縮寫重定向}}: 标题缩写",
+		value: '縮寫重定向'
 	},
 	{
-		label: '{{R from alternative spelling}}: redirect from a title with a different spelling',
-		value: 'R from alternative spelling' 
+		label: "{{拼寫重定向}}: 标题的其他不同拼写",
+		value: '拼寫重定向'
 	},
 	{
-		label: '{{R from plural}}: redirect from a plural word to the singular equivalent',
-		value: 'R from plural' 
+		label: "{{錯字重定向}}: 标题的常见错误拼写或误植",
+		value: '錯字重定向'
 	},
-	{
-		label: '{{R from related word}}: redirect from a related word',
-		value: 'R from related word' 
-	},
-	{
-		label: '{{R with possibilities}}: redirect from a title for a topic more detailed than what is currently provided on the target page, or section of that page, hence something which can and should be expanded',
-		value: 'R with possibilities' 
-	},
-	{
-		label: '{{R from member}}: redirect from a person who is a member of a group to more general related topics, such as the group, organization, ensemble or team that he or she belongs to',
-		value: 'R from member' 
-	},
-	{
-		label: '{{R from other capitalisation}}: redirect from a title with another method of capitalisation',
-		value: 'R from other capitalisation'
-	}
 ];
 
 Twinkle.tag.alternativeList = [
 	{
-		label: '{{R from alternative name}}: redirect from a title that is another name, a pseudonym, a nickname, or a synonym',
-		value: 'R from alternative name' 
+		label: "{{全名重定向}}: 标题的完整或更完整名称",
+		value: '全名重定向'
 	},
 	{
-		label: '{{R from full name}}: redirect from a title that is a complete or more complete name',
-		value: 'R from full name' 
+		label: "{{短名重定向}}: 完整标题名称或人物全名的部分、不完整的名称或简称",
+		value: '短名重定向'
 	},
 	{
-		label: '{{R from surname}}: redirect from a title that is a surname',
-		value: 'R from surname' 
+		label: "{{姓氏重定向}}: 人物姓氏",
+		value: '姓氏重定向'
 	},
 	{
-		label: '{{R from historic name}}: redirect from a title that is another name, a pseudonym, a nickname, or a synonym that has a significant historic past as a region, state, principate\'s holding, city, city-state or such, but which region has been subsumed into a modern era municipality, district or state, or otherwise suffered from a name change over time',
-		value: 'R from historic name' 
+		label: "{{人名重定向}}: 人物人名",
+		value: '人名重定向'
 	},
 	{
-		label: '{{R from scientific name}}: redirect from the scientific name to the common name',
-		value: 'R from scientific name' 
+		label: "{{非中文重定向}}: 非中文标题",
+		value: '非中文重定向'
 	},
 	{
-		label: '{{R to scientific name}}: redirect from the common name to the scientific name',
-		value: 'R to scientific name' 
-	},
-	{
-		label: '{{R from name and country}}: redirect from the specific name to the briefer name',
-		value: 'R from name and country' 
-	},
-	{
-		label: '{{R from alternative language}}: redirect from an English name to a name in another language, or vice-versa',
-		value: 'R from alternative language' 
-	},
-	{
-		label: '{{R from ASCII}}: redirect from a title in basic ASCII to the formal article title, with differences that are not diacritical marks (accents, umlauts, etc.)',
-		value: 'R from ASCII' 
-	},
-	{
-		label: '{{R from title without diacritics}}: redirect to the article title with diacritical marks (accents, umlauts, etc.)',
-		value: 'R from title without diacritics'
+		label: "{{日文重定向}}: 日语名称",
+		value: '日文重定向'
 	}
 ];
 
 Twinkle.tag.administrativeList = [
 	{
-		label: '{{R from merge}}: redirect from a merged page in order to preserve its edit history',
-		value: 'R from merge' 
+		label: "{{角色重定向}}: 电视剧、电影、书籍等作品的角色",
+		value: '角色重定向'
 	},
 	{
-		label: '{{R to disambiguation page}}: redirect to a disambiguation page',
-		value: 'R to disambiguation page' 
+		label: "{{章節重定向}}: 导向至较高密度（散文般密集）组织的页面",
+		value: '章節重定向'
 	},
 	{
-		label: '{{R from duplicated article}}: redirect to a similar article in order to preserve its edit history',
-		value: 'R from duplicated article' 
+		label: "{{列表重定向}}: 导向至低密度的列表",
+		value: '列表重定向'
 	},
 	{
-		label: '{{R to decade}}: redirect from a year to the decade article',
-		value: 'R to decade' 
+		label: "{{可能性重定向}}: 导向至当前提供内容更为详尽的目标页面、或该页面的章节段落",
+		value: '可能性重定向'
 	},
 	{
-		label: '{{R from shortcut}}: redirect from a Wikipedia shortcut',
-		value: 'R from shortcut' 
+		label: "{{關聯字重定向}}: 标题名称关联字",
+		value: '關聯字重定向'
 	},
 	{
-		label: '{{R from CamelCase}}: redirect from a CamelCase title',
-		value: 'R from CamelCase' 
+		label: "{{捷徑重定向}}: 维基百科捷径",
+		value: '捷徑重定向'
 	},
 	{
-		label: '{{R from EXIF}}: redirect of a wikilink created from JPEG EXIF information (i.e. the \"metadata\" section on some image description pages)',
-		value: 'R from EXIF' 
+		label: "{{重定向模板用重定向}}: 重定向模板用",
+		value: '重定向模板用重定向'
 	},
 	{
-		label: '{{R from school}}: redirect from a school article that had very little information',
-		value: 'R from school'
+		label: "{{EXIF重定向}}: JPEG图像包含EXIF信息",
+		value: 'EXIF重定向'
 	}
 ];
 
 // maintenance tags for FILES start here
+/* TODO(jimmyxu)
 
 Twinkle.tag.file = {};
 
@@ -738,118 +627,58 @@ Twinkle.tag.file.replacementList = [
 	{ label: '{{PNG version available}}', value: 'PNG version available' },
 	{ label: '{{SVG version available}}', value: 'SVG version available' }
 ];
-
+*/
 
 // Set to true if template can be grouped into {{articleissues}}
 Twinkle.tag.groupHash = {
-	'3O': true,
-	'advert': true,
-	'autobiography': true,
-	'biased': true,
-	'blpdispute': true,
-	'BLPrefimprove': true,
-	'BLPsources': true,
-	'BLP sources': true,
-	'BLPunsourced': true,
-	'BLPunreferenced': true,
-	'BLPunref': true,
-	'citations missing': true,
-	'citationstyle': true,
-	'citecheck': true,
-	'cleanup': true,
-	'COI': true,
-	'coi': true,
-	'colloquial': true,
-	'confusing': true,
-	'context': true,
-	'contradict': true,
-	'copyedit': true,
+	'blpsources': true,
 	'citation style': true,
-	'criticisms': true,
-	'crystal': true,
-	'deadend': true,
-	'disputed': true,
-	'essay': true,
-	'essay-like': true,
-	'examplefarm': true,
-	'expert': false,
-	'external links': true,
-	'fancruft': true,
-	'fansite': true,
-	'fiction': true,
-	'gameguide': true,
-	'globalize': true,
-	'grammar': true,
-	'histinfo': true,
-	'hoax': true,
-	'howto': true,
-	'importance': true,
-	'inappropriate person': true,
-	'incomplete': true,
-	'lead missing': true,
-	'lead rewrite': true,
-	'lead too long': true,
-	'lead too short': true,
-	'in-universe': true,
-	'jargon': true,
-	'laundry': true,
-	'laundrylists': true,
-	'likeresume': true,
-	'long': true,
-	'newsrelease': true,
-	'notability': true,
-	'notable': true,
-	'NPOV': true,
-	'npov': true,
-	'one source': true,
-	'OR': true,
-	'or': true,
-	'original research': true,
-	'orphan': true,
-	'out of date': true,
-	'peacock': true,
-	'plot': true,
-	'POV': true,
-	'pov': true,
-	'primarysources': true,
-	'prose': true,
-	'proseline': true,
-	'quotefarm': true,
-	'recentism': true,
 	'refimprove': true,
-	'refimproveBLP': true,
-	'restructure': true,
-	'review': true,
-	'rewrite': true,
 	'roughtranslation': true,
-	'sections': true,
-	'self-published': true,
-	'spam': true,
-	'story': true,
-	'synthesis': true,
-	'technical': true,
-	'tone': true,
-	'toolong': true,
-	'tooshort': true,
-	'travelguide': true,
-	'trivia': true,
-	'unbalanced': true,
-	'unencyclopedic': true,
-	'unref': true,
-	'unreferenced': true,
-	'unrefBLP': true,
-	'unreferencedBLP': true,
+	'onesource': true,
+	'primarysources': true,
+	'review': true,
+	'fansite': true,
+	'howto': true,
+	'contradiction': true,
+	'intromissing': true,
 	'update': true,
-	'verylong': true,
+	'jargon': true,
+	'inappropriate person': true,
+	'npov': true,
+	'or': true,
+	'disputed': true,
+	'blpdispute': true,
 	'weasel': true,
-	'wikify': true
+	'notability': false,
+	'globalize': true,
+	'tone': true,
+	'advert': true,
+	'in-universe': true,
+	'expert': true,
+	'verylong': true,
+	'expand': true,
+	'orphan': true,
+	'copyedit': true,
+	'rewrite': true,
+	'citecheck': true,
+	'wikify': true,
+	'trivia': true,
+	'cleanup': true,
+	'importance': true,
+	'unencyclopedic': true,
+	'newsrelease': true,
+	'hoax': true,
+	'grammar': true,
+	'unreferenced': true
 };
 
 Twinkle.tag.callbacks = {
 	main: function( pageobj ) {
 		var params = pageobj.getCallbackParameters();
-		var tagRe, tagText = '', summaryText = 'Added';
+		var tagRe, tagText = '', summaryText = '添加';
 		var tags = [], groupableTags = [];
+		var isNotability = false;
 
 		//Remove tags that become superfluous with this action
 		var pageText = pageobj.getPageText().replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
@@ -861,7 +690,7 @@ Twinkle.tag.callbacks = {
 				tagRe = new RegExp( '(\\{\\{' + params.tags[i] + '(\\||\\}\\}))', 'im' );
 				if( !tagRe.exec( pageText ) ) {
 					if( Twinkle.tag.groupHash[ params.tags[i] ] && 
-							(params.tags[i] !== 'globalize' || params.globalizeSubcategory === 'globalize' ) &&
+							/*(params.tags[i] !== 'globalize' || params.globalizeSubcategory === 'globalize' ) &&*/
 							(params.tags[i] !== 'notability' || params.notabilitySubcategory === 'none' )) {
 						// don't add to multipleissues for globalize/notability subcats
 						groupableTags = groupableTags.concat( params.tags[i] );
@@ -869,27 +698,27 @@ Twinkle.tag.callbacks = {
 						tags = tags.concat( params.tags[i] );
 					}
 				} else {
-					Status.info( 'Info', 'Found {{' + params.tags[i] +
-						'}} on the article already...excluding' );
+					Status.info( '信息', '在条目上找到{{' + params.tags[i] +
+						'}}…已排除' );
 				}
 			}
 
 			if( params.group && groupableTags.length >= 3 ) {
-				Status.info( 'Info', 'Grouping supported tags into {{multiple issues}}' );
+				Status.info( '信息', '合并支持的模板到{{multiple issues}}' );
 
 				groupableTags.sort();
 				tagText += '{{multiple issues';
-				summaryText += ' {{[[Template:multiple issues|multiple issues]]}} with parameters';
+				summaryText += ' {{[[Template:multiple issues|multiple issues]]}}带有参数';
 				for( i = 0; i < groupableTags.length; i++ ) {
 					tagText += '|' + groupableTags[i] +
-						'={{subst:CURRENTMONTHNAME}} {{subst:CURRENTYEAR}}';
+						'={{subst:#time:c}}';
 
 					if( i === (groupableTags.length - 1) ) {
-						summaryText += ' and';
+						summaryText += '和';
 					} else if ( i < (groupableTags.length - 1) && i > 0 ) {
-						summaryText += ',';
+						summaryText += '、';
 					}
-					summaryText += ' ' + groupableTags[i];
+					summaryText += groupableTags[i];
 				}
 				tagText += '}}\n';
 			} else {
@@ -902,8 +731,8 @@ Twinkle.tag.callbacks = {
 				if( !tagRe.exec( pageText ) ) {
 					tags = tags.concat( params.tags[i] );
 				} else {
-					Status.info( 'Info', 'Found {{' + params.tags[i] +
-						'}} on the redirect already...excluding' );
+					Status.info( '信息', '在重定向上找到{{' + params.tags[i] +
+						'}}…已排除' );
 				}
 			}
 		}
@@ -913,18 +742,27 @@ Twinkle.tag.callbacks = {
 			var currentTag = "";
 			if( tags[i] === 'uncategorized' || tags[i] === 'catimprove' ) {
 				pageText += '\n\n{{' + tags[i] +
-					'|date={{subst:CURRENTMONTHNAME}} {{subst:CURRENTYEAR}}}}';
+					'|date={{subst:#time:c}}}}';
 			} else {
+				/*
 				if( tags[i] === 'globalize' ) {
 					currentTag += '{{' + params.globalizeSubcategory;
+				} else*/
+				if (tags[i] == 'current') {
+					currentTag += '{{' + self.params.currentSubcategory;
+				} else if (tags[i] == 'future') {
+					currentTag += '{{' + self.params.futureSubcategory;
 				} else {
 					currentTag += ( Twinkle.tag.mode === 'redirect' ? '\n' : '' ) + '{{' + tags[i];
-				}
+					}
 
 				if( tags[i] === 'notability' && params.notabilitySubcategory !== 'none' ) {
-					currentTag += '|' + params.notabilitySubcategory;
+					currentTag += '|3=' + params.notabilitySubcategory;
 				}
-
+				if (tags[i] == 'notability') {
+					isNotability = true;
+				}
+/*
 				// prompt for other parameters, based on the tag
 				switch( tags[i] ) {
 					case 'cleanup':
@@ -978,25 +816,24 @@ Twinkle.tag.callbacks = {
 					default:
 						break;
 				}
-				
-				currentTag += Twinkle.tag.mode === 'redirect' ? '}}' : '|date={{subst:CURRENTMONTHNAME}} {{subst:CURRENTYEAR}}}}\n';
+				*/
+				currentTag += Twinkle.tag.mode === 'redirect' ? '}}' : '|date={{subst:#time:c}}}}\n';
 				tagText += currentTag;
 			}
 
 			if ( i > 0 || groupableTags.length > 3 ) {
 				if( i === (tags.length - 1) ) {
-					summaryText += ' and';
+					summaryText += '和';
 				} else if ( i < (tags.length - 1) ) {
-					summaryText += ',';
+					summaryText += '、';
 				}
 			}
 
 			summaryText += ' {{[[Template:';
-			if( tags[i] === 'globalize' ) {
+			/*if( tags[i] === 'globalize' ) {
 				summaryText += params.globalizeSubcategory + '|' + params.globalizeSubcategory;
-			} else {
-				summaryText += tags[i] + '|' + tags[i];
-			}
+			} else {*/
+			summaryText += tags[i] + '|' + tags[i];
 			summaryText += ']]}}';
 		}
 
@@ -1022,8 +859,8 @@ Twinkle.tag.callbacks = {
 		if( Twinkle.getFriendlyPref('markTaggedPagesAsPatrolled') ) {
 			pageobj.patrol();
 		}
-	},
-
+	}
+/*
 	file: function friendlytagCallbacksFile(pageobj) {
 		var text = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
@@ -1039,7 +876,7 @@ Twinkle.tag.callbacks = {
 				var input;
 				switch (tag) {
 					case "subst:ncd":
-						/* falls through */
+						/* falls through * /
 					case "Keep local":
 						input = prompt( "{{" + (tag === "subst:ncd" ? "Now Commons" : tag) +
 							"}} - Enter the name of the image on Commons (if different from local name), excluding the File: prefix:", "" );
@@ -1064,7 +901,7 @@ Twinkle.tag.callbacks = {
 						}
 						break;
 					case "Cleanup image":
-						/* falls through */
+						/* falls through * /
 					case "Cleanup SVG":
 						input = prompt( "{{" + tag + "}} - Enter the reason for cleanup (required). To skip the tag, click Cancel:", "" );
 						if (input === null) {
@@ -1090,11 +927,11 @@ Twinkle.tag.callbacks = {
 						}
 						break;
 					case "PNG version available":
-						/* falls through */
+						/* falls through * /
 					case "SVG version available":
-						/* falls through */
+						/* falls through * /
 					case "Obsolete":
-						/* falls through */
+						/* falls through * /
 					case "Redundant":
 						input = prompt( "{{" + tag + "}} - Enter the name of the file which replaces this one (required). To skip the tag, click Cancel:", "" );
 						if (input === null) {
@@ -1140,6 +977,7 @@ Twinkle.tag.callbacks = {
 			pageobj.patrol();
 		}
 	}
+*/
 };
 
 Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
@@ -1154,25 +992,29 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 				params.tags = form.getChecked( 'notice' ).concat( form.getChecked( 'problem' ) ).concat( form.getChecked( 'maintenance' ) );
 			}
 			params.group = form.group.checked;
-			params.globalizeSubcategory = form.getChecked( 'problem.globalize' );
-			params.globalizeSubcategory = params.globalizeSubcategory ? params.globalizeSubcategory[0] : null;
+			/*params.globalizeSubcategory = form.getChecked( 'problem.globalize' );
+			params.globalizeSubcategory = params.globalizeSubcategory ? params.globalizeSubcategory[0] : null;*/
 			params.notabilitySubcategory = form.getChecked( 'problem.notability' );
 			params.notabilitySubcategory = params.notabilitySubcategory ? params.notabilitySubcategory[0] : null;
+			params.currentSubcategory = form.getChecked( 'problem.current' );
+			params.currentSubcategory = params.currentSubcategory ? params.currentSubcategory[0] : null;
+			params.futureSubcategory = form.getChecked( 'problem.future' );
+			params.futureSubcategory = params.futureSubcategory ? params.futureSubcategory[0] : null;
 			break;
-		case 'file':
+		/*case 'file':
 			params.svgSubcategory = form["imageTags.svgCategory"] ? form["imageTags.svgCategory"].value : null;
 			params.tags = form.getChecked( 'imageTags' );
-			break;
+			break;*/
 		case 'redirect':
 			params.tags = form.getChecked( 'administrative' ).concat( form.getChecked( 'alternative' ) ).concat( form.getChecked( 'spelling' ) );
 			break;
 		default:
-			alert("Twinkle.tag: unknown mode " + Twinkle.tag.mode);
+			alert("Twinkle.tag：未知模式 " + Twinkle.tag.mode);
 			break;
 	}
 
 	if( !params.tags.length ) {
-		alert( 'You must select at least one tag!' );
+		alert( '必须选择至少一个标记！' );
 		return;
 	}
 
@@ -1180,12 +1022,12 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	Status.init( form );
 
 	Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
-	Wikipedia.actionCompleted.notice = "Tagging complete, reloading article in a few seconds";
+	Wikipedia.actionCompleted.notice = "标记完成，在几秒内刷新页面";
 	if (Twinkle.tag.mode === 'redirect') {
 		Wikipedia.actionCompleted.followRedirect = false;
 	}
 
-	var wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'), "Tagging " + Twinkle.tag.mode);
+	var wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'), "正在标记" + Twinkle.tag.mode);
 	wikipedia_page.setCallbackParameters(params);
 	switch (Twinkle.tag.mode) {
 		case 'article':
@@ -1193,11 +1035,11 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		case 'redirect':
 			wikipedia_page.load(Twinkle.tag.callbacks.main);
 			return;
-		case 'file':
+		/*case 'file':
 			wikipedia_page.load(Twinkle.tag.callbacks.file);
-			return;
+			return;*/
 		default:
-			alert("Twinkle.tag: unknown mode " + Twinkle.tag.mode);
+			alert("Twinkle.tag：未知模式 " + Twinkle.tag.mode);
 			break;
 	}
 };
