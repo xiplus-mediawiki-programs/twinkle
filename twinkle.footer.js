@@ -64,14 +64,14 @@ Twinkle.load = function(){
 
 	// load the modules in the order that the tabs should appears
 	// user/user talk-related
-	Twinkle.arv();
+	//Twinkle.arv();
 	Twinkle.warn();
 	Twinkle.welcome();
 	Twinkle.shared();
 	Twinkle.talkback();
 	// deletion
 	Twinkle.speedy();
-	Twinkle.prod();
+	//Twinkle.prod();
 	Twinkle.xfd();
 	Twinkle.image();
 	// maintenance
@@ -84,12 +84,12 @@ Twinkle.load = function(){
 	Twinkle.fluff.init();
 	if (userIsInGroup('sysop')) {
 		//Twinkle.closer();  -- disabled for the moment, as it is disliked among Twinkle users -- TTO 2011-05-30
-		Twinkle.delimages();
-		Twinkle.deprod();
-		Twinkle.batchdelete();
-		Twinkle.batchprotect();
-		Twinkle.imagetraverse();
-		Twinkle.batchundelete();
+	//	Twinkle.delimages();
+	//	Twinkle.deprod();
+	//	Twinkle.batchdelete();
+	//	Twinkle.batchprotect();
+	//	Twinkle.imagetraverse();
+	//	Twinkle.batchundelete();
 	}
 	// run the initialization callbacks for any custom modules
 	$(Twinkle.initCallbacks).each(function(k, v) { v(); });
