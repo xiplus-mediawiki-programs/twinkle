@@ -10,7 +10,7 @@ var scriptpathafter = "&action=raw&ctype=text/javascript&happy=yes";
 $.ajax({
 	url: scriptpathbefore + "User:" + encodeURIComponent(mw.config.get('wgUserName')) + "/twinkleoptions.js" + scriptpathafter,
 	dataType: 'text',
-	error: function(){ jsMsg("Could not load twinkleoptions.js"); },
+	error: function(){ jsMsg("不能加载twinkleoptions.js"); },
 	success: function(optionsText){
 
 		//quick pass if user has no options
@@ -43,7 +43,7 @@ $.ajax({
 			Twinkle.prefs = options;
 		}
 		catch (e) {
-			jsMsg("Could not parse twinkleoptions.js");
+			jsMsg("不能解析twinkleoptions.js");
 		}
 	},
 	complete: function(){

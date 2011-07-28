@@ -1,18 +1,20 @@
 /**
  * +-------------------------------------------------------------------------+
- * |                  === WARNING: GLOBAL GADGET FILE ===                    |
- * |                Changes to this page affect many users.                  |
- * |           Please discuss changes at [[WT:TW]] before editing.           |
+ * |                       === 警告：全局小工具文件 ===                      |
+ * |                      对此文件的修改会影响许多用户。                     |
+ * |                           修改前请联系维护者。                          |
  * +-------------------------------------------------------------------------+
  *
- * Imported from github [https://github.com/azatoth/twinkle]
- * To update this script from github, you must have a local repository set up. Then
- * follow the instructions at [https://github.com/azatoth/twinkle/blob/master/README.md].
+ * 从Github导入[https://github.com/jimmyxu/twinkle]
+ * 要从Github更新此脚本，你必须设立一个本地仓库，再
+ * 跟随[https://github.com/jimmyxu/twinkle/blob/master/README.md]的指引。
  *
  * ----------
  *
- * This is AzaToth's Twinkle. See [[WP:TW]].
- * It needs a better header comment than this one.
+ * 这是Twinkle，请参见[[WP:TW]]。
+ * 这个文件需要一个更好的头部注释。
+ *
+ * 维护者：~~~~
  */
 
 //<nowiki>

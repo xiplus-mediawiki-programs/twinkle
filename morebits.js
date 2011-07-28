@@ -55,7 +55,7 @@ var Cookies = {
 	 */
 	create: function( name, value, max_age, path ) {
 		if( Cookies.exists( name ) ) {
-			throw new Error( "cookie " + name + " already exists" );
+			throw new Error( "曲奇 " + name + " 已存在" );
 		}
 		Cookies.set( name, value, max_age, path );
 	},
@@ -549,7 +549,7 @@ QuickForm.element.prototype.compute = function QuickFormElementCompute( data, in
 		}
 		break;
 	default:
-		throw new Error("QuickForm: unknown element type " + data.type.toString());
+		throw new Error("QuickForm: 未知元素类型 " + data.type.toString());
 	}
 
 	if( !childContainder ) {
@@ -765,7 +765,7 @@ String.prototype.trim = function stringPrototypeTrim( chars ) {
 
 String.prototype.splitWeightedByKeys = function stringPrototypeSplitWeightedByKeys( start, end, skip ) {
 	if( start.length !== end.length ) {
-		throw new Error( 'start marker and end marker must be of the same length' );
+		throw new Error( '起始及终止标记必须等长' );
 	}
 	var level = 0;
 	var initial = null;
@@ -776,7 +776,7 @@ String.prototype.splitWeightedByKeys = function stringPrototypeSplitWeightedByKe
 		} else if( typeof( skip ) === 'string' ) {
 			skip = [ skip ];
 		} else {
-			throw new Error( "non-applicable skip parameter" );
+			throw new Error( "不可用的跳过参数" );
 		}
 	}
 	for( var i  = 0; i < this.length; ++i ) {
@@ -878,7 +878,7 @@ Array.prototype.chunk = function arrayChunk( size ) {
 
 function Unbinder( string ) {
 	if( typeof( string ) !== 'string' ) {
-		throw new Error( "not a string" );
+		throw new Error( "不是一个字符串" );
 	}
 	this.content = string;
 	this.counter = 0;
@@ -1155,8 +1155,8 @@ Wikipedia.editCount = 10;
 
 Wikipedia.actionCompleted.timeOut = wpActionCompletedTimeOut;
 Wikipedia.actionCompleted.redirect = null;
-Wikipedia.actionCompleted.notice = 'Action';
-Wikipedia.actionCompleted.postfix = 'completed';
+Wikipedia.actionCompleted.notice = '动作';
+Wikipedia.actionCompleted.postfix = '已完成';
 
 Wikipedia.addCheckpoint = function() {
 	++Wikipedia.nbrOfCheckpointsLeft;
@@ -1238,7 +1238,7 @@ Wikipedia.api.prototype = {
 					// as the first argument to the callback (for legacy code)
 					this.onSuccess.call( this.parent, this );
 				} else {
-					this.statelem.info("done");
+					this.statelem.info("完成");
 				}
 
 				Wikipedia.actionCompleted();
@@ -1248,7 +1248,7 @@ Wikipedia.api.prototype = {
 			error: function(jqXHR, statusText, errorThrown) {
 				this.statusText = statusText;
 				this.errorThrown = errorThrown; // frequently undefined
-				this.errorText = statusText + ' "' + jqXHR.statusText + '" occurred while contacting the API.';
+				this.errorText = statusText + '在调用API时发生了错误“' + jqXHR.statusText + '”。';
 				this.returnError();
 			}
 
@@ -1412,7 +1412,7 @@ Wikipedia.api.prototype = {
  *                      already exists
  *       'nocreate'   - don't create the page, only edit it if it already exists
  *       null         - create the page if it does not exist, unless it was deleted in the moment
- *                      between retrieving the edit token and saving the edit (default)
+ *                      between retrieve the edit token and saving the edit (default)
  *
  * exists(): returns true if the page existed on the wiki when it was last loaded
  *
@@ -1461,7 +1461,7 @@ Wikipedia.api.prototype = {
 Wikipedia.page = function(pageName, currentAction) {
 
 	if (!currentAction) {
-		currentAction = 'Opening page "' + pageName + '"';
+		currentAction = '打开页面“' + pageName + '”';
 	}
 
 	/**
@@ -1641,7 +1641,7 @@ Wikipedia.page = function(pageName, currentAction) {
 
 	this.setFollowRedirect = function(followRedirect) {
 		if (ctx.pageLoaded) {
-			ctx.statusElement.error("Internal error: cannot change redirect setting after the page has been loaded!");
+			ctx.statusElement.error("内部错误：不能在页面加载后修改重定向设置！");
 			return;
 		}
 		ctx.followRedirect = followRedirect;
@@ -1673,7 +1673,7 @@ Wikipedia.page = function(pageName, currentAction) {
 
 		// Need to be able to do something after the page loads
 		if (!onSuccess) {
-			ctx.statusElement.error("Internal error: no onSuccess callback provided to load()!");
+			ctx.statusElement.error("内部错误：未给load()提供onSuccess回调函数！");
 			return;
 		}
 
@@ -1702,7 +1702,7 @@ Wikipedia.page = function(pageName, currentAction) {
 			ctx.loadQuery.inprop = 'protection';
 		}
 
-		ctx.loadApi = new Wikipedia.api("Retrieving page...", ctx.loadQuery, fnLoadSuccess, ctx.statusElement);
+		ctx.loadApi = new Wikipedia.api("抓取页面…", ctx.loadQuery, fnLoadSuccess, ctx.statusElement);
 		ctx.loadApi.setParent(this);
 		ctx.loadApi.post();
 	};
@@ -1711,18 +1711,18 @@ Wikipedia.page = function(pageName, currentAction) {
 	// Only valid after successful .load()
 	this.save = function(onSuccess, onFailure) {
 		if (!ctx.pageLoaded) {
-			ctx.statusElement.error("Internal error: attempt to save a page that has not been loaded!");
+			ctx.statusElement.error("内部错误：试图保存未被加载的页面！");
 			return;
 		}
 		if (!ctx.editSummary) {
-			ctx.statusElement.error("Internal error: edit summary not set before save!");
+			ctx.statusElement.error("内部错误：保存前未设置编辑摘要！");
 			return;
 		}
 
-		if (ctx.fullyProtected && !confirm('An automated edit to the fully protected page "' + ctx.pageName + 
-			(ctx.fullyProtected === 'indefinite' ? '" (protected indefinitely)' : ('" (protection expiring ' + ctx.fullyProtected + ')')) +
-			' is about to be made.  \n\nClick OK to proceed with the edit, or Cancel to skip this edit.')) {
-			ctx.statusElement.error("Edit to fully protected page was aborted.");
+		if (ctx.fullyProtected && !confirm('对全保护页面“' + ctx.pageName + "”" +
+			(ctx.fullyProtected === 'indefinite' ? '（永久）' : ('（到期：' + ctx.fullyProtected + ')')) +
+			'的自动编辑即将提交。\n\n点击确定以确定，或点击取消以取消。')) {
+			ctx.statusElement.error("对全保护页面的编辑被取消。");
 			return;
 		}
 
@@ -1777,7 +1777,7 @@ Wikipedia.page = function(pageName, currentAction) {
 			query[ctx.createOption] = '';
 		}
 
-		ctx.saveApi = new Wikipedia.api( "Saving page...", query, fnSaveSuccess, ctx.statusElement, fnSaveError);
+		ctx.saveApi = new Wikipedia.api( "保存页面…", query, fnSaveSuccess, ctx.statusElement, fnSaveError);
 		ctx.saveApi.setParent(this);
 		ctx.saveApi.post();
 	};
@@ -1798,7 +1798,7 @@ Wikipedia.page = function(pageName, currentAction) {
 
 	this.lookupCreator = function(onSuccess) {
 		if (!onSuccess) {
-			ctx.statusElement.error("Internal error: no onSuccess callback provided to lookupCreator()!");
+			ctx.statusElement.error("内部错误：未给lookupCreator()提供onSuccess回调函数！");
 			return;
 		}
 		ctx.onLookupCreatorSuccess = onSuccess;
@@ -1816,7 +1816,7 @@ Wikipedia.page = function(pageName, currentAction) {
 			query.redirects = '';  // follow all redirects
 		}
 		
-		ctx.lookupCreatorApi = new Wikipedia.api("Retrieving page creator information", query, fnLookupCreatorSuccess, ctx.statusElement);
+		ctx.lookupCreatorApi = new Wikipedia.api("抓取页面创建者信息", query, fnLookupCreatorSuccess, ctx.statusElement);
 		ctx.lookupCreatorApi.setParent(this);
 		ctx.lookupCreatorApi.post();
 	};
@@ -1832,9 +1832,9 @@ Wikipedia.page = function(pageName, currentAction) {
 		var patrollinkmatch = /token=(.+)%2B%5C$/.exec($(".patrollink a").attr("href"));
 		if (patrollinkmatch) {
 			var patroltoken = patrollinkmatch[1] + "+\\";
-			var patrolstat = new Status("Marking page as patrolled");
+			var patrolstat = new Status("标记页面为已巡查");
 
-			var wikipedia_api = new Wikipedia.api("doing...", {
+			var wikipedia_api = new Wikipedia.api("进行中…", {
 				title: ctx.pageName,
 				action: 'markpatrolled',
 				rcid: rcid,
@@ -1850,7 +1850,7 @@ Wikipedia.page = function(pageName, currentAction) {
 
 	this.revert = function(onSuccess, onFailure) {
 		if (!ctx.revertOldID) {
-			ctx.statusElement.error("Internal error: revision ID to revert to was not set before revert!");
+			ctx.statusElement.error("内部错误：回退前未提供修订版本ID！");
 			return;
 		}
 		ctx.editMode = 'revert';
@@ -1861,11 +1861,11 @@ Wikipedia.page = function(pageName, currentAction) {
 
 	this.move = function(onSuccess, onFailure) {
 		if (!ctx.editSummary) {
-			ctx.statusElement.error("Internal error: move reason not set before move (use setEditSummary function)!");
+			ctx.statusElement.error("内部错误：移动前未提供理由（使用setEditSummary函数）！");
 			return;
 		}
 		if (!ctx.moveDestination) {
-			ctx.statusElement.error("Internal error: destination page name was not set before move!");
+			ctx.statusElement.error("内部错误：移动前未指定目标页面！");
 			return;
 		}
 
@@ -1885,7 +1885,7 @@ Wikipedia.page = function(pageName, currentAction) {
 			query.inprop = 'protection';
 		}
 
-		ctx.moveApi = new Wikipedia.api("retrieving move token...", query, fnProcessMove, ctx.statusElement);
+		ctx.moveApi = new Wikipedia.api("抓取移动令牌…", query, fnProcessMove, ctx.statusElement);
 		ctx.moveApi.setParent(this);
 		ctx.moveApi.post();
 	};
@@ -1894,11 +1894,11 @@ Wikipedia.page = function(pageName, currentAction) {
 	this.deletePage = function(onSuccess, onFailure) {
 		// if a non-admin tries to do this, don't bother
 		if (!userIsInGroup('sysop')) {
-			ctx.statusElement.error("Cannot delete page: only admins can do that");
+			ctx.statusElement.error("不能删除页面：只有管理员可进行该操作");
 			return;
 		}
 		if (!ctx.editSummary) {
-			ctx.statusElement.error("Internal error: delete reason not set before delete (use setEditSummary function)!");
+			ctx.statusElement.error("内部错误：删除前未提供理由（使用setEditSummary函数）！");
 			return;
 		}
 
@@ -1916,7 +1916,7 @@ Wikipedia.page = function(pageName, currentAction) {
 			query.redirects = '';  // follow all redirects
 		}
 
-		ctx.deleteApi = new Wikipedia.api("retrieving delete token...", query, fnProcessDelete, ctx.statusElement);
+		ctx.deleteApi = new Wikipedia.api("抓取删除令牌…", query, fnProcessDelete, ctx.statusElement);
 		ctx.deleteApi.setParent(this);
 		ctx.deleteApi.post();
 	};
@@ -1924,15 +1924,15 @@ Wikipedia.page = function(pageName, currentAction) {
 	this.protect = function(onSuccess, onFailure) {
 		// if a non-admin tries to do this, don't bother
 		if (!userIsInGroup('sysop')) {
-			ctx.statusElement.error("Cannot protect page: only admins can do that");
+			ctx.statusElement.error("不能保护页面：只有管理员可进行该操作");
 			return;
 		}
 		if (!ctx.protectEdit && !ctx.protectMove && !ctx.protectCreate) {
-			ctx.statusElement.error("Internal error: you must set edit and/or move and/or create protection before calling protect()!");
+			ctx.statusElement.error("内部错误：调用protect()前未设置编辑和/或移动和/或白纸保护！");
 			return;
 		}
 		if (!ctx.editSummary) {
-			ctx.statusElement.error("Internal error: protection reason not set before protect (use setEditSummary function)!");
+			ctx.statusElement.error("内部错误：保护前未提供理由（使用setEditSummary函数）！");
 			return;
 		}
 
@@ -1950,7 +1950,7 @@ Wikipedia.page = function(pageName, currentAction) {
 			query.redirects = '';  // follow all redirects
 		}
 
-		ctx.protectApi = new Wikipedia.api("retrieving protect token...", query, fnProcessProtect, ctx.statusElement);
+		ctx.protectApi = new Wikipedia.api("抓取保护令牌…", query, fnProcessProtect, ctx.statusElement);
 		ctx.protectApi.setParent(this);
 		ctx.protectApi.post();
 	};
@@ -1994,13 +1994,13 @@ Wikipedia.page = function(pageName, currentAction) {
 		ctx.editToken = $(xml).find('page').attr('edittoken');
 		if (!ctx.editToken)
 		{
-			ctx.statusElement.error("Failed to retrieve edit token.");
+			ctx.statusElement.error("未能抓取编辑令牌。");
 			return;
 		}
 		ctx.loadTime = $(xml).find('page').attr('starttimestamp');
 		if (!ctx.loadTime)
 		{
-			ctx.statusElement.error("Failed to retrieve start timestamp.");
+			ctx.statusElement.error("未能抓取起始时间戳。");
 			return;
 		}
 		ctx.lastEditTime = $(xml).find('page').attr('touched');
@@ -2008,20 +2008,20 @@ Wikipedia.page = function(pageName, currentAction) {
 		if (ctx.editMode === 'revert') {
 			ctx.revertCurID = $(xml).find('rev').attr('revid');
 			if (!ctx.revertCurID) {
-				ctx.statusElement.error("Failed to retrieve current revision ID.");
+				ctx.statusElement.error("未能抓取当前修订版本ID。");
 				return;
 			}
 			ctx.revertUser = $(xml).find('rev').attr('user');
 			if (!ctx.revertUser) {
 				if ($(xml).find('rev').attr('userhidden') === "") {  // username was RevDel'd or oversighted
-					ctx.revertUser = "<username hidden>";
+					ctx.revertUser = "<用户名已隐藏>";
 				} else {
-					ctx.statusElement.error("Failed to retrieve user who made the revision.");
+					ctx.statusElement.error("未能抓取此修订版本的编辑者。");
 					return;
 				}
 			}
 			// set revert edit summary
-			ctx.editSummary = "[[Help:Revert|Reverted]] to revision " + ctx.revertOldID + " by " + ctx.revertUser + ": " + ctx.editSummary;
+			ctx.editSummary = "[[WP:UNDO|取消]]由 " + ctx.revertUser + " 所做出的修订 " + ctx.revertOldID + "：" + ctx.editSummary;
 		}
 
 		ctx.pageLoaded = true;
@@ -2035,7 +2035,7 @@ Wikipedia.page = function(pageName, currentAction) {
 	
 		// check for invalid titles
 		if ( $(xml).find('page').attr('invalid') ) {
-			ctx.statusElement.error("Attempt to edit a page with invalid title: " + ctx.pageName);
+		ctx.statusElement.error("试图编辑具有不合法标题的页面：" + ctx.pageName);
 			return false; // abort
 		}
 
@@ -2045,13 +2045,13 @@ Wikipedia.page = function(pageName, currentAction) {
 			
 			// only notify user for redirects, not normalization
 			if ( $(xml).find('redirects').length > 0 ) {
-				Status.info("Info", "Redirected from " + ctx.pageName + " to " + resolvedName );
+				Status.info("Info", "从 " + ctx.pageName + " 重定向到 " + resolvedName );
 			}
 			ctx.pageName = resolvedName;  // always update in case of normalization
 		}
 		else {
 			// could be a circular redirect or other problem
-			ctx.statusElement.error("Could not resolve redirects for: " + ctx.pageName);
+			ctx.statusElement.error("不能解释页面的重定向：" + ctx.pageName);
 
 			// force error to stay on the screen
 			++Wikipedia.numberOfActionsLeft;
@@ -2076,7 +2076,7 @@ Wikipedia.page = function(pageName, currentAction) {
 				var link = document.createElement('a');
 				link.setAttribute('href', mw.util.wikiGetlink(ctx.pageName) );
 				link.appendChild(document.createTextNode(ctx.pageName));
-				ctx.statusElement.info(['completed (', link, ')']);
+				ctx.statusElement.info(['完成（', link, '）']);
 			}
 			return;
 		}
@@ -2089,13 +2089,13 @@ Wikipedia.page = function(pageName, currentAction) {
 			var code = document.createElement('code');
 			code.style.fontFamily = "monospace";
 			code.appendChild(document.createTextNode(blacklist));
-			ctx.statusElement.error(['Could not save the page because the URL ', code, ' is on the spam blacklist.']);
+			ctx.statusElement.error(['不能保存页面，因URL ', code, ' 在垃圾黑名单中。']);
 		}
 		else if ( $(xml).find('captcha').length > 0 ) {
-			ctx.statusElement.error("Could not save the page because the wiki server wanted you to fill out a CAPTCHA.");
+			ctx.statusElement.error("不能保存页面，因服务器试图让您完成一个全自动区分计算机和人类的图灵测试。");
 		}
 		else {
-			ctx.statusElement.error("Unknown error received from API while saving page");
+			ctx.statusElement.error("保存页面时由API得到未知错误");
 		}
 		
 		// force error to stay on the screen
@@ -2116,19 +2116,19 @@ Wikipedia.page = function(pageName, currentAction) {
 				titles: ctx.pageName  // redirects are already resolved
 			};
 
-			var purgeApi = new Wikipedia.api("Edit conflict detected, purging server cache", purgeQuery, null, ctx.statusElement);
+			var purgeApi = new Wikipedia.api("检测到编辑冲突，更新服务器缓存", purgeQuery, null, ctx.statusElement);
 			var result = purgeApi.post( { async: false } );  // just wait for it, result is for debugging
 
 			--Wikipedia.numberOfActionsLeft;  // allow for normal completion if retry succeeds
 			
-			ctx.statusElement.info("Edit conflict detected, reapplying edit");
+			ctx.statusElement.info("检测到编辑冲突，重试修改");
 			ctx.loadApi.post(); // reload the page and reapply the edit
 
 		// check for loss of edit token
 		// it's impractical to request a new token here, so invoke edit conflict logic when this happens
 		} else if ( errorCode === "notoken" && ctx.conflictRetries++ < ctx.maxConflictRetries ) {
 			 
-			ctx.statusElement.info("Edit token is invalid, retrying");
+			ctx.statusElement.info("编辑令牌不可用，重试");
 			--Wikipedia.numberOfActionsLeft;  // allow for normal completion if retry succeeds
 			ctx.loadApi.post(); // reload
 
@@ -2136,7 +2136,7 @@ Wikipedia.page = function(pageName, currentAction) {
 		} else if ( errorCode === "undefined" && ctx.retries++ < ctx.maxRetries ) {
 
 			// the error might be transient, so try again
-			ctx.statusElement.info("Save failed, retrying");
+			ctx.statusElement.info("保存失败，重试");
 			--Wikipedia.numberOfActionsLeft;  // allow for normal completion if retry succeeds
 			ctx.saveApi.post(); // give it another go!
 
@@ -2145,9 +2145,9 @@ Wikipedia.page = function(pageName, currentAction) {
 
 			// non-admin attempting to edit a protected page - this gives a friendlier message than the default
 			if ( errorCode === "protectedpage" ) {
-				ctx.statusElement.error( "Failed to save edit: Page is fully protected" );
+				ctx.statusElement.error( "不能保存修改：页面被全保护" );
 			} else {
-				ctx.statusElement.error( "Failed to save edit: " + ctx.saveApi.getErrorText() );
+				ctx.statusElement.error( "不能保存页面：" + ctx.saveApi.getErrorText() );
 			}
 			ctx.editMode = 'all';  // cancel append/prepend/revert modes
 			if (ctx.onSaveFailure) {
@@ -2165,7 +2165,7 @@ Wikipedia.page = function(pageName, currentAction) {
 
 		ctx.creator = $(xml).find('rev').attr('user');
 		if (!ctx.creator) {
-			ctx.statusElement.error("Could not find name of page creator");
+			ctx.statusElement.error("不能获取页面创建者的名字");
 			return;
 		}
 		ctx.onLookupCreatorSuccess(this);
@@ -2175,24 +2175,24 @@ Wikipedia.page = function(pageName, currentAction) {
 		var xml = ctx.moveApi.getXML();
 
 		if ($(xml).find('page').attr('missing') === "") {
-			ctx.statusElement.error("Cannot move the page, because it no longer exists");
+			ctx.statusElement.error("不能移动页面，因其已不存在");
 			return;
 		}
 
 		// extract protection info
 		if (userIsInGroup('sysop')) {
 			var editprot = $(xml).find('pr[type="edit"]');
-			if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !confirm('You are about to move the fully protected page "' + ctx.pageName + 
-				(editprot.attr('expiry') === 'indefinite' ? '" (protected indefinitely)' : ('" (protection expiring ' + editprot.attr('expiry') + ')')) +
-				'.  \n\nClick OK to proceed with the move, or Cancel to skip this move.')) {
-				ctx.statusElement.error("Move of fully protected page was aborted.");
+			if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !confirm('即将移动全保护页面“' + ctx.pageName + '”' +
+				(editprot.attr('expiry') === 'indefinite' ? '（永久）' : ('（到期 ' + editprot.attr('expiry') + '）')) +
+				'。\n\n点击确定以确定，或点击取消以取消。')) {
+				ctx.statusElement.error("对全保护页面的移动已取消。");
 				return;
 			}
 		}
 
 		var moveToken = $(xml).find('page').attr('movetoken');
 		if (!moveToken) {
-			ctx.statusElement.error("Failed to retrieve delete token.");
+			ctx.statusElement.error("不能抓取移动令牌。");
 			return;
 		}
 
@@ -2216,7 +2216,7 @@ Wikipedia.page = function(pageName, currentAction) {
 			query.watch = 'true';
 		}
 
-		ctx.moveProcessApi = new Wikipedia.api("moving page...", query, ctx.onMoveSuccess, ctx.statusElement, ctx.onMoveFailure);
+		ctx.moveProcessApi = new Wikipedia.api("移动页面…", query, ctx.onMoveSuccess, ctx.statusElement, ctx.onMoveFailure);
 		ctx.moveProcessApi.setParent(this);
 		ctx.moveProcessApi.post();
 	};
@@ -2225,22 +2225,22 @@ Wikipedia.page = function(pageName, currentAction) {
 		var xml = ctx.deleteApi.getXML();
 
 		if ($(xml).find('page').attr('missing') === "") {
-			ctx.statusElement.error("Cannot delete the page, because it no longer exists");
+			ctx.statusElement.error("不能删除页面，因其已不存在");
 			return;
 		}
 
 		// extract protection info
 		var editprot = $(xml).find('pr[type="edit"]');
-		if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !confirm('You are about to delete the fully protected page "' + ctx.pageName + 
-			(editprot.attr('expiry') === 'indefinite' ? '" (protected indefinitely)' : ('" (protection expiring ' + editprot.attr('expiry') + ')')) +
-			'.  \n\nClick OK to proceed with the deletion, or Cancel to skip this deletion.')) {
-			ctx.statusElement.error("Deletion of fully protected page was aborted.");
+		if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !confirm('即将删除全保护页面“' + ctx.pageName + "”" +
+			(editprot.attr('expiry') === 'indefinite' ? '（永久）' : ('（到期 ' + editprot.attr('expiry') + '）')) +
+			'。\n\n点击确定以确定，或点击取消以取消。')) {
+			ctx.statusElement.error("对全保护页面的删除已取消。");
 			return;
 		}
 
 		var deleteToken = $(xml).find('page').attr('deletetoken');
 		if (!deleteToken) {
-			ctx.statusElement.error("Failed to retrieve delete token.");
+			ctx.statusElement.error("不能抓取删除令牌。");
 			return;
 		}
 
@@ -2254,7 +2254,7 @@ Wikipedia.page = function(pageName, currentAction) {
 			query.watch = 'true';
 		}
 
-		ctx.deleteProcessApi = new Wikipedia.api("deleting page...", query, ctx.onDeleteSuccess, ctx.statusElement, ctx.onDeleteFailure);
+		ctx.deleteProcessApi = new Wikipedia.api("删除页面…", query, ctx.onDeleteSuccess, ctx.statusElement, ctx.onDeleteFailure);
 		ctx.deleteProcessApi.setParent(this);
 		ctx.deleteProcessApi.post();
 	};
@@ -2263,7 +2263,7 @@ Wikipedia.page = function(pageName, currentAction) {
 		var xml = ctx.protectApi.getXML();
 
 		if ($(xml).find('page').attr('missing') === "") {
-			ctx.statusElement.error("Cannot protect the page, because it no longer exists");
+			ctx.statusElement.error("不能保护页面，因其已不存在");
 			return;
 		}
 
@@ -2271,13 +2271,13 @@ Wikipedia.page = function(pageName, currentAction) {
 		// cascading protection not possible on edit<sysop
 		// XXX fix this logic - I can't wrap my head around it
 		//if (ctx.protectCascade && (editprot && editprot.attr('level') !== 'sysop') && (ctx.protectEdit && ctx.protectEdit.level !== 'sysop')) {
-		//	ctx.statusElement.error("Internal error: cascading protection requires sysop-level edit protection!");
+		//	ctx.statusElement.error("内部错误：连锁保护需要编辑全保护！");
 		//	return;
 		//}
 
 		var protectToken = $(xml).find('page').attr('protecttoken');
 		if (!protectToken) {
-			ctx.statusElement.error("Failed to retrieve protect token.");
+			ctx.statusElement.error("不能抓取保护令牌。");
 			return;
 		}
 
@@ -2317,7 +2317,7 @@ Wikipedia.page = function(pageName, currentAction) {
 			query.watch = 'true';
 		}
 
-		ctx.protectProcessApi = new Wikipedia.api("protecting page...", query, ctx.onProtectSuccess, ctx.statusElement, ctx.onProtectFailure);
+		ctx.protectProcessApi = new Wikipedia.api("保护页面…", query, ctx.onProtectSuccess, ctx.statusElement, ctx.onProtectFailure);
 		ctx.protectProcessApi.setParent(this);
 		ctx.protectProcessApi.post();
 	};
@@ -2335,6 +2335,8 @@ Wikipedia.page = function(pageName, currentAction) {
 /**
  * **************** Wikipedia.wiki ****************
  * REMOVEME - but *only* after Twinkle no longer uses it
+ *
+ * TODO(jimmyxu): too lazy to translate deprecated parts.
  */
 
 /*
@@ -2353,9 +2355,9 @@ Wikipedia.wiki = function( currentAction, query, oninit, onsuccess, onerror, onr
 	node.style.padding = "0.6em 0.8em";
 	node.style.margin = "0.5em";
 	node.style.fontSize = "small";
-	node.innerHTML = "<b>This user script is using the deprecated \"Wikipedia.wiki\" class to edit the wiki. " +
-		"It may cease to function in the near future.</b><br />Please pass this message on to the script's maintainer, to ensure the script is upgraded.<br />" +
-		"(The developers of Twinkle are happy to assist script maintainers with updating scripts.)";
+	node.innerHTML = "<b>这个用户脚本正在使用已过时的“Wikipedia.wiki”类来做出编辑。" +
+		"其可能在不久的将来停止工作。</b><br />请转告这个脚本的维护者，已确保其得到升级。<br />" +
+		"（Twinkle的开发者们将会乐于协助升级工作。）";
 	Status.warn(currentAction, [ node ]);
 
 	this.currentAction = currentAction;
@@ -2629,7 +2631,7 @@ Mediawiki.Page.prototype = {
 		 * Check for normal image links, i.e. [[Image:Foobar.png|...]]
 		 * Will eat the whole link
 		 */
-		var links_re = new RegExp( "\\[\\[(?:[Ii]mage|[Ff]ile):\\s*" + image_re_string );
+		var links_re = new RegExp( "\\[\\[(?:[Ii]mage|[Ff]ile|文件):\\s*" + image_re_string );
 		var allLinks = unbinder.content.splitWeightedByKeys( '[[', ']]' ).uniq();
 		for( var i = 0; i < allLinks.length; ++i ) {
 			if( links_re.test( allLinks[i] ) ) {
@@ -2644,7 +2646,7 @@ Mediawiki.Page.prototype = {
 		 * Check for gallery images, i.e. instances that must start on a new line, eventually preceded with some space, and must include Image: prefix
 		 * Will eat the whole line.
 		 */
-		var gallery_image_re = new RegExp( "(^\\s*(?:[Ii]mage|[Ff]ile):\\s*" + image_re_string + ".*?$)", 'mg' );
+		var gallery_image_re = new RegExp( "(^\\s*(?:[Ii]mage|[Ff]ile|文件):\\s*" + image_re_string + ".*?$)", 'mg' );
 		unbinder.content.replace( gallery_image_re, "<!-- " + reason + "$1 -->" );
 
 		// unbind the newly created comments
@@ -2653,7 +2655,7 @@ Mediawiki.Page.prototype = {
 		 * Check free image usages, for example as template arguments, might have the Image: prefix excluded, but must be preceeded by an |
 		 * Will only eat the image name and the preceeding bar and an eventual named parameter
 		 */
-		var free_image_re = new RegExp( "(\\|\\s*(?:[\\w\\s]+\\=)?\\s*(?:(?:[Ii]mage|[Ff]ile):\\s*)?" + image_re_string + ")", 'mg' );
+		var free_image_re = new RegExp( "(\\|\\s*(?:[\\w\\s]+\\=)?\\s*(?:(?:[Ii]mage|[Ff]ile|文件):\\s*)?" + image_re_string + ")", 'mg' );
 		unbinder.content.replace( free_image_re, "<!-- " + reason + "$1 -->" );
 
 		// Rebind the content now, we are done!
@@ -2661,7 +2663,7 @@ Mediawiki.Page.prototype = {
 	},
 	addToImageComment: function( image, data ) {
 		var first_char = image.substr( 0, 1 );
-		var image_re_string = "(?:[Ii]mage|[Ff]ile):\\s*[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( image.substr( 1 ), true ); 
+		var image_re_string = "(?:[Ii]mage|[Ff]ile|文件):\\s*[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( image.substr( 1 ), true ); 
 		var links_re = new RegExp( "\\[\\[" + image_re_string );
 		var allLinks = this.text.splitWeightedByKeys( '[[', ']]' ).uniq();
 		for( var i = 0; i < allLinks.length; ++i ) {
@@ -2678,7 +2680,7 @@ Mediawiki.Page.prototype = {
 	},
 	removeTemplate: function( template ) {
 		var first_char = template.substr( 0, 1 );
-		var template_re_string = "(?:[Tt]emplate:)?\\s*[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( template.substr( 1 ), true ); 
+		var template_re_string = "(?:[Tt]emplate:|模板:)?\\s*[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( template.substr( 1 ), true ); 
 		var links_re = new RegExp( "\\{\\{" + template_re_string );
 		var allTemplates = this.text.splitWeightedByKeys( '{{', '}}', [ '{{{', '}}}' ] ).uniq();
 		for( var i = 0; i < allTemplates.length; ++i ) {
@@ -2879,7 +2881,7 @@ var Status = function( text, stat, type ) {
 
 Status.init = function( root ) {
 	if( !( root instanceof Element ) ) {
-		throw new Error( 'object not an instance of Element' );
+		throw new Error( '对象不是一个Element' );
 	}
 	while( root.hasChildNodes() ) {
 		root.removeChild( root.firstChild );
@@ -2894,7 +2896,7 @@ Status.onError = function( handler ) {
 	if (typeof handler === "function") {
 		Status.errorEvent = handler;
 	} else {
-		throw "Status.onError: handler is not a function";
+		throw "Status.onError：处理程序不是一个函数";
 	}
 };
 
@@ -3026,7 +3028,7 @@ var SimpleWindow = function( width, height ) {
 
 	$(this.content).dialog({
 			autoOpen: false,
-			buttons: { "Placeholder button": function() {} },
+			buttons: { "占位按钮": function() {} },
 			dialogClass: 'morebits-dialog',
 			width: Math.min(parseInt(window.innerWidth, 10), parseInt(width ? width : 800, 10)),
 			// give jQuery the given height value (which represents the anticipated height of the dialog) here, so
@@ -3133,7 +3135,7 @@ SimpleWindow.prototype = {
 		$(this.content).find('input[type="submit"], button[type="submit"]').each(function(key, value) {
 				value.style.display = "none";
 				var button = document.createElement("button");
-				button.textContent = (value.hasAttribute("value") ? value.getAttribute("value") : (value.textContent ? value.textContent : "Submit Query"));
+				button.textContent = (value.hasAttribute("value") ? value.getAttribute("value") : (value.textContent ? value.textContent : "提交"));
 				// here is an instance of cheap coding, probably a memory-usage hit in using a closure here
 				button.addEventListener("click", function() { value.click(); }, false);
 				thisproxy.buttons.push(button);
@@ -3175,11 +3177,11 @@ SimpleWindow.prototype = {
 	},
 	moveWindow: function( x, y ) {
 		// unimplemented
-		alert("SimpleWindow.moveWindow is no longer implemented.");
+		alert("SimpleWindow.moveWindow不再被实现。");
 	},
 	resizeWindow: function( x, y ) {
 		// unimplemented
-		alert("SimpleWindow.resizeWindow is no longer implemented.");
+		alert("SimpleWindow.resizeWindow不再被实现。");
 	}
 };
 
