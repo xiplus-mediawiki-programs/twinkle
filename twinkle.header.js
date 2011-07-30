@@ -45,7 +45,7 @@ Twinkle.defaultConfig.twinkle = {
 	userTalkPageMode: "window",
 	dialogLargeFont: false,
 	 // Fluff (revert and rollback)
-	openTalkPage: [ "agf", "norm", "vand" ],
+	openTalkPage: [  ],
 	openTalkPageOnAutoRevert: false,
 	markRevertedPagesAsMinor: [ "vand" ],
 	watchRevertedPages: [ ],

@@ -15,7 +15,7 @@ Twinkle.fluff = {
 	auto: function() {
 		if( parseInt( QueryString.get('oldid'), 10) !== mw.config.get('wgCurRevisionId') ) {
 			// not latest revision
-			alert("Can't rollback, page has changed in the meantime.");
+			alert("无法回退，页面在此期间已被修改。");
 			return;
 		}
 
@@ -44,14 +44,14 @@ Twinkle.fluff = {
 				var revNode = document.createElement('strong');
 				var revLink = document.createElement('a');
 				revLink.appendChild( spanTag( 'Black', '[' ) );
-				revLink.appendChild( spanTag( 'SteelBlue', 'rollback' ) );
+				revLink.appendChild( spanTag( 'SteelBlue', '回退' ) );
 				revLink.appendChild( spanTag( 'Black', ']' ) );
 				revNode.appendChild(revLink);
 
 				var revVandNode = document.createElement('strong');
 				var revVandLink = document.createElement('a');
 				revVandLink.appendChild( spanTag( 'Black', '[' ) );
-				revVandLink.appendChild( spanTag( 'Red', 'vandalism' ) );
+				revVandLink.appendChild( spanTag( 'Red', '破坏' ) );
 				revVandLink.appendChild( spanTag( 'Black', ']' ) );
 				revVandNode.appendChild(revVandLink);
 
@@ -113,7 +113,7 @@ Twinkle.fluff = {
 				Twinkle.fluff.revertToRevision(oldrev);
 			});
 			revertToRevisionLink.appendChild( spanTag( 'Black', '[' ) );
-			revertToRevisionLink.appendChild( spanTag( 'SaddleBrown', 'restore this version' ) );
+			revertToRevisionLink.appendChild( spanTag( 'SaddleBrown', '恢复此版本' ) );
 			revertToRevisionLink.appendChild( spanTag( 'Black', ']' ) );
 
 			otitle.insertBefore( revertToRevision, otitle.firstChild );
@@ -134,7 +134,7 @@ Twinkle.fluff = {
 					Twinkle.fluff.revertToRevision(newrev);
 				});
 				revertToRevisionLink.appendChild( spanTag( 'Black', '[' ) );
-				revertToRevisionLink.appendChild( spanTag( 'SaddleBrown', 'restore this version' ) );
+				revertToRevisionLink.appendChild( spanTag( 'SaddleBrown', '恢复此版本' ) );
 				revertToRevisionLink.appendChild( spanTag( 'Black', ']' ) );
 				ntitle.insertBefore( revertToRevision, ntitle.firstChild );
 
@@ -168,15 +168,15 @@ Twinkle.fluff = {
 				});
 
 				agfLink.appendChild( spanTag( 'Black', '[' ) );
-				agfLink.appendChild( spanTag( 'DarkOliveGreen', 'rollback (AGF)' ) );
+				agfLink.appendChild( spanTag( 'DarkOliveGreen', '回退（AGF）' ) );
 				agfLink.appendChild( spanTag( 'Black', ']' ) );
 
 				vandLink.appendChild( spanTag( 'Black', '[' ) );
-				vandLink.appendChild( spanTag( 'Red', 'rollback (VANDAL)' ) );
+				vandLink.appendChild( spanTag( 'Red', '回退（破坏）' ) );
 				vandLink.appendChild( spanTag( 'Black', ']' ) );
 
 				normLink.appendChild( spanTag( 'Black', '[' ) );
-				normLink.appendChild( spanTag( 'SteelBlue', 'rollback' ) );
+				normLink.appendChild( spanTag( 'SteelBlue', '回退' ) );
 				normLink.appendChild( spanTag( 'Black', ']' ) );
 
 				agfNode.appendChild(agfLink);
@@ -216,7 +216,7 @@ Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page 
 		'rvprop': [ 'ids', 'timestamp', 'user', 'comment' ],
 		'intoken': 'edit'
 	};
-	var wikipedia_api = new Wikipedia.api( 'Grabbing data of earlier revisions', query, Twinkle.fluff.callbacks.main );
+	var wikipedia_api = new Wikipedia.api( '抓取较早修订版本信息', query, Twinkle.fluff.callbacks.main );
 	wikipedia_api.params = params;
 	wikipedia_api.post();
 };
@@ -235,7 +235,7 @@ Twinkle.fluff.revertToRevision = function revertToRevision( oldrev ) {
 		'intoken': 'edit',
 		'format': 'xml'
 	};
-	var wikipedia_api = new Wikipedia.api( 'Grabbing data of the earlier revision', query, Twinkle.fluff.callbacks.toRevision.main );
+	var wikipedia_api = new Wikipedia.api( '抓取较早修订版本信息', query, Twinkle.fluff.callbacks.toRevision.main );
 	wikipedia_api.params = { rev: oldrev };
 	wikipedia_api.post();
 };
@@ -257,17 +257,17 @@ Twinkle.fluff.callbacks = {
 			var revertToUser = $(xmlDoc).find('rev').attr('user');
 
 			if (revertToRevID !== self.params.rev) {
-				self.statitem.error( 'The retrieved revision does not match the requested revision.  Aborting.' );
+				self.statitem.error( '抓取到的修订版本与请求的修订版本不符，取消。' );
 				return;
 			}
 
-			var optional_summary = prompt( "Please specify a reason for the revert:", "" );
+			var optional_summary = prompt( "请输入回退理由：", "" );
 			if (optional_summary === null)
 			{
-				self.statelem.error( 'Aborted by user.' );
+				self.statelem.error( '由用户取消。' );
 				return;
 			}
-			var summary = "Reverted to revision " + revertToRevID + " by " + revertToUser + (optional_summary ? ": " + optional_summary : '') + "." +
+			var summary = "回退到由" + revertToUser + "做出的修订版本" + revertToRevID + (optional_summary ? "：" + optional_summary : '') +
 				Twinkle.getPref('summaryAd');
 		
 			var query = { 
@@ -284,9 +284,9 @@ Twinkle.fluff.callbacks = {
 			};
 
 			Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
-			Wikipedia.actionCompleted.notice = "Reversion completed";
+			Wikipedia.actionCompleted.notice = "修订版本完成";
 
-			var wikipedia_api = new Wikipedia.api( 'Saving reverted contents', query, null/*Twinkle.fluff.callbacks.toRevision.complete*/, self.statelem);
+			var wikipedia_api = new Wikipedia.api( '保存回退内容', query, null/*Twinkle.fluff.callbacks.toRevision.complete*/, self.statelem);
 			wikipedia_api.params = self.params;
 			wikipedia_api.post();
 
@@ -306,37 +306,37 @@ Twinkle.fluff.callbacks = {
 		var revs = $(xmlDoc).find('rev');
 
 		if( revs.length < 1 ) {
-			self.statitem.error( 'We have less than one additional revision, thus impossible to revert' );
+			self.statitem.error( '没有其它修订版本，无法回退' );
 			return;
 		}
 		var top = revs[0];
 		if( lastrevid < self.params.revid ) {
-			Status.error( 'Error', [ 'The most recent revision ID received from the server, ', htmlNode( 'strong', lastrevid ), ', is less than the ID of the displayed revision. This could indicate that the current revision has been deleted, the server is lagging, or that bad data has been received. Will stop proceeding at this point.' ] );
+			Status.error( '错误', [ '从服务器取得的最新修订版本ID ', htmlNode( 'strong', lastrevid ), ' 小于目前所显示的修订版本ID。这可能意味着当前修订版本已被删除、服务器延迟、或抓取到了坏掉的信息。取消。' ] );
 			return;
 		}
 		var index = 1;
 		if( self.params.revid !== lastrevid  ) {
-			Status.warn( 'Warning', [ 'Latest revision ', htmlNode( 'strong', lastrevid ), ' doesn\'t equal our revision ', htmlNode( 'strong', self.params.revid ) ] );
+			Status.warn( '警告', [ '最新修订版本 ', htmlNode( 'strong', lastrevid ), ' 与我们的修订版本 ', htmlNode( 'strong', self.params.revid ) , '不等'] );
 			if( lastuser === self.params.user ) {
 				switch( self.params.type ) {
 				case 'vand':
-					Status.info( 'Info', [ 'Latest revision was made by ', htmlNode( 'strong', self.params.user ) , '. As we assume vandalism, we continue to revert' ]);
+					Status.info( '信息', [ '最新修订版本由 ', htmlNode( 'strong', self.params.user ) , ' 做出，因我们假定破坏，继续回退操作。' ]);
 					break;
 				case 'agf':
-					Status.warn( 'Warning', [ 'Latest revision was made by ', htmlNode( 'strong', self.params.user ) , '. As we assume good faith, we stop reverting, as the problem might have been fixed.' ]);
+					Status.warn( '警告', [ '最新修订版本由 ', htmlNode( 'strong', self.params.user ) , ' 做出，因我们假定善意，取消回退操作，因为问题可能已被修复。' ]);
 					return;
 				default:
-					Status.warn( 'Notice', [ 'Latest revision was made by ', htmlNode( 'strong', self.params.user ) , ', but we will stop reverting anyway.' ] );
+					Status.warn( '提示', [ '最新修订版本由 ', htmlNode( 'strong', self.params.user ) , ' 做出，但我们还是不回退了。' ] );
 					return;
 				}
 			}
 			else if(self.params.type === 'vand' && 
 					Twinkle.fluff.whiteList.indexOf( top.getAttribute( 'user' ) ) !== -1 && revs.length > 1 &&
 					revs[1].getAttribute( 'pageId' ) === self.params.revid) {
-				Status.info( 'Info', [ 'Latest revision was made by ', htmlNode( 'strong', lastuser ), ', a trusted bot, and the revision before was made by our vandal, so we proceed with the revert.' ] );
+				Status.info( '信息', [ '最新修订版本由 ', htmlNode( 'strong', lastuser ), '，一个可信的机器人做出，之前的版本被认为是破坏，继续回退操作。' ] );
 				index = 2;
 			} else {
-				Status.error( 'Error', [ 'Latest revision was made by ', htmlNode( 'strong', lastuser ), ', so it might have already been reverted, stopping  reverting.'] );
+				Status.error( '错误', [ '最新修订版本由 ', htmlNode( 'strong', lastuser ), ' 做出，所以这个修订版本可能已经被回退了，取消回退操作。'] );
 				return;
 			}
 
@@ -345,24 +345,24 @@ Twinkle.fluff.callbacks = {
 		if( Twinkle.fluff.whiteList.indexOf( self.params.user ) !== -1  ) {
 			switch( self.params.type ) {
 			case 'vand':
-				Status.info( 'Info', [ 'Vandalism revert was chosen on ', htmlNode( 'strong', self.params.user ), '. As this is a whitelisted bot, we assume you wanted to revert vandalism made by the previous user instead.' ] );
+				Status.info( '信息', [ '将对 ', htmlNode( 'strong', self.params.user ), ' 执行破坏回退，这是一个可信的机器人，我们假定您要回退前一个修订版本。' ] );
 				index = 2;
 				vandal = revs[1].getAttribute( 'user' );
 				self.params.user = revs[1].getAttribute( 'user' );
 				break;
 			case 'agf':
-				Status.warn( 'Notice', [ 'Good faith revert was chosen on ', htmlNode( 'strong', self.params.user ), '. This is a whitelisted bot, it makes no sense at all to revert it as a good faith edit, will stop reverting.' ] );
+				Status.warn( '提示', [ '将对 ', htmlNode( 'strong', self.params.user ), ' 执行善意回退，这是一个可信的机器人，取消回退操作。' ] );
 				return;
 			case 'norm':
 				/* falls through */
 			default:
-				var cont = confirm( 'Normal revert was chosen, but the most recent edit was made by a whitelisted bot (' + self.params.user + '). Do you want to revert the revision before instead?' );
+				var cont = confirm( '选择了常规回退，但最新修改是由一个可信的机器人（' + self.params.user + '）做出的。您是否想回退前一个修订版本？' );
 				if( cont ) {
-					Status.info( 'Info', [ 'Normal revert was chosen on ', htmlNode( 'strong', self.params.user ), '. This is a whitelisted bot, and per confirmation, we\'ll revert the previous revision instead.' ] );
+					Status.info( '信息', [ '将对 ', htmlNode( 'strong', self.params.user ), ' 执行常规回退，这是一个可信的机器人，基于确认，我们将回退前一个修订版本。' ] );
 					index = 2;
 					self.params.user = revs[1].getAttribute( 'user' );
 				} else {
-					Status.warn( 'Notice', [ 'Normal revert was chosen on ', htmlNode( 'strong', self.params.user ), '. This is a whitelisted bot, but per confirmation, revert on top revision will proceed.' ] );
+					Status.warn( '提示', [ '将对 ', htmlNode( 'strong', self.params.user ), ' 执行常规回退，这是一个可信的机器人，基于确认，我们仍将回退这个修订版本。' ] );
 				}
 				break;
 			}
@@ -379,20 +379,20 @@ Twinkle.fluff.callbacks = {
 		}
 
 		if( ! found ) {
-			self.statelem.error( [ 'No previous revision found. Perhaps ', htmlNode( 'strong', self.params.user ), ' is the only contributor, or that the user has made more than ' + Twinkle.getPref('revertMaxRevisions') + ' edits in a row.' ] );
+			self.statelem.error( [ '未找到之前的修订版本，可能 ', htmlNode( 'strong', self.params.user ), ' 是唯一贡献者，或这个用户连续做出了超过 ' + Twinkle.getPref('revertMaxRevisions') + ' 次编辑。' ] );
 			return;
 		}
 
 		if( ! count ) {
-			Status.error( 'Error', "We were to revert zero revisions. As that makes no sense, we'll stop reverting this time. It could be that the edit has already been reverted, but the revision ID was still the same." );
+			Status.error( '错误', "我们将要回退0个修订版本，这没有意义，所以取消回退操作。可能是因为这个修订版本已经被回退，但修订版本ID仍是一样的。" );
 			return;
 		}
 
 		var good_revision = revs[ found ];
 		var userHasAlreadyConfirmedAction = false;
 		if (self.params.type !== 'vand' && count > 1) {
-			if ( !confirm( self.params.user + ' has made ' + count + ' edits in a row. Are you sure you want to revert them all?') ) {
-				Status.info( 'Notice', 'Stopping reverting per user input' );
+			if ( !confirm( self.params.user + ' 连续做出了 ' + count + ' 次编辑，是否要回退所有这些？') ) {
+				Status.info( '提示', '用户取消操作' );
 				return;
 			}
 			userHasAlreadyConfirmedAction = true;
@@ -403,55 +403,55 @@ Twinkle.fluff.callbacks = {
 		self.params.goodid = good_revision.getAttribute( 'revid' );
 		self.params.gooduser = good_revision.getAttribute( 'user' );
 
-		self.statelem.status( [ ' revision ', htmlNode( 'strong', self.params.goodid ), ' that was made ', htmlNode( 'strong', count ), ' revisions ago by ', htmlNode( 'strong', self.params.gooduser ) ] );
+		self.statelem.status( [ htmlNode( 'strong', count ), ' 个修订版本之前由 ', htmlNode( 'strong', self.params.gooduser ), ' 做出的修订版本 ', htmlNode( 'strong', self.params.goodid ) ] );
 
 		var summary, extra_summary, userstr, gooduserstr;
 		switch( self.params.type ) {
 		case 'agf':
-			extra_summary = prompt( "An optional comment for the edit summary:", "" );
+			extra_summary = prompt( "可选的编辑摘要：", "" );
 			if (extra_summary === null)
 			{
-				self.statelem.error( 'Aborted by user.' );
+				self.statelem.error( '用户取消操作。' );
 				return;
 			}
 			userHasAlreadyConfirmedAction = true;
 
 			userstr = self.params.user.replace("\\'", "'");
-			summary = "Reverted [[WP:AGF|good faith]] edits by [[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" + 
-				userstr + "|talk]])" + Twinkle.fluff.formatSummaryPostfix(extra_summary) + Twinkle.getPref('summaryAd');
+			summary = "回退[[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" + 
+				userstr + "|讨论]])做出的出于[[WP:AGF|善意]]的编辑" + Twinkle.fluff.formatSummaryPostfix(extra_summary) + Twinkle.getPref('summaryAd');
 			break;
 
 		case 'vand':
 
 			userstr = self.params.user.replace("\\'", "'");
 			gooduserstr = self.params.gooduser.replace("\\'", "'")
-			summary = "Reverted " + self.params.count + (self.params.count > 1 ? ' edits' : ' edit') + " by [[Special:Contributions/" +
-				userstr + "|" + userstr + "]] ([[User talk:" + userstr + "|talk]]) identified as [[WP:VAND|vandalism]] to last revision by " +
-				gooduserstr + "." + Twinkle.getPref('summaryAd');
+			summary = "回退[[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" +
+				userstr + "|讨论]])做出的被认为是[[WP:VAND|破坏]]的 " + self.params.count + " 次编辑，到由" +
+				gooduserstr + "做出的前一个修订版本。 "  + Twinkle.getPref('summaryAd');
 			break;
 
 		case 'norm':
 			/* falls through */
 		default:
 			if( Twinkle.getPref('offerReasonOnNormalRevert') ) {
-				extra_summary = prompt( "An optional comment for the edit summary:", "" );
+				extra_summary = prompt( "可选的编辑摘要：", "" );
 				if (extra_summary === null)
 				{
-					self.statelem.error( 'Aborted by user.' );
+					self.statelem.error( '用户取消操作。' );
 					return;
 				}
 				userHasAlreadyConfirmedAction = true;
 			}
 
 			userstr = self.params.user.replace("\\'", "'");
-			summary = "Reverted " + self.params.count + (self.params.count > 1 ? ' edits' : ' edit') + " by [[Special:Contributions/" + 
-				userstr + "|" + userstr + "]] ([[User talk:" + userstr + "|talk]])" + Twinkle.fluff.formatSummaryPostfix(extra_summary) +
+			summary = "回退[[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" +
+				userstr + "|讨论]])做出的 " + self.params.count + " 次编辑" + Twinkle.fluff.formatSummaryPostfix(extra_summary) +
 				Twinkle.getPref('summaryAd');
 			break;
 		}
 
-		if (Twinkle.getPref('confirmOnFluff') && !userHasAlreadyConfirmedAction && !confirm("Reverting page: are you sure?")) {
-			self.statelem.error( 'Aborted by user.' );
+		if (Twinkle.getPref('confirmOnFluff') && !userHasAlreadyConfirmedAction && !confirm("回退页面：您确定吗？")) {
+			self.statelem.error( '用户取消操作。' );
 			return;
 		}
 
@@ -459,7 +459,7 @@ Twinkle.fluff.callbacks = {
 		if( (!self.params.autoRevert || Twinkle.getPref('openTalkPageOnAutoRevert')) && 
 				Twinkle.getPref('openTalkPage').indexOf( self.params.type ) !== -1 &&
 				mw.config.get('wgUserName') !== self.params.user ) {
-			Status.info( 'Info', [ 'Opening user talk page edit form for user ', htmlNode( 'strong', self.params.user ) ] );
+			Status.info( '信息', [ '打开用户 ', htmlNode( 'strong', self.params.user ), ' 的对话页' ] );
 			
 			query = {
 				'title': 'User talk:' + self.params.user,
@@ -501,28 +501,28 @@ Twinkle.fluff.callbacks = {
 		};
 
 		Wikipedia.actionCompleted.redirect = self.params.pagename;
-		Wikipedia.actionCompleted.notice = "Reversion completed";
+		Wikipedia.actionCompleted.notice = "回退完成";
 
-		var wikipedia_api = new Wikipedia.api( 'Saving reverted contents', query, Twinkle.fluff.callbacks.complete, self.statelem);
+		var wikipedia_api = new Wikipedia.api( '保存回退内容', query, Twinkle.fluff.callbacks.complete, self.statelem);
 		wikipedia_api.params = self.params;
 		wikipedia_api.post();
 
 	},
 	complete: function (self) {
-		self.statelem.info("done");
+		self.statelem.info("完成");
 	}
 };
 
 Twinkle.fluff.formatSummaryPostfix = function(stringToAdd) {
 	if (stringToAdd) {
-		stringToAdd = ': ' + stringToAdd.toUpperCaseFirstChar();
-		if (stringToAdd.search(/[.?!;]$/) == -1) {
-			stringToAdd = stringToAdd + '.';
+		stringToAdd = '：' + stringToAdd.toUpperCaseFirstChar();
+		if (stringToAdd.search(/[。？！]$/) == -1) {
+			stringToAdd = stringToAdd + '。';
 		}
 		return stringToAdd;
 	}
 	else {
-		return '.';
+		return '。';
 	}
 };
 
@@ -535,9 +535,9 @@ Twinkle.fluff.init = function twinklefluffinit() {
 		// This only affect vandalism rollback, for good faith rollback, it will stop, indicating a bot 
 		// has no faith, and for normal rollback, it will rollback that edit.
 		Twinkle.fluff.whiteList = [
-			'AnomieBOT',
+			/*'AnomieBOT',
 			'ClueBot NG',
-			'SineBot'
+			'SineBot'*/
 		];
 
 		if ( QueryString.exists( 'twinklerevert' ) ) {
