@@ -48,7 +48,7 @@ Twinkle.defaultConfig.twinkle = {
 	openTalkPage: [ "agf", "norm", "vand" ],
 	openTalkPageOnAutoRevert: false,
 	markRevertedPagesAsMinor: [ "vand" ],
-	watchRevertedPages: [ "agf", "norm", "vand", "torev" ],
+	watchRevertedPages: [ ],
 	offerReasonOnNormalRevert: true,
 	confirmOnFluff: false,
 	showRollbackLinks: [ "diff", "others" ],
@@ -57,13 +57,13 @@ Twinkle.defaultConfig.twinkle = {
 	deliWatchPage: "default",
 	deliWatchUser: "default",
 	 // PROD
-	watchProdPages: true,
+	watchProdPages: false,
 	prodReasonDefault: "",
 	logProdPages: false,
 	prodLogPageName: "PROD log",
 	 // CSD
 	speedyPromptOnG7: false,
-	watchSpeedyPages: [ "g3", "g5", "g10", "g11", "g12" ],
+	watchSpeedyPages: [ ],
 	markSpeedyPagesAsPatrolled: true,
 	// these next two should probably be identical by default
 	notifyUserOnSpeedyDeletionNomination:    [ "db", "g1", "g2", "g3", "g4", "g10", "g11", "g12", "a1", "a2", "a3", "a5", "a7", "a9", "a10", "f1", "f2", "f3", "f7", "f9", "f10", "u3", "t2", "t3", "p1", "p2" ],
@@ -82,7 +82,7 @@ Twinkle.defaultConfig.twinkle = {
 	 // Warn
 	defaultWarningGroup: "1",
 	showSharedIPNotice: true,
-	watchWarnings: true,
+	watchWarnings: false,
 	blankTalkpageOnIndefBlock: false,
 	 // XfD
 	xfdWatchDiscussion: "default",
@@ -123,13 +123,13 @@ if (mw.config.get("skin") === 'vector') {
 Twinkle.defaultConfig.friendly = {
 	 // Tag
 	groupByDefault: true,
-	watchTaggedPages: true,
+	watchTaggedPages: false,
 	markTaggedPagesAsMinor: false,
 	markTaggedPagesAsPatrolled: true,
 	customTagList: [],
 	 // Welcome
 	topWelcomes: true,
-	watchWelcomes: true,
+	watchWelcomes: false,
 	welcomeHeading: "欢迎",
 	insertHeadings: true,
 	insertUsername: true,
