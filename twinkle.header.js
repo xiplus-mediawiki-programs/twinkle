@@ -128,9 +128,9 @@ Twinkle.defaultConfig.friendly = {
 	markTaggedPagesAsPatrolled: true,
 	customTagList: [],
 	 // Welcome
-	topWelcomes: false,
+	topWelcomes: true,
 	watchWelcomes: true,
-	welcomeHeading: "Welcome",
+	welcomeHeading: "欢迎",
 	insertHeadings: true,
 	insertUsername: true,
 	insertSignature: true,  // sign welcome templates, where appropriate
