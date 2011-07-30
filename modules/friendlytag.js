@@ -4,7 +4,9 @@
  ****************************************
  * Mode of invocation:     Tab ("Tag")
  * Active on:              Existing articles; file pages with a corresponding file
- *                         which is local (not on Commons); all redirects
+ *                         which is local (not on Commons); existing user subpages
+ *                         and existing subpages of Wikipedia:Articles for creation;
+ *                         all redirects
  * Config directives in:   FriendlyConfig
  */
 
@@ -26,6 +28,11 @@ Twinkle.tag = function friendlytag() {
 		Twinkle.tag.mode = 'article';
 		$(twAddPortletLink("#", "标记", "friendly-tag", "标记条目", "")).click(Twinkle.tag.callback);
 	}
+	// tagging of draft articles
+	/*else if( ((mw.config.get('wgNamespaceNumber') === 2 && mw.config.get('wgPageName').indexOf("/") !== -1) || /^Wikipedia\:Articles[ _]for[ _]creation\//.exec(mw.config.get('wgPageName')) ) && mw.config.get('wgCurRevisionId') ) {
+		Twinkle.tag.mode = 'draft';
+		$(twAddPortletLink("#", "Tag", "friendly-tag", "Add review tags to draft article", "")).click(Twinkle.tag.callback);
+	}*/
 };
 
 Twinkle.tag.callback = function friendlytagCallback( uid ) {
@@ -68,8 +75,8 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 				form.append( { type: 'checkbox', name: 'custom', list: Twinkle.getFriendlyPref('customTagList') } );
 			}
 			break;
-/*
-		case 'file':
+
+		/*case 'file':
 			Window.setTitle( "文件维护标记" );
 
 			// TODO: perhaps add custom tags TO list of checkboxes
@@ -88,8 +95,8 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 
 			form.append({ type: 'header', label: '替换模板' });
 			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.replacementList } );
-			break;
-*/
+			break;*/
+
 		case 'redirect':
 			Window.setTitle( "重定向标记" );
 
@@ -102,6 +109,13 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 			form.append({ type: 'header', label:'杂项和管理用重定向模板' });
 			form.append({ type: 'checkbox', name: 'administrative', list: Twinkle.tag.administrativeList });
 			break;
+
+		/*case 'draft':
+			Window.setTitle( "Article draft tagging" );
+
+			form.append({ type: 'header', label:'Draft article tags' });
+			form.append({ type: 'checkbox', name: 'draftTags', list: Twinkle.tag.draftList });
+			break;*/
 
 		default:
 			alert("Twinkle.tag：未知模式 " + Twinkle.tag.mode);
@@ -575,7 +589,7 @@ Twinkle.tag.file.cleanupList = [
 	{ label: '{{Overcompressed JPEG}}: JPEG with high levels of artifacts', value: 'Overcompressed JPEG' },
 	{ label: '{{Opaque}}: opaque background should be transparent', value: 'Opaque' },
 	{ label: '{{Remove border}}: unneeded border, white space, etc.', value: 'Remove border' },
-	{ label: '{{Rename media}}: this tag should not be under the "cleanup" heading', value: 'Rename media' },
+	{ label: '{{Rename media}}: file should be renamed according to the criteria at [[WP:FMV]]', value: 'Rename media' },
 	{ label: '{{Should be PNG}}: GIF or JPEG should be lossless', value: 'Should be PNG' },
 	{
 		label: '{{Should be SVG}}: PNG, GIF or JPEG should be vector graphics', value: 'Should be SVG',
@@ -627,10 +641,17 @@ Twinkle.tag.file.replacementList = [
 	{ label: '{{PNG version available}}', value: 'PNG version available' },
 	{ label: '{{SVG version available}}', value: 'SVG version available' }
 ];
+
+// Tags for DRAFT ARTICLES start here
+
+Twinkle.tag.draftList = [
+	{ label: '{{New unreviewed article}}: mark article for later review', value: 'new unreviewed article' }
+];
 */
 
-// Set to true if template can be grouped into {{articleissues}}
-Twinkle.tag.groupHash = {
+// Contains those article tags that can be grouped into {{multiple issues}}.
+// This list includes synonyms.
+Twinkle.tag.groupHash = [
 	'blpsources': true,
 	'citation style': true,
 	'refimprove': true,
@@ -671,7 +692,7 @@ Twinkle.tag.groupHash = {
 	'hoax': true,
 	'grammar': true,
 	'unreferenced': true
-};
+];
 
 Twinkle.tag.callbacks = {
 	main: function( pageobj ) {
@@ -680,16 +701,16 @@ Twinkle.tag.callbacks = {
 		var tags = [], groupableTags = [];
 		var isNotability = false;
 
-		//Remove tags that become superfluous with this action
+		// Remove tags that become superfluous with this action
 		var pageText = pageobj.getPageText().replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
 
 		var i;
-		if( !Twinkle.tag.mode === 'redirect' ) {
+		if( Twinkle.tag.mode !== 'redirect' ) {
 			// Check for preexisting tags and separate tags into groupable and non-groupable arrays
 			for( i = 0; i < params.tags.length; i++ ) {
 				tagRe = new RegExp( '(\\{\\{' + params.tags[i] + '(\\||\\}\\}))', 'im' );
 				if( !tagRe.exec( pageText ) ) {
-					if( Twinkle.tag.groupHash[ params.tags[i] ] && 
+					if( Twinkle.tag.groupHash.indexOf(params.tags[i]) !== -1 && 
 							/*(params.tags[i] !== 'globalize' || params.globalizeSubcategory === 'globalize' ) &&*/
 							(params.tags[i] !== 'notability' || params.notabilitySubcategory === 'none' )) {
 						// don't add to multipleissues for globalize/notability subcats
@@ -1008,6 +1029,10 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		case 'redirect':
 			params.tags = form.getChecked( 'administrative' ).concat( form.getChecked( 'alternative' ) ).concat( form.getChecked( 'spelling' ) );
 			break;
+		/*case 'draft':
+			params.tags = form.getChecked( 'draftTags' );
+			Twinkle.tag.mode = 'article';
+			break;*/
 		default:
 			alert("Twinkle.tag：未知模式 " + Twinkle.tag.mode);
 			break;

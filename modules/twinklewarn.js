@@ -860,6 +860,10 @@ Twinkle.warn.messages = {
 			label:"Reporting of username to WP:UAA not accepted", 
 			summary:"Notice: Reporting of username to WP:UAA not accepted" 
 		},
+		"uw-userspace draft finish": { 
+			label:"Stale userspace draft", 
+			summary:"Notice: Stale userspace draft" 
+		},
 		"uw-userspacenoindex": { 
 			label:"User page/subpage isn't appropriate for search engine indexing", 
 			summary:"Notice: User (sub)page isn't appropriate for search engine indexing" 
