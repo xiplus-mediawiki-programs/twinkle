@@ -59,7 +59,7 @@ Twinkle.diff.evaluate = function twinklediffEvaluate(me) {
 		'rvuser': user
 	};
 	Status.init( document.getElementById('bodyContent') );
-	var wikipedia_api = new Wikipedia.api( 'Grabbing data of initial contributor', query, Twinkle.diff.callbacks.main );
+	var wikipedia_api = new Wikipedia.api( '抓取最初贡献者信息', query, Twinkle.diff.callbacks.main );
 	wikipedia_api.params = { user: user };
 	wikipedia_api.post();
 };
@@ -70,7 +70,7 @@ Twinkle.diff.callbacks = {
 		var revid = $(xmlDoc).find('rev').attr('revid');
 
 		if( ! revid ) {
-			self.statelem.error( 'no suitable earlier revision found, or ' + self.params.user + ' is the only contributor. Aborting.' );
+			self.statelem.error( '未找到合适的早期版本，或 ' + self.params.user + ' 是唯一贡献者。取消。' );
 			return;
 		}
 		var query = {
