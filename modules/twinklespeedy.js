@@ -26,7 +26,7 @@ Twinkle.speedy = function twinklespeedy() {
 		$(twAddPortletLink("#", "速删", "tw-csd", "请求快速删除", "")).click(Twinkle.speedy.callback);
 	} else {
 		$(twAddPortletLink("#", '速删', 'tw-csd', '请求快速删除', '')).click(function() {
-			alert("Your account is too new to use Twinkle.");
+			alert("您还未达到自动确认。");
 		});
 	}
 };
@@ -49,10 +49,10 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 	{
 		Twinkle.speedy.dialog = new SimpleWindow( Twinkle.getPref('speedyWindowWidth'), Twinkle.getPref('speedyWindowHeight') );
 		dialog = Twinkle.speedy.dialog;
-		dialog.setTitle( "Choose criteria for speedy deletion" );
+		dialog.setTitle( "选择快速删除理由" );
 		dialog.setScriptName( "Twinkle" );
-		dialog.addFooterLink( "Speedy deletion policy", "WP:CSD" );
-		dialog.addFooterLink( "Twinkle help", "WP:TW/DOC#speedy" );
+		dialog.addFooterLink( "快速删除方针", "WP:CSD" );
+		dialog.addFooterLink( "Twinkle帮助", "WP:TW/DOC#speedy" );
 	}
 
 	var form = new QuickForm( callbackfunc, 'change' );
@@ -61,10 +61,10 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 				type: 'checkbox',
 				list: [
 					{
-						label: 'Tag page only, don\'t delete',
+						label: '只标记，不删除',
 						value: 'tag_only',
 						name: 'tag_only',
-						tooltip: 'If you just want to tag the page, instead of deleting it now',
+						tooltip: '如果您只想标记此页面而不是删除它',
 						checked : Twinkle.getPref('deleteSysopDefaultToTag'),
 						event: function( event ) {
 							// enable/disable notify checkbox
@@ -85,16 +85,16 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 					}
 				]
 			} );
-		form.append( { type: 'header', label: 'Delete-related options' } );
+		form.append( { type: 'header', label: '删除相关选项' } );
 		if (mw.config.get('wgNamespaceNumber') % 2 === 0 && (mw.config.get('wgNamespaceNumber') !== 2 || (/\//).test(mw.config.get('wgTitle')))) {  // hide option for user pages, to avoid accidentally deleting user talk page
 			form.append( {
 				type: 'checkbox',
 				list: [
 					{
-						label: 'Also delete talk page',
+						label: '删除讨论页',
 						value: 'talkpage',
 						name: 'talkpage',
-						tooltip: "This option deletes the page's talk page in addition. If you choose the F8 (moved to Commons) criterion, this option is ignored and the talk page is *not* deleted.",
+						tooltip: "删除时附带删除此页面的讨论页。",
 						checked: Twinkle.getPref('deleteTalkPageOnDelete'),
 						disabled: Twinkle.getPref('deleteSysopDefaultToTag'),
 						event: function( event ) {
@@ -108,10 +108,10 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 				type: 'checkbox',
 				list: [
 					{
-						label: 'Also delete all redirects',
+						label: '删除重定向',
 						value: 'redirects',
 						name: 'redirects',
-						tooltip: "This option deletes all incoming redirects in addition. Avoid this option for procedural (e.g. move/merge) deletions.",
+						tooltip: "删除到此页的重定向。",
 						checked: true,
 						disabled: Twinkle.getPref('deleteSysopDefaultToTag'),
 						event: function( event ) {
@@ -120,7 +120,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 					}
 				]
 			} );
-		form.append( { type: 'header', label: 'Tag-related options' } );
+		form.append( { type: 'header', label: '标记相关选项' } );
 	}
 
 	// don't show this notification checkbox for db-multiple, as the value is ignored
@@ -130,11 +130,10 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 				type: 'checkbox',
 				list: [
 					{
-						label: 'Notify page creator if possible',
+						label: '如可能，通知创建者',
 						value: 'notify',
 						name: 'notify',
-						tooltip: "A notification template will be placed on the talk page of the creator, IF you have a notification enabled in your Twinkle preferences " +
-							"for the criterion you choose AND this box is checked. The creator may be welcomed as well.",
+						tooltip: "一个通知模板将会被加入创建者的对话页。",
 						checked: !userIsInGroup( 'sysop' ) || Twinkle.getPref('deleteSysopDefaultToTag'),
 						disabled: userIsInGroup( 'sysop' ) && !Twinkle.getPref('deleteSysopDefaultToTag'),
 						event: function( event ) {
@@ -145,16 +144,16 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 			}
 		);
 	} else {
-		form.append( { type:'header', label: 'Tagging with {{db-multiple}}: Criterion ' + (Twinkle.speedy.dbmultipleCriteria.length + 1) } );
+		form.append( { type:'header', label: '多个理由：第 ' + (Twinkle.speedy.dbmultipleCriteria.length + 1) + ' 个' } );
 	}
 
 	if (firstTime) {
 		form.append( { type: 'radio', name: 'csd',
 			list: [
 				{
-					label: 'Tag with multiple criteria',
+					label: '应用多个理由',
 					value: 'multiple',
-					tooltip: 'Opens a series of further dialogs, allowing you to specify all the criteria you want to tag this page with.',
+					tooltip: '开启一些新的对话框，让您选择多个理由。',
 					disabled: userIsInGroup('sysop') && !Twinkle.getPref('deleteSysopDefaultToTag')
 				}
 			]
@@ -163,7 +162,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 		form.append( { type: 'radio', name: 'csd',
 			list: [
 				{
-					label: 'No more criteria apply - finish tagging',
+					label: '没有更多理由了，结束标记',
 					value: 'multiple-finish'
 				}
 			]
@@ -173,49 +172,49 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 	switch (mw.config.get('wgNamespaceNumber')) {
 		case 0:  // article
 		case 1:  // talk
-			form.append( { type: 'header', label: 'Articles' } );
+			form.append( { type: 'header', label: '条目' } );
 			form.append( { type: 'radio', name: 'csd', list: Twinkle.speedy.getArticleList(!firstTime) } );
 			break;
 
 		case 2:  // user
 		case 3:  // user talk
-			form.append( { type: 'header', label: 'User pages' } );
+			form.append( { type: 'header', label: '用户页' } );
 			form.append( { type: 'radio', name: 'csd', list: Twinkle.speedy.userList } );
 			break;
 
 		case 6:  // file
 		case 7:  // file talk
-			form.append( { type: 'header', label: 'Files' } );
+			form.append( { type: 'header', label: '文件' } );
 			form.append( { type: 'radio', name: 'csd', list: Twinkle.speedy.getFileList(!firstTime) } );
-			form.append( { type: 'div', label: 'Tagging for CSD F4 (no license), F5 (orphaned fair use), F6 (no fair use rationale), and F11 (no permission) can be done using Twinkle\'s "DI" tab.' } );
+			form.append( { type: 'div', label: '标记CSD F3、F4，请使用Twinkle的“图版”功能。' } );
 			break;
 
-		case 10:  // template
+		/*case 10:  // template
 		case 11:  // template talk
-			form.append( { type: 'header', label: 'Templates' } );
+			form.append( { type: 'header', label: '模板' } );
 			form.append( { type: 'radio', name: 'csd', list: Twinkle.speedy.getTemplateList(!firstTime) } );
-			break;
+			break;*/
 
 		case 14:  // category
 		case 15:  // category talk
-			form.append( { type: 'header', label: 'Categories' } );
+			form.append( { type: 'header', label: '分类' } );
 			form.append( { type: 'radio', name: 'csd', list: Twinkle.speedy.categoryList } );
 			break;
 
-		case 100:  // portal
+		/*case 100:  // portal
 		case 101:  // portal talk
-			form.append( { type: 'header', label: 'Portals' } );
+			form.append( { type: 'header', label: '主题' } );
 			form.append( { type: 'radio', name: 'csd', list: Twinkle.speedy.getPortalList(!firstTime) } );
-			break;
+			break;*/
 
 		default:
 			break;
 	}
 
-	form.append( { type: 'header', label: 'General criteria' } );
+	form.append( { type: 'header', label: '常规' } );
 	form.append( { type: 'radio', name: 'csd', list: Twinkle.speedy.getGeneralList(!firstTime) });
 
-	form.append( { type: 'header', label: 'Redirects' } );
+	form.append( { type: 'header', label: '重定向' } );
 	form.append( { type: 'radio', name: 'csd', list: Twinkle.speedy.redirectList } );
 
 	var result = form.render();
@@ -237,187 +236,77 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 Twinkle.speedy.getFileList = function twinklespeedyGetFileList(multiple) {
 	var result = [];
 	result.push({
-		label: 'F1: Redundant file',
-		value: 'redundantimage',
-		tooltip: 'Any file that is a redundant copy, in the same file format and same or lower resolution, of something else on Wikipedia. Likewise, other media that is a redundant copy, in the same format and of the same or lower quality. This does not apply to files duplicated on Wikimedia Commons, because of licence issues; these should be tagged with {{subst:ncd|Image:newname.ext}} or {{subst:ncd}} instead'
-	});
-	result.push({
-		label: 'F2: Corrupt or blank file',
-		value: 'noimage',
-		tooltip: 'Before deleting this type of file, verify that the MediaWiki engine cannot read it by previewing a resized thumbnail of it. This also includes empty (i.e., no content) file description pages for Commons files'
-	});
-	if (!multiple) {
-		result.push({
-			label: 'F2: Unneeded file description page for a file on Commons',
-			value: 'fpcfail',
-			tooltip: 'An image, hosted on Commons, but with tags or information on its English Wikipedia description page that are no longer needed. (For example, a failed featured picture candidate.)'
-		});
-	}
-	result.push({
-		label: 'F3: Improper license',
-		value: 'noncom',
-		tooltip: 'Files licensed as "for non-commercial use only", "non-derivative use" or "used with permission" that were uploaded on or after 2005-05-19, except where they have been shown to comply with the limited standards for the use of non-free content. This includes files licensed under a "Non-commercial Creative Commons License". Such files uploaded before 2005-05-19 may also be speedily deleted if they are not used in any articles'
+		label: 'F1: 重复的文件（完全相同或缩小），而且所有的链入连接已经被修改为指向保留的文件。',
+		value: 'f1'
 	});
 	if (userIsInGroup('sysop')) {
 		result.push({
-			label: 'F4: Lack of licensing information',
-			value: 'unksource',
-			tooltip: 'Files in category "Files with unknown source", "Files with unknown copyright status", or "Files with no copyright tag" that have been tagged with a template that places them in the category for more than seven days, regardless of when uploaded. Note, users sometimes specify their source in the upload summary, so be sure to check the circumstances of the file.'
+			label: 'F3: 所有未知版权的文件和来源不明文件。',
+			value: 'f3'
 		});
 		result.push({
-			label: 'F5: Unused unfree copyrighted files',
-			value: 'unfree',
-			tooltip: 'Files that are not under a free license or in the public domain that are not used in any article and that have been tagged with a template that places them in a dated subcategory of Category:Orphaned fairuse files for more than seven days. Reasonable exceptions may be made for file uploaded for an upcoming article. Use the "Orphaned fair use" option in Twinkle\'s DI module to tag files for forthcoming deletion.'
-		});
-		result.push({
-			label: 'F6: Missing fair-use rationale',
-			value: 'norat',
-			tooltip: 'Any file without a fair use rationale may be deleted seven days after it is uploaded.  Boilerplate fair use templates do not constitute a fair use rationale.  Files uploaded before 2006-05-04 should not be deleted immediately; instead, the uploader should be notified that a fair-use rationale is needed.  Files uploaded after 2006-05-04 can be tagged using the "No fair use rationale" option in Twinkle\'s DI module. Such files can be found in the dated subcategories of Category:Files with no fair use rationale.'
+			label: 'F4: 没有依据上载页面指示提供版权状况、来源等资讯的文件。',
+			value: 'f4'
 		});
 	}
 	result.push({
-		label: 'F7: Invalid fair-use claim',
-		value: 'badfairuse',
-		tooltip: 'Any file with a clearly invalid fair-use tag (such as a {{logo}} tag on a photograph of a mascot) may be deleted at any time. Media that fail any part of the non-free content criteria and were uploaded after 2006-07-13 may be deleted forty-eight hours after notification of the uploader. For media uploaded before 2006-07-13 or tagged with the {{Replaceable fair use}} template, the uploader will be given seven days to comply with this policy after being notified'
+		label: 'F5: 被高分辨率或SVG文件取代的图片。',
+		value: 'f5'
+	});
+	result.push({
+		label: 'F6: 孤立而没有被条目使用的非自由版权文件。',
+		value: 'f6'
 	});
 	if (!multiple) {
 		result.push({
-			label: 'F8: Files available as identical or higher-resolution copies on Wikimedia Commons',
-			value: 'nowcommons',
-			tooltip: 'Provided the following conditions are met: 1: The file format of both images is the same. 2: The file\'s license and source status is beyond reasonable doubt, and the license is undoubtedly accepted at Commons. 3: All information on the file description page is present on the Commons file description page. That includes the complete upload history with links to the uploader\'s local user pages. 4: The file is not protected, and the file description page does not contain a request not to move it to Commons. 5: If the file is available on Commons under a different name than locally, all local references to the file must be updated to point to the title used at Commons. 6: For {{c-uploaded}} files: They may be speedily deleted as soon as they are off the Main Page'
+			label: 'F7: 被维基共享资源文件取代的文件。',
+			value: 'f7'
 		});
 	}
-	result.push({
-		label: 'F9: Unambiguous copyright infringement',
-		value: 'imgcopyvio',
-		tooltip: 'The file was copied from a website or other source that does not have a license compatible with Wikipedia, and the uploader neither claims fair use nor makes a credible assertion of permission of free use. Sources that do not have a license compatible with Wikipedia include stock photo libraries such as Getty Images or Corbis. Non-blatant copyright infringements should be discussed at Wikipedia:Files for deletion'
-	});
-	result.push({
-		label: 'F10: Useless media file',
-		value: 'badfiletype',
-		tooltip: 'Files uploaded that are neither image, sound, nor video files (e.g. .doc, .pdf, or .xls files) which are not used in any article and have no foreseeable encyclopedic use'
-	});
-	if (userIsInGroup('sysop')) {
-		result.push({
-			label: 'F11: No evidence of permission',
-			value: 'nopermission',
-			tooltip: 'If an uploader has specified a license and has named a third party as the source/copyright holder without providing evidence that this third party has in fact agreed, the item may be deleted seven days after notification of the uploader'
-		});
-	}
-	result.push({
-		label: 'G8: File description page with no corresponding file',
-		value: 'imagepage',
-		tooltip: 'This is only for use when the file doesn\'t exist at all. Corrupt files, and local description pages for files on Commons, should use F2; implausible redirects should use R3; and broken Commons redirects should use G6.'
-	});
 	return result;
 };
 
 Twinkle.speedy.getArticleList = function twinklespeedyGetArticleList(multiple) {
 	var result = [];
 	result.push({
-		label: 'A1: No context. Articles lacking sufficient context to identify the subject of the article.',
-		value: 'nocontext',
-		tooltip: 'Example: "He is a funny man with a red car. He makes people laugh." This applies only to very short articles. Context is different from content, treated in A3, below.'
+		label: 'A1: 非常短，而且没有定义或内容。',
+		value: 'a1',
+		tooltip: '例如：“他是一个很有趣的人，他创建了工厂和庄园。并且，顺便提一下，他的妻子也很好。”如果能够发现任何相关的内容，可以将这个页面重定向到相关的条目上。'
 	});
 	result.push({
-		label: 'A2: Foreign language articles that exist on another Wikimedia project',
-		value: 'foreign',
-		tooltip: 'If the article in question does not exist on another project, the template {{notenglish}} should be used instead. All articles in a non-English language that do not meet this criteria (and do not meet any other criteria for speedy deletion) should be listed at Pages Needing Translation (PNT) for review and possible translation'
+		label: 'A2: 没有内容。',
+		value: 'a2',
+		tooltip: '任何内容只包括外部连接、参见、图书参考、类别标签、模板标签、跨语言连接的条目（消歧义页、重定向、软重定向除外）。请注意：有些维基人创建条目时会分开多次保存，请避免删除有人正在工作的页面。带有{{inuse}}的不适用。'
 	});
 	result.push({
-		label: 'A3: No content whatsoever',
-		value: 'nocontent',
-		tooltip: 'Any article consisting only of links elsewhere (including hyperlinks, category tags and "see also" sections), a rephrasing of the title, and/or attempts to correspond with the person or group named by its title. This does not include disambiguation pages'
+		label: 'A3: 跨维基条目。',
+		value: 'a3',
+		tooltip: '复制自其他中文维基计划，或是与其他中文维基计划内容相同的文章，或者是透过Transwiki系统移动的文章。'
 	});
-	result.push({
-		label: 'A5: Transwikied articles',
-		value: 'transwiki',
-		tooltip: 'Any article that has been discussed at Articles for Deletion (et al), where the outcome was to transwiki, and where the transwikification has been properly performed and the author information recorded. Alternately, any article that consists of only a dictionary definition, where the transwikification has been properly performed and the author information recorded'
-	});
-	result.push({
-		label: 'A7: Unremarkable people, groups, companies, web content, and individual animals',
-		value: 'a7',
-		tooltip: 'An article about a real person, group of people, band, club, company, web content, or individual animal that does not assert the importance or significance of its subject. If controversial, or if there has been a previous AfD that resulted in the article being kept, the article should be nominated for AfD instead'
-	});
-	if (!multiple) {
-		result.push({
-			label: 'A7: Unremarkable person',
-			value: 'person',
-			tooltip: 'An article about a real person that does not assert the importance or significance of its subject. If controversial, or if there has been a previous AfD that resulted in the article being kept, the article should be nominated for AfD instead'
-		});
-		result.push({
-			label: 'A7: Unremarkable musician(s) or band',
-			value: 'band',
-			tooltip: 'Article about a band, singer, musician, or musical ensemble that does not assert the importance or significance of the subject'
-		});
-		result.push({
-			label: 'A7: Unremarkable club',
-			value: 'club',
-			tooltip: 'Article about a club that does not assert the importance or significance of the subject'
-		});
-		result.push({
-			label: 'A7: Unremarkable company or organization',
-			value: 'corp',
-			tooltip: 'Article about a company or organization that does not assert the importance or significance of the subject'
-		});
-		result.push({
-			label: 'A7: Unremarkable website or web content',
-			value: 'web',
-			tooltip: 'Article about a web site, blog, online forum, webcomic, podcast, or similar web content that does not assert the importance or significance of its subject'
-		});
-		result.push({
-			label: 'A7: Unremarkable individual animal',
-			value: 'animal',
-			tooltip: 'Article about an individual animal (e.g. pet) that does not assert the importance or significance of its subject'
-		});
-	}
-	result.push({
-		label: 'A9: Unremarkable musical recording where artist\'s article doesn\'t exist',
-		value: 'a9',
-		tooltip: 'An article about a musical recording which does not indicate why its subject is important or significant, and where the artist\'s article has never existed or has been deleted'
-	});
-	if (!multiple) {
-		result.push({
-			label: 'A10: Recently created article that duplicates an existing topic',
-			value: 'a10',
-			tooltip: 'A recently created article with no relevant page history that does not aim to expand upon, detail or improve information within any existing article(s) on the subject, and where the title is not a plausible redirect. This does not include content forks, split pages or any article that aims at expanding or detailing an existing one.'
-		});
-	}
 	return result;
 };
 
 Twinkle.speedy.categoryList = [
 	{
-		label: 'C1: Empty categories',
-		value: 'catempty',
-		tooltip: '(no articles or subcategories for at least four days) whose only content has consisted of links to parent categories. This does not apply to categories being discussed on WP:CFD or WP:SFD, or disambiguation categories. If the category isn\'t relatively new, it possibly contained articles earlier, and deeper investigation is needed'
-	},
-	{
-		label: 'G8: Categories populated by a deleted or retargeted template',
-		value: 'templatecat',
-		tooltip: 'If a template which includes pages in a category has been deleted, the associated category can be deleted. This excludes categories that are still in use.'
+		label: 'O4: 空的类别（没有条目也没有子类别）。',
+		value: 'o4',
+		tooltip: '不适用于Category:不要删除的分类中的空分类。'
 	}
 ];
 
 Twinkle.speedy.userList = [
 	{
-		label: 'U1: User request',
-		value: 'userreq',
-		tooltip: 'Personal subpages, upon request by their user. In some rare cases there may be administrative need to retain the page. Also, sometimes, main user pages may be deleted as well. See Wikipedia:User page for full instructions and guidelines'
+		label: 'O1: 用户请求删除的他们自己的用户页或用户讨论页及其子页面。',
+		value: 'o1',
+		tooltip: '如果是从其他名字空间移动来的，须附有合理原因。'
 	},
 	{
-		label: 'U2: Nonexistent user',
-		value: 'nouser',
-		tooltip: 'User pages of users that do not exist (Check Special:Listusers)'
-	},
-	{
-		label: 'U3: Non-free galleries',
-		value: 'gallery',
-		tooltip: 'Galleries in the userspace which consist mostly of "fair use" or non-free files. Wikipedia\'s non-free content policy forbids users from displaying non-free files, even ones they have uploaded themselves, in userspace. It is acceptable to have free files, GFDL-files, Creative Commons and similar licenses along with public domain material, but not "fair use" files'
+		label: 'O3: 匿名用户的用户讨论页，其中的内容不再有用（避免给使用同一IP地址的用户带来混淆）。',
+		value: 'o3'
 	}
 ];
 
-Twinkle.speedy.getTemplateList = function twinklespeedyGetTemplateList(multiple) {
+/*Twinkle.speedy.getTemplateList = function twinklespeedyGetTemplateList(multiple) {
 	var result = [];
 	result.push({
 		label: 'T2: Templates that are blatant misrepresentations of established policy',
@@ -432,9 +321,9 @@ Twinkle.speedy.getTemplateList = function twinklespeedyGetTemplateList(multiple)
 		});
 	}
 	return result;
-};
+};*/
 
-Twinkle.speedy.getPortalList = function twinklespeedyGetPortalList(multiple) {
+/*Twinkle.speedy.getPortalList = function twinklespeedyGetPortalList(multiple) {
 	var result = [];
 	if (!multiple) {
 		result.push({
@@ -449,141 +338,94 @@ Twinkle.speedy.getPortalList = function twinklespeedyGetPortalList(multiple) {
 		tooltip: 'Any Portal based on a topic for which there is not a non-stub header article, and at least three non-stub articles detailing subject matter that would be appropriate to discuss under the title of that Portal'
 	});
 	return result;
-};
+};*/
 
 Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 	var result = [];
 	if (!multiple) {
 		result.push({
-			label: 'Custom rationale' + (userIsInGroup('sysop') ? ' (custom deletion reason)' : ' using {'+'{db}} template'),
-			value: 'reason',
-			tooltip: '{'+'{db}} is short for "delete because". One of the other deletion criteria must still apply to the page, and you should (must?) make mention of this in your rationale. This is not a "catch-all" for when you can\'t find the right criterion.'
+			label: '自定义理由' + (userIsInGroup('sysop') ? '（自定义删除理由）' : ''),
+			value: 'reason'
 		});
 	}
 	result.push({
-		label: 'G1: Patent nonsense. Pages consisting purely of incoherent text or gibberish with no meaningful content or history.',
-		value: 'nonsense',
-		tooltip: 'This does not include poor writing, partisan screeds, obscene remarks, vandalism, fictional material, material not in English, poorly translated material, implausible theories, or hoaxes'
+		label: 'G1: 没有实际内容或历史纪录的文章。',
+		value: 'g1',
+		tooltip: '如“adfasddd”。参见Wikipedia:胡言乱语。但注意：图片也算是内容。'
 	});
 	result.push({
-		label: 'G2: Test page',
-		value: 'test',
-		tooltip: 'e.g., "Can I really create a page here?"'
+		label: 'G2: 测试页面。',
+		value: 'g2',
+		tooltip: '例如：“这是一个测试。”'
 	});
 	result.push({
-		label: 'G3: Pure vandalism',
-		value: 'vandalism',
-		tooltip: 'Plain pure vandalism (including redirects left behind from pagemove vandalism)'
+		label: 'G3: 纯粹破坏。',
+		value: 'g3'
 	});
-	if (!multiple) {
+	result.push({
+		label: 'G5: 曾经根据Wikipedia:页面存废讨论、Wikipedia:页面存废讨论/疑似侵权、Wikipedia:文件存废讨论被删除后又重新创建的内容，无论标题是否相同。',
+		value: 'g5',
+		tooltip: '该内容之前必须是经存废讨论删除，如之前属于快速删除，请以相同理由重新提送快速删除。不适用于根据恢复守则被恢复的内容。在某些情况下，重新创建的条目有发展的机会。那么不应提交快速删除，而应该提交删除投票进行讨论。'
+	});
+	result.push({
+		label: 'G10: 原作者清空页面或提出删除，且贡献者只有一人。提请须出于善意，及附有合理原因。',
+		value: 'g10',
+		tooltip: '如果贡献者只有一人（对条目内容无实际修改的除外），并附有合理原因，适用此项。'
+	});
+	result.push({
+		label: 'G11: 明显以广告宣传为目的而建立的页面，或任何只有该页面名称中的人物或团体的联系方法的页面。',
+		value: 'g11',
+		tooltip: '只针对专门用于宣传的页面，这些页面需要经过完全重写才能体现百科全书性。需注意，仅仅以某公司或产品为主题的条目，并不直接导致其自然满足此速删标准。'
+	});
+	result.push({
+		label: 'G12: 未列明来源且语调负面的生者传记，无任何版本可回退。',
+		value: 'g12',
+		tooltip: '注意是未列明来源且语调负面，必须2项均符合。'
+	});
+	result.push({
+		label: 'G13: 明显的、拙劣的机器翻译。',
+		value: 'g13'
+	});
+	if (userIsInGroup('sysop')) {
 		result.push({
-			label: 'G3: Blatant hoax',
-			value: 'hoax',
-			tooltip: 'Blatant and obvious hoax, to the point of vandalism'
+			label: 'G14: 未翻译页面。',
+			value: 'g14',
+			tooltip: '复制自其他维基媒体计划，超过两周没有进行任何翻译的非现代标准汉语页面，包括所有未翻译的外语、汉语方言以及文言文。'
 		});
 	}
 	result.push({
-		label: 'G4: Recreation of deleted material',
-		value: 'repost',
-		tooltip: 'A copy, by any title, of a page that was deleted via an XfD process or Deletion review, provided that the copy is substantially identical to the deleted version and that any revisions made clearly do not address the reasons for which the page was deleted. This clause does not apply to content that has been "userfied", to content undeleted as a result of Deletion review, or if the prior deletions were proposed or speedy deletions, although in this last case, the previous speedy criterion, or other speedy deletion criteria, may apply'
+		label: 'G15: 孤立页面。',
+		value: 'g15',
+		tooltip: '包括以下几种类型：1. 没有对应文件的文件页面；2. 没有对应母页面的子页面，用户页子页面除外；3. 指向不存在页面的重定向；4. 没有对应内容页面的讨论页，讨论页存档和用户讨论页除外；5. 对应内容页面为重定向的讨论页，前提是讨论页建立于重定向之后，或者讨论内容已经存档；6. 不存在用户的用户页及用户页子页面，随用户更名产生的用户页重定向除外。'
 	});
 	result.push({
-		label: 'G5: Banned user',
-		value: 'banned',
-		tooltip: 'Pages created by banned users while they were banned'
-	});
-	if (!multiple) {
-		result.push({
-			label: 'G6: History merge',
-			value: 'histmerge',
-			tooltip: 'Temporarily deleting a page in order to merge page histories'
-		});
-		result.push({
-			label: 'G6: Move',
-			value: 'move',
-			tooltip: 'Making way for a noncontroversial move like reversing a redirect'
-		});
-		result.push({
-			label: 'G6: XfD',
-			value: 'xfd',
-			tooltip: 'An admin has closed a deletion discussion (at AfD, FfD, RfD, TfD, CfD, SfD, or MfD) as "delete", but they didn\'t actually delete the page.'
-		});
-		result.push({
-			label: 'G6: Unnecessary disambiguation page',
-			value: 'disambig',
-			tooltip: 'This only applies for orphaned disambiguation pages which either: (1) disambiguate two or fewer existing Wikipedia pages and whose title ends in "(disambiguation)" (i.e., there is a primary topic); or (2) disambiguates no (zero) existing Wikipedia pages, regardless of its title.'
-		});
-		result.push({
-			label: 'G6: Redirect to malplaced disambiguation page',
-			value: 'movedab',
-			tooltip: 'This only applies for redirects to disambiguation pages ending in (disambiguation) where a primary topic does not exist.'
-		});
-		result.push({
-			label: 'G6: Copy-and-paste page move',
-			value: 'copypaste',
-			tooltip: 'This only applies for a copy-and-paste page move of another page that needs to be temporarily deleted to make room for a clean page move.'
-		});
-	}
-	result.push({
-		label: 'G6: Housekeeping',
-		value: 'g6',
-		tooltip: 'Other non-controversial "housekeeping" tasks'
-	});
-	result.push({
-		label: 'G7: Author requests deletion, or author blanked',
-		value: 'author',
-		tooltip: 'Any page for which deletion is requested by the original author in good faith, provided the page\'s only substantial content was added by its author. If the author blanks the page, this can also be taken as a deletion request.'
-	});
-	result.push({
-		label: 'G8: Pages dependent on a non-existent or deleted page',
-		value: 'g8',
-		tooltip: 'such as talk pages with no corresponding subject page; subpages with no parent page; file pages without a corresponding file; redirects to invalid targets, such as nonexistent targets, redirect loops, and bad titles; or categories populated by deleted or retargeted templates. This excludes any page that is useful to the project, and in particular: deletion discussions that are not logged elsewhere, user and user talk pages, talk page archives, plausible redirects that can be changed to valid targets, and file pages or talk pages for files that exist on Wikimedia Commons.'
-	});
-	if (!multiple) {
-		result.push({
-			label: 'G8: Talk pages with no corresponding subject page',
-			value: 'talk',
-			tooltip: 'This excludes any page that is useful to the project, and in particular: deletion discussions that are not logged elsewhere, user and user talk pages, talk page archives, plausible redirects that can be changed to valid targets, and file pages or talk pages for files that exist on Wikimedia Commons.'
-		});
-		result.push({
-			label: 'G8: Subpages with no parent page',
-			value: 'subpage',
-			tooltip: 'This excludes any page that is useful to the project, and in particular: deletion discussions that are not logged elsewhere, user and user talk pages, talk page archives, plausible redirects that can be changed to valid targets, and file pages or talk pages for files that exist on Wikimedia Commons.'
-		});
-	}
-	result.push({
-		label: 'G10: Attack page',
-		value: 'attack',
-		tooltip: 'Pages that serve no purpose but to disparage their subject or some other entity (e.g., "John Q. Doe is an imbecile"). This includes a biography of a living person that is negative in tone and unsourced, where there is no NPOV version in the history to revert to. Administrators deleting such pages should not quote the content of the page in the deletion summary!'
-	});
-	result.push({
-		label: 'G11: Unambiguous advertising',
-		value: 'spam',
-		tooltip: 'Pages which exclusively promote a company, product, group, service, or person and which would need to be fundamentally rewritten in order to become encyclopedic. Note that simply having a company, product, group, service, or person as its subject does not qualify an article for this criterion; an article that is blatant advertising should have inappropriate content as well'
-	});
-	result.push({
-		label: 'G12: Unambiguous copyright infringement',
-		value: 'copyvio',
-		tooltip: 'Either: (1) Material was copied from another website that does not have a license compatible with Wikipedia, or is photography from a stock photo seller (such as Getty Images or Corbis) or other commercial content provider; (2) There is no non-infringing content in the page history worth saving; or (3) The infringement was introduced at once by a single person rather than created organically on wiki and then copied by another website such as one of the many Wikipedia mirrors'
+		label: 'G16: 临时页面依然侵权。',
+		value: 'g16',
+		tooltip: '因为主页面侵权而创建的临时页面仍然侵权。'
 	});
 	return result;
 };
 
 Twinkle.speedy.redirectList = [
 	{
-		label: 'R2: Redirects from mainspace to any other namespace except the Category:, Template:, Wikipedia:, Help: and Portal: namespaces',
-		value: 'rediruser',
-		tooltip: '(this does not include the Wikipedia shortcut pseudo-namespaces). If this was the result of a page move, consider waiting a day or two before deleting the redirect'
+		label: 'R2: 跨名字空间重定向。',
+		value: 'r2',
+		tooltip: '由条目的名字空间重定向至非条目名字空间，或将用户页移出条目名字空间时遗留的重定向。'
 	},
 	{
-		label: 'R3: Redirects as a result of an implausible typo that were recently created',
-		value: 'redirtypo',
-		tooltip: 'However, redirects from common misspellings or misnomers are generally useful, as are redirects in other languages'
+		label: 'R3: 名称错误的重定向，包括条目标题繁简混用、消歧义使用括号或空格错误、间隔号使用错误。',
+		value: 'r3',
+		tooltip: '不包括常见的拼写错误。为常见的拼写错误建立指向正确题目的重定向页面，可使百科用户纵使在查找文章时拼写错误，也能够找到寻求的文章。参阅：Wikipedia:命名常规。'
 	},
 	{
-		label: 'G8: Redirects to invalid targets, such as nonexistent targets, redirect loops, and bad titles',
-		value: 'redirnone',
-		tooltip: 'This excludes any page that is useful to the project, and in particular: deletion discussions that are not logged elsewhere, user and user talk pages, talk page archives, plausible redirects that can be changed to valid targets, and file pages or talk pages for files that exist on Wikimedia Commons.'
+		label: 'R4: 故意破坏的结果。',
+		value: 'r4',
+		tooltip: '如将一个页面移动到一个没有意义的标题上，当重新移动回正确名称时，就会留下一个重定向页。'
+	},
+	{
+		label: 'R5: 指向本身的重定向或循环的重定向。',
+		value: 'r5',
+		tooltip: '如A→B→C→……→A。'
 	}
 ];
 
@@ -591,153 +433,94 @@ Twinkle.speedy.normalizeHash = {
 	'reason': 'db',
 	'multiple': 'multiple',
 	'multiple-finish': 'multiple-finish',
-	'nonsense': 'g1',
-	'test': 'g2',
-	'vandalism': 'g3',
-	'hoax': 'g3',
-	'repost': 'g4',
-	'banned': 'g5',
-	'histmerge': 'g6',
-	'move': 'g6',
-	'xfd': 'g6',
-	'disambig': 'g6',
-	'movedab': 'g6',
-	'copypaste': 'g6',
-	'g6': 'g6',
-	'author': 'g7',
-	'g8': 'g8',
-	'talk': 'g8',
-	'subpage': 'g8',
-	'redirnone': 'g8',
-	'templatecat': 'g8',
-	'attack': 'g10',
-	'spam': 'g11',
-	'copyvio': 'g12',
-	'nocontext': 'a1',
-	'foreign': 'a2',
-	'nocontent': 'a3',
-	'transwiki': 'a5',
-	'a7': 'a7',
-	'person': 'a7',
-	'corp': 'a7',
-	'web': 'a7',
-	'band': 'a7',
-	'club': 'a7',
-	'animal': 'a7',
-	'a9': 'a9',
-	'a10': 'a10',
-	'rediruser': 'r2',
-	'redirtypo': 'r3',
-	'redundantimage': 'f1',
-	'noimage': 'f2',
-	'fpcfail': 'f2',
-	'noncom': 'f3',
-	'unksource': 'f4',
-	'unfree': 'f5',
-	'norat': 'f6',
-	'badfairuse': 'f7',
-	'nowcommons': 'f8',
-	'imgcopyvio': 'f9',
-	'badfiletype': 'f10',
-	'nopermission': 'f11',
-	'catempty': 'c1',
-	'userreq': 'u1',
-	'nouser': 'u2',
-	'gallery': 'u3',
-	'policy':'t2',
-	't3':'t3',
-	'p1':'p1',
-	'emptyportal': 'p2'
+	'g1': 'g1',
+	'g2': 'g2',
+	'g3': 'g3',
+	'g5': 'g5',
+	'g10': 'g10',
+	'g11': 'g11',
+	'g12': 'g12',
+	'g13': 'g13',
+	'g14': 'g14',
+	'g15': 'g15',
+	'g16': 'g16',
+	'a1': 'a1',
+	'a2': 'a2',
+	'a3': 'a3',
+	'r2': 'r2',
+	'r3': 'r3',
+	'r4': 'r4',
+	'r5': 'r5',
+	'f1': 'f1',
+	'f3': 'f3',
+	'f4': 'f4',
+	'f5': 'f5',
+	'f6': 'f6',
+	'f7': 'f7',
+	'o1': 'o1',
+	'o3': 'o3',
+	'o4': 'o4'
 };
 
 // keep this synched with [[MediaWiki:Deletereason-dropdown]]
 Twinkle.speedy.reasonHash = {
 	'reason': '',
 // General
-	'nonsense': '[[WP:PN|Patent nonsense]], meaningless, or incomprehensible',
-	'test': 'Test page',
-	'vandalism': '[[WP:Vandalism|Vandalism]]',
-	'hoax': 'Blatant [[WP:Do not create hoaxes|hoax]]',
-	'repost': 'Recreation of a page that was [[WP:DEL|deleted]] per a [[WP:XFD|deletion discussion]]',
-	'banned': 'Creation by a [[WP:BLOCK|blocked]] or [[WP:BAN|banned]] user in violation of block or ban',
-	'histmerge': 'Temporary deletion in order to merge page histories',
-	'move': 'Making way for a non-controversial move',
-	'xfd': 'Deleting page per result of [[WP:XfD|deletion discussion]]',
-	'disambig': 'Unnecessary disambiguation page',
-	'movedab': 'Redirect to [[WP:MALPLACED|malplaced disambiguation page]]',
-	'copypaste': '[[WP:CPMV|Copy-and-paste]] page move',
-	'g6': 'Housekeeping and routine (non-controversial) cleanup',
-	'author': 'One author who has requested deletion or blanked the page',
-	'g8': 'Page dependent on a deleted or nonexistent page',
-	'talk': '[[Help:Talk page|Talk page]] of a deleted or nonexistent page',
-	'subpage': '[[WP:Subpages|Subpage]] of a deleted or nonexistent page',
-	'redirnone': '[[Wikipedia:Redirect|redirect]] to a deleted or nonexistent page',
-	'templatecat': 'Populated by deleted or retargeted templates',
-	'attack': '[[WP:ATP|Attack page]] or negative unsourced [[WP:BLP|BLP]]',
-	'spam': 'Unambiguous [[WP:ADS|advertising]] or promotion',
-	'copyvio': 'Unambiguous [[WP:C|copyright infringement]]',
+	'g1': '无实际内容',
+	'g2': '测试页',
+	'g3': '破坏',
+	'g5': '曾经依存废讨论被删除的重建内容',
+	'g10': '作者请求',
+	'g11': '广告或宣传',
+	'g12': '未列明来源或违反[[Wikipedia:生者传记]]的负面内容',
+	'g13': '明显且拙劣的机器翻译',
+	'g14': '超过两周没有翻译的非现代标准汉语页面',
+	'g15': '孤立页面',
+	'g16': '临时页面依然侵权',
 // Articles
-	'nocontext': 'Not enough context to identify article\'s subject',
-	'foreign': 'Article in a foreign language that exists on another project',
-	'nocontent': 'Article that has no meaningful, substantive content',
-	'transwiki': 'Article that has been transwikied to another project',
-	'a7': 'No explanation of the subject\'s significance (real person, animal, organization, or web content)',
-	'person' : 'No explanation of the subject\'s significance (real person)',
-	'web': 'No explanation of the subject\'s significance (web content)',
-	'corp': 'No explanation of the subject\'s significance (organization)',
-	'club': 'No explanation of the subject\'s significance (organization)',
-	'band': 'No explanation of the subject\'s significance (band/musician)',
-	'animal': 'No explanation of the subject\'s significance (individual animal)',
-	'a9': 'Music recording by redlinked artist and no indication of importance or significance',
-	'a10': 'Recently created article that duplicates an existing topic',
-// Images and media
-	'redundantimage': 'File  redundant to another on Wikipedia',
-	'noimage': 'Corrupt or empty file, or a file description page for a file on Commons',
-	'noncom': 'File with improper license',
-	'unksource': 'Lack of licensing information',
-	'unfree': 'Unused non-free media',
-	'norat': 'Non-free file without [[WP:RAT|fair-use rationale]]',
-	'badfairuse': '[[WP:NFCC|Invalid]] fair-use claim',
-	'nowcommons': 'Media file available on Commons',
-	'imgcopyvio': 'File [[WP:COPYVIO|copyright violation]]',
-	'badfiletype': 'Useless media file',
-	'nopermission': 'No evidence of permission',
-// Categories
-	'catempty': 'Empty category',
-// User pages
-	'userreq': 'User request to delete page in own userspace',
-	'nouser': 'Userpage or subpage of a nonexistent user',
-	'gallery': '[[WP:NFC|Non-free]] [[Help:Gallery|gallery]]',
-// Templates
-	'policy': 'Template that unambiguously misrepresents established policy',
-	't3': 'Unused, redundant template',
-// Portals
-	'p1': '[[WP:P|Portal]] page that would be subject to speedy deletion as an article',
-	'emptyportal': '[[WP:P|Portal]] without a substantial topic base',
+	'a1': '非常短而无定义或内容',
+	'a2': '内容只包含参考、链接、模板或/及分类',
+	'a3': '与其他中文维基计划内容相同的文章',
 // Redirects
-	'rediruser': 'Cross-[[WP:NS|namespace]] [[WP:R|redirect]] from mainspace',
-	'redirtypo': 'Recently created, implausible [[WP:R|redirect]]'
+	'r2': '跨名字空间重定向',
+	'r3': '名称错误的重定向',
+	'r4': '重定向破坏',
+	'r5': '指向本身的重定向或循环的重定向',
+// Images and media
+	'f1': '重复的图片',
+	'f3': '[[:Category:未知版权的档案]]',
+	'f4': '[[:Category:來源不明檔案]]',
+	'f5': '已有高分辨率的图片取代',
+	'f6': '孤立而没有被条目使用的非自由版权图片',
+	'f7': '[[:Category:与维基共享资源重复的档案]]',
+// User pages
+	'o1': '用户请求删除自己的用户页或其子页面',
+	'o3': '匿名用户的讨论页',
+// Categories
+	'o4': '空的类别'
+// Templates
+// Portals
 };
 
 Twinkle.speedy.callbacks = {
 	sysop: {
 		main: function( params ) {
-			var thispage = new Wikipedia.page( mw.config.get('wgPageName'), "Deleting page" );
+			var thispage = new Wikipedia.page( mw.config.get('wgPageName'), "删除页面" );
 
 			// delete page
 			var reason;
 			if (params.normalized === 'db') {
-				reason = prompt("Enter the deletion summary to use, which will be entered into the deletion log:", "");
+				reason = prompt("输入删除理由：", "");
 			} else {
 				var presetReason = "[[WP:CSD#" + params.normalized.toUpperCase() + "|" + params.normalized.toUpperCase() + "]]: " + params.reason;
 				if (Twinkle.getPref("promptForSpeedyDeletionSummary").indexOf(params.normalized) !== -1) {
-					reason = prompt("Enter the deletion summary to use, or press OK to accept the automatically generated one.", presetReason);
+					reason = prompt("输入删除理由，或点击确定以接受自动生成的：", presetReason);
 				} else {
 					reason = presetReason;
 				}
 			}
 			if (!reason || !reason.replace(/^\s*/, "").replace(/\s*$/, "")) {
-				Status.error("Asking for reason", "you didn't give one.  I don't know... what with admins and their apathetic antics... I give up...");
+				Status.error("询问理由", "您没有提供理由，取消操作。");
 				return;
 			}
 			thispage.setEditSummary( reason + Twinkle.getPref('deletionSummaryAd') );
@@ -745,44 +528,45 @@ Twinkle.speedy.callbacks = {
 
 			// delete talk page
 			if (params.deleteTalkPage &&
-			    params.normalized !== 'f8' &&
+			    params.normalized !== 'f7' &&
+			    params.normalized !== 'o1' &&
 			    document.getElementById( 'ca-talk' ).className !== 'new') {
-				var talkpage = new Wikipedia.page( Wikipedia.namespaces[ mw.config.get('wgNamespaceNumber') + 1 ] + ':' + mw.config.get('wgTitle'), "Deleting talk page" );
-				talkpage.setEditSummary('[[WP:CSD#G8|G8]]: Talk page of deleted page [[' + mw.config.get('wgPageName') + "]]. " + Twinkle.getPref('deletionSummaryAd'));
+				var talkpage = new Wikipedia.page( Wikipedia.namespaces[ mw.config.get('wgNamespaceNumber') + 1 ] + ':' + mw.config.get('wgTitle'), "删除讨论页" );
+				talkpage.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 已删除页面 [[' + mw.config.get('wgPageName') + "]] 的讨论页" + Twinkle.getPref('deletionSummaryAd'));
 				talkpage.deletePage();
 			}
 
 			// promote Unlink tool
 			var $link, $bigtext;
-			if( mw.config.get('wgNamespaceNumber') === 6 && params.normalized !== 'f8' ) {
+			if( mw.config.get('wgNamespaceNumber') === 6 && params.normalized !== 'f7' ) {
 				$link = $('<a/>', {
 					'href': '#',
-					'text': 'click here to go to the Unlink tool',
+					'text': '点击这里前往反链工具',
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' },
 					'click': function(){
 						Wikipedia.actionCompleted.redirect = null;
 						Twinkle.speedy.dialog.close();
-						Twinkle.unlink.callback("Removing usages of and/or links to deleted file " + mw.config.get('wgPageName'));
+						Twinkle.unlink.callback("取消对已删除文件 " + mw.config.get('wgPageName') + " 的使用");
 					}
 				});
 				$bigtext = $('<span/>', {
-					'text': 'To orphan backlinks and remove instances of file usage',
+					'text': '取消对已删除文件的使用',
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
 				});
 				Status.info($bigtext[0], $link[0]);
-			} else if (params.normalized !== 'f8') {
+			} else if (params.normalized !== 'f7') {
 				$link = $('<a/>', {
 					'href': '#',
-					'text': 'click here to go to the Unlink tool',
+					'text': '点击这里前往反链工具',
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' },
 					'click': function(){
 						Wikipedia.actionCompleted.redirect = null;
 						Twinkle.speedy.dialog.close();
-						Twinkle.unlink.callback("Removing links to deleted page " + mw.config.get('wgPageName'));
+						Twinkle.unlink.callback("取消对已删除页面 " + mw.config.get('wgPageName') + " 的链接");
 					}
 				});
 				$bigtext = $('<span/>', {
-					'text': 'To orphan backlinks',
+					'text': '取消对已删除页面的链接',
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
 				});
 				Status.info($bigtext[0], $link[0]);
@@ -804,8 +588,8 @@ Twinkle.speedy.callbacks = {
 					'bltitle': mw.config.get('wgPageName'),
 					'bllimit': 5000  // 500 is max for normal users, 5000 for bots and sysops
 				};
-				var wikipedia_api = new Wikipedia.api( 'getting list of redirects...', query, Twinkle.speedy.callbacks.sysop.deleteRedirectsMain,
-					new Status( 'Deleting redirects' ) );
+				var wikipedia_api = new Wikipedia.api( '取得重定向列表…', query, Twinkle.speedy.callbacks.sysop.deleteRedirectsMain,
+					new Status( '删除重定向' ) );
 				wikipedia_api.params = params;
 				wikipedia_api.post();
 			}
@@ -813,7 +597,7 @@ Twinkle.speedy.callbacks = {
 		openUserTalkPage: function( pageobj ) {
 			pageobj.getStatusElement().unlink();  // don't need it anymore
 			var user = pageobj.getCreator();
-			var statusIndicator = new Status('Opening user talk page edit form for ' + user, 'opening...');
+			var statusIndicator = new Status('打开用户 ' + user + ' 的对话页', '正在打开…');
 
 			var query = {
 				'title': 'User talk:' + user,
@@ -835,7 +619,7 @@ Twinkle.speedy.callbacks = {
 				break;
 			}
 
-			statusIndicator.info( 'complete' );
+			statusIndicator.info( '完成' );
 		},
 		deleteRedirectsMain: function( apiobj ) {
 			var xmlDoc = apiobj.getXML();
@@ -871,8 +655,8 @@ Twinkle.speedy.callbacks = {
 
 			$snapshot.each(function(key, value) {
 				var title = $(value).attr('title');
-				var page = new Wikipedia.page(title, 'Deleting redirect "' + title + '"');
-				page.setEditSummary('[[WP:CSD#G8|G8]]: Redirect to deleted page [[' + mw.config.get('wgPageName') + "]]." + Twinkle.getPref('deletionSummaryAd'));
+				var page = new Wikipedia.page(title, '删除重定向 "' + title + '"');
+				page.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 重定向到已删除页面 [[' + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('deletionSummaryAd'));
 				page.deletePage(onsuccess);
 			});
 		}
@@ -887,31 +671,31 @@ Twinkle.speedy.callbacks = {
 			var statelem = pageobj.getStatusElement();
 
 			if (!pageobj.exists()) {
-				statelem.error( "It seems that the page doesn't exist; perhaps it has already been deleted" );
+				statelem.error( "页面不存在，可能已被删除" );
 				return;
 			}
 
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
 
-			statelem.status( 'Checking for tags on the page...' );
+			statelem.status( '检查页面已有标记…' );
 
 			// check for existing deletion tags
-			var tag = /(?:\{\{\s*(db|delete|db-.*?)(?:\s*\||\s*\}\}))/.exec( text );
+			var tag = /(?:\{\{\s*(db|d|delete|db-.*?)(?:\s*\||\s*\}\}))/i.exec( text );
 			if( tag ) {
-				statelem.error( [ htmlNode( 'strong', tag[1] ) , " is already placed on the page." ] );
+				statelem.error( [ htmlNode( 'strong', tag[1] ) , " 已被置于页面中。" ] );
 				return;
 			}
 
 			var xfd = /(?:\{\{([rsaiftcm]fd|md1)[^{}]*?\}\})/i.exec( text );
-			if( xfd && !confirm( "The deletion-related template {{" + xfd[1] + "}} was found on the page. Do you still want to add a CSD template?" ) ) {
+			if( xfd && !confirm( "删除相关模板 {{" + xfd[1] + "}} 已被置于页面中，您是否仍想添加一个快速删除模板？" ) ) {
 				return;
 			}
 
 			var code, parameters, i;
 			if (params.normalized === 'multiple')
 			{
-				code = "{{db-multiple";
+				code = "{{delete";
 				for (i in Twinkle.speedy.dbmultipleCriteria) {
 					if (typeof Twinkle.speedy.dbmultipleCriteria[i] === 'string') {
 						code += "|" + Twinkle.speedy.dbmultipleCriteria[i].toUpperCase();
@@ -919,7 +703,7 @@ Twinkle.speedy.callbacks = {
 				}
 				for (i in Twinkle.speedy.dbmultipleParameters) {
 					if (typeof Twinkle.speedy.dbmultipleParameters[i] === 'string') {
-						code += "|" + i + "=" + Twinkle.speedy.dbmultipleParameters[i];
+						code += "|" + Twinkle.speedy.dbmultipleParameters[i];
 					}
 				}
 				code += "}}";
@@ -931,10 +715,10 @@ Twinkle.speedy.callbacks = {
 				if (!parameters) {
 					return;  // the user aborted
 				}
-				code = "{{db-" + params.value;
+				code = "{{delete|" + params.value;
 				for (i in parameters) {
-					if (typeof parameters[i] === 'string') {
-						code += "|" + i + "=" + parameters[i];
+					if (typeof parameters[i] === 'string' && parameters[i] !== 'reason') {
+						code += "|" + parameters[i];
 					}
 				}
 				code += "}}";
@@ -951,7 +735,7 @@ Twinkle.speedy.callbacks = {
 			if (params.usertalk) {
 				var callback = function(pageobj) {
 					var initialContrib = pageobj.getCreator();
-					var usertalkpage = new Wikipedia.page('User talk:' + initialContrib, "Notifying initial contributor (" + initialContrib + ")");
+					var usertalkpage = new Wikipedia.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
 					var notifytext;
 
 					// specialcase "db" and "db-multiple"
@@ -959,24 +743,20 @@ Twinkle.speedy.callbacks = {
 					switch (params.normalized)
 					{
 						case 'db':
-							notifytext = "\n\n{{subst:db-reason-notice|1=" + mw.config.get('wgPageName');
-							break;
 						case 'multiple':
-							notifytext = "\n\n{{subst:db-notice-multiple|1=" + mw.config.get('wgPageName');
-							break;
 						default:
-							notifytext = "\n\n{{subst:db-csd-notice-custom|1=" + mw.config.get('wgPageName') + "|2=" + params.value;
+							notifytext = "\n\n{{subst:db-notice|target=" + mw.config.get('wgPageName');
 							break;
 					}
-					for (var i in params.utparams) {
+					/*for (var i in params.utparams) {
 						if (typeof params.utparams[i] === 'string') {
 							notifytext += "|" + i + "=" + params.utparams[i];
 						}
-					}
-					notifytext += (params.welcomeuser ? "" : "|nowelcome=yes") + "}} ~~~~";
+					}*/
+					notifytext += (params.welcomeuser ? "" : "|nowelcome=yes") + "}}--~~~~";
 
 					usertalkpage.setAppendText(notifytext);
-					usertalkpage.setEditSummary("Notification: speedy deletion nomination of [[" + mw.config.get('wgPageName') + "]]." + Twinkle.getPref('summaryAd'));
+					usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]快速删除提名。" + Twinkle.getPref('summaryAd'));
 					usertalkpage.setCreateOption('recreate');
 					usertalkpage.setFollowRedirect(true);
 					usertalkpage.append();
@@ -1000,38 +780,31 @@ Twinkle.speedy.callbacks = {
 			}
 
 			// Remove tags that become superfluous with this action
-			text = text.replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+			//text = text.replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
 
 			// Generate edit summary for edit
 			var editsummary;
 			switch (params.normalized)
 			{
 				case 'db':
-					editsummary = 'Requesting [[WP:CSD|speedy deletion]] with rationale \"' + parameters["1"] + '\".';
+					editsummary = '请求[[WP:CSD|快速删除]]：' + parameters["1"];
 					break;
 				case 'multiple':
-					editsummary = 'Requesting speedy deletion (';
+					editsummary = '请求快速删除（';
 					for (i in Twinkle.speedy.dbmultipleCriteria) {
 						if (typeof Twinkle.speedy.dbmultipleCriteria[i] === 'string') {
-							editsummary += '[[WP:CSD#' + Twinkle.speedy.dbmultipleCriteria[i].toUpperCase() + '|CSD ' + Twinkle.speedy.dbmultipleCriteria[i].toUpperCase() + ']], ';
+							editsummary += '[[WP:CSD#' + Twinkle.speedy.dbmultipleCriteria[i].toUpperCase() + '|CSD ' + Twinkle.speedy.dbmultipleCriteria[i].toUpperCase() + ']]、';
 						}
 					}
-					editsummary = editsummary.substr(0, editsummary.length - 2); // remove trailing comma
-					editsummary += ').';
+					editsummary = editsummary.substr(0, editsummary.length - 1); // remove trailing comma
+					editsummary += '）。';
 					break;
-				case 'g6':
-					if (params.value === 'histmerge') {
-						editsummary = "Requesting history merge with [[" + parameters["1"] + "]] ([[WP:CSD#G6|CSD G6]]).";
-						break;
-					}
-					/* falls through */
 				default:
-					editsummary = "Requesting speedy deletion ([[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]]).";
+					editsummary = "请求快速删除（[[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]]）。";
 					break;
 			}
 
-			pageobj.setPageText(code + ((params.normalized === 'g10' || Twinkle.speedy.dbmultipleCriteria.indexOf('g10') !== -1) ?
-					'' : ("\n" + text) )); // cause attack pages to be blanked
+			pageobj.setPageText(code + "\n" + text );
 			pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
 			pageobj.setWatchlist(params.watch);
 			pageobj.setCreateOption('nocreate');
@@ -1044,7 +817,7 @@ Twinkle.speedy.callbacks = {
 		//   for CSD: params.value
 		//   for DI: params.fromDI = true, params.type
 		addToLog: function(params, initialContrib) {
-			var wikipedia_page = new Wikipedia.page("User:" + mw.config.get('wgUserName') + "/" + Twinkle.getPref('speedyLogPageName'), "Adding entry to userspace log");
+			var wikipedia_page = new Wikipedia.page("User:" + mw.config.get('wgUserName') + "/" + Twinkle.getPref('speedyLogPageName'), "添加项目到用户日志");
 			params.logInitialContrib = initialContrib;
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.speedy.callbacks.user.saveLog);
@@ -1057,53 +830,53 @@ Twinkle.speedy.callbacks = {
 			// add blurb if log page doesn't exist
 			if (!pageobj.exists()) {
 				text =
-					"This is a log of all [[WP:CSD|speedy deletion]] nominations made by this user using [[WP:TW|Twinkle]]'s CSD module.\n\n" +
-					"If you no longer wish to keep this log, you can turn it off using the [[Wikipedia:Twinkle/Preferences|preferences panel]], and " +
-					"nominate this page for speedy deletion under [[WP:CSD#U1|CSD U1]].\n";
+					"这是该用户使用[[WP:TW|Twinkle]]的速删模块做出的[[WP:CSD|快速删除]]提名列表。\n\n" +
+					"如果您不再想保留此日志，请在[[Wikipedia:Twinkle/属性|属性]]中关掉，并" +
+					"使用[[WP:CSD#O1|CSD O1]]提交快速删除。\n";
 				if (userIsInGroup("sysop")) {
-					text += "\nThis log does not track outright speedy deletions made using Twinkle.\n";
+					text += "\n此日志并不记录用Twinkle直接执行的删除。\n";
 				}
 			}
 
 			// create monthly header
 			var date = new Date();
-			var headerRe = new RegExp("^==+\\s*" + date.getUTCMonthName() + "\\s+" + date.getUTCFullYear() + "\\s*==+", "m");
+			var headerRe = new RegExp("^==+\\s*" + date.getUTCFullYear() + "\\s*年\\s*" + date.getUTCMonthName() + "\\s*月\\s*==+", "m");
 			if (!headerRe.exec(text)) {
-				text += "\n\n=== " + date.getUTCMonthName() + " " + date.getUTCFullYear() + " ===";
+				text += "\n\n=== " + date.getUTCFullYear() + "年" + date.getUTCMonthName() + "月 ===";
 			}
 
 			text += "\n# [[:" + mw.config.get('wgPageName') + "]]: ";
 			if (params.fromDI) {
-				text += "DI [[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]] (" + params.type + ")";
+				text += "图版[[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]]（" + params.type + "）";
 			} else {
 				switch (params.normalized)
 				{
 					case 'db':
-						text += "{{tl|db-reason}}";
+						text += "自定义理由";
 						break;
 					case 'multiple':
-						text += "multiple criteria (";
+						text += "多个理由（";
 						for (var i in Twinkle.speedy.dbmultipleCriteria) {
 							if (typeof Twinkle.speedy.dbmultipleCriteria[i] === 'string') {
-								text += '[[WP:CSD#' + Twinkle.speedy.dbmultipleCriteria[i].toUpperCase() + '|' + Twinkle.speedy.dbmultipleCriteria[i].toUpperCase() + ']], ';
+								text += '[[WP:CSD#' + Twinkle.speedy.dbmultipleCriteria[i].toUpperCase() + '|' + Twinkle.speedy.dbmultipleCriteria[i].toUpperCase() + ']]、';
 							}
 						}
-						text = text.substr(0, text.length - 2);  // remove trailing comma
-						text += ')';
+						text = text.substr(0, text.length - 1);  // remove trailing comma
+						text += '）';
 						break;
 					default:
-						text += "[[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]] ({{tl|db-" + params.value + "}})";
+						text += "[[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]]";
 						break;
 				}
 			}
 
 			if (params.logInitialContrib) {
-				text += "; notified {{user|" + params.logInitialContrib + "}}";
+				text += "；通知{{user|" + params.logInitialContrib + "}}";
 			}
 			text += " ~~~~~\n";
 
 			pageobj.setPageText(text);
-			pageobj.setEditSummary("Logging speedy deletion nomination of [[" + mw.config.get('wgPageName') + "]]." + Twinkle.getPref('summaryAd'));
+			pageobj.setEditSummary("记录对[[" + mw.config.get('wgPageName') + "]]的快速删除提名。" + Twinkle.getPref('summaryAd'));
 			pageobj.setCreateOption("recreate");
 			pageobj.save();
 		}
@@ -1116,32 +889,20 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(value, normal
 	var parameters = [];
 	switch( normalized ) {
 		case 'db':
-			var dbrationale = prompt('Please enter a mandatory rationale.   \n\"This page qualifies for speedy deletion because:\"', "");
+			var dbrationale = prompt('这个页面应当被快速删除，因为：', "");
 			if (!dbrationale || !dbrationale.replace(/^\s*/, "").replace(/\s*$/, ""))
 			{
-				statelem.error( 'You must specify a rationale.  Aborted by user.' );
+				statelem.error( '您必须提供理由，用户取消操作。' );
 				return null;
 			}
 			parameters["1"] = dbrationale;
 			break;
-		case 'u1':
-			if (mw.config.get('wgNamespaceNumber') === 3 && !((/\//).test(mw.config.get('wgTitle'))))
-			{
-				var u1rationale = prompt('Please provide a mandatory rationale to explain why this user talk page should be deleted:', "");
-				if (!u1rationale || !u1rationale.replace(/^\s*/, "").replace(/\s*$/, ""))
-				{
-					statelem.error( 'You must specify a rationale.  Aborted by user.' );
-					return null;
-				}
-				parameters.rationale = u1rationale;
-			}
-			break;
-		case 'f8':
+		case 'f7':
 			var pagenamespaces = mw.config.get('wgPageName').replace( '_', ' ' );
-			var filename = prompt( 'Please enter the name of the file on Commons:', pagenamespaces );
+			var filename = prompt( '请输入维基共享上的文件名：', pagenamespaces );
 			if (filename === null)
 			{
-				statelem.error( 'Aborted by user.' );
+				statelem.error( '用户取消操作。' );
 				return null;
 			}
 			if (filename !== '' && filename !== pagenamespaces)
@@ -1152,138 +913,19 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(value, normal
 				}
 				else
 				{
-					statelem.error("The File: prefix was missing from the image filename.  Aborted.");
+					statelem.error("缺少File:前缀，取消操作。");
 					return null;
 				}
 			}
-			parameters.date = "~~~~~";
-			break;
-		case 'g6':
-			switch( value ) {
-				case 'histmerge':
-					var mergetitle = prompt( 'Please enter the title to merge into:', "" );
-					if (mergetitle === null)
-					{
-						statelem.error( 'Aborted by user.' );
-						return null;
-					}
-					parameters["1"] = mergetitle;
-					break;
-				case 'move':
-					var title = prompt( 'Please enter the title of the page to be moved here:', "" );
-					if (title === null)
-					{
-						statelem.error( 'Aborted by user.' );
-						return null;
-					}
-					var reason = prompt( 'Please enter the reason for the page move:', "" );
-					if (reason === null)
-					{
-						statelem.error( 'Aborted by user.' );
-						return null;
-					}
-					parameters["1"] = title;
-					parameters["2"] = reason;
-					break;
-				case 'copypaste':
-					var copytitle = prompt( 'Please enter the title of the original page that was copy-pasted here:', "" );
-					if (copytitle === null)
-					{
-						statelem.error( 'Aborted by user.' );
-						return null;
-					}
-					parameters["1"] = copytitle;
-					break;
-				case 'g6':
-					var g6rationale = prompt( 'Please provide an optional rationale (leave empty to skip):', "" );
-					if (g6rationale === null)
-					{
-						statelem.error( 'Aborted by user.' );
-						return null;
-					}
-					if (g6rationale !== '')
-					{
-						parameters.rationale = g6rationale;
-					}
-					break;
-				default:
-					break;
-			}
-			break;
-		case 'g7':
-			if (Twinkle.getPref('speedyPromptOnG7'))
-			{
-				var g7rationale = prompt('Please provide an optional rationale (perhaps linking to where the author requested this deletion - leave empty to skip):', "");
-				if (g7rationale === null)
-				{
-					statelem.error( 'Aborted by user.' );
-					return null;
-				}
-				if (g7rationale !== '')
-				{
-					parameters.rationale = g7rationale;
-				}
-			}
-			break;
-		case 'f9':
-		case 'g12':
-			var url = prompt( 'Please enter the URL if available, including the "http://":', "" );
-			if (url === null)
-			{
-				statelem.error( 'Aborted by user.' );
-				return null;
-			}
-			parameters.url = url;
-			break;
-		case 'a2':
-			var source = prompt('Enter an interwiki link to the article on the foreign-language wiki (for example, "fr:Bonjour"):', "");
-			if (source === null)
-			{
-				statelem.error('Aborted by user.');
-				return null;
-			}
-			parameters.source = source;
-			break;
-		case 'a10':
-			var duptitle = prompt( 'Enter the article name that is duplicated:', "" );
-			if (duptitle === null)
-			{
-				statelem.error( 'Aborted by user.' );
-				return null;
-			}
-			parameters.article = duptitle;
 			break;
 		case 'f1':
-			var img = prompt( 'Enter the file this is redundant to, excluding the "Image:" or "File:" prefix:', "" );
+			var img = prompt( '输入与此文件相同的文件名（不含“File:”前缀）：', "" );
 			if (img === null)
 			{
-				statelem.error( 'Aborted by user.' );
+				statelem.error( '用户取消操作。' );
 				return null;
 			}
 			parameters.filename = img;
-			break;
-		case 't3':
-			var template = prompt( 'Enter the template this is redundant to, excluding the "Template:" prefix:', "" );
-			if (template === null)
-			{
-				statelem.error( 'Aborted by user.' );
-				return null;
-			}
-			parameters["1"] = "~~~~~";
-			parameters["2"] = template;
-			break;
-		case 'g10':
-			parameters.blanked = 'yes';
-			// it is actually blanked elsewhere in code, but setting the flag here
-			break;
-		case 'p1':
-			var criterion = prompt( 'Enter the code of the article CSD criterion which this portal falls under:   \n\n(A1 = no context, A3 = no content, A7 = non-notable, A10 = duplicate)', "" );
-			if (!criterion || !criterion.replace(/^\s*/, "").replace(/\s*$/, ""))
-			{
-				statelem.error( 'You must enter a criterion.  Aborted by user.' );
-				return null;
-			}
-			parameters["1"] = criterion;
 			break;
 		default:
 			break;
@@ -1297,13 +939,6 @@ Twinkle.speedy.getUserTalkParameters = function twinklespeedyGetUserTalkParamete
 	var utparams = [];
 	switch (normalized)
 	{
-		case 'db':
-			utparams["2"] = parameters["1"];
-			break;
-		case 'a10':
-			utparams.key1 = "article";
-			utparams.value1 = parameters.article;
-			break;
 		default:
 			break;
 	}
@@ -1363,8 +998,8 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 	var normalized = Twinkle.speedy.normalizeHash[ value ];
 
 	// for sysops only
-	if (['f4', 'f5', 'f6', 'f11'].indexOf(normalized) !== -1) {
-		alert("Tagging with F4, F5, F6, and F11 is not possible using the CSD module.  Try using DI instead, or unchecking \"Tag page only\" if you meant to delete the page.");
+	if (['f3', 'f4'].indexOf(normalized) !== -1) {
+		alert("您不能使用此工具标记CSD F3、F4，请使用“图版”工具，或取消勾选“仅标记”。");
 		return;
 	}
 
@@ -1458,9 +1093,9 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 	Status.init( e.target.form );
 
 	Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
-	Wikipedia.actionCompleted.notice = "Tagging complete";
+	Wikipedia.actionCompleted.notice = "标记完成";
 
-	var wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'), "Tagging page");
+	var wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'), "标记页面");
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.speedy.callbacks.user.main);
 };
@@ -1475,7 +1110,7 @@ Twinkle.speedy.callback.doMultiple = function twinklespeedyCallbackDoMultiple(e)
 	{
 		if (Twinkle.speedy.dbmultipleCriteria.indexOf(normalized) !== -1)
 		{
-			alert('You already selected that criterion. Please choose another.');
+			alert('您已经选择了此理由，请换一个。');
 		}
 		else
 		{

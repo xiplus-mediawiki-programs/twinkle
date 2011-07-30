@@ -21,7 +21,7 @@ Twinkle.talkback.callback = function friendlytalkbackCallback( uid ) {
 	}
 
 	var Window = new SimpleWindow( 600, 350 );
-	Window.setTitle( "Talkback" );
+	Window.setTitle( "回复通告" );
 	Window.setScriptName( "Twinkle" );
 	Window.addFooterLink( "关于{{talkback}}", "Template:Talkback" );
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#talkback" );
