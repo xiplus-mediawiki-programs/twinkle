@@ -10,44 +10,44 @@
 Twinkle.talkback = function friendlytalkback() {
 	if( mw.config.get('wgNamespaceNumber') === 3 ) {
 		var username = mw.config.get('wgTitle').split( '/' )[0].replace( /\"/, "\\\""); // only first part before any slashes
-		$(twAddPortletLink("#", "TB", "friendly-talkback", "Easy talkback", "")).click(function() { Twinkle.talkback.callback(username); });
+		$(twAddPortletLink("#", "回复", "friendly-talkback", "回复通告", "")).click(function() { Twinkle.talkback.callback(username); });
 	}
 };
 
 Twinkle.talkback.callback = function friendlytalkbackCallback( uid ) {
 	if( uid === mw.config.get('wgUserName') ){
-		alert( 'Is it really so bad that you\'re talking back to yourself?' );
+		alert( '请不要回复自己。' );
 		return;
 	}
 
 	var Window = new SimpleWindow( 600, 350 );
 	Window.setTitle( "Talkback" );
 	Window.setScriptName( "Twinkle" );
-	Window.addFooterLink( "About {{talkback}}", "Template:Talkback" );
-	Window.addFooterLink( "Twinkle help", "WP:TW/DOC#talkback" );
+	Window.addFooterLink( "关于{{talkback}}", "Template:Talkback" );
+	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#talkback" );
 
 	var form = new QuickForm( Twinkle.talkback.callback.evaluate );
 
 	form.append( { type: 'radio', name: 'tbtarget',
 				list: [ {
-						label: 'My talk page',
+						label: '我的对话页',
 						value: 'mytalk',
 						checked: 'true' },
 					{
-						label: 'Other user talk page',
+						label: '其他用户的对话页',
 						value: 'usertalk' },
+					/*{
+						label: "管理员通告板",
+						value: 'an' },*/
 					{
-						label: "Administrators' noticeboard",
-						value: 'an' },
-					{
-						label: 'Other page',
+						label: '其它页面',
 						value: 'other' } ],
 				event: Twinkle.talkback.callback.change_target
 			} );
 
 	form.append( {
 			type: 'field',
-			label: 'Work area',
+			label: '工作区',
 			name: 'work_area'
 		} );
 
@@ -91,7 +91,7 @@ Twinkle.talkback.callback.change_target = function friendlytagCallbackChangeTarg
 	}
 	var work_area = new QuickForm.element( { 
 			type: 'field',
-			label: 'Talkback information',
+			label: '回复通告信息',
 			name: 'work_area'
 		} );
 
@@ -102,8 +102,8 @@ Twinkle.talkback.callback.change_target = function friendlytagCallbackChangeTarg
 			work_area.append( { 
 					type:'input',
 					name:'section',
-					label:'Linked section (optional)',
-					tooltip:'The section heading on your talk page where you left a message. Leave empty for no section to be linked.',
+					label:'小节（可选）',
+					tooltip:'您对话页中留言的小节标题，留空以不加入链接。',
 					value: Twinkle.talkback.prev_section
 				} );
 			break;
@@ -111,65 +111,65 @@ Twinkle.talkback.callback.change_target = function friendlytagCallbackChangeTarg
 			work_area.append( { 
 					type:'input',
 					name:'page',
-					label:'User',
-					tooltip:'The username of the user on whose talk page you left a message.',
+					label:'用户',
+					tooltip:'您在其对话页上留言的用户的名字。',
 					value: Twinkle.talkback.prev_page
 				} );
 			
 			work_area.append( { 
 					type:'input',
 					name:'section',
-					label:'Linked section (optional)',
-					tooltip:'The section heading on the page where you left a message. Leave empty for no section to be linked.',
+					label:'小节（可选）',
+					tooltip:'您留言的小节标题，留空以不加入链接。',
 					value: Twinkle.talkback.prev_section
 				} );
 			break;
-		case 'an':
+		/*case 'an':
 			var noticeboard = work_area.append( {
 					type: 'select',
 					name: 'noticeboard',
-					label: 'Noticeboard:'
+					label: '通告板：'
 				} );
 			noticeboard.append( {
 					type: 'option',
-					label: "WP:AN (Administrators' noticeboard)",
-					value: "Wikipedia:Administrators' noticeboard"
+					label: "WP:AN（管理员通告板）",
+					value: "Wikipedia:管理员通告板"
 				} );
 			noticeboard.append( {
 					type: 'option',
-					label: 'WP:ANI (Administrators\' noticeboard/Incidents)',
+					label: 'WP:ANI（Wikipedia:管理员通告板/界面的修改）',
 					selected: true,
-					value: "Wikipedia:Administrators' noticeboard/Incidents"
+					value: "Wikipedia:管理员通告板/界面的修改"
 				} );
 			work_area.append( {
 					type:'input',
 					name:'section',
-					label:'Linked thread',
-					tooltip:'The heading of the relevant AN or ANI thread.',
+					label:'小节',
+					tooltip:'AN或ANI中相关的小节。',
 					value: Twinkle.talkback.prev_section
 				} );
-			break;
+			break;*/
 		case 'other':
 			work_area.append( { 
 					type:'input',
 					name:'page',
-					label:'Full page name',
-					tooltip:'The full page name where you left the message.  For example: "Wikipedia talk:Friendly".',
+					label:'完整页面名',
+					tooltip:'您留下信息的完整页面名，如“Wikipedia talk:Friendly”。',
 					value: Twinkle.talkback.prev_page
 				} );
 			
 			work_area.append( { 
 					type:'input',
 					name:'section',
-					label:'Linked section (optional)',
-					tooltip:'The section heading on the page where you left a message. Leave empty for no section to be linked.',
+					label:'小节（可选）',
+					tooltip:'您留言的小节标题，留空以不加入链接。',
 					value: Twinkle.talkback.prev_section
 				} );
 			break;
 	}
 
 	if (value !== "an") {
-		work_area.append( { type:'textarea', label:'Additional message (optional):', name:'message', tooltip:'An additional message that you would like to leave below the talkback template.  Your signature will be added to the end of the message if you leave one.' } );
+		work_area.append( { type:'textarea', label:'附加信息（可选）：', name:'message', tooltip:'一段将会出现在模板下的附加信息，您的签名将会被自动加入。' } );
 	}
 
 	work_area = work_area.render();
@@ -186,18 +186,18 @@ Twinkle.talkback.callback.evaluate = function friendlytalkbackCallbackEvaluate(e
 		
 		if( tbtarget === 'usertalk' ) {
 			if( !page ) {
-				alert( 'You must specify the username of the user whose talk page you left a message on.' );
+				alert( '您必须指定用户名。' );
 				return;
 			}
 		} else {
 			if( !page ) {
-				alert( 'You must specify the full page name when your message is not on a user talk page.' );
+				alert( '您必须指定页面名。' );
 				return;
 			}
 		}
-	} else if (tbtarget === "an") {
+	} /*else if (tbtarget === "an") {
 		page = e.target.noticeboard.value;
-	}
+	}*/
 
 	var message = e.target.message.value;
 
@@ -205,18 +205,18 @@ Twinkle.talkback.callback.evaluate = function friendlytalkbackCallbackEvaluate(e
 	Status.init( e.target );
 
 	Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
-	Wikipedia.actionCompleted.notice = "Talkback complete; reloading talk page in a few seconds";
+	Wikipedia.actionCompleted.notice = "回复通告完成，将在几秒后刷新";
 
-	var talkpage = new Wikipedia.page(mw.config.get('wgPageName'), "Adding talkback");
+	var talkpage = new Wikipedia.page(mw.config.get('wgPageName'), "添加回复通告");
 	var tbPageName = (tbtarget === 'mytalk') ? mw.config.get('wgUserName') : page;
 
 	var text;
-	if ( tbtarget === "an" ) {
+	/*if ( tbtarget === "an" ) {
 		text = "\n== " + Twinkle.getFriendlyPref('adminNoticeHeading') + " ==\n{{subst:ANI-notice|thread=";
 		text += section + "|noticeboard=" + tbPageName + "}}~~~~";
 
 		talkpage.setEditSummary("Notice of AN/ANI discussion" + Twinkle.getPref('summaryAd'));
-	} else {
+	} else {*/
 		//clean talkback heading: strip section header markers, were erroneously suggested in the documentation
 		text = '\n==' + Twinkle.getFriendlyPref('talkbackHeading').replace(/^\s*=+\s*(.*?)\s*=+$\s*/, "$1") + '==\n{{talkback|';
 		text += tbPageName;
@@ -228,14 +228,14 @@ Twinkle.talkback.callback.evaluate = function friendlytalkbackCallbackEvaluate(e
 		text += '|ts=~~~~~}}';
 
 		if( message ) {
-			text += '\n' + message + '  ~~~~';
+			text += '\n' + message + '--~~~~';
 		} else if( Twinkle.getFriendlyPref('insertTalkbackSignature') ) {
 			text += '\n~~~~';
 		}
 
-		talkpage.setEditSummary("Talkback ([[" + (tbtarget === 'other' ? '' : 'User talk:') + tbPageName +
-			(section ? ('#' + section) : '') + "]])" + Twinkle.getPref('summaryAd'));
-	}
+		talkpage.setEditSummary("回复通告（[[" + (tbtarget === 'other' ? '' : 'User talk:') + tbPageName +
+			(section ? ('#' + section) : '') + "]]）" + Twinkle.getPref('summaryAd'));
+	/*}*/
 
 	talkpage.setAppendText(text);
 	talkpage.setCreateOption('recreate');
