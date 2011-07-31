@@ -30,15 +30,15 @@ Twinkle.unlink.getChecked2 = function twinkleunlinkGetChecked2( nodelist ) {
 // the parameter is used when invoking unlink from admin speedy
 Twinkle.unlink.callback = function(presetReason) {
 	var Window = new SimpleWindow( 800, 400 );
-	Window.setTitle( "Unlink backlinks" );
+	Window.setTitle( "取消链入" );
 	Window.setScriptName( "Twinkle" );
-	Window.addFooterLink( "Twinkle help", "WP:TW/DOC#unlink" );
+	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#unlink" );
 
 	var form = new QuickForm( Twinkle.unlink.callback.evaluate );
 	form.append( {
 		type: 'textarea',
 		name: 'reason',
-		label: 'Reason: ',
+		label: '理由：',
 		value: (presetReason ? presetReason : '')
 	} );
 
@@ -63,14 +63,14 @@ Twinkle.unlink.callback = function(presetReason) {
 			'blnamespace': Twinkle.getPref('unlinkNamespaces') // Main namespace and portal namespace only, keep on talk pages.
 		};
 	}
-	var wikipedia_api = new Wikipedia.api( 'Grabbing backlinks', query, Twinkle.unlink.callbacks.display.backlinks );
+	var wikipedia_api = new Wikipedia.api( '抓取链入', query, Twinkle.unlink.callbacks.display.backlinks );
 	wikipedia_api.params = { form: form, Window: Window, image: mw.config.get('wgNamespaceNumber') === Namespace.IMAGE };
 	wikipedia_api.post();
 
 	var root = document.createElement( 'div' );
 	root.style.padding = '15px';  // just so it doesn't look broken
 	Status.init( root );
-	wikipedia_api.statelem.status( "loading..." );
+	wikipedia_api.statelem.status( "载入中…" );
 	Window.setContent( root );
 	Window.display();
 };
@@ -82,13 +82,13 @@ Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event)
 	Twinkle.unlink.imageusagedone = 0;
 
 	function processunlink(pages, imageusage) {
-		var statusIndicator = new Status((imageusage ? 'Unlinking instances of file usage' : 'Unlinking backlinks'), '0%');
+		var statusIndicator = new Status((imageusage ? '取消文件使用' : '取消链入'), '0%');
 		var total = pages.length;  // removing doubling of this number - no apparent reason for it
 
 		Wikipedia.addCheckpoint();
 
 		if( !pages.length ) {
-			statusIndicator.info( '100% (completed)' );
+			statusIndicator.info( '100%（完成）' );
 			Wikipedia.removeCheckpoint();
 			return;
 		}
@@ -98,7 +98,7 @@ Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event)
 		for (var i = 0; i < pages.length; ++i)
 		{
 			var myparams = clone(params);
-			var articlepage = new Wikipedia.page(pages[i], 'Unlinking in article "' + pages[i] + '"');
+			var articlepage = new Wikipedia.page(pages[i], '在条目：“' + pages[i] + '”中');
 			articlepage.setCallbackParameters(myparams);
 			articlepage.load(imageusage ? Twinkle.unlink.callbacks.unlinkImageInstances : Twinkle.unlink.callbacks.unlinkBacklinks);
 		}
@@ -144,24 +144,24 @@ Twinkle.unlink.callbacks = {
 				}
 				if (!list.length)
 				{
-					apiobj.params.form.append( { type: 'div', label: 'No instances of file usage found.' } );
+					apiobj.params.form.append( { type: 'div', label: '未找到文件使用。' } );
 				}
 				else
 				{
-					apiobj.params.form.append( { type:'header', label: 'File usage' } );
+					apiobj.params.form.append( { type:'header', label: '文件使用' } );
 					namespaces = [];
 					$.each(Twinkle.getPref('unlinkNamespaces'), function(k, v) {
 						namespaces.push(Wikipedia.namespacesFriendly[v]);
 					});
 					apiobj.params.form.append( {
 						type: 'div',
-						label: "Selected namespaces: " + namespaces.join(', '),
-						tooltip: "You can change this with your Twinkle preferences, at [[WP:TWPREFS]]"
+						label: "已选择的名字空间：" + namespaces.join(', '),
+						tooltip: "您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]"
 					});
 					if ($(xmlDoc).find('query-continue').length) {
 						apiobj.params.form.append( {
 							type: 'div',
-							label: "First " + list.length.toString() + " file usages shown."
+							label: "显示头 " + list.length.toString() + " 个文件使用。"
 						});
 					}
 					apiobj.params.form.append( {
@@ -187,13 +187,13 @@ Twinkle.unlink.callbacks = {
 				});
 				apiobj.params.form.append( {
 					type: 'div',
-					label: "Selected namespaces: " + namespaces.join(', '),
-					tooltip: "You can change this with your Twinkle preferences, at [[WP:TWPREFS]]"
+					label: "已选择的名字空间：" + namespaces.join(', '),
+					tooltip: "您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]"
 				});
 				if ($(xmlDoc).find('query-continue').length) {
 					apiobj.params.form.append( {
 						type: 'div',
-						label: "First " + list.length.toString() + " backlinks shown."
+						label: "显示头 " + list.length.toString() + " 个链入。"
 					});
 				}
 				apiobj.params.form.append( {
@@ -205,7 +205,7 @@ Twinkle.unlink.callbacks = {
 			}
 			else
 			{
-				apiobj.params.form.append( { type: 'div', label: 'No backlinks found.' } );
+				apiobj.params.form.append( { type: 'div', label: '未找到链入。' } );
 			}
 
 			if (havecontent) {
@@ -232,7 +232,7 @@ Twinkle.unlink.callbacks = {
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary("Removing link(s) to \"" + mw.config.get('wgPageName') + "\": " + params.reason + "." + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary("取消到页面“" + mw.config.get('wgPageName') + "”的链接：" + params.reason + "。" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(Twinkle.unlink.callbacks.success);
 	},
@@ -242,7 +242,7 @@ Twinkle.unlink.callbacks = {
 		var params = pageobj.getCallbackParameters();
 
 		var wikiPage = new Mediawiki.Page(text);
-		wikiPage.commentOutImage(mw.config.get('wgTitle'), 'Commented out');
+		wikiPage.commentOutImage(mw.config.get('wgTitle'), '注释出');
 		text = wikiPage.getText();
 		if (text === oldtext) {
 			// Nothing to do, return
@@ -252,20 +252,20 @@ Twinkle.unlink.callbacks = {
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary("Commenting out use(s) of file \"" + mw.config.get('wgPageName') + "\": " + params.reason + "." + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary("注释出对文件“" + mw.config.get('wgPageName') + "的使用：" + params.reason + "。" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(Twinkle.unlink.callbacks.success);
 	},
 	success: function twinkleunlinkCallbackSuccess(pageobj) {
 		var statelem = pageobj.getStatusElement();
-		statelem.info('done');
+		statelem.info('完成');
 
 		var params = pageobj.getCallbackParameters();
 		var total = params.total;
 		var now = parseInt( 100 * (params.imageusage ? ++(Twinkle.unlink.imageusagedone) : ++(Twinkle.unlink.backlinksdone))/total, 10 ) + '%';
 		params.globalstatus.update( now );
 		if((params.imageusage ? Twinkle.unlink.imageusagedone : Twinkle.unlink.backlinksdone) >= total) {
-			params.globalstatus.info( now + ' (completed)' );
+			params.globalstatus.info( now + '（完成）' );
 			Wikipedia.removeCheckpoint();
 		}
 	}

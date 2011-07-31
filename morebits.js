@@ -1062,7 +1062,7 @@ Wikipedia.namespaces = {
 };
 
 Wikipedia.namespacesFriendly = {
-	'0':   '(Article)',
+	'0':   '（条目）',
 	'1':   'Talk',
 	'2':   'User',
 	'3':   'User talk',
@@ -2623,7 +2623,7 @@ Mediawiki.Page.prototype = {
 		var unbinder = new Unbinder( this.text );
 		unbinder.unbind( '<!--', '-->' );
 
-		reason = reason ? ' ' + reason + ': ' : '';
+		reason = reason ? ' ' + reason + '：' : '';
 		var first_char = image.substr( 0, 1 );
 		var image_re_string = "[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( image.substr( 1 ), true ); 
 
