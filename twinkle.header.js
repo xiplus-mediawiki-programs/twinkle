@@ -18,6 +18,9 @@
  */
 
 //<nowiki>
+//
+if (navigator.userAgent.indexOf("MSIE") == -1) {
+//
 
 var Twinkle = {};
 window.Twinkle = Twinkle;  // allow global access

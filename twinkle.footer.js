@@ -102,4 +102,7 @@ Twinkle.load = function(){
 	}
 };
 
+//
+}
+//
 // </nowiki>
