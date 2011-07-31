@@ -17,58 +17,46 @@
 Twinkle.config = {};
 
 Twinkle.config.commonEnums = {
-	watchlist: { yes: "Add to watchlist", no: "Don't add to watchlist", "default": "Follow your site preferences" },
-	talkPageMode: { window: "In a window, replacing other user talks", tab: "In a new tab", blank: "In a totally new window" }
+	watchlist: { yes: "添加到监视列表", no: "不添加到监视列表", "default": "遵守站点设置" },
+	talkPageMode: { window: "在窗口中，替换其它用户对话页", tab: "在新标签页中", blank: "在全新的窗口中" }
 };
 
 Twinkle.config.commonSets = {
 	csdCriteria: {
-		db: "Custom rationale ({{db}})",
-		g1: "G1", g2: "G2", g3: "G3", g4: "G4", g5: "G5", g6: "G6", g7: "G7", g8: "G8", g10: "G10", g11: "G11", g12: "G12",
-		a1: "A1", a2: "A2", a3: "A3", a5: "A5", a7: "A7", a9: "A9", a10: "A10",
-		u1: "U1", u2: "U2", u3: "U3",
-		f1: "F1", f2: "F2", f3: "F3", f7: "F7", f8: "F8", f9: "F9", f10: "F10",
-		c1: "C1",
-		t2: "T2", t3: "T3",
-		r2: "R2", r3: "R3",
-		p1: "P1", p2: "P2"  // db-multiple is not listed here because it is treated differently within twinklespeedy
+		db: "自定义理由",
+		g1: "G1", g2: "G2", g3: "G3", g5: "G5", g10: "G10", g11: "G11", g12: "G12", g13: "G13", g14: "G14", g15: "G15", g16: "G16",
+		a1: "A1", a2: "A2", a3: "A3",
+		o1: "O1", o3: "O3", o4: "O4",
+		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
+		r2: "R2", r3: "R3", r4: "R4", r5: "R5" // db-multiple is not listed here because it is treated differently within twinklespeedy
 	},
 	csdCriteriaDisplayOrder: [
 		"db",
-		"g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g10", "g11", "g12",
-		"a1", "a2", "a3", "a5", "a7", "a9", "a10",
-		"u1", "u2", "u3",
-		"f1", "f2", "f3", "f7", "f8", "f9", "f10",
-		"c1",
-		"t2", "t3",
-		"r2", "r3",
-		"p1", "p2"
+		"g1", "g2", "g3", "g5", "g10", "g11", "g12", "g13", "g14", "g15", "g16",
+		"a1", "a2", "a3",
+		"o1", "o3", "o4",
+		"f1", "f3", "f4", "f5", "f6", "f7",
+		"r2", "r3", "r4", "r5"
 	],
 	csdAndDICriteria: {
-		db: "Custom rationale ({{db}})",
-		g1: "G1", g2: "G2", g3: "G3", g4: "G4", g5: "G5", g6: "G6", g7: "G7", g8: "G8", g10: "G10", g11: "G11", g12: "G12",
-		a1: "A1", a2: "A2", a3: "A3", a5: "A5", a7: "A7", a9: "A9", a10: "A10",
-		u1: "U1", u2: "U2", u3: "U3",
-		f1: "F1", f2: "F2", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7", f8: "F8", f9: "F9", f10: "F10", f11: "F11",
-		c1: "C1",
-		t2: "T2", t3: "T3",
-		r2: "R2", r3: "R3",
-		p1: "P1", p2: "P2"
+		db: "自定义理由",
+		g1: "G1", g2: "G2", g3: "G3", g5: "G5", g10: "G10", g11: "G11", g12: "G12", g13: "G13", g14: "G14", g15: "G15", g16: "G16",
+		a1: "A1", a2: "A2", a3: "A3",
+		o1: "O1", o3: "O3", o4: "O4",
+		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
+		r2: "R2", r3: "R3", r4: "R4", r5: "R5" // db-multiple is not listed here because it is treated differently within twinklespeedy
 	},
 	csdAndDICriteriaDisplayOrder: [
 		"db",
-		"g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g10", "g11", "g12",
-		"a1", "a2", "a3", "a5", "a7", "a9", "a10",
-		"u1", "u2", "u3",
-		"f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11",
-		"c1",
-		"t2", "t3",
-		"r2", "r3",
-		"p1", "p2"
+		"g1", "g2", "g3", "g5", "g10", "g11", "g12", "g13", "g14", "g15", "g16",
+		"a1", "a2", "a3",
+		"o1", "o3", "o4",
+		"f1", "f3", "f4", "f5", "f6", "f7",
+		"r2", "r3", "r4", "r5"
 	],
 	namespacesNoSpecial: {
-		"0": "Article",
-		"1": "Talk (article)",
+		"0": "（条目）",
+		"1": "Talk",
 		"2": "User",
 		"3": "User talk",
 		"4": "Wikipedia",
@@ -84,9 +72,9 @@ Twinkle.config.commonSets = {
 		"14": "Category",
 		"15": "Category talk",
 		"100": "Portal",
-		"101": "Portal talk",
+		"101": "Portal talk"/*,
 		"108": "Book",
-		"109": "Book talk"
+		"109": "Book talk"*/
 	}
 };
 
@@ -120,14 +108,14 @@ Twinkle.config.commonSets = {
 
 Twinkle.config.sections = [
 {
-	title: "General",
+	title: "常规",
 	preferences: [
 		// TwinkleConfig.summaryAd (string)
 		// Text to be appended to the edit summary of edits made using Twinkle
 		{
 			name: "summaryAd",
-			label: "\"Ad\" to be appended to Twinkle's edit summaries",
-			helptip: "The summary ad should start with a space, and be kept short.",
+			label: "编辑摘要后缀",
+			helptip: "应当由一个空格开头，并尽可能短。",
 			type: "string"
 		},
 
@@ -135,8 +123,8 @@ Twinkle.config.sections = [
 		// Text to be appended to the edit summary of deletions made using Twinkle
 		{
 			name: "deletionSummaryAd",
-			label: "Summary ad to use for deletion summaries",
-			helptip: "Normally the same as the edit summary ad above.",
+			label: "删除摘要后缀",
+			helptip: "通常和编辑摘要后缀一样。",
 			adminOnly: true,
 			type: "string"
 		},
@@ -145,8 +133,8 @@ Twinkle.config.sections = [
 		// Text to be appended to the edit summary of page protections made using Twinkle
 		{
 			name: "protectionSummaryAd",
-			label: "Summary ad to use for page protections",
-			helptip: "Normally the same as the edit summary ad above.",
+			label: "保护摘要后缀",
+			helptip: "通常和编辑摘要后缀一样。",
 			adminOnly: true,
 			type: "string"
 		},
@@ -157,7 +145,7 @@ Twinkle.config.sections = [
 		// 'blank': force open in a new window, even if such a window exists
 		{
 			name: "userTalkPageMode",
-			label: "When opening a user talk page, open it",
+			label: "当要打开用户对话页时，",
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.talkPageMode
 		},
@@ -165,20 +153,20 @@ Twinkle.config.sections = [
 		// TwinkleConfig.dialogLargeFont (boolean)
 		{
 			name: "dialogLargeFont",
-			label: "Use larger text in Twinkle dialogs",
+			label: "在Twinkle对话框中使用大号字体",
 			type: "boolean"
 		}
 	]
 },
 
 {
-	title: "Image deletion (DI)",
+	title: "图片删除",
 	preferences: [
 		// TwinkleConfig.notifyUserOnDeli (boolean)
 		// If the user should be notified after placing a file deletion tag
 		{
 			name: "notifyUserOnDeli",
-			label: "Check the \"notify initial uploader\" box by default",
+			label: "默认勾选“通知创建者”",
 			type: "boolean"
 		},
 
@@ -186,7 +174,7 @@ Twinkle.config.sections = [
 		// The watchlist setting of the page tagged for deletion. Either "yes", "no", or "default". Default is "default" (Duh).
 		{
 			name: "deliWatchPage",
-			label: "Add image page to watchlist when tagging",
+			label: "标记图片时添加到监视列表",
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		},
@@ -195,7 +183,7 @@ Twinkle.config.sections = [
 		// The watchlist setting of the user talk page if a notification is placed. Either "yes", "no", or "default". Default is "default" (Duh).
 		{
 			name: "deliWatchUser",
-			label: "Add user talk page of initial uploader to watchlist when notifying",
+			label: "标记图片时添加创建者对话页到监视列表",
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		}
@@ -203,57 +191,23 @@ Twinkle.config.sections = [
 },
 
 {
-	title: "Proposed deletion (PROD)",
-	preferences: [
-		// TwinkleConfig.watchProdPages (boolean)
-		// If, when applying prod template to page, to watch the page
-		{
-			name: "watchProdPages",
-			label: "Add article to watchlist when tagging",
-			type: "boolean"
-		},
-
-		// TwinkleConfig.prodReasonDefault (string)
-		// The prefilled PROD reason.
-		{
-			name: "prodReasonDefault",
-			label: "Prefilled PROD reason",
-			type: "string"
-		},
-
-		{
-			name: "logProdPages",
-			label: "Keep a log in userspace of all pages you tag for PROD",
-			helptip: "Since non-admins do not have access to their deleted contributions, the userspace log offers a good way to keep track of all pages you tag for PROD using Twinkle.",
-			type: "boolean"
-		},
-		{
-			name: "prodLogPageName",
-			label: "Keep the PROD userspace log at this user subpage",
-			helptip: "i.e. User:<i>username</i>/<i>subpage name</i>. Only works if you turn on the PROD userspace log.",
-			type: "string"
-		}
-	]
-},
-
-{
-	title: "Revert and rollback",  // twinklefluff module
+	title: "回退",  // twinklefluff module
 	preferences: [
 		// TwinkleConfig.openTalkPage (array)
 		// What types of actions that should result in opening of talk page
 		{
 			name: "openTalkPage",
-			label: "Open user talk page after these types of reversions",
+			label: "在这些类型的回退后打开用户对话页",
 			type: "set",
-			setValues: { agf: "AGF rollback", norm: "Normal rollback", vand: "Vandalism rollback", torev: "\"Restore this version\"" }
+			setValues: { agf: "善意回退", norm: "常规回退", vand: "破坏回退", torev: "“恢复此版本”" }
 		},
 
 		// TwinkleConfig.openTalkPageOnAutoRevert (bool)
 		// Defines if talk page should be opened when calling revert from contrib page, because from there, actions may be multiple, and opening talk page not suitable. If set to true, openTalkPage defines then if talk page will be opened.
 		{
 			name: "openTalkPageOnAutoRevert",
-			label: "Open user talk page when invoking rollback from user contributions",
-			helptip: "Often, you may be rolling back many pages at a time from a vandal's contributions page, so it would be unsuitable to open the user talk page. Hence, this option is off by default. When this is on, the desired options must be enabled in the previous setting for this to work.",
+			label: "在从用户贡献中发起回退时打开用户对话页",
+			helptip: "您经常会在破坏者的用户贡献中发起许多回退，总是打开用户对话页可能不太适当，所以这个选项默认关闭。当它被打开时，依赖上一个设定。",
 			type: "boolean"
 		},
 
@@ -261,33 +215,33 @@ Twinkle.config.sections = [
 		// What types of actions that should result in marking edit as minor
 		{
 			name: "markRevertedPagesAsMinor",
-			label: "Mark as minor edit for these types of reversions",
+			label: "将这些类型的回退标记为小修改",
 			type: "set",
-			setValues: { agf: "AGF rollback", norm: "Normal rollback", vand: "Vandalism rollback", torev: "\"Restore this version\"" }
+			setValues: { agf: "善意回退", norm: "常规回退", vand: "破坏回退", torev: "“恢复此版本”" }
 		},
 
 		// TwinkleConfig.watchRevertedPages (array)
 		// What types of actions that should result in forced addition to watchlist
 		{
 			name: "watchRevertedPages",
-			label: "Add pages to watchlist for these types of reversions",
+			label: "把这些类型的回退加入监视列表",
 			type: "set",
-			setValues: { agf: "AGF rollback", norm: "Normal rollback", vand: "Vandalism rollback", torev: "\"Restore this version\"" }
+			setValues: { agf: "善意回退", norm: "常规回退", vand: "破坏回退", torev: "“恢复此版本”" }
 		},
 
 		// TwinkleConfig.offerReasonOnNormalRevert (boolean)
 		// If to offer a prompt for extra summary reason for normal reverts, default to true
 		{
 			name: "offerReasonOnNormalRevert",
-			label: "Prompt for reason for normal rollbacks",
-			helptip: "\"Normal\" rollbacks are the ones that are invoked from the middle [rollback] link.",
+			label: "常规回退时询问理由",
+			helptip: "“常规”回退是中间的那个[回退]链接。",
 			type: "boolean"
 		},
 
 		{
 			name: "confirmOnFluff",
-			label: "Provide a confirmation message before reverting",
-			helptip: "For users of pen or touch devices, and chronically indecisive people.",
+			label: "回退前要求确认",
+			helptip: "给那些手持手持设备的用户，或者意志不坚定的。",
 			type: "boolean"
 		},
 
@@ -296,40 +250,33 @@ Twinkle.config.sections = [
 		// Note from TTO: |contribs| seems to be equal to |others| + |mine|, i.e. redundant, so I left it out heres
 		{
 			name: "showRollbackLinks",
-			label: "Show rollback links on these pages",
+			label: "在这些页面上显示回退链接",
 			type: "set",
-			setValues: { diff: "Diff pages", others: "Contributions pages of other users", mine: "My contributions page" }
+			setValues: { diff: "差异", others: "其它用户的贡献", mine: "我的贡献" }
 		}
 	]
 },
 
 {
-	title: "Shared IP tagging",
+	title: "共享IP标记",
 	inFriendlyConfig: true,
 	preferences: [
 		{
 			name: "markSharedIPAsMinor",
-			label: "Mark shared IP tagging as a minor edit",
+			label: "将共享IP标记标记为小修改",
 			type: "boolean"
 		}
 	]
 },
 
 {
-	title: "Speedy deletion (CSD)",
+	title: "快速删除",
 	preferences: [
-		// TwinkleConfig.speedyPromptOnG7 (boolean)
-		{
-			name: "speedyPromptOnG7",
-			label: "Prompt for rationale when tagging with G7 (author request)",
-			type: "boolean"
-		},
-
 		// TwinkleConfig.watchSpeedyPages (array)
 		// Whether to add speedy tagged pages to watchlist
 		{
 			name: "watchSpeedyPages",
-			label: "Add page to watchlist when tagging with these criteria",
+			label: "将以下理由添加到监视列表",
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdCriteria,
 			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaDisplayOrder
@@ -339,8 +286,8 @@ Twinkle.config.sections = [
 		// If, when applying speedy template to page, to mark the page as patrolled (if the page was reached from NewPages)
 		{
 			name: "markSpeedyPagesAsPatrolled",
-			label: "Mark page as patrolled when tagging (if possible)",
-			helptip: "Due to technical limitations, pages are only marked as patrolled when they are reached via Special:NewPages.",
+			label: "标记时标记页面为已巡查（如可能）",
+			helptip: "基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。",
 			type: "boolean"
 		},
 
@@ -348,8 +295,8 @@ Twinkle.config.sections = [
 		// What types of actions should result that the author of the page being notified of nomination
 		{
 			name: "notifyUserOnSpeedyDeletionNomination",
-			label: "Notify page creator only when tagging with these criteria",
-			helptip: "Even if you choose to notify from the CSD screen, the notification will only take place for those criteria selected here.",
+			label: "仅在使用以下理由时通知页面创建者",
+			helptip: "尽管您在对话框中选择通知，通知仍只会在使用这些理由时发出。",
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdCriteria,
 			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaDisplayOrder
@@ -360,8 +307,8 @@ Twinkle.config.sections = [
 		// with a "firstarticle" notice if his talk page has not yet been created.
 		{
 			name: "welcomeUserOnSpeedyDeletionNotification",
-			label: "Welcome page creator alongside notification when tagging with these criteria",
-			helptip: "The welcome is issued only if the user is notified about the deletion, and only if their talk page does not already exist. The template used is {{<a href=\"" + mw.util.wikiGetlink("Template:Firstarticle") + "\">firstarticle</a>}}.",
+			label: "在使用以下理由时欢迎页面创建者",
+			helptip: "欢迎模板仅在用户被通知时加入，使用的模板是{{firstarticle}}。",
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdCriteria,
 			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaDisplayOrder
@@ -370,7 +317,7 @@ Twinkle.config.sections = [
 		// TwinkleConfig.promptForSpeedyDeletionSummary (array of strings)
 		{
 			name: "promptForSpeedyDeletionSummary",
-			label: "Allow editing of deletion summary when deleting under these criteria",
+			label: "使用以下理由删除时允许编辑删除理由",
 			adminOnly: true,
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdAndDICriteria,
@@ -381,7 +328,7 @@ Twinkle.config.sections = [
 		// What types of actions that should result user talk page to be opened when speedily deleting (admin only)
 		{
 			name: "openUserTalkPageOnSpeedyDelete",
-			label: "Open user talk page when deleting under these criteria",
+			label: "使用以下理由是打开用户对话页",
 			adminOnly: true,
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdAndDICriteria,
@@ -392,7 +339,7 @@ Twinkle.config.sections = [
 		// If talk page if exists should also be deleted (CSD G8) when spedying a page (admin only)
 		{
 			name: "deleteTalkPageOnDelete",
-			label: "Check the \"also delete talk page\" box by default",
+			label: "默认勾选“同时删除讨论页”",
 			adminOnly: true,
 			type: "boolean"
 		},
@@ -401,7 +348,7 @@ Twinkle.config.sections = [
 		// Make the CSD screen default to "tag" instead of "delete" (admin only)
 		{
 			name: "deleteSysopDefaultToTag",
-			label: "Default to speedy tagging instead of outright deletion",
+			label: "默认为标记而不是直接删除",
 			adminOnly: true,
 			type: "boolean"
 		},
@@ -410,7 +357,7 @@ Twinkle.config.sections = [
 		// Defines the width of the Twinkle SD window in pixels
 		{
 			name: "speedyWindowWidth",
-			label: "Width of speedy deletion window (pixels)",
+			label: "快速删除对话框宽度（像素）",
 			type: "integer"
 		},
 
@@ -418,26 +365,26 @@ Twinkle.config.sections = [
 		// Defines the width of the Twinkle SD window in pixels
 		{
 			name: "speedyWindowHeight",
-			label: "Height of speedy deletion window (pixels)",
-			helptip: "If you have a big monitor, you might like to increase this.",
+			label: "快速删除对话框高度（像素）",
+			helptip: "如果您有一只很大的监视器，您可以将此调高。",
 			type: "integer"
 		},
 
 		{
 			name: "logSpeedyNominations",
-			label: "Keep a log in userspace of all CSD nominations",
-			helptip: "Since non-admins do not have access to their deleted contributions, the userspace log offers a good way to keep track of all pages you nominate for CSD using Twinkle. Files tagged using DI are also added to this log.",
+			label: "在用户空间中记录所有快速删除提名",
+			helptip: "非管理员无法访问到已删除的贡献，用户空间日志提供了一个很好的方法来记录这些历史。",
 			type: "boolean"
 		},
 		{
 			name: "speedyLogPageName",
-			label: "Keep the CSD userspace log at this user subpage",
-			helptip: "i.e. User:<i>username</i>/<i>subpage name</i>. Only works if you turn on the CSD userspace log.",
+			label: "在此页保留日志",
+			helptip: "如：User:<i>用户名</i>/<i>子页面</i>，仅在打开日志时工作。",
 			type: "string"
 		},
 		{
 			name: "noLogOnSpeedyNomination",
-			label: "Do not create a userspace log entry when tagging with these criteria",
+			label: "在使用以下理由时不做记录",
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdAndDICriteria,
 			setDisplayOrder: Twinkle.config.commonSets.csdAndDICriteriaDisplayOrder
@@ -446,77 +393,77 @@ Twinkle.config.sections = [
 },
 
 {
-	title: "Tag",
+	title: "标记",
 	inFriendlyConfig: true,
 	preferences: [
 		{
 			name: "groupByDefault",
-			label: "Check the \"group into {{multiple issues}}\" box by default",
+			label: "默认勾选“合并到{{multiple issues}}”",
 			type: "boolean"
 		},
 		{
 			name: "watchTaggedPages",
-			label: "Add page to watchlist when tagging",
+			label: "标记时添加到监视列表",
 			type: "boolean"
 		},
 		{
 			name: "markTaggedPagesAsMinor",
-			label: "Mark addition of tags as a minor edit",
+			label: "将标记标记为小修改",
 			type: "boolean"
 		},
 		{
 			name: "markTaggedPagesAsPatrolled",
-			label: "Mark pages as patrolled when tagging (if possible)",
-			helptip: "Due to technical limitations, pages are only marked as patrolled when they are reached via Special:NewPages.",
+			label: "标记时标记页面为已巡查（如可能）",
+			helptip: "基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。",
 			type: "boolean"
 		},
 		{
 			name: "customTagList",
-			label: "Custom article maintenance tags to display",
-			helptip: "These appear as additional options at the bottom of the list of tags. For example, you could add new maintenance tags which have not yet been added to Twinkle's defaults.",
+			label: "自定义条目维护标记",
+			helptip: "这些会出现在列表的末尾。",
 			type: "customList",
-			customListValueTitle: "Template name (no curly brackets)",
-			customListLabelTitle: "Text to show in Welcome dialog"
+			customListValueTitle: "模板名（不含大括号）",
+			customListLabelTitle: "显示的文字"
 		}
 	]
 },
 
 {
-	title: "Talkback",
+	title: "回复",
 	inFriendlyConfig: true,
 	preferences: [
 		{
 			name: "markTalkbackAsMinor",
-			label: "Mark talkbacks as minor edits",
+			label: "将回复标记为小修改",
 			type: "boolean"
 		},
 		{
 			name: "insertTalkbackSignature",
-			label: "Insert signature within talkbacks",
+			label: "回复时添加签名",
 			type: "boolean"
 		},
 		{
 			name: "talkbackHeading",
-			label: "Section heading to use for talkbacks",
+			label: "回复所用的小节标题",
 			type: "string"
 		},
 		{
 			name: "adminNoticeHeading",
-			label: "Section heading to use for administrators' noticeboard notices",
+			label: "管理员通告板所用的小节标题",
 			type: "string"
 		}
 	]
 },
 
 {
-	title: "Unlink",
+	title: "反链",
 	preferences: [
 		// TwinkleConfig.unlinkNamespaces (array)
 		// In what namespaces unlink should happen, default in 0 (article) and 100 (portal)
 		{
 			name: "unlinkNamespaces",
-			label: "Remove links from pages in these namespaces",
-			helptip: "Avoid selecting any talk namespaces, as Twinkle might end up unlinking on talk archives (a big no-no).",
+			label: "取消以下名字空间中的反链",
+			helptip: "请避免选择讨论页，因这样会导致Twinkle试图修改讨论存档。",
 			type: "set",
 			setValues: Twinkle.config.commonSets.namespacesNoSpecial
 		}
@@ -524,15 +471,15 @@ Twinkle.config.sections = [
 },
 
 {
-	title: "Warn user",
+	title: "警告用户",
 	preferences: [
 		// TwinkleConfig.defaultWarningGroup (int)
 		// if true, watch the page which has been dispatched an warning or notice, if false, default applies
 		{
 			name: "defaultWarningGroup",
-			label: "Default warning level",
+			label: "默认警告级别",
 			type: "enum",
-			enumValues: { "1": "Level 1", "2": "Level 2", "3": "Level 3", "4": "Level 4", "5": "Level 4im", "6": "Single-issue notices", "7": "Single-issue warnings", "8": "Block (admin only)" }
+			enumValues: { "1": "层级1", "2": "层级2", "3": "层级3", "4": "层级4", "5": "层级4im", "6": "单层级通知", "7": "单层级警告", "8": "封禁" }
 		},
 
 		// TwinkleConfig.showSharedIPNotice may take arguments:
@@ -540,8 +487,8 @@ Twinkle.config.sections = [
 		// false: to not print the notice
 		{
 			name: "showSharedIPNotice",
-			label: "Add extra notice on shared IP talk pages",
-			helptip: "Notice used is {{<a href='" + mw.util.wikiGetlink("Template:SharedIPAdvice") + "'>SharedIPAdvice</a>}}",
+			label: "在IP对话页上显示附加信息",
+			helptip: "使用的模板是{{SharedIPAdvice}}。",
 			type: "boolean"
 		},
 
@@ -549,7 +496,7 @@ Twinkle.config.sections = [
 		// if true, watch the page which has been dispatched an warning or notice, if false, default applies
 		{
 			name: "watchWarnings",
-			label: "Add user talk page to watchlist when notifying",
+			label: "警告时添加用户对话页到监视列表",
 			type: "boolean"
 		},
 
@@ -557,8 +504,7 @@ Twinkle.config.sections = [
 		// if true, blank the talk page when issuing an indef block notice (per [[WP:UW#Indefinitely blocked users]])
 		{
 			name: "blankTalkpageOnIndefBlock",
-			label: "Blank the talk page when indefinitely blocking users",
-			helptip: "See <a href=\"" + mw.util.wikiGetlink("WP:UW#Indefinitely blocked users") + "\">WP:UW</a> for more information.",
+			label: "无限期封禁时清空对话页",
 			adminOnly: true,
 			type: "boolean"
 		}
@@ -566,80 +512,79 @@ Twinkle.config.sections = [
 },
 
 {
-	title: "Welcome user",
+	title: "欢迎用户",
 	inFriendlyConfig: true,
 	preferences: [
 		{
 			name: "topWelcomes",
-			label: "Place welcomes above existing content on user talk pages",
+			label: "将欢迎置于对话页最顶",
 			type: "boolean"
 		},
 		{
 			name: "watchWelcomes",
-			label: "Add user talk pages to watchlist when welcoming",
-			helptip: "Doing so adds to the personal element of welcoming a user - you will be able to see how they are coping as a newbie, and possibly help them.",
+			label: "欢迎时添加用户对话页到监视列表",
+			helptip: "您将可以更好地帮助他。",
 			type: "boolean"
 		},
 		{
 			name: "insertHeadings",
-			label: "Insert a section heading before welcomes",
+			label: "在欢迎之上插入小节标题",
 			type: "boolean"
 		},
 		{
 			name: "welcomeHeading",
-			label: "Section heading to use for welcomes",
-			helptip: "Only has an effect if headings are enabled, and the heading is not part of the template.",
+			label: "欢迎所使用的小节标题",
+			helptip: "仅当上一项启用且模板不含标题时有效。",
 			type: "string"
 		},
 		{
 			name: "insertUsername",
-			label: "Add your username to the template (where applicable)",
-			helptip: "Some welcome templates have an opening sentence like \"Hi, I'm &lt;username&gt;. Welcome\" etc. If you turn off this option, these templates will not display your username in that way.",
+			label: "添加您的用户名到模板（如适用）",
 			type: "boolean"
 		},
 		{
 			name: "insertSignature",
-			label: "Add your signature after the welcome",
-			helptip: "Strongly recommended.",
+			label: "在欢迎后添加您的签名",
+			helptip: "强烈推荐。",
 			type: "boolean"
 		},
 		{
 			name: "markWelcomesAsMinor",
-			label: "Mark welcomes as minor edits",
+			label: "将欢迎标记为小修改",
 			type: "boolean"
 		},
 		{
 			name: "maskTemplateInSummary",
-			label: "Omit the name of the welcome template in the edit summary",
-			helptip: "The names of some of the templates (e.g. \"welcome-anon-vandal\") may be viewed by the user as attacks, so it is better to leave them out of the edit summary",
+			label: "在编辑摘要中隐藏模板名",
+			helptip: "一些模板的名字（如“welcome-anon-vandal”）可能被用户当成人身攻击，所以最好别在摘要里包含它们。",
 			type: "boolean"
 		},
 		{
 			name: "quickWelcomeMode",
-			label: "Clicking the \"welcome\" link on a diff page will",
-			helptip: "If you choose to welcome automatically, the template you specify below will be used.",
+			label: "点击差异上的“欢迎”链接会",
+			helptip: "如果您选择自动欢迎，您选择的模板将会被使用。",
 			type: "enum",
-			enumValues: { auto: "welcome automatically", norm: "prompt you to select a template" }
+			enumValues: { auto: "自动欢迎", norm: "提示您选择一个模板" }
 		},
 		{
 			name: "quickWelcomeTemplate",
-			label: "Template to use when welcoming automatically",
-			helptip: "Enter the name of a welcome template, without the curly brackets. A link to the given article will be added.",
+			label: "自动欢迎时所用的模板",
+			helptip: "输入模板名，不带大括号，条目名将会被当作参数。",
 			type: "string"
 		},
 		{
 			name: "customWelcomeList",
-			label: "Custom welcome templates to display",
-			helptip: "You can add other welcome templates, or user subpages that are welcome templates (prefixed with \"User:\"). Don't forget that these templates are substituted onto user talk pages.",
+			label: "自定义欢迎模板",
+			helptip: "您可以添加其它模板或用户子页面，请记住它们将被替换引用。",
 			type: "customList",
-			customListValueTitle: "Template name (no curly brackets)",
-			customListLabelTitle: "Text to show in Welcome dialog"
+			customListValueTitle: "模板名（不带大括号）",
+			customListLabelTitle: "显示的文本"
 		}
 	]
 },
 
 {
-	title: "XFD (deletion discussions)",
+	title: "存废讨论",
 	preferences: [
 		// TwinkleConfig.xfdWatchPage (string)
 		// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't
@@ -688,7 +633,7 @@ Twinkle.config.sections = [
 },
 
 {
-	title: "Hidden",
+	title: "隐藏",
 	hidden: true,
 	preferences: [
 		// twinkle.header.js: portlet setup
@@ -781,10 +726,10 @@ Twinkle.config.sections = [
 
 Twinkle.config.init = function twinkleconfigInit() {
 
-	if ((mw.config.get("wgPageName") === "Wikipedia:Twinkle/Preferences" ||
-	    (mw.config.get("wgNamespaceNumber") === 2 && mw.config.get("wgTitle").lastIndexOf("/Twinkle preferences") === (mw.config.get("wgTitle").length - 20))) &&
+	if ((mw.config.get("wgPageName") === "Wikipedia:Twinkle/参数设置" ||
+	    (mw.config.get("wgNamespaceNumber") === 2 && mw.config.get("wgTitle").lastIndexOf("/Twinkle参数设置") === (mw.config.get("wgTitle").length - 20))) &&
 	    mw.config.get("wgAction") === "view") {
-		// create the config page at Wikipedia:Twinkle/Preferences, and at user subpages (for testing purposes)
+		// create the config page at Wikipedia:Twinkle/参数设置, and at user subpages (for testing purposes)
 
 		if (!document.getElementById("twinkle-config")) {
 			return;  // maybe the page is misconfigured, or something - but any attempt to modify it will be pointless
@@ -800,7 +745,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		// (settings in that file will still work, but they will be overwritten by twinkleoptions.js settings)
 		var contentnotice = document.createElement("p");
 		// I hate innerHTML, but this is one thing it *is* good for...
-		contentnotice.innerHTML = "<b>Before modifying your preferences here,</b> make sure you have removed any old <code>TwinkleConfig</code> and <code>FriendlyConfig</code> settings from your <a href=\"" + mw.util.wikiGetlink("Special:MyPage/skin.js") + "\" title=\"Special:MyPage/skin.js\">user JavaScript file</a>.";
+		contentnotice.innerHTML = "<b>在这里修改您的参数设置之前，</b>确认您已移除了<a href=\"" + mw.util.wikiGetlink("Special:MyPage/skin.js") + "\" title=\"Special:MyPage/skin.js\">用户JavaScript文件</a>中任何旧的<code>FriendlyConfig</code>设置。";
 		contentdiv.appendChild(contentnotice);
 
 		// look and see if the user does in fact have any old settings in their skin JS file
@@ -818,7 +763,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		var toctitle = document.createElement("div");
 		toctitle.id = "toctitle";
 		var toch2 = document.createElement("h2");
-		toch2.textContent = "Contents ";
+		toch2.textContent = "目录 ";
 		toctitle.appendChild(toch2);
 		// add TOC show/hide link
 		var toctoggle = document.createElement("span");
@@ -827,7 +772,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		var toctogglelink = document.createElement("a");
 		toctogglelink.className = "internal";
 		toctogglelink.setAttribute("href", "#tw-tocshowhide");
-		toctogglelink.textContent = "hide";
+		toctogglelink.textContent = "隐藏";
 		toctoggle.appendChild(toctogglelink);
 		toctoggle.appendChild(document.createTextNode("]"));
 		toctitle.appendChild(toctoggle);
@@ -838,9 +783,9 @@ Twinkle.config.init = function twinkleconfigInit() {
 			var $tocul = $(tocul);
 			$tocul.toggle();
 			if ($tocul.find(":visible").length) {
-				toctogglelink.textContent = "hide";
+				toctogglelink.textContent = "隐藏";
 			} else {
-				toctogglelink.textContent = "show";
+				toctogglelink.textContent = "显示";
 			}
 		}, false);
 		toctd.appendChild(tocul);
@@ -1051,12 +996,12 @@ Twinkle.config.init = function twinkleconfigInit() {
 							pref: pref,
 							inFriendlyConfig: section.inFriendlyConfig
 						});
-						button.appendChild(document.createTextNode("Edit items"));
+						button.appendChild(document.createTextNode("编辑项目"));
 						cell.appendChild(button);
 						break;
 
 					default:
-						alert("twinkleconfig: unknown data type for preference " + pref.name);
+						alert("twinkleconfig: 未知类型的属性 " + pref.name);
 						break;
 				}
 				row.appendChild(cell);
@@ -1081,7 +1026,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 						resetlink.style.cssFloat = "right";
 					}
 					resetlink.style.margin = "0 0.6em";
-					resetlink.appendChild(document.createTextNode("Reset"));
+					resetlink.appendChild(document.createTextNode("复位"));
 					cell.appendChild(resetlink);
 				}
 				row.appendChild(cell);
@@ -1099,7 +1044,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		var button = document.createElement("button");
 		button.setAttribute("id", "twinkle-config-submit");
 		button.setAttribute("type", "submit");
-		button.appendChild(document.createTextNode("Save changes"));
+		button.appendChild(document.createTextNode("保存修改"));
 		footerbox.appendChild(button);
 		var footerspan = document.createElement("span");
 		footerspan.className = "plainlinks";
@@ -1109,7 +1054,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		footera.setAttribute("href", "#tw-reset-all");
 		footera.setAttribute("id", "twinkle-config-resetall");
 		footera.addEventListener("click", Twinkle.config.resetAllPrefs, false);
-		footera.appendChild(document.createTextNode("Restore defaults"));
+		footera.appendChild(document.createTextNode("恢复默认"));
 		footerspan.appendChild(footera);
 		footerbox.appendChild(footerspan);
 		contentform.appendChild(footerbox);
@@ -1137,27 +1082,27 @@ Twinkle.config.init = function twinkleconfigInit() {
 			box.style.borderWidth = "2px";
 
 			if (mw.config.get("wgArticleId") > 0) {  // page exists
-				box.appendChild(document.createTextNode("This page contains your Twinkle preferences. You can change them using the "));
+				box.appendChild(document.createTextNode("这页包含您的Twinkle参数设置，您可使用"));
 			} else {  // page does not exist
-				box.appendChild(document.createTextNode("You can customize Twinkle to suit your preferences by using the "));
+				box.appendChild(document.createTextNode("您可配置您的Twinkle，通过使用"));
 			}
 			link = document.createElement("a");
-			link.setAttribute("href", mw.util.wikiGetlink("Wikipedia:Twinkle/Preferences") );
-			link.appendChild(document.createTextNode("Twinkle preferences panel"));
+			link.setAttribute("href", mw.util.wikiGetlink("Wikipedia:Twinkle/参数设置") );
+			link.appendChild(document.createTextNode("Twinkle参数设置面板"));
 			box.appendChild(link);
-			box.appendChild(document.createTextNode(", or by editing this page."));
+			box.appendChild(document.createTextNode("，或直接编辑本页。"));
 			$(box).insertAfter($("#contentSub"));
 
 		} else if (mw.config.get("wgTitle").indexOf(mw.config.get("wgUserName")) === 0 && mw.config.get("wgTitle").lastIndexOf(".js") == mw.config.get("wgTitle").length - 3) {
 			// place "Looking for Twinkle options?" notice
 			box.style.width = "60%";
 
-			box.appendChild(document.createTextNode("If you want to set Twinkle preferences, you can use the "));
+			box.appendChild(document.createTextNode("如果您想配置您的Twinkle，请使用"));
 			link = document.createElement("a");
-			link.setAttribute("href", mw.util.wikiGetlink("Wikipedia:Twinkle/Preferences") );
-			link.appendChild(document.createTextNode("Twinkle preferences panel"));
+			link.setAttribute("href", mw.util.wikiGetlink("Wikipedia:Twinkle/参数设置") );
+			link.appendChild(document.createTextNode("Twinkle参数设置面板"));
 			box.appendChild(link);
-			box.appendChild(document.createTextNode("."));
+			box.appendChild(document.createTextNode("。"));
 			$(box).insertAfter($("#contentSub"));
 		}
 	}
@@ -1170,8 +1115,8 @@ Twinkle.config.legacyPrefsNotice = function twinkleconfigLegacyPrefsNotice(pageo
 	if (text.indexOf("TwinkleConfig") !== -1 || text.indexOf("FriendlyConfig") !== -1) {
 		contentnotice.innerHTML = '<table class="plainlinks ombox ombox-content"><tr><td class="mbox-image">' +
 			'<img alt="" src="http://upload.wikimedia.org/wikipedia/en/3/38/Imbox_content.png" /></td>' +
-			'<td class="mbox-text"><p><big><b>Before modifying your settings here,</b> you must remove your old Twinkle and Friendly settings from your personal skin JavaScript.</big></p>' +
-			'<p>To do this, you can <a href="' + mw.config.get("wgScript") + '?title=User:' + encodeURIComponent(mw.config.get("wgUserName")) + '/' + mw.config.get("skin") + '.js&action=edit" target="_tab"><b>edit your personal JavaScript</b></a>, removing all lines of code that refer to <code>TwinkleConfig</code> and <code>FriendlyConfig</code>.</p>' +
+			'<td class="mbox-text"><p><big><b>在这里修改您的参数设置之前，</b>您必须移除在用户JavaScript文件中任何旧的Friendly设置。</big></p>' +
+			'<p>要这样做，您可以<a href="' + mw.config.get("wgScript") + '?title=User:' + encodeURIComponent(mw.config.get("wgUserName")) + '/' + mw.config.get("skin") + '.js&action=edit" target="_tab"><b>编辑您的个人JavaScript</b></a>。删除提到<code>FriendlyConfig</code>的代码。</p>' +
 			'</td></tr></table>';
 	} else {
 		$(contentnotice).remove();
@@ -1189,7 +1134,7 @@ Twinkle.config.listDialog.addRow = function twinkleconfigListDialogAddRow(dlgtab
 	var removeButton = document.createElement("button");
 	removeButton.setAttribute("type", "button");
 	removeButton.addEventListener("click", function() { $(contenttr).remove(); }, false);
-	removeButton.textContent = "Remove";
+	removeButton.textContent = "移除";
 	contenttd.appendChild(removeButton);
 	contenttr.appendChild(contenttd);
 
@@ -1227,7 +1172,7 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 
 	var dialog = new SimpleWindow(720, 400);
 	dialog.setTitle(curpref.label);
-	dialog.setScriptName("Twinkle preferences");
+	dialog.setScriptName("Twinkle参数设置");
 
 	var dialogcontent = document.createElement("div");
 	var dlgtable = document.createElement("table");
@@ -1246,12 +1191,12 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 	// value column header
 	dlgth = document.createElement("th");
 	dlgth.style.width = "35%";
-	dlgth.textContent = (curpref.customListValueTitle ? curpref.customListValueTitle : "Value");
+	dlgth.textContent = (curpref.customListValueTitle ? curpref.customListValueTitle : "数值");
 	dlgtr.appendChild(dlgth);
 	// label column header
 	dlgth = document.createElement("th");
 	dlgth.style.width = "60%";
-	dlgth.textContent = (curpref.customListLabelTitle ? curpref.customListLabelTitle : "Label");
+	dlgth.textContent = (curpref.customListLabelTitle ? curpref.customListLabelTitle : "标签");
 	dlgtr.appendChild(dlgth);
 	dlgtbody.appendChild(dlgtr);
 
@@ -1277,7 +1222,7 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 	addButton.addEventListener("click", function(e) {
 		Twinkle.config.listDialog.addRow(dlgtbody);
 	}, false);
-	addButton.textContent = "Add";
+	addButton.textContent = "添加";
 	dlgtd.appendChild(addButton);
 	dlgtr.appendChild(dlgtd);
 	dlgtfoot.appendChild(dlgtr);
@@ -1293,21 +1238,21 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 		Twinkle.config.listDialog.save($prefbutton, dlgtbody);
 		dialog.close();
 	}, false);
-	button.textContent = "Save changes";
+	button.textContent = "保存修改";
 	dialogcontent.appendChild(button);
 	button = document.createElement("button");
 	button.setAttribute("type", "submit");  // so SimpleWindow puts the button in the button pane
 	button.addEventListener("click", function(e) {
 		Twinkle.config.listDialog.reset($prefbutton, dlgtbody);
 	}, false);
-	button.textContent = "Reset";
+	button.textContent = "复位";
 	dialogcontent.appendChild(button);
 	button = document.createElement("button");
 	button.setAttribute("type", "submit");  // so SimpleWindow puts the button in the button pane
 	button.addEventListener("click", function(e) {
 		dialog.close();  // the event parameter on this function seems to be broken
 	}, false);
-	button.textContent = "Cancel";
+	button.textContent = "取消";
 	dialogcontent.appendChild(button);
 
 	dialog.setContent(dialogcontent);
@@ -1436,10 +1381,10 @@ Twinkle.config.resetAllPrefs = function twinkleconfigResetAllPrefs() {
 Twinkle.config.save = function twinkleconfigSave(e) {
 	Status.init( document.getElementById("twinkle-config-content") );
 
-	Wikipedia.actionCompleted.notice = "Save";
+	Wikipedia.actionCompleted.notice = "保存";
 
 	var userjs = "User:" + mw.config.get("wgUserName") + "/twinkleoptions.js";
-	var wikipedia_page = new Wikipedia.page(userjs, "Saving preferences to " + userjs);
+	var wikipedia_page = new Wikipedia.page(userjs, "保存参数设置到 " + userjs);
 	wikipedia_page.setCallbackParameters(e.target);
 	wikipedia_page.load(Twinkle.config.writePrefs);
 
@@ -1598,7 +1543,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 					case "integer":  // read from the input box
 						userValue = parseInt(form[pref.name].value, 10);
 						if (isNaN(userValue)) {
-							Status.warn("Saving", "The value you specified for " + pref.name + " (" + pref.value + ") was invalid.  The save will continue, but the invalid data value will be skipped.");
+							Status.warn("保存", "您为 " + pref.name + "指定的值（" + pref.value + "）不合法，会继续保存操作，但此值将会跳过。");
 							userValue = null;
 						}
 						break;
@@ -1627,7 +1572,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 						break;
 
 					default:
-						alert("twinkleconfig: unknown data type for preference " + pref.name);
+						alert("twinkleconfig: 未知数据类型，属性 " + pref.name);
 						break;
 				}
 			}
@@ -1661,37 +1606,37 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 	}
 
 	var text =
-		"// twinkleoptions.js: personal Twinkle preferences file\n" +
+		"// twinkleoptions.js：用户Twinkle参数设置文件\n" +
 		"//\n" +
-		"// NOTE: The easiest way to change your Twinkle preferences is by using the\n" +
-		"// Twinkle preferences panel, at [[" + mw.config.get("wgPageName") + "]].\n" +
+		"// 注：修改您的参数设置最简单的办法是使用\n" +
+		"// Twinkle参数设置面板，在[[" + mw.config.get("wgPageName") + "]]。\n" +
 		"//\n" +
-		"// This file is AUTOMATICALLY GENERATED.  Any changes you make (aside from\n" +
-		"// changing the configuration parameters in a valid-JavaScript way) will be\n" +
-		"// overwritten the next time you click \"save\" in the Twinkle preferences\n" +
-		"// panel.  If modifying this file, make sure to use correct JavaScript.\n" +
+		"// 这个文件是自动生成的，您所做的任何修改（除了\n" +
+		"// 以一种合法的JavaScript的方式来修改这些属性值）会\n" +
+		"// 在下一次您点击“保存”时被覆盖。\n" +
+		"// 修改此文件时，请记得使用合法的JavaScript。\n" +
 		"\n" +
 		"window.Twinkle.prefs = ";
 	text += JSON.stringify(newConfig, null, 2);
 	text +=
 		";\n" +
 		"\n" +
-		"// End of twinkleoptions.js\n";
+		"// twinkleoptions.js到此为止\n";
 
 	pageobj.setPageText(text);
-	pageobj.setEditSummary("Saving Twinkle preferences: automatic edit from [[" + mw.config.get("wgPageName") + "]] ([[WP:TW|TW]])");
+	pageobj.setEditSummary("保存Twinkle参数设置：从[[" + mw.config.get("wgPageName") + "]]的自动编辑。 ([[WP:TW|TW]])");
 	pageobj.setCreateOption("recreate");
 	pageobj.save(Twinkle.config.saveSuccess);
 };
 
 Twinkle.config.saveSuccess = function twinkleconfigSaveSuccess(pageobj) {
-	pageobj.getStatusElement().info("successful");
+	pageobj.getStatusElement().info("成功");
 
 	var noticebox = document.createElement("div");
 	noticebox.className = "successbox";
 	noticebox.style.fontSize = "100%";
 	noticebox.style.marginTop = "2em";
-	noticebox.innerHTML = "<p><b>Your Twinkle preferences have been saved.</b></p><p>To see the changes, you will need to <a href=\"" + mw.util.wikiGetlink("WP:BYPASS") + "\" title=\"WP:BYPASS\"><b>bypass your browser cache</b></a>.</p>";
+	noticebox.innerHTML = "<p><b>您的Twinkle参数设置已被保存。</b></p><p>要看到这些更改，您可能需要<a href=\"" + mw.util.wikiGetlink("WP:BYPASS") + "\" title=\"WP:BYPASS\"><b>绕过浏览器缓存</b></a>。</p>";
 	Status.root.appendChild(noticebox);
 	var noticeclear = document.createElement("br");
 	noticeclear.style.clear = "both";
