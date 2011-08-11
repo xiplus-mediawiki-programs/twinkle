@@ -13,7 +13,7 @@ Twinkle.warn = function twinklewarn() {
 			$(twAddPortletLink("#", "警告", "tw-warn", "警告或提醒用户", "")).click(Twinkle.warn.callback);
 		} else {
 			$(twAddPortletLink("#", "警告", "tw-warn", "警告或提醒用户", "")).click(function() {
-				alert("Your account is too new to use Twinkle.");
+				alert("您还未达到自动确认。");
 			});
 		}
 	}
@@ -21,16 +21,16 @@ Twinkle.warn = function twinklewarn() {
 
 Twinkle.warn.callback = function twinklewarnCallback() {
 	var Window = new SimpleWindow( 600, 440 );
-	Window.setTitle( "Warn/notify user" );
+	Window.setTitle( "警告、通知用户" );
 	Window.setScriptName( "Twinkle" );
-	Window.addFooterLink( "Choosing a warning level", "WP:UWUL#Levels" );
-	Window.addFooterLink( "Twinkle help", "WP:TW/DOC#warn" );
+	Window.addFooterLink( "选择警告级别", "WP:WARN" );
+	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#warn" );
 
 	var form = new QuickForm( Twinkle.warn.callback.evaluate );
 	var main_select = form.append( {
 			type:'field',
-			label:'Choose type of warning/notice to issue',
-			tooltip:'First choose a main warning group, then the specific warning to issue.'
+			label:'选择要发送的警告或通知类别',
+			tooltip:'首先选择一组，再选择具体的警告模板。'
 		} );
 
 	var main_group = main_select.append( {
@@ -40,15 +40,15 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		} );
 
 	var defaultGroup = parseInt(Twinkle.getPref('defaultWarningGroup'), 10);
-	main_group.append( { type:'option', label:'General note (1)', value:'level1', selected: ( defaultGroup === 1 || defaultGroup < 1 || ( userIsInGroup( 'sysop' ) ? defaultGroup > 8 : defaultGroup > 7 ) ) } );
-	main_group.append( { type:'option', label:'Caution (2)', value:'level2', selected: ( defaultGroup === 2 ) } );
-	main_group.append( { type:'option', label:'Warning (3)', value:'level3', selected: ( defaultGroup === 3 ) } );
-	main_group.append( { type:'option', label:'Final warning (4)', value:'level4', selected: ( defaultGroup === 4 ) } );
-	main_group.append( { type:'option', label:'Only warning (4im)', value:'level4im', selected: ( defaultGroup === 5 ) } );
-	main_group.append( { type:'option', label:'Single issue notices', value:'singlenotice', selected: ( defaultGroup === 6 ) } );
-	main_group.append( { type:'option', label:'Single issue warnings', value:'singlewarn', selected: ( defaultGroup === 7 ) } );
+	main_group.append( { type:'option', label:'层级1', value:'level1', selected: ( defaultGroup === 1 || defaultGroup < 1 || ( userIsInGroup( 'sysop' ) ? defaultGroup > 8 : defaultGroup > 7 ) ) } );
+	main_group.append( { type:'option', label:'层级2', value:'level2', selected: ( defaultGroup === 2 ) } );
+	main_group.append( { type:'option', label:'层级3', value:'level3', selected: ( defaultGroup === 3 ) } );
+	main_group.append( { type:'option', label:'层级4', value:'level4', selected: ( defaultGroup === 4 ) } );
+	main_group.append( { type:'option', label:'层级4im', value:'level4im', selected: ( defaultGroup === 5 ) } );
+	main_group.append( { type:'option', label:'单层级通知', value:'singlenotice', selected: ( defaultGroup === 6 ) } );
+	main_group.append( { type:'option', label:'单层级警告', value:'singlewarn', selected: ( defaultGroup === 7 ) } );
 	if( userIsInGroup( 'sysop' ) ) {
-		main_group.append( { type:'option', label:'Blocking', value:'block', selected: ( defaultGroup === 8 ) } );
+		main_group.append( { type:'option', label:'封禁', value:'block', selected: ( defaultGroup === 8 ) } );
 	}
 
 	main_select.append( { type:'select', name:'sub_group', event:Twinkle.warn.callback.change_subcategory } ); //Will be empty to begin with.
@@ -56,23 +56,23 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	form.append( {
 			type:'input',
 			name:'article',
-			label:'Linked article',
+			label:'条目链接',
 			value:( QueryString.exists( 'vanarticle' ) ? QueryString.get( 'vanarticle' ) : '' ),
-			tooltip:'An article can be linked within the notice, perhaps because it was a revert to said article that dispatched this notice. Leave empty for no article to be linked.'
+			tooltip:'给模板中加入一条目链接，可留空。'
 		} );
 
-	var more = form.append( { type:'field', label:'Fill in an optional reason and hit \"Submit\"' } );
-	more.append( { type:'textarea', label:'More:', name:'reason', tooltip:'Perhaps a reason, or that a more detailed notice must be appended' } );
+	var more = form.append( { type:'field', label:'填入可选的理由并点击“提交”' } );
+	more.append( { type:'textarea', label:'更多：', name:'reason', tooltip:'可以填入理由或是更详细的通知。' } );
 
 	var previewlink = document.createElement( 'a' );
 	$(previewlink).click(function(){
 		Twinkle.warn.callbacks.preview();
 	});
 	previewlink.style.cursor = "pointer";
-	previewlink.textContent = 'Preview';
+	previewlink.textContent = '预览';
 	more.append( { type: 'div', name: 'warningpreview', label: [ previewlink ] } );
 
-	more.append( { type:'submit', label:'Submit' } );
+	more.append( { type:'submit', label:'提交' } );
 
 	var result = form.render();
 	Window.setContent( result );
@@ -93,1162 +93,779 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 Twinkle.warn.messages = {
 	level1: {
 		"uw-vandalism1": {
-			label:"Vandalism",
-			summary:"General note: Nonconstructive editing"
+			label:"破坏",
+			summary:"层级1：破坏"
 		},
 		"uw-test1": {
-			label:"Editing tests",
-			summary:"General note: Editing tests"
+			label:"编辑测试",
+			summary:"层级1：编辑测试"
 		},
 		"uw-delete1": {
-			label:"Page blanking, removal of content",
-			summary:"General note: Page blanking, removal of content"
+			label:"清空页面、移除内容或模板",
+			summary:"层级1：清空页面、移除内容或模板"
 		},
 		"uw-redirect1": { 
-			label:"Creating malicious redirects", 
-			summary:"General note: Creating malicious redirects" 
+			label:"创建恶意重定向", 
+			summary:"层级1：创建恶意重定向" 
 		},
 		"uw-tdel1": { 
-			label:"Removal of maintenance templates", 
-			summary:"General note: Removal of maintenance templates" 
+			label:"移除维护性模板", 
+			summary:"层级1：移除维护性模板" 
 		},
 		"uw-joke1": { 
-			label:"Using improper humor", 
-			summary:"General note: Using improper humor" 
+			label:"加入不当玩笑", 
+			summary:"层级1：加入不当玩笑" 
 		},
 		"uw-create1": { 
-			label:"Creating inappropriate pages", 
-			summary:"General note: Creating inappropriate pages" 
+			label:"创建不当页面", 
+			summary:"层级1：创建不当页面" 
 		},
 		"uw-upload1": { 
-			label:"Uploading unencyclopedic images", 
-			summary:"General note: Uploading unencyclopedic images" 
+			label:"上传不当图像", 
+			summary:"层级1：上传不当图像" 
 		},
 		"uw-image1": { 
-			label:"Image-related vandalism", 
-			summary:"General note: Image-related vandalism" 
-		},
-		"uw-ics1": { 
-			label:"Uploading files missing copyright status", 
-			summary:"General note: Uploading files missing copyright status" 
-		},
-		"uw-idt1": { 
-			label:"Removing file deletion tags", 
-			summary:"General note: Removing file deletion tags" 
+			label:"与图像相关之破坏", 
+			summary:"层级1：与图像相关之破坏" 
 		},
 		"uw-spam1": { 
-			label:"Adding spam links", 
-			summary:"General note: Adding spam links" 
+			label:"增加垃圾连结", 
+			summary:"层级1：增加垃圾连结" 
 		},
 		"uw-advert1": { 
-			label:"Using Wikipedia for advertising or promotion", 
-			summary:"General note: Using Wikipedia for advertising or promotion" 
+			label:"利用维基百科来发布广告或推广", 
+			summary:"层级1：利用维基百科来发布广告或推广" 
 		},
 		"uw-npov1": { 
-			label:"Not adhering to neutral point of view", 
-			summary:"General note: Not adhering to neutral point of view" 
+			label:"不遵守中立的观点方针", 
+			summary:"层级1：不遵守中立的观点方针" 
 		},
 		"uw-unsourced1": { 
-			label:"Addition of unsourced or improperly cited material", 
-			summary:"General note: Addition of unsourced or improperly cited material" 
+			label:"没有使用适当的引用方法而增加没有来源的资料", 
+			summary:"层级1：没有使用适当的引用方法而增加没有来源的资料" 
 		},
 		"uw-error1": { 
-			label:"Introducing deliberate factual errors", 
-			summary:"General note: Introducing factual errors" 
-		},
-		"uw-nor1": { 
-			label:"Adding original research, including unpublished syntheses of sourced material", 
-			summary:"General note: Adding original research, including unpublished syntheses of sourced material" 
+			label:"故意加入不实内容", 
+			summary:"层级1：故意加入不实内容" 
 		},
 		"uw-biog1": { 
-			label:"Adding unreferenced controversial information about living persons", 
-			summary:"General note: Adding unreferenced controversial information about living persons" 
+			label:"加入有关在生人物而又缺乏来源的资料", 
+			summary:"层级1：加入有关在生人物而又缺乏来源的资料" 
 		},
-		"uw-defam1": { 
-			label:"Defamation not specifically directed", 
-			summary:"General note: Defamation not specifically directed" 
+		"uw-defamatory1": { 
+			label:"没有特定目标的诽谤", 
+			summary:"层级1：没有特定目标的诽谤" 
 		},
-		"uw-uncen1": { 
-			label:"Censorship of material", 
-			summary:"General note: Censorship of material" 
+		"uw-notcensored1": { 
+			label:"资料的审查", 
+			summary:"层级1：资料的审查" 
 		},
 		"uw-mos1": { 
-			label:"Manual of style", 
-			summary:"General note: Formatting, date, language, etc (Manual of style)" 
+			label:"格式、日期、语言等", 
+			summary:"层级1：格式、日期、语言等" 
 		},
 		"uw-move1": { 
-			label:"Page moves against naming conventions or consensus", 
-			summary:"General note: Page moves against naming conventions or consensus" 
+			label:"页面移动", 
+			summary:"层级1：页面移动" 
 		},
-		"uw-chat1": { 
-			label:"Using talk page as forum", 
-			summary:"General note: Using talk page as forum" 
+		"uw-cd1": { 
+			label:"把讨论页清空", 
+			summary:"层级1：把讨论页清空" 
+		},
+		"uw-cd1": { 
+			label:"把讨论页当为论坛", 
+			summary:"层级1：把讨论页当为论坛" 
 		},
 		"uw-tpv1": { 
-			label:"Refactoring others' talk page comments", 
-			summary:"General note: Refactoring others' talk page comments" 
+			label:"改写其他用户在讨论页留下的意见", 
+			summary:"层级1：改写其他用户在讨论页留下的意见" 
 		},
 		"uw-afd1": { 
-			label:"Removing {{afd}} templates",
-			summary:"General note: Removing {{afd}} templates"
+			label:"移除{{afd}}模板",
+			summary:"层级1：移除{{afd}}模板"
 		},
 		"uw-speedy1": { 
-			label:"Removing {{speedy deletion}} templates",
-			summary:"General note: Removing {{speedy deletion}} templates"
-		},
-		"uw-blpprod1": { 
-			label:"Removing {{blp prod}} templates",
-			summary:"General note: Removing {{blp prod}} templates"
+			label:"移除{{delete}}模板",
+			summary:"层级1：移除{{delete}}模板"
 		},
 		"uw-npa1": { 
-			label:"Personal attack directed at a specific editor", 
-			summary:"General note: Personal attack directed at a specific editor" 
+			label:"针对特定用户的人身攻击", 
+			summary:"层级1：针对特定用户的人身攻击" 
 		},
 		"uw-agf1": { 
-			label:"Not assuming good faith", 
-			summary:"General note: Not assuming good faith" 
+			label:"没有善意推定", 
+			summary:"层级1：没有善意推定" 
 		},
 		"uw-own1": { 
-			label:"Ownership of articles", 
-			summary:"General note: Ownership of articles"
+			label:"条目的所有权", 
+			summary:"层级1：条目的所有权"
 		},
 		"uw-tempabuse1": { 
-			label:"Improper use of warning or blocking template", 
-			summary:"General note: Improper use of warning or blocking template"
-		},
-		"uw-genre1": { 
-			label:"Frequent or mass changes to genres without consensus or references", 
-			summary:"General note: Frequent or mass changes to genres without consensus or references"
+			label:"不当使用警告或封锁模板", 
+			summary:"层级1：不当使用警告或封锁模板"
 		}
 	},
 	level2: {
-		"uw-vandalism2": { 
-			label:"Vandalism", 
-			summary:"Caution: Vandalism" 
+		"uw-vandalism2": {
+			label:"破坏",
+			summary:"层级2：破坏"
 		},
-		"uw-test2": { 
-			label:"Editing tests", 
-			summary:"Caution: Editing tests" 
+		"uw-test2": {
+			label:"编辑测试",
+			summary:"层级2：编辑测试"
 		},
-		"uw-delete2": { 
-			label:"Page blanking, removal of content", 
-			summary:"Caution: Page blanking, removal of content" 
+		"uw-delete2": {
+			label:"清空页面、移除内容或模板",
+			summary:"层级2：清空页面、移除内容或模板"
 		},
 		"uw-redirect2": { 
-			label:"Creating malicious redirects", 
-			summary:"Caution: Creating malicious redirects" 
+			label:"创建恶意重定向", 
+			summary:"层级2：创建恶意重定向" 
 		},
 		"uw-tdel2": { 
-			label:"Removal of maintenance templates", 
-			summary:"Caution: Removal of maintenance templates" 
+			label:"移除维护性模板", 
+			summary:"层级2：移除维护性模板" 
 		},
 		"uw-joke2": { 
-			label:"Using improper humor", 
-			summary:"Caution: Using improper humor" 
+			label:"加入不当玩笑", 
+			summary:"层级2：加入不当玩笑" 
 		},
 		"uw-create2": { 
-			label:"Creating inappropriate pages", 
-			summary:"Caution: Creating inappropriate pages" 
+			label:"创建不当页面", 
+			summary:"层级2：创建不当页面" 
 		},
 		"uw-upload2": { 
-			label:"Uploading unencyclopedic images", 
-			summary:"Caution: Uploading unencyclopedic images" 
+			label:"上传不当图像", 
+			summary:"层级2：上传不当图像" 
 		},
 		"uw-image2": { 
-			label:"Image-related vandalism", 
-			summary:"Caution: Image-related vandalism" 
-		},
-		"uw-ics2": { 
-			label:"Uploading files missing copyright status", 
-			summary:"Caution: Uploading files missing copyright status" 
-		},
-		"uw-idt2": { 
-			label:"Removing file deletion tags", 
-			summary:"Caution: Removing file deletion tags" 
+			label:"与图像相关之破坏", 
+			summary:"层级2：与图像相关之破坏" 
 		},
 		"uw-spam2": { 
-			label:"Adding spam links", 
-			summary:"Caution: Adding spam links" 
+			label:"增加垃圾连结", 
+			summary:"层级2：增加垃圾连结" 
 		},
 		"uw-advert2": { 
-			label:"Using Wikipedia for advertising or promotion", 
-			summary:"Caution: Using Wikipedia for advertising or promotion" 
+			label:"利用维基百科来发布广告或推广", 
+			summary:"层级2：利用维基百科来发布广告或推广" 
 		},
 		"uw-npov2": { 
-			label:"Not adhering to neutral point of view", 
-			summary:"Caution: Not adhering to neutral point of view" 
+			label:"不遵守中立的观点方针", 
+			summary:"层级2：不遵守中立的观点方针" 
 		},
 		"uw-unsourced2": { 
-			label:"Addition of unsourced or improperly cited material", 
-			summary:"Caution: Addition of unsourced or improperly cited material" 
+			label:"没有使用适当的引用方法而增加没有来源的资料", 
+			summary:"层级2：没有使用适当的引用方法而增加没有来源的资料" 
 		},
 		"uw-error2": { 
-			label:"Introducing deliberate factual errors", 
-			summary:"Caution: Introducing factual errors" 
-		},
-		"uw-nor2": { 
-			label:"Adding original research, including unpublished syntheses of sourced material", 
-			summary:"Caution: Adding original research, including unpublished syntheses of sourced material"
+			label:"故意加入不实内容", 
+			summary:"层级2：故意加入不实内容" 
 		},
 		"uw-biog2": { 
-			label:"Adding unreferenced controversial information about living persons", 
-			summary:"Caution: Adding unreferenced controversial information about living persons" 
+			label:"加入有关在生人物而又缺乏来源的资料", 
+			summary:"层级2：加入有关在生人物而又缺乏来源的资料" 
 		},
-		"uw-defam2": { 
-			label:"Defamation not specifically directed", 
-			summary:"Caution: Defamation not specifically directed" 
+		"uw-defamatory2": { 
+			label:"没有特定目标的诽谤", 
+			summary:"层级2：没有特定目标的诽谤" 
 		},
-		"uw-uncen2": { 
-			label:"Censorship of material", 
-			summary:"Caution: Censorship of material" 
+		"uw-notcensored2": { 
+			label:"资料的审查", 
+			summary:"层级2：资料的审查" 
 		},
 		"uw-mos2": { 
-			label:"Manual of style", 
-			summary:"Caution: Formatting, date, language, etc (Manual of style)" 
+			label:"格式、日期、语言等", 
+			summary:"层级2：格式、日期、语言等" 
 		},
 		"uw-move2": { 
-			label:"Page moves against naming conventions or consensus", 
-			summary:"Caution: Page moves against naming conventions or consensus" 
+			label:"页面移动", 
+			summary:"层级2：页面移动" 
 		},
-		"uw-chat2": { 
-			label:"Using talk page as forum", 
-			summary:"Caution: Using talk page as forum" 
+		"uw-cd2": { 
+			label:"把讨论页清空", 
+			summary:"层级2：把讨论页清空" 
+		},
+		"uw-cd2": { 
+			label:"把讨论页当为论坛", 
+			summary:"层级2：把讨论页当为论坛" 
 		},
 		"uw-tpv2": { 
-			label:"Refactoring others' talk page comments", 
-			summary:"Caution: Refactoring others' talk page comments" 
+			label:"改写其他用户在讨论页留下的意见", 
+			summary:"层级2：改写其他用户在讨论页留下的意见" 
 		},
 		"uw-afd2": { 
-			label:"Removing {{afd}} templates",
-			summary:"Caution: Removing {{afd}} templates"
+			label:"移除{{afd}}模板",
+			summary:"层级2：移除{{afd}}模板"
 		},
 		"uw-speedy2": { 
-			label:"Removing {{speedy deletion}} templates",
-			summary:"Caution: Removing {{speedy deletion}} templates"
-		},
-		"uw-blpprod2": { 
-			label:"Removing {{blp prod}} templates",
-			summary:"Caution: Removing {{blp prod}} templates"
+			label:"移除{{delete}}模板",
+			summary:"层级2：移除{{delete}}模板"
 		},
 		"uw-npa2": { 
-			label:"Personal attack directed at a specific editor", 
-			summary:"Caution: Personal attack directed at a specific editor" 
+			label:"针对特定用户的人身攻击", 
+			summary:"层级2：针对特定用户的人身攻击" 
 		},
 		"uw-agf2": { 
-			label:"Not assuming good faith", 
-			summary:"Caution: Not assuming good faith" 
+			label:"没有善意推定", 
+			summary:"层级2：没有善意推定" 
 		},
 		"uw-own2": { 
-			label:"Ownership of articles", 
-			summary:"Caution: Ownership of articles"
+			label:"条目的所有权", 
+			summary:"层级2：条目的所有权"
 		},
 		"uw-tempabuse2": { 
-			label:"Improper use of warning or blocking template", 
-			summary:"Caution: Improper use of warning or blocking template"
-		},
-		"uw-genre2": { 
-			label:"Frequent or mass changes to genres without consensus or references", 
-			summary:"Caution: Frequent or mass changes to genres without consensus or references"
+			label:"不当使用警告或封锁模板", 
+			summary:"层级2：不当使用警告或封锁模板"
 		}
 	},
 	level3: {
-		"uw-vandalism3": { 
-			label:"Vandalism", 
-			summary:"Warning: Vandalism" 
+		"uw-vandalism3": {
+			label:"破坏",
+			summary:"层级3：破坏"
 		},
-		"uw-test3": { 
-			label:"Editing tests", 
-			summary:"Warning: Editing tests" 
+		"uw-test3": {
+			label:"编辑测试",
+			summary:"层级3：编辑测试"
 		},
-		"uw-delete3": { 
-			label:"Page blanking, removal of content", 
-			summary:"Warning: Page blanking, removal of content" 
+		"uw-delete3": {
+			label:"清空页面、移除内容或模板",
+			summary:"层级3：清空页面、移除内容或模板"
 		},
 		"uw-redirect3": { 
-			label:"Creating malicious redirects", 
-			summary:"Warning: Creating malicious redirects" 
+			label:"创建恶意重定向", 
+			summary:"层级3：创建恶意重定向" 
 		},
 		"uw-tdel3": { 
-			label:"Removal of maintenance templates", 
-			summary:"Warning: Removal of maintenance templates" 
+			label:"移除维护性模板", 
+			summary:"层级3：移除维护性模板" 
 		},
 		"uw-joke3": { 
-			label:"Using improper humor", 
-			summary:"Warning: Using improper humor" 
+			label:"加入不当玩笑", 
+			summary:"层级3：加入不当玩笑" 
 		},
 		"uw-create3": { 
-			label:"Creating inappropriate pages", 
-			summary:"Warning: Creating inappropriate pages" 
+			label:"创建不当页面", 
+			summary:"层级3：创建不当页面" 
 		},
 		"uw-upload3": { 
-			label:"Uploading unencyclopedic images", 
-			summary:"Warning: Uploading unencyclopedic images" 
+			label:"上传不当图像", 
+			summary:"层级3：上传不当图像" 
 		},
 		"uw-image3": { 
-			label:"Image-related vandalism", 
-			summary:"Warning: Image-related vandalism" 
-		},
-		"uw-ics3": { 
-			label:"Uploading files missing copyright status", 
-			summary:"Warning: Uploading files missing copyright status" 
-		},
-		"uw-idt3": { 
-			label:"Removing file deletion tags", 
-			summary:"Warning: Removing file deletion tags" 
+			label:"与图像相关之破坏", 
+			summary:"层级3：与图像相关之破坏" 
 		},
 		"uw-spam3": { 
-			label:"Adding spam links", 
-			summary:"Warning: Adding spam links" 
+			label:"增加垃圾连结", 
+			summary:"层级3：增加垃圾连结" 
 		},
 		"uw-advert3": { 
-			label:"Using Wikipedia for advertising or promotion", 
-			summary:"Warning: Using Wikipedia for advertising or promotion" 
+			label:"利用维基百科来发布广告或推广", 
+			summary:"层级3：利用维基百科来发布广告或推广" 
 		},
 		"uw-npov3": { 
-			label:"Not adhering to neutral point of view", 
-			summary:"Warning: Not adhering to neutral point of view" 
+			label:"不遵守中立的观点方针", 
+			summary:"层级3：不遵守中立的观点方针" 
 		},
 		"uw-unsourced3": { 
-			label:"Addition of unsourced or improperly cited material", 
-			summary:"Warning: Addition of unsourced or improperly cited material" 
+			label:"没有使用适当的引用方法而增加没有来源的资料", 
+			summary:"层级3：没有使用适当的引用方法而增加没有来源的资料" 
 		},
 		"uw-error3": { 
-			label:"Introducing deliberate factual errors", 
-			summary:"Warning: Introducing deliberate factual errors" 
-		},
-		"uw-nor3": { 
-			label:"Adding original research, including unpublished syntheses of sourced material", 
-			summary:"Warning: Adding original research, including unpublished syntheses of sourced material"
+			label:"故意加入不实内容", 
+			summary:"层级3：故意加入不实内容" 
 		},
 		"uw-biog3": { 
-			label:"Adding unreferenced controversial or defamatory information about living persons", 
-			summary:"Warning: Adding unreferenced controversial information about living persons" 
+			label:"加入有关在生人物而又缺乏来源的资料", 
+			summary:"层级3：加入有关在生人物而又缺乏来源的资料" 
 		},
-		"uw-defam3": { 
-			label:"Defamation not specifically directed", 
-			summary:"Warning: Defamation not specifically directed" 
+		"uw-defamatory3": { 
+			label:"没有特定目标的诽谤", 
+			summary:"层级3：没有特定目标的诽谤" 
 		},
-		"uw-uncen3": { 
-			label:"Censorship of material", 
-			summary:"Warning: Censorship of material" 
+		"uw-notcensored3": { 
+			label:"资料的审查", 
+			summary:"层级3：资料的审查" 
 		},
 		"uw-mos3": { 
-			label:"Manual of style", 
-			summary:"Warning: Formatting, date, language, etc (Manual of style)" 
+			label:"格式、日期、语言等", 
+			summary:"层级3：格式、日期、语言等" 
 		},
 		"uw-move3": { 
-			label:"Page moves against naming conventions or consensus", 
-			summary:"Warning: Page moves against naming conventions or consensus" 
+			label:"页面移动", 
+			summary:"层级3：页面移动" 
 		},
-		"uw-chat3": { 
-			label:"Using talk page as forum", 
-			summary:"Warning: Using talk page as forum" 
+		"uw-cd3": { 
+			label:"把讨论页清空", 
+			summary:"层级3：把讨论页清空" 
+		},
+		"uw-cd3": { 
+			label:"把讨论页当为论坛", 
+			summary:"层级3：把讨论页当为论坛" 
 		},
 		"uw-tpv3": { 
-			label:"Refactoring others' talk page comments", 
-			summary:"Warning: Refactoring others' talk page comments" 
+			label:"改写其他用户在讨论页留下的意见", 
+			summary:"层级3：改写其他用户在讨论页留下的意见" 
 		},
 		"uw-afd3": { 
-			label:"Removing {{afd}} templates",
-			summary:"Warning: Removing {{afd}} templates"
+			label:"移除{{afd}}模板",
+			summary:"层级3：移除{{afd}}模板"
 		},
 		"uw-speedy3": { 
-			label:"Removing {{speedy deletion}} templates",
-			summary:"Warning: Removing {{speedy deletion}} templates"
-		},
-		"uw-blpprod3": { 
-			label:"Removing {{blpprod}} templates",
-			summary:"Warning: Removing {{blpprod}} templates"
+			label:"移除{{delete}}模板",
+			summary:"层级3：移除{{delete}}模板"
 		},
 		"uw-npa3": { 
-			label:"Personal attack directed at a specific editor", 
-			summary:"Warning: Personal attack directed at a specific editor" 
+			label:"针对特定用户的人身攻击", 
+			summary:"层级3：针对特定用户的人身攻击" 
 		},
 		"uw-agf3": { 
-			label:"Not assuming good faith", 
-			summary:"Warning: Not assuming good faith" 
+			label:"没有善意推定", 
+			summary:"层级3：没有善意推定" 
 		},
 		"uw-own3": { 
-			label:"Ownership of articles", 
-			summary:"Warning: Ownership of articles"
+			label:"条目的所有权", 
+			summary:"层级3：条目的所有权"
 		},
-		"uw-genre3": { 
-			label:"Frequent or mass changes to genres without consensus or reference", 
-			summary:"Warning: Frequent or mass changes to genres without consensus or reference"
+		"uw-tempabuse3": { 
+			label:"不当使用警告或封锁模板", 
+			summary:"层级3：不当使用警告或封锁模板"
 		}
-
 	},
 	level4: {
-		"uw-generic4": { 
-			label:"Generic warning (for template series missing level 4)", 
-			summary:"Final warning notice" 
+		"uw-vandalism4": {
+			label:"破坏",
+			summary:"层级4：破坏"
 		},
-		"uw-vandalism4": { 
-			label:"Vandalism", 
-			summary:"Final warning: Vandalism" 
+		"uw-test4": {
+			label:"编辑测试",
+			summary:"层级4：编辑测试"
 		},
-		"uw-test4": { 
-			label:"Editing tests", 
-			summary:"Final warning: Editing tests" 
-		},
-		"uw-delete4": { 
-			label:"Page blanking, removal of content", 
-			summary:"Final warning: Page blanking, removal of content" 
+		"uw-delete4": {
+			label:"清空页面、移除内容或模板",
+			summary:"层级4：清空页面、移除内容或模板"
 		},
 		"uw-redirect4": { 
-			label:"Creating malicious redirects", 
-			summary:"Final warning: Creating malicious redirects" 
+			label:"创建恶意重定向", 
+			summary:"层级4：创建恶意重定向" 
 		},
 		"uw-tdel4": { 
-			label:"Removal of maintenance templates", 
-			summary:"Final warning: Removal of maintenance templates" 
+			label:"移除维护性模板", 
+			summary:"层级4：移除维护性模板" 
 		},
 		"uw-joke4": { 
-			label:"Using improper humor", 
-			summary:"Final warning: Using improper humor" 
+			label:"加入不当玩笑", 
+			summary:"层级4：加入不当玩笑" 
 		},
 		"uw-create4": { 
-			label:"Creating inappropriate pages", 
-			summary:"Final warning: Creating inappropriate pages" 
+			label:"创建不当页面", 
+			summary:"层级4：创建不当页面" 
 		},
 		"uw-upload4": { 
-			label:"Uploading unencyclopedic images", 
-			summary:"Final warning: Uploading unencyclopedic images" 
+			label:"上传不当图像", 
+			summary:"层级4：上传不当图像" 
 		},
 		"uw-image4": { 
-			label:"Image-related vandalism", 
-			summary:"Final warning: Image-related vandalism" 
-		},
-		"uw-ics4": { 
-			label:"Uploading files missing copyright status", 
-			summary:"Final warning: Uploading files missing copyright status" 
-		},
-		"uw-idt4": { 
-			label:"Removing file deletion tags", 
-			summary:"Final warning: Removing file deletion tags" 
+			label:"与图像相关之破坏", 
+			summary:"层级4：与图像相关之破坏" 
 		},
 		"uw-spam4": { 
-			label:"Adding spam links", 
-			summary:"Final warning: Adding spam links" 
+			label:"增加垃圾连结", 
+			summary:"层级4：增加垃圾连结" 
 		},
 		"uw-advert4": { 
-			label:"Using Wikipedia for advertising or promotion", 
-			summary:"Final warning: Using Wikipedia for advertising or promotion" 
+			label:"利用维基百科来发布广告或推广", 
+			summary:"层级4：利用维基百科来发布广告或推广" 
 		},
 		"uw-npov4": { 
-			label:"Not adhering to neutral point of view", 
-			summary:"Final warning: Not adhering to neutral point of view" 
+			label:"不遵守中立的观点方针", 
+			summary:"层级4：不遵守中立的观点方针" 
+		},
+		"uw-unsourced4": { 
+			label:"没有使用适当的引用方法而增加没有来源的资料", 
+			summary:"层级4：没有使用适当的引用方法而增加没有来源的资料" 
 		},
 		"uw-error4": { 
-			label:"Introducing deliberate factual errors", 
-			summary:"Final Warning: Introducing deliberate factual errors"
-		},
-		"uw-nor4": { 
-			label:"Adding original research, including unpublished syntheses of sourced material", 
-			summary:"Final Warning: Adding original research, including unpublished syntheses of sourced material"
+			label:"故意加入不实内容", 
+			summary:"层级4：故意加入不实内容" 
 		},
 		"uw-biog4": { 
-			label:"Adding unreferenced defamatory information about living persons", 
-			summary:"Final warning: Adding unreferenced controversial information about living persons" 
+			label:"加入有关在生人物而又缺乏来源的资料", 
+			summary:"层级4：加入有关在生人物而又缺乏来源的资料" 
 		},
-		"uw-defam4": { 
-			label:"Defamation not specifically directed", 
-			summary:"Final warning: Defamation not specifically directed" 
+		"uw-defamatory4": { 
+			label:"没有特定目标的诽谤", 
+			summary:"层级4：没有特定目标的诽谤" 
 		},
-		"uw-uncen4": { 
-			label:"Censorship of material", 
-			summary:"Final warning: Censorship of material" 
+		"uw-notcensored4": { 
+			label:"资料的审查", 
+			summary:"层级4：资料的审查" 
 		},
 		"uw-mos4": { 
-			label:"Manual of style", 
-			summary:"Final warning: Formatting, date, language, etc (Manual of style)" 
+			label:"格式、日期、语言等", 
+			summary:"层级4：格式、日期、语言等" 
 		},
 		"uw-move4": { 
-			label:"Page moves against naming conventions or consensus", 
-			summary:"Final warning: Page moves against naming conventions or consensus" 
+			label:"页面移动", 
+			summary:"层级4：页面移动" 
 		},
-		"uw-chat4": { 
-			label:"Using talk page as forum", 
-			summary:"Final warning: Using talk page as forum" 
+		"uw-cd4": { 
+			label:"把讨论页清空", 
+			summary:"层级4：把讨论页清空" 
+		},
+		"uw-cd4": { 
+			label:"把讨论页当为论坛", 
+			summary:"层级4：把讨论页当为论坛" 
 		},
 		"uw-tpv4": { 
-			label:"Refactoring others' talk page comments", 
-			summary:"Final warning: Refactoring others' talk page comments" 
+			label:"改写其他用户在讨论页留下的意见", 
+			summary:"层级4：改写其他用户在讨论页留下的意见" 
 		},
 		"uw-afd4": { 
-			label:"Removing {{afd}} templates",
-			summary:"Final warning: Removing {{afd}} templates"
+			label:"移除{{afd}}模板",
+			summary:"层级4：移除{{afd}}模板"
 		},
 		"uw-speedy4": { 
-			label:"Removing {{speedy deletion}} templates",
-			summary:"Final warning: Removing {{speedy deletion}} templates"
-		},
-		"uw-blpprod4": { 
-			label:"Removing {{blpprod}} templates",
-			summary:"Final warning: Removing {{blpprod}} templates"
+			label:"移除{{delete}}模板",
+			summary:"层级4：移除{{delete}}模板"
 		},
 		"uw-npa4": { 
-			label:"Personal attack directed at a specific editor", 
-			summary:"Final warning: Personal attack directed at a specific editor"
+			label:"针对特定用户的人身攻击", 
+			summary:"层级4：针对特定用户的人身攻击" 
+		},
+		"uw-agf4": { 
+			label:"没有善意推定", 
+			summary:"层级4：没有善意推定" 
+		},
+		"uw-own4": { 
+			label:"条目的所有权", 
+			summary:"层级4：条目的所有权"
+		},
+		"uw-tempabuse4": { 
+			label:"不当使用警告或封锁模板", 
+			summary:"层级4：不当使用警告或封锁模板"
 		}
-
 	},
 	level4im: {
-		"uw-vandalism4im": { 
-			label:"Vandalism", 
-			summary:"Only warning: Vandalism" 
+		"uw-vandalism4im": {
+			label:"破坏",
+			summary:"层级4im：破坏"
 		},
-		"uw-delete4im": { 
-			label:"Page blanking, removal of content", 
-			summary:"Only warning: Page blanking, removal of content" 
+		"uw-delete4im": {
+			label:"清空页面、移除内容或模板",
+			summary:"层级4im：清空页面、移除内容或模板"
 		},
 		"uw-redirect4im": { 
-			label:"Creating malicious redirects", 
-			summary:"Only warning: Creating malicious redirects" 
+			label:"创建恶意重定向", 
+			summary:"层级4im：创建恶意重定向" 
 		},
 		"uw-joke4im": { 
-			label:"Using improper humor", 
-			summary:"Only warning: Using improper humor" 
+			label:"加入不当玩笑", 
+			summary:"层级4im：加入不当玩笑" 
 		},
 		"uw-create4im": { 
-			label:"Creating inappropriate pages", 
-			summary:"Only warning: Creating inappropriate pages" 
+			label:"创建不当页面", 
+			summary:"层级4im：创建不当页面" 
 		},
 		"uw-upload4im": { 
-			label:"Uploading unencyclopedic images", 
-			summary:"Only warning: Uploading unencyclopedic images" 
+			label:"上传不当图像", 
+			summary:"层级4im：上传不当图像" 
 		},
 		"uw-image4im": { 
-			label:"Image-related vandalism", 
-			summary:"Only warning: Image-related vandalism" 
+			label:"与图像相关之破坏", 
+			summary:"层级4im：与图像相关之破坏" 
 		},
 		"uw-spam4im": { 
-			label:"Adding spam links", 
-			summary:"Only warning: Adding spam links" 
-		},
-		"uw-advert4im": { 
-			label:"Using Wikipedia for advertising or promotion", 
-			summary:"Only warning: Using Wikipedia for advertising or promotion" 
+			label:"增加垃圾连结", 
+			summary:"层级4im：增加垃圾连结" 
 		},
 		"uw-biog4im": { 
-			label:"Adding unreferenced defamatory information about living persons", 
-			summary:"Only warning: Adding unreferenced controversial information about living persons" 
+			label:"加入有关在生人物而又缺乏来源的资料", 
+			summary:"层级4im：加入有关在生人物而又缺乏来源的资料" 
 		},
-		"uw-defam4im": { 
-			label:"Defamation not specifically directed", 
-			summary:"Only warning: Defamation not specifically directed" 
+		"uw-defamatory4im": { 
+			label:"没有特定目标的诽谤", 
+			summary:"层级4im：没有特定目标的诽谤" 
 		},
 		"uw-move4im": { 
-			label:"Page moves against naming conventions or consensus", 
-			summary:"Only warning: Page moves against naming conventions or consensus" 
+			label:"页面移动", 
+			summary:"层级4im：页面移动" 
 		},
 		"uw-npa4im": { 
-			label:"Personal attack directed at a specific editor", 
-			summary:"Only warning: Personal attack directed at a specific editor"
+			label:"针对特定用户的人身攻击", 
+			summary:"层级4im：针对特定用户的人身攻击" 
+		},
+		"uw-tempabuse4im": { 
+			label:"不当使用警告或封锁模板", 
+			summary:"层级4im：不当使用警告或封锁模板"
 		}
 	},
 	singlenotice: {
 		"uw-2redirect": { 
-			label:"Creating double redirects through bad page moves", 
-			summary:"Notice: Creating double redirects through bad page moves" 
+			label:"透过不适当的页面移动建立双重重定向", 
+			summary:"单层级通知：透过不适当的页面移动建立双重重定向" 
 		},
 		"uw-aiv": { 
-			label:"Bad AIV report", 
-			summary:"Notice: Bad AIV report" 
+			label:"不恰当的破坏回报", 
+			summary:"单层级通知：不恰当的破坏回报" 
 		},
 		"uw-articlesig": { 
-			label:"Adding signatures to article space", 
-			summary:"Notice: Adding signatures to article space" 
+			label:"在条目页中签名", 
+			summary:"单层级通知：在条目页中签名" 
 		},
 		"uw-autobiography": { 
-			label:"Creating autobiographies", 
-			summary:"Notice: Creating autobiographies" 
+			label:"建立自传", 
+			summary:"单层级通知：建立自传" 
 		},
 		"uw-badcat": { 
-			label:"Adding incorrect categories", 
-			summary:"Notice: Adding incorrect categories" 
-		},
-		"uw-badlistentry": {
-			label:"Adding inappropriate entries to lists",
-			summary:"Notice: Adding inappropriate entries to lists"
+			label:"加入错误的页面分类", 
+			summary:"单层级通知：加入错误的页面分类" 
 		},
 		"uw-bite": { 
-			label:"\"Biting\" newcomers", 
-			summary:"Notice: \"Biting\" newcomers" 
+			label:"伤害新手", 
+			summary:"单层级通知：伤害新手" 
+		},
+		"uw-booktitle": {
+			label:"没有使用书名号来标示书籍、电影、音乐专辑等",
+			summary:"单层级通知：没有使用书名号来标示书籍、电影、音乐专辑等"
+		},
+		"uw-c&pmove": {
+			label:"剪贴移动",
+			summary:"单层级通知：剪贴移动"
+		},
+		"uw-chinese": { 
+			label:"不是以中文进行沟通", 
+			summary:"单层级通知：不是以中文进行沟通" 
 		},
 		"uw-coi": { 
-			label:"Conflict of Interest", 
-			summary:"Notice: Conflict of Interest" 
+			label:"利益冲突", 
+			summary:"单层级通知：利益冲突" 
 		},
-		"uw-copying": {
-			label:"Copying text to another page",
-			summary:"Notice: Copying text to another page"
+		"uw-copyright-friendly": {
+			label:"初次加入侵犯版权的内容",
+			summary:"单层级通知：初次加入侵犯版权的内容"
 		},
-		"uw-crystal": {
-			label:"Adding speculative or unconfirmed information",
-			summary:"Notice: Adding speculative or unconfirmed information"
-		},
-		"uw-csd": {
-			label:"Speedy deletion declined",
-			summary:"Notice: Speedy deletion declined"
-		},
-		"uw-c&pmove": { 
-			label:"Cut and paste moves", 
-			summary:"Notice: Cut and paste moves" 
-		},
-		"uw-dab": {
-			label:"Incorrect edit to a disambiguation page",
-			summary:"Notice: Incorrect edit to a disambiguation page"
+		"uw-copyviorewrite": {
+			label:"在侵权页面直接重写条目",
+			summary:"单层级通知：在侵权页面直接重写条目"
 		},
 		"uw-date": { 
-			label:"Unnecessarily changing date formats", 
-			summary:"Notice: Unnecessarily changing date formats" 
-		},
-		"uw-deadlink": { 
-			label:"Removing proper sources containing dead links", 
-			summary:"Notice: Removing proper sources containing dead links" 
-		},
-		"uw-directcat": { 
-			label:"Applying stub categories manually", 
-			summary:"Notice: Applying stub categories manually" 
-		},
-		"uw-draftfirst": { 
-			label:"User should draft in userspace without the risk of speedy deletion", 
-			summary:"Notice: Consider drafting your article in [[Help:Userspace draft|userspace]]"
+			label:"不必要地更换日期格式", 
+			summary:"单层级通知：不必要地更换日期格式" 
 		},
 		"uw-editsummary": { 
-			label:"Not using edit summary", 
-			summary:"Notice: Not using edit summary" 
+			label:"没有使用编辑摘要", 
+			summary:"单层级通知：没有使用编辑摘要" 
 		},
-		"uw-english": { 
-			label:"Not communicating in English", 
-			summary:"Notice: Not communicating in English" 
-		},
-		"uw-fuir": { 
-			label:"Fair use image has been removed from your userpage", 
-			summary:"Notice: A fair use image has been removed from your userpage" 
-		},
-		"uw-hasty": { 
-			label:"Hasty addition of speedy deletion tags", 
-			summary:"Notice: Allow creators time to improve their articles before tagging them for deletion"
-		},
-		"uw-imageuse": {
-			label:"Incorrect image linking",
-			summary:"Notice: Incorrect image linking"
-		},
-		"uw-incompleteAFD": {
-			label:"Incomplete AFD",
-			summary:"Notice: Incomplete AFD"
-		},
-		"uw-italicize": { 
-			label:"Italicize books, films, albums, magazines, TV series, etc within articles", 
-			summary:"Notice: Italicize books, films, albums, magazines, TV series, etc within articles" 
+		"uw-hangon": { 
+			label:"没有在讨论页说明暂缓快速删除理由", 
+			summary:"单层级通知：没有在讨论页说明暂缓快速删除理由"
 		},
 		"uw-lang": { 
-			label:"Unnecessarily changing between British and American English", 
-			summary:"Notice: Unnecessarily changing between British and American English" 
+			label:"不必要地将条目所有文字换成简体或繁体中文", 
+			summary:"单层级通知：不必要地将条目所有文字换成简体或繁体中文" 
 		},
 		"uw-linking": { 
-			label:"Excessive addition of redlinks or repeated blue links", 
-			summary:"Notice: Excessive addition of redlinks or repeated blue links" 
+			label:"过度加入红字连结或重复蓝字连结", 
+			summary:"单层级通知：过度加入红字连结或重复蓝字连结" 
 		},
 		"uw-minor": { 
-			label:"Incorrect use of minor edits check box", 
-			summary:"Notice: Incorrect use of minor edits check box" 
-		},
-		"uw-nonfree": { 
-			label:"Uploading replaceable non-free images", 
-			summary:"Notice: Uploading replaceable non-free images" 
+			label:"不适当地使用小修改选项", 
+			summary:"单层级通知：不适当地使用小修改选项" 
 		},
 		"uw-notaiv": { 
-			label:"Do not report complex abuse to AIV", 
-			summary:"Notice: Do not report complex abuse to AIV" 
-		},
-		"uw-notenglish": {
-			label:"Creating non-English articles",
-			summary:"Notice: Creating non-English articles"
-		},
-		"uw-notifysd": { 
-			label:"Notify authors of speedy deletion tagged articles", 
-			summary:"Notice: Please notify authors of articles tagged for speedy deletion"
-		},
-		"uw-notvand": {
-			label:"Mislabelling edits as vandalism",
-			summary:"Notice: Misidentifying edits as vandalism"
+			label:"不要向当前的破坏回报复杂的用户纷争", 
+			summary:"单层级通知：不要向当前的破坏回报复杂的用户纷争" 
 		},
 		"uw-notvote": {
-			label:"We use consensus, not voting", 
-			summary:"Notice: We use consensus, not voting" 
-		},
-		"uw-patrolled": { 
-			label:"Mark newpages as patrolled when patrolling", 
-			summary:"Notice: Mark newpages as patrolled when patrolling" 
-		},
-		"uw-plagiarism": { 
-			label:"Copying from public domain sources without attribution", 
-			summary:"Notice: Copying from public domain sources without attribution" 
+			label:"我们是以共识处事，不仅是投票", 
+			summary:"单层级通知：我们是以共识处事，不仅是投票" 
 		},
 		"uw-preview": { 
-			label:"Use preview button to avoid mistakes", 
-			summary:"Notice: Use preview button to avoid mistakes" 
+			label:"使用预览按钮来避免不必要的错误", 
+			summary:"单层级通知：使用预览按钮来避免不必要的错误" 
 		},
-		"uw-probation": { 
-			label:"Article is on probation", 
-			summary:"Notice: Article is on probation" 
-		},
-		"uw-refimprove": {
-			label:"Creating unverifiable articles",
-			summary:"Notice: Creating unverifiable articles"
-		},
-		"uw-removevandalism": {
-			label:"Incorrect vandalism removal",
-			summary:"Notice: Incorrect vandalism removal"
-		},
-		"uw-repost": { 
-			label:"Recreating material previously deleted via XfD process", 
-			summary:"Notice: Recreating previously deleted material" 
-		},
-		"uw-salt": { 
-			label:"Recreating salted articles under a different title", 
-			summary:"Notice: Recreating salted articles under a different title" 
-		},
-		"uw-samename": { 
-			label:"Rename request impossible", 
-			summary:"Notice: Rename request impossible"
+		"uw-sandbox": { 
+			label:"移除沙盒的置顶模板{{sandbox}}", 
+			summary:"单层级通知：移除沙盒的置顶模板{{sandbox}}" 
 		},
 		"uw-selfrevert": { 
-			label:"Reverting self tests", 
-			summary:"Notice: Reverting self tests" 
-		},
-		"uw-skype": {
-			label:"Skype interfering with editing",
-			summary:"Notice: Skype interfering with editing"
-		},
-		"uw-socialnetwork": { 
-			label:"Wikipedia is not a social network", 
-			summary:"Notice: Wikipedia is not a social network" 
-		},
-		"uw-sofixit": { 
-			label:"Be bold and fix things yourself",
-			summary:"Notice: You can be bold and fix things yourself" 
-		},
-		"uw-spoiler": {
-			label:"Adding spoiler alerts or removing supposed spoilers from appropriate sections",
-			summary:"Notice: Don't delete or flag potential 'spoilers' in Wikipedia articles"
+			label:"回退个人的测试", 
+			summary:"单层级通知：回退个人的测试" 
 		},
 		"uw-subst": { 
-			label:"Remember to subst: templates", 
-			summary:"Notice: Remember to subst: templates" 
+			label:"谨记要替代模板", 
+			summary:"单层级通知：谨记要替代模板" 
 		},
 		"uw-talkinarticle": { 
-			label:"Talk in article", 
-			summary:"Notice: Talk in article" 
+			label:"在条目页中留下意见", 
+			summary:"单层级通知：在条目页中留下意见" 
 		},
 		"uw-tilde": { 
-			label:"Not signing posts", 
-			summary:"Notice: Not signing posts" 
-		},
-		"uw-toppost": { 
-			label:"Posting at the top of talk pages", 
-			summary:"Notice: Posting at the top of talk pages" 
+			label:"没有在讨论页上签名", 
+			summary:"单层级通知：没有在讨论页上签名" 
 		},
 		"uw-uaa": { 
-			label:"Reporting of username to WP:UAA not accepted", 
-			summary:"Notice: Reporting of username to WP:UAA not accepted" 
-		},
-		"uw-userspace draft finish": { 
-			label:"Stale userspace draft", 
-			summary:"Notice: Stale userspace draft" 
-		},
-		"uw-userspacenoindex": { 
-			label:"User page/subpage isn't appropriate for search engine indexing", 
-			summary:"Notice: User (sub)page isn't appropriate for search engine indexing" 
-		},
-		"uw-vgscope": {
-			label:"Adding video game walkthroughs, cheats or instructions",
-			summary:"Notice: Adding video game walkthroughs, cheats or instructions"
+			label:"向更改用户名回报的用户名称并不违反方针", 
+			summary:"单层级通知：向更改用户名回报的用户名称并不违反方针" 
 		},
 		"uw-warn": { 
-			label:"Place user warning templates when reverting vandalism", 
-			summary:"Notice: You can use user warning templates when reverting vandalism"
-		},
-		"uw-userspace draft finish": { 
-			label:"Stale userspace draft", 
-			summary:"Notice: Stale Userspace draft" 
+			label:"警告破坏用户", 
+			summary:"单层级通知：警告破坏用户"
 		}
 	},
 	singlewarn: {
 		"uw-3rr": { 
-			label:"Violating the three-revert rule; see also uw-ew",
-			summary:"Warning: Violating the three-revert rule"
-		},
-		"uw-affiliate": { 
-			label:"Affiliate marketing", 
-			summary:"Warning: Affiliate marketing"
-		},
-		"uw-agf-sock": { 
-			label:"Use of multiple accounts (assuming good faith)", 
-			summary:"Warning: Using multiple accounts"
+			label:"用户潜在违反回退不过三原则的可能性",
+			summary:"单层级警告：用户潜在违反回退不过三原则的可能性"
 		},
 		"uw-attack": {
-			label:"Creating attack pages",
-			summary:"Warning: Creating attack pages",
+			label:"建立人身攻击页面",
+			summary:"单层级警告：建立人身攻击页面",
 			suppressArticleInSummary: true
 		},
-		"uw-attempt": {
-			label:"Triggering the edit filter",
-			summary:"Warning: Triggering the edit filter"
-		},
-		"uw-bizlist": {
-			label:"Business promotion",
-			summary:"Warning: Promoting a business"
-		},
-		"uw-botun": {
-			label:"Bot username",
-			summary:"Warning: Bot username"
+		"uw-bv": {
+			label:"公然的破坏",
+			summary:"单层级警告：公然的破坏"
 		},
 		"uw-canvass": {
-			label:"Canvassing",
-			summary:"Warning: Canvassing"
+			label:"不恰当的拉票",
+			summary:"单层级警告：不恰当的拉票"
 		},
 		"uw-copyright": {
-			label:"Copyright violation",
-			summary:"Warning: Copyright violation"
+			label:"侵犯版权",
+			summary:"单层级警告：侵犯版权"
 		},
 		"uw-copyright-link": { 
-			label:"Linking to copyrighted works violation",
-			summary:"Warning: Linking to copyrighted works violation" 
-		},
-		"uw-copyright-remove": {
-			label:"Removing {{copyvio}} template from articles",
-			summary:"Warning: Removing {{copyvio}} templates"
-		},
-		"uw-efsummary": {
-			label:"Edit summary triggering the edit filter",
-			summary:"Warning: Edit summary triggering the edit filter"
-		},
-		"uw-ew": {
-			label:"Edit warring; see also uw-3rr",
-			summary:"Warning: Edit warring"
+			label:"连结到有版权的材料",
+			summary:"单层级警告：连结到有版权的材料" 
 		},
 		"uw-hoax": { 
-			label:"Creating hoaxes", 
-			summary:"Warning: Creating hoaxes" 
+			label:"建立恶作剧", 
+			summary:"单层级警告：建立恶作剧" 
 		},
 		"uw-legal": { 
-			label:"Making legal threats", 
-			summary:"Warning: Making legal threats" 
+			label:"诉诸法律威胁", 
+			summary:"单层级警告：诉诸法律威胁" 
 		},
 		"uw-longterm": { 
-			label:"Long term pattern of vandalism", 
-			summary:"Warning: Long term pattern of vandalism" 
+			label:"长期的破坏", 
+			summary:"单层级警告：长期的破坏" 
 		},
 		"uw-multipleIPs": { 
-			label:"Usage of multiple IPs", 
-			summary:"Warning: Usage of multiple IPs" 
+			label:"使用多个IP地址", 
+			summary:"单层级警告：使用多个IP地址" 
+		},
+		"uw-npov-tvd": { 
+			label:"在剧集条目中加入奸角等非中立描述", 
+			summary:"单层级警告：在剧集条目中加入奸角等非中立描述"
 		},
 		"uw-pinfo": { 
-			label:"Personal info", 
-			summary:"Warning: Personal info" 
+			label:"个人资料", 
+			summary:"单层级警告：个人资料" 
 		},
-		"uw-socksuspect": {
-			label:"Sockpuppetry",
-			summary:"Warning: You are a suspected [[WP:SOCK|sockpuppet]]"  // of User:...
+		"uw-redirect": {
+			label:"建立恶意重定向",
+			summary:"单层级警告：建立恶意重定向"
 		},
 		"uw-upv": { 
-			label:"Userpage vandalism", 
-			summary:"Warning: Userpage vandalism"
+			label:"用户页破坏", 
+			summary:"单层级警告：用户页破坏"
+		},
+		"uw-substub": { 
+			label:"创建小小作品", 
+			summary:"单层级警告：创建小小作品"
 		},
 		"uw-username": { 
-			label:"Username is against policy", 
-			summary:"Warning: Your username might be against policy"
-		},
-		"uw-coi-username": { 
-			label:"Username is against policy, and conflict of interest", 
-			summary:"Warning: Username and conflict of interest policy"
-		},
-		"uw-userpage": { 
-			label:"Userpage or subpage is against policy", 
-			summary:"Warning: Userpage or subpage is against policy"
-		},
-		"uw-wrongsummary": { 
-			label:"Using inaccurate or inappropriate edit summaries", 
-			summary:"Warning: Using inaccurate or inappropriate edit summaries"
+			label:"不恰当的用户名", 
+			summary:"单层级警告：不恰当的用户名"
 		}
 	},
 	block: {
-		"uw-block": {
-			'label':"Block",
-			'summary':"You have been blocked from editing"
+		"uw-block1": {
+			'label':"层级1封禁",
+			'summary':"层级1封禁"
 		},
-		"uw-blocknotalk": {
-			'label':"Block (talk page disabled)",
-			'summary':"You have been blocked from editing and your user talk page has been disabled"
+		"uw-block2": {
+			'label':"层级2封禁",
+			'summary':"层级2封禁"
 		},
-		"uw-blockindef": {
-			'label':"Block (indefinite)",
-			'summary':"You have been indefinitely blocked from editing"
-		},
-		"uw-ablock": {
-			'label':"Anonymous block",
-			'summary':"Your IP address has been blocked from editing"
-		},
-		"uw-aeblock": {
-			'label':"Arbitration enforcement block",
-			'summary':"You have been blocked from editing for violating an [[WP:Arbitration|arbitration decision]] with your edits"
-		},
-		"uw-adblock": {
-			'label':"Advertising block",
-			'summary':"You have been blocked from editing for [[WP:SOAP|advertising or self-promotion]]"
-		},
-		"uw-sblock": {
-			'label':"Spam block",
-			'summary':"You have been blocked from editing for continuing to add [[WP:SPAM|spam links]]"
-		},
-		"uw-soablock": {
-			'label':"Spam/advertising-only account block",
-			'summary':"You have been indefinitely blocked from editing because your account is being used only for [[WP:SPAM|spam, advertising, or promotion]]"
-		},
-		"uw-vblock": {
-			'label':"Vandalism block",
-			'summary':"You have been blocked from editing for persistent [[WP:VAND|vandalism]]"
-		},
-		"uw-voablock": {
-			'label':"Vandalism-only account block",
-			'summary':"You have been indefinitely blocked from editing because your account is being [[WP:VOA|used only for vandalism]]"
-		},
-		"uw-bioblock": {
-			'label':"BLP violations",
-			'summary':"You have been blocked from editing for violations of Wikipedia's [[WP:BLP|biographies of living persons policy]]"
-		},
-		"uw-npblock": {
-			'label':"Creating nonsense pages block",
-			'summary':"You have been blocked from editing for creating [[WP:PN|nonsense pages]]"
-		},
-		"uw-myblock": {
-			'label':"Social networking block",
-			'summary':"You have been blocked from editing for using user and/or article pages as a [[WP:NOTMYSPACE|blog, web host, social networking site or forum]]"
-		},
-		"uw-copyrightblock": {
-			'label':"Copyright violation block",
-			'summary':"You have been blocked from editing for continued [[WP:COPYVIO|copyright infringement]]"
-		},
-		"uw-dblock": {
-			'label':"Deletion/removal of content block",
-			'summary':"You have been blocked from editing for continued [[WP:VAND|removal of material]]"
-		},
-		"uw-efblock": {
-			'label':"Edit filter-related block",
-			'summary':"You have been blocked from editing for making disruptive edits that repeatedly triggered the [[WP:EF|edit filter]]"
-		},
-		"uw-ewblock": {
-			'label':"Edit warring block",
-			'summary':"You have been blocked from editing to prevent further [[WP:DE|disruption]] caused by your engagement in an [[WP:EW|edit war]]"
+		"uw-block3": {
+			'label':"层级3封禁",
+			'summary':"层级3封禁"
 		},
 		"uw-3block": {
-			'label':"Three-revert rule violation block",
-			'summary':"You have been blocked from editing for your [[WP:DE|disruption]] caused by [[WP:EW|edit warring]] and violation of the [[WP:3RR|three-revert rule]]"
+			'label':"回退不过三原则封禁",
+			'summary':"回退不过三原则封禁"
 		},
-		"uw-botblock": {
-			'label':"Unapproved bot block",
-			'summary':"You have been blocked from editing because it appears you are running a [[WP:BOT|bot script]] without [[WP:BRFA|approval]]"
+		"uw-ablock": {
+			'label':"匿名封禁",
+			'summary':"匿名封禁"
+		},
+		"uw-bblock": {
+			'label':"机器人失灵封禁",
+			'summary':"机器人失灵封禁"
+		},
+		"uw-dblock": {
+			'label':"删除封禁",
+			'summary':"删除封禁"
+		},
+		"uw-sblock": {
+			'label':"垃圾连结封禁",
+			'summary':"垃圾连结封禁"
 		},
 		"uw-ublock": {
-			'label':"Username soft block",
-			'summary':"You have been indefinitely blocked from editing because your username is a violation of the [[WP:U|username policy]]"
+			'label':"用户名称封禁",
+			'summary':"用户名称封禁"
 		},
-		"uw-uhblock": {
-			'label':"Username hard block",
-			'summary':"You have been indefinitely blocked from editing because your username is a blatant violation of the [[WP:U|username policy]]"
-		},
-		"uw-softerblock": {
-			'label':"Promotional username soft block",
-			'summary':"You have been indefinitely blocked from editing because your [[WP:U|username]] gives the impression that the account represents a group, organization or website"
-		},
-		"uw-causeblock": {
-			'label':"Promotional username soft block, for charitable causes and social service organizations",
-			'summary':"You have been indefinitely blocked from editing because your [[WP:U|username]] gives the impression that the account represents a group, organization or website"
-		},
-		"uw-botublock": {
-			'label':"Bot username soft block",
-			'summary':"You have been indefinitely blocked from editing because your [[WP:U|username]] indicates this is a [[WP:BOT|bot]] account, which is currently not approved"
-		},
-		"uw-memorialblock": {
-			'label':"Memorial username soft block",
-			'summary':"You have been indefinitely blocked from editing because your [[WP:U|username]] indicates this account may be used as a memorial or tribute to someone"
-		},
-		"uw-ublock-famous": {
-			'label':"Famous username soft block",
-			'summary':"You have been indefinitely blocked from editing because your [[WP:U|username]] matches the name of a well-known living individual"
-		},
-		"uw-ublock-double": {
-			'label':"Similar username soft block",
-			'summary':"You have been indefinitely blocked from editing because your [[WP:U|username]] is too similar to the username of another Wikipedia user"
-		},
-		"uw-uhblock-double": {
-			'label':"Username impersonation hard block",
-			'summary':"You have been indefinitely blocked from editing because your [[WP:U|username]] appears to impersonate another Wikipedia user"
-		},
-		"uw-vaublock": {
-			'label':"Vandalism-only account and username hard block",
-			'summary':"You have been indefinitely blocked from editing because your account is being [[WP:VOA|used only for vandalism]] and your username is a blatant violation of the [[WP:U|username policy]]"
-		},
-		"uw-spamublock": {
-			'label':"Spam/advertising-only account and promotional username hard block",
-			'summary':"You have been indefinitely blocked from editing because your account is being used only for [[WP:SPAM|spam or advertising]] and your username is a violation of the [[WP:U|username policy]]"
-		},
-		"uw-compblock": {
-			'label':"Possible compromised account block",
-			'summary':"You have been indefinitely blocked from editing because it is believed that your [[WP:SECURE|account has been compromised]]"
-		},
-		"uw-lblock": {
-			'label':"Legal threat block",
-			'summary':"You have been blocked from editing for making [[WP:NLT|legal threats or taking legal action]]"
-		},
-		"uw-hblock": {
-			'label':"Harassment block",
-			'summary':"You have been blocked from editing for attempting to [[WP:HARASS|harass]] other users"
-		},
-		"uw-pinfoblock": {
-			'label':"Personal information exposure block",
-			'summary':"You have been blocked from editing for [[WP:OUTING|posting personal information]] of another editor"
-		},
-		"uw-deoablock": {
-			'label':"Disruption/trolling only account block",
-			'summary':"You have been indefinitely blocked from editing because your account is being used only for [[WP:DE|trolling, disruption or harassment]]"
-		},
-		"uw-block-onlyfor": {
-			'label':"Bad-faith single purpose account",
-			'summary':"You have been indefinitely blocked from editing because your account is a [[WP:SPA|single purpose account]] being [[WP:DE|used only for disruptive editing]]"
-		},
-		"uw-spoablock": {
-			'label':"Sockpuppet account block",
-			'summary':"You have been indefinitely blocked from editing because your account is being used only for [[WP:SOCK|sock puppetry or meat puppetry]]"
+		"uw-vblock": {
+			'label':"破坏封禁",
+			'summary':"破坏封禁"
 		}
 	}
 };
 
 // Set to true if the template is always for an indef block
 Twinkle.warn.indefBlockHash = {
-	'uw-block': false,
+	'uw-block1': false,
+	'uw-block2': false,
+	'uw-block3': true,
 	'uw-3block': false,
 	'uw-ablock': false,
-	'uw-adblock': false,
-	'uw-aeblock': false,
-	'uw-bioblock': false,
-	'uw-blocknotalk': false,
-	'uw-botblock': false,
-	'uw-copyrightblock': false,
+	'uw-bblock': false,
 	'uw-dblock': false,
-	'uw-efblock': false,
-	'uw-ewblock': false,
-	'uw-hblock': false,
-	'uw-myblock': false,
-	'uw-npblock': false,
-	'uw-pinfoblock': false,
 	'uw-sblock': false,
-	'uw-pblock': false,
-	'uw-blockindef': true,
-	'uw-block-onlyfor': true,
-	'uw-botublock': true,
-	'uw-causeblock': true,
-	'uw-compblock': true,
-	'uw-deoablock': true,
-	'uw-lblock': true,
-	'uw-memorialblock': true,
-	'uw-soablock': true,
-	'uw-softerblock': true,
-	'uw-spamublock': true,
-	'uw-spoablock': true,
 	'uw-ublock': true,
-	'uw-ublock-famous': true,
-	'uw-uhblock': true,
-	'uw-uhblock-double': true,
-	'uw-ublock-double': true,
-	'uw-vaublock': true,
-	'uw-voablock': true
+	'uw-vblock': false
 };
 
 // Set to true if the template supports the page parameter
 Twinkle.warn.pageHash = {
-	'uw-block': true,
-	'uw-3block': true,
-	'uw-ablock': true,
-	'uw-adblock': true,
-	'uw-aeblock': true,
-	'uw-bioblock': true,
-	'uw-blocknotalk': true,
-	'uw-botblock': true,
-	'uw-copyrightblock': true,
-	'uw-dblock': true,
-	'uw-efblock': true,
-	'uw-ewblock': true,
-	'uw-hblock': true,
-	'uw-myblock': true,
-	'uw-npblock': true,
-	'uw-pinfoblock': true,
-	'uw-sblock': true,
-	'uw-vblock': true,
-	'uw-blockindef': true,
-	'uw-block-onlyfor': true,
-	'uw-botublock': false,
-	'uw-causeblock': false,
-	'uw-compblock': true,
-	'uw-deoablock': true,
-	'uw-lblock': true,
-	'uw-memorialblock': false,
-	'uw-soablock': true,
-	'uw-softerblock': false,
-	'uw-spamublock': false,
-	'uw-spoablock': true,
+	'uw-block1': false,
+	'uw-block2': false,
+	'uw-block3': false,
+	'uw-3block': false,
+	'uw-ablock': false,
+	'uw-bblock': false,
+	'uw-dblock': false,
+	'uw-sblock': false,
 	'uw-ublock': false,
-	'uw-ublock-famous': false,
-	'uw-uhblock': false,
-	'uw-uhblock-double': false,
-	'uw-ublock-double': false,
-	'uw-vaublock': true,
-	'uw-voablock': true
+	'uw-vblock': false
 };
 
 // Set to true if the template supports the reason parameter and isn't the same as its super-template when a reason is provided
 Twinkle.warn.reasonHash = {
-	'uw-block': true,
-	'uw-3block': false,
+	'uw-block1': true,
+	'uw-block2': true,
+	'uw-block3': true,
+	'uw-3block': true,
 	'uw-ablock': true,
-	'uw-adblock': false,
-	'uw-aeblock': true,
-	'uw-bioblock': false,
-	'uw-blocknotalk': true,
-	'uw-botblock': false,
-	'uw-copyrightblock': false,
-	'uw-dblock': false,
-	'uw-efblock': false,
-	'uw-ewblock': false,
-	'uw-hblock': false,
-	'uw-myblock': false,
-	'uw-npblock': false,
-	'uw-pinfoblock': true,
+	'uw-bblock': false,
+	'uw-dblock': true,
 	'uw-sblock': false,
-	'uw-vblock': false,
-	'uw-blockindef': true,
-	'uw-block-onlyfor': true,
-	'uw-botublock': true,
-	'uw-causeblock': false,
-	'uw-compblock': false,
-	'uw-deoablock': false,
-	'uw-lblock': false,
-	'uw-memorialblock': false,
-	'uw-soablock': false,
-	'uw-softerblock': false,
-	'uw-spamublock': false,
-	'uw-spoablock': false,
-	'uw-ublock': true,
-	'uw-ublock-famous': false,
-	'uw-uhblock': true,
-	'uw-uhblock-double': false,
-	'uw-ublock-double': false,
-	'uw-vaublock': false,
-	'uw-voablock': false
+	'uw-ublock': false,
+	'uw-vblock': true
 };
 
 Twinkle.warn.prev_block_timer = null;
@@ -1285,8 +902,8 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 		var more = new QuickForm.element( {
 				type: 'input',
 				name: 'block_timer',
-				label: 'Period of blocking: ',
-				tooltip: 'The period the blocking is due for, for example 24 hours, 2 weeks, indefinite etc...'
+				label: '封禁时间：',
+				tooltip: '例如24小时、2天等。'
 			} );
 		e.target.root.insertBefore( more.render(), e.target.root.lastChild );
 		if(Twinkle.warn.prev_block_timer !== null) {
@@ -1379,13 +996,8 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 	}
 
 	var $article = $(e.target.form.article);
-	if (main_group === "singlewarn" && value === "uw-socksuspect") {
-		$article.prev().hide();
-		$article.before('<span id="tw-spi-article-username">Username of sock master, if known (without User:) </span>');
-	} else {
-		$("span#tw-spi-article-username").remove();
-		$article.prev().show();
-	}
+	$("span#tw-spi-article-username").remove();
+	$article.prev().show();
 };
 
 Twinkle.warn.callbacks = {
@@ -1393,7 +1005,7 @@ Twinkle.warn.callbacks = {
 		// XXX cannot preview block templates as yet...
 		var templatename = $('select[name="sub_group"]:visible').last()[0].value;
 		if (templatename in Twinkle.warn.messages.block) {
-			alert("Cannot preview block templates at the moment, unfortunately");
+			alert("很不幸，暂时不能预览封禁模板。");
 			return;
 		}
 
@@ -1424,11 +1036,11 @@ Twinkle.warn.callbacks = {
 		if (linkedarticle.length) {
 			templatetext += '|1=' + linkedarticle[0].value;
 		}
-		templatetext += '}}';
 		var reason = $('textarea[name="reason"]:visible').last();
 		if (reason.length && reason[0].value) {
-			templatetext += " ''" + reason[0].value + "''";
+			templatetext += '|2=' + reason[0].value;
 		}
+		templatetext += '}}';
 		var query = {
 			action: 'parse',
 			prop: 'text',
@@ -1436,7 +1048,7 @@ Twinkle.warn.callbacks = {
 			text: templatetext,
 			title: mw.config.get('wgPageName')
 		};
-		var wikipedia_api = new Wikipedia.api("loading...", query, Twinkle.warn.callbacks.previewRender, new Status("Preview"));
+		var wikipedia_api = new Wikipedia.api("加载…", query, Twinkle.warn.callbacks.previewRender, new Status("预览"));
 		wikipedia_api.params = { previewbox: previewbox };
 		wikipedia_api.post();
 	},
@@ -1445,7 +1057,7 @@ Twinkle.warn.callbacks = {
 		var xml = apiobj.getXML();
 		var html = $(xml).find('text').text();
 		if (!html) {
-			apiobj.statelem.error("failed to retrieve preview, or warning template was blanked");
+			apiobj.statelem.error("不能读取预览，或警告模板被清空");
 			return;
 		}
 		params.previewbox.innerHTML = html;
@@ -1480,8 +1092,8 @@ Twinkle.warn.callbacks = {
 			temp_time.setUTCHours( temp_time.getUTCHours() + 24 );
 
 			if( temp_time > date ) {
-				if( !confirm( "An identical " + params.sub_group + " has been issued in the last 24 hours.  \nWould you still like to add this warning/notice?" ) ) {
-					pageobj.statelem.info( 'aborted per user request' );
+				if( !confirm( "近24小时内一个同样的 " + params.sub_group + " 模板已被发出。\n是否继续？" ) ) {
+					pageobj.statelem.info( '用户取消' );
 					return;
 				}
 			}
@@ -1490,14 +1102,13 @@ Twinkle.warn.callbacks = {
 		latest.date.setUTCMinutes( latest.date.getUTCMinutes() + 1 ); // after long debate, one minute is max
 
 		if( latest.date > date ) {
-			if( !confirm( "A " + latest.type + " has been issued in the last minute.  \nWould you still like to add this warning/notice?" ) ) {
-				pageobj.statelem.info( 'aborted per user request' );
+			if( !confirm( "近1分钟内一个同样的 " + latest.type + " 模板已被发出。\n是否继续？" ) ) {
+				pageobj.statelem.info( '用户取消' );
 				return;
 			}
 		}
 		
-		var mainheaderRe = new RegExp("==+\\s*Warnings\\s*==+");
-		var headerRe = new RegExp( "^==+\\s*(?:" + date.getUTCMonthName() + '|' + date.getUTCMonthNameAbbrev() +  ")\\s+" + date.getUTCFullYear() + "\\s*==+", 'm' );
+		var headerRe = new RegExp( "^==+\\s*" + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月" + "\\s*==+", 'm' );
 
 		if( text.length > 0 ) {
 			text += "\n\n";
@@ -1506,12 +1117,12 @@ Twinkle.warn.callbacks = {
 		if( params.main_group === 'block' ) {
 			var article = '', reason = '', time = null;
 			
-			if( Twinkle.getPref('blankTalkpageOnIndefBlock') && params.sub_group !== 'uw-lblock' && ( Twinkle.warn.indefBlockHash[ params.sub_group ] || (/indef|\*|max/).exec( params.block_timer ) ) ) {
-				Status.info( 'Info', 'Blanking talk page per preferences and creating a new level 2 heading for the date' );
-				text = "== " + date.getUTCMonthName() + " " + date.getUTCFullYear() + " ==\n";
+			if( Twinkle.getPref('blankTalkpageOnIndefBlock') && ( Twinkle.warn.indefBlockHash[ params.sub_group ] || (/indef|\*|max/).exec( params.block_timer ) ) ) {
+				Status.info( '信息', '根据参数设置清空讨论页并创建新标题' );
+				text = "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
 			} else if( !headerRe.exec( text ) ) {
-				Status.info( 'Info', 'Will create a new level 2 heading for the date, as none was found for this month' );
-				text += "== " + date.getUTCMonthName() + " " + date.getUTCFullYear() + " ==\n";
+				Status.info( '信息', '未找到当月标题，将创建新的' );
+				text += "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
 			}
 			
 			if( params.article && Twinkle.warn.pageHash[ params.sub_group ] ) {
@@ -1533,37 +1144,30 @@ Twinkle.warn.callbacks = {
 			text += "{{subst:" + params.sub_group + article + time + reason + "|sig=true|subst=subst:}}";
 		} else {
 			if( !headerRe.exec( text ) ) {
-				Status.info( 'Info', 'Will create a new level 2 heading for the date, as none was found for this month' );
-				text += "== " + date.getUTCMonthName() + " " + date.getUTCFullYear() + " ==\n";
+				Status.info( '信息', '未找到当月标题，将创建新的' );
+				text += "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
 			}
 
 			switch( params.sub_group ) {
 				case 'uw-username':
 					text += "{{subst:" + params.sub_group + ( params.reason ? '|1=' + params.reason : '' ) + "|subst=subst:}} ~~~~";
 					break;
-				case 'uw-socksuspect':
-					text += "{{subst:" + params.sub_group + ( params.article ? '|1=User:' + params.article : '' ) + "|subst=subst:}}" + (params.reason ? " ''" + params.reason + "'' ": ' ' ) + " ~~~~";
-					break;
 				default:
-					text += "{{subst:" + params.sub_group + ( params.article ? '|1=' + params.article : '' ) + "|subst=subst:}}" + (params.reason ? " ''" + params.reason + "'' ": ' ' ) + "~~~~";
+					text += "{{subst:" + params.sub_group + ( params.article ? '|1=' + params.article : '' ) + (params.reason ? '|2=' + params.reason : '' ) + "|subst=subst:}}" + "--~~~~";
 					break;
 			}
 		}
 		
 		if ( Twinkle.getPref('showSharedIPNotice') && isIPAddress( mw.config.get('wgTitle') ) ) {
-			Status.info( 'Info', 'Adding a shared IP notice' );
+			Status.info( '信息', '添加共享IP说明' );
 			text +=  "\n{{subst:SharedIPAdvice}}";
 		}
 
 		var summary = messageData.summary;
 		if ( messageData.suppressArticleInSummary !== true && params.article ) {
-			if ( params.sub_group === "uw-socksuspect" ) {  // this template requires a username
-				summary += " of [[User:" + params.article + "]]";
-			} else {
-				summary += " on [[" + params.article + "]]";
-			}
+			summary += "，关于[[" + params.article + "]]";
 		}
-		summary += "." + Twinkle.getPref("summaryAd");
+		summary += "。" + Twinkle.getPref("summaryAd");
 
 		pageobj.setPageText( text );
 		pageobj.setEditSummary( summary );
@@ -1577,7 +1181,7 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	// First, check to make sure a reason was filled in if uw-username was selected
 	
 	if(e.target.sub_group.value === 'uw-username' && e.target.reason.value.trim() === '') {
-		alert("You must supply a reason for the {{uw-username}} template.");
+		alert("必须给{{uw-username}}提供理由。");
 		return;
 	}
 
@@ -1595,9 +1199,9 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	Status.init( e.target );
 
 	Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
-	Wikipedia.actionCompleted.notice = "Warning complete, reloading talk page in a few seconds";
+	Wikipedia.actionCompleted.notice = "警告完成，将在几秒后刷新";
 
-	var wikipedia_page = new Wikipedia.page( mw.config.get('wgPageName'), 'User talk page modification' );
+	var wikipedia_page = new Wikipedia.page( mw.config.get('wgPageName'), '用户对话页修改' );
 	wikipedia_page.setCallbackParameters( params );
 	wikipedia_page.setFollowRedirect( true );
 	wikipedia_page.load( Twinkle.warn.callbacks.main );
