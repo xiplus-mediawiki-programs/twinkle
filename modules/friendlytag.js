@@ -229,7 +229,7 @@ Twinkle.tag.article.tags = {
 	"BLP unsourced": "此生者传记条目没有列出任何参考或来源",
 	"catimprove": "此条目需要更多页面分类",
 	"citation style": "这篇条目的参考文献需要进行清理",
-	"cleanup": "此条目可能需要进行清理，以符合维基百科的质量标准"
+	"cleanup": "此条目可能需要进行清理，以符合维基百科的质量标准",
 	"COI": "这个条目的一位主要贡献者似乎与本条目的主题存在利益冲突",
 	"copyedit": "此条目或章节需要编修，以确保语法、用语、语气、风格、表达恰当",
 	"disputed": "此条目的准确性有争议",
@@ -692,7 +692,7 @@ Twinkle.tag.callbacks = {
 					default:
 						break;
 				}
-*/
+
 				currentTag += Twinkle.tag.mode === 'redirect' ? '}}' : '|date={{subst:#time:c}}}}\n';
 				tagText += currentTag;
 			}
@@ -820,6 +820,9 @@ Twinkle.tag.callbacks = {
 						} else if (input !== "") {
 							tagtext += "|reason=" + input;
 						}
+						break;
+					case "Non-free reduced":
+						tagtext += "|date={{subst:date}}";
 						break;
 					default:
 						break;  // don't care
