@@ -11,8 +11,8 @@
  *
  * ----------
  *
- * 这是Twinkle，请参见[[WP:TW]]。
- * 这个文件需要一个更好的头部注释。
+ * 这是Twinkle，新手、管理员及他们之间的用户的
+ * 好搭档。请参见[[WP:TW]]以获取更多信息。
  *
  * 维护者：~~~
  */
@@ -120,14 +120,13 @@ if (mw.config.get("skin") === 'vector') {
 	Twinkle.defaultConfig.twinkle.portletNext = null;
 }
 
-
-
 Twinkle.defaultConfig.friendly = {
 	 // Tag
 	groupByDefault: true,
 	watchTaggedPages: false,
 	markTaggedPagesAsMinor: false,
 	markTaggedPagesAsPatrolled: true,
+	tagArticleSortOrder: "cat",
 	customTagList: [],
 	 // Welcome
 	topWelcomes: true,

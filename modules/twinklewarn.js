@@ -713,7 +713,7 @@ Twinkle.warn.messages = {
 			summary:"Notice: Applying stub categories manually" 
 		},
 		"uw-draftfirst": { 
-			label:"Draft in userspace without the risk of speedy deletion", 
+			label:"User should draft in userspace without the risk of speedy deletion", 
 			summary:"Notice: Consider drafting your article in [[Help:Userspace draft|userspace]]"
 		},
 		"uw-editsummary": { 
@@ -727,10 +727,6 @@ Twinkle.warn.messages = {
 		"uw-fuir": { 
 			label:"Fair use image has been removed from your userpage", 
 			summary:"Notice: A fair use image has been removed from your userpage" 
-		},
-		"uw-hangon": { 
-			label:"User forgets to place a hang-on reasoning to the talk page", 
-			summary:"Notice: User forgets to place a hang-on reasoning to the talk page" 
 		},
 		"uw-hasty": { 
 			label:"Hasty addition of speedy deletion tags", 
@@ -1321,8 +1317,8 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 };
 
 Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSubcategory(e) {
-	var main_group = e.target.main_group;
-	var value = e.target.value;
+	var main_group = e.target.form.main_group.value;
+	var value = e.target.form.sub_group.value;
 
 	if( main_group === 'singlewarn' ) {
 		if( value === 'uw-username' ) {
@@ -1382,7 +1378,7 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 		}
 	}
 
-	var $article = $(e.target.article);
+	var $article = $(e.target.form.article);
 	if (main_group === "singlewarn" && value === "uw-socksuspect") {
 		$article.prev().hide();
 		$article.before('<span id="tw-spi-article-username">Username of sock master, if known (without User:) </span>');
@@ -1591,7 +1587,7 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 		reason: e.target.reason.value,
 		main_group: e.target.main_group.value,
 		sub_group: e.target.sub_group.value,
-		article: e.target.article.value.replace( /^(Image|Category):/i, ':$1:' ),
+		article: e.target.article.value,  // .replace( /^(Image|Category):/i, ':$1:' ),  -- apparently no longer needed...
 		block_timer: e.target.block_timer ? e.target.block_timer.value : null
 	};
 

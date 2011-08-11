@@ -397,11 +397,6 @@ Twinkle.config.sections = [
 	inFriendlyConfig: true,
 	preferences: [
 		{
-			name: "groupByDefault",
-			label: "默认勾选“合并到{{multiple issues}}”",
-			type: "boolean"
-		},
-		{
 			name: "watchTaggedPages",
 			label: "标记时添加到监视列表",
 			type: "boolean"
@@ -416,6 +411,17 @@ Twinkle.config.sections = [
 			label: "标记时标记页面为已巡查（如可能）",
 			helptip: "基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。",
 			type: "boolean"
+		},
+		{
+			name: "groupByDefault",
+			label: "Check the \"group into {{multiple issues}}\" box by default",
+			type: "boolean"
+		},
+		{
+			name: "tagArticleSortOrder",
+			label: "Default view order for article tags",
+			type: "enum",
+			enumValues: { "cat": "By categories", "alpha": "In alphabetical order" }
 		},
 		{
 			name: "customTagList",

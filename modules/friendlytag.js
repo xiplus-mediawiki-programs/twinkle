@@ -61,18 +61,23 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 				}
 			);
 
-			form.append( { type:'header', label:'维护模板' } );
-			form.append( { type:'checkbox', name: 'maintenance', list: Twinkle.tag.maintenanceList } );
+			form.append({
+				type: 'select',
+				name: 'sortorder',
+				label: '察看列表：',
+				tooltip: '您可以在Twinkle参数设置中更改此项。',
+				event: Twinkle.tag.updateSortOrder,
+				list: [
+					{ type: 'option', value: 'cat', label: '按类别', selected: Twinkle.getFriendlyPref('tagArticleSortOrder') === 'cat' },
+					{ type: 'option', value: 'alpha', label: '按字母', selected: Twinkle.getFriendlyPref('tagArticleSortOrder') === 'alpha' }
+				]
+			});
 
-			form.append( { type:'header', label:'问题模板' } );
-			form.append( { type:'checkbox', name: 'problem', list: Twinkle.tag.problemList } );
-
-			form.append( { type:'header', label:'提示模板' } );
-			form.append( { type:'checkbox', name: 'notice', list: Twinkle.tag.noticeList } );
+			form.append( { type: 'div', id: 'tagWorkArea' } );
 
 			if( Twinkle.getFriendlyPref('customTagList').length ) {
 				form.append( { type:'header', label:'自定义模板' } );
-				form.append( { type: 'checkbox', name: 'custom', list: Twinkle.getFriendlyPref('customTagList') } );
+				form.append( { type: 'checkbox', name: 'articleTags', list: Twinkle.getFriendlyPref('customTagList') } );
 			}
 			break;
 
@@ -101,13 +106,13 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 			Window.setTitle( "重定向标记" );
 
 			form.append({ type: 'header', label:'拼写、错误拼写、时态和大小写模板' });
-			form.append({ type: 'checkbox', name: 'spelling', list: Twinkle.tag.spellingList });
+			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.spellingList });
 
 			form.append({ type: 'header', label:'其他名称模板' });
-			form.append({ type: 'checkbox', name: 'alternative', list: Twinkle.tag.alternativeList });
+			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.alternativeList });
 
 			form.append({ type: 'header', label:'杂项和管理用重定向模板' });
-			form.append({ type: 'checkbox', name: 'administrative', list: Twinkle.tag.administrativeList });
+			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.administrativeList });
 			break;
 
 		/*case 'draft':
@@ -127,350 +132,214 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 	var result = form.render();
 	Window.setContent( result );
 	Window.display();
+
+	if (Twinkle.tag.mode === "article") {
+		// fake a change event on the sort dropdown, to initialize the tag list
+		var evt = document.createEvent("Event");
+		evt.initEvent("change", true, true);
+		result.sortorder.dispatchEvent(evt);
+	}
 };
+
+Twinkle.tag.checkedTags = [];
+
+Twinkle.tag.updateSortOrder = function(e) {
+	var sortorder = e.target.value;
+	var $workarea = $(e.target.form).find("div#tagWorkArea");
+
+	Twinkle.tag.checkedTags = e.target.form.getChecked("articleTags");
+	if (!Twinkle.tag.checkedTags) {
+		Twinkle.tag.checkedTags = [];
+	}
+
+	// function to generate a checkbox, with appropriate subgroup if needed
+	var makeCheckbox = function(tag, description) {
+		var checkbox = { value: tag, label: "{{" + tag + "}}: " + description };
+		if (Twinkle.tag.checkedTags.indexOf(tag) !== -1) {
+			checkbox.checked = true;
+		}
+		return checkbox;
+	};
+
+	// categorical sort order
+	if (sortorder === "cat") {
+		var div = new QuickForm.element({
+			type: "div",
+			id: "tagWorkArea"
+		});
+
+		// function to iterate through the tags and create a checkbox for each one
+		var doCategoryCheckboxes = function(subdiv, array) {
+			var checkboxes = [];
+			$.each(array, function(k, tag) {
+				var description = Twinkle.tag.article.tags[tag];
+				checkboxes.push(makeCheckbox(tag, description));
+			});
+			subdiv.append({
+				type: "checkbox",
+				name: "articleTags",
+				list: checkboxes
+			});
+		};
+
+		var i = 0;
+		// go through each category and sub-category and append lists of checkboxes
+		$.each(Twinkle.tag.article.tagCategories, function(title, content) {
+			div.append({ type: "header", id: "tagHeader" + i, label: title });
+			var subdiv = div.append({ type: "div", id: "tagSubdiv" + i++ });
+			if ($.isArray(content)) {
+				doCategoryCheckboxes(subdiv, content);
+			} else {
+				$.each(content, function(subtitle, subcontent) {
+					subdiv.append({ type: "div", label: [ htmlNode("b", subtitle) ] });
+					doCategoryCheckboxes(subdiv, subcontent);
+				});
+			}
+		});
+
+		var rendered = div.render();
+		$workarea.replaceWith(rendered);
+		var $rendered = $(rendered);
+		$rendered.find("h5").css({ 'font-size': '110%', 'margin-top': '1em' });
+		$rendered.find("div").filter(":has(span.quickformDescription)").css({ 'margin-top': '0.4em' });
+	}
+	// alphabetical sort order
+	else {
+		var checkboxes = [];
+		$.each(Twinkle.tag.article.tags, function(tag, description) {
+			checkboxes.push(makeCheckbox(tag, description));
+		});
+		var tags = new QuickForm.element({
+			type: "checkbox",
+			name: "articleTags",
+			list: checkboxes
+		});
+		$workarea.empty().append(tags.render());
+	}
+};
+
 
 // Tags for ARTICLES start here
 
-Twinkle.tag.maintenanceList = [
-	{
-		label: wgUVS("{{attention}}: 此条目需要您的关注", "{{attention}}: 此條目需要您的關注"),
-		value: 'attention'
-	},
-	{
-		label: wgUVS("{{cleanup}}: 条目可能需要进行清理", "{{cleanup}}: 條目可能需要進行清理"),
-		value: 'cleanup'
-	},
-	{
-		label: wgUVS("{{copyedit}}: 条目需要校对，以确保语法、用语、语气、风格及表达恰当", "{{copyedit}}: 條目需要校對，以確保語法、用語、語氣、風格及表達恰當"),
-		value: 'copyedit'
-	},
-	{
-		label: wgUVS("{{expand}}: 此条目需要扩充", "{{expand}}: 此條目需要擴充"),
-		value: 'expand'
-	},
-	{
-		label: wgUVS("{{expert}}: 此条目需要精通或熟悉本主题的专家参与编辑", "{{expert}}: 此條目需要精通或熟悉本主題的專家參與編輯"),
-		value: 'expert'
-	},
-	{
-		label: wgUVS("{{fansite}}: 此条目类似爱好者站点", "{{fansite}}: 此條目類似愛好者站點"),
-		value: 'fansite'
-	},
-	{
-		label: wgUVS("{{grammar}}: 此条目或章节的文法需要改善", "{{grammar}}: 此條目或章節的文法需要改善"),
-		value: 'grammar'
-	},
-	{
-		label: wgUVS("{{howto}}: 此条目或章节包含指南或教学内容", "{{howto}}: 此條目或章節包含指南或教學內容"),
-		value: 'howto'
-	},
-	{
-		label: wgUVS("{{in-universe}}: 本条目以小说作品原始的写作风格叙述一个小说作品或情节", "{{in-universe}}: 本條目以小說作品原始的寫作風格敍述一個小說作品或情節"),
-		value: 'in-universe'
-	},
-	{
-		label: wgUVS("{{infoboxneeded}}: 此条目需要加上一个合适的信息框模板，或是现有的信息框需要更新", "{{infoboxneeded}}: 此條目需要加上一個合適的訊息框模板，或是現有的訊息框需要更新"),
-		value: 'infoboxneeded'
-	},
-	{
-		label: wgUVS("{{intro-missing}}: 这个条目的导言过于短小", "{{intro-missing}}: 這個條目的導言過於短小"),
-		value: 'intromissing'
-	},
-	{
-		label: wgUVS("{{newsrelease}}: 本条目或章节阅读起来像是新闻稿，或包含过度的宣传性语调", "{{newsrelease}}: 本條目或章節閱讀起來像是新聞稿，或包含過度的宣傳性語調"),
-		value: 'newsrelease'
-	},
-	{
-		label: wgUVS("{{nofootnotes}}: 本条目包含了一些参考来源或外部链接，但由于条目内部缺少内文脚注，本条目的来源仍然不明确", "{{nofootnotes}}: 本條目包含了一些參考來源或外部鏈結，但由於條目內部缺乏內文腳注，本條目的來源仍然不明確"),
-		value: 'nofootnotes'
-	},
-	{
-		label: wgUVS("{{notchinese}}: 此条目包含过多不是现代标准汉语的内容", "{{notchinese}}: 此條目包含過多不是現代標準漢語的內容"),
-		value: 'notchinese'
-	},
-	{
-		label: wgUVS("{{notchinesetitle}}: 据命名常规，本条目标题应使用中文", "{{notchinesetitle}}: 據命名常規，本條目標題應使用中文"),
-		value: 'notchinesetitle'
-	},
-	{
-		label: wgUVS("{{orphan}}: 这个条目只有或没有很少链入页面", "{{orphan}}: 這個條目只有或沒有很少鏈入頁面"),
-		value: 'orphan'
-	},
-	{
-		label: wgUVS("{{prosetimeline}}: 此条目或章节可能包含不适当的条列式年代表", "{{prosetimeline}}: 此條目或章節可能包含不適當的條列式年代表"),
-		value: 'prosetimeline'
-	},
-	{
-		label: wgUVS("{{roughtranslation}}: 此条目或章节翻译粗劣", "{{roughtranslation}}: 此條目或章節翻譯粗劣"),
-		value: 'roughtranslation'
-	},
-	{
-		label: wgUVS("{{tone}}: 此条目的语调或风格可能不适合百科全书的写作方式", "{{tone}}: 此條目的語調或風格可能不適合百科全書的寫作方式"),
-		value: 'tone'
-	},
-	{
-		label: wgUVS("{{translating}}: 此条目仍有文字未被翻译成中文", "{{translating}}: 此條目仍有文字未被翻譯成中文"),
-		value: 'translating'
-	},
-	{
-		label: wgUVS("{{trivia}}: 应避免有陈列杂项资料的章节", "{{trivia}}: 應避免有陳列雜項資料的章節"),
-		value: 'trivia'
-	},
-	{
-		label: wgUVS("{{uncategorized}}: 此条目缺少页面分类", "{{uncategorized}: 此條目缺乏頁面分類"),
-		value: 'uncategorized'
-	},
-	{
-		label: wgUVS("{{verylong}}: 此条目可能过于冗长", "{{verylong}}: 此條目可能過於冗長"),
-		value: 'verylong'
-	},
-	{
-		label: wgUVS("{{wikify}}: 此条目格式需要被修正以符合维基标准", "{{wikify}}: 此條目格式需要被修正以符合維基標準"),
-		value: 'wikify'
-	}
-];
+Twinkle.tag.article = {};
 
+Twinkle.tag.article.tags = {
+	"advert": "此条目或章节类似广告",
+	"BLPsources": "当前传记条目需要补充更多来源",
+	"BLP unsourced": "此生者传记条目没有列出任何参考或来源",
+	"catimprove": "此条目需要更多页面分类",
+	"citation style": "这篇条目的参考文献需要进行清理",
+	"cleanup": "此条目可能需要进行清理，以符合维基百科的质量标准"
+	"COI": "这个条目的一位主要贡献者似乎与本条目的主题存在利益冲突",
+	"copyedit": "此条目或章节需要编修，以确保语法、用语、语气、风格、表达恰当",
+	"disputed": "此条目的准确性有争议",
+	"expert-subject": "本条目或段落需要专家的关注",
+	"external links": "维基百科不是连结集",
+	"fansite": "此条目或章节类似爱好者站点",
+	"globalize": "此条目仅具有一部分地区的观点或资讯，无法完整表达普世通用，并包含广泛区域的观点",
+	"hoax": "此条目的真实性被质疑",
+	"in-universe": "本条目或章节使用小说故事内的观点描述一个虚构事物",
+	"inuse": "本条目正在进行重大修改",
+	"lead section": "此文的导言部分也许不足以概括其内容",
+	"merge": "建议此页面与页面合并",
+	"merge from": "建议将页面合并到本页面",
+	"merge to": "建议将此页面合并至页面",
+	"no footnotes": "此条目列出了一些参考来源或外部链接，但由于缺少内文脚注，条目中部分信息的来源仍然不明确",
+	"non-free": "此条目或章节可能过多或不当地使用了受版权保护的文字、图像或/及多媒体文件",
+	"notability": "此条目可能不符合通用关注度指引",
+	"notmandarin": "此条目包含过多不是现代标准汉语的内容",
+	"original research": "此条目或章节可能包含原创研究或未查证内容",
+	"orphan": "这个条目没有或只有很少链入页面",
+	"POV": "此条目的中立性有争议。内容、语调可能带有明显的个人观点或地方色彩",
+	"prose": "此条目使用了列表式记述，可能需要改写为连贯的叙述性文字",
+	"refimprove": "此条目需要补充更多来源",
+	"roughtranslation": "此条目翻译粗劣",
+	"tone": "此条目或章节的语调或风格可能不适合百科全书的写作方式",
+	"toolong": "此条目或章节可能过于冗长",
+	"uncategorized": "此条目缺少页面分类",
+	"unreferenced": "此条目没有列出任何参考或来源",
+	"update": "当前条目或章节需要更新",
+	"weasel": "此条目或章节可能因为语意模棱两可而损及其中立性",
+	"wikify": "此条目或章节需要被修正为维基格式以符合质量标准"
+};
 
-Twinkle.tag.problemList = [
-	{
-		label: wgUVS("{{advert}}: 此条目类似广告", "{{advert}}: 此條目類似廣告"),
-		value: 'advert'
+Twinkle.tag.article.tagCategories = {
+	"清理和维护模板": {
+		"常规清理": [
+			"cleanup",
+			"copyedit",
+			"wikify"
+		],
+		"可能多余的内容": [
+			"external links",
+			"non-free"
+		],
+		"结构和导言": [
+			"lead section",
+			"toolong"
+		],
+		"小说相关清理": [
+			"in-universe"
+		]
 	},
-	{
-		label: wgUVS("{{blpdispute}}: 此条目可能违反了生者传记方针", "{{blpdispute}}: 此條目可能違反了生者傳記方針"),
-		value: 'blpdispute'
+	"常规条目问题": {
+		"重要性和知名度": [
+			"notability"
+		],
+		"写作风格": [
+			"advert",
+			"fansite",
+			"prose",
+			"tone"
+		],
+		"信息和细节": [
+			"expert-subject",
+		],
+		"时间性": [
+			"update"
+		],
+		"中立、偏见和事实准确性": [
+			"COI",
+			"disputed",
+			"hoax",
+			"globalize",
+			"POV",
+			"weasel"
+		],
+		"可供查证和来源": [
+			"BLPsources",
+			"BLP unsourced",
+			"original research",
+			"refimprove",
+			"unreferenced"
+		]
 	},
-	{
-		label: wgUVS("{{blpsource}}: 此传记条目需要补充性的引用以供查证", "{{blpsource}}: 此傳記條目需要附加來源資料以供查證"),
-		value: 'blpsource'
+	"具体内容问题": {
+		"语言": [
+			"notmandarin",
+			"rough translation"
+		],
+		"链接": [
+			"orphan",
+			"wikify"  // this tag is listed twice because it used to focus mainly on links, but now it's a more general cleanup tag
+		],
+		"参考技术": [
+			"citation style"
+		],
+		"分类": [
+			"catimprove",
+			"uncategorized"
+		]
 	},
-	{
-		label: wgUVS("{{disputed}}: 此条目的准确性有争议", "{{disputed}}: 此條目的準確性有爭議"),
-		value: 'disputed'
-	},
-	{
-		label: wgUVS("{{globalize}}: 此条目仅具一部分地域的观点或资料，尚需补充世界性的内容", "{{globalize}}: 此條目僅具一部份地域的觀點或資料，尚需補充世界性的內容"),
-		value: 'globalize',
-	},
-	{
-		label: wgUVS("{{hoax}}: 此条目真实性成疑", "{{hoax}}: 此條目真實性成疑"),
-		value: 'hoax'
-	},
-	{
-		label: wgUVS("{{non-free}}: 此条目可能过多或不当地使用了受版权保护的文字、图像或/及多媒体文件", "{{non-free}}: 此條目可能過多或不當地使用了受版權保護的文字、圖像或/及多媒體檔案"),
-		value: 'non-free'
-	},
-	{
-		label: wgUVS("{{notability}}: 此条目可能不符合通用关注度指引", "{{notability}}: 此條目可能不符合通用關注度指引"),
-		value: 'notability',
-		subgroup: {
-			name: 'notability',
-			type: 'select',
-			list: [
-				{
-					label: wgUVS("{{notability}}: 通用的知名度标准", "{{notability}}: 通用的知名度標準"),
-					value: "none"
-				},
-				{
-					label: wgUVS("{{notability|Biographies}}: 人物传记", "{{notability|Biographies}}: 人物傳記"),
-					value: "Biographies"
-				},
-				{
-					label: wgUVS("{{notability|Fiction}}: 虚构事物", "{{notability|Fiction}}: 虛構事物"),
-					value: "Fiction"
-				},
-				{
-					label: wgUVS("{{notability|Neologisms}}: 发明、研究", "{{notability|Neologisms}}: 發明或研究"),
-					value: "Neologisms"
-				},
-				{
-					label: wgUVS("{{notability|Web}}: 网站、网络内容", "{{notability|Web}}: 網站或網絡內容"),
-					value: "Web"
-				}
-			]
-		}
-	},
-	{
-		label: wgUVS("{{notability unreferenced}}: 此条目也许具备关注度，但需要可靠的来源来加以彰显", "{{notability unreferenced}}: 此條目也許具備關注度，但需要可靠的來源加以彰顯"),
-		value: 'notability unreferenced'
-	},
-	{
-		label: wgUVS("{{npov}}: 此条目的中立性有争议。内容、语调可能带有明显的个人观点或地方色彩", "{{npov}}: 此條目的中立性有爭議。內容、語調可能帶有明顯的個人觀點或地方色彩"),
-		value: 'npov'
-	},
-	{
-		label: wgUVS("{{off-topic}}: 这篇文章的内容文不对题", "{{off-topic}}: 這篇文章的內容文不對題"),
-		value: 'off-topic'
-	},
-	{
-		label: wgUVS("{{original research}}: 此条目可能包含原创研究或未查证内容", "{{original research}}: 此條目可能包含原創研究或未查證內容"),
-		value: 'original research'
-	},
-	{
-		label: wgUVS("{{primarysources}}: 此条目需要可靠、公开、第三方的来源", "{{primarysources}}: 此條目需要可靠、公開、第三方的來源"),
-		value: 'primarysources'
-	},
-	{
-		label: wgUVS("{{refimprove}}: 此条目需要补充更多来源", "{{refimprove}}: 此條目需要補充更多來源"),
-		value: 'refimprove'
-	},
-	{
-		label: wgUVS("{{review}}: 此条目或章节阅读起来类似评论", "{{review}}: 此條目或章節閱讀起來類似評論"),
-		value: 'review'
-	},
-	{
-		label: wgUVS("{{rewrite}}: 此条目或段落的质量低劣，需要完全重写", "{{rewrite}}: 此條目或段落的質量低劣，需要完全重寫"),
-		value: 'rewrite'
-	},
-	{
-		label: wgUVS("{{substub}}: 这篇是过于短小的文章", "{{substub}}: 這篇是過於短小的文章"),
-		value: 'substub'
-	},
-	{
-		label: wgUVS("{{unencyclopedic}}: 此条目可能不适合写入百科全书", "{{unencyclopedic}}: 此條目可能不適合寫入百科全書"),
-		value: 'unencyclopedic'
-	},
-	{
-		label: wgUVS("{{unreferenced}}: 此条目没有列出任何参考或来源", "{{unreferenced}}: 此條目沒有列出任何參考或來源"),
-		value: 'unreferenced'
-	},
-	{
-		label: wgUVS("{{update}}: 这个条目需要更新", "{{update}}: 這個條目需要更新"),
-		value: 'update'
-	},
-	{
-		label: wgUVS("{{weasel}}: 此条目可能因为语意模棱两可而损及其中立性", "{{weasel}}: 此條目可能因為語意模稜兩可而損及其中立性"),
-		value: 'weasel'
-	}
-];
-
-Twinkle.tag.noticeList = [
-	{
-		label: wgUVS("{{current}}: 本文记述一项新闻动态", "{{current}}: 本文記述一項新聞動態"),
-		value: 'current',
-		subgroup: {
-			name: 'current',
-			type: 'select',
-			list: [
-				{
-					label: wgUVS("{{current}}: 本文记述一项新闻动态", "{{current}}: 本文記述一項新聞動態"),
-					value: "current"
-				},
-				{
-					label: wgUVS("{{current spaceflight}}: 本文或本章节是关于目前或最近的太空任务", "{{current spaceflight}}: 本文或本章節是關於目前或最近的太空任務"),
-					value: "current spaceflight"
-				},
-				{
-					label: wgUVS("{{current sport}}: 此条目记述一项近期体育赛事", "{{current sport}}: 此條目記述一項近期體育賽事"),
-					value: "current sport"
-				},
-				{
-					label: wgUVS("{{current related}}: 本条目和一项新闻动态相关", "{{current related}}: 本條目和一項新聞動態相關"),
-					value: "current related"
-				},
-				{
-					label: wgUVS("{{recent death}}: 这是一篇关于最近逝世人物的文章", "{{recent death}}: 這是一篇關於最近逝世人物的文章"),
-					value: "recent death"
-				}
-			]
-		}
-	},
-	{
-		label: wgUVS("{{future}}: 此条目是关于未来已定或预期会发生的事件", "{{future}}: 此條目是關於未來已定或預期會發生的事件"),
-		value: 'future',
-		subgroup: {
-			name: 'future',
-			type: 'select',
-			list: [
-				{
-					label: wgUVS("{{future}}: 此条目是关于未来已定或预期会发生的事件", "{{future}}: 此條目關於未來已定或預期會發生的事件"),
-					value: "future"
-				},
-				{
-					label: "工程",
-					list: [
-						{
-							label: wgUVS("{{future infrastructure}}: 此条目是关于未来的建设或计划", "{{future infrastructure}}: 此條目是關於未來的建設或計劃"),
-							value: "future infrastructure"
-						},
-						{
-							label: wgUVS("{{future software}}: 此条目包含计划中或预期会发布的未来软件", "{{future software}}: 此條目包含計劃中或預期會發布的未來軟件"),
-							value: "future software"
-						},
-						{
-							label: wgUVS("{{future spaceflight}}: 本条目为已列入计划或可能进行的航天活动", "{{future spaceflight}}: 本條目為已列入計劃或可能進行的航天活動"),
-							value: "future spaceflight"
-						}
-					]
-				},
-				{
-					label: "娱乐",
-					list: [
-						{
-							label: wgUVS("{{future film}}: 此条目是关于正在计划或拍摄中的电影", "{{future film}}: 此條目是關於正在計劃或拍攝中的電影"),
-							value: "future film"
-						},
-						{
-							label: wgUVS("{{future game}}: 此条目是关于尚未发行的电子游戏", "{{future game}}: 此條目是關於尚未發行的電子遊戲"),
-							value: "future game"
-						},
-						{
-							label: wgUVS("{{future tvshow}}: 此条目包含有关正在计划、拍摄中或有待播出的电视节目的信息", "{{future tvshow}}: 此條目包含有關正在計劃、拍攝中或有待播出之電視節目訊息"),
-							value: "future tvshow"
-						},
-						{
-							label: wgUVS("{{future tvshow information}}: 此条目包含有关正在播出的电视系列节目的信息", "{{future tvshow information}}: 此條目包含有關正在播出的電視系列節目之訊息"),
-							value: "future tvshow information"
-						}
-					]
-				},
-				{
-					label: "杂项",
-					list: [
-						{
-							label: wgUVS("{{future election}}: 此条目是关于将举办或进行中的选举", "{{future election}}: 此條目是關於將舉辦或進行中的選舉"),
-							value: "future election"
-						},
-						{
-							label: wgUVS("{{future product}}: 此条目是关于未上市产品的信息", "{{future product}}: 此條目是關於未上市產品的訊息"),
-							value: "future product"
-						}
-					]
-				},
-				{
-					label: "运输",
-					list: [
-						{
-							label: wgUVS("{{future public transportation}}: 本文是关于未来的公共运输建设或计划", "{{future public transportation}}: 本文是關於未來的公共運輸建設或計劃"),
-							value: "future public transportation"
-						}
-					]
-				},
-				{
-					label: "运动",
-					list: [
-						{
-							label: wgUVS("{{future go}}: 此条目是关于一项预定进行的围棋赛", "{{future go}}: 此條目是關於一項預定進行的圍棋賽"),
-							value: "future go"
-						},
-						{
-							label: wgUVS("{{future sport}}: 此条目是关于一项预定进行的体育竞赛", "{{future sport}}: 此條目是關於一項預定進行的體育競賽"),
-							value: "future sport"
-						}
-					]
-				}
-			]
-		}
-	},
-	{
-		label: wgUVS("{{inuse}}: 这篇文章正在进行重大修改", "{{inuse}}: 這篇文章正在進行重大修改"),
-		value: 'inuse'
-	},
-	{
-		label: wgUVS("{{underconstruction}}: 这个条目是一个扩展或大修改，它并未供使用", "{{underconstruction}}: 這個條目是一個擴展或大修改，它並未供使用"),
-		value: 'underconstruction'
-	}
-];
+	"合并": [
+		"merge",
+		"merge from",
+		"merge to"
+	],
+	"信息": [
+		"in use"
+	]
+};
 
 // Tags for REDIRECTS start here
 
@@ -652,45 +521,88 @@ Twinkle.tag.draftList = [
 // Contains those article tags that can be grouped into {{multiple issues}}.
 // This list includes synonyms.
 Twinkle.tag.groupHash = [
-	'blpsources',
-	'citation style',
-	'refimprove',
-	'roughtranslation',
-	'onesource',
-	'primarysources',
-	'review',
-	'fansite',
-	'howto',
-	'contradiction',
-	'intromissing',
-	'update',
-	'jargon',
-	'inappropriate person',
-	'npov',
-	'or',
-	'disputed',
-	'blpdispute',
-	'weasel',
-	'globalize',
-	'tone',
 	'advert',
-	'in-universe',
-	'expert',
-	'verylong',
-	'expand',
-	'orphan',
-	'copyedit',
-	'rewrite',
+	'attention',
+	'autobiography',
+	'biased',
+	'blpdispute',
+	'citations missing',
+	'citation style',
 	'citecheck',
-	'wikify',
-	'trivia',
 	'cleanup',
-	'importance',
-	'unencyclopedic',
-	'newsrelease',
-	'hoax',
+	'COI',
+	'colloquial',
+	'confusing',
+	'context',
+	'contradict',
+	'copyedit',
+	'criticisms',
+	'crystal',
+	'deadend',
+	'disputed',
+	'do-attempt',
+	'essay',
+	'examplefarm',
+	'expand',
+	'expert',
+	'external links',
+	'fancruft',
+	'fansite',
+	'fiction',
+	'gameguide',
+	'globalize',
 	'grammar',
-	'unreferenced'
+	'histinfo',
+	'hoax',
+	'howto',
+	'inappropriate person',
+	'in-universe',
+	'importance',
+	'incomplete',
+	'intro length',
+	'intromissing',
+	'introrewrite',
+	'jargon',
+	'laundrylists',
+	'likeresume',
+	'long',
+	'newsrelease',
+	'nofootnotes',
+	'notability',
+	'onesource',
+	'OR',
+	'orphan',
+	'out of date',
+	'peacock',
+	'plot',
+	'POV',
+	'primarysources',
+	'prose',
+	'proseline',
+	'quotefarm',
+	'recent',
+	'refimprove',
+	'refimproveBLP',
+	'restructure',
+	'review',
+	'rewrite',
+	'roughtranslation',
+	'sections',
+	'self-published',
+	'spam',
+	'story',
+	'synthesis',
+	'tone',
+	'tooshort',
+	'travelguide',
+	'trivia',
+	'unbalanced',
+	'unencyclopedic',
+	'unreferenced',
+	'unreferencedBLP',
+	'update',
+	'weasel',
+	'wikify'
 ];
 
 Twinkle.tag.callbacks = {
@@ -709,14 +621,7 @@ Twinkle.tag.callbacks = {
 			for( i = 0; i < params.tags.length; i++ ) {
 				tagRe = new RegExp( '(\\{\\{' + params.tags[i] + '(\\||\\}\\}))', 'im' );
 				if( !tagRe.exec( pageText ) ) {
-					if( Twinkle.tag.groupHash.indexOf(params.tags[i]) !== -1 && 
-							/*(params.tags[i] !== 'globalize' || params.globalizeSubcategory === 'globalize' ) &&*/
-							(params.tags[i] !== 'notability' || params.notabilitySubcategory === 'none' )) {
-						// don't add to multipleissues for globalize/notability subcats
-						groupableTags = groupableTags.concat( params.tags[i] );
-					} else {
-						tags = tags.concat( params.tags[i] );
-					}
+					tags = tags.concat( params.tags[i] );
 				} else {
 					Status.info( '信息', '在条目上找到{{' + params.tags[i] +
 						'}}…已排除' );
@@ -764,69 +669,20 @@ Twinkle.tag.callbacks = {
 				pageText += '\n\n{{' + tags[i] +
 					'|date={{subst:#time:c}}}}';
 			} else {
-				/*
-				if( tags[i] === 'globalize' ) {
-					currentTag += '{{' + params.globalizeSubcategory;
-				} else*/
-				if (tags[i] == 'current') {
-					currentTag += '{{' + self.params.currentSubcategory;
-				} else if (tags[i] == 'future') {
-					currentTag += '{{' + self.params.futureSubcategory;
-				} else {
-					currentTag += ( Twinkle.tag.mode === 'redirect' ? '\n' : '' ) + '{{' + tags[i];
-					}
+				currentTag += ( Twinkle.tag.mode === 'redirect' ? '\n' : '' ) + '{{' + tags[i];
 
-				if( tags[i] === 'notability' && params.notabilitySubcategory !== 'none' ) {
-					currentTag += '|3=' + params.notabilitySubcategory;
-				}
 				if (tags[i] == 'notability') {
 					isNotability = true;
 				}
-/*
+
 				// prompt for other parameters, based on the tag
 				switch( tags[i] ) {
-					case 'cleanup':
-						var reason = prompt('You can optionally enter a more specific reason why the article requires cleanup.  \n' +
-							"Just click OK if you don't wish to enter this.  To skip the {{cleanup}} tag, click Cancel.", "");
-						if (reason === null) {
-							continue;
-						} else if (reason !== "") {
-							currentTag += '|reason=' + reason;
-						}
-						break;
-					case 'copypaste':
-						var url = prompt('Please enter the URL which is believed to be the source of the copy-paste.  \n' +
-							"Just click OK if you don't know.  To skip the {{copypaste}} tag, click Cancel.", "");
-						if (url === null) {
-							continue;
-						} else if (url !== "") {
-							currentTag += '|url=' + url;
-						}
-						break;
-					case 'notenglish':
-						var langname = prompt('Please enter the name of the language the article is thought to be written in.  \n' +
-							"Just click OK if you don't know.  To skip the {{notenglish}} tag, click Cancel.", "");
-						if (langname === null) {
-							continue;
-						} else if (langname !== "") {
-							currentTag += '|1=' + langname;
-						}
-						break;
-					case 'roughtranslation':
-						var roughlang = prompt('Please enter the name of the language the article is thought to have been translated from.  \n' +
-							"Just click OK if you don't know.  To skip the {{roughtranslation}} tag, click Cancel.", "");
-						if (roughlang === null) {
-							continue;
-						} else if (roughlang !== "") {
-							currentTag += '|1=' + roughlang;
-						}
-						break;
 					case 'merge':
 					case 'merge to':
 					case 'merge from':
-						var param = prompt('Please enter the name of the other article(s) involved in the merge.  \n' +
-							"To specify multiple articles, separate them with a vertical pipe (|) character.  \n" +
-							"This information is required.  Click OK when done, or click Cancel to skip the merge tag.", "");
+						var param = prompt('请输入合并相关的条目名。\n' +
+							"要指定多个条目，请用管道符（|）分开。\n" +
+							"这个信息是必须的。完成时请点击确定，或点击取消以略过此标记。", "");
 						if (param === null) {
 							continue;
 						} else if (param !== "") {
@@ -836,7 +692,7 @@ Twinkle.tag.callbacks = {
 					default:
 						break;
 				}
-				*/
+*/
 				currentTag += Twinkle.tag.mode === 'redirect' ? '}}' : '|date={{subst:#time:c}}}}\n';
 				tagText += currentTag;
 			}
@@ -850,9 +706,6 @@ Twinkle.tag.callbacks = {
 			}
 
 			summaryText += ' {{[[Template:';
-			/*if( tags[i] === 'globalize' ) {
-				summaryText += params.globalizeSubcategory + '|' + params.globalizeSubcategory;
-			} else {*/
 			summaryText += tags[i] + '|' + tags[i];
 			summaryText += ']]}}';
 		}
@@ -875,7 +728,7 @@ Twinkle.tag.callbacks = {
 		pageobj.setMinorEdit(Twinkle.getFriendlyPref('markTaggedPagesAsMinor'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save();
-		
+
 		if( Twinkle.getFriendlyPref('markTaggedPagesAsPatrolled') ) {
 			pageobj.patrol();
 		}
@@ -1006,27 +859,15 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 
 	switch (Twinkle.tag.mode) {
 		case 'article':
-			if( Twinkle.getFriendlyPref('customTagList').length ) {
-				params.tags = form.getChecked( 'notice' ).concat( form.getChecked( 'problem' ) ).concat( form.getChecked( 'maintenance' ) ).concat( form.getChecked( 'custom' ) );
-			} else {
-				params.tags = form.getChecked( 'notice' ).concat( form.getChecked( 'problem' ) ).concat( form.getChecked( 'maintenance' ) );
-			}
+			params.tags = form.getChecked( 'articleTags' );
 			params.group = form.group.checked;
-			/*params.globalizeSubcategory = form.getChecked( 'problem.globalize' );
-			params.globalizeSubcategory = params.globalizeSubcategory ? params.globalizeSubcategory[0] : null;*/
-			params.notabilitySubcategory = form.getChecked( 'problem.notability' );
-			params.notabilitySubcategory = params.notabilitySubcategory ? params.notabilitySubcategory[0] : null;
-			params.currentSubcategory = form.getChecked( 'problem.current' );
-			params.currentSubcategory = params.currentSubcategory ? params.currentSubcategory[0] : null;
-			params.futureSubcategory = form.getChecked( 'problem.future' );
-			params.futureSubcategory = params.futureSubcategory ? params.futureSubcategory[0] : null;
 			break;
 		/*case 'file':
 			params.svgSubcategory = form["imageTags.svgCategory"] ? form["imageTags.svgCategory"].value : null;
 			params.tags = form.getChecked( 'imageTags' );
 			break;*/
 		case 'redirect':
-			params.tags = form.getChecked( 'administrative' ).concat( form.getChecked( 'alternative' ) ).concat( form.getChecked( 'spelling' ) );
+			params.tags = form.getChecked( 'redirectTags' );
 			break;
 		/*case 'draft':
 			params.tags = form.getChecked( 'draftTags' );
