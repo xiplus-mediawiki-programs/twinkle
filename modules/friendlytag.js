@@ -667,7 +667,7 @@ Twinkle.tag.callbacks = {
 			var currentTag = "";
 			if( tags[i] === 'uncategorized' || tags[i] === 'catimprove' ) {
 				pageText += '\n\n{{' + tags[i] +
-					'|date={{subst:#time:c}}}}';
+					'|time={{subst:#time:c}}}}';
 			} else {
 				currentTag += ( Twinkle.tag.mode === 'redirect' ? '\n' : '' ) + '{{' + tags[i];
 
@@ -693,7 +693,7 @@ Twinkle.tag.callbacks = {
 						break;
 				}
 
-				currentTag += Twinkle.tag.mode === 'redirect' ? '}}' : '|date={{subst:#time:c}}}}\n';
+				currentTag += Twinkle.tag.mode === 'redirect' ? '}}' : '|time={{subst:#time:c}}}}\n';
 				tagText += currentTag;
 			}
 
@@ -719,8 +719,8 @@ Twinkle.tag.callbacks = {
 			pageText = pageText.replace(/^\s*(?:((?:\s*\{\{\s*(?:about|correct title|dablink|distinguish|for|other\s?(?:hurricaneuses|people|persons|places|uses(?:of)?)|redirect(?:-acronym)?|see\s?(?:also|wiktionary)|selfref|the)\d*\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\})+(?:\s*\n)?)\s*)?/i,
 				"$1" + tagText);
 		}
-		summaryText += ' tag' + ( ( tags.length + ( groupableTags.length > 3 ? 1 : 0 ) ) > 1 ? 's' : '' ) +
-			' to ' + Twinkle.tag.mode + Twinkle.getPref('summaryAd');
+		summaryText += '标记' + ( ( tags.length + ( groupableTags.length > 3 ? 1 : 0 ) ) > 1 ? 's' : '' ) +
+			'到' + Twinkle.tag.mode + Twinkle.getPref('summaryAd');
 
 		pageobj.setPageText(pageText);
 		pageobj.setEditSummary(summaryText);
