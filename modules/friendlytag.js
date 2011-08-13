@@ -317,7 +317,7 @@ Twinkle.tag.article.tagCategories = {
 	"具体内容问题": {
 		"语言": [
 			"notmandarin",
-			"rough translation"
+			"roughtranslation"
 		],
 		"链接": [
 			"orphan",
@@ -337,7 +337,7 @@ Twinkle.tag.article.tagCategories = {
 		"merge to"
 	],
 	"信息": [
-		"in use"
+		"inuse"
 	]
 };
 
@@ -621,7 +621,11 @@ Twinkle.tag.callbacks = {
 			for( i = 0; i < params.tags.length; i++ ) {
 				tagRe = new RegExp( '(\\{\\{' + params.tags[i] + '(\\||\\}\\}))', 'im' );
 				if( !tagRe.exec( pageText ) ) {
-					tags = tags.concat( params.tags[i] );
+					if( Twinkle.tag.groupHash.indexOf(params.tags[i]) !== -1 ) {
+						groupableTags = groupableTags.concat( params.tags[i] );
+					} else {
+						tags = tags.concat( params.tags[i] );
+					}
 				} else {
 					Status.info( '信息', '在条目上找到{{' + params.tags[i] +
 						'}}…已排除' );
