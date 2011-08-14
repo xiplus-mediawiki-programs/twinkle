@@ -414,14 +414,14 @@ Twinkle.config.sections = [
 		},
 		{
 			name: "groupByDefault",
-			label: "Check the \"group into {{multiple issues}}\" box by default",
+			label: "默认勾选“合并到{{multiple issues}}”复选框",
 			type: "boolean"
 		},
 		{
 			name: "tagArticleSortOrder",
-			label: "Default view order for article tags",
+			label: "条目标记的默认察看方式",
 			type: "enum",
-			enumValues: { "cat": "By categories", "alpha": "In alphabetical order" }
+			enumValues: { "cat": "按类别", "alpha": "按字母" }
 		},
 		{
 			name: "customTagList",
@@ -597,7 +597,7 @@ Twinkle.config.sections = [
 		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 		{
 			name: "xfdWatchPage",
-			label: "Add the nominated page to watchlist",
+			label: "添加提名的页面到监视列表",
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		},
@@ -608,20 +608,8 @@ Twinkle.config.sections = [
 		// Either "yes" (add to watchlist), "no" (don't add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 		{
 			name: "xfdWatchDiscussion",
-			label: "Add the deletion discussion page to watchlist",
-			helptip: "This refers to the discussion subpage (for AfD and MfD) or the daily log page (for TfD, CfD, RfD and FfD)",
-			type: "enum",
-			enumValues: Twinkle.config.commonEnums.watchlist
-		},
-
-		// TwinkleConfig.xfdWatchList (string)
-		// The watchlist setting of the XfD list page, *if* the discussion is on a separate page. Either "yes" (add to watchlist), "no" (don't
-		// add to watchlist), or "default" (use setting from preferences). Default is "no" (Hehe. Seriously though, who wants to watch it?
-		// Sorry in advance for any false positives.).
-		{
-			name: "xfdWatchList",
-			label: "Add the daily log/list page to the watchlist (where applicable)",
-			helptip: "This only applies for AfD and MfD, where the discussions are transcluded onto a daily log page (for AfD) or the main MfD page (for MfD).",
+			label: "添加存废讨论页到监视列表",
+			helptip: "当日的页面。",
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		},
@@ -631,7 +619,7 @@ Twinkle.config.sections = [
 		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 		{
 			name: "xfdWatchUser",
-			label: "Add the user talk page to watchlist (when notifying)",
+			label: "添加创建者对话页到监视列表（在通知时）",
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		}

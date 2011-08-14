@@ -22,7 +22,7 @@ Twinkle.diff = function twinklediff() {
 
 	// Show additional tabs only on diff pages
 	if (QueryString.exists('diff')) {
-		$(twAddPortletLink("#", '自从', 'tw-since', '显示与上一修订版本间的差异' )).click(function(){Twinkle.diff.evaluate(false);});
+		$(twAddPortletLink("#", '自前', 'tw-since', '显示与上一修订版本间的差异' )).click(function(){Twinkle.diff.evaluate(false);});
 		$(twAddPortletLink("#", '自我', 'tw-sincemine', '显示与我做出的修订版本的差异' )).click(function(){Twinkle.diff.evaluate(true);});
 
 		var oldid = /oldid=(.+)/.exec($('div#mw-diff-ntitle1 strong a').first().attr("href"))[1];

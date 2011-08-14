@@ -88,7 +88,6 @@ Twinkle.defaultConfig.twinkle = {
 	blankTalkpageOnIndefBlock: false,
 	 // XfD
 	xfdWatchDiscussion: "default",
-	xfdWatchList: "no",
 	xfdWatchPage: "default",
 	xfdWatchUser: "default",
 	 // Hidden preferences
