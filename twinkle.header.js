@@ -90,6 +90,9 @@ Twinkle.defaultConfig.twinkle = {
 	xfdWatchDiscussion: "default",
 	xfdWatchPage: "default",
 	xfdWatchUser: "default",
+	 // Copyvio
+	copyvioWatchPage: "default",
+	copyvioWatchUser: "default",
 	 // Hidden preferences
 	revertMaxRevisions: 50,
 	batchdeleteChunks: 50,

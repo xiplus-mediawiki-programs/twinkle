@@ -71,6 +71,7 @@ Twinkle.load = function(){
 	Twinkle.talkback();
 	// deletion
 	Twinkle.speedy();
+	Twinkle.copyvio();
 	//Twinkle.prod();
 	Twinkle.xfd();
 	Twinkle.image();

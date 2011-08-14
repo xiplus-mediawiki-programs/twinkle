@@ -627,6 +627,31 @@ Twinkle.config.sections = [
 },
 
 {
+	title: "侵犯版权",
+	preferences: [
+		// TwinkleConfig.copyvioWatchPage (string)
+		// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't
+		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
+		{
+			name: "copyvioWatchPage",
+			label: "添加提报的页面到监视列表",
+			type: "enum",
+			enumValues: Twinkle.config.commonEnums.watchlist
+		},
+
+		// TwinkleConfig.copyvioWatchUser (string)
+		// The watchlist setting of the user if he receives a notification. Either "yes" (add to watchlist), "no" (don't
+		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
+		{
+			name: "copyvioWatchUser",
+			label: "添加创建者对话页到监视列表（在通知时）",
+			type: "enum",
+			enumValues: Twinkle.config.commonEnums.watchlist
+		}
+	]
+},
+
+{
 	title: "隐藏",
 	hidden: true,
 	preferences: [
