@@ -98,6 +98,10 @@ Twinkle.copyvio.callbacks = {
 		}
 		// pageobj.setCreateOption('recreate');
 		pageobj.save();
+
+		if( Twinkle.getTwinklePref('markCopyvioPagesAsPatrolled') ) {
+			pageobj.patrol();
+		}
 	},
 	copyvioList: function(pageobj) {
 		var text = pageobj.getPageText();

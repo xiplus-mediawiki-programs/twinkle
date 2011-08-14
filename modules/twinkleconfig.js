@@ -647,7 +647,17 @@ Twinkle.config.sections = [
 			label: "添加创建者对话页到监视列表（在通知时）",
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
-		}
+		},
+
+		// TwinkleConfig.markSpeedyPagesAsPatrolled (boolean)
+		// If, when applying speedy template to page, to mark the page as patrolled (if the page was reached from NewPages)
+		{
+			name: "markCopyvioPagesAsPatrolled",
+			label: "标记时标记页面为已巡查（如可能）",
+			helptip: "基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。",
+			type: "boolean"
+		},
+
 	]
 },
 
