@@ -90,6 +90,7 @@ Twinkle.defaultConfig.twinkle = {
 	xfdWatchDiscussion: "default",
 	xfdWatchPage: "default",
 	xfdWatchUser: "default",
+	markXfdPagesAsPatrolled: true,
 	 // Copyvio
 	copyvioWatchPage: "default",
 	copyvioWatchUser: "default",

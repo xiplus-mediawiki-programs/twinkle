@@ -946,7 +946,7 @@ Twinkle.protect.callbacks = {
 		var text = rppPage.getPageText();
 		var statusElement = rppPage.getStatusElement();
 
-		var rppRe = new RegExp( '===\\s*[[' + RegExp.escape( mw.config.get('wgTitle'), true ) + ']]\\s*===', 'm' );
+		var rppRe = new RegExp( '===\\s*[[' + RegExp.escape( mw.config.get('wgPageName'), true ) + ']]\\s*===', 'm' );
 		var tag = rppRe.exec( text );
 
 		var rppLink = document.createElement('a');
@@ -958,7 +958,7 @@ Twinkle.protect.callbacks = {
 			return;
 		}
 
-		var newtag = '=== [[' + mw.config.get('wgTitle') +  ']] ===' + "\n";
+		var newtag = '=== [[' + mw.config.get('wgPageName') +  ']] ===' + "\n";
 		if( ( new RegExp( '^' + RegExp.escape( newtag ).replace( /\s+/g, '\\s*' ), 'm' ) ).test( text ) ) {
 			statusElement.error( [ '已有对此条目的保护提名，在 ', rppLink, '，取消操作。' ] );
 			return;

@@ -832,7 +832,7 @@ Twinkle.speedy.callbacks = {
 			if (!pageobj.exists()) {
 				text =
 					"这是该用户使用[[WP:TW|Twinkle]]的速删模块做出的[[WP:CSD|快速删除]]提名列表。\n\n" +
-					"如果您不再想保留此日志，请在[[Wikipedia:Twinkle/属性|属性]]中关掉，并" +
+					"如果您不再想保留此日志，请在[[Wikipedia:Twinkle/参数设置|参数设置]]中关掉，并" +
 					"使用[[WP:CSD#O1|CSD O1]]提交快速删除。\n";
 				if (userIsInGroup("sysop")) {
 					text += "\n此日志并不记录用Twinkle直接执行的删除。\n";
@@ -841,9 +841,9 @@ Twinkle.speedy.callbacks = {
 
 			// create monthly header
 			var date = new Date();
-			var headerRe = new RegExp("^==+\\s*" + date.getUTCFullYear() + "\\s*年\\s*" + date.getUTCMonthName() + "\\s*月\\s*==+", "m");
+			var headerRe = new RegExp("^==+\\s*" + date.getUTCFullYear() + "\\s*年\\s*" + (date.getUTCMonth() + 1) + "\\s*月\\s*==+", "m");
 			if (!headerRe.exec(text)) {
-				text += "\n\n=== " + date.getUTCFullYear() + "年" + date.getUTCMonthName() + "月 ===";
+				text += "\n\n=== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 ===";
 			}
 
 			text += "\n# [[:" + mw.config.get('wgPageName') + "]]: ";

@@ -277,6 +277,10 @@ Twinkle.xfd.callbacks = {
 			}
 			// pageobj.setCreateOption('recreate');
 			pageobj.save();
+
+			if( Twinkle.getPref('markXfdPagesAsPatrolled') ) {
+				pageobj.patrol();
+			}
 		},
 		todaysList: function(pageobj) {
 			var text = pageobj.getPageText();

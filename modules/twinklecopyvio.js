@@ -99,7 +99,7 @@ Twinkle.copyvio.callbacks = {
 		// pageobj.setCreateOption('recreate');
 		pageobj.save();
 
-		if( Twinkle.getTwinklePref('markCopyvioPagesAsPatrolled') ) {
+		if( Twinkle.getPref('markCopyvioPagesAsPatrolled') ) {
 			pageobj.patrol();
 		}
 	},
