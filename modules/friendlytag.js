@@ -13,7 +13,7 @@
 Twinkle.tag = function friendlytag() {
 	// redirect tagging
 	if( Wikipedia.isPageRedirect() ) {
-		Twinkle.tag.mode = 'redirect';
+		Twinkle.tag.mode = '重定向';
 		$(twAddPortletLink("#", "标记", "friendly-tag", "标记重定向", "")).click(Twinkle.tag.callback);
 	}
 	// file tagging
@@ -25,7 +25,7 @@ Twinkle.tag = function friendlytag() {
 	*/
 	// article tagging
 	else if( mw.config.get('wgNamespaceNumber') === 0 && mw.config.get('wgCurRevisionId') ) {
-		Twinkle.tag.mode = 'article';
+		Twinkle.tag.mode = '条目';
 		$(twAddPortletLink("#", "标记", "friendly-tag", "标记条目", "")).click(Twinkle.tag.callback);
 	}
 	// tagging of draft articles
@@ -44,7 +44,7 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 	var form = new QuickForm( Twinkle.tag.callback.evaluate );
 
 	switch( Twinkle.tag.mode ) {
-		case 'article':
+		case '条目':
 			Window.setTitle( "条目维护标记" );
 
 			form.append( {
@@ -133,7 +133,7 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 	Window.setContent( result );
 	Window.display();
 
-	if (Twinkle.tag.mode === "article") {
+	if (Twinkle.tag.mode === "条目") {
 		// fake a change event on the sort dropdown, to initialize the tag list
 		var evt = document.createEvent("Event");
 		evt.initEvent("change", true, true);
@@ -616,7 +616,7 @@ Twinkle.tag.callbacks = {
 		var pageText = pageobj.getPageText().replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
 
 		var i;
-		if( Twinkle.tag.mode !== 'redirect' ) {
+		if( Twinkle.tag.mode !== '重定向' ) {
 			// Check for preexisting tags and separate tags into groupable and non-groupable arrays
 			for( i = 0; i < params.tags.length; i++ ) {
 				tagRe = new RegExp( '(\\{\\{' + params.tags[i] + '(\\||\\}\\}))', 'im' );
@@ -673,7 +673,7 @@ Twinkle.tag.callbacks = {
 				pageText += '\n\n{{' + tags[i] +
 					'|time={{subst:#time:c}}}}';
 			} else {
-				currentTag += ( Twinkle.tag.mode === 'redirect' ? '\n' : '' ) + '{{' + tags[i];
+				currentTag += ( Twinkle.tag.mode === '重定向' ? '\n' : '' ) + '{{' + tags[i];
 
 				if (tags[i] == 'notability') {
 					isNotability = true;
@@ -697,7 +697,7 @@ Twinkle.tag.callbacks = {
 						break;
 				}
 
-				currentTag += Twinkle.tag.mode === 'redirect' ? '}}' : '|time={{subst:#time:c}}}}\n';
+				currentTag += Twinkle.tag.mode === '重定向' ? '}}' : '|time={{subst:#time:c}}}}\n';
 				tagText += currentTag;
 			}
 
@@ -714,7 +714,7 @@ Twinkle.tag.callbacks = {
 			summaryText += ']]}}';
 		}
 
-		if( Twinkle.tag.mode === 'redirect' ) {
+		if( Twinkle.tag.mode === '重定向' ) {
 			pageText += tagText;
 		} else {
 			// smartly insert the new tags after any hatnotes. Regex is a bit more
@@ -723,7 +723,7 @@ Twinkle.tag.callbacks = {
 			pageText = pageText.replace(/^\s*(?:((?:\s*\{\{\s*(?:about|correct title|dablink|distinguish|for|other\s?(?:hurricaneuses|people|persons|places|uses(?:of)?)|redirect(?:-acronym)?|see\s?(?:also|wiktionary)|selfref|the)\d*\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\})+(?:\s*\n)?)\s*)?/i,
 				"$1" + tagText);
 		}
-		summaryText += '标记' + ( ( tags.length + ( groupableTags.length > 3 ? 1 : 0 ) ) > 1 ? 's' : '' ) +
+		summaryText += '标记' +
 			'到' + Twinkle.tag.mode + Twinkle.getPref('summaryAd');
 
 		pageobj.setPageText(pageText);
@@ -865,7 +865,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	var params = {};
 
 	switch (Twinkle.tag.mode) {
-		case 'article':
+		case '条目':
 			params.tags = form.getChecked( 'articleTags' );
 			params.group = form.group.checked;
 			break;
@@ -873,7 +873,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			params.svgSubcategory = form["imageTags.svgCategory"] ? form["imageTags.svgCategory"].value : null;
 			params.tags = form.getChecked( 'imageTags' );
 			break;*/
-		case 'redirect':
+		case '重定向':
 			params.tags = form.getChecked( 'redirectTags' );
 			break;
 		/*case 'draft':
@@ -895,16 +895,16 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 
 	Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
 	Wikipedia.actionCompleted.notice = "标记完成，在几秒内刷新页面";
-	if (Twinkle.tag.mode === 'redirect') {
+	if (Twinkle.tag.mode === '重定向') {
 		Wikipedia.actionCompleted.followRedirect = false;
 	}
 
 	var wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'), "正在标记" + Twinkle.tag.mode);
 	wikipedia_page.setCallbackParameters(params);
 	switch (Twinkle.tag.mode) {
-		case 'article':
+		case '条目':
 			/* falls through */
-		case 'redirect':
+		case '重定向':
 			wikipedia_page.load(Twinkle.tag.callbacks.main);
 			return;
 		/*case 'file':
