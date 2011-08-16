@@ -2297,7 +2297,7 @@ Wikipedia.page = function(pageName, currentAction) {
 	var fnProcessProtect = function() {
 		var xml = ctx.protectApi.getXML();
 
-		if ($(xml).find('page').attr('missing') === "") {
+		if ($(xml).find('page').attr('missing') === "" && !ctx.protectCreate) {
 			ctx.statusElement.error("不能保护页面，因其已不存在");
 			return;
 		}

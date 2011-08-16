@@ -426,7 +426,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 	// re-add protection level text, if it's available
 	if (e.target.values === 'protect' && Twinkle.protect.protectionLevel) {
 		Status.init($('div[name="currentprot"] span').last()[0]);
-		Status.info("Current protection level", Twinkle.protect.protectionLevel);
+		Status.info("当前保护级别", Twinkle.protect.protectionLevel);
 	}
 };
 
@@ -729,7 +729,11 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 		break;
 	}
 
-	if( actiontype === 'tag' || actiontype === 'protect' ) {
+	if( !mw.config.get('wgArticleId') ) {
+		tagparams = {
+			tag: 'noop'
+		};
+	} else if( actiontype === 'tag' || actiontype === 'protect' ) {
 		tagparams = {
 			tag: form.tagtype.value,
 			reason: ((form.tagtype.value === 'pp-protected' || form.tagtype.value === 'pp-semi-protected' || form.tagtype.value === 'pp-move') && form.reason) ? form.reason.value : null,
