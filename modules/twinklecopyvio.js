@@ -111,7 +111,6 @@ Twinkle.copyvio.callbacks = {
 		pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]。" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('recreate');
 		pageobj.save();
-		Twinkle.copyvio.currentRationale = null;  // any errors from now on do not need to print the rationale, as it is safely saved on-wiki
 	}
 };
 

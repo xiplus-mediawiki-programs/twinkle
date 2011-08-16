@@ -233,6 +233,7 @@ Twinkle.tag.article.tags = {
 	"COI": "这个条目的一位主要贡献者似乎与本条目的主题存在利益冲突",
 	"copyedit": "此条目或章节需要编修，以确保语法、用语、语气、风格、表达恰当",
 	"disputed": "此条目的准确性有争议",
+	"expand": "此条目或章节需要扩充",
 	"expert-subject": "本条目或段落需要专家的关注",
 	"external links": "维基百科不是连结集",
 	"fansite": "此条目或章节类似爱好者站点",
@@ -254,6 +255,7 @@ Twinkle.tag.article.tags = {
 	"prose": "此条目使用了列表式记述，可能需要改写为连贯的叙述性文字",
 	"refimprove": "此条目需要补充更多来源",
 	"roughtranslation": "此条目翻译粗劣",
+	"substub": "请您改写这篇过于短小的文章",
 	"tone": "此条目或章节的语调或风格可能不适合百科全书的写作方式",
 	"toolong": "此条目或章节可能过于冗长",
 	"uncategorized": "此条目缺少页面分类",
@@ -291,6 +293,10 @@ Twinkle.tag.article.tagCategories = {
 			"fansite",
 			"prose",
 			"tone"
+		],
+		"内容": [
+			"expand",
+			"substub"
 		],
 		"信息和细节": [
 			"expert-subject",
@@ -610,7 +616,6 @@ Twinkle.tag.callbacks = {
 		var params = pageobj.getCallbackParameters();
 		var tagRe, tagText = '', summaryText = '添加';
 		var tags = [], groupableTags = [];
-		var isNotability = false;
 
 		// Remove tags that become superfluous with this action
 		var pageText = pageobj.getPageText().replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
@@ -676,7 +681,10 @@ Twinkle.tag.callbacks = {
 				currentTag += ( Twinkle.tag.mode === '重定向' ? '\n' : '' ) + '{{' + tags[i];
 
 				if (tags[i] == 'notability') {
-					isNotability = true;
+					wikipedia_page = new Wikipedia.page("Wikipedia:关注度/提报", "添加关注度记录项");
+					wikipedia_page.setFollowRedirect(true);
+					wikipedia_page.setCallbackParameters(params);
+					wikipedia_page.load(Twinkle.tag.callbacks.notabilityList);
 				}
 
 				// prompt for other parameters, based on the tag
@@ -736,7 +744,18 @@ Twinkle.tag.callbacks = {
 		if( Twinkle.getFriendlyPref('markTaggedPagesAsPatrolled') ) {
 			pageobj.patrol();
 		}
+	},
+
+	notabilityList: function(pageobj) {
+		var text = pageobj.getPageText();
+		var params = pageobj.getCallbackParameters();
+
+		pageobj.setPageText(text + "\n{{subst:Wikipedia:关注度/提报/item|title=" + mw.config.get('wgPageName') + "}}");
+		pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]。" + Twinkle.getPref('summaryAd'));
+		pageobj.setCreateOption('recreate');
+		pageobj.save();
 	}
+
 /*
 	file: function friendlytagCallbacksFile(pageobj) {
 		var text = pageobj.getPageText();
