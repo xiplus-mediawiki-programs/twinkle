@@ -10,35 +10,35 @@
 
 Twinkle.batchdelete = function twinklebatchdelete() {
 	if( userIsInGroup( 'sysop' ) && (mw.config.get( 'wgNamespaceNumber' ) > 0 || mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Prefixindex') ) {
-		$(twAddPortletLink("#", "D-batch", "tw-batch", "Delete pages found in this category/on this page", "")).click(Twinkle.batchdelete.callback);
+		$(twAddPortletLink("#", "批删", "tw-batch", "删除此分类或页面中的所有链接", "")).click(Twinkle.batchdelete.callback);
 	}
 };
 
 Twinkle.batchdelete.unlinkCache = {};
 Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 	var Window = new SimpleWindow( 800, 400 );
-	Window.setTitle( "Batch deletion" );
+	Window.setTitle( "批量删除" );
 	Window.setScriptName( "Twinkle" );
-	Window.addFooterLink( "Twinkle help", "WP:TW/DOC#batchdelete" );
+	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#batchdelete" );
 
 	var form = new QuickForm( Twinkle.batchdelete.callback.evaluate );
 	form.append( {
 			type: 'checkbox',
 			list: [
 				{ 
-					label: 'Delete pages',
+					label: '删除页面',
 					name: 'delete_page',
 					value: 'delete',
 					checked: true
 				},
 				{
-					label: 'Remove backlinks to the page',
+					label: '取消链入',
 					name: 'unlink_page',
 					value: 'unlink',
 					checked: true
 				},
 				{
-					label: 'Delete redirects to deleted pages',
+					label: '删除重定向',
 					name: 'delete_redirects',
 					value: 'delete_redirects',
 					checked: true
@@ -48,7 +48,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 	form.append( {
 			type: 'textarea',
 			name: 'reason',
-			label: 'Reason: '
+			label: '理由：'
 		} );
 
 	var query;
@@ -111,7 +111,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 		};
 	}
 
-	var wikipedia_api = new Wikipedia.api( 'Grabbing pages', query, function( self ) {
+	var wikipedia_api = new Wikipedia.api( '抓取页面', query, function( self ) {
 			var xmlDoc = self.responseXML;
 			var snapshot = xmlDoc.evaluate('//page[@ns != "' + Namespace.IMAGE + '" and not(@missing)]', xmlDoc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null );
 			var list = [];
@@ -120,8 +120,8 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 				var page = xmlDoc.evaluate( '@title', object, null, XPathResult.STRING_TYPE, null ).stringValue;
 				var size = xmlDoc.evaluate( 'revisions/rev/@size', object, null, XPathResult.NUMBER_TYPE, null ).numberValue;
 
-				var disputed = xmlDoc.evaluate( 'boolean(categories/cl[@title="Category:Contested candidates for speedy deletion"])', object, null, XPathResult.BOOLEAN_TYPE, null ).booleanValue;
-				list.push( {label:page + ' (' + size + ' bytes)' + ( disputed ? ' (DISPUTED CSD)' : '' ), value:page, checked:!disputed });
+				var disputed = xmlDoc.evaluate( 'boolean(categories/cl[@title="Category:快速删除候选"])', object, null, XPathResult.BOOLEAN_TYPE, null ).booleanValue;
+				list.push( {label:page + '(' + size + '字节）' + ( disputed ? '（速删争议）' : '' ), value:page, checked:!disputed });
 			}
 			self.params.form.append( {
 					type: 'checkbox',
@@ -146,8 +146,8 @@ Twinkle.batchdelete.currentDeleteCounter = 0;
 Twinkle.batchdelete.currentUnlinkCounter = 0;
 Twinkle.batchdelete.currentdeletor = 0;
 Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvaluate(event) {
-	Wikipedia.actionCompleted.notice = 'Status';
-	Wikipedia.actionCompleted.postfix = 'batch deletion is now complete';
+	Wikipedia.actionCompleted.notice = '状态';
+	Wikipedia.actionCompleted.postfix = '批量删除已完成';
 	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' '));  // for queen/king/whatever and country!
 	var pages = event.target.getChecked( 'pages' );
 	var reason = event.target.reason.value;
@@ -160,7 +160,7 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 	SimpleWindow.setButtonsEnabled( false );
 	Status.init( event.target );
 	if( !pages ) {
-		Status.error( 'Error', 'nothing to delete, aborting' );
+		Status.error( '错误', '没什么要删的，取消操作' );
 		return;
 	}
 
@@ -180,7 +180,7 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 					'action': 'query',
 					'titles': page
 				};
-				var wikipedia_api = new Wikipedia.api( 'Checking if page ' + page + ' exists', query, Twinkle.batchdelete.callbacks.main );
+				var wikipedia_api = new Wikipedia.api( '检查页面 ' + page + ' 是否存在', query, Twinkle.batchdelete.callbacks.main );
 				wikipedia_api.params = { page:page, reason:reason, unlink_page:unlink_page, delete_page:delete_page, delete_redirects:delete_redirects };
 				wikipedia_api.post();
 			}
@@ -201,7 +201,7 @@ Twinkle.batchdelete.callbacks = {
 		var exists = xmlDoc.evaluate( 'boolean(//pages/page[not(@missing)])', xmlDoc, null, XPathResult.BOOLEAN_TYPE, null ).booleanValue;
 
 		if( ! exists ) {
-			self.statelem.error( "It seems that the page doesn't exist, perhaps it has already been deleted" );
+			self.statelem.error( "页面不存在，可能已被删除" );
 			return;
 		}
 
@@ -215,7 +215,7 @@ Twinkle.batchdelete.callbacks = {
 				'bltitle': self.params.page,
 				'bllimit': userIsInGroup( 'sysop' ) ? 5000 : 500 // 500 is max for normal users, 5000 for bots and sysops
 			};
-			wikipedia_api = new Wikipedia.api( 'Grabbing backlinks', query, Twinkle.batchdelete.callbacks.unlinkBacklinksMain );
+			wikipedia_api = new Wikipedia.api( '抓取链入', query, Twinkle.batchdelete.callbacks.unlinkBacklinksMain );
 			wikipedia_api.params = self.params;
 			wikipedia_api.post();
 		} else {
@@ -231,12 +231,12 @@ Twinkle.batchdelete.callbacks = {
 					'bltitle': self.params.page,
 					'bllimit': userIsInGroup( 'sysop' ) ? 5000 : 500 // 500 is max for normal users, 5000 for bots and sysops
 				};
-				wikipedia_api = new Wikipedia.api( 'Grabbing redirects', query, Twinkle.batchdelete.callbacks.deleteRedirectsMain );
+				wikipedia_api = new Wikipedia.api( '抓取重定向', query, Twinkle.batchdelete.callbacks.deleteRedirectsMain );
 				wikipedia_api.params = self.params;
 				wikipedia_api.post();
 			}
 
-			var wikipedia_page = new Wikipedia.page( self.params.page, 'Deleting page ' + self.params.page );
+			var wikipedia_page = new Wikipedia.page( self.params.page, '删除页面 ' + self.params.page );
 			wikipedia_page.setEditSummary(self.params.reason + Twinkle.getPref('deletionSummaryAd'));
 			wikipedia_page.deletePage(function( apiobj ) { 
 					--Twinkle.batchdelete.currentDeleteCounter;
@@ -244,7 +244,7 @@ Twinkle.batchdelete.callbacks = {
 					link.setAttribute( 'href', mw.util.wikiGetlink(self.params.page) );
 					link.setAttribute( 'title', self.params.page );
 					link.appendChild( document.createTextNode( self.params.page ) );
-					apiobj.statelem.info( [ 'completed (' , link , ')' ] );
+					apiobj.statelem.info( [ '完成（' , link , '）' ] );
 				} );	
 		} else {
 			--Twinkle.batchdelete.currentDeleteCounter;
@@ -260,7 +260,7 @@ Twinkle.batchdelete.callbacks = {
 			return;
 		}
 
-		var statusIndicator = new Status('Deleting redirects for ' + self.params.page, '0%');
+		var statusIndicator = new Status('删除到 ' + self.params.page + ' 的重定向', '0%');
 
 		var onsuccess = function( self ) {
 			var obj = self.params.obj;
@@ -269,7 +269,7 @@ Twinkle.batchdelete.callbacks = {
 			obj.update( now );
 			self.statelem.unlink();
 			if( self.params.current >= total ) {
-				obj.info( now + ' (completed)' );
+				obj.info( now + '（完成）' );
 				Wikipedia.removeCheckpoint();
 			}
 		};
@@ -277,7 +277,7 @@ Twinkle.batchdelete.callbacks = {
 
 		Wikipedia.addCheckpoint();
 		if( snapshot.snapshotLength === 0 ) {
-			statusIndicator.info( '100% (completed)' );
+			statusIndicator.info( '100%（完成）' );
 			Wikipedia.removeCheckpoint();
 			return;
 		}
@@ -290,8 +290,8 @@ Twinkle.batchdelete.callbacks = {
 
 		for ( var i = 0; i < snapshot.snapshotLength; ++i ) {
 			var title = snapshot.snapshotItem(i).value;
-			var wikipedia_page = new Wikipedia.page( title, "Deleting " + title );
-			wikipedia_page.setEditSummary('[[WP:CSD#G8|G8]]: Redirect to deleted page "' + self.params.page + '"' + Twinkle.getPref('deletionSummaryAd'));
+			var wikipedia_page = new Wikipedia.page( title, "删除 " + title );
+			wikipedia_page.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 重定向到已删除页面“' + self.params.page + '”' + Twinkle.getPref('deletionSummaryAd'));
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.deletePage(onsuccess);
 		}
@@ -305,7 +305,7 @@ Twinkle.batchdelete.callbacks = {
 			return;
 		}
 
-		var statusIndicator = new Status('Unlinking backlinks to ' + self.params.page, '0%');
+		var statusIndicator = new Status('取消到 ' + self.params.page + ' 的链接', '0%');
 
 		var total = snapshot.snapshotLength * 2;
 
@@ -316,7 +316,7 @@ Twinkle.batchdelete.callbacks = {
 			obj.update( now );
 			self.statelem.unlink();
 			if( self.params.current >= total ) {
-				obj.info( now + ' (completed)' );
+				obj.info( now + '（完成）' );
 				--Twinkle.batchdelete.currentUnlinkCounter;
 				Wikipedia.removeCheckpoint();
 			}
@@ -324,7 +324,7 @@ Twinkle.batchdelete.callbacks = {
 
 		Wikipedia.addCheckpoint();
 		if( snapshot.snapshotLength === 0 ) {
-			statusIndicator.info( '100% (completed)' );
+			statusIndicator.info( '100%（完成）' );
 			--Twinkle.batchdelete.currentUnlinkCounter;
 			Wikipedia.removeCheckpoint();
 			return;
@@ -335,7 +335,7 @@ Twinkle.batchdelete.callbacks = {
 
 		for ( var i = 0; i < snapshot.snapshotLength; ++i ) {
 			var title = snapshot.snapshotItem(i).value;
-			var wikipedia_page = new Wikipedia.page( title, "Unlinking on " + title );
+			var wikipedia_page = new Wikipedia.page( title, "在页面 " + title + " 中");
 			var params = clone( self.params );
 			params.title = title;
 			params.onsuccess = onsuccess;
@@ -370,7 +370,7 @@ Twinkle.batchdelete.callbacks = {
 			Wikipedia.actionCompleted();
 			return;
 		}
-		pageobj.setEditSummary('Removing link(s) to deleted page ' + self.params.page + Twinkle.getPref('deletionSummaryAd'));
+		pageobj.setEditSummary('取消到页面 ' + self.params.page + ' 的链接' + Twinkle.getPref('deletionSummaryAd'));
 		pageobj.setPageText(text);
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(params.onsuccess);
