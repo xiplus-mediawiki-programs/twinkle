@@ -712,9 +712,12 @@ Twinkle.speedy.callbacks = {
 				if (!parameters) {
 					return;  // the user aborted
 				}
-				code = "{{delete|" + params.value;
+				code = "{{delete|";
+				if (params.value !== 'reason') {
+					code += params.value;
+				}
 				for (i in parameters) {
-					if (typeof parameters[i] === 'string' && parameters[i] !== 'reason') {
+					if (typeof parameters[i] === 'string') {
 						code += "|" + parameters[i];
 					}
 				}
