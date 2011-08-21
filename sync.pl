@@ -88,7 +88,7 @@ if( $opt->mode eq "pull" ) {
         $bot->edit({
                 page    => $page,
                 text    => decode("UTF-8", $text),
-                summary => "$+{branch}:$log",
+                summary => "$+{branch}",
             });
     }
 } elsif( $opt->mode eq "deploy" ) {
@@ -104,7 +104,7 @@ if( $opt->mode eq "pull" ) {
         my $ret = $bot->edit({
                 page    => $page,
                 text    => decode("UTF-8", $text),
-                summary => "$tag: $log",
+                summary => "$tag",
             });
 		unless($ret) {
 			die "Error $bot->{error}->{code}: $bot->{error}->{details}";
