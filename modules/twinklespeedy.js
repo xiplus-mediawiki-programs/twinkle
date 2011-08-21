@@ -170,7 +170,13 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 		} );
 	}
 
-	switch (mw.config.get('wgNamespaceNumber')) {
+	var namespace = mw.config.get('wgNamespaceNumber');
+	/*if (namespace % 2 === 1 && namespace !== 3) {  // talk pages, but not user talk pages
+		form.append( { type: 'header', label: '讨论页' } );
+		form.append( { type: 'radio', name: 'csd', list: Twinkle.speedy.talkList } );
+	}*/
+
+	switch (namespace) {
 		case 0:  // article
 		case 1:  // talk
 			form.append( { type: 'header', label: '条目' } );
@@ -740,7 +746,6 @@ Twinkle.speedy.callbacks = {
 					var notifytext;
 
 					// specialcase "db" and "db-multiple"
-					// XXX modify the "db-csd-notice-custom" template to cater for these special cases
 					switch (params.normalized)
 					{
 						case 'db':
