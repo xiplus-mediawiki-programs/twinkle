@@ -1,5 +1,6 @@
 // <nowiki>
 /**
+ * vim: set noet sts=0 sw=8:
  * morebits.js
  * ===========
  * A library full of lots of goodness for user scripts on Wikipedia.

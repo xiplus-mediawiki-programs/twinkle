@@ -1,5 +1,5 @@
-
 /**
+ * vim: set noet sts=0 sw=8:
  * General initialization code
  */
 

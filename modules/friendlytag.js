@@ -1,4 +1,5 @@
 /*
+ * vim: set noet sts=0 sw=8:
  ****************************************
  *** friendlytag.js: Tag module
  ****************************************
@@ -102,7 +103,7 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.replacementList } );
 			break;*/
 
-		case 'redirect':
+		case '重定向':
 			Window.setTitle( "重定向标记" );
 
 			form.append({ type: 'header', label:'拼写、错误拼写、时态和大小写模板' });

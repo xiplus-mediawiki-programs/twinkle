@@ -1,4 +1,5 @@
 /*
+ * vim: set noet sts=0 sw=8:
  ****************************************
  *** twinkleprotect.js: Protect/RPP module
  ****************************************
