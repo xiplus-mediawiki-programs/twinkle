@@ -2182,8 +2182,10 @@ Wikipedia.page = function(pageName, currentAction) {
 			// non-admin attempting to edit a protected page - this gives a friendlier message than the default
 			if ( errorCode === "protectedpage" ) {
 				ctx.statusElement.error( "不能保存修改：页面被全保护" );
+			} else if ( errorCode === "hookaborted" ) {
+				ctx.statusElement.error( "不能保存修改：被防滥用过滤器阻止" );
 			} else {
-				ctx.statusElement.error( "不能保存页面：" + ctx.saveApi.getErrorText() );
+				ctx.statusElement.error( "不能保存修改：" + ctx.saveApi.getErrorText() );
 			}
 			ctx.editMode = 'all';  // cancel append/prepend/revert modes
 			if (ctx.onSaveFailure) {
