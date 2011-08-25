@@ -218,7 +218,7 @@ Twinkle.xfd.callbacks = {
 			if(params.usertalk) {
 				var initialContrib = pageobj.getCreator();
 				var usertalkpage = new Wikipedia.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
-				var notifytext = "\n{{subst:AFDNote|" + mw.config.get('wgPageName') + "}}";
+				var notifytext = "\n{{subst:AFDNote|" + mw.config.get('wgPageName') + "}}--~~~~";
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]存废讨论提名。" + Twinkle.getPref('summaryAd'));
 				usertalkpage.setCreateOption('recreate');
