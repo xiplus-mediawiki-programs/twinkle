@@ -751,10 +751,10 @@ Twinkle.tag.callbacks = {
 		var text = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
 
-		pageobj.setPageText(text + "\n{{subst:Wikipedia:关注度/提报/item|title=" + mw.config.get('wgPageName') + "}}");
+		pageobj.setAppendText("\n{{subst:Wikipedia:关注度/提报/item|title=" + mw.config.get('wgPageName') + "}}");
 		pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]。" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('recreate');
-		pageobj.save();
+		pageobj.append();
 	}
 
 /*

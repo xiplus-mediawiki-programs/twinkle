@@ -305,7 +305,7 @@ Twinkle.xfd.callbacks = {
 					break;
 			}
 
-			pageobj.setPageText(text + "\n{{subst:DRItem|Type=" + type + "|DRarticles=" + mw.config.get('wgPageName') + "|Reason=" + params.reason + "|To=" + to + "}}--~~~~");
+			pageobj.setAppendText("\n{{subst:DRItem|Type=" + type + "|DRarticles=" + mw.config.get('wgPageName') + "|Reason=" + params.reason + "|To=" + to + "}}--~~~~");
 			pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]。" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchDiscussion')) {
 				case 'yes':
@@ -319,7 +319,7 @@ Twinkle.xfd.callbacks = {
 					break;
 			}
 			pageobj.setCreateOption('recreate');
-			pageobj.save();
+			pageobj.append();
 			Twinkle.xfd.currentRationale = null;  // any errors from now on do not need to print the rationale, as it is safely saved on-wiki
 		}
 	},
@@ -383,7 +383,7 @@ i
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
 
-			pageobj.setPageText(text + "\n{{subst:IfdItem|Filename=" + mw.config.get('wgTitle') + "|Uploader=" + params.uploader + "|Reason=" + params.reason + "}}--~~~~");
+			pageobj.setAppendText("\n{{subst:IfdItem|Filename=" + mw.config.get('wgTitle') + "|Uploader=" + params.uploader + "|Reason=" + params.reason + "}}--~~~~");
 			pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]。" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchDiscussion')) {
 				case 'yes':
@@ -397,7 +397,7 @@ i
 					break;
 			}
 			pageobj.setCreateOption('recreate');
-			pageobj.save();
+			pageobj.append();
 			Twinkle.xfd.currentRationale = null;  // any errors from now on do not need to print the rationale, as it is safely saved on-wiki
 		}
 	}

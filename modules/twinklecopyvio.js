@@ -108,10 +108,10 @@ Twinkle.copyvio.callbacks = {
 		var text = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
 
-		pageobj.setPageText(text + "\n{{subst:CopyvioVFDRecord|" + mw.config.get('wgPageName') + "}}");
+		pageobj.setAppendText("\n{{subst:CopyvioVFDRecord|" + mw.config.get('wgPageName') + "}}");
 		pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]。" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('recreate');
-		pageobj.save();
+		pageobj.append();
 	}
 };
 
