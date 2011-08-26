@@ -1756,7 +1756,7 @@ Wikipedia.page = function(pageName, currentAction) {
 		}
 
 		if (ctx.fullyProtected && !confirm('对全保护页面“' + ctx.pageName + "”" +
-			(ctx.fullyProtected === 'indefinite' ? '（永久）' : ('（到期：' + ctx.fullyProtected + ')')) +
+			(ctx.fullyProtected === 'indefinite' ? '（永久）' : ('（到期：' + ctx.fullyProtected + '）')) +
 			'的自动编辑即将提交。\n\n点击确定以确定，或点击取消以取消。')) {
 			ctx.statusElement.error("对全保护页面的编辑被取消。");
 			return;
