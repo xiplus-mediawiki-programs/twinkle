@@ -627,6 +627,12 @@ Twinkle.tag.callbacks = {
 			for( i = 0; i < params.tags.length; i++ ) {
 				tagRe = new RegExp( '(\\{\\{' + params.tags[i] + '(\\||\\}\\}))', 'im' );
 				if( !tagRe.exec( pageText ) ) {
+					if( params.tags[i] == 'notability' ) {
+						wikipedia_page = new Wikipedia.page("Wikipedia:关注度/提报", "添加关注度记录项");
+						wikipedia_page.setFollowRedirect(true);
+						wikipedia_page.setCallbackParameters(params);
+						wikipedia_page.load(Twinkle.tag.callbacks.notabilityList);
+					}
 					if( Twinkle.tag.groupHash.indexOf(params.tags[i]) !== -1 ) {
 						groupableTags = groupableTags.concat( params.tags[i] );
 					} else {
@@ -680,13 +686,6 @@ Twinkle.tag.callbacks = {
 					'|time={{subst:#time:c}}}}';
 			} else {
 				currentTag += ( Twinkle.tag.mode === '重定向' ? '\n' : '' ) + '{{' + tags[i];
-
-				if (tags[i] == 'notability') {
-					wikipedia_page = new Wikipedia.page("Wikipedia:关注度/提报", "添加关注度记录项");
-					wikipedia_page.setFollowRedirect(true);
-					wikipedia_page.setCallbackParameters(params);
-					wikipedia_page.load(Twinkle.tag.callbacks.notabilityList);
-				}
 
 				// prompt for other parameters, based on the tag
 				switch( tags[i] ) {

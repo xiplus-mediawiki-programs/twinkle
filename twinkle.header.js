@@ -138,7 +138,7 @@ Twinkle.defaultConfig.friendly = {
 	watchWelcomes: false,
 	welcomeHeading: "欢迎",
 	insertHeadings: true,
-	insertUsername: true,
+	insertUsername: false,
 	insertSignature: true,  // sign welcome templates, where appropriate
 	markWelcomesAsMinor: true,
 	quickWelcomeMode: "norm",
