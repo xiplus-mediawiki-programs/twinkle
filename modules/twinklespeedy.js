@@ -642,12 +642,12 @@ Twinkle.speedy.callbacks = {
 			statusIndicator.status("0%");
 
 			var onsuccess = function( apiobj ) {
-				var obj = apiobj.params.obj;
-				var total = apiobj.params.total;
-				var now = parseInt( 100 * ++(apiobj.params.current)/total, 10 ) + '%';
+				var obj = apiobj.parent.params.obj;
+				var total = apiobj.parent.params.total;
+				var now = parseInt( 100 * ++(apiobj.parent.params.current)/total, 10 ) + '%';
 				obj.update( now );
 				apiobj.statelem.unlink();
-				if( apiobj.params.current >= total ) {
+				if( apiobj.parent.params.current >= total ) {
 					obj.info( now + '（完成）' );
 					Wikipedia.removeCheckpoint();
 				}
@@ -664,11 +664,15 @@ Twinkle.speedy.callbacks = {
 				var title = $(value).attr('title');
 				var page = new Wikipedia.page(title, '删除重定向 "' + title + '"');
 				page.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 重定向到已删除页面 [[' + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('deletionSummaryAd'));
-				page.setCallbackParameters(params);
+				page.params = params;
 				page.deletePage(onsuccess);
 			});
 		}
 	},
+
+
+
+
 
 	user: {
 		main: function(pageobj) {
