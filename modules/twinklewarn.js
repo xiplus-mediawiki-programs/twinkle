@@ -785,89 +785,52 @@ Twinkle.warn.messages = {
 	},
 	block: {
 		"uw-block1": {
-			'label':"层级1封禁",
-			'summary':"层级1封禁"
+			label: "层级1封禁",
+			summary: "层级1封禁"
 		},
 		"uw-block2": {
-			'label':"层级2封禁",
-			'summary':"层级2封禁"
+			label: "层级2封禁",
+			summary: "层级2封禁"
 		},
 		"uw-block3": {
-			'label':"层级3封禁",
-			'summary':"层级3封禁"
+			label: "层级3封禁",
+			summary: "层级3封禁",
+			indefinite: true
 		},
 		"uw-3block": {
-			'label':"回退不过三原则封禁",
-			'summary':"回退不过三原则封禁"
+			label: "回退不过三原则封禁",
+			summary: "回退不过三原则封禁"
 		},
 		"uw-ablock": {
-			'label':"匿名封禁",
-			'summary':"匿名封禁"
+			label: "匿名封禁",
+			summary: "匿名封禁"
 		},
 		"uw-bblock": {
-			'label':"机器人失灵封禁",
-			'summary':"机器人失灵封禁"
+			label: "机器人失灵封禁",
+			summary: "机器人失灵封禁"
 		},
 		"uw-dblock": {
-			'label':"删除封禁",
-			'summary':"删除封禁"
+			label: "删除封禁",
+			summary: "删除封禁"
 		},
 		"uw-sblock": {
-			'label':"垃圾连结封禁",
-			'summary':"垃圾连结封禁"
+			label: "垃圾连结封禁",
+			summary: "垃圾连结封禁"
 		},
 		"uw-ublock": {
-			'label':"用户名称封禁",
-			'summary':"用户名称封禁"
+			label: "用户名称封禁",
+			summary: "用户名称封禁",
+			indefinite: true
 		},
 		"uw-vblock": {
-			'label':"破坏封禁",
-			'summary':"破坏封禁"
+			label: "破坏封禁",
+			summary: "破坏封禁"
 		}
 	}
 };
 
-// Set to true if the template is always for an indef block
-Twinkle.warn.indefBlockHash = {
-	'uw-block1': false,
-	'uw-block2': false,
-	'uw-block3': true,
-	'uw-3block': false,
-	'uw-ablock': false,
-	'uw-bblock': false,
-	'uw-dblock': false,
-	'uw-sblock': false,
-	'uw-ublock': true,
-	'uw-vblock': false
-};
-
-// Set to true if the template supports the page parameter
-Twinkle.warn.pageHash = {
-	'uw-block1': false,
-	'uw-block2': false,
-	'uw-block3': false,
-	'uw-3block': false,
-	'uw-ablock': false,
-	'uw-bblock': false,
-	'uw-dblock': false,
-	'uw-sblock': false,
-	'uw-ublock': false,
-	'uw-vblock': false
-};
-
 // Set to true if the template supports the reason parameter and isn't the same as its super-template when a reason is provided
-Twinkle.warn.reasonHash = {
-	'uw-block1': true,
-	'uw-block2': true,
-	'uw-block3': true,
-	'uw-3block': true,
-	'uw-ablock': true,
-	'uw-bblock': false,
-	'uw-dblock': true,
-	'uw-sblock': false,
-	'uw-ublock': false,
-	'uw-vblock': true
-};
+// NOTE: I have removed this reason hash; I have an updated version on my machine, which I am yet to integrate. -- TTO
 
 Twinkle.warn.prev_block_timer = null;
 Twinkle.warn.prev_article = null;
@@ -914,8 +877,9 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 		if(Twinkle.warn.prev_article === null) {
 			Twinkle.warn.prev_article = e.target.root.article.value;
 		}
-		e.target.root.article.disabled = true;
+		e.target.root.article.disabled = false;
 		e.target.root.article.value = '';
+		$(e.target.root).find("fieldset:has(textarea)").hide();
 	} else if( e.target.root.block_timer ) {
 		if(!e.target.root.block_timer.disabled && Twinkle.warn.prev_block_timer === null) {
 			Twinkle.warn.prev_block_timer = e.target.root.block_timer.value;
@@ -931,6 +895,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 			Twinkle.warn.prev_reason = null;
 		}
 		e.target.root.reason.disabled = false;
+		$(e.target.root).find("fieldset:has(textarea)").show();
 	}
 };
 
@@ -953,7 +918,7 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 			e.target.form.article.disabled = false;
 		}
 	} else if( main_group === 'block' ) {
-		if( Twinkle.warn.indefBlockHash[ value ] ) {
+		if( Twinkle.warn.messages.block[value].indefinite ) {
 			if(Twinkle.warn.prev_block_timer === null) {
 				Twinkle.warn.prev_block_timer = e.target.form.block_timer.value;
 			}
@@ -967,7 +932,7 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 			e.target.form.block_timer.disabled = false;
 		}
 
-		if( Twinkle.warn.pageHash[ value ] ) {
+		if( Twinkle.warn.messages.block[value].pageParam ) {
 			if(Twinkle.warn.prev_article !== null) {
 				e.target.form.article.value = Twinkle.warn.prev_article;
 				Twinkle.warn.prev_article = null;
@@ -981,19 +946,19 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 			e.target.form.article.value = '';
 		}
 
-		if( Twinkle.warn.reasonHash[ value ] ) {
-			if(Twinkle.warn.prev_reason !== null) {
-				e.target.form.reason.value = Twinkle.warn.prev_reason;
-				Twinkle.warn.prev_reason = null;
-			}
-			e.target.form.reason.disabled = false;
-		} else if( !e.target.form.reason.disabled ) {
-			if(Twinkle.warn.prev_reason === null) {
-				Twinkle.warn.prev_reason = e.target.form.reason.value;
-			}
-			e.target.form.reason.disabled = true;
-			e.target.form.reason.value = '';
-		}
+		//if( Twinkle.warn.messages.block[value].reasonParam ) {
+		//	if(Twinkle.warn.prev_reason !== null) {
+		//		e.target.form.reason.value = Twinkle.warn.prev_reason;
+		//		Twinkle.warn.prev_reason = null;
+		//	}
+		//	e.target.form.reason.disabled = false;
+		//} else if( !e.target.form.reason.disabled ) {
+		//	if(Twinkle.warn.prev_reason === null) {
+		//		Twinkle.warn.prev_reason = e.target.form.reason.value;
+		//	}
+		//	e.target.form.reason.disabled = true;
+		//	e.target.form.reason.value = '';
+		//}
 	}
 
 	var $article = $(e.target.form.article);
@@ -1003,12 +968,7 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 
 Twinkle.warn.callbacks = {
 	preview: function() {
-		// XXX cannot preview block templates as yet...
 		var templatename = $('select[name="sub_group"]:visible').last()[0].value;
-		if (templatename in Twinkle.warn.messages.block) {
-			alert("很不幸，暂时不能预览封禁模板。");
-			return;
-		}
 
 		var previewdiv = $('div[name="warningpreview"]:visible').last();
 		if (!previewdiv.length) {
@@ -1032,9 +992,26 @@ Twinkle.warn.callbacks = {
 		var statusspan = document.createElement('span');
 		previewbox.appendChild(statusspan);
 		Status.init(statusspan);
+		
 		var templatetext = '{{subst:' + templatename;
 		var linkedarticle = $('input[name="article"]:visible').last();
-		if (linkedarticle.length) {
+		if (templatename in Twinkle.warn.messages.block) {
+			if( linkedarticle.length && Twinkle.warn.messages.block[templatename].pageParam ) {
+				templatetext += '|page=' + linkedarticle;
+			}
+
+			var blocktime = $('input[name="block_timer"]:visible').last();
+			if( /te?mp|^\s*$|min/.exec( blocktime ) || Twinkle.warn.messages.block[templatename].indefinite ) {
+				; // nothing
+			} else if( /indef|\*|max/.exec( blocktime ) ) {
+				templatetext += '|indef=yes';
+			} else {
+				templatetext += '|time=' + blocktime;
+			}
+
+			templatetext += "|sig=true";
+		} else if (linkedarticle.length) {
+			// add linked article for user warnings (non-block templates)
 			templatetext += '|1=' + linkedarticle[0].value;
 		}
 		var reason = $('textarea[name="reason"]:visible').last();
@@ -1122,7 +1099,7 @@ Twinkle.warn.callbacks = {
 		if( params.main_group === 'block' ) {
 			var article = '', reason = '', time = null;
 			
-			if( Twinkle.getPref('blankTalkpageOnIndefBlock') && ( Twinkle.warn.indefBlockHash[ params.sub_group ] || (/indef|\*|max/).exec( params.block_timer ) ) ) {
+			if( Twinkle.getPref('blankTalkpageOnIndefBlock') && ( Twinkle.warn.messages.block[params.sub_group].indefinite || (/indef|\*|max/).exec( params.block_timer ) ) ) {
 				Status.info( '信息', '根据参数设置清空讨论页并创建新标题' );
 				text = "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
 			} else if( !headerRe.exec( text ) ) {
@@ -1130,15 +1107,15 @@ Twinkle.warn.callbacks = {
 				text += "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
 			}
 			
-			if( params.article && Twinkle.warn.pageHash[ params.sub_group ] ) {
+			if( params.article && Twinkle.warn.messages.block[params.sub_group].pageParam ) {
 				article = '|page=' + params.article;
 			}
 			
-			if( params.reason && Twinkle.warn.reasonHash[ params.sub_group ] ) {
-				reason = '|reason=' + params.reason;
-			}
+			//if( params.reason && Twinkle.warn.reasonHash[ params.sub_group ] ) {
+			//	reason = '|reason=' + params.reason;
+			//}
 			
-			if( /te?mp|^\s*$|min/.exec( params.block_timer ) || Twinkle.warn.indefBlockHash[ params.sub_group ] ) {
+			if( /te?mp|^\s*$|min/.exec( params.block_timer ) || Twinkle.warn.messages.block[params.sub_group].indefinite ) {
 				time = '';
 			} else if( /indef|\*|max/.exec( params.block_timer ) ) {
 				time = '|indef=yes';

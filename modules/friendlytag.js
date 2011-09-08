@@ -270,7 +270,7 @@ Twinkle.tag.article.tagCategories = {
 	"清理和维护模板": {
 		"常规清理": [
 			"cleanup",
-			"copyedit",
+			"copy edit",
 			"wikify"
 		],
 		"可能多余的内容": [
@@ -681,7 +681,7 @@ Twinkle.tag.callbacks = {
 		tags.sort();
 		for( i = 0; i < tags.length; i++ ) {
 			var currentTag = "";
-			if( tags[i] === 'uncategorized' || tags[i] === 'catimprove' ) {
+			if( tags[i] === 'uncategorized' || tags[i] === 'cat improve' ) {
 				pageText += '\n\n{{' + tags[i] +
 					'|time={{subst:#time:c}}}}';
 			} else {
