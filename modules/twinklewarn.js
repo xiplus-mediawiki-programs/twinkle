@@ -18,9 +18,28 @@ Twinkle.warn = function twinklewarn() {
 			});
 		}
 	}
+
+	// modify URL of talk page on rollback success pages
+	if( mw.config.get('wgAction') === 'rollback' ) {
+		var $vandalTalkLink = $("#mw-rollback-success .mw-usertoollinks a").first();
+		$vandalTalkLink.css("font-weight", "bold");
+
+		var extraParam = "vanarticle=" + mw.util.rawurlencode(mw.config.get("wgPageName").replace(/_/g, " "));
+		var href = $vandalTalkLink.attr("href");
+		if (href.indexOf("?") === -1) {
+			$vandalTalkLink.attr("href", href + "?" + extraParam);
+		} else {
+			$vandalTalkLink.attr("href", href + "&" + extraParam);
+		}
+	}
 };
 
 Twinkle.warn.callback = function twinklewarnCallback() {
+	if( mw.config.get('wgTitle').split( '/' )[0].replace( /\"/, "\\\"") === mw.config.get('wgUserName') ){
+		alert( '好吧，你已经被警告了！' );
+		return;
+	}
+	
 	var Window = new SimpleWindow( 600, 440 );
 	Window.setTitle( "警告、通知用户" );
 	Window.setScriptName( "Twinkle" );

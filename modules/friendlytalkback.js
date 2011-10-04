@@ -155,7 +155,7 @@ Twinkle.talkback.callback.change_target = function friendlytagCallbackChangeTarg
 					type:'input',
 					name:'page',
 					label:'完整页面名',
-					tooltip:'您留下信息的完整页面名，如“Wikipedia talk:Friendly”。',
+					tooltip:'您留下信息的完整页面名，如“Wikipedia talk:Twinkle”。',
 					value: Twinkle.talkback.prev_page
 				} );
 			
@@ -214,7 +214,7 @@ Twinkle.talkback.callback.evaluate = function friendlytalkbackCallbackEvaluate(e
 	var text;
 	/*if ( tbtarget === "an" ) {
 		text = "\n== " + Twinkle.getFriendlyPref('adminNoticeHeading') + " ==\n{{subst:ANI-notice|thread=";
-		text += section + "|noticeboard=" + tbPageName + "}}~~~~";
+		text += section + "|noticeboard=" + tbPageName + "}} ~~~~";
 
 		talkpage.setEditSummary("Notice of AN/ANI discussion" + Twinkle.getPref('summaryAd'));
 	} else {*/

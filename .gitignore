@@ -1,2 +1,5 @@
 .mediawiki-bot-*
 twinkle.js
+/.settings
+/.project
+/twinkle.js

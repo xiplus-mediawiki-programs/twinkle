@@ -337,7 +337,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			}
 			field2.append({
 					type: 'textarea',
-					name: 'reason',
+					name: 'protectReason',
 					label: '保护理由（日志）：'
 				});
 			if (!mw.config.get('wgArticleId')) {  // tagging isn't relevant for non-existing pages
@@ -424,10 +424,17 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 		$(e.target.form).find('fieldset[name="field2"]').css('display', 'none');
 	}
 
-	// re-add protection level text, if it's available
-	if (e.target.values === 'protect' && Twinkle.protect.protectionLevel) {
-		Status.init($('div[name="currentprot"] span').last()[0]);
-		Status.info("当前保护级别", Twinkle.protect.protectionLevel);
+	if (e.target.values === 'protect') {
+		// fake a change event on the preset dropdown
+		var evt = document.createEvent( "Event" );
+		evt.initEvent( 'change', true, true );
+		e.target.form.category.dispatchEvent( evt );
+
+		// re-add protection level text, if it's available
+		if (Twinkle.protect.protectionLevel) {
+			Status.init($('div[name="currentprot"] span').last()[0]);
+			Status.info("当前保护级别", Twinkle.protect.protectionLevel);
+		}
 	}
 };
 
@@ -472,7 +479,7 @@ Twinkle.protect.protectionTypes = [
 		label: '全保护',
 		list: [
 			{ label: '常规（全）', value: 'pp-protected' },
-			{ label: '争议、编辑战（全）', selected: userIsInGroup('sysop'), value: 'pp-dispute' },
+			{ label: '争议、编辑战（全）', value: 'pp-dispute' },
 			{ label: '长期破坏（全）', value: 'pp-vandalism' },
 			{ label: '高风险模板（全）', value: 'pp-template' },
 			{ label: '已封禁用户的讨论页（全）', value: 'pp-usertalk' }
@@ -482,7 +489,7 @@ Twinkle.protect.protectionTypes = [
 		label: '半保护',
 		list: [
 			{ label: '常规（半）', value: 'pp-semi-protected' },
-			{ label: '长期破坏（半）', selected: !userIsInGroup('sysop'), value: 'pp-semi-vandalism' },
+			{ label: '长期破坏（半）', value: 'pp-semi-vandalism' },
 			{ label: '违反生者传记方针（半）', value: 'pp-semi-blp' },
 			{ label: '傀儡破坏（半）', value: 'pp-semi-sock' },
 			{ label: '高风险模板（半）', value: 'pp-semi-template' },
@@ -683,10 +690,11 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 			}
 		}
 
+		var reasonField = (actiontype === "protect" ? form.protectReason : form.reason);
 		if (item.reason) {
-			form.reason.value = item.reason;
+			reasonField.value = item.reason;
 		} else {
-			form.reason.value = '';
+			reasonField.value = '';
 		}
 
 		// sort out tagging options
@@ -737,11 +745,11 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 	} else if( actiontype === 'tag' || actiontype === 'protect' ) {
 		tagparams = {
 			tag: form.tagtype.value,
-			reason: ((form.tagtype.value === 'pp-protected' || form.tagtype.value === 'pp-semi-protected' || form.tagtype.value === 'pp-move') && form.reason) ? form.reason.value : null,
+			reason: ((form.tagtype.value === 'pp-protected' || form.tagtype.value === 'pp-semi-protected' || form.tagtype.value === 'pp-move') && form.protectReason) ? form.protectReason.value : null,
 			expiry: (actiontype === 'protect') ? (form.editmodify.checked ? form.editexpiry.value : (form.movemodify.checked ?
 				form.moveexpiry.value : null)) : null,
-				small: form.small.checked,
-				noinclude: form.noinclude.checked
+			small: form.small.checked,
+			noinclude: form.noinclude.checked
 		};
 	}
 
@@ -759,8 +767,8 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			} else {
 				thispage.setCreateProtection(form.createlevel.value, form.createexpiry.value);
 			}
-			if (form.reason.value) {
-				thispage.setEditSummary(form.reason.value);
+			if (form.protectReason.value) {
+				thispage.setEditSummary(form.protectReason.value);
 			} else {
 				alert("您必须输入保护理由，这会出现在日志中。");
 				return;

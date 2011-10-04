@@ -39,6 +39,14 @@ Twinkle.config.commonSets = {
 		"f1", "f3", "f4", "f5", "f6", "f7",
 		"r2", "r3", "r4", "r5"
 	],
+	csdCriteriaNotificationDisplayOrder: [
+		"db",
+		"g1", "g2", "g3", "g5", "g10", "g11", "g12", "g13", "g14", "g15", "g16",
+		"a1", "a2", "a3",
+		"o1", "o3", "o4",
+		"f1", "f3", "f4", "f5", "f6", "f7",
+		"r2", "r3", "r4", "r5"
+	],
 	csdAndDICriteria: {
 		db: "自定义理由",
 		g1: "G1", g2: "G2", g3: "G3", g5: "G5", g10: "G10", g11: "G11", g12: "G12", g13: "G13", g14: "G14", g15: "G15", g16: "G16",
@@ -300,7 +308,7 @@ Twinkle.config.sections = [
 			helptip: "尽管您在对话框中选择通知，通知仍只会在使用这些理由时发出。",
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdCriteria,
-			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaDisplayOrder
+			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaNotificationDisplayOrder
 		},
 
 		// TwinkleConfig.welcomeUserOnSpeedyDeletionNotification (array of strings)
@@ -312,7 +320,7 @@ Twinkle.config.sections = [
 			helptip: "欢迎模板仅在用户被通知时加入，使用的模板是{{firstarticle}}。",
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdCriteria,
-			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaDisplayOrder
+			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaNotificationDisplayOrder
 		},
 
 		// TwinkleConfig.promptForSpeedyDeletionSummary (array of strings)

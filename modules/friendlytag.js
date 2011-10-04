@@ -224,6 +224,9 @@ Twinkle.tag.updateSortOrder = function(e) {
 
 Twinkle.tag.article = {};
 
+// A list of all article tags, in alphabetical order
+// To ensure tags appear in the default "categorized" view, add them to the tagCategories hash below.
+
 Twinkle.tag.article.tags = {
 	"advert": "此条目或章节类似广告",
 	"BLPsources": "当前传记条目需要补充更多来源",
@@ -265,6 +268,10 @@ Twinkle.tag.article.tags = {
 	"weasel": "此条目或章节可能因为语意模棱两可而损及其中立性",
 	"wikify": "此条目或章节需要被修正为维基格式以符合质量标准"
 };
+
+// A list of tags in order of category
+// Tags should be in alphabetical order within the categories
+// Add new categories with discretion - the list is long enough as is!
 
 Twinkle.tag.article.tagCategories = {
 	"清理和维护模板": {
@@ -329,6 +336,7 @@ Twinkle.tag.article.tagCategories = {
 		],
 		"链接": [
 			"orphan",
+			"overlinked",
 			"wikify"  // this tag is listed twice because it used to focus mainly on links, but now it's a more general cleanup tag
 		],
 		"参考技术": [
@@ -539,6 +547,7 @@ Twinkle.tag.groupHash = [
 	'citecheck',
 	'cleanup',
 	'COI',
+	'coi',
 	'colloquial',
 	'confusing',
 	'context',
@@ -559,7 +568,6 @@ Twinkle.tag.groupHash = [
 	'fiction',
 	'gameguide',
 	'globalize',
-	'grammar',
 	'histinfo',
 	'hoax',
 	'howto',
@@ -580,6 +588,7 @@ Twinkle.tag.groupHash = [
 	'onesource',
 	'OR',
 	'orphan',
+	'do-attempt',
 	'out of date',
 	'peacock',
 	'plot',
@@ -597,7 +606,6 @@ Twinkle.tag.groupHash = [
 	'roughtranslation',
 	'sections',
 	'self-published',
-	'spam',
 	'story',
 	'synthesis',
 	'tone',

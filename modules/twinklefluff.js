@@ -142,7 +142,7 @@ Twinkle.fluff = {
 				return;
 			}
 			if( Twinkle.getPref('showRollbackLinks').indexOf('diff') != -1 ) {
-				var vandal = $("#mw-diff-ntitle2 a").first().text().replace("'", "\\'");
+				var vandal = $("#mw-diff-ntitle2 a").first().text();
 
 				var revertNode = document.createElement('div');
 				revertNode.setAttribute( 'id', 'tw-revert' );
@@ -307,7 +307,7 @@ Twinkle.fluff.callbacks = {
 		var revs = $(xmlDoc).find('rev');
 
 		if( revs.length < 1 ) {
-			self.statitem.error( '没有其它修订版本，无法回退' );
+			self.statelem.error( '没有其它修订版本，无法回退' );
 			return;
 		}
 		var top = revs[0];
@@ -417,15 +417,15 @@ Twinkle.fluff.callbacks = {
 			}
 			userHasAlreadyConfirmedAction = true;
 
-			userstr = self.params.user.replace("\\'", "'");
+			userstr = self.params.user;
 			summary = "回退[[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" + 
 				userstr + "|讨论]])做出的出于[[WP:AGF|善意]]的编辑" + Twinkle.fluff.formatSummaryPostfix(extra_summary) + Twinkle.getPref('summaryAd');
 			break;
 
 		case 'vand':
 
-			userstr = self.params.user.replace("\\'", "'");
-			gooduserstr = self.params.gooduser.replace("\\'", "'")
+			userstr = self.params.user;
+			gooduserstr = self.params.gooduser;
 			summary = "回退[[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" +
 				userstr + "|讨论]])做出的被认为是[[WP:VAND|破坏]]的 " + self.params.count + " 次编辑，到由" +
 				gooduserstr + "做出的前一个修订版本。 "  + Twinkle.getPref('summaryAd');
@@ -444,7 +444,7 @@ Twinkle.fluff.callbacks = {
 				userHasAlreadyConfirmedAction = true;
 			}
 
-			userstr = self.params.user.replace("\\'", "'");
+			userstr = self.params.user;
 			summary = "回退[[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" +
 				userstr + "|讨论]])做出的 " + self.params.count + " 次编辑" + Twinkle.fluff.formatSummaryPostfix(extra_summary) +
 				Twinkle.getPref('summaryAd');

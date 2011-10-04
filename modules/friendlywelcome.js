@@ -98,6 +98,11 @@ Twinkle.welcome.welcomeUser = function welcomeUser() {
 };
 
 Twinkle.welcome.callback = function friendlywelcomeCallback( uid ) {
+	if( uid === mw.config.get('wgUserName') ){
+		alert( '我们非常、非常欢迎你的到来！' );
+		return;
+	}
+	
 	var Window = new SimpleWindow( 600, 400 );
 	Window.setTitle( "欢迎用户" );
 	Window.setScriptName( "Twinkle" );
