@@ -316,6 +316,7 @@ Twinkle.tag.article.tagCategories = {
 		"可供查证和来源": [
 			"BLPsources",
 			"BLP unsourced",
+			"nofootnotes",
 			"original research",
 			"refimprove",
 			"unreferenced"
