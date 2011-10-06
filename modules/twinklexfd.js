@@ -148,7 +148,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		afd_category.append( { type:'option', label:'合并', value:'merge' } );
 		afd_category.append( { type:'option', label:'移动到维基辞典', value:'vmd' } );
 		afd_category.append( { type:'option', label:'移动到维基文库', value:'vms' } );
-		afd_category.append( { type:'option', label:'移动到维基教科书', value:'vmd' } );
+		afd_category.append( { type:'option', label:'移动到维基教科书', value:'vmb' } );
 		afd_category.append( { type:'option', label:'移动到维基语录', value:'vmq' } );
 
 		work_area.append( {
