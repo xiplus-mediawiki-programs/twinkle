@@ -8,6 +8,8 @@
  * Config directives in:   TwinkleConfig
  */
 
+// Note: a lot of code in this module is re-used/called by batchprotect.
+
 Twinkle.protect = function twinkleprotect() {
 	if ( mw.config.get('wgNamespaceNumber') < 0 ) {
 		return;
@@ -1004,7 +1006,10 @@ Twinkle.protect.callbacks = {
 		text = text.replace( reg, "$1" + newtag + "\n");
 		if (text.length === originalTextLength)
 		{
-			statusElement.error( '无法在WP:RFPP上找到相关位点标记，取消操作。' );
+			var linknode = document.createElement('a');
+			linknode.setAttribute("href", mw.util.wikiGetlink("Wikipedia:Twinkle/修复RFPP") );
+			linknode.appendChild(document.createTextNode('如何修复RFPP'));
+			statusElement.error( [ '无法在WP:RFPP上找到相关位点标记，要修复此问题，请参见', linknode, '。' ] );
 			return;
 		}
 		statusElement.status( '添加新提名…' );

@@ -100,11 +100,13 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 	result.category.dispatchEvent( evt );
 };
 
+Twinkle.xfd.previousNotify = true;
+
 Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory(e) {
 	var value = e.target.value;
-	var root = e.target.form;
+	var form = e.target.form;
 	var old_area;
-	var childNodes = root.childNodes;
+	var childNodes = form.childNodes;
 	for( var i = 0; i < childNodes.length; ++i ) {
 		var node = childNodes[i];
 		if (node instanceof Element &&
@@ -115,7 +117,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 	}
 	var work_area = null;
 
-	var oldreasontextbox = e.target.form.getElementsByTagName('textarea')[0];
+	var oldreasontextbox = form.getElementsByTagName('textarea')[0];
 	var oldreason = (oldreasontextbox ? oldreasontextbox.value : '');
 
 	switch( value ) {
@@ -191,6 +193,16 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		work_area = work_area.render();
 		old_area.parentNode.replaceChild( work_area, old_area );
 		break;
+	}
+
+	// No creator notification for CFDS
+	if (value === "cfds") {
+		Twinkle.xfd.previousNotify = form.notify.checked;
+		form.notify.checked = false;
+		form.notify.disabled = true;
+	} else {
+		form.notify.checked = Twinkle.xfd.previousNotify;
+		form.notify.disabled = false;
 	}
 };
 
