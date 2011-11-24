@@ -103,6 +103,18 @@ Twinkle.load = function(){
 		mw.util.addCSS(".morebits-dialog-content, .morebits-dialog-footerlinks { font-size: 100% !important; } " +
 			".morebits-dialog input, .morebits-dialog select, .morebits-dialog-content button { font-size: inherit !important; }");
 	}
+
+	// override any user-defined summaryAd, for the sake of AbuseFilter.
+	// FIXME
+	if (typeof(Twinkle.prefs) !== "object") {
+		Twinkle.prefs = {};
+	}
+	if (typeof(Twinkle.prefs.twinkle) !== "object") {
+		Twinkle.prefs.twinkle = {};
+	}
+	Twinkle.prefs.twinkle.summaryAd = Twinkle.defaultConfig.twinkle.summaryAd;
+	Twinkle.prefs.twinkle.deletionSummaryAd = Twinkle.defaultConfig.twinkle.deletionSummaryAd;
+	Twinkle.prefs.twinkle.protectionSummaryAd = Twinkle.defaultConfig.twinkle.protectionSummaryAd;
 };
 
 //
