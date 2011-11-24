@@ -273,9 +273,11 @@ Twinkle.xfd.callbacks = {
 			tag += '}}';
 			if ( params.noinclude ) {
 				tag = '<noinclude>' + tag + '</noinclude>';
+			} else {
+				tag += '\n';
 			}
 
-			pageobj.setPageText(tag + "\n" + text);
+			pageobj.setPageText(tag + text);
 			pageobj.setEditSummary("页面存废讨论：[[" + params.logpage + "#" + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchPage')) {
 				case 'yes':

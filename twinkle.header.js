@@ -7,8 +7,6 @@
  * +-------------------------------------------------------------------------+
  *
  * 从Github导入[https://github.com/jimmyxu/twinkle]
- * 要从Github更新此脚本，你必须设立一个本地仓库，再
- * 跟随[https://github.com/jimmyxu/twinkle/blob/master/README.md]的指引。
  *
  * ----------
  *
