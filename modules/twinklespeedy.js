@@ -779,8 +779,16 @@ Twinkle.speedy.callbacks = {
 				thispage.lookupCreator(callback);
 			}
 			// or, if not notifying, add this nomination to the user's userspace log without the initial contributor's name
-			else if (params.lognomination) {
-				Twinkle.speedy.callbacks.user.addToLog(params, null);
+			else {
+				var callback = function(pageobj) {
+					var statelem = pageobj.getStatusElement();
+					var initialContrib = pageobj.getCreator();
+					statelem.status( '页面创建者：' + initialContrib );
+				};
+				thispage.lookupCreator(callback);
+				if (params.lognomination) {
+					Twinkle.speedy.callbacks.user.addToLog(params, null);
+				}
 			}
 
 			// Wrap SD template in noinclude tags if we are in template space.
