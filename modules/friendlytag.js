@@ -501,7 +501,8 @@ Twinkle.tag.file.cleanupList = [
 			]
 		}
 	},
-	{ label: '{{Should be text}}: image should be represented as text, tables, or math markup', value: 'Should be text' }
+	{ label: '{{Should be text}}: image should be represented as text, tables, or math markup', value: 'Should be text' },
+	{ label: '{{Split media}}: there are two different images in the upload log which need to be split', value: 'Split media' }
 ];
 
 Twinkle.tag.file.qualityList = [
@@ -517,13 +518,12 @@ Twinkle.tag.file.commonsList = [
 	{ label: '{{Do not move to Commons}} (PD issue): file is PD in the US but not in country of origin', value: 'Do not move to Commons' },
 	{ label: '{{Do not move to Commons}} (other reason)', value: 'Do not move to Commons_reason' },
 	{ label: '{{Keep local}}: request to keep local copy of a Commons file', value: 'Keep local' },
-	{ label: '{{Now Commons}}: file has been copied to Commons', value: 'subst:ncd' },
-	{ label: '{{Shadows Commons}}: a different file is present on Commons under the same filename', value: 'Shadows Commons' }
+	{ label: '{{Now Commons}}: file has been copied to Commons', value: 'subst:ncd' }
 ];
 
 Twinkle.tag.file.replacementList = [
+	{ label: '{{Duplicate}}: exact duplicate of another file, but not yet orphaned', value: 'Duplicate' },
 	{ label: '{{Obsolete}}: improved version available', value: 'Obsolete' },
-	{ label: '{{Redundant}}: exact duplicate of another file, but not yet orphaned', value: 'Redundant' },
 	{ label: '{{PNG version available}}', value: 'PNG version available' },
 	{ label: '{{SVG version available}}', value: 'SVG version available' }
 ];
@@ -777,6 +777,12 @@ Twinkle.tag.callbacks = {
 
 			var tagtext = "", currentTag;
 			$.each(params.tags, function(k, tag) {
+				// when other commons-related tags are placed, remove "move to Commons" tag
+				if (["Keep local", "subst:ncd", "Do not move to Commons_reason", "Do not move to Commons",
+					"Now Commons"].indexOf(tag) !== -1) {
+					text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*}}/gi, "");
+				}
+
 				currentTag = "{{" + (tag === "Do not move to Commons_reason" ? "Do not move to Commons" : tag);
 
 				var input;
@@ -838,7 +844,7 @@ Twinkle.tag.callbacks = {
 						/* falls through * /
 					case "Obsolete":
 						/* falls through * /
-					case "Redundant":
+					case "Duplicate":
 						input = prompt( "{{" + tag + "}} - Enter the name of the file which replaces this one (required). To skip the tag, click Cancel:", "" );
 						if (input === null) {
 							return true;  // continue
@@ -855,6 +861,8 @@ Twinkle.tag.callbacks = {
 						}
 						break;
 					case "Non-free reduced":
+						//remove {{non-free reduce}} and redirects
+						text = text.replace(/\{\{\s*(Template\s*:\s*)?(Non-free reduce|FairUseReduce|Fairusereduce|Fair Use Reduce|Fair use reduce|Reduce size|Reduce|Fair-use reduce|Image-toobig|Comic-ovrsize-img|Non-free-reduce|Nfr|Smaller image|Nonfree reduce)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
 						currentTag += "|date={{subst:date}}";
 						break;
 					default:

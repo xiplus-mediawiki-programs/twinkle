@@ -17,9 +17,6 @@
  */
 
 //<nowiki>
-//
-if (navigator.userAgent.indexOf("MSIE") == -1) {
-//
 
 var Twinkle = {};
 window.Twinkle = Twinkle;  // allow global access
@@ -147,7 +144,6 @@ Twinkle.defaultConfig.friendly = {
 	markTalkbackAsMinor: true,
 	insertTalkbackSignature: true,  // always sign talkback templates
 	talkbackHeading: "回复通告",
-	adminNoticeHeading: "提醒",
 	 // Shared
 	markSharedIPAsMinor: true
 };

@@ -31,6 +31,8 @@
  */
 
 
+var Morebits = {};
+
 /**
  * **************** userIsInGroup(), userIsAnon() ****************
  * Simple helper functions to see what groups a user might belong
@@ -44,63 +46,25 @@ function userIsAnon() {
 }
 
 
+
 /**
- * **************** Cookies ****************
+ * **************** isIPAddress() ****************
+ * Helper function: Returns true if given string contains a valid IPv4 or
+ * IPv6 address
+ *
+ * This is copied from mediaWiki.util; sometimes util is loaded after twinkle (?!)
  */
 
-var Cookies = {
-	/*
-	 * Creates an cookie with the name and value pair. expiry is optional or null and defaults
-	 * to browser standard (in seconds), path is optional and defaults to "/"
-	 * throws error if the cookie already exists.
-	 */
-	create: function( name, value, max_age, path ) {
-		if( Cookies.exists( name ) ) {
-			throw new Error( "曲奇 " + name + " 已存在" );
-		}
-		Cookies.set( name, value, max_age, path );
-	},
-	/*
-	 * Sets an cookie with the name and value pair, overwrites any previous cookie of that name.
-	 * expiry is optional or null and defaults to browser standard (in seconds),
-	 * path is optional and defaults to /
-	 */
-	set: function( name, value, max_age, path ) {
-		var cookie = name + "=" + encodeURIComponent( value );
-		if( max_age ) {
-			cookie += "; max-age=" + max_age;
-		}
-		cookie += "; path=" + path || "/";
-		document.cookie = cookie;
-	},
-	/*
-	 * Retuns the cookie with the name "name", return null if no cookie found.
-	 */
-	read: function( name ) {
-		var cookies = document.cookie.split(";");
-		for( var i = 0; i < cookies.length; ++i ) {
-			var current = cookies[i];
-			current = current.trim();
-			if( current.indexOf( name + "=" ) === 0 ) {
-				return decodeURIComponent( current.substring( name.length + 1 ) );
-			}
-		}
-		return null;
-	},
-	/*
-	 * Returns true if a cookie exists, false otherwise
-	 */
-	exists: function( name ) {
-		var re = new RegExp( ";\\s*" + name + "=" );
-		return re.test( document.cookie );
-	},
-	/*
-	 * Deletes the cookie named "name"
-	 */
-	remove: function( name ) {
-		Cookies.set( name, '', -1 );
-	}
-};
+Morebits.RE_IP_ADD = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|0?[0-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|0?[0-9]?[0-9])$/;
+Morebits.RE_IPV6_ADD = /^(?::(?::|(?::[0-9A-Fa-f]{1,4}){1,7})|[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4}){0,6}::|[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4}){7})$/;
+Morebits.RE_IPV6_ADD2 = /^[0-9A-Fa-f]{1,4}(?:::?[0-9A-Fa-f]{1,4}){1,6}$/;
+
+function isIPAddress( address ) {
+	return address.search( Morebits.RE_IP_ADD ) !== -1 ||  // IPv4
+		address.search( Morebits.RE_IPV6_ADD ) !== -1 ||  // IPv6
+		(address.search( Morebits.RE_IPV6_ADD2 ) !== -1	&& address.search( /::/ ) !== -1 && address.search( /::.*::/ ) === -1);
+}
+
 
 
 /**
@@ -782,128 +746,146 @@ Bytes.prototype.toString = function( magnitude ) {
 
 
 /**
- * **************** String ****************
+ * **************** String; Morebits.string ****************
  */
 
-String.prototype.ltrim = function stringPrototypeLtrim( chars ) {
-	chars = chars || "\\s";
-	return this.replace( new RegExp("^[" + chars + "]+", "g"), "" );
-};
+if (!String.prototype.trimLeft) {
+	String.prototype.trimLeft = function stringPrototypeLtrim( chars ) {
+		chars = chars || "\\s";
+		return this.replace( new RegExp("^[" + chars + "]+", "g"), "" );
+	};
+}
 
-String.prototype.rtrim = function stringPrototypeRtrim( chars ) {
-	chars = chars || "\\s";
-	return this.replace( new RegExp("[" + chars + "]+$", "g"), "" );
-};
+if (!String.prototype.trimRight) {
+	String.prototype.trimRight = function stringPrototypeRtrim( chars ) {
+		chars = chars || "\\s";
+		return this.replace( new RegExp("[" + chars + "]+$", "g"), "" );
+	};
+}
 
-String.prototype.trim = function stringPrototypeTrim( chars ) {
-	return this.rtrim(chars).ltrim(chars);
-};
-
-String.prototype.splitWeightedByKeys = function stringPrototypeSplitWeightedByKeys( start, end, skip ) {
-	if( start.length !== end.length ) {
-		throw new Error( '起始及终止标记必须等长' );
-	}
-	var level = 0;
-	var initial = null;
-	var result = [];
-	if( !( skip instanceof Array ) ) {
-		if( typeof( skip ) === 'undefined' ) {
-			skip = [];
-		} else if( typeof( skip ) === 'string' ) {
-			skip = [ skip ];
-		} else {
-			throw new Error( "不可用的跳过参数" );
-		}
-	}
-	for( var i  = 0; i < this.length; ++i ) {
-		for( var j = 0; j < skip.length; ++j ) {
-			if( this.substr( i, skip[j].length ) === skip[j] ) {
-				i += skip[j].length - 1;
-				continue;
-			}
-		}
-		if( this.substr( i, start.length ) === start ) {
-			if( initial === null ) {
-				initial = i;
-			}
-			++level;
-			i += start.length - 1;
-		} else if( this.substr( i, end.length ) === end ) {
-			--level;
-			i += end.length - 1;
-		}
-		if( !level && initial ) {
-			result.push( this.substring( initial, i + 1 ) );
-			initial = null;
-		}
-	}
-
-	return result;
-};
+if (!String.prototype.trim) {
+	String.prototype.trim = function stringPrototypeTrim( chars ) {
+		return this.trimRight(chars).trimLeft(chars);
+	};
+}
 
 // Helper functions to change case of a string
-String.prototype.toUpperCaseFirstChar = function() {
-	return this.substr( 0, 1 ).toUpperCase() + this.substr( 1 );
-};
+Morebits.string = {
+	toUpperCaseFirstChar: function(str) {
+		str = str.toString();
+		return str.substr( 0, 1 ).toUpperCase() + str.substr( 1 );
+	},
+	toLowerCaseFirstChar: function(str) {
+		str = str.toString();
+		return str.substr( 0, 1 ).toLowerCase() + str.substr( 1 );
+	},
+	splitWeightedByKeys: function( str, start, end, skip ) {
+		if( start.length !== end.length ) {
+			throw new Error( '起始和结束标记必须等长' );
+		}
+		var level = 0;
+		var initial = null;
+		var result = [];
+		if( !( skip instanceof Array ) ) {
+			if( typeof( skip ) === 'undefined' ) {
+				skip = [];
+			} else if( typeof( skip ) === 'string' ) {
+				skip = [ skip ];
+			} else {
+				throw new Error( "不适用的跳过参数" );
+			}
+		}
+		for( var i  = 0; i < str.length; ++i ) {
+			for( var j = 0; j < skip.length; ++j ) {
+				if( str.substr( i, skip[j].length ) === skip[j] ) {
+					i += skip[j].length - 1;
+					continue;
+				}
+			}
+			if( str.substr( i, start.length ) === start ) {
+				if( initial === null ) {
+					initial = i;
+				}
+				++level;
+				i += start.length - 1;
+			} else if( str.substr( i, end.length ) === end ) {
+				--level;
+				i += end.length - 1;
+			}
+			if( !level && initial ) {
+				result.push( str.substring( initial, i + 1 ) );
+				initial = null;
+			}
+		}
 
-String.prototype.toLowerCaseFirstChar = function() {
-	return this.substr( 0, 1 ).toLowerCase() + this.substr( 1 );
-};
-
-String.prototype.toUpperCaseEachWord = function( delim ) {
-	delim = delim ? delim : ' ';
-	return this.split( delim ).map( function(v) { return v.toUpperCaseFirstChar(); } ).join( delim );
-};
-
-String.prototype.toLowerCaseEachWord = function( delim ) {
-	delim = delim ? delim : ' ';
-	return this.split( delim ).map( function(v) { return v.toLowerCaseFirstChar(); } ).join( delim );
+		return result;
+	}
 };
 
 
 /**
- * **************** Array ****************
+ * **************** Morebits.array ****************
+ *
+ * uniq(arr): returns a copy of the array with duplicates removed
+ *
+ * dups(arr): returns a copy of the array with the first instance of each value
+ *            removed; subsequent instances of those values (duplicates) remain
+ *
+ * chunk(arr, size): breaks up |arr| into smaller arrays of length |size|, and
+ *                   returns an array of these "chunked" arrays
  */
 
-Array.prototype.uniq = function arrayPrototypeUniq() {
-	var result = [];
-	for( var i = 0; i < this.length; ++i ) {
-		var current = this[i];
-		if( result.indexOf( current ) === -1 ) {
-			result.push( current );
+Morebits.array = {
+	uniq: function(arr) {
+		if (!($.isArray(arr))) {
+			throw "A non-array object passed to Morebits.array.uniq";
+			return;
 		}
-	}
-	return result;
-};
-
-Array.prototype.dups = function arrayPrototypeUniq() {
-	var uniques = [];
-	var result = [];
-	for( var i = 0; i < this.length; ++i ) {
-		var current = this[i];
-		if( uniques.indexOf( current ) === -1 ) {
-			uniques.push( current );
-		} else {
-			result.push( current );
+		var result = [];
+		for( var i = 0; i < arr.length; ++i ) {
+			var current = arr[i];
+			if( result.indexOf( current ) === -1 ) {
+				result.push( current );
+			}
 		}
-	}
-	return result;
-};
-
-Array.prototype.chunk = function arrayChunk( size ) {
-	if( typeof( size ) !== 'number' || size <= 0 ) { // pretty impossible to do anything :)
-		return [ this ]; // we return an array consisting of this array.
-	}
-	var result = [];
-	var current;
-	for(var i = 0; i < this.length; ++i ) {
-		if( i % size === 0 ) { // when 'i' is 0, this is always true, so we start by creating one.
-			current = [];
-			result.push( current );
+		return result;
+	},
+	dups: function(arr) {
+		if (!($.isArray(arr))) {
+			throw "A non-array object passed to Morebits.array.dups";
+			return;
 		}
-		current.push( this[i] );
+		var uniques = [];
+		var result = [];
+		for( var i = 0; i < arr.length; ++i ) {
+			var current = arr[i];
+			if( uniques.indexOf( current ) === -1 ) {
+				uniques.push( current );
+			} else {
+				result.push( current );
+			}
+		}
+		return result;
+	},
+	chunk: function( arr, size ) {
+		if (!($.isArray(arr))) {
+			throw "A non-array object passed to Morebits.array.chunk";
+			return;
+		}
+		if( typeof( size ) !== 'number' || size <= 0 ) { // pretty impossible to do anything :)
+			return [ arr ]; // we return an array consisting of this array.
+		}
+		var result = [];
+		var current;
+		for(var i = 0; i < arr.length; ++i ) {
+			if( i % size === 0 ) { // when 'i' is 0, this is always true, so we start by creating one.
+				current = [];
+				result.push( current );
+			}
+			current.push( arr[i] );
+		}
+		return result;
 	}
-	return result;
 };
 
 
@@ -1017,6 +999,9 @@ var Namespace = {
 /**
  * **************** Date ****************
  * Helper functions to get the month as a string instead of a number
+ *
+ * Normally it is poor form to play with prototypes of primitive types, but it
+ * is fairly unlikely that anyone will iterate over a Date object.
  */
 
 Date.monthNames = [
@@ -1755,9 +1740,9 @@ Wikipedia.page = function(pageName, currentAction) {
 			return;
 		}
 
-		if (ctx.fullyProtected && !confirm('对全保护页面“' + ctx.pageName + "”" +
-			(ctx.fullyProtected === 'indefinite' ? '（永久）' : ('（到期：' + ctx.fullyProtected + '）')) +
-			'的自动编辑即将提交。\n\n点击确定以确定，或点击取消以取消。')) {
+		if (ctx.fullyProtected && !confirm('您即将编辑全保护页面 "' + ctx.pageName +
+			(ctx.fullyProtected === 'infinity' ? '（永久）' : ('（到期：' + ctx.fullyProtected + ')')) +
+			'。\n\n点击确定以确定，或点击取消以取消。')) {
 			ctx.statusElement.error("对全保护页面的编辑被取消。");
 			return;
 		}
@@ -2220,8 +2205,8 @@ Wikipedia.page = function(pageName, currentAction) {
 		// extract protection info
 		if (userIsInGroup('sysop')) {
 			var editprot = $(xml).find('pr[type="edit"]');
-			if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !confirm('即将移动全保护页面“' + ctx.pageName + '”' +
-				(editprot.attr('expiry') === 'indefinite' ? '（永久）' : ('（到期 ' + editprot.attr('expiry') + '）')) +
+			if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !confirm('您即将移动全保护页面“' + ctx.pageName + '”' +
+				(editprot.attr('expiry') === 'infinity' ? '（永久）' : ('（到期：' + editprot.attr('expiry') + '）')) +
 				'。\n\n点击确定以确定，或点击取消以取消。')) {
 				ctx.statusElement.error("对全保护页面的移动已取消。");
 				return;
@@ -2269,8 +2254,8 @@ Wikipedia.page = function(pageName, currentAction) {
 
 		// extract protection info
 		var editprot = $(xml).find('pr[type="edit"]');
-		if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !confirm('即将删除全保护页面“' + ctx.pageName + "”" +
-			(editprot.attr('expiry') === 'indefinite' ? '（永久）' : ('（到期 ' + editprot.attr('expiry') + '）')) +
+		if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !confirm('您即将删除全保护页面“' + ctx.pageName + "”" +
+			(editprot.attr('expiry') === 'infinity' ? '（永久）' : ('（到期 ' + editprot.attr('expiry') + '）')) +
 			'。\n\n点击确定以确定，或点击取消以取消。')) {
 			ctx.statusElement.error("对全保护页面的删除已取消。");
 			return;
@@ -2300,8 +2285,13 @@ Wikipedia.page = function(pageName, currentAction) {
 	var fnProcessProtect = function() {
 		var xml = ctx.protectApi.getXML();
 
-		if ($(xml).find('page').attr('missing') === "" && !ctx.protectCreate) {
+		var missing = ($(xml).find('page').attr('missing') === "");
+		if (((ctx.protectEdit || ctx.protectMove) && missing)) {
 			ctx.statusElement.error("不能保护页面，因其已不存在");
+			return;
+		}
+		if (ctx.protectCreate && !missing) {
+			ctx.statusElement.error("不能白纸保护页面，因其已存在");
 			return;
 		}
 
@@ -2372,9 +2362,7 @@ Wikipedia.page = function(pageName, currentAction) {
 
 /**
  * **************** Wikipedia.wiki ****************
- * REMOVEME - but *only* after Twinkle no longer uses it
- *
- * TODO(jimmyxu): too lazy to translate deprecated parts.
+ * REMOVEME - but *only* after Twinkle no longer uses it - viz. batchundelete :(
  */
 
 /*
@@ -2529,19 +2517,6 @@ Wikipedia.wiki.prototype = {
 
 
 /**
- * **************** Number ****************
- * REMOVEME - unused?
- */
-
-Number.prototype.zeroFill = function( length ) {
-	var str = this.toFixed();
-	if( !length ) { return str; }
-	while( str.length < length ) { str = '0' + str; }
-	return str;
-};
-
-
-/**
  * **************** MediaWiki ****************
  * Wikitext manipulation
  */
@@ -2670,7 +2645,7 @@ Mediawiki.Page.prototype = {
 		 * Will eat the whole link
 		 */
 		var links_re = new RegExp( "\\[\\[(?:[Ii]mage|[Ff]ile|文件):\\s*" + image_re_string );
-		var allLinks = unbinder.content.splitWeightedByKeys( '[[', ']]' ).uniq();
+		var allLinks = Morebits.array.uniq(Morebits.string.splitWeightedByKeys( unbinder.content, '[[', ']]' ));
 		for( var i = 0; i < allLinks.length; ++i ) {
 			if( links_re.test( allLinks[i] ) ) {
 				var replacement = '<!-- ' + reason + allLinks[i] + ' -->';
@@ -2703,7 +2678,7 @@ Mediawiki.Page.prototype = {
 		var first_char = image.substr( 0, 1 );
 		var image_re_string = "(?:[Ii]mage|[Ff]ile|文件):\\s*[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( image.substr( 1 ), true ); 
 		var links_re = new RegExp( "\\[\\[" + image_re_string );
-		var allLinks = this.text.splitWeightedByKeys( '[[', ']]' ).uniq();
+		var allLinks = Morebits.array.uniq(Morebits.string.splitWeightedByKeys( this.text, '[[', ']]' ));
 		for( var i = 0; i < allLinks.length; ++i ) {
 			if( links_re.test( allLinks[i] ) ) {
 				var replacement = allLinks[i];
@@ -2720,7 +2695,7 @@ Mediawiki.Page.prototype = {
 		var first_char = template.substr( 0, 1 );
 		var template_re_string = "(?:[Tt]emplate:|模板:)?\\s*[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( template.substr( 1 ), true ); 
 		var links_re = new RegExp( "\\{\\{" + template_re_string );
-		var allTemplates = this.text.splitWeightedByKeys( '{{', '}}', [ '{{{', '}}}' ] ).uniq();
+		var allTemplates = Morebits.array.uniq(Morebits.string.splitWeightedByKeys( this.text, '{{', '}}', [ '{{{', '}}}' ] ));
 		for( var i = 0; i < allTemplates.length; ++i ) {
 			if( links_re.test( allTemplates[i] ) ) {
 				this.text = this.text.replace( allTemplates[i], '', 'g' );
@@ -2731,30 +2706,6 @@ Mediawiki.Page.prototype = {
 		return this.text;
 	}
 };
-
-
-/**
- * **************** isInNetwork(), isIPAddress() ****************
- */
-
-// ipadress is in the format 1.2.3.4 and network is in the format 1.2.3.4/5
-function isInNetwork( ipaddress, network ) {
-	var iparr = ipaddress.split('.');
-	var ip = (parseInt(iparr[0], 10) << 24) + (parseInt(iparr[1], 10) << 16) + (parseInt(iparr[2], 10) << 8) + (parseInt(iparr[3], 10));
-
-	var netmask = 0xffffffff << network.split('/')[1];
-
-	var netarr = network.split('/')[0].split('.');
-	var net = (parseInt(netarr[0], 10) << 24) + (parseInt(netarr[1], 10) << 16) + (parseInt(netarr[2], 10) << 8) + (parseInt(netarr[3], 10));
-
-	return (ip & netmask) === net;
-}
-
-// Returns true if given string contains a valid IP-address, that is, from 0.0.0.0 to 255.255.255.255
-function isIPAddress( string ){
-	var res = /(\d{1,4})\.(\d{1,3})\.(\d{1,3})\.(\d{1,4})/.exec( string );
-	return res && res.slice( 1, 5 ).every( function( e ) { return e < 256; } );
-}
 
 
 /**
@@ -2878,21 +2829,6 @@ QueryString.create = function( arr ) {
 	return resarr.join('&');
 };
 QueryString.prototype.create = QueryString.create;
-
-/**
- * **************** Exception ****************
- * Simple exception handling
- * REMOVEME - unused?
- */
-
-var Exception = function( message ) {
-	this.message = message || '';
-	this.name = "Exception";
-};
-
-Exception.prototype.what = function() {
-	return this.message;
-};
 
 
 /**

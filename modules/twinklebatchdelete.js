@@ -69,7 +69,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 		if(QueryString.exists( 'from' ) )
 		{
 			gapnamespace = QueryString.get( 'namespace' );
-			gapprefix = QueryString.get( 'from' ).toUpperCaseFirstChar();
+			gapprefix = Morebits.string.toUpperCaseFirstChar( QueryString.get( 'from' ) );
 		}
 		else
 		{
@@ -187,7 +187,7 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 			}
 		}
 	}
-	var work = pages.chunk( Twinkle.getPref('batchdeleteChunks') );
+	var work = Morebits.array.chunk( pages, Twinkle.getPref('batchdeleteChunks') );
 	Wikipedia.addCheckpoint();
 	Twinkle.batchdelete.currentdeletor = window.setInterval( toCall, 1000, work );
 };

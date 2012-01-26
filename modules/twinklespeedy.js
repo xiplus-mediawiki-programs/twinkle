@@ -746,6 +746,13 @@ Twinkle.speedy.callbacks = {
 			if (params.usertalk) {
 				var callback = function(pageobj) {
 					var initialContrib = pageobj.getCreator();
+
+					// don't notify users when their user talk page is nominated
+					if (initialContrib === mw.config.get('wgTitle') && mw.config.get('wgNamespaceNumber') === 3) {
+						Status.warn("通知页面创建者：用户创建了自己的对话页"); 
+						return;
+					}
+
 					var usertalkpage = new Wikipedia.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
 					var notifytext;
 
@@ -799,6 +806,10 @@ Twinkle.speedy.callbacks = {
 
 			// Remove tags that become superfluous with this action
 			//text = text.replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+			if (mw.config.get('wgNamespaceNumber') === 6) {
+				// remove "move to Commons" tag - deletion-tagged files cannot be moved to Commons
+				text = text.replace(/\{\{((copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*}}/gi, "");
+			}
 
 			// Generate edit summary for edit
 			var editsummary;

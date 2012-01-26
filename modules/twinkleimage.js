@@ -97,7 +97,7 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 			throw new Error( "Twinkle.image.callback.evaluate：未知条款" );
 	}
 
-	var lognomination = Twinkle.getPref('logSpeedyNominations') && Twinkle.getPref('noLogOnSpeedyNomination').indexOf(csdcrit) === -1;
+	var lognomination = Twinkle.getPref('logSpeedyNominations') && Twinkle.getPref('noLogOnSpeedyNomination').indexOf(csdcrit.toLowerCase()) === -1;
 
 	var params = {
 		'type': type,
@@ -136,6 +136,7 @@ Twinkle.image.callbacks = {
 		var text = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
 
+		text = text.replace(/\{\{((copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*}}/gi, "");
 		// Adding discussion
 		wikipedia_page = new Wikipedia.page("Wikipedia:檔案存廢討論/無版權訊息或檔案來源", "添加快速删除记录项");
 		wikipedia_page.setFollowRedirect(true);

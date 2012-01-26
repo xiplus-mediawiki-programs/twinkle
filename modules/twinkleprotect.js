@@ -115,7 +115,7 @@ Twinkle.protect.callback.protectionLevel = function twinkleprotectCallbackProtec
 	$(xml).find('pr').each(function(index, pr) {
 		var $pr = $(pr);
 		var boldnode = document.createElement('b');
-		boldnode.textContent = $pr.attr('type').toUpperCaseFirstChar() + ": " + $pr.attr('level');
+		boldnode.textContent = Morebits.string.toUpperCaseFirstChar($pr.attr('type')) + ": " + $pr.attr('level');
 		result.push(boldnode);
 		if ($pr.attr('expiry') === 'infinity') {
 			result.push("（永久）");
@@ -744,7 +744,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 		tagparams = {
 			tag: 'noop'
 		};
-	} else if( actiontype === 'tag' || actiontype === 'protect' ) {
+	} else if( actiontype === 'tag' || (actiontype === 'protect' && mw.config.get('wgArticleId')) ) {
 		tagparams = {
 			tag: form.tagtype.value,
 			reason: ((form.tagtype.value === 'pp-protected' || form.tagtype.value === 'pp-semi-protected' || form.tagtype.value === 'pp-move') && form.protectReason) ? form.protectReason.value : null,
@@ -994,7 +994,7 @@ Twinkle.protect.callbacks = {
 
 		words += params.typename;
 
-		newtag += "请求" + words.toUpperCaseFirstChar() + ( params.reason !== '' ? "：" + params.reason : "。" ) + "--~~~~";
+		newtag += "请求" + Morebits.string.toUpperCaseFirstChar(words) + ( params.reason !== '' ? "：" + params.reason : "。" ) + "--~~~~";
 
 		var reg;
 		if ( params.category === 'unprotect' ) {
