@@ -52,8 +52,8 @@ my $repo = Git::Repository->new();
 my $bot = MediaWiki::Bot->new({
         assert      => 'user',
         protocol    => 'https',
-        host        => 'secure.wikimedia.org',
-        path        => "$opt->{family}/$opt->{lang}/w",
+        host        => "$opt->{lang}.$opt->{family}.org",
+        path        => 'w',
         login_data  => { username => $opt->username, password => $opt->password},
         debug => $opt->{verbose} ? 2 : 0,
 		maxlag => 1000 # not a botty script, thus smash it!
