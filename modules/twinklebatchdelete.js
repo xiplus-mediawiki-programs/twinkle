@@ -74,7 +74,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 		else
 		{
 			var pathSplit = location.pathname.split('/');
-			if (pathSplit.length < 3 || pathSplit[2] !== "Special:PrefixIndex") {
+			if (pathSplit.length < 3 ) {//|| pathSplit[2] !== "Special:PrefixIndex") {
 				return;
 			}
 			var titleSplit = pathSplit[3].split(':');
