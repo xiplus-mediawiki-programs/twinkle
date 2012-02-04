@@ -281,14 +281,13 @@ Twinkle.speedy.getArticleList = function twinklespeedyGetArticleList(multiple) {
 		tooltip: '例如：“他是一个很有趣的人，他创建了工厂和庄园。并且，顺便提一下，他的妻子也很好。”如果能够发现任何相关的内容，可以将这个页面重定向到相关的条目上。'
 	});
 	result.push({
-		label: 'A2: 没有内容。',
+		label: 'A2: 内容只包括外部连接、参见、图书参考、类别标签、模板标签、跨语言连接的条目。',
 		value: 'a2',
-		tooltip: '任何内容只包括外部连接、参见、图书参考、类别标签、模板标签、跨语言连接的条目（消歧义页、重定向、软重定向除外）。请注意：有些维基人创建条目时会分开多次保存，请避免删除有人正在工作的页面。带有{{inuse}}的不适用。'
+		tooltip: '请注意：有些维基人创建条目时会分开多次保存，请避免删除有人正在工作的页面。带有{{inuse}}的不适用。'
 	});
 	result.push({
-		label: 'A3: 跨维基条目。',
-		value: 'a3',
-		tooltip: '复制自其他中文维基计划，或是与其他中文维基计划内容相同的文章，或者是透过Transwiki系统移动的文章。'
+		label: 'A3: 复制自其他中文维基计划，或是与其他中文维基计划内容相同的文章。或者是透过Transwiki系统移动的文章。',
+		value: 'a3'
 	});
 	return result;
 };
@@ -395,9 +394,9 @@ Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 	});
 	if (userIsInGroup('sysop')) {
 		result.push({
-			label: 'G14: 未翻译页面。',
+			label: 'G14: 超过两周没有进行任何翻译的非现代标准汉语页面。',
 			value: 'g14',
-			tooltip: '复制自其他维基媒体计划，超过两周没有进行任何翻译的非现代标准汉语页面，包括所有未翻译的外语、汉语方言以及文言文。'
+			tooltip: '包括所有未翻译的外语、汉语方言以及文言文。'
 		});
 	}
 	result.push({
