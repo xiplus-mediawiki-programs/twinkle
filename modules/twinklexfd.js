@@ -133,7 +133,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 							label: '使用<noinclude>包裹模板',
 							value: 'noinclude',
 							name: 'noinclude',
-							checked: mw.config.get('wgNamespaceNumber') === Namespace.TEMPLATE,
+							checked: mw.config.get('wgNamespaceNumber') === 10, // Template namespace
 							tooltip: '使其不会在被包含时出现。'
 						}
 					]
