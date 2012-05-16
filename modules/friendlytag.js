@@ -15,25 +15,13 @@ Twinkle.tag = function friendlytag() {
 	// redirect tagging
 	if( Wikipedia.isPageRedirect() ) {
 		Twinkle.tag.mode = '重定向';
-		$(twAddPortletLink("#", "标记", "friendly-tag", "标记重定向", "")).click(Twinkle.tag.callback);
+		twAddPortletLink( Twinkle.tag.callback, "标记", "friendly-tag", "标记重定向" );
 	}
-	// file tagging
-	/*
-	else if( mw.config.get('wgNamespaceNumber') === 6 && !document.getElementById("mw-sharedupload") && document.getElementById("mw-imagepage-section-filehistory") ) {
-		Twinkle.tag.mode = 'file';
-		$(twAddPortletLink("#", "标记", "friendly-tag", "标记文件", "")).click(Twinkle.tag.callback);
-	}
-	*/
-	// article tagging
+	// article/draft article tagging
 	else if( mw.config.get('wgNamespaceNumber') === 0 && mw.config.get('wgCurRevisionId') ) {
 		Twinkle.tag.mode = '条目';
-		$(twAddPortletLink("#", "标记", "friendly-tag", "标记条目", "")).click(Twinkle.tag.callback);
+		twAddPortletLink( Twinkle.tag.callback, "标记", "friendly-tag", "标记条目" );
 	}
-	// tagging of draft articles
-	/*else if( ((mw.config.get('wgNamespaceNumber') === 2 && mw.config.get('wgPageName').indexOf("/") !== -1) || /^Wikipedia\:Articles[ _]for[ _]creation\//.exec(mw.config.get('wgPageName')) ) && mw.config.get('wgCurRevisionId') ) {
-		Twinkle.tag.mode = 'draft';
-		$(twAddPortletLink("#", "Tag", "friendly-tag", "Add review tags to draft article", "")).click(Twinkle.tag.callback);
-	}*/
 };
 
 Twinkle.tag.callback = function friendlytagCallback( uid ) {
@@ -115,13 +103,6 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 			form.append({ type: 'header', label:'杂项和管理用重定向模板' });
 			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.administrativeList });
 			break;
-
-		/*case 'draft':
-			Window.setTitle( "Article draft tagging" );
-
-			form.append({ type: 'header', label:'Draft article tags' });
-			form.append({ type: 'checkbox', name: 'draftTags', list: Twinkle.tag.draftList });
-			break;*/
 
 		default:
 			alert("Twinkle.tag：未知模式 " + Twinkle.tag.mode);
@@ -528,11 +509,6 @@ Twinkle.tag.file.replacementList = [
 	{ label: '{{SVG version available}}', value: 'SVG version available' }
 ];
 
-// Tags for DRAFT ARTICLES start here
-
-Twinkle.tag.draftList = [
-	{ label: '{{New unreviewed article}}: mark article for later review', value: 'new unreviewed article' }
-];
 */
 
 // Contains those article tags that can be grouped into {{multiple issues}}.
@@ -912,17 +888,9 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			params.tags = form.getChecked( 'articleTags' );
 			params.group = form.group.checked;
 			break;
-		/*case 'file':
-			params.svgSubcategory = form["imageTags.svgCategory"] ? form["imageTags.svgCategory"].value : null;
-			params.tags = form.getChecked( 'imageTags' );
-			break;*/
 		case '重定向':
 			params.tags = form.getChecked( 'redirectTags' );
 			break;
-		/*case 'draft':
-			params.tags = form.getChecked( 'draftTags' );
-			Twinkle.tag.mode = 'article';
-			break;*/
 		default:
 			alert("Twinkle.tag：未知模式 " + Twinkle.tag.mode);
 			break;

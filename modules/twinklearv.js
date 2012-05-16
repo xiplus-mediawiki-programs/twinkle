@@ -8,33 +8,23 @@
  */
 
 Twinkle.arv = function twinklearv() {
-	if ( mw.config.get('wgNamespaceNumber') === 2 || mw.config.get('wgNamespaceNumber') === 3 || 
-	    ( mw.config.get('wgNamespaceNumber') === -1 && mw.config.get('wgCanonicalSpecialPageName') === "Contributions" )) {
 
-		// If we are on the contributions page, need to parse some then
-		var username;
-		if( mw.config.get('wgNamespaceNumber') === -1 && mw.config.get('wgCanonicalSpecialPageName') === "Contributions" ) {
-			username = decodeURIComponent(/wiki\/Special:Log\/(.+)$/.exec($('div#contentSub a[title^="Special:Log"]').last().attr("href").replace(/_/g, "%20"))[1]);
-		} else {
-			username = mw.config.get('wgTitle').split( '/' )[0]; // only first part before any slashes
-		}
-
-		if ( !username ) {
-			return;
-		}
-
-		var title = isIPAddress( username ) ? 'Report IP to administrators' : 'Report user to administrators';
-		
-		if (twinkleUserAuthorized) {
-			$(twAddPortletLink("#", "ARV", "tw-arv", title, "" )).click(function() { Twinkle.arv.callback(username.replace( /\"/g, "\\\"")); } );
-		} else {
-			$(twAddPortletLink("#", 'ARV', 'tw-arv', title, "" )).click(function() { alert("Your account is too new to use Twinkle."); } );
-		}
+	var username = Morebits.getPageAssociatedUser();
+	if ( username === false ) {
+		return;
 	}
+
+	var title = isIPAddress( username ) ? 'Report IP to administrators' : 'Report user to administrators';
+
+	twAddPortletLink( function(){ Twinkle.arv.callback(username); }, "ARV", "tw-arv", title );
 };
 
 Twinkle.arv.callback = function ( uid ) {
-	if( uid === mw.config.get('wgUserName') ){
+	if ( !twinkleUserAuthorized ) {
+		alert("Your account is too new to use Twinkle.");
+		return;
+	}
+	if ( uid === mw.config.get('wgUserName') ) {
 		alert( 'You don\'t want to report yourself, do you?' );
 		return;
 	}

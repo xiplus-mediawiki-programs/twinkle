@@ -11,7 +11,7 @@
 
 Twinkle.batchdelete = function twinklebatchdelete() {
 	if( userIsInGroup( 'sysop' ) && (mw.config.get( 'wgNamespaceNumber' ) > 0 || mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Prefixindex') ) {
-		$(twAddPortletLink("#", "批删", "tw-batch", "删除此分类或页面中的所有链接", "")).click(Twinkle.batchdelete.callback);
+		twAddPortletLink( Twinkle.batchdelete.callback, "批删", "tw-batch", "删除此分类或页面中的所有链接" );
 	}
 };
 
@@ -53,7 +53,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 		} );
 
 	var query;
-	if( mw.config.get( 'wgNamespaceNumber' ) === Namespace.CATEGORY ) {
+	if( mw.config.get( 'wgNamespaceNumber' ) === 14 ) {  // Category:
 
 		query = {
 			'action': 'query',
@@ -78,10 +78,10 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 				return;
 			}
 			var titleSplit = pathSplit[3].split(':');
-			gapnamespace = Namespace[titleSplit[0].toUpperCase()];
-			if ( titleSplit.length < 2 || typeof(gapnamespace) === 'undefined' )
+			gapnamespace = mw.config.get("wgNamespaceIds")[titleSplit[0].toLowerCase()];
+			if ( titleSplit.length < 2 || typeof gapnamespace === 'undefined' )
 			{
-				gapnamespace = Namespace.MAIN;
+				gapnamespace = 0;  // article namespace
 				gapprefix = pathSplit.splice(3).join('/');
 			}
 			else
@@ -114,7 +114,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 
 	var wikipedia_api = new Wikipedia.api( '抓取页面', query, function( self ) {
 			var xmlDoc = self.responseXML;
-			var snapshot = xmlDoc.evaluate('//page[@ns != "' + Namespace.IMAGE + '" and not(@missing)]', xmlDoc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null );
+			var snapshot = xmlDoc.evaluate('//page[@ns != "6" and not(@missing)]', xmlDoc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null );  // 6 = File: namespace
 			var list = [];
 			for ( var i = 0; i < snapshot.snapshotLength; ++i ) {
 				var object = snapshot.snapshotItem(i);
@@ -283,7 +283,7 @@ Twinkle.batchdelete.callbacks = {
 			return;
 		}
 
-		var params = clone( self.params );
+		var params = $.extend({}, self.params);
 		params.current = 0;
 		params.total = total;
 		params.obj = statusIndicator;
@@ -337,7 +337,7 @@ Twinkle.batchdelete.callbacks = {
 		for ( var i = 0; i < snapshot.snapshotLength; ++i ) {
 			var title = snapshot.snapshotItem(i).value;
 			var wikipedia_page = new Wikipedia.page( title, "在页面 " + title + " 中");
-			var params = clone( self.params );
+			var params = $.extend( {}, self.params );
 			params.title = title;
 			params.onsuccess = onsuccess;
 			wikipedia_page.setCallbackParameters(params);

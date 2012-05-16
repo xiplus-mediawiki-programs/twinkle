@@ -105,7 +105,7 @@ function isIPAddress( address ) {
  *   textarea  A big, multi-line text box.
  *              - Attributes: name, label, value, cols, rows, disabled, readonly
  *
- * Global attributes: id, tooltip, extra, adminonly
+ * Global attributes: id, style, tooltip, extra, adminonly
  */
 
 var QuickForm = function QuickForm( event, eventType ) {
@@ -289,13 +289,13 @@ QuickForm.element.prototype.compute = function QuickFormElementCompute( data, in
 				}
 				var event;
 				if( current.subgroup ) {
-					var tmpgroup = current.subgroup;
+					var tmpgroup = $.extend({}, current.subgroup);
 					if( ! tmpgroup.type ) {
 						tmpgroup.type = data.type;
 					}
-					tmpgroup.name = (current.name || data.name) + '.' +  tmpgroup.name;
+					tmpgroup.name = (current.name || data.name) + '.' + tmpgroup.name;
 
-					var subgroup =this.compute( current.subgroup, cur_id )[0];
+					var subgroup = this.compute( tmpgroup, cur_id )[0];
 					subgroup.style.marginLeft = '3em';
 					subnode.subgroup = subgroup;
 					subnode.shown = false;
@@ -305,7 +305,7 @@ QuickForm.element.prototype.compute = function QuickFormElementCompute( data, in
 							e.target.parentNode.appendChild( e.target.subgroup );
 							if( e.target.type === 'radio' ) {
 								var name = e.target.name;
-								if( typeof( e.target.form.names[name] ) !== 'undefined' ) {
+								if( typeof e.target.form.names[name] !== 'undefined' ) {
 									e.target.form.names[name].parentNode.removeChild( e.target.form.names[name].subgroup );
 								}
 								e.target.form.names[name] = e.target;
@@ -322,7 +322,7 @@ QuickForm.element.prototype.compute = function QuickFormElementCompute( data, in
 					event = function(e) {
 						if( e.target.checked ) {
 							var name = e.target.name;
-							if( typeof( e.target.form.names[name] ) !== 'undefined' ) {
+							if( typeof e.target.form.names[name] !== 'undefined' ) {
 								e.target.form.names[name].parentNode.removeChild( e.target.form.names[name].subgroup );
 							}
 							delete e.target.form.names[name];
@@ -487,7 +487,7 @@ QuickForm.element.prototype.compute = function QuickFormElementCompute( data, in
 			var result = document.createElement( 'span' );
 			result.className = 'quickformDescription';
 			for( i = 0; i < data.label.length; ++i ) {
-				if( typeof(data.label[i]) === 'string' ) {
+				if( typeof data.label[i] === 'string' ) {
 					result.appendChild( document.createTextNode( data.label[i] ) );
 				} else if( data.label[i] instanceof Element ) {
 					result.appendChild( data.label[i] );
@@ -561,6 +561,9 @@ QuickForm.element.prototype.compute = function QuickFormElementCompute( data, in
 
 	if( data.extra ) {
 		childContainder.extra = data.extra;
+	}
+	if( data.style ) {
+		childContainder.setAttribute( 'style', data.style );
 	}
 	childContainder.setAttribute( 'id', data.id || id );
 
@@ -666,13 +669,13 @@ RegExp.escape = function( text, space_fix ) {
  */
 
 var Bytes = function( value ) {
-	if( typeof(value) === 'string' ) {
+	if( typeof value === 'string' ) {
 		var res = /(\d+) ?(\w?)(i?)B?/.exec( value );
 		var number = res[1];
 		var mag = res[2];
 		var si = res[3];
 
-		if( ! number ) {
+		if( !number ) {
 			this.number = 0;
 			return;
 		}
@@ -787,9 +790,9 @@ Morebits.string = {
 		var initial = null;
 		var result = [];
 		if( !( skip instanceof Array ) ) {
-			if( typeof( skip ) === 'undefined' ) {
+			if( typeof skip === 'undefined' ) {
 				skip = [];
-			} else if( typeof( skip ) === 'string' ) {
+			} else if( typeof skip === 'string' ) {
 				skip = [ skip ];
 			} else {
 				throw new Error( "不适用的跳过参数" );
@@ -839,7 +842,6 @@ Morebits.array = {
 	uniq: function(arr) {
 		if (!($.isArray(arr))) {
 			throw "A non-array object passed to Morebits.array.uniq";
-			return;
 		}
 		var result = [];
 		for( var i = 0; i < arr.length; ++i ) {
@@ -853,7 +855,6 @@ Morebits.array = {
 	dups: function(arr) {
 		if (!($.isArray(arr))) {
 			throw "A non-array object passed to Morebits.array.dups";
-			return;
 		}
 		var uniques = [];
 		var result = [];
@@ -870,9 +871,8 @@ Morebits.array = {
 	chunk: function( arr, size ) {
 		if (!($.isArray(arr))) {
 			throw "A non-array object passed to Morebits.array.chunk";
-			return;
 		}
-		if( typeof( size ) !== 'number' || size <= 0 ) { // pretty impossible to do anything :)
+		if( typeof size !== 'number' || size <= 0 ) { // pretty impossible to do anything :)
 			return [ arr ]; // we return an array consisting of this array.
 		}
 		var result = [];
@@ -888,6 +888,25 @@ Morebits.array = {
 	}
 };
 
+/**
+ * Get the user associated with this page.
+ * Currently works on User:, User talk:, Special:Contributions.
+ */
+Morebits.getPageAssociatedUser = function(){
+	var namespaceIds = mediaWiki.config.get("wgNamespaceIds");
+	var thisNamespaceId = mw.config.get('wgNamespaceNumber');
+
+	if ( thisNamespaceId === namespaceIds['user'] || thisNamespaceId === namespaceIds['user_talk'] ) {
+		return mw.config.get('wgTitle').split( '/' )[0]; // only first part before any slashes, to work on subpages
+	}
+
+	if ( thisNamespaceId === namespaceIds['special'] && mw.config.get('wgCanonicalSpecialPageName') === "Contributions" ) {
+		return decodeURIComponent(/wiki\/Special:Log\/(.+)$/.exec($('div#contentSub a[title^="Special:Log"]').last().attr("href").replace(/_/g, "%20"))[1]);
+	}
+
+	return false;
+};
+
 
 /**
  * **************** Unbinder ****************
@@ -895,8 +914,8 @@ Morebits.array = {
  */
 
 function Unbinder( string ) {
-	if( typeof( string ) !== 'string' ) {
-		throw new Error( "不是一个字符串" );
+	if( typeof string !== 'string' ) {
+		throw new Error( "不是字符串" );
 	}
 	this.content = string;
 	this.counter = 0;
@@ -934,65 +953,6 @@ Unbinder.getCallback = function UnbinderGetCallback(self) {
 		++self.counter;
 		return current;
 	};
-};
-
-
-/**
- * **************** clone() ****************
- * REMOVEME - global namespace pollution -> move to better name, or
- * rework the few usages using jQuery.extend
- */
-
-function clone( obj, deep ) {
-	var objectClone = new obj.constructor();
-	for ( var property in obj ) {
-		if ( !deep ) {
-			objectClone[property] = obj[property];
-		} else if ( typeof obj[property] === 'object' ) {
-			objectClone[property] = clone( obj[property], deep );
-		} else {
-			objectClone[property] = obj[property];
-		}
-	}
-	return objectClone;
-}
-
-
-/**
- * **************** Namespace ****************
- */
-
-var Namespace = {
-	MAIN:           0,
-	TALK:           1,
-	USER:           2,
-	USER_TALK:      3,
-	PROJECT:        4,
-	PROJECT_TALK:   5,
-	IMAGE:          6,
-	IMAGE_TALK:     7,
-	FILE:           6,
-	FILE_TALK:      7,
-	MEDIAWIKI:      8,
-	MEDIAWIKI_TALK: 9,
-	TEMPLATE:       10,
-	TEMPLATE_TALK:  11,
-	HELP:           12,
-	HELP_TALK:      13,
-	CATEGORY:       14,
-	CATEGORY_TALK:  15,
-	PORTAL:         100,
-	PORTAL_TALK:    101,
-	BOOK:           108,
-	BOOK_TALK:      109,
-	MEDIA:          -2,
-	SPECIAL:        -1,
-
-	"":             0,
-	WIKIPEDIA:      4,
-	WIKIPEDIA_TALK: 5,
-	WP:             4,
-	WT:             5
 };
 
 
@@ -1168,8 +1128,8 @@ Wikipedia.actionCompleted.event = function() {
 		window.setTimeout( function() { window.location = Wikipedia.actionCompleted.redirect; }, Wikipedia.actionCompleted.timeOut );
 	}
 };
-var wpActionCompletedTimeOut = typeof(wpActionCompletedTimeOut) === 'undefined' ? 5000 : wpActionCompletedTimeOut;
-var wpMaxLag = typeof(wpMaxLag) === 'undefined' ? 10 : wpMaxLag; // Maximum lag allowed, 5-10 is a good value, the higher value, the more agressive.
+var wpActionCompletedTimeOut = ( typeof wpActionCompletedTimeOut === 'undefined' ? 5000 : wpActionCompletedTimeOut );
+var wpMaxLag = ( typeof wpMaxLag === 'undefined' ? 10 : wpMaxLag ); // Maximum lag allowed, 5-10 is a good value, the higher value, the more agressive.
 
 // editCount - REMOVEME when Wikipedia.wiki is gone
 Wikipedia.editCount = 10;
@@ -1245,7 +1205,7 @@ Wikipedia.api.prototype = {
 				this.errorCode = $(xml).find('error').attr('code');
 				this.errorText = $(xml).find('error').attr('info');
 
-				if (typeof(this.errorCode) === "string") {
+				if (typeof this.errorCode === "string") {
 
 					// the API didn't like what we told it, e.g., bad edit token or an error creating a page
 					this.returnError();
@@ -1322,6 +1282,9 @@ Wikipedia.api.prototype = {
  * Each of the callback functions takes one parameter, which is a
  * reference to the Wikipedia.page object that registered the callback.
  * Callback functions may invoke any Wikipedia.page prototype method using this reference.
+ *
+ *
+ * NOTE: This list of member functions is incomplete.
  *
  * Constructor: Wikipedia.page(pageName, currentAction)
  *    pageName - the name of the page, prefixed by the namespace (if any)
@@ -1716,7 +1679,7 @@ Wikipedia.page = function(pageName, currentAction) {
 		if (ctx.followRedirect) {
 			ctx.loadQuery.redirects = '';  // follow all redirects
 		}
-		if (typeof(ctx.pageSection) === 'number') {
+		if (typeof ctx.pageSection === 'number') {
 			ctx.loadQuery.rvsection = ctx.pageSection;
 		}
 		if (userIsInGroup('sysop')) {
@@ -1759,7 +1722,7 @@ Wikipedia.page = function(pageName, currentAction) {
 			watchlist: ctx.watchlistOption
 		};
 
-		if (typeof(ctx.pageSection) === 'number') {
+		if (typeof ctx.pageSection === 'number') {
 			query.section = ctx.pageSection;
 		}
 
@@ -2358,6 +2321,63 @@ Wikipedia.page = function(pageName, currentAction) {
  * - Deal with action.completed stuff
  * - Need to reset all parameters once done (e.g. edit summary, move destination, etc.)
  */
+
+
+/**
+ * **************** Wikipedia.preview ****************
+ * Uses the API to parse a fragment of wikitext and render it as HTML.
+ *
+ * Constructor: Wikipedia.preview(previewbox, currentAction)
+ *    previewbox - the <div> element that will contain the rendered HTML
+ *
+ * beginRender(wikitext): Displays the preview box, and begins an asynchronous attempt
+ *                        to render the specified wikitext.
+ *    wikitext - wikitext to render; most things should work, including subst: and ~~~~
+ *
+ * closePreview(): Hides the preview box and clears it.
+ *
+ * The suggested implementation pattern (in SimpleWindow + QuickForm situations) is to
+ * construct a Wikipedia.preview object after rendering a QuickForm, and bind the object
+ * to an arbitrary property of the form (e.g. |previewer|).  For an example, see
+ * twinklewarn.js.
+ */
+
+Wikipedia.preview = function(previewbox) {
+	this.previewbox = previewbox;
+	$(previewbox).addClass("morebits-previewbox").hide();
+
+	this.beginRender = function(wikitext) {
+		$(previewbox).show();
+
+		var statusspan = document.createElement('span');
+		previewbox.appendChild(statusspan);
+		Status.init(statusspan);
+
+		var query = {
+			action: 'parse',
+			prop: 'text',
+			pst: 'true',  // PST = pre-save transform; this makes substitution work properly
+			text: wikitext,
+			title: mw.config.get('wgPageName')
+		};
+		var renderApi = new Wikipedia.api("载入中…", query, fnRenderSuccess, new Status("预览"));
+		renderApi.post();
+	};
+
+	var fnRenderSuccess = function(apiobj) {
+		var xml = apiobj.getXML();
+		var html = $(xml).find('text').text();
+		if (!html) {
+			apiobj.statelem.error("载入预览失败，或模板被清空");
+			return;
+		}
+		previewbox.innerHTML = html;
+	};
+
+	this.closePreview = function() {
+		$(previewbox).empty().hide();
+	};
+};
 
 
 /**
@@ -3009,9 +3029,14 @@ var SimpleWindow = function( width, height ) {
 			// it can position the dialog appropriately
 			// the 20 pixels represents adjustment for the extra height of the jQuery dialog "chrome", compared
 			// to that of the old SimpleWindow
-			height: height + 20
-		}).bind("dialogresize", function(event, ui) {
-			this.style.maxHeight = "";
+			height: height + 20,
+			close: function(event, ui) {
+				// dialogs and their content can be destroyed once closed
+				$(event.target).dialog("destroy").remove();
+			},
+			resize: function(event, ui) {
+				this.style.maxHeight = "";
+			}
 		});
 
 	var $widget = $(this.content).dialog("widget");
@@ -3156,6 +3181,9 @@ SimpleWindow.prototype = {
 	resizeWindow: function( x, y ) {
 		// unimplemented
 		alert("SimpleWindow.resizeWindow不再被实现。");
+	},
+	setModality: function( modal ) {
+		$(this.content).dialog("option", "modal", modal);
 	}
 };
 

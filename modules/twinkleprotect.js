@@ -15,18 +15,15 @@ Twinkle.protect = function twinkleprotect() {
 		return;
 	}
 
-	if ( userIsInGroup( 'sysop' ) ) {
-		$(twAddPortletLink("#", "保护", "tw-rpp", "保护页面", "")).click(Twinkle.protect.callback);
-	} else if (twinkleUserAuthorized) {
-		$(twAddPortletLink("#", "保护", "tw-rpp", "请求保护页面", "")).click(Twinkle.protect.callback);
-	} else {
-		$(twAddPortletLink("#", '保护', 'tw-rpp', '请求保护页面', '')).click(function() {
-			alert("您还未达到自动确认。");
-		});
-	}
+	twAddPortletLink(Twinkle.protect.callback, userIsInGroup('sysop') ? "保护" : "保护", "tw-rpp",
+		userIsInGroup('sysop') ? "保护页面" : "请求保护页面" );
 };
 
 Twinkle.protect.callback = function twinkleprotectCallback() {
+	if (!twinkleUserAuthorized) {
+		alert("您还未达到自动确认。");
+		return;
+	}
 	var Window = new SimpleWindow( 620, 530 );
 	Window.setTitle( userIsInGroup( 'sysop' ) ? "施行或请求保护页面" : "请求保护页面" );
 	Window.setScriptName( "Twinkle" );
@@ -922,8 +919,12 @@ Twinkle.protect.callbacks = {
 		var tag, summary;
 
 		var oldtag_re = /\s*(?:<noinclude>)?\s*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
-
-		text = text.replace( oldtag_re, '' );
+		var re_result;
+		if (re_result = oldtag_re.exec(text)) {
+			if (confirm("在页面上找到{{" + re_result[1] + "}}\n点击确定以移除，或点击取消以取消。")) {
+				text = text.replace( oldtag_re, '' );
+			}
+		}
 
 		if ( params.tag !== 'none' ) {
 			tag = params.tag;

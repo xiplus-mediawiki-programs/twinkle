@@ -12,7 +12,7 @@ Twinkle.unlink = function twinkleunlink() {
 	if( mw.config.get('wgNamespaceNumber') < 0 ) {
 		return;
 	}
-	$(twAddPortletLink("#", "链入", "tw-unlink", "取消链入", "")).click(function(){Twinkle.unlink.callback()}); //wrap call in function, callback expects a reason parameter.
+	twAddPortletLink( Twinkle.unlink.callback, "链入", "tw-unlink", "取消到本页的链接" );
 };
 
 Twinkle.unlink.getChecked2 = function twinkleunlinkGetChecked2( nodelist ) {
@@ -44,7 +44,7 @@ Twinkle.unlink.callback = function(presetReason) {
 	} );
 
 	var query;
-	if(mw.config.get('wgNamespaceNumber') === Namespace.IMAGE) {
+	if(mw.config.get('wgNamespaceNumber') === 6) {  // File:
 		query = {
 			'action': 'query',
 			'list': [ 'backlinks', 'imageusage' ],
@@ -65,7 +65,7 @@ Twinkle.unlink.callback = function(presetReason) {
 		};
 	}
 	var wikipedia_api = new Wikipedia.api( '抓取链入', query, Twinkle.unlink.callbacks.display.backlinks );
-	wikipedia_api.params = { form: form, Window: Window, image: mw.config.get('wgNamespaceNumber') === Namespace.IMAGE };
+	wikipedia_api.params = { form: form, Window: Window, image: mw.config.get('wgNamespaceNumber') === 6 };
 	wikipedia_api.post();
 
 	var root = document.createElement( 'div' );
@@ -98,7 +98,7 @@ Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event)
 		var params = { reason: reason, imageusage: imageusage, globalstatus: statusIndicator, current: 0, total: total };
 		for (var i = 0; i < pages.length; ++i)
 		{
-			var myparams = clone(params);
+			var myparams = $.extend({}, params);
 			var articlepage = new Wikipedia.page(pages[i], '在条目：“' + pages[i] + '”中');
 			articlepage.setCallbackParameters(myparams);
 			articlepage.load(imageusage ? Twinkle.unlink.callbacks.unlinkImageInstances : Twinkle.unlink.callbacks.unlinkBacklinks);

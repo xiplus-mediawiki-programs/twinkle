@@ -75,7 +75,7 @@ Twinkle.welcome.normal = function() {
 	}
 	if( mw.config.get( 'wgNamespaceNumber' ) === 3 ) {
 		var username = mw.config.get( 'wgTitle' ).split( '/' )[0].replace( /\"/, "\\\""); // only first part before any slashes
-		$(twAddPortletLink("#", "欢迎", "friendly-welcome", "欢迎用户", "")).click(function() { Twinkle.welcome.callback(username); });
+		twAddPortletLink( function(){ Twinkle.welcome.callback(username); }, "欢迎", "friendly-welcome", "欢迎用户" );
 	}
 };
 
@@ -98,242 +98,578 @@ Twinkle.welcome.welcomeUser = function welcomeUser() {
 };
 
 Twinkle.welcome.callback = function friendlywelcomeCallback( uid ) {
-	if( uid === mw.config.get('wgUserName') ){
-		alert( '我们非常、非常欢迎你的到来！' );
+	if( uid === mw.config.get('wgUserName') && !confirm( '您确定要欢迎自己吗？…' ) ){
 		return;
 	}
-	
-	var Window = new SimpleWindow( 600, 400 );
+
+	var Window = new SimpleWindow( 600, 420 );
 	Window.setTitle( "欢迎用户" );
 	Window.setScriptName( "Twinkle" );
 	//Window.addFooterLink( "Welcoming Committee", "WP:WC" );
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#welcome" );
 
-	var form = new QuickForm( Twinkle.welcome.callback.evaluate, 'change' );
+	var form = new QuickForm( Twinkle.welcome.callback.evaluate );
+
+	form.append({
+			type: 'select',
+			name: 'type',
+			label: 'Type of welcome: ',
+			event: Twinkle.welcome.populateWelcomeList,
+			list: [
+				{ type: 'option', value: 'standard', label: 'Standard welcomes', selected: !isIPAddress(mw.config.get('wgTitle')) },
+				{ type: 'option', value: 'anonymous', label: 'IP user welcomes', selected: isIPAddress(mw.config.get('wgTitle')) },
+				{ type: 'option', value: 'wikiProject', label: 'WikiProject welcomes' },
+				{ type: 'option', value: 'nonEnglish', label: 'Non-English welcomes' }
+			]
+		});
+
+	form.append( { type: 'div', id: 'welcomeWorkArea' } );
 
 	form.append( {
 			type: 'input',
 			name: 'article',
-			label: '条目名（如模板支持）',
+			label: '* 条目名（如模板支持）',
 			value:( QueryString.exists( 'vanarticle' ) ? QueryString.get( 'vanarticle' ) : '' ),
-			tooltip: '如果模板支持，您可在此处加入一个条目名。支持的模板已用星号标记出来。',
-			event: function( event ) {
-				event.stopPropagation();
-			}
+			tooltip: '如果模板支持，您可在此处加入一个条目名。支持的模板已用星号标记出来。'
 		} );
 
-	form.append( { type:'header', label:'简单模板' } );
-	form.append( { type: 'radio', name: 'simple', list: Twinkle.welcome.standardList } );
+	var previewlink = document.createElement( 'a' );
+	$(previewlink).click(function(){
+		Twinkle.welcome.callbacks.preview(result);  // |result| is defined below
+	});
+	previewlink.style.cursor = "pointer";
+	previewlink.textContent = '预览';
+	form.append( { type: 'div', name: 'welcomepreview', label: [ previewlink ] } );
 
-	if( Twinkle.getFriendlyPref('customWelcomeList').length ) {
-		form.append( { type:'header', label:'自定义模板' } );
-		form.append( { type: 'radio', name: 'custom', list: Twinkle.getFriendlyPref('customWelcomeList') } );
-	}
-
-	/*form.append( { type:'header', label:'Welcoming committee templates' } );
-	form.append( { type: 'radio', name: 'welcomingCommittee', list: Twinkle.welcome.welcomingCommitteeList } );*/
-
-	form.append( { type:'header', label:'问题用户模板' } );
-	form.append( { type: 'radio', name: 'problem', list: Twinkle.welcome.problemList } );
-
-	form.append( { type:'header', label:'匿名用户模板' } );
-	form.append( { type: 'radio', name: 'anonymous', list: Twinkle.welcome.anonymousList } );
+	form.append( { type: 'submit' } );
 
 	var result = form.render();
 	Window.setContent( result );
 	Window.display();
+
+	// initialize the welcome list
+	var evt = document.createEvent( "Event" );
+	evt.initEvent( 'change', true, true );
+	result.type.dispatchEvent( evt );
 };
 
-Twinkle.welcome.standardList = [
-	{
-		label: '{{Welcome}}: 标准欢迎模板*',
-		value: 'Welcome'
-	},
-	{
-		label: '{{Welcome plain}}: 纯文本欢迎模板',
-		value: 'Welcome plain'
-	}
-];
+Twinkle.welcome.populateWelcomeList = function(e) {
+	var type = e.target.value;
+	var $workarea = $(e.target.form).find("div#welcomeWorkArea");
 
-/*Twinkle.welcome.welcomingCommitteeList = [
-	{ 
-		label: '{{Wel}}: similar to {{Welcome}}, but automatically identifies anonymous and registered users*',
-		value: 'Wel',
-		tooltip: 'This template checks whether the username contains any letters. If there are any, {{Welcome-reg}} will be shown. If there are none, {{Welcome-anon}} will be shown.'
-	},
-	{ 
-		label: '{{W-basic}}: standard template, similar to {{Welcome}} with additional options',
-		value: 'W-basic',
-		tooltip: 'This template is similar to {{Welcome}} but supports many different options.  Includes a signature.'
-	},
-	{ 
-		label: '{{W-shout}}: extroverted message with bold advice',
-		value: 'W-shout',
-		tooltip: 'This template is similar to {{WelcomeShout}} but supports many different options.  Includes a signature.'
-	},
-	{ 
-		label: '{{W-short}}: concise; won\'t overwhelm',
-		value: 'W-short||',
-		tooltip: 'This template is similar to {{Welcomeshort}} but supports many different options.  Includes a signature.'
-	},
-	{ 
-		label: '{{W-link}}: shortest greeting, links to Welcoming committee\'s greetings page',
-		value: 'W-link',
-		tooltip: 'This template is similar to {{Welcom}} but supports many different options.  Includes a signature.'
-	},
-	{ 
-		label: '{{W-graphical}}: graphical menu format to ease transition from the graphic-heavy web',
-		value: 'W-graphical',
-		tooltip: 'This template is similar to {{Welcomeg}} but has fewer links.  Supports many different options.  Includes a signature.'
-	},
-		{ 
-		label: '{{W-graphic}}: another version of {{W-graphical}}',
-		value: 'W-graphic',
-		tooltip: 'This template is similar to {{W-graphic}} but with more powerful colours and changes in text.  Supports many different options.  Includes a signature.'
-	},
-	{ 
-		label: '{{W-screen}}: graphical; designed to fit the size of the user\'s screen',
-		value: 'W-screen',
-		tooltip: 'This template is a nice graphical welcome with many different options.  Includes a signature.'
-	}
-];*/
+	var div = new QuickForm.element({
+		type: "div",
+		id: "welcomeWorkArea"
+	});
 
-Twinkle.welcome.problemList = [
-	{
-		label: '{{Firstarticle}}: 用户的第一篇条目不符合方针*',
-		value: 'Firstarticle'
-	},
-	{
-		label: '{{Welcomevandal}}: 用户的初始动作像是破坏',
-		value: 'Welcomevandal'
-	},
-	{
-		label: '{{Welcomeipvandal}}: 匿名用户的初始动作像是破坏',
-		value: 'Welcomeipvandal'
+	if ((type === "standard" || type === "anonymous") && Twinkle.getFriendlyPref("customWelcomeList").length) {
+		div.append({ type: 'header', label: '自定义欢迎模板' });
+		div.append({ 
+			type: 'radio',
+			name: 'template',
+			list: Twinkle.getFriendlyPref("customWelcomeList"),
+			event: Twinkle.welcome.selectTemplate
+		});
 	}
-];
 
-Twinkle.welcome.anonymousList = [
-	{
-		label: '{{Welcome-anon}}: 匿名用户',
-		value: 'Welcome-anon'
+	var appendTemplates = function(list) {
+		div.append({ 
+			type: 'radio',
+			name: 'template',
+			list: list.map(function(obj) {
+				var properties = Twinkle.welcome.templates[obj];
+				var result = (properties ? { 
+					value: obj,
+					label: "{{" + obj + "}}: " + properties.description + (properties.linkedArticle ? "\u00A0*" : ""),  // U+00A0 NO-BREAK SPACE
+					tooltip: properties.tooltip  // may be undefined
+				} : {
+					value: obj,
+					label: "{{" + obj + "}}"
+				});
+				return result;
+			}),
+			event: Twinkle.welcome.selectTemplate
+		});
+	};
+
+	switch (type) {
+		case "standard":
+			div.append({ type: 'header', label: '常规欢迎模板' });
+			appendTemplates([
+				"welcome",
+				"welcome-short",
+				"welcome-personal",
+				"welcome-graphical",
+				"welcome-menu",
+				"welcome-screen",
+				"welcome-belated",
+				"welcome student",
+				"welcome teacher"
+			]);
+			div.append({ type: 'header', label: '问题用户欢迎模板' });
+			appendTemplates([
+				"welcomelaws",
+				"first article",
+				"welcomevandal",
+				"welcomenpov",
+				"welcomespam",
+				"welcomeunsourced",
+				"welcomeauto",
+				"welcome-COI"
+			]);
+			break;
+		case "anonymous":
+			div.append({ type: 'header', label: '匿名用户欢迎模板' });
+			appendTemplates([
+				"welcome-anon",
+				"welcome-anon-test",
+				"welcome-anon-vandal",
+				"welcome-anon-constructive"
+			]);
+			break;
+		case "wikiProject":
+			div.append({ type: 'header', label: 'WikiProject相关欢迎模板' });
+			appendTemplates([
+				"welcome-au",
+				"welcome-bio",
+				"welcome-cal",
+				"welcome-conserv",
+				"welcome-cycling",
+				"welcome-dbz",
+				"welcome-et",
+				"welcome-in",
+				"welcome-de",
+				"welcome-math",
+				"welcome-med",
+				"welcome-no",
+				"welcome-phys",
+				"welcome-pl",
+				"welcome-rugbyunion",
+				"welcome-ru",
+				"welcome-starwars",
+				"welcome-ch",
+				"welcome-uk",
+				"welcome-usroads",
+				"welcome-videogames"
+			]);
+			break;
+		case "nonEnglish":
+			div.append({ type: 'header', label: '非英语欢迎模板' });
+			appendTemplates([
+				"welcomeen-sq",
+				"welcomeen-zh",
+				"welcomeen-nl",
+				"welcomeen-fi",
+				"welcomeen-fr",
+				"welcomeen-de",
+				"welcomeen-he",
+				"welcomeen-ja",
+				"welcomeen-ko",
+				"welcomeen-mr",
+				"welcomeen-ml",
+				"welcomeen-or",
+				"welcomeen-pt",
+				"welcomeen-ru",
+				"welcomeen-es",
+				"welcomeen-sv",
+				"welcomeen-uk"
+			]);
+			break;
+		default:
+			div.append({ type: 'div', label: 'Twinkle.welcome.populateWelcomeList: 哪里出问题了' });
+			break;
 	}
-];
 
-// Set to true if template does not already have heading
-Twinkle.welcome.headingHash = {
-	'Welcome': false,
-	'Welcome plain': false,
-	'Firstarticle': false,
-	'Welcomevandal': false,
-	'Welcomeipvandal': false,
-	'Welcome-anon': false
+	var rendered = div.render();
+	rendered.className = "quickform-scrollbox";
+	$workarea.replaceWith(rendered);
+
+	var firstRadio = e.target.form.template[0];
+	firstRadio.checked = true;
+	Twinkle.welcome.selectTemplate({ target: firstRadio });
 };
 
-// Set to true if template already has signature
-Twinkle.welcome.signatureHash = {
-	'Welcome': true,
-	'Welcome plain': true,
-	'Firstarticle': true,
-	'Welcomevandal': true,
-	'Welcomeipvandal': true,
-	'Welcome-anon': true
+Twinkle.welcome.selectTemplate = function(e) {
+	var properties = Twinkle.welcome.templates[e.target.values];
+	e.target.form.article.disabled = (properties ? !properties.linkedArticle : false);
 };
 
-/* Set to true if template supports article
- * name from art template parameter 
- */
-Twinkle.welcome.artHash = {
-	'Welcome': true,
-	'Welcome plain': false,
-	'Firstarticle': true,
-	'Welcomevandal': false,
-	'Welcomeipvandal': false,
-	'Welcome-anon': false
+
+// A list of welcome templates and their properties and syntax
+
+// The four fields that are available are "description", "linkedArticle", "syntax", and "tooltip".
+// The three magic words that can be used in the "syntax" field are:
+//   - $USERNAME$  - replaced by the welcomer's username, depending on user's preferences
+//   - $ARTICLE$   - replaced by an article name, if "linkedArticle" is true
+//   - $HEADER$    - adds a level 2 header (most templates already include this)
+
+Twinkle.welcome.templates = {
+	"welcome": {
+		description: "standard welcome",
+		linkedArticle: true,
+		syntax: "{{subst:welcome|$USERNAME$|art=$ARTICLE$}} ~~~~"
+	},
+	"welcome-short": {
+		description: "a shorter welcome message",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-short|$USERNAME$}} $EXTRA$ ~~~~"
+	},
+	"welcome-personal": {
+		description: "more personal welcome, including a plate of cookies",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-personal|$USERNAME$}} ~~~~"
+	},
+	"welcome-graphical": {
+		description: "colorful welcome message with table of about 20 links",
+		linkedArticle: false,
+		syntax: "$HEADER$ {{subst:welcome-graphical|$EXTRA$}}"
+	},
+	"welcome-menu": {
+		description: "welcome message with large table of about 60 links",
+		linkedArticle: false,
+		syntax: "$HEADER$ {{subst:welcome-menu}}"
+	},
+	"welcome-screen": {
+		description: "welcome message with clear, annotated table of 10 links",
+		linkedArticle: false,
+		syntax: "$HEADER$ {{subst:welcome-screen}}"
+	},
+	"welcome-belated": {
+		description: "welcome for users with more substantial contributions",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-belated|$USERNAME$}}"
+	},
+	"welcome student": {
+		description: "welcome for students editing as part of an educational class project",
+		linkedArticle: false,
+		syntax: "$HEADER$ {{subst:welcome student|$USERNAME$}} ~~~~"
+	},
+	"welcome teacher": {
+		description: "welcome for course instructors involved in an educational class project",
+		linkedArticle: false,
+		syntax: "$HEADER$ {{subst:welcome teacher|$USERNAME$}} ~~~~"
+	},
+	"welcomelaws": {
+		description: "welcome with information about copyrights, NPOV, the sandbox, and vandalism",
+		linkedArticle: false,
+		syntax: "{{subst:welcomelaws|$USERNAME$}}"
+	},
+	"first article": {
+		description: "for someone whose first article did not meet page creation guidelines",
+		linkedArticle: true,
+		syntax: "{{subst:first article|$ARTICLE$|$USERNAME$}}"
+	},
+	"welcomevandal": {
+		description: "for someone whose initial efforts appear to be vandalism",
+		linkedArticle: true,
+		syntax: "{{subst:welcomevandal|$ARTICLE$|$USERNAME$}}"
+	},
+	"welcomenpov": {
+		description: "for someone whose initial efforts do not adhere to the neutral point of view policy",
+		linkedArticle: true,
+		syntax: "{{subst:welcomenpov|$ARTICLE$|$USERNAME$}} ~~~~"
+	},
+	"welcomespam": {
+		description: "welcome with additional discussion of anti-spamming policies",
+		linkedArticle: true,
+		syntax: "{{subst:welcomespam|$ARTICLE$|$USERNAME$}} ~~~~"
+	},
+	"welcomeunsourced": {
+		description: "for someone whose initial efforts are unsourced",
+		linkedArticle: true,
+		syntax: "{{subst:welcomeunsourced|$ARTICLE$|$USERNAME$}} ~~~~"
+	},
+	"welcomeauto": {
+		description: "for someone who created an autobiographical article",
+		linkedArticle: true,
+		syntax: "{{subst:welcomeauto|$USERNAME$|art=$ARTICLE$}} ~~~~"
+	},
+	"welcome-COI": {
+		description: "for someone who has edited in areas where they may have a conflict of interest",
+		linkedArticle: true,
+		syntax: "{{subst:welcome-COI|$USERNAME$|art=$ARTICLE$}} ~~~~"
+	},
+
+
+	"welcome-anon": {
+		description: "for anonymous users; encourages creating an account",
+		linkedArticle: true,
+		syntax: "{{subst:welcome-anon|art=$ARTICLE$}} ~~~~"
+	},
+	"welcome-anon-test": {
+		description: "for anonymous users who have performed test edits",
+		linkedArticle: true,
+		syntax: "{{subst:welcome-anon-test|$ARTICLE$|$USERNAME$}} ~~~~"
+	},
+	"welcome-anon-vandal": {
+		description: "for anonymous users who have vandalized a page",
+		linkedArticle: true,
+		syntax: "{{subst:welcome-anon-vandal|$ARTICLE$|$USERNAME$}}"
+	},
+	"welcome-anon-constructive": {
+		description: "for anonymous users who fight vandalism and edit constructively",
+		linkedArticle: true,
+		syntax: "{{subst:welcome-anon-constructive|art=$ARTICLE$}} ~~~~"
+	},
+
+	// WIKIPROJECT-SPECIFIC WELCOMES
+
+	"welcome-au": {
+		description: "welcome for users with an apparent interest in Australia topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-au}} ~~~~"
+	},
+	"welcome-bio": {
+		description: "welcome for users with an apparent interest in biographical topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-bio}} ~~~~"
+	},
+	"welcome-cal": {
+		description: "welcome for users with an apparent interest in California topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-cal}} ~~~~"
+	},
+	"welcome-conserv": {
+		description: "welcome for users with an apparent interest in conservatism topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-conserv}}"
+	},
+	"welcome-cycling": {
+		description: "welcome for users with an apparent interest in cycling topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-cycling}} ~~~~"
+	},
+	"welcome-dbz": {
+		description: "welcome for users with an apparent interest in Dragon Ball topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-dbz}}"
+	},
+	"welcome-et": {
+		description: "welcome for users with an apparent interest in Estonia topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-et}}"
+	},
+	"welcome-in": {
+		description: "welcome for users with an apparent interest in India topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-in}} ~~~~"
+	},
+	"welcome-de": {
+		description: "welcome for users with an apparent interest in Germany topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-de}} ~~~~"
+	},
+	"welcome-math": {
+		description: "welcome for users with an apparent interest in mathematical topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-math}} ~~~~"
+	},
+	"welcome-med": {
+		description: "welcome for users with an apparent interest in medicine topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-med}} ~~~~"
+	},
+	"welcome-no": {
+		description: "welcome for users with an apparent interest in Norway topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-no}} ~~~~"
+	},
+	"welcome-phys": {
+		description: "welcome for users with an apparent interest in physics topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-phys}} ~~~~"
+	},
+	"welcome-pl": {
+		description: "welcome for users with an apparent interest in Poland topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-pl}} ~~~~"
+	},
+	"welcome-rugbyunion": {
+		description: "welcome for users with an apparent interest in rugby union topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-rugbyunion}} ~~~~"
+	},
+	"welcome-ru": {
+		description: "welcome for users with an apparent interest in Russia topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-ru}} ~~~~"
+	},
+	"welcome-starwars": {
+		description: "welcome for users with an apparent interest in Star Wars topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-starwars}} ~~~~"
+	},
+	"welcome-ch": {
+		description: "welcome for users with an apparent interest in Switzerland topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-ch}} ~~~~"
+	},
+	"welcome-uk": {
+		description: "welcome for users with an apparent interest in Ukraine topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-uk}} ~~~~"
+	},
+	"welcome-usroads": {
+		description: "welcome for users with an apparent interest in US roads topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-usroads}}"
+	},
+	"welcome-videogames": {
+		description: "welcome for users with an apparent interest in video game topics",
+		linkedArticle: false,
+		syntax: "{{subst:welcome-videogames}}"
+	},
+
+	// NON-ENGLISH WELCOMES
+
+	"welcomeen-sq": {
+		description: "welcome for users whose first language appears to be Albanian",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-sq}}"
+	},
+	"welcomeen-zh": {
+		description: "welcome for users whose first language appears to be Chinese",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-zh}}"
+	},
+	"welcomeen-nl": {
+		description: "welcome for users whose first language appears to be Dutch",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-nl}}"
+	},
+	"welcomeen-fi": {
+		description: "welcome for users whose first language appears to be Finnish",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-fi}}"
+	},
+	"welcomeen-fr": {
+		description: "welcome for users whose first language appears to be French",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-fr}}"
+	},
+	"welcomeen-de": {
+		description: "welcome for users whose first language appears to be German",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-de}}"
+	},
+	"welcomeen-he": {
+		description: "welcome for users whose first language appears to be Hebrew",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-he}}"
+	},
+	"welcomeen-ja": {
+		description: "welcome for users whose first language appears to be Japanese",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-ja}}"
+	},
+	"welcomeen-ko": {
+		description: "welcome for users whose first language appears to be Korean",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-ko}}"
+	},
+	"welcomeen-mr": {
+		description: "welcome for users whose first language appears to be Marathi",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-mr}}"
+	},
+	"welcomeen-ml": {
+		description: "welcome for users whose first language appears to be Malayalam",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-ml}}"
+	},
+	"welcomeen-or": {
+		description: "welcome for users whose first language appears to be Odia (Oriya)",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-or}}"
+	},
+	"welcomeen-pt": {
+		description: "welcome for users whose first language appears to be Portuguese",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-pt}}"
+	},
+	"welcomeen-ru": {
+		description: "welcome for users whose first language appears to be Russian",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-ru}}"
+	},
+	"welcomeen-es": {
+		description: "welcome for users whose first language appears to be Spanish",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-es}}"
+	},
+	"welcomeen-sv": {
+		description: "welcome for users whose first language appears to be Swedish",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-sv}}"
+	},
+	"welcomeen-uk": {
+		description: "welcome for users whose first language appears to be Ukrainian",
+		linkedArticle: false,
+		syntax: "{{subst:welcomeen-uk}}"
+	}
 };
 
-/* Set to true if template supports article
- * name from vanarticle template parameter 
- */
-Twinkle.welcome.vandalHash = {
-	'Welcome': false,
-	'Welcome plain': false,
-	'Firstarticle': false,
-	'Welcomevandal': false,
-	'Welcomeipvandal': false,
-	'Welcome-anon': false
+Twinkle.welcome.getTemplateWikitext = function(template, article) {
+	var properties = Twinkle.welcome.templates[template];
+	if (properties) {
+		return properties.syntax.
+			replace("$USERNAME$", Twinkle.getFriendlyPref("insertUsername") ? mw.config.get("wgUserName") : "").
+			replace("$ARTICLE$", article ? article : "").
+			replace(/\$HEADER\$\s*/, "== 欢迎 ==\n\n").
+			replace("$EXTRA$", "");  // EXTRA is not implemented yet
+	} else {
+		return "{{subst:" + template + (article ? ("|art=" + article) : "") + "}} ~~~~";
+	}
 };
 
 Twinkle.welcome.callbacks = {
+	preview: function(form) {
+		var previewDialog = new SimpleWindow(750, 400);
+		previewDialog.setTitle("欢迎模板预览");
+		previewDialog.setScriptName("欢迎用户");
+		previewDialog.setModality(true);
+
+		var previewdiv = document.createElement("div");
+		previewdiv.style.marginLeft = previewdiv.style.marginRight = "0.5em";
+		previewdiv.style.fontSize = "small";
+		previewDialog.setContent(previewdiv);
+
+		var previewer = new Wikipedia.preview(previewdiv);
+		previewer.beginRender(Twinkle.welcome.getTemplateWikitext(form.getChecked("template"), form.article.value));
+
+		var submit = document.createElement("input");
+		submit.setAttribute("type", "submit");
+		submit.setAttribute("value", "关闭");
+		previewDialog.addContent(submit);
+
+		previewDialog.display();
+
+		$(submit).click(function(e) {
+			previewDialog.close();
+		});
+	},
 	main: function( pageobj ) {
 		var params = pageobj.getCallbackParameters();
-		var oldText = pageobj.getPageText();
-		
+		var text = pageobj.getPageText();
+
 		// abort if mode is auto and form is not empty
 		if( pageobj.exists() && params.mode === 'auto' ) {
 			Status.info( '警告', '用户对话页非空，取消自动欢迎' );
 			Wikipedia.actionCompleted.event();
 			return;
 		}
-		
-		var text = '';
-		Status.info( '信息', '将添加欢迎模板到对话页' +
-			( Twinkle.getFriendlyPref('topWelcomes') ? '顶' : '底' ) +
-			'部。' );
-		if( !Twinkle.getFriendlyPref('topWelcomes') ) {
-			text += oldText + '\n';
-		}
-		
-		if( Twinkle.welcome.headingHash[ params.value ] && Twinkle.getFriendlyPref('insertHeadings') ) {
-			Status.info( '信息', '将创建小节标题' );
-			// strip section header markers from pref, to preserve backwards compatibility
-			text += "== " + Twinkle.getFriendlyPref('welcomeHeading').replace(/^\s*=+\s*(.*?)\s*=+$\s*/, "$1") + " ==\n";
-		}
-		
-		Status.info( '信息', '将替换引用{{' + params.value + '}}欢迎模板' );
-		text += '{{subst:' + params.value;
-		
-		if( Twinkle.welcome.artHash[ params.value ] ) {
-			if( Twinkle.getFriendlyPref('insertUsername') && params.value.substring(2,0) !== 'W-' ) {
-				Status.info( '信息', '将添加您的用户名到模板' );
-				text += '|' + mw.config.get('wgUserName');
-			}
-			
-			if( params.article ) {
-				Status.info( '信息', '将添加条目链接到模板' );
-				text += '|art=' + params.article;
-			}
-		} else if( Twinkle.welcome.vandalHash[ params.value ] ) {
-			if( params.article ) {
-				Status.info( '信息', '将添加条目链接到模板' );
-			}
-			text += '|' + params.article;
-			
-			if( Twinkle.getFriendlyPref('insertUsername') ) {
-				Status.info( '信息', '将添加您的用户名到模板' );
-				text += '|' + mw.config.get('wgUserName');
-			}
-		} else if( Twinkle.getFriendlyPref('insertUsername') ) {
-			Status.info( '信息', '将添加您的用户名到模板' );
-			text += '|' + mw.config.get('wgUserName');
-		} 
-		
-		text += '}}';
-		
-		if( !Twinkle.welcome.signatureHash[ params.value ] && Twinkle.getFriendlyPref('insertSignature') ) {
-			Status.info( '信息', '将添加您的签名' );
-			text += ' \n~~~~';
-		}
-		
+
+		var welcomeText = Twinkle.welcome.getTemplateWikitext(params.value, params.article);
+
 		if( Twinkle.getFriendlyPref('topWelcomes') ) {
-			text += '\n\n' + oldText;
+			text = welcomeText + '\n\n' + text;
+		} else {
+			text += "\n" + welcomeText;
 		}
- 
-		var summaryText = "添加" + ( Twinkle.getFriendlyPref('maskTemplateInSummary') ? '欢迎' : ( '{{[[Template:' + params.value + '|' + params.value + ']]}}' ) ) +
-			"模板到用户对话页";
+
+		var summaryText = "欢迎来到维基百科！";
 		pageobj.setPageText(text);
 		pageobj.setEditSummary(summaryText + Twinkle.getPref('summaryAd'));
-		pageobj.setMinorEdit(Twinkle.getFriendlyPref('markWelcomesAsMinor'));
 		pageobj.setWatchlist(Twinkle.getFriendlyPref('watchWelcomes'));
 		pageobj.setCreateOption('recreate');
 		pageobj.save();
@@ -341,19 +677,16 @@ Twinkle.welcome.callbacks = {
 };
 
 Twinkle.welcome.callback.evaluate = function friendlywelcomeCallbackEvaluate(e) {
-	// Ignore if a change to the text field triggered this event
-	if( e.target.name === 'article' ) {
-		return;
-	}
-	
+	var form = e.target;
+
 	var params = {
-		value: e.target.values,
-		article: e.target.form.article.value,
+		value: form.getChecked("template"),
+		article: form.article.value,
 		mode: 'manual'
 	};
 
 	SimpleWindow.setButtonsEnabled( false );
-	Status.init( e.target.form );
+	Status.init( form );
 
 	Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
 	Wikipedia.actionCompleted.notice = "欢迎完成，将在几秒钟后刷新";

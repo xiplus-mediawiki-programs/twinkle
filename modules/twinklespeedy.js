@@ -21,19 +21,16 @@ Twinkle.speedy = function twinklespeedy() {
 		return;
 	}
 
-	if ( userIsInGroup( 'sysop' ) ) {
-		$(twAddPortletLink("#", "速删", "tw-csd", "快速删除", "")).click(Twinkle.speedy.callback);
-	} else if (twinkleUserAuthorized) {
-		$(twAddPortletLink("#", "速删", "tw-csd", "请求快速删除", "")).click(Twinkle.speedy.callback);
-	} else {
-		$(twAddPortletLink("#", '速删', 'tw-csd', '请求快速删除', '')).click(function() {
-			alert("您还未达到自动确认。");
-		});
-	}
+	twAddPortletLink( Twinkle.speedy.callback, "速删", "tw-csd", userIsInGroup('sysop') ? "快速删除" : "请求快速删除" );
 };
 
 // This function is run when the CSD tab/header link is clicked
 Twinkle.speedy.callback = function twinklespeedyCallback() {
+	if ( !twinkleUserAuthorized ) {
+		alert("您尚未达到自动确认。");
+		return;
+	}
+
 	Twinkle.speedy.initDialog(userIsInGroup( 'sysop' ) ? Twinkle.speedy.callback.evaluateSysop : Twinkle.speedy.callback.evaluateUser, true);
 };
 
@@ -654,7 +651,7 @@ Twinkle.speedy.callbacks = {
 
 			Wikipedia.addCheckpoint();
 
-			var params = clone( apiobj.params );
+			var params = $.extend( {}, apiobj.params );
 			params.current = 0;
 			params.total = total;
 			params.obj = statusIndicator;

@@ -11,7 +11,7 @@
 Twinkle.shared = function friendlyshared() {
 	if( mw.config.get('wgNamespaceNumber') === 3 && isIPAddress(mw.config.get('wgTitle')) ) {
 		var username = mw.config.get('wgTitle').split( '/' )[0].replace( /\"/, "\\\""); // only first part before any slashes
-		$(twAddPortletLink("#", "Shared IP", "friendly-shared", "Shared IP tagging", "")).click(function() { Twinkle.shared.callback(username); });
+		twAddPortletLink( function(){ Twinkle.shared.callback(username); }, "Shared IP", "friendly-shared", "Shared IP tagging" );
 	}
 };
 
@@ -23,20 +23,22 @@ Twinkle.shared.callback = function friendlysharedCallback( uid ) {
 
 	var form = new QuickForm( Twinkle.shared.callback.evaluate );
 
-	form.append( { type:'header', label:'Shared IP address templates' } );
-	form.append( { type: 'radio', name: 'shared', list: Twinkle.shared.standardList,
+	var div = form.append( { type: 'div', id: 'sharedip-templatelist' } );
+	div.append( { type: 'header', label: 'Shared IP address templates' } );
+	div.append( { type: 'radio', name: 'shared', list: Twinkle.shared.standardList,
 		event: function( e ) {
 			Twinkle.shared.callback.change_shared( e );
 			e.stopPropagation();
-		} } );
+		}
+	} );
 
-	var org = form.append( { type:'field', label:'Fill in IP address owner/operator, hostname and contact information (if applicable) and hit \"Submit\"' } );
+	var org = form.append( { type:'field', label:'Fill in other details (optional) and click \"Submit\"' } );
 	org.append( {
 			type: 'input',
 			name: 'organization',
-			label: 'Organization name',
+			label: 'IP address owner/operator',
 			disabled: true,
-			tooltip: 'Some of these templates support an optional parameter for the organization name that owns/operates the IP address.  The organization name can be entered here for those templates, including wikimarkup if necessary.'
+			tooltip: 'You can optionally enter the name of the organization that owns/operates the IP address.  You can use wikimarkup if necessary.'
 		}
 	);
 	org.append( {
@@ -44,7 +46,7 @@ Twinkle.shared.callback = function friendlysharedCallback( uid ) {
 			name: 'host',
 			label: 'Host name (optional)',
 			disabled: true,
-			tooltip: 'These templates support an optional parameter for the host name.  The host name (for example, proxy.example.com) can be entered here and will be linked by the template.'
+			tooltip: 'The host name (for example, proxy.example.com) can be optionally entered here and will be linked by the template.'
 		}
 	);
 	org.append( {
@@ -52,7 +54,7 @@ Twinkle.shared.callback = function friendlysharedCallback( uid ) {
 			name: 'contact',
 			label: 'Contact information (only if requested)',
 			disabled: true,
-			tooltip: 'Some of these templates support an optional parameter for the organization\'s contact information.  Use this parameter only if the organization has specifically request that it be added.  This contact information can be entered here for those templates, including wikimarkup if necessary.'
+			tooltip: 'You can optionally enter some contact details for the organization.  Use this parameter only if the organization has specifically requested that it be added.  You can use wikimarkup if necessary.'
 		}
 	);
 	
@@ -61,46 +63,52 @@ Twinkle.shared.callback = function friendlysharedCallback( uid ) {
 	var result = form.render();
 	Window.setContent( result );
 	Window.display();
+
+	$(result).find('div#sharedip-templatelist').addClass('quickform-scrollbox');
 };
 
 Twinkle.shared.standardList = [
 	{
-		label: '{{shared IP}}: standard shared IP address template',
-		value: 'shared IP',
+		label: '{{Shared IP}}: standard shared IP address template',
+		value: 'Shared IP',
 		tooltip: 'IP user talk page template that shows helpful information to IP users and those wishing to warn, block or ban them'
 	},
 	{ 
-		label: '{{shared IP edu}}: shared IP address template modified for educational institutions',
-		value: 'shared IP edu'
+		label: '{{Shared IP edu}}: shared IP address template modified for educational institutions',
+		value: 'Shared IP edu'
 	},
 	{
-		label: '{{shared IP corp}}: shared IP address template modified for businesses',
-		value: 'shared IP corp'
+		label: '{{Shared IP corp}}: shared IP address template modified for businesses',
+		value: 'Shared IP corp'
 	},
 	{
-		label: '{{shared IP public}}: shared IP address template modified for public terminals',
-		value: 'shared IP public'
+		label: '{{Shared IP public}}: shared IP address template modified for public terminals',
+		value: 'Shared IP public'
 	},
 	{
-		label: '{{shared IP gov}}: shared IP address template modified for government agencies or facilities',
-		value: 'shared IP gov'
+		label: '{{Shared IP gov}}: shared IP address template modified for government agencies or facilities',
+		value: 'Shared IP gov'
 	},
 	{
-		label: '{{dynamicIP}}: shared IP address template modified for organizations with dynamic addressing',
-		value: 'dynamicIP'
+		label: '{{Dynamic IP}}: shared IP address template modified for organizations with dynamic addressing',
+		value: 'Dynamic IP'
+	},
+	{
+		label: '{{Static IP}}: shared IP address template modified for static IP addresses',
+		value: 'Static IP'
 	},
 	{ 
 		label: '{{ISP}}: shared IP address template modified for ISP organizations (specifically proxies)',
 		value: 'ISP'
 	},
 	{ 
-		label: '{{mobileIP}}: shared IP address template modified for mobile phone companies and their customers',
-		value: 'mobileIP'
+		label: '{{Mobile IP}}: shared IP address template modified for mobile phone companies and their customers',
+		value: 'Mobile IP'
 	}
 ];
 
-Twinkle.shared.callback.change_shared = function friendlytagCallbackChangeShared(e) {
-	if( e.target.value === 'shared IP edu' ) {
+Twinkle.shared.callback.change_shared = function friendlysharedCallbackChangeShared(e) {
+	if( e.target.value === 'Shared IP edu' ) {
 		e.target.form.contact.disabled = false;
 	} else {
 		e.target.form.contact.disabled = true;

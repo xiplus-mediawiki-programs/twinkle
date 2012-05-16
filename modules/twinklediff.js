@@ -19,12 +19,12 @@ Twinkle.diff = function twinklediff() {
 		'oldid': 'prev'
 	};
 
-	twAddPortletLink( mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/index.php?' + QueryString.create( query ), '最后', 'tw-lastdiff', '显示最后修改' );
+	twAddPortletLink( mw.util.wikiScript("index")+ "?" + jQuery.param( query ), '最后', 'tw-lastdiff', '显示最后修改' );
 
 	// Show additional tabs only on diff pages
 	if (QueryString.exists('diff')) {
-		$(twAddPortletLink("#", '自前', 'tw-since', '显示与上一修订版本间的差异' )).click(function(){Twinkle.diff.evaluate(false);});
-		$(twAddPortletLink("#", '自我', 'tw-sincemine', '显示与我做出的修订版本的差异' )).click(function(){Twinkle.diff.evaluate(true);});
+		twAddPortletLink(function(){ Twinkle.diff.evaluate(false); }, '自前', 'tw-since', '显示与上一修订版本间的差异' );
+		twAddPortletLink( function(){ Twinkle.diff.evaluate(true); }, '自我', 'tw-sincemine', '显示与我做出的修订版本的差异' );
 
 		var oldid = /oldid=(.+)/.exec($('div#mw-diff-ntitle1 strong a').first().attr("href"))[1];
 		query = {
@@ -32,7 +32,7 @@ Twinkle.diff = function twinklediff() {
 			'diff': 'cur',
 			'oldid' : oldid
 		};
-		twAddPortletLink( mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/index.php?' + QueryString.create( query ), '当前', 'tw-curdiff', '显示与当前版本间的差异' );
+		twAddPortletLink( mw.util.wikiScript("index")+ "?" + jQuery.param( query ), '当前', 'tw-curdiff', '显示与当前版本间的差异' );
 	}
 };
 

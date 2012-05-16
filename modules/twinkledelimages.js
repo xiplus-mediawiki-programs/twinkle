@@ -13,7 +13,7 @@ Twinkle.delimages = function twinkledeli() {
 		return;
 	}
 	if( userIsInGroup( 'sysop' ) ) {
-		$(twAddPortletLink("#", "批图", "tw-deli", "批量删除此页内的文件", "")).click(Twinkle.delimages.callback);
+		twAddPortletLink( Twinkle.delimages.callback, "批图", "tw-deli", "批量删除此页内的文件" );
 	}
 };
 
@@ -48,12 +48,12 @@ Twinkle.delimages.callback = function twinkledeliCallback() {
 		label: '理由：'
 	} );
 	var query;
-	if( mw.config.get( 'wgNamespaceNumber' ) === Namespace.CATEGORY ) {
+	if( mw.config.get( 'wgNamespaceNumber' ) === 14 ) {  // Category:
 		query = {
 			'action': 'query',
 			'generator': 'categorymembers',
 			'gcmtitle': mw.config.get( 'wgPageName' ),
-			'gcmnamespace': Namespace.IMAGE,
+			'gcmnamespace': 6,  // File:
 			'gcmlimit' : Twinkle.getPref('deliMax'), 
 			'prop': [ 'imageinfo', 'categories', 'revisions' ],
 			'grvlimit': 1,

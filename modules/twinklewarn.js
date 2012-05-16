@@ -10,19 +10,14 @@
 
 Twinkle.warn = function twinklewarn() {
 	if( mw.config.get('wgNamespaceNumber') === 3 ) {
-		if(twinkleUserAuthorized) {
-			$(twAddPortletLink("#", "警告", "tw-warn", "警告或提醒用户", "")).click(Twinkle.warn.callback);
-		} else {
-			$(twAddPortletLink("#", "警告", "tw-warn", "警告或提醒用户", "")).click(function() {
-				alert("您还未达到自动确认。");
-			});
-		}
+			twAddPortletLink( Twinkle.warn.callback, "警告", "tw-warn", "警告或提醒用户" );
 	}
 
 	// modify URL of talk page on rollback success pages
 	if( mw.config.get('wgAction') === 'rollback' ) {
 		var $vandalTalkLink = $("#mw-rollback-success .mw-usertoollinks a").first();
 		$vandalTalkLink.css("font-weight", "bold");
+		$vandalTalkLink.text("对话（使用Twinkle警告）");
 
 		var extraParam = "vanarticle=" + mw.util.rawurlencode(mw.config.get("wgPageName").replace(/_/g, " "));
 		var href = $vandalTalkLink.attr("href");
@@ -35,8 +30,12 @@ Twinkle.warn = function twinklewarn() {
 };
 
 Twinkle.warn.callback = function twinklewarnCallback() {
-	if( mw.config.get('wgTitle').split( '/' )[0].replace( /\"/, "\\\"") === mw.config.get('wgUserName') ){
-		alert( '好吧，你已经被警告了！' );
+	if ( !twinkleUserAuthorized ) {
+		alert("您还未达到自动确认。");
+		return;
+	}
+	if( mw.config.get('wgTitle').split( '/' )[0] === mw.config.get('wgUserName') &&
+			!confirm( '警告自己可被视为精神不稳定的迹象！您确定要继续吗？' ) ) {
 		return;
 	}
 	
@@ -90,7 +89,8 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	});
 	previewlink.style.cursor = "pointer";
 	previewlink.textContent = '预览';
-	more.append( { type: 'div', name: 'warningpreview', label: [ previewlink ] } );
+	more.append( { type: 'div', id: 'warningpreview', label: [ previewlink ] } );
+	more.append( { type: 'div', id: 'twinklewarn-previewbox', style: 'display: none' } );
 
 	more.append( { type:'submit', label:'提交' } );
 
@@ -98,6 +98,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	Window.setContent( result );
 	Window.display();
 	result.main_group.root = result;
+	result.previewer = new Wikipedia.preview($(result).find('div#twinklewarn-previewbox').last()[0]);
 
 	// We must init the first choice (General Note);
 	var evt = document.createEvent( "Event" );
@@ -911,7 +912,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 		e.target.root.article.disabled = false;
 
 		$(e.target.root.reason).parent().hide();
-		$("div#twinklewarn-previewbox:visible").last().remove();
+		e.target.root.previewer.closePreview();
 	} else if( e.target.root.block_timer ) {
 		// hide the block-related fields
 		if(!e.target.root.block_timer.disabled && Twinkle.warn.prev_block_timer === null) {
@@ -929,7 +930,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 		e.target.root.article.disabled = false;
 
 		$(e.target.root.reason).parent().show();
-		$("div#twinklewarn-previewbox:visible").last().remove();
+		e.target.root.previewer.closePreview();
 	}
 };
 
@@ -1003,30 +1004,6 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 Twinkle.warn.callbacks = {
 	preview: function(form) {
 		var templatename = form.sub_group.value;
-
-		var previewdiv = $(form).find('div[name="warningpreview"]').last();
-		if (!previewdiv.length) {
-			return;  // just give up
-		}
-		previewdiv = previewdiv[0];
-
-		var previewbox = $(form).find('div#twinklewarn-previewbox').last();
-		if (!previewbox.length) {
-			previewbox = document.createElement('div');
-			previewbox.style.background = "white";
-			previewbox.style.border = "2px inset";
-			previewbox.style.marginTop = "0.4em";
-			previewbox.style.padding = "0.2em 0.4em";
-			previewbox.setAttribute('id', 'twinklewarn-previewbox');
-			previewdiv.parentNode.appendChild(previewbox);
-		} else {
-			previewbox.show();
-			previewbox = previewbox[0];
-		}
-
-		var statusspan = document.createElement('span');
-		previewbox.appendChild(statusspan);
-		Status.init(statusspan);
 		
 		var templatetext = '{{subst:' + templatename;
 		var linkedarticle = form.article.value;
@@ -1064,28 +1041,7 @@ Twinkle.warn.callbacks = {
 		}
 		templatetext += '}}';
 
-		var query = {
-			action: 'parse',
-			prop: 'text',
-			pst: 'true',  // PST = pre-save transform; this makes substitution work properly
-			text: templatetext,
-			title: mw.config.get('wgPageName')
-		};
-		var wikipedia_api = new Wikipedia.api("加载…", query, Twinkle.warn.callbacks.previewRender, new Status("预览"));
-		wikipedia_api.params = { previewbox: previewbox };
-		wikipedia_api.post();
-	},
-	previewRender: function( apiobj ) {
-		var params = apiobj.params;
-		var xml = apiobj.getXML();
-		var html = $(xml).find('text').text();
-		if (!html) {
-			apiobj.statelem.error("不能读取预览，或警告模板被清空");
-			return;
-		}
-		params.previewbox.innerHTML = html;
-		// fix vertical alignment
-		$(params.previewbox).find(':not(img)').css('vertical-align', 'baseline');
+		form.previewer.beginRender(templatetext);
 	},
 	main: function( pageobj ) {
 		var text = pageobj.getPageText();

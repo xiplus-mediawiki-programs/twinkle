@@ -17,13 +17,7 @@ Twinkle.xfd = function twinklexfd() {
 	if ( mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Wikipedia.isPageRedirect()))) ) {
 		return;
 	}
-	if (twinkleUserAuthorized) {
-		$(twAddPortletLink("#", "提删", "tw-xfd", "提交删除讨论", "")).click(Twinkle.xfd.callback);
-	} else {
-		$(twAddPortletLink("#", '提删', 'tw-xfd', '提交删除讨论', '')).click(function() {
-			alert("您尚未达到自动确认。");
-		});
-	}
+	twAddPortletLink( Twinkle.xfd.callback, "提删", "tw-xfd", "提交删除讨论" );
 };
 
 Twinkle.xfd.currentRationale = null;
@@ -45,6 +39,11 @@ Twinkle.xfd.printRationale = function twinklexfdPrintRationale() {
 };
 
 Twinkle.xfd.callback = function twinklexfdCallback() {
+	if (!twinkleUserAuthorized) {
+		alert("您尚未达到自动确认。");
+		return;
+	}
+
 	var Window = new SimpleWindow( 600, 350 );
 	Window.setTitle( "提交存废讨论" );
 	Window.setScriptName( "Twinkle" );
@@ -61,13 +60,13 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 	categories.append( {
 			type: 'option',
 			label: '页面存废讨论',
-			selected: mw.config.get('wgNamespaceNumber') !== Namespace.IMAGE,
+			selected: mw.config.get('wgNamespaceNumber') === 0,  // Main namespace
 			value: 'afd'
 		} );
 	categories.append( {
 			type: 'option',
 			label: '文件存废讨论',
-			selected: mw.config.get('wgNamespaceNumber') === Namespace.IMAGE,
+			selected: mw.config.get('wgNamespaceNumber') === 6,  // File namespace
 			value: 'ffd'
 		} );
 	form.append( {
@@ -376,7 +375,6 @@ Twinkle.xfd.callbacks = {
 		taggingImage: function(pageobj) {
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
-i
 			pageobj.setPageText("{{ifd|" + params.reason + "|date={{subst:#time:c}}}}\n" + text);
 			pageobj.setEditSummary("文件存废讨论：[[" + params.logpage + "#" + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchPage')) {

@@ -537,36 +537,8 @@ Twinkle.config.sections = [
 			type: "boolean"
 		},
 		{
-			name: "insertHeadings",
-			label: "在欢迎之上插入小节标题",
-			type: "boolean"
-		},
-		{
-			name: "welcomeHeading",
-			label: "欢迎所使用的小节标题",
-			helptip: "仅当上一项启用且模板不含标题时有效。",
-			type: "string"
-		},
-		{
 			name: "insertUsername",
 			label: "添加您的用户名到模板（如适用）",
-			type: "boolean"
-		},
-		{
-			name: "insertSignature",
-			label: "在欢迎后添加您的签名",
-			helptip: "强烈推荐。",
-			type: "boolean"
-		},
-		{
-			name: "markWelcomesAsMinor",
-			label: "将欢迎标记为小修改",
-			type: "boolean"
-		},
-		{
-			name: "maskTemplateInSummary",
-			label: "在编辑摘要中隐藏模板名",
-			helptip: "一些模板的名字（如“welcome-anon-vandal”）可能被用户当成人身攻击，所以最好别在摘要里包含它们。",
 			type: "boolean"
 		},
 		{
