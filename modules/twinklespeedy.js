@@ -299,12 +299,12 @@ Twinkle.speedy.categoryList = [
 
 Twinkle.speedy.userList = [
 	{
-		label: 'O1: 用户请求删除的他们自己的用户页或用户讨论页及其子页面。',
+		label: 'O1: 用户请求删除自己的用户页或其子页面。',
 		value: 'o1',
 		tooltip: '如果是从其他名字空间移动来的，须附有合理原因。'
 	},
 	{
-		label: 'O3: 匿名用户的用户讨论页，其中的内容不再有用（避免给使用同一IP地址的用户带来混淆）。',
+		label: 'O3: 匿名用户的用户讨论页，其中的内容不再有用。',
 		value: 'o3'
 	}
 ];
@@ -352,7 +352,7 @@ Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 		});
 	}
 	result.push({
-		label: 'G1: 没有实际内容或历史纪录的文章。',
+		label: 'G1: 没有实际内容或历史纪录的页面。',
 		value: 'g1',
 		tooltip: '如“adfasddd”。参见Wikipedia:胡言乱语。但注意：图片也算是内容。'
 	});
@@ -362,11 +362,12 @@ Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 		tooltip: '例如：“这是一个测试。”'
 	});
 	result.push({
-		label: 'G3: 纯粹破坏。',
-		value: 'g3'
+		label: 'G3: 纯粹破坏或明显的恶作剧。',
+		value: 'g3',
+		tooltip: '包括明显的错误信息、明显的恶作剧、信息明显错误的图片，以及清理移动破坏时留下的重定向。'
 	});
 	result.push({
-		label: 'G5: 曾经根据Wikipedia:页面存废讨论、Wikipedia:页面存废讨论/疑似侵权、Wikipedia:文件存废讨论被删除后又重新创建的内容，无论标题是否相同。',
+		label: 'G5: 曾经根据页面存废讨论、疑似侵权讨论、文件存废讨论被删除后又重新创建的内容，而有关内容与被删除的版本相同或非常相似，无论标题是否相同。',
 		value: 'g5',
 		tooltip: '该内容之前必须是经存废讨论删除，如之前属于快速删除，请以相同理由重新提送快速删除。不适用于根据恢复守则被恢复的内容。在某些情况下，重新创建的条目有发展的机会。那么不应提交快速删除，而应该提交删除投票进行讨论。'
 	});
