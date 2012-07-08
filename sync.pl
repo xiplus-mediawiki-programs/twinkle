@@ -98,7 +98,7 @@ if( $opt->mode eq "pull" ) {
 			die "file not deployable";
 		}
 		$page = $deploys{$file};
-		say "$file -> https://secure.wikimedia.org/$opt->{family}/$opt->{lang}/wiki/$page";
+		say "$file -> https://$opt->{lang}.$opt->{family}.org/wiki/$page";
         my $tag = $repo->run(describe => '--always', '--dirty');
         my $log = $repo->run(log => '-1', '--pretty=format:%s', '--no-color');
         my $text = read_file($file,  {binmode => ':raw' });
