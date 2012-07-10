@@ -461,7 +461,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 
 		// Tagging file
 		wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'), "添加存废讨论模板到页面");
-		wikipedia_page.setFollowRedirect(true);
+		wikipedia_page.setFollowRedirect(false);
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.xfd.callbacks.afd.taggingArticle);
 
@@ -485,7 +485,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 
 		// Tagging file
 		wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'), "添加存废讨论模板到文件描述页");
-		wikipedia_page.setFollowRedirect(true);
+		wikipedia_page.setFollowRedirect(false);
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.xfd.callbacks.ffd.taggingImage);
 
