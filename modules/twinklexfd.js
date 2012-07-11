@@ -14,7 +14,7 @@ Twinkle.xfd = function twinklexfd() {
 	// * non-existent pages
 	// * files on Commons, whether there is a local page or not (unneeded local pages of files on Commons are eligible for CSD F2)
 	// * file pages without actual files (these are eligible for CSD G8)
-	if ( mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Wikipedia.isPageRedirect()))) ) {
+	if ( mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.wiki.isPageRedirect()))) ) {
 		return;
 	}
 	twAddPortletLink( Twinkle.xfd.callback, "提删", "tw-xfd", "提交删除讨论" );
@@ -22,7 +22,7 @@ Twinkle.xfd = function twinklexfd() {
 
 Twinkle.xfd.currentRationale = null;
 
-// error callback on Status object
+// error callback on Morebits.status.object
 Twinkle.xfd.printRationale = function twinklexfdPrintRationale() {
 	if (Twinkle.xfd.currentRationale) {
 		var p = document.createElement("p");
@@ -32,7 +32,7 @@ Twinkle.xfd.printRationale = function twinklexfdPrintRationale() {
 		pre.style.marginTop = "0";
 		pre.textContent = Twinkle.xfd.currentRationale;
 		p.appendChild(pre);
-		Status.root.appendChild(p);
+		Morebits.status.root.appendChild(p);
 		// only need to print the rationale once
 		Twinkle.xfd.currentRationale = null;
 	}
@@ -44,13 +44,13 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 		return;
 	}
 
-	var Window = new SimpleWindow( 600, 350 );
+	var Window = new Morebits.simpleWindow( 600, 350 );
 	Window.setTitle( "提交存废讨论" );
 	Window.setScriptName( "Twinkle" );
 	Window.addFooterLink( "关于存废讨论", "WP:XFD" );
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#xfd" );
 
-	var form = new QuickForm( Twinkle.xfd.callback.evaluate );
+	var form = new Morebits.quickForm( Twinkle.xfd.callback.evaluate );
 	var categories = form.append( {
 			type: 'select',
 			name: 'category',
@@ -104,16 +104,7 @@ Twinkle.xfd.previousNotify = true;
 Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory(e) {
 	var value = e.target.value;
 	var form = e.target.form;
-	var old_area;
-	var childNodes = form.childNodes;
-	for( var i = 0; i < childNodes.length; ++i ) {
-		var node = childNodes[i];
-		if (node instanceof Element &&
-		    node.getAttribute( 'name' ) === 'work_area') {
-			old_area = node;
-			break;
-		}
-	}
+	var old_area = Morebits.quickForm.getElements(e.target.form, "work_area")[0];
 	var work_area = null;
 
 	var oldreasontextbox = form.getElementsByTagName('textarea')[0];
@@ -121,7 +112,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 
 	switch( value ) {
 	case 'afd':
-		work_area = new QuickForm.element( {
+		work_area = new Morebits.quickForm.element( {
 				type: 'field',
 				label: '页面存废讨论',
 				name: 'work_area'
@@ -169,7 +160,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		old_area.parentNode.replaceChild( work_area, old_area );
 		break;
 	case 'ffd':
-		work_area = new QuickForm.element( {
+		work_area = new Morebits.quickForm.element( {
 				type: 'field',
 				label: '文件存废讨论',
 				name: 'work_area'
@@ -184,7 +175,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		old_area.parentNode.replaceChild( work_area, old_area );
 		break;
 	default:
-		work_area = new QuickForm.element( {
+		work_area = new Morebits.quickForm.element( {
 				type: 'field',
 				label: '未定义',
 				name: 'work_area'
@@ -220,7 +211,7 @@ Twinkle.xfd.callbacks = {
 			var params = pageobj.getCallbackParameters();
 
 			// Adding discussion
-			wikipedia_page = new Wikipedia.page(params.logpage, "添加讨论到当日列表");
+			wikipedia_page = new Morebits.wiki.page(params.logpage, "添加讨论到当日列表");
 			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.xfd.callbacks.afd.todaysList);
@@ -228,7 +219,7 @@ Twinkle.xfd.callbacks = {
 			// Notification to first contributor
 			if(params.usertalk) {
 				var initialContrib = pageobj.getCreator();
-				var usertalkpage = new Wikipedia.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
+				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
 				var notifytext = "\n{{subst:AFDNote|" + mw.config.get('wgPageName') + "}}--~~~~";
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]存废讨论提名。" + Twinkle.getPref('summaryAd'));
@@ -345,14 +336,14 @@ Twinkle.xfd.callbacks = {
 			params.uploader = initialContrib;
 
 			// Adding discussion
-			wikipedia_page = new Wikipedia.page(params.logpage, "添加讨论到当日列表");
+			wikipedia_page = new Morebits.wiki.page(params.logpage, "添加讨论到当日列表");
 			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.xfd.callbacks.ffd.todaysList);
 
 			// Notification to first contributor
 			if(params.usertalk) {
-				var usertalkpage = new Wikipedia.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
+				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
 				var notifytext = "\n{{subst:idw|File:" + mw.config.get('wgTitle') + "}}";
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary("通知：文件[[" + mw.config.get('wgPageName') + "]]存废讨论提名。" + Twinkle.getPref('summaryAd'));
@@ -431,14 +422,14 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		}
 	}
 
-	SimpleWindow.setButtonsEnabled( false );
-	Status.init( e.target );
+	Morebits.simpleWindow.setButtonsEnabled( false );
+	Morebits.status.init( e.target );
 
 	Twinkle.xfd.currentRationale = reason;
-	Status.onError(Twinkle.xfd.printRationale);
+	Morebits.status.onError(Twinkle.xfd.printRationale);
 
 	if( !type ) {
-		Status.error( '错误', '未定义的动作' );
+		Morebits.status.error( '错误', '未定义的动作' );
 		return;
 	}
 
@@ -454,23 +445,23 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		logpage = 'Wikipedia:頁面存廢討論/記錄/' + dateString;
 		params = { usertalk: usertalk, xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, logpage: logpage };
 
-		Wikipedia.addCheckpoint();
+		Morebits.wiki.addCheckpoint();
 		// Updating data for the action completed event
-		Wikipedia.actionCompleted.redirect = logpage;
-		Wikipedia.actionCompleted.notice = "提名完成，重定向到讨论页";
+		Morebits.wiki.actionCompleted.redirect = logpage;
+		Morebits.wiki.actionCompleted.notice = "提名完成，重定向到讨论页";
 
 		// Tagging file
-		wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'), "添加存废讨论模板到页面");
+		wikipedia_page = new Morebits.wikipedia.page(mw.config.get('wgPageName'), "添加存废讨论模板到页面");
 		wikipedia_page.setFollowRedirect(false);
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.xfd.callbacks.afd.taggingArticle);
 
 		// Contributor specific edits
-		wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'));
+		wikipedia_page = new Morebits.wikipedia.page(mw.config.get('wgPageName'));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.lookupCreator(Twinkle.xfd.callbacks.afd.main);
 
-		Wikipedia.removeCheckpoint();
+		Morebits.wiki.removeCheckpoint();
 		break;
 
 	case 'ffd': // FFD
@@ -478,23 +469,23 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		logpage = 'Wikipedia:檔案存廢討論/記錄/' + dateString;
 		params = { usertalk: usertalk, reason: reason, logpage: logpage };
 
-		Wikipedia.addCheckpoint();
+		Morebits.wiki.addCheckpoint();
 		// Updating data for the action completed event
-		Wikipedia.actionCompleted.redirect = logpage;
-		Wikipedia.actionCompleted.notice = "提名完成，重定向到讨论页";
+		Morebits.wiki.actionCompleted.redirect = logpage;
+		Morebits.wiki.actionCompleted.notice = "提名完成，重定向到讨论页";
 
 		// Tagging file
-		wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'), "添加存废讨论模板到文件描述页");
+		wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), "添加存废讨论模板到文件描述页");
 		wikipedia_page.setFollowRedirect(false);
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.xfd.callbacks.ffd.taggingImage);
 
 		// Contributor specific edits
-		wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'));
+		wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.lookupCreator(Twinkle.xfd.callbacks.ffd.main);
 
-		Wikipedia.removeCheckpoint();
+		Morebits.wiki.removeCheckpoint();
 		break;
 
 	default:

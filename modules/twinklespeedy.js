@@ -21,7 +21,7 @@ Twinkle.speedy = function twinklespeedy() {
 		return;
 	}
 
-	twAddPortletLink( Twinkle.speedy.callback, "速删", "tw-csd", userIsInGroup('sysop') ? "快速删除" : "请求快速删除" );
+	twAddPortletLink( Twinkle.speedy.callback, "速删", "tw-csd", Morebits.userIsInGroup('sysop') ? "快速删除" : "请求快速删除" );
 };
 
 // This function is run when the CSD tab/header link is clicked
@@ -31,7 +31,7 @@ Twinkle.speedy.callback = function twinklespeedyCallback() {
 		return;
 	}
 
-	Twinkle.speedy.initDialog(userIsInGroup( 'sysop' ) ? Twinkle.speedy.callback.evaluateSysop : Twinkle.speedy.callback.evaluateUser, true);
+	Twinkle.speedy.initDialog(Morebits.userIsInGroup( 'sysop' ) ? Twinkle.speedy.callback.evaluateSysop : Twinkle.speedy.callback.evaluateUser, true);
 };
 
 Twinkle.speedy.dialog = null;
@@ -45,7 +45,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 	var dialog;
 	if (!content)
 	{
-		Twinkle.speedy.dialog = new SimpleWindow( Twinkle.getPref('speedyWindowWidth'), Twinkle.getPref('speedyWindowHeight') );
+		Twinkle.speedy.dialog = new Morebits.simpleWindow( Twinkle.getPref('speedyWindowWidth'), Twinkle.getPref('speedyWindowHeight') );
 		dialog = Twinkle.speedy.dialog;
 		dialog.setTitle( "选择快速删除理由" );
 		dialog.setScriptName( "Twinkle" );
@@ -53,8 +53,8 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 		dialog.addFooterLink( "Twinkle帮助", "WP:TW/DOC#speedy" );
 	}
 
-	var form = new QuickForm( callbackfunc, 'change' );
-	if( firstTime && userIsInGroup( 'sysop' ) ) {
+	var form = new Morebits.quickForm( callbackfunc, 'change' );
+	if( firstTime && Morebits.userIsInGroup( 'sysop' ) ) {
 		form.append( {
 				type: 'checkbox',
 				list: [
@@ -131,9 +131,9 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 						label: '如可能，通知创建者',
 						value: 'notify',
 						name: 'notify',
-						tooltip: "一个通知模板将会被加入创建者的对话页。",
-						checked: !userIsInGroup( 'sysop' ) || Twinkle.getPref('deleteSysopDefaultToTag'),
-						disabled: userIsInGroup( 'sysop' ) && !Twinkle.getPref('deleteSysopDefaultToTag'),
+						tooltip: "一个通知模板将会被加入创建者的对话页，如果您启用了该理据的通知。",
+						checked: !Morebits.userIsInGroup( 'sysop' ) || Twinkle.getPref('deleteSysopDefaultToTag'),
+						disabled: Morebits.userIsInGroup( 'sysop' ) && !Twinkle.getPref('deleteSysopDefaultToTag'),
 						event: function( event ) {
 							event.stopPropagation();
 						}
@@ -152,7 +152,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 					label: '应用多个理由',
 					value: 'multiple',
 					tooltip: '开启一些新的对话框，让您选择多个理由。',
-					disabled: userIsInGroup('sysop') && !Twinkle.getPref('deleteSysopDefaultToTag')
+					disabled: Morebits.userIsInGroup('sysop') && !Twinkle.getPref('deleteSysopDefaultToTag')
 				}
 			]
 		} );
@@ -243,7 +243,7 @@ Twinkle.speedy.getFileList = function twinklespeedyGetFileList(multiple) {
 		label: 'F1: 重复的文件（完全相同或缩小），而且所有的链入连接已经被修改为指向保留的文件。',
 		value: 'f1'
 	});
-	if (userIsInGroup('sysop')) {
+	if (Morebits.userIsInGroup('sysop')) {
 		result.push({
 			label: 'F3: 所有未知版权的文件和来源不明文件。',
 			value: 'f3'
@@ -357,7 +357,7 @@ Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 	var result = [];
 	if (!multiple) {
 		result.push({
-			label: '自定义理由' + (userIsInGroup('sysop') ? '（自定义删除理由）' : ''),
+			label: '自定义理由' + (Morebits.userIsInGroup('sysop') ? '（自定义删除理由）' : ''),
 			value: 'reason'
 		});
 	}
@@ -523,7 +523,7 @@ Twinkle.speedy.reasonHash = {
 Twinkle.speedy.callbacks = {
 	sysop: {
 		main: function( params ) {
-			var thispage = new Wikipedia.page( mw.config.get('wgPageName'), "删除页面" );
+			var thispage = new Morebits.wiki.page( mw.config.get('wgPageName'), "删除页面" );
 
 			// delete page
 			var reason;
@@ -538,7 +538,7 @@ Twinkle.speedy.callbacks = {
 				}
 			}
 			if (!reason || !reason.replace(/^\s*/, "").replace(/\s*$/, "")) {
-				Status.error("询问理由", "您没有提供理由，取消操作。");
+				Morebits.status.error("询问理由", "您没有提供理由，取消操作。");
 				return;
 			}
 			thispage.setEditSummary( reason + Twinkle.getPref('deletionSummaryAd') );
@@ -549,7 +549,7 @@ Twinkle.speedy.callbacks = {
 			    params.normalized !== 'f7' &&
 			    params.normalized !== 'o1' &&
 			    document.getElementById( 'ca-talk' ).className !== 'new') {
-				var talkpage = new Wikipedia.page( Wikipedia.namespaces[ mw.config.get('wgNamespaceNumber') + 1 ] + ':' + mw.config.get('wgTitle'), "删除讨论页" );
+				var talkpage = new Morebits.wiki.page( Morebits.wikipedia.namespaces[ mw.config.get('wgNamespaceNumber') + 1 ] + ':' + mw.config.get('wgTitle'), "删除讨论页" );
 				talkpage.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 已删除页面 [[' + mw.config.get('wgPageName') + "]] 的讨论页" + Twinkle.getPref('deletionSummaryAd'));
 				talkpage.deletePage();
 			}
@@ -562,7 +562,7 @@ Twinkle.speedy.callbacks = {
 					'text': '点击这里前往反链工具',
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' },
 					'click': function(){
-						Wikipedia.actionCompleted.redirect = null;
+						Morebits.wiki.actionCompleted.redirect = null;
 						Twinkle.speedy.dialog.close();
 						Twinkle.unlink.callback("取消对已删除文件 " + mw.config.get('wgPageName') + " 的使用");
 					}
@@ -571,14 +571,14 @@ Twinkle.speedy.callbacks = {
 					'text': '取消对已删除文件的使用',
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
 				});
-				Status.info($bigtext[0], $link[0]);
+				Morebits.status.info($bigtext[0], $link[0]);
 			} else if (params.normalized !== 'f7') {
 				$link = $('<a/>', {
 					'href': '#',
 					'text': '点击这里前往反链工具',
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' },
 					'click': function(){
-						Wikipedia.actionCompleted.redirect = null;
+						Morebits.wiki.actionCompleted.redirect = null;
 						Twinkle.speedy.dialog.close();
 						Twinkle.unlink.callback("取消对已删除页面 " + mw.config.get('wgPageName') + " 的链接");
 					}
@@ -587,12 +587,12 @@ Twinkle.speedy.callbacks = {
 					'text': '取消对已删除页面的链接',
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
 				});
-				Status.info($bigtext[0], $link[0]);
+				Morebits.status.info($bigtext[0], $link[0]);
 			}
 
 			// open talk page of first contributor
 			if( params.openusertalk ) {
-				thispage = new Wikipedia.page( mw.config.get('wgPageName') );  // a necessary evil, in order to clear incorrect Status.text
+				thispage = new Morebits.wiki.page( mw.config.get('wgPageName') );  // a necessary evil, in order to clear incorrect status text
 				thispage.setCallbackParameters( params );
 				thispage.lookupCreator( Twinkle.speedy.callbacks.sysop.openUserTalkPage );
 			}
@@ -606,8 +606,8 @@ Twinkle.speedy.callbacks = {
 					'bltitle': mw.config.get('wgPageName'),
 					'bllimit': 5000  // 500 is max for normal users, 5000 for bots and sysops
 				};
-				var wikipedia_api = new Wikipedia.api( '取得重定向列表…', query, Twinkle.speedy.callbacks.sysop.deleteRedirectsMain,
-					new Status( '删除重定向' ) );
+				var wikipedia_api = new Morebits.wiki.api( '取得重定向列表…', query, Twinkle.speedy.callbacks.sysop.deleteRedirectsMain,
+					new Morebits.status( '删除重定向' ) );
 				wikipedia_api.params = params;
 				wikipedia_api.post();
 			}
@@ -615,7 +615,7 @@ Twinkle.speedy.callbacks = {
 		openUserTalkPage: function( pageobj ) {
 			pageobj.getStatusElement().unlink();  // don't need it anymore
 			var user = pageobj.getCreator();
-			var statusIndicator = new Status('打开用户 ' + user + ' 的对话页', '正在打开…');
+			var statusIndicator = new Morebits.status('打开用户 ' + user + ' 的对话页', '正在打开…');
 
 			var query = {
 				'title': 'User talk:' + user,
@@ -625,15 +625,15 @@ Twinkle.speedy.callbacks = {
 			};
 			switch( Twinkle.getPref('userTalkPageMode') ) {
 			case 'tab':
-				window.open( mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/index.php?' + QueryString.create( query ), '_tab' );
+				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_tab' );
 				break;
 			case 'blank':
-				window.open( mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/index.php?' + QueryString.create( query ), '_blank', 'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
+				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_blank', 'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
 				break;
 			case 'window':
 				/* falls through */
 				default :
-				window.open( mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/index.php?' + QueryString.create( query ), 'twinklewarnwindow', 'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
+				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), 'twinklewarnwindow', 'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
 				break;
 			}
 
@@ -658,13 +658,13 @@ Twinkle.speedy.callbacks = {
 				var now = parseInt( 100 * ++(apiobj.parent.params.current)/total, 10 ) + '%';
 				obj.update( now );
 				apiobj.statelem.unlink();
-				if( apiobj.parent.params.current >= total ) {
+				if( apiobj.params.current >= total ) {
 					obj.info( now + '（完成）' );
-					Wikipedia.removeCheckpoint();
+					Morebits.wiki.removeCheckpoint();
 				}
 			};
 
-			Wikipedia.addCheckpoint();
+			Morebits.wiki.addCheckpoint();
 
 			var params = $.extend( {}, apiobj.params );
 			params.current = 0;
@@ -673,9 +673,8 @@ Twinkle.speedy.callbacks = {
 
 			$snapshot.each(function(key, value) {
 				var title = $(value).attr('title');
-				var page = new Wikipedia.page(title, '删除重定向 "' + title + '"');
+				var page = new Morebits.wiki.page(title, '删除重定向 "' + title + '"');
 				page.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 重定向到已删除页面 [[' + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('deletionSummaryAd'));
-				page.params = params;
 				page.deletePage(onsuccess);
 			});
 		}
@@ -702,7 +701,7 @@ Twinkle.speedy.callbacks = {
 			// check for existing deletion tags
 			var tag = /(?:\{\{\s*(db|d|delete|db-.*?)(?:\s*\||\s*\}\}))/i.exec( text );
 			if( tag ) {
-				statelem.error( [ htmlNode( 'strong', tag[1] ) , " 已被置于页面中。" ] );
+				statelem.error( [ Morebits.htmlNode( 'strong', tag[1] ) , " 已被置于页面中。" ] );
 				return;
 			}
 
@@ -747,66 +746,10 @@ Twinkle.speedy.callbacks = {
 				params.utparams = Twinkle.speedy.getUserTalkParameters(params.normalized, parameters);
 			}
 
-			var thispage = new Wikipedia.page(mw.config.get('wgPageName'));
+			var thispage = new Morebits.wiki.page(mw.config.get('wgPageName'));
 			// patrol the page, if reached from Special:NewPages
 			if( Twinkle.getPref('markSpeedyPagesAsPatrolled') ) {
 				thispage.patrol();
-			}
-
-			// Notification to first contributor
-			if (params.usertalk) {
-				var callback = function(pageobj) {
-					var initialContrib = pageobj.getCreator();
-
-					// don't notify users when their user talk page is nominated
-					if (initialContrib === mw.config.get('wgTitle') && mw.config.get('wgNamespaceNumber') === 3) {
-						Status.warn("通知页面创建者：用户创建了自己的对话页"); 
-						return;
-					}
-
-					var usertalkpage = new Wikipedia.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
-					var notifytext;
-
-					// specialcase "db" and "db-multiple"
-					switch (params.normalized)
-					{
-						case 'db':
-						case 'multiple':
-						default:
-							notifytext = "\n\n{{subst:db-notice|target=" + mw.config.get('wgPageName');
-							break;
-					}
-					/*for (var i in params.utparams) {
-						if (typeof params.utparams[i] === 'string') {
-							notifytext += "|" + i + "=" + params.utparams[i];
-						}
-					}*/
-					notifytext += (params.welcomeuser ? "" : "|nowelcome=yes") + "}}--~~~~";
-
-					usertalkpage.setAppendText(notifytext);
-					usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]快速删除提名。" + Twinkle.getPref('summaryAd'));
-					usertalkpage.setCreateOption('recreate');
-					usertalkpage.setFollowRedirect(true);
-					usertalkpage.append();
-
-					// add this nomination to the user's userspace log, if the user has enabled it
-					if (params.lognomination) {
-						Twinkle.speedy.callbacks.user.addToLog(params, initialContrib);
-					}
-				};
-				thispage.lookupCreator(callback);
-			}
-			// or, if not notifying, add this nomination to the user's userspace log without the initial contributor's name
-			else {
-				var callback = function(pageobj) {
-					var statelem = pageobj.getStatusElement();
-					var initialContrib = pageobj.getCreator();
-					statelem.status( '页面创建者：' + initialContrib );
-				};
-				thispage.lookupCreator(callback);
-				if (params.lognomination) {
-					Twinkle.speedy.callbacks.user.addToLog(params, null);
-				}
 			}
 
 			// Wrap SD template in noinclude tags if we are in template space.
@@ -816,10 +759,10 @@ Twinkle.speedy.callbacks = {
 			}
 
 			// Remove tags that become superfluous with this action
-			//text = text.replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+			text = text.replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
 			if (mw.config.get('wgNamespaceNumber') === 6) {
 				// remove "move to Commons" tag - deletion-tagged files cannot be moved to Commons
-				text = text.replace(/\{\{((copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*}}/gi, "");
+				text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, "");
 			}
 
 			// Generate edit summary for edit
@@ -844,11 +787,67 @@ Twinkle.speedy.callbacks = {
 					break;
 			}
 
-			pageobj.setPageText(code + "\n" + text );
+			pageobj.setPageText(code + "\n" + text);
 			pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
 			pageobj.setWatchlist(params.watch);
 			pageobj.setCreateOption('nocreate');
-			pageobj.save();
+			pageobj.save(Twinkle.speedy.callbacks.user.tagComplete);
+		},
+
+		tagComplete: function(pageobj) {
+			var params = pageobj.getCallbackParameters();
+
+			// Notification to first contributor
+			if (params.usertalk) {
+				var callback = function(pageobj) {
+					var initialContrib = pageobj.getCreator();
+
+					// don't notify users when their user talk page is nominated
+					if (initialContrib === mw.config.get('wgTitle') && mw.config.get('wgNamespaceNumber') === 3) {
+						Morebits.status.warn("通知页面创建者：用户创建了自己的对话页");
+						return;
+					}
+
+					var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）"),
+					    notifytext, i;
+
+					// specialcase "db" and "db-multiple"
+					switch (params.normalized)
+					{
+						case 'db':
+						case 'multiple':
+						default:
+							notifytext = "\n\n{{subst:db-notice|target=" + mw.config.get('wgPageName');
+							break;
+					}
+					notifytext += (params.welcomeuser ? "" : "|nowelcome=yes") + "}}--~~~~";
+
+					usertalkpage.setAppendText(notifytext);
+					usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]快速删除提名。" + Twinkle.getPref('summaryAd'));
+					usertalkpage.setCreateOption('recreate');
+					usertalkpage.setFollowRedirect(true);
+					usertalkpage.append();
+
+					// add this nomination to the user's userspace log, if the user has enabled it
+					if (params.lognomination) {
+						Twinkle.speedy.callbacks.user.addToLog(params, initialContrib);
+					}
+				};
+				var thispage = new Morebits.wiki.page(mw.config.get('wgPageName'));
+				thispage.lookupCreator(callback);
+			}
+			// or, if not notifying, add this nomination to the user's userspace log without the initial contributor's name
+			else {
+				var callback = function(pageobj) {
+					var statelem = pageobj.getStatusElement();
+					var initialContrib = pageobj.getCreator();
+					statelem.status( '页面创建者：' + initialContrib );
+				};
+				thispage.lookupCreator(callback);
+				if (params.lognomination) {
+					Twinkle.speedy.callbacks.user.addToLog(params, null);
+				}
+			}
 		},
 
 		// note: this code is also invoked from twinkleimage
@@ -857,7 +856,7 @@ Twinkle.speedy.callbacks = {
 		//   for CSD: params.value
 		//   for DI: params.fromDI = true, params.type
 		addToLog: function(params, initialContrib) {
-			var wikipedia_page = new Wikipedia.page("User:" + mw.config.get('wgUserName') + "/" + Twinkle.getPref('speedyLogPageName'), "添加项目到用户日志");
+			var wikipedia_page = new Morebits.wiki.page("User:" + mw.config.get('wgUserName') + "/" + Twinkle.getPref('speedyLogPageName'), "添加项目到用户日志");
 			params.logInitialContrib = initialContrib;
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.speedy.callbacks.user.saveLog);
@@ -873,7 +872,7 @@ Twinkle.speedy.callbacks = {
 					"这是该用户使用[[WP:TW|Twinkle]]的速删模块做出的[[WP:CSD|快速删除]]提名列表。\n\n" +
 					"如果您不再想保留此日志，请在[[Wikipedia:Twinkle/参数设置|参数设置]]中关掉，并" +
 					"使用[[WP:CSD#O1|CSD O1]]提交快速删除。\n";
-				if (userIsInGroup("sysop")) {
+				if (Morebits.userIsInGroup("sysop")) {
 					text += "\n此日志并不记录用Twinkle直接执行的删除。\n";
 				}
 			}
@@ -1007,7 +1006,7 @@ Twinkle.speedy.callback.evaluateSysop = function twinklespeedyCallbackEvaluateSy
 		deleteTalkPage: e.target.form.talkpage && e.target.form.talkpage.checked,
 		deleteRedirects: e.target.form.redirects.checked
 	};
-	Status.init( e.target.form );
+	Morebits.status.init( e.target.form );
 
 	Twinkle.speedy.callbacks.sysop.main( params );
 };
@@ -1130,12 +1129,12 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 		lognomination: csdlog
 	};
 
-	Status.init( e.target.form );
+	Morebits.status.init( e.target.form );
 
-	Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
-	Wikipedia.actionCompleted.notice = "标记完成";
+	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
+	Morebits.wiki.actionCompleted.notice = "标记完成";
 
-	var wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'), "标记页面");
+	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), "标记页面");
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.speedy.callbacks.user.main);
 };
@@ -1154,7 +1153,7 @@ Twinkle.speedy.callback.doMultiple = function twinklespeedyCallbackDoMultiple(e)
 		}
 		else
 		{
-			var parameters = Twinkle.speedy.getParameters(value, normalized, Status);
+			var parameters = Twinkle.speedy.getParameters(value, normalized, Morebits.status);
 			if (parameters)
 			{
 				for (var i in parameters) {

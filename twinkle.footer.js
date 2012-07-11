@@ -3,14 +3,14 @@
  * General initialization code
  */
 
-var scriptpathbefore = mw.config.get( "wgServer" ) + mw.config.get( "wgScript" ) + "?title=";
-var scriptpathafter = "&action=raw&ctype=text/javascript&happy=yes";
+var scriptpathbefore = mw.util.wikiScript( "index" ) + "?title=",
+    scriptpathafter = "&action=raw&ctype=text/javascript&happy=yes";
 
 // Retrieve the user's Twinkle preferences
 $.ajax({
-	url: scriptpathbefore + "User:" + encodeURIComponent( mw.config.get( "wgUserName" )) + "/twinkleoptions.js" + scriptpathafter,
+	url: scriptpathbefore + "User:" + encodeURIComponent( mw.config.get("wgUserName")) + "/twinkleoptions.js" + scriptpathafter,
 	dataType: "text",
-	error: function () { jsMsg( "不能加载twinkleoptions.js" ); },
+	error: function () { mw.util.jsMessage( "不能加载twinkleoptions.js" ); },
 	success: function ( optionsText ) {
 
 		// Quick pass if user has no options
@@ -45,7 +45,7 @@ $.ajax({
 			}
 		}
 		catch ( e ) {
-			jsMsg("不能解析twinkleoptions.js");
+			mw.util.jsMessage("不能解析twinkleoptions.js");
 		}
 	},
 	complete: function () {
@@ -66,7 +66,6 @@ Twinkle.load = function () {
 
 	// Load the modules in the order that the tabs should appears
 	// User/user talk-related
-	//Twinkle.arv();
 	Twinkle.warn();
 	Twinkle.welcome();
 	Twinkle.shared();
@@ -74,7 +73,6 @@ Twinkle.load = function () {
 	// Deletion
 	Twinkle.speedy();
 	Twinkle.copyvio();
-	//Twinkle.prod();
 	Twinkle.xfd();
 	Twinkle.image();
 	// Maintenance
@@ -85,12 +83,9 @@ Twinkle.load = function () {
 	Twinkle.unlink();
 	Twinkle.config.init();
 	Twinkle.fluff.init();
-	if ( userIsInGroup('sysop') ) {
+	if ( Morebits.userIsInGroup('sysop') ) {
 		Twinkle.delimages();
-	//	Twinkle.deprod();
 		Twinkle.batchdelete();
-	//	Twinkle.batchprotect();
-	//	Twinkle.batchundelete();
 	}
 	// Run the initialization callbacks for any custom modules
 	$( Twinkle.initCallbacks ).each(function ( k, v ) { v(); });
@@ -115,6 +110,6 @@ Twinkle.load = function () {
 	Twinkle.prefs.twinkle.protectionSummaryAd = Twinkle.defaultConfig.twinkle.protectionSummaryAd;
 };
 
-} ( jQuery )); // End wrap with anonymous function
+} ( window, document, jQuery )); // End wrap with anonymous function
 
 // </nowiki>

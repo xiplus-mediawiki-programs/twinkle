@@ -15,9 +15,9 @@ Twinkle.warn = function twinklewarn() {
 
 	// modify URL of talk page on rollback success pages
 	if( mw.config.get('wgAction') === 'rollback' ) {
-		var $vandalTalkLink = $("#mw-rollback-success .mw-usertoollinks a").first();
+		var $vandalTalkLink = $("#mw-rollback-success").find(".mw-usertoollinks a").first();
 		$vandalTalkLink.css("font-weight", "bold");
-		$vandalTalkLink.text("对话（使用Twinkle警告）");
+		$vandalTalkLink.wrapInner($("<span/>").attr("title", "如果合适，您可以用Twinkle在该用户对话页上做出警告。"));
 
 		var extraParam = "vanarticle=" + mw.util.rawurlencode(mw.config.get("wgPageName").replace(/_/g, " "));
 		var href = $vandalTalkLink.attr("href");
@@ -39,13 +39,13 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		return;
 	}
 	
-	var Window = new SimpleWindow( 600, 440 );
+	var Window = new Morebits.simpleWindow( 600, 440 );
 	Window.setTitle( "警告、通知用户" );
 	Window.setScriptName( "Twinkle" );
 	Window.addFooterLink( "选择警告级别", "WP:WARN" );
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#warn" );
 
-	var form = new QuickForm( Twinkle.warn.callback.evaluate );
+	var form = new Morebits.quickForm( Twinkle.warn.callback.evaluate );
 	var main_select = form.append( {
 			type:'field',
 			label:'选择要发送的警告或通知类别',
@@ -59,14 +59,14 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		} );
 
 	var defaultGroup = parseInt(Twinkle.getPref('defaultWarningGroup'), 10);
-	main_group.append( { type:'option', label:'层级1', value:'level1', selected: ( defaultGroup === 1 || defaultGroup < 1 || ( userIsInGroup( 'sysop' ) ? defaultGroup > 8 : defaultGroup > 7 ) ) } );
+	main_group.append( { type:'option', label:'层级1', value:'level1', selected: ( defaultGroup === 1 || defaultGroup < 1 || ( Morebits.userIsInGroup( 'sysop' ) ? defaultGroup > 8 : defaultGroup > 7 ) ) } );
 	main_group.append( { type:'option', label:'层级2', value:'level2', selected: ( defaultGroup === 2 ) } );
 	main_group.append( { type:'option', label:'层级3', value:'level3', selected: ( defaultGroup === 3 ) } );
 	main_group.append( { type:'option', label:'层级4', value:'level4', selected: ( defaultGroup === 4 ) } );
 	main_group.append( { type:'option', label:'层级4im', value:'level4im', selected: ( defaultGroup === 5 ) } );
 	main_group.append( { type:'option', label:'单层级通知', value:'singlenotice', selected: ( defaultGroup === 6 ) } );
 	main_group.append( { type:'option', label:'单层级警告', value:'singlewarn', selected: ( defaultGroup === 7 ) } );
-	if( userIsInGroup( 'sysop' ) ) {
+	if( Morebits.userIsInGroup( 'sysop' ) ) {
 		main_group.append( { type:'option', label:'封禁', value:'block', selected: ( defaultGroup === 8 ) } );
 	}
 
@@ -76,7 +76,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 			type:'input',
 			name:'article',
 			label:'条目链接',
-			value:( QueryString.exists( 'vanarticle' ) ? QueryString.get( 'vanarticle' ) : '' ),
+			value:( Morebits.queryString.exists( 'vanarticle' ) ? Morebits.queryString.get( 'vanarticle' ) : '' ),
 			tooltip:'给模板中加入一条目链接，可留空。'
 		} );
 
@@ -98,7 +98,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	Window.setContent( result );
 	Window.display();
 	result.main_group.root = result;
-	result.previewer = new Wikipedia.preview($(result).find('div#twinklewarn-previewbox').last()[0]);
+	result.previewer = new Morebits.wiki.preview($(result).find('div#twinklewarn-previewbox').last()[0]);
 
 	// We must init the first choice (General Note);
 	var evt = document.createEvent( "Event" );
@@ -875,14 +875,14 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 		if( old_subvalue && old_subvalue_re.test( i ) ) {
 			selected = true;
 		}
-		var elem = new QuickForm.element( { type:'option', label:"{{" + i + "}}: " + messages[i].label, value:i, selected: selected } );
+		var elem = new Morebits.quickForm.element( { type:'option', label:"{{" + i + "}}: " + messages[i].label, value:i, selected: selected } );
 		
 		sub_group.appendChild( elem.render() );
 	}
 
 	if( value === 'block' ) {
 		// create the block-related fields
-		var more = new QuickForm.element( { type: 'div', id: 'block_fields' } );
+		var more = new Morebits.quickForm.element( { type: 'div', id: 'block_fields' } );
 		more.append( {
 			type: 'input',
 			name: 'block_timer',
@@ -932,6 +932,10 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 		$(e.target.root.reason).parent().show();
 		e.target.root.previewer.closePreview();
 	}
+
+	// clear overridden label on article textbox
+	Morebits.quickForm.setElementTooltipVisibility(e.target.root.article, true);
+	Morebits.quickForm.resetElementLabel(e.target.root.article);
 };
 
 Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSubcategory(e) {
@@ -939,18 +943,18 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 	var value = e.target.form.sub_group.value;
 
 	if( main_group === 'singlewarn' ) {
-		if( value === 'uw-username' ) {
+		if( value === 'uw-username' || value === 'uw-socksuspect' ) {
 			if(Twinkle.warn.prev_article === null) {
 				Twinkle.warn.prev_article = e.target.form.article.value;
 			}
-			e.target.form.article.disabled = true;
+			e.target.form.article.notArticle = true;
 			e.target.form.article.value = '';
-		} else if( e.target.form.article.disabled ) {
+		} else if( e.target.form.article.notArticle ) {
 			if(Twinkle.warn.prev_article !== null) {
 				e.target.form.article.value = Twinkle.warn.prev_article;
 				Twinkle.warn.prev_article = null;
 			}
-			e.target.form.article.disabled = false;
+			e.target.form.article.notArticle = false;
 		}
 	} else if( main_group === 'block' ) {
 		if( Twinkle.warn.messages.block[value].indefinite ) {
@@ -996,9 +1000,17 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 		}
 	}
 
-	var $article = $(e.target.form.article);
-	$("span#tw-spi-article-username").remove();
-	$article.prev().show();
+	// change form labels according to the warning selected
+	if (value === "uw-socksuspect") {
+		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
+		Morebits.quickForm.overrideElementLabel(e.target.form.article, "傀儡操纵者用户名，如知晓（不含User:） ");
+	} else if (value === "uw-username") {
+		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
+		Morebits.quickForm.overrideElementLabel(e.target.form.article, "用户名违反方针，因为… ");
+	} else {
+		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, true);
+		Morebits.quickForm.resetElementLabel(e.target.form.article);
+	}
 };
 
 Twinkle.warn.callbacks = {
@@ -1101,10 +1113,10 @@ Twinkle.warn.callbacks = {
 			var article = '', reason = '', time = null;
 			
 			if( Twinkle.getPref('blankTalkpageOnIndefBlock') && ( Twinkle.warn.messages.block[params.sub_group].indefinite || (/indef|\*|max/).exec( params.block_timer ) ) ) {
-				Status.info( '信息', '根据参数设置清空讨论页并创建新标题' );
+				Morebits.status.info( '信息', '根据参数设置清空讨论页并创建新标题' );
 				text = "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
 			} else if( !headerRe.exec( text ) ) {
-				Status.info( '信息', '未找到当月标题，将创建新的' );
+				Morebits.status.info( '信息', '未找到当月标题，将创建新的' );
 				text += "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
 			}
 			
@@ -1127,22 +1139,14 @@ Twinkle.warn.callbacks = {
 			text += "{{subst:" + params.sub_group + article + time + reason + "|sig=true|subst=subst:}}";
 		} else {
 			if( !headerRe.exec( text ) ) {
-				Status.info( '信息', '未找到当月标题，将创建新的' );
+				Morebits.status.info( '信息', '未找到当月标题，将创建新的' );
 				text += "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
 			}
-
-			switch( params.sub_group ) {
-				case 'uw-username':
-					text += "{{subst:" + params.sub_group + ( params.reason ? '|1=' + params.reason : '' ) + "|subst=subst:}} ~~~~";
-					break;
-				default:
-					text += "{{subst:" + params.sub_group + ( params.article ? '|1=' + params.article : '' ) + (params.reason ? '|2=' + params.reason : '' ) + "|subst=subst:}}" + "--~~~~";
-					break;
-			}
+			text += "{{subst:" + params.sub_group + ( params.article ? '|1=' + params.article : '' ) + (params.reason ? '|2=' + params.reason : '' ) + "|subst=subst:}}" + "--~~~~";
 		}
 		
-		if ( Twinkle.getPref('showSharedIPNotice') && isIPAddress( mw.config.get('wgTitle') ) ) {
-			Status.info( '信息', '添加共享IP说明' );
+		if ( Twinkle.getPref('showSharedIPNotice') && Morebits.isIPAddress( mw.config.get('wgTitle') ) ) {
+			Morebits.status.info( '信息', '添加共享IP说明' );
 			text +=  "\n{{subst:SharedIPAdvice}}";
 		}
 
@@ -1163,7 +1167,7 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 
 	// First, check to make sure a reason was filled in if uw-username was selected
 	
-	if(e.target.sub_group.value === 'uw-username' && e.target.reason.value.trim() === '') {
+	if(e.target.sub_group.value === 'uw-username' && e.target.article.value.trim() === '') {
 		alert("必须给{{uw-username}}提供理由。");
 		return;
 	}
@@ -1178,13 +1182,13 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 		block_timer: e.target.block_timer ? e.target.block_timer.value : null
 	};
 
-	SimpleWindow.setButtonsEnabled( false );
-	Status.init( e.target );
+	Morebits.simpleWindow.setButtonsEnabled( false );
+	Morebits.status.init( e.target );
 
-	Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
-	Wikipedia.actionCompleted.notice = "警告完成，将在几秒后刷新";
+	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
+	Morebits.wiki.actionCompleted.notice = "警告完成，将在几秒后刷新";
 
-	var wikipedia_page = new Wikipedia.page( mw.config.get('wgPageName'), '用户对话页修改' );
+	var wikipedia_page = new Morebits.wiki.page( mw.config.get('wgPageName'), '用户对话页修改' );
 	wikipedia_page.setCallbackParameters( params );
 	wikipedia_page.setFollowRedirect( true );
 	wikipedia_page.load( Twinkle.warn.callbacks.main );

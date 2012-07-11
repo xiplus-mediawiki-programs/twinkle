@@ -461,6 +461,11 @@ Twinkle.config.sections = [
 			name: "talkbackHeading",
 			label: "回复所用的小节标题",
 			type: "string"
+		},
+		{
+			name: "mailHeading",
+			label: "“有新邮件”所用的小节标题",
+			type: "string"
 		}
 	]
 },
@@ -741,8 +746,8 @@ Twinkle.config.sections = [
 
 Twinkle.config.init = function twinkleconfigInit() {
 
-	if ((mw.config.get("wgPageName") === "Wikipedia:Twinkle/参数设置" ||
-	    (mw.config.get("wgNamespaceNumber") === 2 && mw.config.get("wgTitle").lastIndexOf("/Twinkle参数设置") === (mw.config.get("wgTitle").length - 20))) &&
+	if ((mw.config.get("wgNamespaceNumber") === mw.config.get("wgNamespaceIds").project && mw.config.get("wgTitle") === "Twinkle/参数设置" ||
+	    (mw.config.get("wgNamespaceNumber") === mw.config.get("wgNamespaceIds").user && mw.config.get("wgTitle").lastIndexOf("/Twinkle参数") === (mw.config.get("wgTitle").length - 9))) &&
 	    mw.config.get("wgAction") === "view") {
 		// create the config page at Wikipedia:Twinkle/参数设置, and at user subpages (for testing purposes)
 
@@ -764,7 +769,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		contentdiv.appendChild(contentnotice);
 
 		// look and see if the user does in fact have any old settings in their skin JS file
-		var skinjs = new Wikipedia.page("User:" + mw.config.get("wgUserName") + "/" + mw.config.get("skin") + ".js");
+		var skinjs = new Morebits.wiki.page("User:" + mw.config.get("wgUserName") + "/" + mw.config.get("skin") + ".js");
 		skinjs.setCallbackParameters(contentnotice);
 		skinjs.load(Twinkle.config.legacyPrefsNotice);
 
@@ -820,7 +825,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		contentform.appendChild(container);
 
 		$(Twinkle.config.sections).each(function(sectionkey, section) {
-			if (section.hidden || (section.adminOnly && !userIsInGroup("sysop"))) {
+			if (section.hidden || (section.adminOnly && !Morebits.userIsInGroup("sysop"))) {
 				return true;  // i.e. "continue" in this context
 			}
 
@@ -856,7 +861,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 
 			// add each of the preferences to the form
 			$(section.preferences).each(function(prefkey, pref) {
-				if (pref.adminOnly && !userIsInGroup("sysop")) {
+				if (pref.adminOnly && !Morebits.userIsInGroup("sysop")) {
 					return true;  // i.e. "continue" in this context
 				}
 
@@ -936,7 +941,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 						$.each(pref.enumValues, function(enumvalue, enumdisplay) {
 							var option = document.createElement("option");
 							option.setAttribute("value", enumvalue);
-							if (configgetter(pref.name) == enumvalue) {
+							if (configgetter(pref.name) === enumvalue) {
 								option.setAttribute("selected", "selected");
 							}
 							option.appendChild(document.createTextNode(enumdisplay));
@@ -1079,7 +1084,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 			location.hash = location.hash;
 		}
 
-	} else if (mw.config.get("wgNamespaceNumber") === 2) {
+	} else if (mw.config.get("wgNamespaceNumber") === mw.config.get("wgNamespaceIds").user) {
 
 		var box = document.createElement("div");
 		box.setAttribute("id", "twinkle-config-headerbox");
@@ -1102,20 +1107,20 @@ Twinkle.config.init = function twinkleconfigInit() {
 				box.appendChild(document.createTextNode("您可配置您的Twinkle，通过使用"));
 			}
 			link = document.createElement("a");
-			link.setAttribute("href", mw.util.wikiGetlink("Wikipedia:Twinkle/参数设置") );
+			link.setAttribute("href", mw.util.wikiGetlink(mw.config.get("wgFormattedNamespaces")[mw.config.get("wgNamespaceIds").project] + ":Twinkle/参数设置") );
 			link.appendChild(document.createTextNode("Twinkle参数设置面板"));
 			box.appendChild(link);
 			box.appendChild(document.createTextNode("，或直接编辑本页。"));
 			$(box).insertAfter($("#contentSub"));
 
 		} else if (mw.config.get("wgTitle").indexOf(mw.config.get("wgUserName")) === 0 &&
-				mw.config.get("wgPageName").lastIndexOf(".js") == mw.config.get("wgPageName").length - 3) {
+				mw.config.get("wgPageName").lastIndexOf(".js") === mw.config.get("wgPageName").length - 3) {
 			// place "Looking for Twinkle options?" notice
 			box.style.width = "60%";
 
 			box.appendChild(document.createTextNode("如果您想配置您的Twinkle，请使用"));
 			link = document.createElement("a");
-			link.setAttribute("href", mw.util.wikiGetlink("Wikipedia:Twinkle/参数设置") );
+			link.setAttribute("href", mw.util.wikiGetlink(mw.config.get("wgFormattedNamespaces")[mw.config.get("wgNamespaceIds").project] + ":Twinkle/参数设置") );
 			link.appendChild(document.createTextNode("Twinkle参数设置面板"));
 			box.appendChild(link);
 			box.appendChild(document.createTextNode("。"));
@@ -1124,7 +1129,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 	}
 };
 
-// Wikipedia.page callback from init code
+// Morebits.wiki.page callback from init code
 Twinkle.config.legacyPrefsNotice = function twinkleconfigLegacyPrefsNotice(pageobj) {
 	var text = pageobj.getPageText();
 	var contentnotice = pageobj.getCallbackParameters();
@@ -1186,7 +1191,7 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 	var curvalue = $prefbutton.data("value");
 	var curpref = $prefbutton.data("pref");
 
-	var dialog = new SimpleWindow(720, 400);
+	var dialog = new Morebits.simpleWindow(720, 400);
 	dialog.setTitle(curpref.label);
 	dialog.setScriptName("Twinkle参数设置");
 
@@ -1249,7 +1254,7 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 
 	// buttonpane buttons: [Save changes] [Reset] [Cancel]
 	var button = document.createElement("button");
-	button.setAttribute("type", "submit");  // so SimpleWindow puts the button in the button pane
+	button.setAttribute("type", "submit");  // so Morebits.simpleWindow puts the button in the button pane
 	button.addEventListener("click", function(e) {
 		Twinkle.config.listDialog.save($prefbutton, dlgtbody);
 		dialog.close();
@@ -1257,14 +1262,14 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 	button.textContent = "保存修改";
 	dialogcontent.appendChild(button);
 	button = document.createElement("button");
-	button.setAttribute("type", "submit");  // so SimpleWindow puts the button in the button pane
+	button.setAttribute("type", "submit");  // so Morebits.simpleWindow puts the button in the button pane
 	button.addEventListener("click", function(e) {
 		Twinkle.config.listDialog.reset($prefbutton, dlgtbody);
 	}, false);
 	button.textContent = "复位";
 	dialogcontent.appendChild(button);
 	button = document.createElement("button");
-	button.setAttribute("type", "submit");  // so SimpleWindow puts the button in the button pane
+	button.setAttribute("type", "submit");  // so Morebits.simpleWindow puts the button in the button pane
 	button.addEventListener("click", function(e) {
 		dialog.close();  // the event parameter on this function seems to be broken
 	}, false);
@@ -1321,7 +1326,7 @@ Twinkle.config.resetPrefLink = function twinkleconfigResetPrefLink(e) {
 
 	// search tactics
 	$(Twinkle.config.sections).each(function(sectionkey, section) {
-		if (section.hidden || (section.adminOnly && !userIsInGroup("sysop"))) {
+		if (section.hidden || (section.adminOnly && !Morebits.userIsInGroup("sysop"))) {
 			return true;  // continue: skip impossibilities
 		}
 
@@ -1381,11 +1386,11 @@ Twinkle.config.resetPref = function twinkleconfigResetPref(pref, inFriendlyConfi
 Twinkle.config.resetAllPrefs = function twinkleconfigResetAllPrefs() {
 	// no confirmation message - the user can just refresh/close the page to abort
 	$(Twinkle.config.sections).each(function(sectionkey, section) {
-		if (section.hidden || (section.adminOnly && !userIsInGroup("sysop"))) {
+		if (section.hidden || (section.adminOnly && !Morebits.userIsInGroup("sysop"))) {
 			return true;  // continue: skip impossibilities
 		}
 		$(section.preferences).each(function(prefkey, pref) {
-			if (!pref.adminOnly || userIsInGroup("sysop")) {
+			if (!pref.adminOnly || Morebits.userIsInGroup("sysop")) {
 				Twinkle.config.resetPref(pref, section.inFriendlyConfig);
 			}
 		});
@@ -1395,12 +1400,12 @@ Twinkle.config.resetAllPrefs = function twinkleconfigResetAllPrefs() {
 };
 
 Twinkle.config.save = function twinkleconfigSave(e) {
-	Status.init( document.getElementById("twinkle-config-content") );
+	Morebits.status.init( document.getElementById("twinkle-config-content") );
 
-	Wikipedia.actionCompleted.notice = "保存";
+	Morebits.wiki.actionCompleted.notice = "保存";
 
-	var userjs = "User:" + mw.config.get("wgUserName") + "/twinkleoptions.js";
-	var wikipedia_page = new Wikipedia.page(userjs, "保存参数设置到 " + userjs);
+	var userjs = mw.config.get("wgFormattedNamespaces")[mw.config.get("wgNamespaceIds").user] + ":" + mw.config.get("wgUserName") + "/twinkleoptions.js";
+	var wikipedia_page = new Morebits.wiki.page(userjs, "保存参数设置到 " + userjs);
 	wikipedia_page.setCallbackParameters(e.target);
 	wikipedia_page.load(Twinkle.config.writePrefs);
 
@@ -1436,7 +1441,7 @@ if (!JSON) {
 	function str(key, holder) {
 		var i, k, v, length, mind = gap, partial, value = holder[key];
 
-		if (value && typeof value === 'object' && typeof value.toJSON === 'function') {
+		if (value && typeof value === 'object' && $.isFunction(value.toJSON)) {
 			value = value.toJSON(key);
 		}
 
@@ -1454,9 +1459,9 @@ if (!JSON) {
 			}
 			gap += indent;
 			partial = [];
-			if (Object.prototype.toString.apply(value) === '[object Array]') {
+			if ($.isArray(value)) {
 				length = value.length;
-				for (i = 0; i < length; i += 1) {
+				for (i = 0; i < length; ++i) {
 					partial[i] = str(i, value) || 'null';
 				}
 				v = partial.length === 0 ? '[]' : gap ?
@@ -1483,7 +1488,7 @@ if (!JSON) {
 		}
 	}
 
-	if (typeof JSON.stringify !== 'function') {
+	if (!$.isFunction(JSON.stringify)) {
 		JSON.stringify = function (value, ignoredParam1, ignoredParam2) {
 			ignoredParam1 = ignoredParam2;  // boredom
 			gap = '';
@@ -1514,12 +1519,12 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 	// and it is not very robust: e.g. compare([2], ["2"]) === true, and
 	// compare({}, {}) === false, but it's good enough for our purposes here
 	var compare = function(a, b) {
-		if (Object.prototype.toString.apply(a) === "[object Array]") {
+		if ($.isArray(a)) {
 			if (a.length !== b.length) {
 				return false;
 			}
 			var asort = a.sort(), bsort = b.sort();
-			for (var i = 0; asort[i]; i++) {
+			for (var i = 0; asort[i]; ++i) {
 				// comparison of the two properties of custom lists
 				if ((typeof asort[i] === "object") && (asort[i].label !== bsort[i].label ||
 					asort[i].value !== bsort[i].value)) {
@@ -1535,7 +1540,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 	};
 
 	$(Twinkle.config.sections).each(function(sectionkey, section) {
-		if (section.adminOnly && !userIsInGroup("sysop")) {
+		if (section.adminOnly && !Morebits.userIsInGroup("sysop")) {
 			return;  // i.e. "continue" in this context
 		}
 
@@ -1544,7 +1549,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 			var userValue;  // = undefined
 
 			// only read form values for those prefs that have them
-			if (!section.hidden && (!pref.adminOnly || userIsInGroup("sysop"))) {
+			if (!section.hidden && (!pref.adminOnly || Morebits.userIsInGroup("sysop"))) {
 				switch (pref.type) {
 
 					case "boolean":  // read from the checkbox
@@ -1559,7 +1564,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 					case "integer":  // read from the input box
 						userValue = parseInt(form[pref.name].value, 10);
 						if (isNaN(userValue)) {
-							Status.warn("保存", "您为 " + pref.name + "指定的值（" + pref.value + "）不合法，会继续保存操作，但此值将会跳过。");
+							Morebits.status.warn("保存", "您为 " + pref.name + " 指定的值（" + pref.value + "）不合法，会继续保存操作，但此值将会跳过。");
 							userValue = null;
 						}
 						break;
@@ -1595,12 +1600,12 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 
 			// only save those preferences that are *different* from the default
 			if (section.inFriendlyConfig) {
-				if (typeof userValue !== "undefined" && !compare(userValue, Twinkle.defaultConfig.friendly[pref.name])) {
+				if (userValue !== undefined && !compare(userValue, Twinkle.defaultConfig.friendly[pref.name])) {
 					newConfig.friendly[pref.name] = userValue;
 				}
 				foundFriendlyPrefs.push(pref.name);
 			} else {
-				if (typeof userValue !== "undefined" && !compare(userValue, Twinkle.defaultConfig.twinkle[pref.name])) {
+				if (userValue !== undefined && !compare(userValue, Twinkle.defaultConfig.twinkle[pref.name])) {
 					newConfig.twinkle[pref.name] = userValue;
 				}
 				foundTwinklePrefs.push(pref.name);
@@ -1653,8 +1658,8 @@ Twinkle.config.saveSuccess = function twinkleconfigSaveSuccess(pageobj) {
 	noticebox.style.fontSize = "100%";
 	noticebox.style.marginTop = "2em";
 	noticebox.innerHTML = "<p><b>您的Twinkle参数设置已被保存。</b></p><p>要看到这些更改，您可能需要<a href=\"" + mw.util.wikiGetlink("WP:BYPASS") + "\" title=\"WP:BYPASS\"><b>绕过浏览器缓存</b></a>。</p>";
-	Status.root.appendChild(noticebox);
+	Morebits.status.root.appendChild(noticebox);
 	var noticeclear = document.createElement("br");
 	noticeclear.style.clear = "both";
-	Status.root.appendChild(noticeclear);
+	Morebits.status.root.appendChild(noticeclear);
 };

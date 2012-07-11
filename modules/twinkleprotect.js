@@ -15,8 +15,8 @@ Twinkle.protect = function twinkleprotect() {
 		return;
 	}
 
-	twAddPortletLink(Twinkle.protect.callback, userIsInGroup('sysop') ? "保护" : "保护", "tw-rpp",
-		userIsInGroup('sysop') ? "保护页面" : "请求保护页面" );
+	twAddPortletLink(Twinkle.protect.callback, Morebits.userIsInGroup('sysop') ? "保护" : "保护", "tw-rpp",
+		Morebits.userIsInGroup('sysop') ? "保护页面" : "请求保护页面" );
 };
 
 Twinkle.protect.callback = function twinkleprotectCallback() {
@@ -24,19 +24,19 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 		alert("您还未达到自动确认。");
 		return;
 	}
-	var Window = new SimpleWindow( 620, 530 );
-	Window.setTitle( userIsInGroup( 'sysop' ) ? "施行或请求保护页面" : "请求保护页面" );
+	var Window = new Morebits.simpleWindow( 620, 530 );
+	Window.setTitle( Morebits.userIsInGroup( 'sysop' ) ? "施行或请求保护页面" : "请求保护页面" );
 	Window.setScriptName( "Twinkle" );
 	Window.addFooterLink( "保护模板", "Template:Protection templates" );
 	Window.addFooterLink( "保护方针", "WP:PROT" );
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#protect" );
 
-	var form = new QuickForm( Twinkle.protect.callback.evaluate );
+	var form = new Morebits.quickForm( Twinkle.protect.callback.evaluate );
 	var actionfield = form.append( {
 			type: 'field',
 			label: '操作类型'
 		} );
-	if( userIsInGroup( 'sysop' ) ) {
+	if( Morebits.userIsInGroup( 'sysop' ) ) {
 		actionfield.append( {
 				type: 'radio',
 				name: 'actiontype',
@@ -58,13 +58,14 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 				{
 					label: '请求保护页面',
 					value: 'request',
-					tooltip: '如果您想在WP:RFPP请求保护此页' + (userIsInGroup('sysop') ? '而不是自行完成。' : '。'),
-					checked: !userIsInGroup('sysop')
+					tooltip: '如果您想在WP:RFPP请求保护此页' + (Morebits.userIsInGroup('sysop') ? '而不是自行完成。' : '。'),
+					checked: !Morebits.userIsInGroup('sysop')
 				},
 				{
 					label: '用保护模板标记此页',
 					value: 'tag',
-					tooltip: '可以用此为页面加上合适的保护模板。'
+					tooltip: '可以用此为页面加上合适的保护模板。',
+					disabled: mw.config.get('wgArticleId') === 0
 				}
 			]
 		} );
@@ -84,22 +85,18 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 	evt.initEvent( 'change', true, true );
 	result.actiontype[0].dispatchEvent( evt );
 
-	// reduce vertical height of dialog
-	$('select[name="editlevel"], select[name="editexpiry"], select[name="moveexpiry"], select[name="movelevel"], select[name="createexpiry"], select[name="createlevel"]').
-		parent().css({ display: 'inline-block', marginRight: '0.5em' });
-
 	// get current protection level asynchronously
-	Wikipedia.actionCompleted.postfix = false;  // avoid Action: completed notice
-	if (userIsInGroup('sysop')) {
+	Morebits.wiki.actionCompleted.postfix = false;  // avoid Action: completed notice
+	if (Morebits.userIsInGroup('sysop')) {
 		var query = {
 			action: 'query',
 			prop: 'info',
 			inprop: 'protection',
 			titles: mw.config.get('wgPageName')
 		};
-		Status.init($('div[name="currentprot"] span').last()[0]);
-		var statelem = new Status("当前保护级别");
-		var wpapi = new Wikipedia.api("抓取…", query, Twinkle.protect.callback.protectionLevel, statelem);
+		Morebits.status.init($('div[name="currentprot"] span').last()[0]);
+		var statelem = new Morebits.status("当前保护级别");
+		var wpapi = new Morebits.wiki.api("抓取…", query, Twinkle.protect.callback.protectionLevel, statelem);
 		wpapi.post();
 	}
 };
@@ -130,7 +127,7 @@ Twinkle.protect.callback.protectionLevel = function twinkleprotectCallbackProtec
 	}
 	Twinkle.protect.protectionLevel = result;
 	apiobj.statelem.info(result);
-	window.setTimeout(function() { Wikipedia.actionCompleted.postfix = "完成"; }, 500);  // restore actionCompleted message
+	window.setTimeout(function() { Morebits.wiki.actionCompleted.postfix = "完成"; }, 500);  // restore actionCompleted message
 };
 
 Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAction(e) {
@@ -140,7 +137,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 
 	switch (e.target.values) {
 		case 'protect':
-			field_preset = new QuickForm.element({ type: 'field', label: '预设', name: 'field_preset' });
+			field_preset = new Morebits.quickForm.element({ type: 'field', label: '预设', name: 'field_preset' });
 			field_preset.append({
 					type: 'select',
 					name: 'category',
@@ -149,7 +146,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					list: (mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypes : Twinkle.protect.protectionTypesCreate)
 				});
 
-			field2 = new QuickForm.element({ type: 'field', label: '保护选项', name: 'field2' });
+			field2 = new Morebits.quickForm.element({ type: 'field', label: '保护选项', name: 'field2' });
 			field2.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
 			// for existing pages
 			if (mw.config.get('wgArticleId')) {
@@ -290,7 +287,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					});
 				createlevel.append({
 						type: 'option',
-						label: '（站点默认）',
+						label: '全部',
 						value: 'all'
 					});
 				createlevel.append({
@@ -344,7 +341,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			}
 			/* falls through */
 		case 'tag':
-			field1 = new QuickForm.element({ type: 'field', label: '标记选项', name: 'field1' });
+			field1 = new Morebits.quickForm.element({ type: 'field', label: '标记选项', name: 'field1' });
 			field1.append( {
 					type: 'select',
 					name: 'tagtype',
@@ -372,7 +369,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			break;
 
 		case 'request':
-			field_preset = new QuickForm.element({ type: 'field', label: '保护类型', name: 'field_preset' });
+			field_preset = new Morebits.quickForm.element({ type: 'field', label: '保护类型', name: 'field_preset' });
 			field_preset.append({
 					type: 'select',
 					name: 'category',
@@ -381,7 +378,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					list: (mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypes : Twinkle.protect.protectionTypesCreate)
 				});
 
-			field1 = new QuickForm.element({ type: 'field', label: '选项', name: 'field1' });
+			field1 = new Morebits.quickForm.element({ type: 'field', label: '选项', name: 'field1' });
 			field1.append( {
 					type: 'select',
 					name: 'expiry',
@@ -431,9 +428,13 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 
 		// re-add protection level text, if it's available
 		if (Twinkle.protect.protectionLevel) {
-			Status.init($('div[name="currentprot"] span').last()[0]);
-			Status.info("当前保护级别", Twinkle.protect.protectionLevel);
+			Morebits.status.init($('div[name="currentprot"] span').last()[0]);
+			Morebits.status.info("当前保护级别", Twinkle.protect.protectionLevel);
 		}
+
+		// reduce vertical height of dialog
+		$(e.target.form).find('select[name="editlevel"], select[name="editexpiry"], select[name="moveexpiry"], select[name="movelevel"], select[name="createexpiry"], select[name="createlevel"]').
+			parent().css({ display: 'inline-block', marginRight: '0.5em' });
 	}
 };
 
@@ -755,7 +756,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 	switch (actiontype) {
 		case 'protect':
 			// protect the page
-			var thispage = new Wikipedia.page(mw.config.get('wgPageName'), "保护页面");
+			var thispage = new Morebits.wiki.page(mw.config.get('wgPageName'), "保护页面");
 			if (mw.config.get('wgArticleId')) {
 				if (form.editmodify.checked) {
 					thispage.setEditProtection(form.editlevel.value, form.editexpiry.value);
@@ -773,30 +774,30 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				return;
 			}
 
-			SimpleWindow.setButtonsEnabled( false );
-			Status.init( form );
+			Morebits.simpleWindow.setButtonsEnabled( false );
+			Morebits.status.init( form );
 
-			Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
-			Wikipedia.actionCompleted.notice = "保护完成";
+			Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
+			Morebits.wiki.actionCompleted.notice = "保护完成";
 
 			thispage.protect();
 			/* falls through */
 		case 'tag':
 
 			if (actiontype === 'tag') {
-				SimpleWindow.setButtonsEnabled( false );
-				Status.init( form );
-				Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
-				Wikipedia.actionCompleted.followRedirect = false;
-				Wikipedia.actionCompleted.notice = "标记完成";
+				Morebits.simpleWindow.setButtonsEnabled( false );
+				Morebits.status.init( form );
+				Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
+				Morebits.wiki.actionCompleted.followRedirect = false;
+				Morebits.wiki.actionCompleted.notice = "标记完成";
 			}
 
 			if (tagparams.tag === 'noop') {
-				Status.info("应用保护模板", "无关");
+				Morebits.status.info("应用保护模板", "无关");
 				break;
 			}
 
-			var protectedPage = new Wikipedia.page( mw.config.get('wgPageName'), '标记页面');
+			var protectedPage = new Morebits.wiki.page( mw.config.get('wgPageName'), '标记页面');
 			protectedPage.setCallbackParameters( tagparams );
 			protectedPage.load( Twinkle.protect.callbacks.taggingPage );
 			break;
@@ -892,16 +893,16 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				expiry: form.expiry.value
 			};
 
-			SimpleWindow.setButtonsEnabled( false );
-			Status.init( form );
+			Morebits.simpleWindow.setButtonsEnabled( false );
+			Morebits.status.init( form );
 
 			rppName = 'Wikipedia:请求保护页面';
 
 			// Updating data for the action completed event
-			Wikipedia.actionCompleted.redirect = rppName;
-			Wikipedia.actionCompleted.notice = "提名完成，重定向到讨论页";
+			Morebits.wiki.actionCompleted.redirect = rppName;
+			Morebits.wiki.actionCompleted.notice = "提名完成，重定向到讨论页";
 
-			var rppPage = new Wikipedia.page( rppName, '请求保护页面');
+			var rppPage = new Morebits.wiki.page( rppName, '请求保护页面');
 			rppPage.setFollowRedirect( true );
 			rppPage.setCallbackParameters( rppparams );
 			rppPage.load( Twinkle.protect.callbacks.fileRequest );
@@ -919,8 +920,8 @@ Twinkle.protect.callbacks = {
 		var tag, summary;
 
 		var oldtag_re = /\s*(?:<noinclude>)?\s*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
-		var re_result;
-		if (re_result = oldtag_re.exec(text)) {
+		var re_result = oldtag_re.exec(text);
+		if (re_result) {
 			if (confirm("在页面上找到{{" + re_result[1] + "}}\n点击确定以移除，或点击取消以取消。")) {
 				text = text.replace( oldtag_re, '' );
 			}

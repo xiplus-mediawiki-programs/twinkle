@@ -13,7 +13,7 @@
 
 Twinkle.tag = function friendlytag() {
 	// redirect tagging
-	if( Wikipedia.isPageRedirect() ) {
+	if( Morebits.wiki.isPageRedirect() ) {
 		Twinkle.tag.mode = '重定向';
 		twAddPortletLink( Twinkle.tag.callback, "标记", "friendly-tag", "标记重定向" );
 	}
@@ -25,12 +25,12 @@ Twinkle.tag = function friendlytag() {
 };
 
 Twinkle.tag.callback = function friendlytagCallback( uid ) {
-	var Window = new SimpleWindow( 630, 400 );
+	var Window = new Morebits.simpleWindow( 630, (Twinkle.tag.mode === "条目") ? 450 : 400 );
 	Window.setScriptName( "Twinkle" );
 	// anyone got a good policy/guideline/info page/instructional page link??
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#tag" );
 
-	var form = new QuickForm( Twinkle.tag.callback.evaluate );
+	var form = new Morebits.quickForm( Twinkle.tag.callback.evaluate );
 
 	switch( Twinkle.tag.mode ) {
 		case '条目':
@@ -145,7 +145,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 
 	// categorical sort order
 	if (sortorder === "cat") {
-		var div = new QuickForm.element({
+		var div = new Morebits.quickForm.element({
 			type: "div",
 			id: "tagWorkArea"
 		});
@@ -173,7 +173,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 				doCategoryCheckboxes(subdiv, content);
 			} else {
 				$.each(content, function(subtitle, subcontent) {
-					subdiv.append({ type: "div", label: [ htmlNode("b", subtitle) ] });
+					subdiv.append({ type: "div", label: [ Morebits.htmlNode("b", subtitle) ] });
 					doCategoryCheckboxes(subdiv, subcontent);
 				});
 			}
@@ -191,7 +191,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 		$.each(Twinkle.tag.article.tags, function(tag, description) {
 			checkboxes.push(makeCheckbox(tag, description));
 		});
-		var tags = new QuickForm.element({
+		var tags = new Morebits.quickForm.element({
 			type: "checkbox",
 			name: "articleTags",
 			list: checkboxes
@@ -600,21 +600,22 @@ Twinkle.tag.groupHash = [
 
 Twinkle.tag.callbacks = {
 	main: function( pageobj ) {
-		var params = pageobj.getCallbackParameters();
-		var tagRe, tagText = '', summaryText = '添加';
-		var tags = [], groupableTags = [];
+		var params = pageobj.getCallbackParameters(),
+		    tagRe, tagText = '', summaryText = '添加',
+		    tags = [], groupableTags = [],
 
-		// Remove tags that become superfluous with this action
-		var pageText = pageobj.getPageText().replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+		    // Remove tags that become superfluous with this action
+		    pageText = pageobj.getPageText().replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, ""),
 
-		var i;
+		    i;
+
 		if( Twinkle.tag.mode !== '重定向' ) {
 			// Check for preexisting tags and separate tags into groupable and non-groupable arrays
 			for( i = 0; i < params.tags.length; i++ ) {
 				tagRe = new RegExp( '(\\{\\{' + params.tags[i] + '(\\||\\}\\}))', 'im' );
 				if( !tagRe.exec( pageText ) ) {
 					if( params.tags[i] == 'notability' ) {
-						wikipedia_page = new Wikipedia.page("Wikipedia:关注度/提报", "添加关注度记录项");
+						wikipedia_page = new Morebits.wiki.page("Wikipedia:关注度/提报", "添加关注度记录项");
 						wikipedia_page.setFollowRedirect(true);
 						wikipedia_page.setCallbackParameters(params);
 						wikipedia_page.load(Twinkle.tag.callbacks.notabilityList);
@@ -625,13 +626,13 @@ Twinkle.tag.callbacks = {
 						tags = tags.concat( params.tags[i] );
 					}
 				} else {
-					Status.info( '信息', '在条目上找到{{' + params.tags[i] +
+					Morebits.status.info( '信息', '在条目上找到{{' + params.tags[i] +
 						'}}…已排除' );
 				}
 			}
 
 			if( params.group && groupableTags.length >= 3 ) {
-				Status.info( '信息', '合并支持的模板到{{multiple issues}}' );
+				Morebits.status.info( '信息', '合并支持的模板到{{multiple issues}}' );
 
 				groupableTags.sort();
 				tagText += '{{multiple issues';
@@ -658,7 +659,7 @@ Twinkle.tag.callbacks = {
 				if( !tagRe.exec( pageText ) ) {
 					tags = tags.concat( params.tags[i] );
 				} else {
-					Status.info( '信息', '在重定向上找到{{' + params.tags[i] +
+					Morebits.status.info( '信息', '在重定向上找到{{' + params.tags[i] +
 						'}}…已排除' );
 				}
 			}
@@ -741,142 +742,6 @@ Twinkle.tag.callbacks = {
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
 	}
-
-/*
-	file: function friendlytagCallbacksFile(pageobj) {
-		var text = pageobj.getPageText();
-		var params = pageobj.getCallbackParameters();
-		var summary = "Adding ";
-
-		// Add maintenance tags
-		if (params.tags.length) {
-
-			var tagtext = "", currentTag;
-			$.each(params.tags, function(k, tag) {
-				// when other commons-related tags are placed, remove "move to Commons" tag
-				if (["Keep local", "subst:ncd", "Do not move to Commons_reason", "Do not move to Commons",
-					"Now Commons"].indexOf(tag) !== -1) {
-					text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*}}/gi, "");
-				}
-
-				currentTag = "{{" + (tag === "Do not move to Commons_reason" ? "Do not move to Commons" : tag);
-
-				var input;
-				switch (tag) {
-					case "subst:ncd":
-						/* falls through * /
-					case "Keep local":
-						input = prompt( "{{" + (tag === "subst:ncd" ? "Now Commons" : tag) +
-							"}} - Enter the name of the image on Commons (if different from local name), excluding the File: prefix:", "" );
-						if (input === null) {
-							return true;  // continue
-						} else if (input !== "") {
-							currentTag += '|1=' + input;
-						}
-						break;
-					case "Rename media":
-						input = prompt( "{{Rename media}} - Enter the new name for the image (optional):", "" );
-						if (input === null) {
-							return true;  // continue
-						} else if (input !== "") {
-							currentTag += "|1=" + input;
-						}
-						input = prompt( "{{Rename media}} - Enter the reason for the rename (optional):", "" );
-						if (input === null) {
-							return true;  // continue
-						} else if (input !== "") {
-							currentTag += "|2=" + input;
-						}
-						break;
-					case "Cleanup image":
-						/* falls through * /
-					case "Cleanup SVG":
-						input = prompt( "{{" + tag + "}} - Enter the reason for cleanup (required). To skip the tag, click Cancel:", "" );
-						if (input === null) {
-							return true;  // continue
-						} else if (input !== "") {
-							currentTag += "|1=" + input;
-						}
-						break;
-					case "Image-Poor-Quality":
-						input = prompt( "{{Image-Poor-Quality}} - Enter the reason why this image is so bad (required). To skip the tag, click Cancel:", "" );
-						if (input === null) {
-							return true;  // continue
-						} else if (input !== "") {
-							currentTag += "|1=" + input;
-						}
-						break;
-					case "Low quality chem":
-						input = prompt( "{{Low quality chem}} - Enter the reason why the diagram is disputed (required). To skip the tag, click Cancel:", "" );
-						if (input === null) {
-							return true;  // continue
-						} else if (input !== "") {
-							currentTag += "|1=" + input;
-						}
-						break;
-					case "PNG version available":
-						/* falls through * /
-					case "SVG version available":
-						/* falls through * /
-					case "Obsolete":
-						/* falls through * /
-					case "Duplicate":
-						input = prompt( "{{" + tag + "}} - Enter the name of the file which replaces this one (required). To skip the tag, click Cancel:", "" );
-						if (input === null) {
-							return true;  // continue
-						} else if (input !== "") {
-							currentTag += "|1=" + input;
-						}
-						break;
-					case "Do not move to Commons_reason":
-						input = prompt( "{{Do not move to Commons}} - Enter the reason why this image should not be moved to Commons (required). To skip the tag, click Cancel:", "" );
-						if (input === null) {
-							return true;  // continue
-						} else if (input !== "") {
-							currentTag += "|reason=" + input;
-						}
-						break;
-					case "Non-free reduced":
-						//remove {{non-free reduce}} and redirects
-						text = text.replace(/\{\{\s*(Template\s*:\s*)?(Non-free reduce|FairUseReduce|Fairusereduce|Fair Use Reduce|Fair use reduce|Reduce size|Reduce|Fair-use reduce|Image-toobig|Comic-ovrsize-img|Non-free-reduce|Nfr|Smaller image|Nonfree reduce)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s* /ig, "");
-						currentTag += "|date={{subst:date}}";
-						break;
-					default:
-						break;  // don't care
-				}
-
-				if (tag === "Should be SVG") {
-					currentTag += "|" + params.svgSubcategory;
-				}
-
-				currentTag += "}}\n";
-
-				tagtext += currentTag;
-				summary += "{{" + tag + "}}, ";
-
-				return true;  // continue
-			});
-
-			if (!tagtext) {
-				pageobj.getStatusElement().warn("User canceled operation; nothing to do");
-				return;
-			}
-
-			text = tagtext + text;
-		}
-
-		pageobj.setPageText(text);
-		pageobj.setEditSummary(summary.substring(0, summary.length - 2) + Twinkle.getPref('summaryAd'));
-		pageobj.setWatchlist(Twinkle.getFriendlyPref('watchTaggedPages'));
-		pageobj.setMinorEdit(Twinkle.getFriendlyPref('markTaggedPagesAsMinor'));
-		pageobj.setCreateOption('nocreate');
-		pageobj.save();
-
-		if( Twinkle.getFriendlyPref('markTaggedPagesAsPatrolled') ) {
-			pageobj.patrol();
-		}
-	}
-*/
 };
 
 Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
@@ -901,16 +766,16 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		return;
 	}
 
-	SimpleWindow.setButtonsEnabled( false );
-	Status.init( form );
+	Morebits.simpleWindow.setButtonsEnabled( false );
+	Morebits.status.init( form );
 
-	Wikipedia.actionCompleted.redirect = mw.config.get('wgPageName');
-	Wikipedia.actionCompleted.notice = "标记完成，在几秒内刷新页面";
+	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
+	Morebits.wiki.actionCompleted.notice = "标记完成，在几秒内刷新页面";
 	if (Twinkle.tag.mode === '重定向') {
-		Wikipedia.actionCompleted.followRedirect = false;
+		Morebits.wiki.actionCompleted.followRedirect = false;
 	}
 
-	var wikipedia_page = new Wikipedia.page(mw.config.get('wgPageName'), "正在标记" + Twinkle.tag.mode);
+	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), "正在标记" + Twinkle.tag.mode);
 	wikipedia_page.setCallbackParameters(params);
 	switch (Twinkle.tag.mode) {
 		case '条目':
@@ -918,9 +783,6 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		case '重定向':
 			wikipedia_page.load(Twinkle.tag.callbacks.main);
 			return;
-		/*case 'file':
-			wikipedia_page.load(Twinkle.tag.callbacks.file);
-			return;*/
 		default:
 			alert("Twinkle.tag：未知模式 " + Twinkle.tag.mode);
 			break;

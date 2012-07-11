@@ -18,7 +18,7 @@
 
 //<nowiki>
 
-( function ( $, undefined ) { // Wrap with anonymous function
+( function ( window, document, $, undefined ) { // Wrap with anonymous function
 
 var Twinkle = {};
 window.Twinkle = Twinkle;  // allow global access
@@ -66,10 +66,10 @@ Twinkle.defaultConfig.twinkle = {
 	watchSpeedyPages: [ ],
 	markSpeedyPagesAsPatrolled: true,
 	// these next two should probably be identical by default
-	notifyUserOnSpeedyDeletionNomination: [ "db", "g1", "g2", "g3", "g5", "g11", "g12", "g13", "g16", "a1", "a2", "f6", "r2", "r3", "r4" ],
-	welcomeUserOnSpeedyDeletionNotification: [ "db", "g1", "g2", "g3", "g5", "g11", "g12", "g13", "g16", "a1", "a2", "f6", "r2", "r3", "r4" ],
-	promptForSpeedyDeletionSummary: [ "db"/*, "g1", "g2", "g3", "g5", "g11", "g12", "g13", "g16", "a1", "a2", "f6", "r2", "r3", "r4"*/ ],
-	openUserTalkPageOnSpeedyDelete: [ /*"db", "g1", "g2", "g3", "g5", "g11", "g12", "g13", "g16", "a1", "a2", "f6", "r2", "r3", "r4"*/ ],
+	notifyUserOnSpeedyDeletionNomination: [ "db", "g1", "g2", "g3", "g5", "g11", "g12", "g13", "g16", "a1", "a2", "a4", "a5", "f6", "r2", "r3", "r4" ],
+	welcomeUserOnSpeedyDeletionNotification: [ "db", "g1", "g2", "g3", "g5", "g11", "g12", "g13", "g16", "a1", "a2", "a4", "a5", "f6", "r2", "r3", "r4" ],
+	promptForSpeedyDeletionSummary: [ "db" ],
+	openUserTalkPageOnSpeedyDelete: [  ],
 	deleteTalkPageOnDelete: false,
 	deleteSysopDefaultToTag: false,
 	speedyWindowHeight: 500,
@@ -144,6 +144,7 @@ Twinkle.defaultConfig.friendly = {
 	markTalkbackAsMinor: true,
 	insertTalkbackSignature: true,  // always sign talkback templates
 	talkbackHeading: "回复通告",
+	mailHeading: "您有新邮件！",
 	 // Shared
 	markSharedIPAsMinor: true
 };
@@ -312,9 +313,14 @@ function twAddPortletLink( task, text, id, tooltip )
 		twAddPortlet( Twinkle.getPref( "portletArea" ), Twinkle.getPref( "portletId" ), Twinkle.getPref( "portletName" ), Twinkle.getPref( "portletType" ), Twinkle.getPref( "portletNext" ));
 	}
 	var link = mw.util.addPortletLink( Twinkle.getPref( "portletId" ), typeof task === "string" ? task : "#", text, id, tooltip );
-	if ($.isFunction(task)) $(link).click(function (ev) { task(); ev.preventDefault(); });
+	if ( $.isFunction( task ) ) {
+		$( link ).click(function ( ev ) {
+			task();
+			ev.preventDefault();
+		});
+	}
 	return link;
 }
 
 // Check if account is experienced enough to use Twinkle
-var twinkleUserAuthorized = userIsInGroup( "autoconfirmed" ) || userIsInGroup( "confirmed" );
+var twinkleUserAuthorized = Morebits.userIsInGroup( "autoconfirmed" ) || Morebits.userIsInGroup( "confirmed" );

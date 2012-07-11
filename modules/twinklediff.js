@@ -19,25 +19,24 @@ Twinkle.diff = function twinklediff() {
 		'oldid': 'prev'
 	};
 
-	twAddPortletLink( mw.util.wikiScript("index")+ "?" + jQuery.param( query ), '最后', 'tw-lastdiff', '显示最后修改' );
+	twAddPortletLink( mw.util.wikiScript("index")+ "?" + $.param( query ), '最后', 'tw-lastdiff', '显示最后修改' );
 
 	// Show additional tabs only on diff pages
-	if (QueryString.exists('diff')) {
+	if (Morebits.queryString.exists('diff')) {
 		twAddPortletLink(function(){ Twinkle.diff.evaluate(false); }, '自前', 'tw-since', '显示与上一修订版本间的差异' );
 		twAddPortletLink( function(){ Twinkle.diff.evaluate(true); }, '自我', 'tw-sincemine', '显示与我做出的修订版本的差异' );
 
-		var oldid = /oldid=(.+)/.exec($('div#mw-diff-ntitle1 strong a').first().attr("href"))[1];
+		var oldid = /oldid=(.+)/.exec($('#mw-diff-ntitle1').find('strong a').first().attr("href"))[1];
 		query = {
 			'title': mw.config.get('wgPageName'),
 			'diff': 'cur',
 			'oldid' : oldid
 		};
-		twAddPortletLink( mw.util.wikiScript("index")+ "?" + jQuery.param( query ), '当前', 'tw-curdiff', '显示与当前版本间的差异' );
+		twAddPortletLink( mw.util.wikiScript("index")+ "?" + $.param( query ), '当前Current', 'tw-curdiff', '显示与当前版本间的差异' );
 	}
 };
 
 Twinkle.diff.evaluate = function twinklediffEvaluate(me) {
-	var ntitle = getElementsByClassName( document.getElementById('bodyContent'), 'td' , 'diff-ntitle' )[0];
 
 	var user;
 	if( me ) {
@@ -59,8 +58,8 @@ Twinkle.diff.evaluate = function twinklediffEvaluate(me) {
 		'rvstartid': mw.config.get('wgCurRevisionId') - 1, // i.e. not the current one
 		'rvuser': user
 	};
-	Status.init( document.getElementById('bodyContent') );
-	var wikipedia_api = new Wikipedia.api( '抓取最初贡献者信息', query, Twinkle.diff.callbacks.main );
+	Morebits.status.init( document.getElementById('bodyContent') );
+	var wikipedia_api = new Morebits.wiki.api( '抓取最初贡献者信息', query, Twinkle.diff.callbacks.main );
 	wikipedia_api.params = { user: user };
 	wikipedia_api.post();
 };
@@ -79,6 +78,6 @@ Twinkle.diff.callbacks = {
 			'oldid': revid,
 			'diff': mw.config.get('wgCurRevisionId')
 		};
-		window.location = mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/index.php?' + QueryString.create( query );
+		window.location = mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query );
 	}
 };

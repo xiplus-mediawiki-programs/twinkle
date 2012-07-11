@@ -12,19 +12,19 @@ Twinkle.delimages = function twinkledeli() {
 	if( mw.config.get( 'wgNamespaceNumber' ) < 0 || !mw.config.get( 'wgCurRevisionId' ) ) {
 		return;
 	}
-	if( userIsInGroup( 'sysop' ) ) {
+	if( Morebits.userIsInGroup( 'sysop' ) ) {
 		twAddPortletLink( Twinkle.delimages.callback, "批图", "tw-deli", "批量删除此页内的文件" );
 	}
 };
 
 Twinkle.delimages.unlinkCache = {};
 Twinkle.delimages.callback = function twinkledeliCallback() {
-	var Window = new SimpleWindow( 800, 400 );
+	var Window = new Morebits.simpleWindow( 800, 400 );
 	Window.setTitle( "批量文件删除" );
 	Window.setScriptName( "Twinkle" );
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#delimages" );
 
-	var form = new QuickForm( Twinkle.delimages.callback.evaluate );
+	var form = new Morebits.quickForm( Twinkle.delimages.callback.evaluate );
 	form.append( {
 		type: 'checkbox',
 		list: [
@@ -68,7 +68,7 @@ Twinkle.delimages.callback = function twinkledeliCallback() {
 			'gimlimit': 'max'
 		};
 	}
-	var wikipedia_api = new Wikipedia.api( '抓取文件', query, function( self ) {
+	var wikipedia_api = new Morebits.wiki.api( '抓取文件', query, function( self ) {
 		var xmlDoc = self.responseXML;
 		var images = $(xmlDoc).find('page[imagerepository="local"]');
 		var list = [];
@@ -103,7 +103,7 @@ Twinkle.delimages.callback = function twinkledeliCallback() {
 wikipedia_api.params = { form:form, Window:Window };
 wikipedia_api.post();
 var root = document.createElement( 'div' );
-Status.init( root );
+Morebits.status.init( root );
 Window.setContent( root );
 Window.display();
 };
@@ -121,13 +121,13 @@ Twinkle.delimages.callback.evaluate = function twinkledeliCallbackEvaluate(event
 		return;
 	}
 
-	SimpleWindow.setButtonsEnabled( false );
-	Status.init( event.target );
+	Morebits.simpleWindow.setButtonsEnabled( false );
+	Morebits.status.init( event.target );
 
 	function toCall( work ) {
 		if( work.length === 0 && Twinkle.delimages.currentDeleteCounter <= 0 && Twinkle.delimages.currentUnlinkCounter <= 0 ) {
 			window.clearInterval( Twinkle.delimages.currentdeletor );
-			Wikipedia.removeCheckpoint();
+			Morebits.wiki.removeCheckpoint();
 			return;
 		} else if( work.length !== 0 && Twinkle.delimages.currentDeleteCounter <= Twinkle.getPref('batchDeleteMinCutOff') && Twinkle.delimages.currentUnlinkCounter <= Twinkle.getPref('batchDeleteMinCutOff') ) {
 			Twinkle.delimages.unlinkCache = []; // Clear the cache
@@ -141,14 +141,14 @@ Twinkle.delimages.callback.evaluate = function twinkledeliCallbackEvaluate(event
 					'action': 'query',
 					'titles': image
 				};
-				var wikipedia_api = new Wikipedia.api( '检查文件 ' + image + ' 是否存在', query, Twinkle.delimages.callbacks.main );
+				var wikipedia_api = new Morebits.wiki.api( '检查文件 ' + image + ' 是否存在', query, Twinkle.delimages.callbacks.main );
 				wikipedia_api.params = { image:image, reason:reason, unlink_image:unlink_image, delete_image:delete_image };
 				wikipedia_api.post();
 			}
 		}
 	}
 	var work = Morebits.array.chunk( images, Twinkle.getPref('deliChunks') );
-	Wikipedia.addCheckpoint();
+	Morebits.wiki.addCheckpoint();
 	Twinkle.delimages.currentdeletor = window.setInterval( toCall, 1000, work );
 };
 Twinkle.delimages.callbacks = {
@@ -173,16 +173,16 @@ Twinkle.delimages.callbacks = {
 				'action': 'query',
 				'list': 'imageusage',
 				'iutitle': self.params.image,
-				'iulimit': userIsInGroup( 'sysop' ) ? 5000 : 500 // 500 is max for normal users, 5000 for bots and sysops
+				'iulimit': Morebits.userIsInGroup( 'sysop' ) ? 5000 : 500 // 500 is max for normal users, 5000 for bots and sysops
 			};
-			var wikipedia_api = new Wikipedia.api( '抓取文件链接', query, Twinkle.delimages.callbacks.unlinkImageInstancesMain );
+			var wikipedia_api = new Morebits.wiki.api( '抓取文件链接', query, Twinkle.delimages.callbacks.unlinkImageInstancesMain );
 			wikipedia_api.params = self.params;
 			wikipedia_api.post();
 		}
 		if( self.params.delete_image ) {
 
-			var imagepage = new Wikipedia.page( self.params.image, '删除文件');
-			imagepage.setEditSummary( self.params.reason + Twinkle.getPref('deletionSummaryAd'));
+			var imagepage = new Morebits.wiki.page( self.params.image, '删除文件');
+			imagepage.setEditSummary( "因为“" + self.params.reason + "”删除" + Twinkle.getPref('deletionSummaryAd'));
 			imagepage.deletePage();
 		}
 	},
@@ -198,7 +198,7 @@ Twinkle.delimages.callbacks = {
 		}
 
 		$.each( instances, function(k,title) {
-			page = new Wikipedia.page(title, "取消文件在 " + title + " 上的使用");
+			page = new Morebits.wiki.page(title, "取消文件在" + title + " 上的使用");
 			page.setFollowRedirect(true);
 			page.setCallbackParameters({'image': self.params.image, 'reason': self.params.reason});
 			page.load(Twinkle.delimages.callbacks.unlinkImageInstances);
@@ -211,7 +211,7 @@ Twinkle.delimages.callbacks = {
 
 		var image = params.image.replace( /^(?:Image|File|文件):/, '' );
 		var old_text = self.getPageText();
-		var wikiPage = new Mediawiki.Page( old_text );
+		var wikiPage = new Morebits.wikitext.page( old_text );
 		wikiPage.commentOutImage( image , '注释此文件因其已被删除' );
 		var text = wikiPage.getText();
 
