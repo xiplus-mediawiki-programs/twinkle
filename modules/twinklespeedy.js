@@ -400,7 +400,7 @@ Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 		label: 'G13: 明显的、拙劣的机器翻译。',
 		value: 'g13'
 	});
-	if (userIsInGroup('sysop')) {
+	if (Morebits.userIsInGroup('sysop')) {
 		result.push({
 			label: 'G14: 超过两周没有进行任何翻译的非现代标准汉语页面。',
 			value: 'g14',

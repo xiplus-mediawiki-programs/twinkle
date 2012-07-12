@@ -1287,6 +1287,10 @@ Morebits.wiki.actionCompleted.redirect = null;
 Morebits.wiki.actionCompleted.notice = '动作';
 Morebits.wiki.actionCompleted.postfix = '已完成';
 
+Morebits.wiki.addCheckpoint = function() {
+		++Morebits.wiki.nbrOfCheckpointsLeft;
+};
+
 Morebits.wiki.removeCheckpoint = function() {
 	if( --Morebits.wiki.nbrOfCheckpointsLeft <= 0 && Morebits.wiki.numberOfActionsLeft <= 0 ) {
 		Morebits.wiki.actionCompleted.event();
@@ -2204,7 +2208,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			var link = document.createElement('a');
 			link.setAttribute('href', mw.util.wikiGetlink(ctx.pageName) );
 			link.appendChild(document.createTextNode(ctx.pageName));
-			ctx.statusElement.info(['completed (', link, ')']);
+			ctx.statusElement.info(['完成（', link, '）']);
 			if (ctx.onSaveSuccess) {
 				ctx.onSaveSuccess(this);  // invoke callback
 			}

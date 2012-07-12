@@ -451,13 +451,13 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		Morebits.wiki.actionCompleted.notice = "提名完成，重定向到讨论页";
 
 		// Tagging file
-		wikipedia_page = new Morebits.wikipedia.page(mw.config.get('wgPageName'), "添加存废讨论模板到页面");
+		wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), "添加存废讨论模板到页面");
 		wikipedia_page.setFollowRedirect(false);
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.xfd.callbacks.afd.taggingArticle);
 
 		// Contributor specific edits
-		wikipedia_page = new Morebits.wikipedia.page(mw.config.get('wgPageName'));
+		wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.lookupCreator(Twinkle.xfd.callbacks.afd.main);
 
