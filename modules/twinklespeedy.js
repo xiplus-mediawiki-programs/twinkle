@@ -432,11 +432,6 @@ Twinkle.speedy.redirectList = [
 		tooltip: '不包括常见的拼写错误。为常见的拼写错误建立指向正确题目的重定向页面，可使百科用户纵使在查找文章时拼写错误，也能够找到寻求的文章。参阅：Wikipedia:命名常规。'
 	},
 	{
-		label: 'R4: 故意破坏的结果。',
-		value: 'r4',
-		tooltip: '如将一个页面移动到一个没有意义的标题上，当重新移动回正确名称时，就会留下一个重定向页。'
-	},
-	{
 		label: 'R5: 指向本身的重定向或循环的重定向。',
 		value: 'r5',
 		tooltip: '如A→B→C→……→A。'
@@ -465,7 +460,6 @@ Twinkle.speedy.normalizeHash = {
 	'a5': 'a5',
 	'r2': 'r2',
 	'r3': 'r3',
-	'r4': 'r4',
 	'r5': 'r5',
 	'f1': 'f1',
 	'f3': 'f3',
@@ -502,7 +496,6 @@ Twinkle.speedy.reasonHash = {
 // Redirects
 	'r2': '跨名字空间重定向',
 	'r3': '名称错误的重定向',
-	'r4': '重定向破坏',
 	'r5': '指向本身的重定向或循环的重定向',
 // Images and media
 	'f1': '重复的图片',

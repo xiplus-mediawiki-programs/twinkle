@@ -29,7 +29,7 @@ Twinkle.config.commonSets = {
 		a1: "A1", a2: "A2", a3: "A3", a4: "A4", a5: "A5",
 		o1: "O1", o3: "O3", o4: "O4",
 		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
-		r2: "R2", r3: "R3", r4: "R4", r5: "R5" // db-multiple is not listed here because it is treated differently within twinklespeedy
+		r2: "R2", r3: "R3", r5: "R5" // db-multiple is not listed here because it is treated differently within twinklespeedy
 	},
 	csdCriteriaDisplayOrder: [
 		"db",
@@ -37,7 +37,7 @@ Twinkle.config.commonSets = {
 		"a1", "a2", "a3", "a4", "a5",
 		"o1", "o3", "o4",
 		"f1", "f3", "f4", "f5", "f6", "f7",
-		"r2", "r3", "r4", "r5"
+		"r2", "r3", "r5"
 	],
 	csdCriteriaNotificationDisplayOrder: [
 		"db",
@@ -45,7 +45,7 @@ Twinkle.config.commonSets = {
 		"a1", "a2", "a3", "a4", "a5",
 		"o1", "o3", "o4",
 		"f1", "f3", "f4", "f5", "f6", "f7",
-		"r2", "r3", "r4", "r5"
+		"r2", "r3", "r5"
 	],
 	csdAndDICriteria: {
 		db: "自定义理由",
@@ -53,7 +53,7 @@ Twinkle.config.commonSets = {
 		a1: "A1", a2: "A2", a3: "A3", a4: "A4", a5: "A5",
 		o1: "O1", o3: "O3", o4: "O4",
 		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
-		r2: "R2", r3: "R3", r4: "R4", r5: "R5" // db-multiple is not listed here because it is treated differently within twinklespeedy
+		r2: "R2", r3: "R3", r5: "R5" // db-multiple is not listed here because it is treated differently within twinklespeedy
 	},
 	csdAndDICriteriaDisplayOrder: [
 		"db",
@@ -61,7 +61,7 @@ Twinkle.config.commonSets = {
 		"a1", "a2", "a3", "a4", "a5",
 		"o1", "o3", "o4",
 		"f1", "f3", "f4", "f5", "f6", "f7",
-		"r2", "r3", "r4", "r5"
+		"r2", "r3", "r5"
 	],
 	namespacesNoSpecial: {
 		"0": "（条目）",
