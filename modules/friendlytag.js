@@ -70,27 +70,6 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 			}
 			break;
 
-		/*case 'file':
-			Window.setTitle( "文件维护标记" );
-
-			// TODO: perhaps add custom tags TO list of checkboxes
-
-			form.append({ type: 'header', label: '版权和来源问题模板' });
-			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.licenseList } );
-
-			form.append({ type: 'header', label: '清理模板' } );
-			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.cleanupList } );
-
-			form.append({ type: 'header', label: '图片质量模板' } );
-			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.qualityList } );
-
-			form.append({ type: 'header', label: '维基媒体相关模板' });
-			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.commonsList } );
-
-			form.append({ type: 'header', label: '替换模板' });
-			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.replacementList } );
-			break;*/
-
 		case '重定向':
 			Window.setTitle( "重定向标记" );
 
@@ -513,7 +492,7 @@ Twinkle.tag.callbacks = {
 			}
 
 			summaryText += '{{[[';
-			summaryText += (tagName.indexOf(":") !== -1 ? tagName : ("Template:" + tagName + "|" + tagName));
+			summaryText += (tagName.indexOf(":") !== -1 ? tagName : ("T:" + tagName + "|" + tagName));
 			summaryText += ']]}}';
 		};
 
@@ -548,7 +527,7 @@ Twinkle.tag.callbacks = {
 				totalTags = groupableTags.length;
 				$.each(groupableTags, addTag);
 
-				summaryText += '多个标记（{{[[Template:multiple issues|multiple issues]]}}）';
+				summaryText += '等标记（{{[[T:multiple issues|multiple issues]]}}）';
 				if( tags.length > 0 ) {
 					summaryText += '及';
 				}
