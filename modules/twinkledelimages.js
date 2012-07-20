@@ -182,7 +182,7 @@ Twinkle.delimages.callbacks = {
 		if( self.params.delete_image ) {
 
 			var imagepage = new Morebits.wiki.page( self.params.image, '删除文件');
-			imagepage.setEditSummary( "因为“" + self.params.reason + "”删除" + Twinkle.getPref('deletionSummaryAd'));
+			imagepage.setEditSummary( "文件被删除：" + self.params.reason + Twinkle.getPref('deletionSummaryAd'));
 			imagepage.deletePage();
 		}
 	},

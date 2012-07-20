@@ -203,7 +203,7 @@
 	
 		var text;
 		if ( tbtarget === "mail" ) {
-			text = "\n==" + Twinkle.getFriendlyPref("mailHeading") + "==\n{{you've got mail|subject=";
+			text = "\n\n==" + Twinkle.getFriendlyPref("mailHeading") + "==\n{{you've got mail|subject=";
 			text += section + "|ts=~~~~~}}";
 
 			if( message ) {
@@ -216,7 +216,7 @@
 
 		} else {
 			//clean talkback heading: strip section header markers, were erroneously suggested in the documentation
-			text = "\n==" + Twinkle.getFriendlyPref("talkbackHeading").replace( /^\s*=+\s*(.*?)\s*=+$\s*/, "$1" ) + "==\n{{talkback|";
+			text = "\n\n==" + Twinkle.getFriendlyPref("talkbackHeading").replace( /^\s*=+\s*(.*?)\s*=+$\s*/, "$1" ) + "==\n{{talkback|";
 			text += tbPageName;
 
 			if( section ) {

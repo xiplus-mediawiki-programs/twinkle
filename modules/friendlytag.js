@@ -5,8 +5,8 @@
  ****************************************
  * Mode of invocation:     Tab ("Tag")
  * Active on:              Existing articles; file pages with a corresponding file
- *                         which is local (not on Commons); existing user subpages
- *                         and existing subpages of Wikipedia:Articles for creation;
+ *                         which is local (not on Commons); existing subpages of
+ *                         {Wikipedia|Wikipedia talk}:Articles for creation;
  *                         all redirects
  * Config directives in:   FriendlyConfig
  */
@@ -40,10 +40,10 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 					type: 'checkbox',
 					list: [
 						{
-							label: '如可能，合并到{{multiple issues}}',
+							label: '如可能，合并入{{multiple issues}}',
 							value: 'group',
 							name: 'group',
-							tooltip: '如果添加{{multiple issues}}支持的三个以上的模板，所有支持的模板都会被合并至一个{{multiple issues}}模板中。',
+							tooltip: '如果添加{{multiple issues}}支持的三个以上的模板，所有支持的模板都会被合并入{{multiple issues}}模板中。',
 							checked: Twinkle.getFriendlyPref('groupByDefault')
 						}
 					]
@@ -209,46 +209,58 @@ Twinkle.tag.article = {};
 // To ensure tags appear in the default "categorized" view, add them to the tagCategories hash below.
 
 Twinkle.tag.article.tags = {
-	"advert": "此条目或章节类似广告",
-	"BLPsources": "当前传记条目需要补充更多来源",
-	"BLP unsourced": "此生者传记条目没有列出任何参考或来源",
-	"catimprove": "此条目需要更多页面分类",
-	"citation style": "这篇条目的参考文献需要进行清理",
-	"cleanup": "此条目可能需要进行清理，以符合维基百科的质量标准",
-	"COI": "这个条目的一位主要贡献者似乎与本条目的主题存在利益冲突",
-	"copyedit": "此条目或章节需要编修，以确保语法、用语、语气、风格、表达恰当",
-	"disputed": "此条目的准确性有争议",
-	"expand": "此条目或章节需要扩充",
-	"expert-subject": "本条目或段落需要专家的关注",
-	"external links": "维基百科不是连结集",
-	"fansite": "此条目或章节类似爱好者站点",
-	"globalize": "此条目仅具有一部分地区的观点或资讯，无法完整表达普世通用，并包含广泛区域的观点",
-	"hoax": "此条目的真实性被质疑",
-	"in-universe": "本条目或章节使用小说故事内的观点描述一个虚构事物",
-	"inuse": "本条目正在进行重大修改",
-	"lead section": "此文的导言部分也许不足以概括其内容",
+	"advert": "类似广告",
+	"autobiography": "类似一篇自传，或内容主要由条目描述的当事人或组织撰写、编辑",
+	"blpdispute": "可能违反了维基百科关于生者传记的方针",
+	"blpsources": "传记需要补充更多来源",
+	"catimprove": "需要更多页面分类",
+	"citation style": "参考文献需要进行清理，以符合正确的引用、脚注或外部链接格式",
+	"citecheck": "可能包含不适用或被曲解的引用资料，部分内容的准确性无法被证实",
+	"cleanup": "可能需要进行清理，以符合维基百科的质量标准",
+	"cleanup-jargon": "包含过多行话或专业术语，可能需要简化或提出进一步解释",
+	"coi": "主要贡献者与本条目所宣扬的内容可能存在利益冲突",
+	"contradict": "内容自相矛盾",
+	"copyedit": "需要编修，以确保文法、用词、语气、格式、标点等使用恰当",
+	"disputed": "内容疑欠准确，有待查证",
+	"expand": "需要扩充",
+	"expert": "需要精通或熟悉本主题的专家参与编辑",
+	"external links": "使用外部链接的方式可能不符合维基百科的方针或指引",
+	"fansite": "类似爱好者站点",
+	"globalize": "仅具有一部分地区的信息或观点，无法做到普世通用和完整表达包含广泛区域的信息、观点",
+	"hoax": "真实性被质疑",
+	"howto": "包含指南或教学内容",
+	"in-universe": "使用小说故事内的观点描述一个虚构事物",
+	"inappropriate person": "使用不适当的第一人称和第二人称",
+	"inappropriate tone": "语调或风格可能不适合百科全书的写作方式",
+	"lead section": "导言部分也许不足以概括其内容",
+	"lead section too long": "导言部分也许过于冗长",
 	"merge": "建议此页面与页面合并",
 	"merge from": "建议将页面合并到本页面",
 	"merge to": "建议将此页面合并至页面",
-	"nofootnotes": "此条目列出了一些参考来源或外部链接，但由于缺少内文脚注，条目中部分信息的来源仍然不明确",
-	"non-free": "此条目或章节可能过多或不当地使用了受版权保护的文字、图像或/及多媒体文件",
-	"notability": "此条目可能不符合通用关注度指引",
-	"notmandarin": "此条目包含过多不是现代标准汉语的内容",
-	"original research": "此条目或章节可能包含原创研究或未查证内容",
-	"orphan": "这个条目没有或只有很少链入页面",
-	"overlinked": "此条目可能含有太多的内部链接",
-	"POV": "此条目的中立性有争议。内容、语调可能带有明显的个人观点或地方色彩",
-	"prose": "此条目使用了列表式记述，可能需要改写为连贯的叙述性文字",
-	"refimprove": "此条目需要补充更多来源",
-	"roughtranslation": "此条目翻译粗劣",
-	"substub": "请您改写这篇过于短小的文章",
-	"tone": "此条目或章节的语调或风格可能不适合百科全书的写作方式",
-	"toolong": "此条目或章节可能过于冗长",
-	"uncategorized": "此条目缺少页面分类",
-	"unreferenced": "此条目没有列出任何参考或来源",
-	"update": "当前条目或章节需要更新",
-	"weasel": "此条目或章节可能因为语意模棱两可而损及其中立性",
-	"wikify": "此条目或章节需要被修正为维基格式以符合质量标准"
+	"newsrelease": "阅读起来像是新闻稿，或包含过度的宣传性语调",
+	"no footnotes": "由于缺少内文脚注，部分信息的来源仍然不明确",
+	"non-free": "可能过多或不当地使用了受版权保护的文字、图像或/及多媒体文件",
+	"notability": "可能不符合通用关注度指引，或下列标准：传记、虚构事物、发明研究或网站",
+	"notmandarin": "包含过多不是现代标准汉语的内容",
+	"onesource": "极大或完全地依赖于某个单一的来源",
+	"original research": "可能包含原创研究或未查证内容",
+	"orphan": "没有或只有很少链入页面",
+	"overlinked": "可能含有太多的内部链接",
+	"pov": "中立性有争议。内容、语调可能带有明显的个人观点或地方色彩",
+	"primarysources": "需要可靠、公开、第三方的来源",
+	"prose": "使用了列表式记述，可能需要改写为连贯的叙述性文字",
+	"refimprove": "需要补充更多来源",
+	"review": "阅读起来类似评论，需要清理",
+	"rewrite": "不符合维基百科的质量标准，需要完全重写",
+	"roughtranslation": "翻译品质不佳",
+	"trivia": "应避免有陈列杂项、琐碎资料的部分",
+	"uncategorized": "缺少页面分类",
+	"unencyclopedic": "可能不适合写入百科全书",
+	"unreferenced": "没有列出任何参考或来源",
+	"update": "需要更新",
+	"verylong": "可能过于冗长",
+	"weasel": "可能因为语意模棱两可而损及其中立性或准确性",
+	"wikify": "需要被修正为维基格式以符合质量标准"
 };
 
 // A list of tags in order of category
@@ -259,6 +271,7 @@ Twinkle.tag.article.tagCategories = {
 	"清理和维护模板": {
 		"常规清理": [
 			"cleanup",
+			"cleanup-jargon",
 			"copyedit",
 			"wikify"
 		],
@@ -268,7 +281,8 @@ Twinkle.tag.article.tagCategories = {
 		],
 		"结构和导言": [
 			"lead section",
-			"toolong"
+			"lead section too long",
+			"verylong"
 		],
 		"小说相关清理": [
 			"in-universe"
@@ -281,32 +295,42 @@ Twinkle.tag.article.tagCategories = {
 		"写作风格": [
 			"advert",
 			"fansite",
+			"howto",
+			"inappropriate person",
+			"inappropriate tone",
+			"newsrelease",
 			"prose",
-			"tone"
+			"review"
 		],
 		"内容": [
 			"expand",
-			"substub"
+			"unencyclopedic"
 		],
 		"信息和细节": [
-			"expert-subject",
+			"expert",
+			"trivia"
 		],
 		"时间性": [
 			"update"
 		],
 		"中立、偏见和事实准确性": [
-			"COI",
+			"autobiography",
+			"coi",
+			"contradict",
 			"disputed",
-			"hoax",
 			"globalize",
-			"POV",
+			"hoax",
+			"pov",
 			"weasel"
 		],
 		"可供查证和来源": [
-			"BLPsources",
-			"BLP unsourced",
-			"nofootnotes",
+			"blpdispute",
+			"blpsources",
+			"citecheck",
+			"no footnotes",
+			"onesource",
 			"original research",
+			"primarysources",
 			"refimprove",
 			"unreferenced"
 		]
@@ -333,9 +357,6 @@ Twinkle.tag.article.tagCategories = {
 		"merge",
 		"merge from",
 		"merge to"
-	],
-	"信息": [
-		"inuse"
 	]
 };
 
@@ -430,184 +451,71 @@ Twinkle.tag.administrativeList = [
 	}
 ];
 
-// maintenance tags for FILES start here
-/* TODO(jimmyxu)
 
-Twinkle.tag.file = {};
-
-Twinkle.tag.file.licenseList = [
-	{ label: '{{Bsr}}: source info consists of bare image URL/generic base URL only', value: 'Bsr' },
-	{ label: '{{Non-free reduce}}: non-low-resolution fair use image (or too-long audio clip, etc)', value: 'Non-free reduce' },
-	{ label: '{{Non-free reduced}}: fair use media which has been reduced (old versions need to be deleted)', value: 'Non-free reduced' }
-];
-
-Twinkle.tag.file.cleanupList = [
-	{ label: '{{Artifacts}}: PNG contains residual compression artifacts', value: 'Artifacts' },
-	{ label: '{{Bad font}}: SVG uses fonts not available on the thumbnail server', value: 'Bad font' },
-	{ label: '{{Bad format}}: PDF/DOC/... file should be converted to a more useful format', value: 'Bad format' },
-	{ label: '{{Bad GIF}}: GIF that should be PNG, JPEG, or SVG', value: 'Bad GIF' },
-	{ label: '{{Bad JPEG}}: JPEG that should be PNG or SVG', value: 'Bad JPEG' },
-	{ label: '{{Bad trace}}: auto-traced SVG requiring cleanup', value: 'Bad trace' },
-	{ label: '{{Cleanup image}}: general cleanup', value: 'Cleanup image' },
-	{ label: '{{Cleanup SVG}}: SVG needing code and/or appearance cleanup', value: 'Cleanup SVG' },
-	{ label: '{{ClearType}}: image (not screenshot) with ClearType anti-aliasing', value: 'ClearType' },
-	{ label: '{{Imagewatermark}}: image contains visible or invisible watermarking', value: 'Imagewatermark' },
-	{ label: '{{NoCoins}}: image using coins to indicate scale', value: 'NoCoins' },
-	{ label: '{{Overcompressed JPEG}}: JPEG with high levels of artifacts', value: 'Overcompressed JPEG' },
-	{ label: '{{Opaque}}: opaque background should be transparent', value: 'Opaque' },
-	{ label: '{{Remove border}}: unneeded border, white space, etc.', value: 'Remove border' },
-	{ label: '{{Rename media}}: file should be renamed according to the criteria at [[WP:FMV]]', value: 'Rename media' },
-	{ label: '{{Should be PNG}}: GIF or JPEG should be lossless', value: 'Should be PNG' },
-	{
-		label: '{{Should be SVG}}: PNG, GIF or JPEG should be vector graphics', value: 'Should be SVG',
-		subgroup: {
-			name: 'svgCategory',
-			type: 'select',
-			list: [
-				{ label: '{{Should be SVG|other}}', value: 'other' },
-				{ label: '{{Should be SVG|alphabet}}: character images, font examples, etc.', value: 'alphabet' },
-				{ label: '{{Should be SVG|chemical}}: chemical diagrams, etc.', value: 'chemical' },
-				{ label: '{{Should be SVG|circuit}}: electronic circuit diagrams, etc.', value: 'circuit' },
-				{ label: '{{Should be SVG|coat of arms}}: coats of arms', value: 'coat of arms' },
-				{ label: '{{Should be SVG|diagram}}: diagrams that do not fit any other subcategory', value: 'diagram' },
-				{ label: '{{Should be SVG|emblem}}: emblems, free/libre logos, insignias, etc.', value: 'emblem' },
-				{ label: '{{Should be SVG|fair use}}: fair-use images, fair-use logos', value: 'fair use' },
-				{ label: '{{Should be SVG|flag}}: flags', value: 'flag' },
-				{ label: '{{Should be SVG|graph}}: visual plots of data', value: 'graph' },
-				{ label: '{{Should be SVG|logo}}: logos', value: 'logo' },
-				{ label: '{{Should be SVG|map}}: maps', value: 'map' },
-				{ label: '{{Should be SVG|music}}: musical scales, notes, etc.', value: 'music' },
-				{ label: '{{Should be SVG|physical}}: "realistic" images of physical objects, people, etc.', value: 'physical' },
-				{ label: '{{Should be SVG|symbol}}: miscellaneous symbols, icons, etc.', value: 'symbol' }
-			]
-		}
-	},
-	{ label: '{{Should be text}}: image should be represented as text, tables, or math markup', value: 'Should be text' },
-	{ label: '{{Split media}}: there are two different images in the upload log which need to be split', value: 'Split media' }
-];
-
-Twinkle.tag.file.qualityList = [
-	{ label: '{{Image-blownout}}', value: 'Image-blownout' },
-	{ label: '{{Image-out-of-focus}}', value: 'Image-out-of-focus' },
-	{ label: '{{Image-Poor-Quality}}', value: 'Image-Poor-Quality' },
-	{ label: '{{Image-underexposure}}', value: 'Image-underexposure' },
-	{ label: '{{Low quality chem}}: disputed chemical structures', value: 'Low quality chem' }
-];
-
-Twinkle.tag.file.commonsList = [
-	{ label: '{{Copy to Commons}}: free media that should be copied to Commons', value: 'Copy to Commons' },
-	{ label: '{{Do not move to Commons}} (PD issue): file is PD in the US but not in country of origin', value: 'Do not move to Commons' },
-	{ label: '{{Do not move to Commons}} (other reason)', value: 'Do not move to Commons_reason' },
-	{ label: '{{Keep local}}: request to keep local copy of a Commons file', value: 'Keep local' },
-	{ label: '{{Now Commons}}: file has been copied to Commons', value: 'subst:ncd' }
-];
-
-Twinkle.tag.file.replacementList = [
-	{ label: '{{Duplicate}}: exact duplicate of another file, but not yet orphaned', value: 'Duplicate' },
-	{ label: '{{Obsolete}}: improved version available', value: 'Obsolete' },
-	{ label: '{{PNG version available}}', value: 'PNG version available' },
-	{ label: '{{SVG version available}}', value: 'SVG version available' }
-];
-
-*/
-
-// Contains those article tags that can be grouped into {{multiple issues}}.
-// This list includes synonyms.
-Twinkle.tag.groupHash = [
-	'advert',
-	'attention',
-	'autobiography',
-	'biased',
-	'blpdispute',
-	'citations missing',
-	'citation style',
-	'citecheck',
-	'cleanup',
-	'COI',
-	'coi',
-	'colloquial',
-	'confusing',
-	'context',
-	'contradict',
-	'copyedit',
-	'criticisms',
-	'crystal',
-	'deadend',
-	'disputed',
-	'do-attempt',
-	'essay',
-	'examplefarm',
-	'expand',
-	'expert',
-	'external links',
-	'fancruft',
-	'fansite',
-	'fiction',
-	'gameguide',
-	'globalize',
-	'histinfo',
-	'hoax',
-	'howto',
-	'inappropriate person',
-	'in-universe',
-	'importance',
-	'incomplete',
-	'intro length',
-	'intromissing',
-	'introrewrite',
-	'jargon',
-	'laundrylists',
-	'likeresume',
-	'long',
-	'newsrelease',
-	'nofootnotes',
-	'notability',
-	'onesource',
-	'OR',
-	'orphan',
-	'do-attempt',
-	'out of date',
-	'peacock',
-	'plot',
-	'POV',
-	'primarysources',
-	'prose',
-	'proseline',
-	'quotefarm',
-	'recent',
-	'refimprove',
-	'refimproveBLP',
-	'restructure',
-	'review',
-	'rewrite',
+// Contains those article tags that *do not* work inside {{multiple issues}}.
+Twinkle.tag.multipleIssuesExceptions = [
+	'catimprove',
+	'merge',
+	'merge from',
+	'merge to',
+	'notmandarin',
 	'roughtranslation',
-	'sections',
-	'self-published',
-	'story',
-	'synthesis',
-	'tone',
-	'tooshort',
-	'travelguide',
-	'trivia',
-	'unbalanced',
-	'unencyclopedic',
-	'unreferenced',
-	'unreferencedBLP',
-	'update',
-	'weasel',
-	'wikify'
+	'uncategorized',
+	'update'
 ];
+
 
 Twinkle.tag.callbacks = {
 	main: function( pageobj ) {
 		var params = pageobj.getCallbackParameters(),
 		    tagRe, tagText = '', summaryText = '添加',
-		    tags = [], groupableTags = [],
+		    tags = [], groupableTags = [], i, totalTags;
 
-		    // Remove tags that become superfluous with this action
-		    pageText = pageobj.getPageText().replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, ""),
+		// Remove tags that become superfluous with this action
+		var pageText = pageobj.getPageText().replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
 
-		    i;
+		var addTag = function friendlytagAddTag( tagIndex, tagName ) {
+			var currentTag = "";
+			if( tagName === 'uncategorized' || tagName === 'catimprove' ) {
+				pageText += '\n\n{{' + tagName +
+					'|time={{subst:#time:c}}}}';
+			} else {
+				currentTag += ( Twinkle.tag.mode === '重定向' ? '\n' : '' ) + '{{' + tagName;
+
+				// prompt for other parameters, based on the tag
+				switch( tagName ) {
+					case 'merge':
+					case 'merge to':
+					case 'merge from':
+						var param = prompt('请输入合并相关的条目名。\n' +
+							"要指定多个条目，请用管道符（|）分开。\n" +
+							"这个信息是必须的。完成时请点击确定，或点击取消以略过此标记。", "");
+						if (param === null) {
+							return true;  // continue to next tag
+						} else if (param !== "") {
+							currentTag += '|' + param;
+						}
+						break;
+					default:
+						break;
+				}
+
+				currentTag += (Twinkle.tag.mode === '重定向') ? '}}' : '|time={{subst:#time:c}}}}\n';
+				tagText += currentTag;
+			}
+
+			if ( tagIndex > 0 ) {
+				if( tagIndex === (totalTags - 1) ) {
+					summaryText += '和';
+				} else if ( tagIndex < (totalTags - 1) ) {
+					summaryText += '、';
+				}
+			}
+
+			summaryText += '{{[[';
+			summaryText += (tagName.indexOf(":") !== -1 ? tagName : ("Template:" + tagName + "|" + tagName));
+			summaryText += ']]}}';
+		};
 
 		if( Twinkle.tag.mode !== '重定向' ) {
 			// Check for preexisting tags and separate tags into groupable and non-groupable arrays
@@ -620,94 +528,50 @@ Twinkle.tag.callbacks = {
 						wikipedia_page.setCallbackParameters(params);
 						wikipedia_page.load(Twinkle.tag.callbacks.notabilityList);
 					}
-					if( Twinkle.tag.groupHash.indexOf(params.tags[i]) !== -1 ) {
+					if( Twinkle.tag.multipleIssuesExceptions.indexOf(params.tags[i]) === -1 ) {
 						groupableTags = groupableTags.concat( params.tags[i] );
 					} else {
 						tags = tags.concat( params.tags[i] );
 					}
 				} else {
-					Morebits.status.info( '信息', '在条目上找到{{' + params.tags[i] +
-						'}}…已排除' );
+					Morebits.status.info( '信息', '在页面上找到{{' + params.tags[i] +
+						'}}…跳过' );
 				}
 			}
 
 			if( params.group && groupableTags.length >= 3 ) {
-				Morebits.status.info( '信息', '合并支持的模板到{{multiple issues}}' );
+				Morebits.status.info( '信息', '合并支持的模板入{{multiple issues}}' );
 
 				groupableTags.sort();
-				tagText += '{{multiple issues';
-				summaryText += ' {{[[Template:multiple issues|multiple issues]]}}带有参数';
-				for( i = 0; i < groupableTags.length; i++ ) {
-					tagText += '|' + groupableTags[i] +
-						'={{subst:#time:c}}';
+				tagText += '{{multiple issues|\n';
 
-					if( i === (groupableTags.length - 1) ) {
-						summaryText += '和';
-					} else if ( i < (groupableTags.length - 1) && i > 0 ) {
-						summaryText += '、';
-					}
-					summaryText += groupableTags[i];
+				totalTags = groupableTags.length;
+				$.each(groupableTags, addTag);
+
+				summaryText += '多个标记（{{[[Template:multiple issues|multiple issues]]}}）';
+				if( tags.length > 0 ) {
+					summaryText += '及';
 				}
 				tagText += '}}\n';
 			} else {
 				tags = tags.concat( groupableTags );
 			}
 		} else {
-			// Check for pre-existing tags
+			// Redirect tagging: Check for pre-existing tags
 			for( i = 0; i < params.tags.length; i++ ) {
 				tagRe = new RegExp( '(\\{\\{' + params.tags[i] + '(\\||\\}\\}))', 'im' );
 				if( !tagRe.exec( pageText ) ) {
 					tags = tags.concat( params.tags[i] );
 				} else {
 					Morebits.status.info( '信息', '在重定向上找到{{' + params.tags[i] +
-						'}}…已排除' );
+						'}}…跳过' );
 				}
 			}
 		}
 
 		tags.sort();
-		for( i = 0; i < tags.length; i++ ) {
-			var currentTag = "";
-			if( tags[i] === 'uncategorized' || tags[i] === 'cat improve' ) {
-				pageText += '\n\n{{' + tags[i] +
-					'|time={{subst:#time:c}}}}';
-			} else {
-				currentTag += ( Twinkle.tag.mode === '重定向' ? '\n' : '' ) + '{{' + tags[i];
-
-				// prompt for other parameters, based on the tag
-				switch( tags[i] ) {
-					case 'merge':
-					case 'merge to':
-					case 'merge from':
-						var param = prompt('请输入合并相关的条目名。\n' +
-							"要指定多个条目，请用管道符（|）分开。\n" +
-							"这个信息是必须的。完成时请点击确定，或点击取消以略过此标记。", "");
-						if (param === null) {
-							continue;
-						} else if (param !== "") {
-							currentTag += '|' + param;
-						}
-						break;
-					default:
-						break;
-				}
-
-				currentTag += Twinkle.tag.mode === '重定向' ? '}}' : '|time={{subst:#time:c}}}}\n';
-				tagText += currentTag;
-			}
-
-			if ( i > 0 || groupableTags.length > 3 ) {
-				if( i === (tags.length - 1) ) {
-					summaryText += '和';
-				} else if ( i < (tags.length - 1) ) {
-					summaryText += '、';
-				}
-			}
-
-			summaryText += ' {{[[Template:';
-			summaryText += tags[i] + '|' + tags[i];
-			summaryText += ']]}}';
-		}
+		totalTags = tags.length;
+		$.each(tags, addTag);
 
 		if( Twinkle.tag.mode === '重定向' ) {
 			pageText += tagText;
@@ -718,7 +582,7 @@ Twinkle.tag.callbacks = {
 			pageText = pageText.replace(/^\s*(?:((?:\s*\{\{\s*(?:about|correct title|dablink|distinguish|for|other\s?(?:hurricaneuses|people|persons|places|uses(?:of)?)|redirect(?:-acronym)?|see\s?(?:also|wiktionary)|selfref|the)\d*\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\})+(?:\s*\n)?)\s*)?/i,
 				"$1" + tagText);
 		}
-		summaryText += '标记' +
+		summaryText += ( tags.length > 0 ? '标记' : '' ) +
 			'到' + Twinkle.tag.mode + Twinkle.getPref('summaryAd');
 
 		pageobj.setPageText(pageText);
