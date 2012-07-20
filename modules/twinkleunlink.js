@@ -12,7 +12,9 @@ Twinkle.unlink = function twinkleunlink() {
 	if( mw.config.get('wgNamespaceNumber') < 0 ) {
 		return;
 	}
-	twAddPortletLink( Twinkle.unlink.callback, "链入", "tw-unlink", "取消到本页的链接" );
+	if( Morebits.userIsInGroup( 'sysop' ) ) {
+		twAddPortletLink( Twinkle.unlink.callback, "链入", "tw-unlink", "取消到本页的链接" );
+	}
 };
 
 Twinkle.unlink.getChecked2 = function twinkleunlinkGetChecked2( nodelist ) {
