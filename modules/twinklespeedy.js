@@ -39,12 +39,12 @@ Twinkle.speedy.dialog = null;
 // Parameters:
 //  - callbackfunc: the function to call when the dialog box is submitted
 //  - firstTime: is this the first time? (false during a db-multiple run, true otherwise)
-//  - content: (optional) a div element in which the form content should be rendered - allows
-//    for placing content in an existing dialog box
-Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, firstTime, content) {
+//  - oldDialog: (optional) the Morebits.simpleWindow which is currently visible
+Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, firstTime, oldDialog) {
 	var dialog;
-	if (!content)
-	{
+	if (oldDialog) {
+		dialog = oldDialog;
+	} else {
 		Twinkle.speedy.dialog = new Morebits.simpleWindow( Twinkle.getPref('speedyWindowWidth'), Twinkle.getPref('speedyWindowHeight') );
 		dialog = Twinkle.speedy.dialog;
 		dialog.setTitle( "选择快速删除理由" );
@@ -53,7 +53,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 		dialog.addFooterLink( "Twinkle帮助", "WP:TW/DOC#speedy" );
 	}
 
-	var form = new Morebits.quickForm( callbackfunc, 'change' );
+	var form = new Morebits.quickForm( callbackfunc, (Twinkle.getPref('speedySelectionStyle') === 'radioClick' ? 'change' : null) );
 	if( firstTime && Morebits.userIsInGroup( 'sysop' ) ) {
 		form.append( {
 				type: 'checkbox',
@@ -221,19 +221,16 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc, first
 	form.append( { type: 'header', label: '重定向' } );
 	form.append( { type: 'radio', name: 'csd', list: Twinkle.speedy.redirectList } );
 
+	if( Twinkle.getPref( 'speedySelectionStyle' ) !== 'radioClick' ) {
+		form.append( { type: 'submit', label: ( firstTime ? undefined : "继续" ) } );
+	}
+
 	var result = form.render();
-	if (dialog)
-	{
-		// render new dialog
-		dialog.setContent( result );
+	dialog.setContent( result );
+	if (!oldDialog) {
 		dialog.display();
 	}
-	else
-	{
-		// place the form content into the existing dialog box
-		content.textContent = ''; // clear children
-		content.appendChild(result);
-	}
+	result.dialog = dialog;  // expando property
 };
 
 // this is a function to allow for db-multiple filtering
@@ -358,7 +355,8 @@ Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 	if (!multiple) {
 		result.push({
 			label: '自定义理由' + (Morebits.userIsInGroup('sysop') ? '（自定义删除理由）' : ''),
-			value: 'reason'
+			value: 'reason',
+			tooltip: '该页至少应该符合一条快速删除的标准，并且您必须在理由中提到。这不是万能的删除理由。'
 		});
 	}
 	result.push({
@@ -713,7 +711,7 @@ Twinkle.speedy.callbacks = {
 					}
 				}
 				for (i in Twinkle.speedy.dbmultipleParameters) {
-					if (typeof Twinkle.speedy.dbmultipleParameters[i] === 'string') {
+					if (typeof Twinkle.speedy.dbmultipleParameters[i] === 'string' && !parseInt(i, 10)) {
 						code += "|" + Twinkle.speedy.dbmultipleParameters[i];
 					}
 				}
@@ -929,6 +927,21 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(value, normal
 			}
 			parameters["1"] = dbrationale;
 			break;
+		case 'g10':
+			if (Twinkle.getPref('speedyPromptOnG10'))
+			{
+				var g10rationale = prompt('请提供可选的理由（比如作者在哪里请求了删除——留空以跳过）：', "");
+				if (g10rationale === null)
+				{
+					statelem.error( '用户取消操作。' );
+					return null;
+				}
+				if (g10rationale !== '')
+				{
+					parameters.rationale = g10rationale;
+				}
+			}
+			break;
 		case 'f7':
 			var pagenamespaces = mw.config.get('wgPageName').replace( '_', ' ' );
 			var filename = prompt( '请输入维基共享上的文件名：', pagenamespaces );
@@ -977,17 +990,35 @@ Twinkle.speedy.getUserTalkParameters = function twinklespeedyGetUserTalkParamete
 	return utparams;
 };
 
+
+Twinkle.speedy.resolveCsdValue = function twinklespeedyResolveCsdValue(e) {
+	var value = (e.target.values ? e.target.values : (e.target.form ? e.target.form : e.target).getChecked('csd'));
+	if ($.isArray(value)) {
+		if (value.length === 0) {
+			alert( "请选择一个理据！" );
+			return null;
+		} else {
+			value = value[0];
+		}
+	}
+	return value;
+};
+
 Twinkle.speedy.callback.evaluateSysop = function twinklespeedyCallbackEvaluateSysop(e)
 {
 	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' ')); // for queen/king/whatever and country!
+	var form = (e.target.form ? e.target.form : e.target);
 
-	var tag_only = e.target.form.tag_only;
+	var tag_only = form.tag_only;
 	if( tag_only && tag_only.checked ) {
 		Twinkle.speedy.callback.evaluateUser(e);
 		return;
 	}
 
-	var value = e.target.values;
+	var value = Twinkle.speedy.resolveCsdValue(e);
+	if (!value) {
+		return;
+	}
 	var normalized = Twinkle.speedy.normalizeHash[ value ];
 
 	var params = {
@@ -996,23 +1027,30 @@ Twinkle.speedy.callback.evaluateSysop = function twinklespeedyCallbackEvaluateSy
 		watch: Twinkle.getPref('watchSpeedyPages').indexOf( normalized ) !== -1,
 		reason: Twinkle.speedy.reasonHash[ value ],
 		openusertalk: Twinkle.getPref('openUserTalkPageOnSpeedyDelete').indexOf( normalized ) !== -1,
-		deleteTalkPage: e.target.form.talkpage && e.target.form.talkpage.checked,
-		deleteRedirects: e.target.form.redirects.checked
+		deleteTalkPage: form.talkpage && form.talkpage.checked,
+		deleteRedirects: form.redirects.checked
 	};
-	Morebits.status.init( e.target.form );
+
+	Morebits.simpleWindow.setButtonsEnabled( false );
+	Morebits.status.init( form );
 
 	Twinkle.speedy.callbacks.sysop.main( params );
 };
 
 Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUser(e) {
 	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' '));  // for queen/king/whatever and country!
-	var value = e.target.values;
+	var form = (e.target.form ? e.target.form : e.target);
+
+	var value = Twinkle.speedy.resolveCsdValue(e);
+	if (!value) {
+		return;
+	}
 
 	if (value === 'multiple')
 	{
-		e.target.form.style.display = "none"; // give the user a cue that the dialog is being changed
+		form.style.display = "none"; // give the user a cue that the dialog is being changed
 		setTimeout(function() {
-			Twinkle.speedy.initDialog(Twinkle.speedy.callback.doMultiple, false, e.target.form.parentNode);
+			Twinkle.speedy.initDialog(Twinkle.speedy.callback.doMultiple, false, form.dialog);
 		}, 150);
 		return;
 	}
@@ -1071,7 +1109,7 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 	}
 	else
 	{
-		notifyuser = (Twinkle.getPref('notifyUserOnSpeedyDeletionNomination').indexOf(normalized) !== -1) && e.target.form.notify.checked;
+		notifyuser = (Twinkle.getPref('notifyUserOnSpeedyDeletionNomination').indexOf(normalized) !== -1) && form.notify.checked;
 	}
 
 	var welcomeuser = false;
@@ -1122,7 +1160,8 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 		lognomination: csdlog
 	};
 
-	Morebits.status.init( e.target.form );
+	Morebits.simpleWindow.setButtonsEnabled( false );
+	Morebits.status.init( form );
 
 	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 	Morebits.wiki.actionCompleted.notice = "标记完成";
@@ -1136,7 +1175,12 @@ Twinkle.speedy.dbmultipleCriteria = [];
 Twinkle.speedy.dbmultipleParameters = [];
 Twinkle.speedy.callback.doMultiple = function twinklespeedyCallbackDoMultiple(e)
 {
-	var value = e.target.values;
+	var form = (e.target.form ? e.target.form : e.target);
+	var value = Twinkle.speedy.resolveCsdValue(e);
+	if (!value) {
+		return;
+	}
+
 	var normalized = Twinkle.speedy.normalizeHash[value];
 	if (value !== 'multiple-finish')
 	{
@@ -1157,9 +1201,9 @@ Twinkle.speedy.callback.doMultiple = function twinklespeedyCallbackDoMultiple(e)
 				Twinkle.speedy.dbmultipleCriteria.push(normalized);
 			}
 		}
-		e.target.form.style.display = "none"; // give the user a cue that the dialog is being changed
+		form.style.display = "none"; // give the user a cue that the dialog is being changed
 		setTimeout(function() {
-			Twinkle.speedy.initDialog(Twinkle.speedy.callback.doMultiple, false, e.target.form.parentNode);
+			Twinkle.speedy.initDialog(Twinkle.speedy.callback.doMultiple, false, form.dialog);
 		}, 150);
 	}
 	else

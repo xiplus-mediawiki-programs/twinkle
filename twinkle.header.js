@@ -63,6 +63,8 @@ Twinkle.defaultConfig.twinkle = {
 	logProdPages: false,
 	prodLogPageName: "PROD log",
 	 // CSD
+	speedySelectionStyle: "buttonClick",
+	speedyPromptOnG10: false,
 	watchSpeedyPages: [ ],
 	markSpeedyPagesAsPatrolled: true,
 	// these next two should probably be identical by default

@@ -281,6 +281,18 @@ Twinkle.config.sections = [
 {
 	title: "快速删除",
 	preferences: [
+		{
+			name: "speedySelectionStyle",
+			label: "什么时候执行标记或删除",
+			type: "enum",
+			enumValues: { "buttonClick": '当我点“提交”时', "radioClick": "当我点一个选项时" }
+		},
+		{
+			name: "speedyPromptOnG10",
+			label: "在标记G10（作者请求）时询问理由",
+			type: "boolean"
+		},
+
 		// TwinkleConfig.watchSpeedyPages (array)
 		// Whether to add speedy tagged pages to watchlist
 		{
