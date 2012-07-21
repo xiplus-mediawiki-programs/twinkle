@@ -130,16 +130,6 @@ Twinkle.defaultConfig.friendly = {
 	markTaggedPagesAsPatrolled: true,
 	tagArticleSortOrder: "cat",
 	customTagList: [],
-	 // Welcome
-	topWelcomes: true,
-	watchWelcomes: false,
-	welcomeHeading: "欢迎",
-	insertHeadings: true,
-	insertUsername: false,
-	insertSignature: true,  // sign welcome templates, where appropriate
-	quickWelcomeMode: "norm",
-	quickWelcomeTemplate: "welcome",
-	customWelcomeList: [],
 	 // Talkback
 	markTalkbackAsMinor: true,
 	insertTalkbackSignature: true,  // always sign talkback templates

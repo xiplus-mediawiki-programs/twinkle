@@ -67,7 +67,6 @@ Twinkle.load = function () {
 	// Load the modules in the order that the tabs should appears
 	// User/user talk-related
 	Twinkle.warn();
-	Twinkle.welcome();
 	Twinkle.shared();
 	Twinkle.talkback();
 	// Deletion

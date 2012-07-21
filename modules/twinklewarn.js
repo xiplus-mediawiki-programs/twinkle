@@ -1068,10 +1068,6 @@ Twinkle.warn.callbacks = {
 		var params = pageobj.getCallbackParameters();
 		var messageData = Twinkle.warn.messages[params.main_group][params.sub_group];
 
-		if (!pageobj.exists()) {
-			text = "{{subst:welcome/auto}}\n";
-		}
-
 		var history_re = /<!-- Template:(uw-.*?) -->.*?(\d{1,2}:\d{1,2}, \d{1,2} \w+ \d{4}) \(UTC\)/g;
 		var history = {};
 		var latest = { date:new Date( 0 ), type:'' };

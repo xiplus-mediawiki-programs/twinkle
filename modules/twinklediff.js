@@ -32,7 +32,7 @@ Twinkle.diff = function twinklediff() {
 			'diff': 'cur',
 			'oldid' : oldid
 		};
-		twAddPortletLink( mw.util.wikiScript("index")+ "?" + $.param( query ), '当前Current', 'tw-curdiff', '显示与当前版本间的差异' );
+		twAddPortletLink( mw.util.wikiScript("index")+ "?" + $.param( query ), '当前', 'tw-curdiff', '显示与当前版本间的差异' );
 	}
 };
 

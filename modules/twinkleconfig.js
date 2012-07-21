@@ -527,50 +527,6 @@ Twinkle.config.sections = [
 },
 
 {
-	title: "欢迎用户",
-	inFriendlyConfig: true,
-	preferences: [
-		{
-			name: "topWelcomes",
-			label: "将欢迎置于对话页最顶",
-			type: "boolean"
-		},
-		{
-			name: "watchWelcomes",
-			label: "欢迎时添加用户对话页到监视列表",
-			helptip: "您将可以更好地帮助他。",
-			type: "boolean"
-		},
-		{
-			name: "insertUsername",
-			label: "添加您的用户名到模板（如适用）",
-			type: "boolean"
-		},
-		{
-			name: "quickWelcomeMode",
-			label: "点击差异上的“欢迎”链接会",
-			helptip: "如果您选择自动欢迎，您选择的模板将会被使用。",
-			type: "enum",
-			enumValues: { auto: "自动欢迎", norm: "提示您选择一个模板" }
-		},
-		{
-			name: "quickWelcomeTemplate",
-			label: "自动欢迎时所用的模板",
-			helptip: "输入模板名，不带大括号，条目名将会被当作参数。",
-			type: "string"
-		},
-		{
-			name: "customWelcomeList",
-			label: "自定义欢迎模板",
-			helptip: "您可以添加其它模板或用户子页面，请记住它们将被替换引用。",
-			type: "customList",
-			customListValueTitle: "模板名（不带大括号）",
-			customListLabelTitle: "显示的文本"
-		}
-	]
-},
-
-{
 	title: "存废讨论",
 	preferences: [
 		// TwinkleConfig.xfdWatchPage (string)
