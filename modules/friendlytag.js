@@ -192,6 +192,7 @@ Twinkle.tag.article.tags = {
 	"autobiography": "类似一篇自传，或内容主要由条目描述的当事人或组织撰写、编辑",
 	"blpdispute": "可能违反了维基百科关于生者传记的方针",
 	"blpsources": "传记需要补充更多来源",
+	"blpunsourced": "传记没有列出任何参考或来源",
 	"catimprove": "需要更多页面分类",
 	"citation style": "参考文献需要进行清理，以符合正确的引用、脚注或外部链接格式",
 	"citecheck": "可能包含不适用或被曲解的引用资料，部分内容的准确性无法被证实",
@@ -232,6 +233,7 @@ Twinkle.tag.article.tags = {
 	"review": "阅读起来类似评论，需要清理",
 	"rewrite": "不符合维基百科的质量标准，需要完全重写",
 	"roughtranslation": "翻译品质不佳",
+	"substub": "过于短小",
 	"trivia": "应避免有陈列杂项、琐碎资料的部分",
 	"uncategorized": "缺少页面分类",
 	"unencyclopedic": "可能不适合写入百科全书",
@@ -283,6 +285,7 @@ Twinkle.tag.article.tagCategories = {
 		],
 		"内容": [
 			"expand",
+			"substub",
 			"unencyclopedic"
 		],
 		"信息和细节": [
@@ -305,6 +308,7 @@ Twinkle.tag.article.tagCategories = {
 		"可供查证和来源": [
 			"blpdispute",
 			"blpsources",
+			"blpunsourced",
 			"citecheck",
 			"no footnotes",
 			"onesource",
@@ -439,6 +443,7 @@ Twinkle.tag.multipleIssuesExceptions = [
 	'merge to',
 	'notmandarin',
 	'roughtranslation',
+	"substub",
 	'uncategorized',
 	'update'
 ];
