@@ -198,11 +198,6 @@ Twinkle.speedy.callback.dbMultipleChanged = function twinklespeedyCallbackDbMult
 
 	var radioOrCheckbox = (value ? 'checkbox' : 'radio');
 
-	/*if (namespace % 2 === 1 && namespace !== 3) {  // talk pages, but not user talk pages
-		work_area.append( { type: 'header', label: '讨论页' } );
-		work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.talkList } );
-	}*/
-
 	switch (namespace) {
 		case 0:  // article
 		case 1:  // talk
@@ -223,23 +218,11 @@ Twinkle.speedy.callback.dbMultipleChanged = function twinklespeedyCallbackDbMult
 			work_area.append( { type: 'div', label: '标记CSD F3、F4，请使用Twinkle的“图版”功能。' } );
 			break;
 
-		/*case 10:  // template
-		case 11:  // template talk
-			work_area.append( { type: 'header', label: '模板' } );
-			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getTemplateList(value) } );
-			break;*/
-
 		case 14:  // category
 		case 15:  // category talk
 			work_area.append( { type: 'header', label: '分类' } );
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.categoryList } );
 			break;
-
-		/*case 100:  // portal
-		case 101:  // portal talk
-			work_area.append( { type: 'header', label: '传送门' } );
-			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getPortalList(value) } );
-			break;*/
 
 		default:
 			break;
@@ -306,7 +289,7 @@ Twinkle.speedy.getArticleList = function twinklespeedyGetArticleList(multiple) {
 		value: 'a3'
 	});
 	result.push({
-		label: 'A4：未在条目中列举影响力及于主题自身环境以外，以述明重要性的真实人物、动物或组织。',
+		label: 'A4: 未在条目中列举影响力及于主题自身环境以外，以述明重要性的真实人物、动物或组织。',
 		value: 'a4',
 		tooltip: '包括以下几种类型：人物：无第三方可靠来源，且未列举影响力及于主角之家庭、亲朋、就读学校及就业机构以外人事物之事迹；动物：无第三方可靠来源之单一或少数个体，或且未列举影响力及于动物之一般日常作息以外人事物之事迹；组织（乐队、俱乐部、社团）：无第三方可靠来源，且未列举影响力及于成员之家庭、亲朋、就读学校及就业机构以外人事物之事迹；其他情况不适用。'
 	});
@@ -337,40 +320,6 @@ Twinkle.speedy.userList = [
 		value: 'o3'
 	}
 ];
-
-/*Twinkle.speedy.getTemplateList = function twinklespeedyGetTemplateList(multiple) {
-	var result = [];
-	result.push({
-		label: 'T2: Templates that are blatant misrepresentations of established policy',
-		value: 'policy',
-		tooltip: 'This includes "speedy deletion" templates for issues that are not speedy deletion criteria and disclaimer templates intended to be used in articles'
-	});
-	if (!multiple) {
-		result.push({
-			label: 'T3: Templates that are not employed in any useful fashion',
-			value: 't3',
-			tooltip: 'Templates that are either substantial duplications of another template or hardcoded instances of another template where the same functionality could be provided by that other template'
-		});
-	}
-	return result;
-};*/
-
-/*Twinkle.speedy.getPortalList = function twinklespeedyGetPortalList(multiple) {
-	var result = [];
-	if (!multiple) {
-		result.push({
-			label: 'P1: Portal that would be subject to speedy deletion if it were an article',
-			value: 'p1',
-			tooltip: 'You must specify the article criterion that applies in this case (A1, A3, A7, or A10).'
-		});
-	}
-	result.push({
-		label: 'P2: Underpopulated portal',
-		value: 'emptyportal',
-		tooltip: 'Any Portal based on a topic for which there is not a non-stub header article, and at least three non-stub articles detailing subject matter that would be appropriate to discuss under the title of that Portal'
-	});
-	return result;
-};*/
 
 Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 	var result = [];
@@ -666,9 +615,9 @@ Twinkle.speedy.callbacks = {
 			statusIndicator.status("0%");
 
 			var onsuccess = function( apiobj ) {
-				var obj = apiobj.parent.params.obj;
-				var total = apiobj.parent.params.total;
-				var now = parseInt( 100 * ++(apiobj.parent.params.current)/total, 10 ) + '%';
+				var obj = apiobj.params.obj;
+				var total = apiobj.params.total;
+				var now = parseInt( 100 * ++(apiobj.params.current)/total, 10 ) + '%';
 				obj.update( now );
 				apiobj.statelem.unlink();
 				if( apiobj.params.current >= total ) {
@@ -688,14 +637,11 @@ Twinkle.speedy.callbacks = {
 				var title = $(value).attr('title');
 				var page = new Morebits.wiki.page(title, '删除重定向 "' + title + '"');
 				page.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 重定向到已删除页面“' + mw.config.get('wgPageName') + "”" + Twinkle.getPref('deletionSummaryAd'));
+				page.setCallbackParameters(params);
 				page.deletePage(onsuccess);
 			});
 		}
 	},
-
-
-
-
 
 	user: {
 		main: function(pageobj) {
@@ -955,7 +901,18 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(value, normal
 					return null;
 				}
 			}
-			parameters.date = "~~~~~";
+			break;
+		case 'a5':
+			var duptitle = prompt('[CSD A5] 请输入该其它条目的标题：', "");
+			if (duptitle === null)
+			{
+				statelem.error( '用户取消操作。' );
+				return null;
+			}
+			if (duptitle !== '')
+			{
+				parameters.duptitle = '[[:' + pagename + ']]';
+			}
 			break;
 		case 'g10':
 			if (Twinkle.getPref('speedyPromptOnG10'))
