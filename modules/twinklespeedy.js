@@ -699,7 +699,10 @@ Twinkle.speedy.callbacks = {
 				if (!parameters) {
 					return;  // the user aborted
 				}
-				code = "{{delete|" + params.values[0];
+				code = "{{delete";
+				if (params.values[0] !== 'reason') {
+					code += "|" + params.values[0];
+				}
 				for (i in parameters) {
 					if (typeof parameters[i] === 'string') {
 						code += "|" + parameters[i];
@@ -912,7 +915,7 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(value, normal
 			}
 			if (duptitle !== '')
 			{
-				parameters.duptitle = '[[:' + pagename + ']]';
+				parameters.duptitle = '[[:' + duptitle + ']]';
 			}
 			break;
 		case 'g10':
