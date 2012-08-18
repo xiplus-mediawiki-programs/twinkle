@@ -255,7 +255,7 @@ Twinkle.unlink.callbacks = {
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary("注释出对文件“" + mw.config.get('wgPageName') + "的使用：" + params.reason + "。" + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary("注释出文件“" + mw.config.get('wgPageName') + "：" + params.reason + "。" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(Twinkle.unlink.callbacks.success);
 	},

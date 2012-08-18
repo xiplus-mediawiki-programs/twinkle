@@ -2824,7 +2824,7 @@ Morebits.wikitext.page.prototype = {
 		 * Check for normal image links, i.e. [[Image:Foobar.png|...]]
 		 * Will eat the whole link
 		 */
-		var links_re = new RegExp( "\\[\\[(?:[Ii]mage|[Ff]ile|文件):\\s*" + image_re_string );
+		var links_re = new RegExp( "\\[\\[(?:[Ii]mage|[Ff]ile|文件|檔案):\\s*" + image_re_string );
 		var allLinks = Morebits.array.uniq(Morebits.string.splitWeightedByKeys( unbinder.content, '[[', ']]' ));
 		for( var i = 0; i < allLinks.length; ++i ) {
 			if( links_re.test( allLinks[i] ) ) {
@@ -2839,7 +2839,7 @@ Morebits.wikitext.page.prototype = {
 		 * Check for gallery images, i.e. instances that must start on a new line, eventually preceded with some space, and must include Image: prefix
 		 * Will eat the whole line.
 		 */
-		var gallery_image_re = new RegExp( "(^\\s*(?:[Ii]mage|[Ff]ile|文件):\\s*" + image_re_string + ".*?$)", 'mg' );
+		var gallery_image_re = new RegExp( "(^\\s*(?:[Ii]mage|[Ff]ile|文件|檔案):\\s*" + image_re_string + ".*?$)", 'mg' );
 		unbinder.content.replace( gallery_image_re, "<!-- " + reason + "$1 -->" );
 
 		// unbind the newly created comments
@@ -2848,7 +2848,7 @@ Morebits.wikitext.page.prototype = {
 		 * Check free image usages, for example as template arguments, might have the Image: prefix excluded, but must be preceeded by an |
 		 * Will only eat the image name and the preceeding bar and an eventual named parameter
 		 */
-		var free_image_re = new RegExp( "(\\|\\s*(?:[\\w\\s]+\\=)?\\s*(?:(?:[Ii]mage|[Ff]ile|文件):\\s*)?" + image_re_string + ")", 'mg' );
+		var free_image_re = new RegExp( "(\\|\\s*(?:[\\w\\s]+\\=)?\\s*(?:(?:[Ii]mage|[Ff]ile|文件|檔案):\\s*)?" + image_re_string + ")", 'mg' );
 		unbinder.content.replace( free_image_re, "<!-- " + reason + "$1 -->" );
 
 		// Rebind the content now, we are done!
@@ -2860,7 +2860,7 @@ Morebits.wikitext.page.prototype = {
 		if( first_char.toUpperCase() !== first_char.toLowerCase() ) {
 			first_char_regex = '[' + RegExp.escape( first_char.toUpperCase(), true ) + RegExp.escape( first_char.toLowerCase(), true ) + ']';
 		}
-		var image_re_string = "(?:[Ii]mage|[Ff]ile|文件):\\s*" + first_char_regex + RegExp.escape( image.substr( 1 ), true );
+		var image_re_string = "(?:[Ii]mage|[Ff]ile|文件|檔案):\\s*" + first_char_regex + RegExp.escape( image.substr( 1 ), true );
 		var links_re = new RegExp( "\\[\\[" + image_re_string );
 		var allLinks = Morebits.array.uniq(Morebits.string.splitWeightedByKeys( this.text, '[[', ']]' ));
 		for( var i = 0; i < allLinks.length; ++i ) {
