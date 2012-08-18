@@ -96,12 +96,15 @@ Twinkle.load = function () {
 			".morebits-dialog input, .morebits-dialog select, .morebits-dialog-content button { font-size: inherit !important; }" );
 	}
 
-	// override any user-defined summaryAd, for the sake of AbuseFilter.
-	// FIXME
+	// Override any user-defined summaryAd, for the sake of AbuseFilter
+	// Need to init all prefs here, or twinkleconfig would fail
 	if (typeof(Twinkle.prefs) !== "object") {
 		Twinkle.prefs = {};
 	}
 	if (typeof(Twinkle.prefs.twinkle) !== "object") {
+		Twinkle.prefs.twinkle = {};
+	}
+	if (typeof(Twinkle.prefs.friendly) !== "object") {
 		Twinkle.prefs.twinkle = {};
 	}
 	Twinkle.prefs.twinkle.summaryAd = Twinkle.defaultConfig.twinkle.summaryAd;
