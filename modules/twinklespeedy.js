@@ -110,7 +110,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 						value: 'redirects',
 						name: 'redirects',
 						tooltip: "删除到此页的重定向。",
-						checked: true,
+						checked: Twinkle.getPref('deleteRedirectsOnDelete'),
 						disabled: Twinkle.getPref('deleteSysopDefaultToTag'),
 						event: function( event ) {
 							event.stopPropagation();

@@ -360,7 +360,14 @@ Twinkle.config.sections = [
 		// If talk page if exists should also be deleted (CSD G8) when spedying a page (admin only)
 		{
 			name: "deleteTalkPageOnDelete",
-			label: "默认勾选“同时删除讨论页”",
+			label: "默认勾选“删除讨论页”",
+			adminOnly: true,
+			type: "boolean"
+		},
+
+		{
+			name: "deleteRedirectsOnDelete",
+			label: "默认勾选“删除重定向”",
 			adminOnly: true,
 			type: "boolean"
 		},

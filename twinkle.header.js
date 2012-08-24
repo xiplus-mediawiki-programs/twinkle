@@ -73,6 +73,7 @@ Twinkle.defaultConfig.twinkle = {
 	promptForSpeedyDeletionSummary: [ "db" ],
 	openUserTalkPageOnSpeedyDelete: [  ],
 	deleteTalkPageOnDelete: false,
+	deleteRedirectsOnDelete: true,
 	deleteSysopDefaultToTag: false,
 	speedyWindowHeight: 500,
 	speedyWindowWidth: 800,
