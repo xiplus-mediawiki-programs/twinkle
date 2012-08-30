@@ -810,24 +810,29 @@ Twinkle.warn.messages = {
 	block: {
 		"uw-block1": {
 			label: "层级1封禁",
-			summary: "层级1封禁"
+			summary: "层级1封禁",
+			reasonParam: true
 		},
 		"uw-block2": {
 			label: "层级2封禁",
-			summary: "层级2封禁"
+			summary: "层级2封禁",
+			reasonParam: true
 		},
 		"uw-block3": {
 			label: "层级3封禁",
 			summary: "层级3封禁",
+			reasonParam: true,
 			indefinite: true
 		},
 		"uw-3block": {
 			label: "回退不过三原则封禁",
-			summary: "回退不过三原则封禁"
+			summary: "回退不过三原则封禁",
+			reasonParam: true,
 		},
 		"uw-ablock": {
 			label: "匿名封禁",
-			summary: "匿名封禁"
+			summary: "匿名封禁",
+			reasonParam: true,
 		},
 		"uw-bblock": {
 			label: "机器人失灵封禁",
@@ -852,7 +857,8 @@ Twinkle.warn.messages = {
 		},
 		"uw-cblock": {
 			label: "用户核查封禁",
-			summary: "用户核查封禁"
+			summary: "用户核查封禁",
+			indefinite: true
 		}
 	}
 };
