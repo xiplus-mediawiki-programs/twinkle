@@ -201,6 +201,7 @@ Twinkle.tag.article.tags = {
 	"coi": "主要贡献者与本条目所宣扬的内容可能存在利益冲突",
 	"contradict": "内容自相矛盾",
 	"copyedit": "需要编修，以确保文法、用词、语气、格式、标点等使用恰当",
+	"dead end": "需要更多连接去其他条目的链结以连入百科全书的链接网络",
 	"disputed": "内容疑欠准确，有待查证",
 	"expand": "需要扩充",
 	"expert": "需要精通或熟悉本主题的专家参与编辑",
@@ -240,8 +241,7 @@ Twinkle.tag.article.tags = {
 	"unreferenced": "没有列出任何参考或来源",
 	"update": "需要更新",
 	"verylong": "可能过于冗长",
-	"weasel": "可能因为语意模棱两可而损及其中立性或准确性",
-	"wikify": "需要被修正为维基格式以符合质量标准"
+	"weasel": "可能因为语意模棱两可而损及其中立性或准确性"
 };
 
 // A list of tags in order of category
@@ -253,8 +253,7 @@ Twinkle.tag.article.tagCategories = {
 		"常规清理": [
 			"cleanup",
 			"cleanup-jargon",
-			"copyedit",
-			"wikify"
+			"copyedit"
 		],
 		"可能多余的内容": [
 			"external links",
@@ -324,9 +323,9 @@ Twinkle.tag.article.tagCategories = {
 			"roughtranslation"
 		],
 		"链接": [
+			"dead end",
 			"orphan",
-			"overlinked",
-			"wikify"  // this tag is listed twice because it used to focus mainly on links, but now it's a more general cleanup tag
+			"overlinked"
 		],
 		"参考技术": [
 			"citation style"
@@ -504,7 +503,7 @@ Twinkle.tag.callbacks = {
 		if( Twinkle.tag.mode !== '重定向' ) {
 			// Check for preexisting tags and separate tags into groupable and non-groupable arrays
 			for( i = 0; i < params.tags.length; i++ ) {
-				tagRe = new RegExp( '(\\{\\{' + params.tags[i] + '(\\||\\}\\}))', 'im' );
+				tagRe = new RegExp( '(\\{\\{' + params.tags[i] + '(\\||\\}\\})|\\|\\s*' + params.tags[i] + '\\s*=[a-z ]+\\d+)', 'im' );
 				if( !tagRe.exec( pageText ) ) {
 					if( params.tags[i] == 'notability' ) {
 						wikipedia_page = new Morebits.wiki.page("Wikipedia:关注度/提报", "添加关注度记录项");
@@ -518,12 +517,42 @@ Twinkle.tag.callbacks = {
 						tags = tags.concat( params.tags[i] );
 					}
 				} else {
-					Morebits.status.info( '信息', '在页面上找到{{' + params.tags[i] +
+					Morebits.status.warn( '信息', '在页面上找到{{' + params.tags[i] +
 						'}}…跳过' );
 				}
 			}
 
-			if( params.group && groupableTags.length >= 3 ) {
+			var miTest = /\{\{(multiple ?issues|article ?issues|mi)[^}]+\{/im.exec(pageText);
+			var miOldStyleRegex = /\{\{(multiple ?issues|article ?issues|mi)\s*\|([^{]+)\}\}/im;
+			var miOldStyleTest = miOldStyleRegex.exec(pageText);
+
+			if( ( miTest || miOldStyleTest ) && groupableTags.length > 0 ) {
+				Morebits.status.info( '信息', '添加支持的标记入已存在的{{multiple issues}}' );
+
+				groupableTags.sort();
+				tagText = "";
+
+				totalTags = groupableTags.length;
+				$.each(groupableTags, addTag);
+
+				summaryText += '标记' + '（在{{[[T:multiple issues|multiple issues]]}}内）';
+				if( tags.length > 0 ) {
+					summaryText += '和';
+				}
+
+				if( miOldStyleTest ) {
+					// convert tags from old-style to new-style
+					var split = miOldStyleTest[2].split("|");
+					$.each(split, function(index, val) {
+						split[index] = val.replace("=", "|time=").trim();
+					});
+					pageText = pageText.replace(miOldStyleRegex, "{{$1|\n{{" + split.join("}}\n{{") + "}}\n" + tagText + "}}\n");
+				} else {
+					var miRegex = new RegExp("(\\{\\{\\s*" + miTest[1] + "\\s*(?:\\|(?:\\{\\{[^{}]*\\}\\}|[^{}])*)?)\\}\\}\\s*", "im");
+					pageText = pageText.replace(miRegex, "$1" + tagText + "}}\n");
+				}
+				tagText = "";
+			} else if( params.group && groupableTags.length >= 3 ) {
 				Morebits.status.info( '信息', '合并支持的模板入{{multiple issues}}' );
 
 				groupableTags.sort();
@@ -547,7 +576,7 @@ Twinkle.tag.callbacks = {
 				if( !tagRe.exec( pageText ) ) {
 					tags = tags.concat( params.tags[i] );
 				} else {
-					Morebits.status.info( '信息', '在重定向上找到{{' + params.tags[i] +
+					Morebits.status.warn( '信息', '在重定向上找到{{' + params.tags[i] +
 						'}}…跳过' );
 				}
 			}
