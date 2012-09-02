@@ -105,7 +105,7 @@ Twinkle.load = function () {
 		Twinkle.prefs.twinkle = {};
 	}
 	if (typeof(Twinkle.prefs.friendly) !== "object") {
-		Twinkle.prefs.twinkle = {};
+		Twinkle.prefs.friendly = {};
 	}
 	Twinkle.prefs.twinkle.summaryAd = Twinkle.defaultConfig.twinkle.summaryAd;
 	Twinkle.prefs.twinkle.deletionSummaryAd = Twinkle.defaultConfig.twinkle.deletionSummaryAd;
