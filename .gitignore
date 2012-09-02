@@ -3,3 +3,7 @@ twinkle.js
 /.settings
 /.project
 /twinkle.js
+jsl.conf
+stash*.txt
+stash*.diff
+*.jsX
