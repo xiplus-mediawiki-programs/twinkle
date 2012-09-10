@@ -289,11 +289,6 @@ Twinkle.speedy.getArticleList = function twinklespeedyGetArticleList(multiple) {
 		value: 'a3'
 	});
 	result.push({
-		label: 'A4: 未在条目中列举影响力及于主题自身环境以外，以述明重要性的真实人物、动物或组织。',
-		value: 'a4',
-		tooltip: '包括以下几种类型：人物：无第三方可靠来源，且未列举影响力及于主角之家庭、亲朋、就读学校及就业机构以外人事物之事迹；动物：无第三方可靠来源之单一或少数个体，或且未列举影响力及于动物之一般日常作息以外人事物之事迹；组织（乐队、俱乐部、社团）：无第三方可靠来源，且未列举影响力及于成员之家庭、亲朋、就读学校及就业机构以外人事物之事迹；其他情况不适用。'
-	});
-	result.push({
 		label: 'A5: 条目建立时之内容即与其他现有条目内容完全相同，且名称不适合做为其他条目之重定向。',
 		value: 'a5',
 		tooltip: '条目被建立时，第一个版本的内容与当时其他现存条目完全相同，且这个条目的名称不适合改为重定向，就可以提送快速删除。如果名称可以作为重定向，就应直接改重定向，不要提送快速删除。如果是多个条目合并产生的新条目，不适用。如果是从主条目拆分产生的条目，不适用；如有疑虑，应提送存废讨论处理。'
@@ -425,7 +420,6 @@ Twinkle.speedy.normalizeHash = {
 	'a1': 'a1',
 	'a2': 'a2',
 	'a3': 'a3',
-	'a4': 'a4',
 	'a5': 'a5',
 	'r2': 'r2',
 	'r3': 'r3',
@@ -460,7 +454,6 @@ Twinkle.speedy.reasonHash = {
 	'a1': '非常短而无定义或内容',
 	'a2': '内容只包含参考、链接、模板或/及分类',
 	'a3': '与其他中文维基计划内容相同的文章',
-	'a4': '未述明重要性的真实人物、动物或组织',
 	'a5': '条目建立时之内容即与其他现有条目内容相同',
 // Redirects
 	'r2': '跨名字空间重定向',
@@ -615,12 +608,12 @@ Twinkle.speedy.callbacks = {
 			statusIndicator.status("0%");
 
 			var onsuccess = function( apiobj ) {
-				var obj = apiobj.params.obj;
-				var total = apiobj.params.total;
-				var now = parseInt( 100 * ++(apiobj.params.current)/total, 10 ) + '%';
+				var obj = apiobj.parent.params.obj;
+				var total = apiobj.parent.params.total;
+				var now = parseInt( 100 * ++(apiobj.parent.params.current)/total, 10 ) + '%';
 				obj.update( now );
 				apiobj.statelem.unlink();
-				if( apiobj.params.current >= total ) {
+				if( apiobj.parent.params.current >= total ) {
 					obj.info( now + '（完成）' );
 					Morebits.wiki.removeCheckpoint();
 				}
@@ -637,7 +630,7 @@ Twinkle.speedy.callbacks = {
 				var title = $(value).attr('title');
 				var page = new Morebits.wiki.page(title, '删除重定向 "' + title + '"');
 				page.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 重定向到已删除页面“' + mw.config.get('wgPageName') + "”" + Twinkle.getPref('deletionSummaryAd'));
-				page.setCallbackParameters(params);
+				page.params = params;
 				page.deletePage(onsuccess);
 			});
 		}

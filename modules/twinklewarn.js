@@ -1074,13 +1074,13 @@ Twinkle.warn.callbacks = {
 		var params = pageobj.getCallbackParameters();
 		var messageData = Twinkle.warn.messages[params.main_group][params.sub_group];
 
-		var history_re = /<!-- Template:(uw-.*?) -->.*?(\d{1,2}:\d{1,2}, \d{1,2} \w+ \d{4}) \(UTC\)/g;
+		var history_re = /<!-- Template:(uw-.*?) -->.*?(\d{4})年(\d{1,2})月(\d{1,2})日 \([日一二三四五六]\) (\d{1,2}):(\d{1,2}) \(UTC\)/g;
 		var history = {};
 		var latest = { date:new Date( 0 ), type:'' };
 		var current;
 
 		while( ( current = history_re.exec( text ) ) ) {
-			var current_date = new Date( current[2] + ' UTC' );
+			var current_date = new Date( current[2] + '-' + current[3] + '-' + current[4] + ' ' + current[5] + ':' + current[6] + ' UTC' );
 			if( !( current[1] in history ) ||  history[ current[1] ] < current_date ) {
 				history[ current[1] ] = current_date;
 			}
