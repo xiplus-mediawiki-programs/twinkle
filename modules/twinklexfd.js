@@ -344,7 +344,7 @@ Twinkle.xfd.callbacks = {
 			// Notification to first contributor
 			if(params.usertalk) {
 				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
-				var notifytext = "\n{{subst:idw|File:" + mw.config.get('wgTitle') + "}}";
+				var notifytext = "\n{{subst:idw|File:" + mw.config.get('wgTitle') + "}}--~~~~";
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary("通知：文件[[" + mw.config.get('wgPageName') + "]]存废讨论提名。" + Twinkle.getPref('summaryAd'));
 				usertalkpage.setCreateOption('recreate');
