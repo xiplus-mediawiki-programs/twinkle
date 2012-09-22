@@ -328,7 +328,7 @@ Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 	result.push({
 		label: 'G1: 没有实际内容或历史纪录的页面。',
 		value: 'g1',
-		tooltip: '如“adfasddd”。参见Wikipedia:胡言乱语。但注意：图片也算是内容。'
+		tooltip: '如“adfasddd”。参见胡言乱语。但注意：图片也算是内容。'
 	});
 	result.push({
 		label: 'G2: 测试页面。',
@@ -376,11 +376,13 @@ Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 		value: 'g15',
 		tooltip: '包括以下几种类型：1. 没有对应文件的文件页面；2. 没有对应母页面的子页面，用户页子页面除外；3. 指向不存在页面的重定向；4. 没有对应内容页面的讨论页，讨论页存档和用户讨论页除外；5. 对应内容页面为重定向的讨论页，前提是讨论页建立于重定向之后，或者讨论内容已经存档；6. 不存在用户的用户页及用户页子页面，随用户更名产生的用户页重定向除外。'
 	});
-	result.push({
-		label: 'G16: 临时页面依然侵权。',
-		value: 'g16',
-		tooltip: '因为主页面侵权而创建的临时页面仍然侵权。'
-	});
+	if (Morebits.userIsInGroup('sysop')) {
+		result.push({
+			label: 'G16: 临时页面依然侵权。',
+			value: 'g16',
+			tooltip: '因为主页面侵权而创建的临时页面仍然侵权。'
+		});
+	}
 	return result;
 };
 
@@ -393,7 +395,7 @@ Twinkle.speedy.redirectList = [
 	{
 		label: 'R3: 名称错误的重定向，包括条目标题繁简混用、消歧义使用括号或空格错误、间隔号使用错误。',
 		value: 'r3',
-		tooltip: '不包括常见的拼写错误。为常见的拼写错误建立指向正确题目的重定向页面，可使百科用户纵使在查找文章时拼写错误，也能够找到寻求的文章。参阅：Wikipedia:命名常规。'
+		tooltip: '不包括常见的拼写错误。为常见的拼写错误建立指向正确题目的重定向页面，可使百科用户纵使在查找文章时拼写错误，也能够找到寻求的文章。参阅：命名常规。'
 	},
 	{
 		label: 'R5: 指向本身的重定向或循环的重定向。',
@@ -445,7 +447,7 @@ Twinkle.speedy.reasonHash = {
 	'g5': '曾经依存废讨论被删除的重建内容',
 	'g10': '作者请求',
 	'g11': '广告或宣传',
-	'g12': '未列明来源或违反[[Wikipedia:生者传记]]的负面内容',
+	'g12': '未列明来源或违反生者传记的负面内容',
 	'g13': '明显且拙劣的机器翻译',
 	'g14': '超过两周没有翻译的非现代标准汉语页面',
 	'g15': '孤立页面',

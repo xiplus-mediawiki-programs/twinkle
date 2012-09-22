@@ -1002,7 +1002,7 @@ Twinkle.protect.callbacks = {
 		if ( params.category === 'unprotect' ) {
 			reg = /(==\s*请求解除保护\s*==\n)/;
 		} else {
-			reg = /(==\s*请求保护\s*==\n)/;
+			reg = /(\/header2}}\n)/;
 		}
 		var originalTextLength = text.length;
 		text = text.replace( reg, "$1" + newtag + "\n");

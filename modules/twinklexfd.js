@@ -309,7 +309,7 @@ Twinkle.xfd.callbacks = {
 					break;
 			}
 
-			pageobj.setAppendText("\n{{subst:DRItem|Type=" + type + "|DRarticles=" + mw.config.get('wgPageName') + "|Reason=" + params.reason + "|To=" + to + "}}--~~~~");
+			pageobj.setAppendText("\n{{subst:DRItem|Type=" + type + "|DRarticles=" + mw.config.get('wgPageName') + "|Reason=" + params.reason + "|To=" + to + "}}~~~~");
 			pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]。" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchDiscussion')) {
 				case 'yes':
