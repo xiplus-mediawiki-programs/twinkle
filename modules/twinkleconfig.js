@@ -29,7 +29,7 @@ Twinkle.config.commonSets = {
 		a1: "A1", a2: "A2", a3: "A3", a5: "A5",
 		o1: "O1", o3: "O3", o4: "O4",
 		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
-		r2: "R2", r3: "R3", r5: "R5" // db-multiple is not listed here because it is treated differently within twinklespeedy
+		r2: "R2", r3: "R3", r5: "R5"
 	},
 	csdCriteriaDisplayOrder: [
 		"db",
@@ -39,6 +39,14 @@ Twinkle.config.commonSets = {
 		"f1", "f3", "f4", "f5", "f6", "f7",
 		"r2", "r3", "r5"
 	],
+	csdCriteriaNotification: {
+		db: "自定义理由",
+		g1: "G1", g2: "G2", g3: "G3", g5: "G5", g10: "G10", g11: "G11", g12: "G12", g13: "G13", g14: "G14", g15: "G15", g16: "G16",
+		a1: "A1", a2: "A2", a3: "A3", a5: "A5",
+		o1: "O1", o3: "O3", o4: "O4",
+		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
+		r2: "R2", r3: "R3", r5: "R5"
+	},
 	csdCriteriaNotificationDisplayOrder: [
 		"db",
 		"g1", "g2", "g3", "g5", "g10", "g11", "g12", "g13", "g14", "g15", "g16",
@@ -53,7 +61,7 @@ Twinkle.config.commonSets = {
 		a1: "A1", a2: "A2", a3: "A3", a5: "A5",
 		o1: "O1", o3: "O3", o4: "O4",
 		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
-		r2: "R2", r3: "R3", r5: "R5" // db-multiple is not listed here because it is treated differently within twinklespeedy
+		r2: "R2", r3: "R3", r5: "R5"
 	},
 	csdAndDICriteriaDisplayOrder: [
 		"db",
@@ -319,7 +327,7 @@ Twinkle.config.sections = [
 			label: "仅在使用以下理由时通知页面创建者",
 			helptip: "尽管您在对话框中选择通知，通知仍只会在使用这些理由时发出。",
 			type: "set",
-			setValues: Twinkle.config.commonSets.csdCriteria,
+			setValues: Twinkle.config.commonSets.csdCriteriaNotification,
 			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaNotificationDisplayOrder
 		},
 
@@ -331,7 +339,7 @@ Twinkle.config.sections = [
 			label: "在使用以下理由时欢迎页面创建者",
 			helptip: "欢迎模板仅在用户被通知时加入，使用的模板是{{firstarticle}}。",
 			type: "set",
-			setValues: Twinkle.config.commonSets.csdCriteria,
+			setValues: Twinkle.config.commonSets.csdCriteriaNotification,
 			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaNotificationDisplayOrder
 		},
 
