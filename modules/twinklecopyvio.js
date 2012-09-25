@@ -37,7 +37,21 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 			type: 'textarea',
 			label:'侵权来源：',
 			name: 'source'
-		} );
+		}
+	);
+	form.append( {
+			type: 'checkbox',
+			list: [
+				{
+					label: '通知页面创建者',
+					value: 'notify',
+					name: 'notify',
+					tooltip: "在页面创建者对话页上放置一通知模板。",
+					checked: true
+				}
+			]
+		}
+	);
 	form.append( { type:'submit' } );
 
 	var result = form.render();
@@ -58,24 +72,26 @@ Twinkle.copyvio.callbacks = {
 		wikipedia_page.load(Twinkle.copyvio.callbacks.copyvioList);
 
 		// Notification to first contributor
-		var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
-		var notifytext = "\n{{subst:CopyvioNotice|" + mw.config.get('wgPageName') +  "}}";
-		usertalkpage.setAppendText(notifytext);
-		usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]疑似侵犯版权。" + Twinkle.getPref('summaryAd'));
-		usertalkpage.setCreateOption('recreate');
-		switch (Twinkle.getPref('copyvioWatchUser')) {
-			case 'yes':
-				usertalkpage.setWatchlist(true);
-				break;
-			case 'no':
-				usertalkpage.setWatchlistFromPreferences(false);
-				break;
-			default:
-				usertalkpage.setWatchlistFromPreferences(true);
-				break;
+		if(params.usertalk) {
+			var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
+			var notifytext = "\n{{subst:CopyvioNotice|" + mw.config.get('wgPageName') +  "}}";
+			usertalkpage.setAppendText(notifytext);
+			usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]疑似侵犯版权。" + Twinkle.getPref('summaryAd'));
+			usertalkpage.setCreateOption('recreate');
+			switch (Twinkle.getPref('copyvioWatchUser')) {
+				case 'yes':
+					usertalkpage.setWatchlist(true);
+					break;
+				case 'no':
+					usertalkpage.setWatchlistFromPreferences(false);
+					break;
+				default:
+					usertalkpage.setWatchlistFromPreferences(true);
+					break;
+			}
+			usertalkpage.setFollowRedirect(true);
+			usertalkpage.append();
 		}
-		usertalkpage.setFollowRedirect(true);
-		usertalkpage.append();
 	},
 	taggingArticle: function(pageobj) {
 		var params = pageobj.getCallbackParameters();
@@ -120,6 +136,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' '));  // for queen/king/whatever and country!
 
 	var source = e.target.source.value;
+	var usertalk = e.target.notify.checked;
 
 	Morebits.simpleWindow.setButtonsEnabled( false );
 	Morebits.status.init( e.target );
@@ -131,7 +148,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 
 	var query, wikipedia_page, wikipedia_api, logpage, params;
 	logpage = 'Wikipedia:頁面存廢討論/疑似侵權';
-	params = { source: source, logpage: logpage };
+	params = { source: source, logpage: logpage, usertalk: usertalk};
 
 	Morebits.wiki.addCheckpoint();
 	// Updating data for the action completed event
