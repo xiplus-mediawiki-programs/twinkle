@@ -960,8 +960,8 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 	var main_group = e.target.form.main_group.value;
 	var value = e.target.form.sub_group.value;
 
-	if( main_group === 'singlewarn' ) {
-		if( value === 'uw-username' || value === 'uw-socksuspect' ) {
+	if( main_group === 'singlenotice' || main_group === 'singlewarn' ) {
+		if( value === 'uw-bite' || value === 'uw-username' || value === 'uw-socksuspect' ) {
 			if(Twinkle.warn.prev_article === null) {
 				Twinkle.warn.prev_article = e.target.form.article.value;
 			}
@@ -1025,6 +1025,9 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 	} else if (value === "uw-username") {
 		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
 		Morebits.quickForm.overrideElementLabel(e.target.form.article, "用户名违反方针，因为… ");
+	} else if (value === "uw-bite") {
+		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
+		Morebits.quickForm.overrideElementLabel(e.target.form.article, "被“咬到”的用户（不含User:） ");
 	} else {
 		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, true);
 		Morebits.quickForm.resetElementLabel(e.target.form.article);
