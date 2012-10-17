@@ -231,8 +231,10 @@ Twinkle.speedy.callback.dbMultipleChanged = function twinklespeedyCallbackDbMult
 	work_area.append( { type: 'header', label: '常规' } );
 	work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getGeneralList(value) });
 
-	work_area.append( { type: 'header', label: '重定向' } );
-	work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.redirectList } );
+	if (Morebits.wiki.isPageRedirect() || Morebits.userIsInGroup('sysop')) {
+		work_area.append( { type: 'header', label: '重定向' } );
+		work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.redirectList } );
+	}
 
 	var old_area = Morebits.quickForm.getElements(form, "work_area")[0];
 	form.replaceChild(work_area.render(), old_area);
