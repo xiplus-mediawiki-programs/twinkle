@@ -242,7 +242,7 @@ Twinkle.xfd.callbacks = {
 		taggingArticle: function(pageobj) {
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
-			var tag = '{{subst:vfd/auto|' + params.reason;
+			var tag = '{{vfd|' + params.reason;
 
 			switch ( params.xfdcat ) {
 				case 'vmd':
@@ -260,7 +260,10 @@ Twinkle.xfd.callbacks = {
 				default:
 					break;
 			}
-			tag += '}}';
+			if (Morebits.wiki.isPageRedirect()) {
+				tag += '|r';
+			}
+			tag += '|date={{subst:#time:Y/m/d}}}}';
 			if ( params.noinclude ) {
 				tag = '<noinclude>' + tag + '</noinclude>';
 			} else {
