@@ -311,7 +311,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							}
 						},
 						list: [
-							{ label: '1小时', value: '1 hour' },
+							{ label: '1小时', selected: true, value: '1 hour' },
 							{ label: '2小时', value: '2 hours' },
 							{ label: '3小时', value: '3 hours' },
 							{ label: '6小时', value: '6 hours' },
@@ -326,7 +326,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							{ label: '2月', value: '2 months' },
 							{ label: '3月', value: '3 months' },
 							{ label: '1年', value: '1 year' },
-							{ label: '无限期', selected: true, value:'indefinite' },
+							{ label: '无限期', value:'indefinite' },
 							{ label: '自定义…', value: 'custom' }
 						]
 					});
@@ -598,7 +598,7 @@ Twinkle.protect.protectionPresetsInfo = {
 		template: 'none'
 	},
 	'pp-create': {
-		create: 'sysop',
+		create: 'autoconfirmed',
 		reason: '{{pp-create}}'
 	}
 };

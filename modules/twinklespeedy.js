@@ -513,13 +513,34 @@ Twinkle.speedy.callbacks = {
 				talkpage.deletePage();
 			}
 
+			// prompt for protect on G11
+			var $link, $bigtext;
+			if (params.normalized === 'g11') {
+				$link = $('<a/>', {
+					'href': '#',
+					'text': '点击这里施行保护',
+					'css': { 'fontSize': '130%', 'fontWeight': 'bold' },
+					'click': function(){
+						Morebits.wiki.actionCompleted.redirect = null;
+						Twinkle.speedy.dialog.close();
+						mw.config.set('wgArticleId', 0);
+						Twinkle.protect.callback();
+					}
+				});
+				$bigtext = $('<span/>', {
+					'text': '白纸保护该页',
+					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
+				});
+				Morebits.status.info($bigtext[0], $link[0]);
+			}
+
 			// promote Unlink tool
 			var $link, $bigtext;
 			if( mw.config.get('wgNamespaceNumber') === 6 && params.normalized !== 'f7' ) {
 				$link = $('<a/>', {
 					'href': '#',
 					'text': '点击这里前往反链工具',
-					'css': { 'fontSize': '130%', 'fontWeight': 'bold' },
+					'css': { 'fontWeight': 'bold' },
 					'click': function(){
 						Morebits.wiki.actionCompleted.redirect = null;
 						Twinkle.speedy.dialog.close();
@@ -528,14 +549,14 @@ Twinkle.speedy.callbacks = {
 				});
 				$bigtext = $('<span/>', {
 					'text': '取消对已删除文件的使用',
-					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
+					'css': { 'fontWeight': 'bold' }
 				});
 				Morebits.status.info($bigtext[0], $link[0]);
 			} else if (params.normalized !== 'f7') {
 				$link = $('<a/>', {
 					'href': '#',
 					'text': '点击这里前往反链工具',
-					'css': { 'fontSize': '130%', 'fontWeight': 'bold' },
+					'css': { 'fontWeight': 'bold' },
 					'click': function(){
 						Morebits.wiki.actionCompleted.redirect = null;
 						Twinkle.speedy.dialog.close();
@@ -544,7 +565,7 @@ Twinkle.speedy.callbacks = {
 				});
 				$bigtext = $('<span/>', {
 					'text': '取消对已删除页面的链接',
-					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
+					'css': { 'fontWeight': 'bold' }
 				});
 				Morebits.status.info($bigtext[0], $link[0]);
 			}
