@@ -790,23 +790,19 @@ Twinkle.speedy.callbacks = {
 					var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）"),
 					    notifytext, i;
 
-					// specialcase "db" and "db-multiple"
-					/*
-					if (params.normalizeds.length > 1) {
-						notifytext = "\n{{subst:db-notice-multiple|1=" + mw.config.get('wgPageName');
-						var count = 2;
-						$.each(params.normalizeds, function(index, norm) {
-							notifytext += "|" + (count++) + "=" + norm.toUpperCase();
-						});
-					} else if (params.normalizeds[0] === "db") {
-						notifytext = "\n{{subst:db-reason-notice|1=" + mw.config.get('wgPageName');
-					} else {*/
-						notifytext = "\n{{subst:db-notice|target=" + mw.config.get('wgPageName');
-					/*}*/
+					notifytext = "\n{{subst:db-notice|target=" + mw.config.get('wgPageName');
 					notifytext += (params.welcomeuser ? "" : "|nowelcome=yes") + "}}--~~~~";
 
+					var editsummary = "通知：";
+					if (params.normalizeds.indexOf("g12") === -1) {  // no article name in summary for G10 deletions
+						editsummary += "页面[[" + mw.config.get('wgPageName') + "]]";
+					} else {
+						editsummary += "一攻击性页面";
+					}
+					editsummary += "快速删除提名";
+
 					usertalkpage.setAppendText(notifytext);
-					usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]快速删除提名。" + Twinkle.getPref('summaryAd'));
+					usertalkpage.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
 					usertalkpage.setCreateOption('recreate');
 					usertalkpage.setFollowRedirect(true);
 					usertalkpage.append();

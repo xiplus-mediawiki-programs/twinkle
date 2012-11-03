@@ -415,7 +415,7 @@ Twinkle.config.sections = [
 		{
 			name: "speedyLogPageName",
 			label: "在此页保留日志",
-			helptip: "如：User:<i>用户名</i>/<i>子页面</i>，仅在打开日志时工作。",
+			helptip: "在此框中输入子页面名称，您将在User:<i>用户名</i>/<i>子页面</i>找到CSD日志。仅在打开日志时工作。",
 			type: "string"
 		},
 		{
