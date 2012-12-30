@@ -35,7 +35,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		return;
 	}
 	if( mw.config.get('wgTitle').split( '/' )[0] === mw.config.get('wgUserName') &&
-			!confirm( '警告自己可被视为精神不稳定的迹象！您确定要继续吗？' ) ) {
+			!confirm( '您将要警告自己！您确定要继续吗？' ) ) {
 		return;
 	}
 	
