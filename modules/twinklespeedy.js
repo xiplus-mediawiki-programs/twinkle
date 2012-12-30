@@ -208,7 +208,7 @@ Twinkle.speedy.callback.dbMultipleChanged = function twinklespeedyCallbackDbMult
 		case 2:  // user
 		case 3:  // user talk
 			work_area.append( { type: 'header', label: '用户页' } );
-			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.userList } );
+			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getUserList(value) } );
 			break;
 
 		case 6:  // file
@@ -306,17 +306,19 @@ Twinkle.speedy.categoryList = [
 	}
 ];
 
-Twinkle.speedy.userList = [
-	{
+Twinkle.speedy.getUserList = function twinklespeedyGetTemplateList(multiple) {
+	var result = [];
+	result.push({
 		label: 'O1: 用户请求删除自己的用户页或其子页面。',
 		value: 'o1',
 		tooltip: '如果是从其他名字空间移动来的，须附有合理原因。'
-	},
-	{
+	});
+	result.push({
 		label: 'O3: 匿名用户的用户讨论页，其中的内容不再有用。',
 		value: 'o3'
-	}
-];
+	});
+	return result;
+};
 
 Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 	var result = [];

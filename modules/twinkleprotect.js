@@ -143,7 +143,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					name: 'category',
 					label: '选择预设：',
 					event: Twinkle.protect.callback.changePreset,
-					list: (mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypes : Twinkle.protect.protectionTypesCreate)
+					list: (mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypesAdmin : Twinkle.protect.protectionTypesCreate)
 				});
 
 			field2 = new Morebits.quickForm.element({ type: 'field', label: '保护选项', name: 'field2' });
@@ -559,7 +559,7 @@ Twinkle.protect.protectionPresetsInfo = {
 		move: 'sysop',
 		reason: '已封禁用户滥用其对话页'
 	},
-	'pp-semi-template': {
+	'pp-semi-template': {  // removed for now
 		edit: 'autoconfirmed',
 		move: 'sysop',
 		reason: '高风险模板',
@@ -815,7 +815,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 					break;
 				case 'pp-semi-vandalism':
 				case 'pp-semi-usertalk':
-				case 'pp-semi-template':
+				case 'pp-semi-template':  // removed for now
 				case 'pp-semi-sock':
 				case 'pp-semi-blp':
 				case 'pp-semi-protected':
@@ -848,7 +848,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 					typereason = '长期破坏';
 					break;
 				case 'pp-template':
-				case 'pp-semi-template':
+				case 'pp-semi-template':  // removed for now
 					typereason = '高风险模板';
 					break;
 				case 'pp-usertalk':
