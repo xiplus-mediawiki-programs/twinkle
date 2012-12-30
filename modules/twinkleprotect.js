@@ -508,6 +508,8 @@ Twinkle.protect.protectionTypes = [
 	{ label: '解除保护', value: 'unprotect' }
 ];
 
+Twinkle.protect.protectionTypesAdmin = Twinkle.protect.protectionTypes;
+
 Twinkle.protect.protectionTypesCreate = [
 	{
 		label: '白纸保护',
