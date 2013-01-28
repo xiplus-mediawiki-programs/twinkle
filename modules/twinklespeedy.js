@@ -200,7 +200,6 @@ Twinkle.speedy.callback.dbMultipleChanged = function twinklespeedyCallbackDbMult
 
 	switch (namespace) {
 		case 0:  // article
-		case 1:  // talk
 			work_area.append( { type: 'header', label: '条目' } );
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getArticleList(value) } );
 			break;
@@ -212,14 +211,12 @@ Twinkle.speedy.callback.dbMultipleChanged = function twinklespeedyCallbackDbMult
 			break;
 
 		case 6:  // file
-		case 7:  // file talk
 			work_area.append( { type: 'header', label: '文件' } );
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getFileList(value) } );
 			work_area.append( { type: 'div', label: '标记CSD F3、F4，请使用Twinkle的“图版”功能。' } );
 			break;
 
 		case 14:  // category
-		case 15:  // category talk
 			work_area.append( { type: 'header', label: '分类' } );
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.categoryList } );
 			break;
