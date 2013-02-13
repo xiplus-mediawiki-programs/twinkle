@@ -142,10 +142,12 @@ Morebits.quickForm.element.prototype.append = function QuickFormElementAppend( d
 	return child;
 };
 
-Morebits.quickForm.element.prototype.render = function QuickFormElementRender() {
-	var currentNode = this.compute( this.data );
+// This should be called without parameters: form.render()
+Morebits.quickForm.element.prototype.render = function QuickFormElementRender( internal_subgroup_id ) {
+	var currentNode = this.compute( this.data, internal_subgroup_id );
 
 	for( var i = 0; i < this.childs.length; ++i ) {
+		// do not pass internal_subgroup_id to recursive calls
 		currentNode[1].appendChild( this.childs[i].render() );
 	}
 	return currentNode[0];
@@ -165,7 +167,6 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 	switch( data.type ) {
 	case 'form':
 		node = document.createElement( 'form' );
-		node.setAttribute( 'name', 'id' );
 		node.className = "quickform";
 		node.setAttribute( 'action', 'javascript:void(0);');
 		if( data.event ) {
@@ -290,14 +291,26 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 				}
 				var event;
 				if( current.subgroup ) {
-					var tmpgroup = $.extend({}, current.subgroup);
-					if( ! tmpgroup.type ) {
-						tmpgroup.type = data.type;
-					}
-					tmpgroup.name = (current.name || data.name) + '.' + tmpgroup.name;
+					var tmpgroup = current.subgroup;  // $.extend({}, current.subgroup); really needed?
 
-					var subgroup = this.compute( tmpgroup, cur_id )[0];
-					subgroup.style.marginLeft = '3em';
+					if( ! $.isArray( tmpgroup ) ) {
+						tmpgroup = [ tmpgroup ];
+					}
+
+					var subgroupRaw = new Morebits.quickForm.element({
+						type: 'div', 
+						id: id + '_' + i + '_subgroup'
+					});
+					$.each( tmpgroup, function( idx, el ) {
+						if( ! el.type ) {
+							el.type = data.type;
+						}
+						el.name = (current.name || data.name) + '.' + el.name;
+						subgroupRaw.append( el );
+					} );
+					
+					var subgroup = subgroupRaw.render( cur_id );
+					subgroup.className = "quickformSubgroup";
 					subnode.subgroup = subgroup;
 					subnode.shown = false;
 
@@ -336,6 +349,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 		break;
 	case 'input':
 		node = document.createElement( 'div' );
+		node.setAttribute( 'id', 'div_' + id );
 
 		if( data.label ) {
 			label = node.appendChild( document.createElement( 'label' ) );
@@ -348,6 +362,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 			subnode.setAttribute( 'value', data.value );
 		}
 		subnode.setAttribute( 'name', data.name );
+		subnode.setAttribute( 'id', id );
 		subnode.setAttribute( 'type', 'text' );
 		if( data.size ) {
 			subnode.setAttribute( 'size', data.size );
@@ -526,10 +541,12 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 		break;
 	case 'textarea':
 		node = document.createElement( 'div' );
+		node.setAttribute( 'id', 'div_' + id );
 		if( data.label ) {
 			label = node.appendChild( document.createElement( 'h5' ) );
 			label.appendChild( document.createTextNode( data.label ) );
-			label.setAttribute( 'for', id );
+			// TODO need to nest a <label> tag in here without creating extra vertical space
+			//label.setAttribute( 'for', id );
 		}
 		subnode = node.appendChild( document.createElement( 'textarea' ) );
 		subnode.setAttribute( 'name', data.name );
@@ -2635,13 +2652,9 @@ Morebits.wikitext.page.prototype = {
 	removeLink: function( link_target ) {
 		var first_char = link_target.substr( 0, 1 );
 		var link_re_string = "[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( link_target.substr( 1 ), true );
-		var link_simple_re = new RegExp( "\\[\\[:?(" + link_re_string + ")\\|?\\]\\]", 'g' );
+		var link_simple_re = new RegExp( "\\[\\[:?(" + link_re_string + ")\\]\\]", 'g' );
 		var link_named_re = new RegExp( "\\[\\[:?" + link_re_string + "\\|(.+?)\\]\\]", 'g' );
-		if( link_simple_re.test(this.text) ) {
-			this.text = this.text.replace( link_simple_re, "$1" );
-		} else {
-			this.text = this.text.replace( link_named_re, "$1" );
-		}
+		this.text = this.text.replace( link_simple_re, "$1" ).replace( link_named_re, "$1" );
 	},
 	commentOutImage: function( image, reason ) {
 		var unbinder = new Morebits.unbinder( this.text );

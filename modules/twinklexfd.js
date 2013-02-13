@@ -417,7 +417,8 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	var type =  e.target.category.value;
 	var usertalk = e.target.notify.checked;
 	var reason = e.target.xfdreason.value;
-	var xfdcat, mergeinto, noinclude;
+	var noinclude = e.target.noinclude.checked
+	var xfdcat, mergeinto;
 	if( type === 'afd' ) {
 		xfdcat = e.target.xfdcat.value;
 		if( xfdcat === 'merge' ) {

@@ -286,12 +286,10 @@ Twinkle.fluff.callbacks = {
 			Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 			Morebits.wiki.actionCompleted.notice = "修订版本完成";
 
-			var wikipedia_api = new Morebits.wiki.api( '保存回退内容', query, null/*Twinkle.fluff.callbacks.toRevision.complete*/, self.statelem);
+			var wikipedia_api = new Morebits.wiki.api( '保存回退内容', query, Twinkle.fluff.callbacks.complete, self.statelem);
 			wikipedia_api.params = self.params;
 			wikipedia_api.post();
 
-		},
-		complete: function (self) {
 		}
 	},
 	main: function( self ) {
@@ -508,8 +506,16 @@ Twinkle.fluff.callbacks = {
 		wikipedia_api.post();
 
 	},
-	complete: function (self) {
-		self.statelem.info("完成");
+	complete: function (apiobj) {
+		var blacklist = $(apiobj.getXML()).find('edit').attr('spamblacklist');
+		if (blacklist) {
+			var code = document.createElement('code');
+			code.style.fontFamily = "monospace";
+			code.appendChild(document.createTextNode(blacklist));
+			apiobj.statelem.error(['不能回退，因URL', code, '在垃圾黑名单中。']);
+		} else {
+			apiobj.statelem.info("完成");
+		}
 	}
 };
 

@@ -954,6 +954,9 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 	// clear overridden label on article textbox
 	Morebits.quickForm.setElementTooltipVisibility(e.target.root.article, true);
 	Morebits.quickForm.resetElementLabel(e.target.root.article);
+	
+	// hide the big red notice
+	$("#tw-warn-red-notice").remove();
 };
 
 Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSubcategory(e) {
@@ -1031,6 +1034,16 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 	} else {
 		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, true);
 		Morebits.quickForm.resetElementLabel(e.target.form.article);
+	}
+	
+	// add big red notice, warning users about how to use {{uw-username}} appropriately
+	if (value === "uw-username") {
+		var $redWarning = $("<div style='color: red;' id='tw-warn-red-notice'>{{uw-username}}<b>不应</b>被用于<b>明显</b>违反用户名方针的用户。" + 
+			"明显的违反方针应被报告给UAA。" +
+			"{{uw-username}}应只被用在边界情况下需要与用户讨论时。</div>");
+		$redWarning.insertAfter(Morebits.quickForm.getElementLabelObject(e.target.form.reasonGroup));
+	} else {
+		$("#tw-warn-red-notice").remove();
 	}
 };
 

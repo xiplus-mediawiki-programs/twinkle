@@ -900,7 +900,7 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(value, normal
 			break;
 		case 'f7':
 			var pagenamespaces = mw.config.get('wgPageName').replace( '_', ' ' );
-			var filename = prompt( '[CSD F8] 请输入维基共享上的文件名：', pagenamespaces );
+			var filename = prompt( '[CSD F7] 请输入维基共享上的文件名：', pagenamespaces );
 			if (filename === null)
 			{
 				statelem.error( '用户取消操作。' );

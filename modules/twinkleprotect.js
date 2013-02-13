@@ -106,6 +106,7 @@ Twinkle.protect.protectionLevel = null;
 Twinkle.protect.callback.protectionLevel = function twinkleprotectCallbackProtectionLevel(apiobj) {
 	var xml = apiobj.getXML();
 	var result = [];
+
 	$(xml).find('pr').each(function(index, pr) {
 		var $pr = $(pr);
 		var boldnode = document.createElement('b');
@@ -120,6 +121,7 @@ Twinkle.protect.callback.protectionLevel = function twinkleprotectCallbackProtec
 			result.push("（联锁）");
 		}
 	});
+
 	if (!result.length) {
 		var boldnode = document.createElement('b');
 		boldnode.textContent = "未被保护";
@@ -433,8 +435,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 		}
 
 		// reduce vertical height of dialog
-		$(e.target.form).find('select[name="editlevel"], select[name="editexpiry"], select[name="moveexpiry"], select[name="movelevel"], select[name="createexpiry"], select[name="createlevel"]').
-			parent().css({ display: 'inline-block', marginRight: '0.5em' });
+		$(e.target.form).find('fieldset[name="field2"] select').parent().css({ display: 'inline-block', marginRight: '0.5em' });
 	}
 };
 
@@ -464,7 +465,7 @@ Twinkle.protect.formevents = {
 };
 
 Twinkle.protect.doCustomExpiry = function twinkleprotectDoCustomExpiry(target) {
-	var custom = prompt('输入自定义终止时间。\n您可以使用相对时间，如“1 minute”或“19 days”，或绝对时间“yyyymmddhhmm”（如“200602011406”是2006年02月01日14：06（UTC））', '');
+	var custom = prompt('输入自定义终止时间。\n您可以使用相对时间，如“1 minute”或“19 days”，或绝对时间“yyyymmddhhmm”（如“200602011405”是2006年02月01日14：05（UTC））', '');
 	if (custom) {
 		var option = document.createElement('option');
 		option.setAttribute('value', custom);
@@ -782,26 +783,25 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 			Morebits.wiki.actionCompleted.notice = "保护完成";
 
-			thispage.protect();
-			/* falls through */
+			thispage.protect(function() { 
+				thispage.getStatusElement().info("done");
+				if (tagparams) {
+					Twinkle.protect.callbacks.taggingPageInitial(tagparams);
+				}
+			});
+			break;
+
 		case 'tag':
+			// apply a protection template
 
-			if (actiontype === 'tag') {
-				Morebits.simpleWindow.setButtonsEnabled( false );
-				Morebits.status.init( form );
-				Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
-				Morebits.wiki.actionCompleted.followRedirect = false;
-				Morebits.wiki.actionCompleted.notice = "标记完成";
-			}
+			Morebits.simpleWindow.setButtonsEnabled( false );
+			Morebits.status.init( form );
 
-			if (tagparams.tag === 'noop') {
-				Morebits.status.info("应用保护模板", "无关");
-				break;
-			}
+			Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
+			Morebits.wiki.actionCompleted.followRedirect = false;
+			Morebits.wiki.actionCompleted.notice = "标记完成";
 
-			var protectedPage = new Morebits.wiki.page( mw.config.get('wgPageName'), '标记页面');
-			protectedPage.setCallbackParameters( tagparams );
-			protectedPage.load( Twinkle.protect.callbacks.taggingPage );
+			Twinkle.protect.callbacks.taggingPageInitial(tagparams);
 			break;
 
 		case 'request':
@@ -916,6 +916,16 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 };
 
 Twinkle.protect.callbacks = {
+	taggingPageInitial: function( tagparams ) {
+		if (tagparams.tag === 'noop') {
+			Morebits.status.info("应用保护模板", "没什么要做的");
+			return;
+		}
+
+		var protectedPage = new Morebits.wiki.page( mw.config.get('wgPageName'), 'Tagging page');
+		protectedPage.setCallbackParameters( tagparams );
+		protectedPage.load( Twinkle.protect.callbacks.taggingPage );
+	},
 	taggingPage: function( protectedPage ) {
 		var params = protectedPage.getCallbackParameters();
 		var text = protectedPage.getPageText();

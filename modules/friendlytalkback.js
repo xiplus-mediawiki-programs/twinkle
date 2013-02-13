@@ -207,7 +207,7 @@
 			text += section + "|ts=~~~~~}}";
 
 			if( message ) {
-				text += "\n" + message + "  ~~~~";
+				text += "\n" + message + "--~~~~";
 			} else if( Twinkle.getFriendlyPref("insertTalkbackSignature") ) {
 				text += "\n~~~~";
 			}
