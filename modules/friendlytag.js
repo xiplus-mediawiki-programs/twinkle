@@ -18,7 +18,7 @@ Twinkle.tag = function friendlytag() {
 		twAddPortletLink( Twinkle.tag.callback, "标记", "friendly-tag", "标记重定向" );
 	}
 	// article/draft article tagging
-	else if( mw.config.get('wgNamespaceNumber') === 0 && mw.config.get('wgCurRevisionId') ) {
+	else if( ( mw.config.get('wgNamespaceNumber') === 0 && mw.config.get('wgCurRevisionId') ) || ( mw.config.get('wgPageName') === 'Wikipedia:沙盒' ) ) {
 		Twinkle.tag.mode = '条目';
 		twAddPortletLink( Twinkle.tag.callback, "标记", "friendly-tag", "标记条目" );
 	}
