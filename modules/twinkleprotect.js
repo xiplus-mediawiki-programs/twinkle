@@ -784,7 +784,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			Morebits.wiki.actionCompleted.notice = "保护完成";
 
 			thispage.protect(function() { 
-				thispage.getStatusElement().info("done");
+				thispage.getStatusElement().info("完成");
 				if (tagparams) {
 					Twinkle.protect.callbacks.taggingPageInitial(tagparams);
 				}
@@ -922,7 +922,7 @@ Twinkle.protect.callbacks = {
 			return;
 		}
 
-		var protectedPage = new Morebits.wiki.page( mw.config.get('wgPageName'), 'Tagging page');
+		var protectedPage = new Morebits.wiki.page( mw.config.get('wgPageName'), '标记页面');
 		protectedPage.setCallbackParameters( tagparams );
 		protectedPage.load( Twinkle.protect.callbacks.taggingPage );
 	},
