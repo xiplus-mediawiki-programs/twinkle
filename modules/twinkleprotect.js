@@ -102,6 +102,8 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 };
 
 Twinkle.protect.protectionLevel = null;
+Twinkle.protect.oldEditProtection = null;
+Twinkle.protect.oldMoveProtection = null;
 
 Twinkle.protect.callback.protectionLevel = function twinkleprotectCallbackProtectionLevel(apiobj) {
 	var xml = apiobj.getXML();
@@ -119,6 +121,18 @@ Twinkle.protect.callback.protectionLevel = function twinkleprotectCallbackProtec
 		}
 		if ($pr.attr('cascade') === '') {
 			result.push("（联锁）");
+		}
+
+		if ($pr.attr('type') === "edit") {
+			Twinkle.protect.oldEditProtection = { 
+				level: $pr.attr('level'),
+				expiry: $pr.attr('expiry')
+			};
+		} else if ($pr.attr('type') === "move") {
+			Twinkle.protect.oldMoveProtection = { 
+				level: $pr.attr('level'),
+				expiry: $pr.attr('expiry')
+			};
 		}
 	});
 
@@ -145,7 +159,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					name: 'category',
 					label: '选择预设：',
 					event: Twinkle.protect.callback.changePreset,
-					list: (mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypesAdmin : Twinkle.protect.protectionTypesCreate)
+					list: (mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypes : Twinkle.protect.protectionTypesCreate)
 				});
 
 			field2 = new Morebits.quickForm.element({ type: 'field', label: '保护选项', name: 'field2' });
@@ -267,12 +281,12 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							{ label: '6小时', value: '6 hours' },
 							{ label: '12小时', value: '12 hours' },
 							{ label: '1日', value: '1 day' },
-							{ label: '2日', selected: true, value: '2 days' },
+							{ label: '2日', value: '2 days' },
 							{ label: '3日', value: '3 days' },
 							{ label: '4日', value: '4 days' },
 							{ label: '1周', value: '1 week' },
 							{ label: '2周', value: '2 weeks' },
-							{ label: '1月', value: '1 month' },
+							{ label: '1月', selected: true, value: '1 month' },
 							{ label: '2月', value: '2 months' },
 							{ label: '3月', value: '3 months' },
 							{ label: '1年', value: '1 year' },
@@ -431,7 +445,8 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 		// re-add protection level text, if it's available
 		if (Twinkle.protect.protectionLevel) {
 			Morebits.status.init($('div[name="currentprot"] span').last()[0]);
-			Morebits.status.info("当前保护级别", Twinkle.protect.protectionLevel);
+			// seems unneeded
+			//Morebits.status.info("当前保护级别", Twinkle.protect.protectionLevel);
 		}
 
 		// reduce vertical height of dialog
@@ -476,6 +491,7 @@ Twinkle.protect.doCustomExpiry = function twinkleprotectDoCustomExpiry(target) {
 };
 
 Twinkle.protect.protectionTypes = [
+	{ label: '解除保护', value: 'unprotect' },
 	{
 		label: '全保护',
 		list: [
@@ -505,20 +521,19 @@ Twinkle.protect.protectionTypes = [
 			{ label: '移动破坏（移动）', value: 'pp-move-vandalism' },
 			{ label: '高风险页面（移动）', value: 'pp-move-indef' }
 		]
-	},
-	{ label: '解除保护', value: 'unprotect' }
+	}
 ];
 
 Twinkle.protect.protectionTypesAdmin = Twinkle.protect.protectionTypes;
 
 Twinkle.protect.protectionTypesCreate = [
+	{ label: '解除保护', value: 'unprotect' },
 	{
 		label: '白纸保护',
 		list: [
 			{ label: '常规', value: 'pp-create' }
 		]
-	},
-	{ label: '解除保护', value: 'unprotect' }
+	}
 ];
 
 // NOTICE: keep this synched with [[MediaWiki:Protect-dropdown]]
@@ -759,36 +774,77 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 	switch (actiontype) {
 		case 'protect':
 			// protect the page
-			var thispage = new Morebits.wiki.page(mw.config.get('wgPageName'), "保护页面");
-			if (mw.config.get('wgArticleId')) {
-				if (form.editmodify.checked) {
-					thispage.setEditProtection(form.editlevel.value, form.editexpiry.value);
-				}
-				if (form.movemodify.checked) {
-					thispage.setMoveProtection(form.movelevel.value, form.moveexpiry.value);
-				}
-			} else {
-				thispage.setCreateProtection(form.createlevel.value, form.createexpiry.value);
-			}
-			if (form.protectReason.value) {
-				thispage.setEditSummary(form.protectReason.value);
-			} else {
-				alert("您必须输入保护理由，这会出现在日志中。");
-				return;
-			}
-
-			Morebits.simpleWindow.setButtonsEnabled( false );
-			Morebits.status.init( form );
 
 			Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 			Morebits.wiki.actionCompleted.notice = "保护完成";
 
-			thispage.protect(function() { 
-				thispage.getStatusElement().info("完成");
+			var statusInited = false;
+			var thispage;
+			
+			var allDone = function twinkleprotectCallbackAllDone() { 
+				if (thispage) {
+					thispage.getStatusElement().info("完成");
+				}
 				if (tagparams) {
 					Twinkle.protect.callbacks.taggingPageInitial(tagparams);
 				}
-			});
+			};
+
+			var protectIt = function twinkleprotectCallbackProtectIt(next) {
+				thispage = new Morebits.wiki.page(mw.config.get('wgPageName'), "保护页面");
+				if (mw.config.get('wgArticleId')) {
+					if (form.editmodify.checked) {
+						thispage.setEditProtection(form.editlevel.value, form.editexpiry.value);
+					} else if (form.movemodify.checked && Twinkle.protect.oldEditProtection) {
+						if (Twinkle.protect.oldEditProtection.expiry === "infinity") {
+							Twinkle.protect.oldEditProtection.expiry = "indefinite";  // stupid API bug
+						}
+						thispage.setEditProtection(Twinkle.protect.oldEditProtection.level,
+							Twinkle.protect.oldEditProtection.expiry);
+					} else {
+						alert("Twinkle未能抓取当前保护设置。");
+						return;
+					}
+
+					if (form.movemodify.checked) {
+						thispage.setMoveProtection(form.movelevel.value, form.moveexpiry.value);
+					} else if (form.editmodify.checked && Twinkle.protect.oldMoveProtection) {
+						if (Twinkle.protect.oldMoveProtection.expiry === "infinity") {
+							Twinkle.protect.oldMoveProtection.expiry = "indefinite";  // stupid API bug
+						}
+						thispage.setMoveProtection(Twinkle.protect.oldMoveProtection.level,
+							Twinkle.protect.oldMoveProtection.expiry);
+					} else {
+						alert("Twinkle未能抓取当前保护设置。");
+						return;
+					}
+				} else {
+					thispage.setCreateProtection(form.createlevel.value, form.createexpiry.value);
+				}
+				
+				if (form.protectReason.value) {
+					thispage.setEditSummary(form.protectReason.value);
+				} else {
+					alert("您必须输入保护理由，这将被记录在保护日志中。");
+					return;
+				}
+
+				if (!statusInited) {
+					Morebits.simpleWindow.setButtonsEnabled( false );
+					Morebits.status.init( form );
+					statusInited = true;
+				}
+
+				thispage.protect(next);
+			};
+			
+			if ((form.editmodify && form.editmodify.checked) || (form.movemodify && form.movemodify.checked) || 
+				!mw.config.get('wgArticleId')) {
+				protectIt(allDone);
+			} else {
+				alert("请告诉Twinkle要做什么！\n如果您只是想标记该页，请选择上面的“用保护模板标记此页”选项。");
+			}
+			
 			break;
 
 		case 'tag':

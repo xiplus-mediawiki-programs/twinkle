@@ -403,8 +403,9 @@ Twinkle.xfd.callbacks = {
 					break;
 			}
 			pageobj.setCreateOption('recreate');
-			pageobj.append();
-			Twinkle.xfd.currentRationale = null;  // any errors from now on do not need to print the rationale, as it is safely saved on-wiki
+			pageobj.append(function() {
+				Twinkle.xfd.currentRationale = null;  // any errors from now on do not need to print the rationale, as it is safely saved on-wiki
+			});
 		}
 	}
 };
@@ -460,7 +461,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.xfd.callbacks.afd.taggingArticle);
 
-		// Contributor specific edits
+		// Notification to first contributor
 		wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.lookupCreator(Twinkle.xfd.callbacks.afd.main);
