@@ -121,8 +121,8 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 				var page = xmlDoc.evaluate( '@title', object, null, XPathResult.STRING_TYPE, null ).stringValue;
 				var size = xmlDoc.evaluate( 'revisions/rev/@size', object, null, XPathResult.NUMBER_TYPE, null ).numberValue;
 
-				var disputed = xmlDoc.evaluate( 'boolean(categories/cl[@title="Category:快速删除候选"])', object, null, XPathResult.BOOLEAN_TYPE, null ).booleanValue;
-				list.push( {label:page + '(' + size + '字节）' + ( disputed ? '（速删争议）' : '' ), value:page, checked:!disputed });
+				var disputed = xmlDoc.evaluate( 'boolean(categories/cl[@title="Category:有爭議的快速刪除候選"])', object, null, XPathResult.BOOLEAN_TYPE, null ).booleanValue;
+				list.push( {label:page + '(' + size + '字节）' + ( disputed ? '（争议）' : '' ), value:page, checked:!disputed });
 			}
 			self.params.form.append( {
 					type: 'checkbox',
