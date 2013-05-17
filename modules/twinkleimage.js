@@ -12,15 +12,11 @@ Twinkle.image = function twinkleimage() {
 	if (mw.config.get('wgNamespaceNumber') === 6 &&
 	    !document.getElementById("mw-sharedupload") &&
 	    document.getElementById("mw-imagepage-section-filehistory")) {
-		twAddPortletLink(Twinkle.image.callback, "图版", "tw-di", "提交文件快速删除");
+		twAddPortletLink(Twinkle.image.callback, "图权", "tw-di", "提交文件快速删除");
 	}
 };
 
 Twinkle.image.callback = function twinkleimageCallback() {
-	if( !twinkleUserAuthorized ) {
-		alert("您尚未达到自动确认。");
-		return;
-	}
 	var Window = new Morebits.simpleWindow( 600, 300 );
 	Window.setTitle( "文件快速删除候选" );
 	Window.setScriptName( "Twinkle" );

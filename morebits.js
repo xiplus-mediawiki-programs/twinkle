@@ -966,7 +966,7 @@ Morebits.string = {
 				--level;
 				i += end.length - 1;
 			}
-			if( !level && initial ) {
+			if( !level && initial !== null ) {
 				result.push( str.substring( initial, i + 1 ) );
 				initial = null;
 			}
@@ -1400,15 +1400,14 @@ Morebits.wiki.api.prototype = {
 	},
 
 	returnError: function() {
-
+		this.statelem.error( this.errorText );
+		
 		// invoke failure callback if one was supplied
 		if (this.onError) {
 
 			// set the callback context to this.parent for new code and supply the API object
 			// as the first argument to the callback for legacy code
 			this.onError.call( this.parent, this );
-		} else {
-			this.statelem.error( this.errorText );
 		}
 		// don't complete the action so that the error remains displayed
 	},
@@ -1690,6 +1689,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		stabilizeProcessApi: null
 	};
 
+	var emptyFunction = function() { };
+
 	/**
 	 * Public interface accessors
 	 */
@@ -1830,11 +1831,12 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 	this.load = function(onSuccess, onFailure) {
 		ctx.onLoadSuccess = onSuccess;
-		ctx.onLoadFailure = onFailure;
+		ctx.onLoadFailure = onFailure || emptyFunction;
 
 		// Need to be able to do something after the page loads
 		if (!onSuccess) {
 			ctx.statusElement.error("内部错误：未给load()提供onSuccess回调函数！");
+			ctx.onLoadFailure(this);
 			return;
 		}
 
@@ -1863,7 +1865,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			ctx.loadQuery.inprop = 'protection';
 		}
 
-		ctx.loadApi = new Morebits.wiki.api("抓取页面…", ctx.loadQuery, fnLoadSuccess, ctx.statusElement);
+		ctx.loadApi = new Morebits.wiki.api("抓取页面…", ctx.loadQuery, fnLoadSuccess, ctx.statusElement, ctx.onLoadFailure);
 		ctx.loadApi.setParent(this);
 		ctx.loadApi.post();
 	};
@@ -1871,12 +1873,17 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	// Save updated .pageText to Wikipedia
 	// Only valid after successful .load()
 	this.save = function(onSuccess, onFailure) {
+		ctx.onSaveSuccess = onSuccess;
+		ctx.onSaveFailure = onFailure || emptyFunction;
+
 		if (!ctx.pageLoaded) {
 			ctx.statusElement.error("内部错误：试图保存未被加载的页面！");
+			ctx.onSaveFailure(this);
 			return;
 		}
 		if (!ctx.editSummary) {
 			ctx.statusElement.error("内部错误：保存前未设置编辑摘要！");
+			ctx.onSaveFailure(this);
 			return;
 		}
 
@@ -1884,11 +1891,10 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			(ctx.fullyProtected === 'infinity' ? '（永久）' : ('（到期：' + ctx.fullyProtected + ')')) +
 			'。\n\n点击确定以确定，或点击取消以取消。')) {
 			ctx.statusElement.error("对全保护页面的编辑被取消。");
+			ctx.onSaveFailure(this);
 			return;
 		}
 
-		ctx.onSaveSuccess = onSuccess;
-		ctx.onSaveFailure = onFailure;
 		ctx.retries = 0;
 
 		var query = {
@@ -1946,15 +1952,15 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	this.append = function(onSuccess, onFailure) {
 		ctx.editMode = 'append';
 		ctx.onSaveSuccess = onSuccess;
-		ctx.onSaveFailure = onFailure;
-		this.load(fnAutoSave, onFailure);
+		ctx.onSaveFailure = onFailure || emptyFunction;
+		this.load(fnAutoSave, ctx.onSaveFailure);
 	};
 
 	this.prepend = function(onSuccess, onFailure) {
 		ctx.editMode = 'prepend';
 		ctx.onSaveSuccess = onSuccess;
-		ctx.onSaveFailure = onFailure;
-		this.load(fnAutoSave, onFailure);
+		ctx.onSaveFailure = onFailure || emptyFunction;
+		this.load(fnAutoSave, ctx.onSaveFailure);
 	};
 
 	this.lookupCreator = function(onSuccess) {
@@ -2010,28 +2016,33 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	};
 
 	this.revert = function(onSuccess, onFailure) {
+		ctx.onSaveSuccess = onSuccess;
+		ctx.onSaveFailure = onFailure || emptyFunction;
+
 		if (!ctx.revertOldID) {
 			ctx.statusElement.error("内部错误：回退前未提供修订版本ID！");
+			ctx.onSaveFailure(this);
 			return;
 		}
+
 		ctx.editMode = 'revert';
-		ctx.onSaveSuccess = onSuccess;
-		ctx.onSaveFailure = onFailure;
-		this.load(fnAutoSave, onFailure);
+		this.load(fnAutoSave, ctx.onSaveFailure);
 	};
 
 	this.move = function(onSuccess, onFailure) {
+		ctx.onMoveSuccess = onSuccess;
+		ctx.onMoveFailure = onFailure || emptyFunction;
+
 		if (!ctx.editSummary) {
 			ctx.statusElement.error("内部错误：移动前未提供理由（使用setEditSummary函数）！");
+			ctx.onMoveFailure(this);
 			return;
 		}
 		if (!ctx.moveDestination) {
 			ctx.statusElement.error("内部错误：移动前未指定目标页面！");
+			ctx.onMoveFailure(this);
 			return;
 		}
-
-		ctx.onMoveSuccess = onSuccess;
-		ctx.onMoveFailure = onFailure;
 
 		var query = {
 			action: 'query',
@@ -2046,25 +2057,27 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.inprop = 'protection';
 		}
 
-		ctx.moveApi = new Morebits.wiki.api("抓取移动令牌…", query, fnProcessMove, ctx.statusElement);
+		ctx.moveApi = new Morebits.wiki.api("抓取移动令牌…", query, fnProcessMove, ctx.statusElement, ctx.onMoveFailure);
 		ctx.moveApi.setParent(this);
 		ctx.moveApi.post();
 	};
 
 	// |delete| is a reserved word in some flavours of JS
 	this.deletePage = function(onSuccess, onFailure) {
+		ctx.onDeleteSuccess = onSuccess;
+		ctx.onDeleteFailure = onFailure || emptyFunction;
+
 		// if a non-admin tries to do this, don't bother
 		if (!Morebits.userIsInGroup('sysop')) {
 			ctx.statusElement.error("不能删除页面：只有管理员可进行该操作");
+			ctx.onDeleteFailure(this);
 			return;
 		}
 		if (!ctx.editSummary) {
 			ctx.statusElement.error("内部错误：删除前未提供理由（使用setEditSummary函数）！");
+			ctx.onDeleteFailure(this);
 			return;
 		}
-
-		ctx.onDeleteSuccess = onSuccess;
-		ctx.onDeleteFailure = onFailure;
 
 		var query = {
 			action: 'query',
@@ -2077,28 +2090,31 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.redirects = '';  // follow all redirects
 		}
 
-		ctx.deleteApi = new Morebits.wiki.api("抓取删除令牌…", query, fnProcessDelete, ctx.statusElement);
+		ctx.deleteApi = new Morebits.wiki.api("抓取删除令牌…", query, fnProcessDelete, ctx.statusElement, ctx.onDeleteFailure);
 		ctx.deleteApi.setParent(this);
 		ctx.deleteApi.post();
 	};
 
 	this.protect = function(onSuccess, onFailure) {
+		ctx.onProtectSuccess = onSuccess;
+		ctx.onProtectFailure = onFailure || emptyFunction;
+
 		// if a non-admin tries to do this, don't bother
 		if (!Morebits.userIsInGroup('sysop')) {
 			ctx.statusElement.error("不能保护页面：只有管理员可进行该操作");
+			ctx.onProtectFailure(this);
 			return;
 		}
 		if (!ctx.protectEdit && !ctx.protectMove && !ctx.protectCreate) {
 			ctx.statusElement.error("内部错误：调用protect()前未设置编辑和/或移动和/或白纸保护！");
+			ctx.onProtectFailure(this);
 			return;
 		}
 		if (!ctx.editSummary) {
 			ctx.statusElement.error("内部错误：保护前未提供理由（使用setEditSummary函数）！");
+			ctx.onProtectFailure(this);
 			return;
 		}
-
-		ctx.onProtectSuccess = onSuccess;
-		ctx.onProtectFailure = onFailure;
 
 		var query = {
 			action: 'query',
@@ -2111,7 +2127,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.redirects = '';  // follow all redirects
 		}
 
-		ctx.protectApi = new Morebits.wiki.api("抓取保护令牌…", query, fnProcessProtect, ctx.statusElement);
+		ctx.protectApi = new Morebits.wiki.api("抓取保护令牌…", query, fnProcessProtect, ctx.statusElement, ctx.onProtectFailure);
 		ctx.protectApi.setParent(this);
 		ctx.protectApi.post();
 	};
@@ -2120,22 +2136,25 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	// only works where $wgFlaggedRevsProtection = true (i.e. where FlaggedRevs
 	// settings appear on the wiki's "protect" tab)
 	this.stabilize = function(onSuccess, onFailure) {
+		ctx.onStabilizeSuccess = onSuccess;
+		ctx.onStabilizeFailure = onFailure || emptyFunction;
+
 		// if a non-admin tries to do this, don't bother
 		if (!Morebits.userIsInGroup('sysop')) {
 			ctx.statusElement.error("不能应用FlaggedRevs设定：只有管理员能这么做");
+			ctx.onStabilizeFailure(this);
 			return;
 		}
 		if (!ctx.flaggedRevs) {
 			ctx.statusElement.error("内部错误：调用stabilize()前必须设置flaggedRevs！");
+			ctx.onStabilizeFailure(this);
 			return;
 		}
 		if (!ctx.editSummary) {
 			ctx.statusElement.error("内部错误：调用stabilize()前未提供理由（用setEditSummary函数）！");
+			ctx.onStabilizeFailure(this);
 			return;
 		}
-
-		ctx.onStabilizeSuccess = onSuccess;
-		ctx.onStabilizeFailure = onFailure;
 
 		var query = {
 			action: 'query',
@@ -2147,7 +2166,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.redirects = '';  // follow all redirects
 		}
 
-		ctx.stabilizeApi = new Morebits.wiki.api("抓取stabilize令牌…", query, fnProcessStabilize, ctx.statusElement);
+		ctx.stabilizeApi = new Morebits.wiki.api("抓取stabilize令牌…", query, fnProcessStabilize, ctx.statusElement, ctx.onStabilizeFailure);
 		ctx.stabilizeApi.setParent(this);
 		ctx.stabilizeApi.post();
 	};
@@ -2167,7 +2186,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	var fnLoadSuccess = function() {
 		var xml = ctx.loadApi.getXML();
 
-		if ( !fnCheckPageName(xml) ) {
+		if ( !fnCheckPageName(xml, ctx.onLoadFailure) ) {
 			return; // abort
 		}
 
@@ -2192,12 +2211,14 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		if (!ctx.editToken)
 		{
 			ctx.statusElement.error("未能抓取编辑令牌。");
+			ctx.onLoadFailure(this);
 			return;
 		}
 		ctx.loadTime = $(xml).find('page').attr('starttimestamp');
 		if (!ctx.loadTime)
 		{
 			ctx.statusElement.error("未能抓取起始时间戳。");
+			ctx.onLoadFailure(this);
 			return;
 		}
 		ctx.lastEditTime = $(xml).find('page').attr('touched');
@@ -2206,6 +2227,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			ctx.revertCurID = $(xml).find('rev').attr('revid');
 			if (!ctx.revertCurID) {
 				ctx.statusElement.error("未能抓取当前修订版本ID。");
+				ctx.onLoadFailure(this);
 				return;
 			}
 			ctx.revertUser = $(xml).find('rev').attr('user');
@@ -2214,6 +2236,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 					ctx.revertUser = "<用户名已隐藏>";
 				} else {
 					ctx.statusElement.error("未能抓取此修订版本的编辑者。");
+					ctx.onLoadFailure(this);
 					return;
 				}
 			}
@@ -2228,11 +2251,15 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	};
 
 	// helper function to parse the page name returned from the API
-	var fnCheckPageName = function(xml) {
-	
+	var fnCheckPageName = function(xml, onFailure) {
+		if (!onFailure) {
+			onFailure = emptyFunction;
+		}
+
 		// check for invalid titles
 		if ( $(xml).find('page').attr('invalid') ) {
-		ctx.statusElement.error("试图编辑具有不合法标题的页面：" + ctx.pageName);
+			ctx.statusElement.error("标题不合法：" + ctx.pageName);
+			onFailure(this);
 			return false; // abort
 		}
 
@@ -2249,6 +2276,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		else {
 			// could be a circular redirect or other problem
 			ctx.statusElement.error("不能解释页面的重定向：" + ctx.pageName);
+			onFailure(this);
 
 			// force error to stay on the screen
 			++Morebits.wiki.numberOfActionsLeft;
@@ -2296,6 +2324,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		
 		// force error to stay on the screen
 		++Morebits.wiki.numberOfActionsLeft;
+
+		ctx.onSaveFailure(this);
 	};
 
 	// callback from saveApi.post()
@@ -2374,6 +2404,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		if ($(xml).find('page').attr('missing') === "") {
 			ctx.statusElement.error("不能移动页面，因其已不存在");
+			ctx.onMoveFailure(this);
 			return;
 		}
 
@@ -2384,6 +2415,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 				(editprot.attr('expiry') === 'infinity' ? '（永久）' : ('（到期：' + editprot.attr('expiry') + '）')) +
 				'。\n\n点击确定以确定，或点击取消以取消。')) {
 				ctx.statusElement.error("对全保护页面的移动已取消。");
+				ctx.onMoveFailure(this);
 				return;
 			}
 		}
@@ -2391,6 +2423,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		var moveToken = $(xml).find('page').attr('movetoken');
 		if (!moveToken) {
 			ctx.statusElement.error("不能抓取移动令牌。");
+			ctx.onMoveFailure(this);
 			return;
 		}
 
@@ -2424,6 +2457,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		if ($(xml).find('page').attr('missing') === "") {
 			ctx.statusElement.error("不能删除页面，因其已不存在");
+			ctx.onDeleteFailure(this);
 			return;
 		}
 
@@ -2433,12 +2467,14 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			(editprot.attr('expiry') === 'infinity' ? '（永久）' : ('（到期 ' + editprot.attr('expiry') + '）')) +
 			'。\n\n点击确定以确定，或点击取消以取消。')) {
 			ctx.statusElement.error("对全保护页面的删除已取消。");
+			ctx.onDeleteFailure(this);
 			return;
 		}
 
 		var deleteToken = $(xml).find('page').attr('deletetoken');
 		if (!deleteToken) {
 			ctx.statusElement.error("不能抓取删除令牌。");
+			ctx.onDeleteFailure(this);
 			return;
 		}
 
@@ -2463,54 +2499,63 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		var missing = ($(xml).find('page').attr('missing') === "");
 		if (((ctx.protectEdit || ctx.protectMove) && missing)) {
 			ctx.statusElement.error("不能保护页面，因其已不存在");
+			ctx.onProtectFailure(this);
 			return;
 		}
 		if (ctx.protectCreate && !missing) {
 			ctx.statusElement.error("不能白纸保护页面，因其已存在");
+			ctx.onProtectFailure(this);
 			return;
 		}
 
-		var editprot = $(xml).find('pr[type="edit"]');
-		// cascading protection not possible on edit<sysop
-		// XXX fix this logic - I can't wrap my head around it
-		//if (ctx.protectCascade && (editprot && editprot.attr('level') !== 'sysop') && (ctx.protectEdit && ctx.protectEdit.level !== 'sysop')) {
-		//	ctx.statusElement.error("内部错误：连锁保护需要编辑全保护！");
-		//	return;
-		//}
+		// TODO cascading protection not possible on edit<sysop
 
 		var protectToken = $(xml).find('page').attr('protecttoken');
 		if (!protectToken) {
 			ctx.statusElement.error("不能抓取保护令牌。");
+			ctx.onProtectFailure(this);
 			return;
 		}
 
-		var protections = '', expiry = '';
+		// fetch existing protection levels
+		var prs = $(xml).find('pr');
+		var editprot = prs.filter('[type="edit"]');
+		var moveprot = prs.filter('[type="move"]');
+		var createprot = prs.filter('[type="create"]');
+
+		var protections = [], expirys = [];
+
+		// set edit protection level
 		if (ctx.protectEdit) {
-			protections += 'edit=' + ctx.protectEdit.level;
-			expiry += ctx.protectEdit.expiry;
+			protections.push('edit=' + ctx.protectEdit.level);
+			expirys.push(ctx.protectEdit.expiry);
+		} else if (editprot.length) {
+			protections.push('edit=' + editprot.attr("level"));
+			expirys.push(editprot.attr("expiry").replace("infinity", "indefinite"));
 		}
+
 		if (ctx.protectMove) { 
-			if (ctx.protectEdit) {
-				protections += '|';
-				expiry += '|';
-			}
-			protections += 'move=' + ctx.protectMove.level;
-			expiry += ctx.protectMove.expiry;
+			protections.push('move=' + ctx.protectMove.level);
+			expirys.push(ctx.protectMove.expiry);
+		} else if (moveprot.length) {
+			protections.push('move=' + moveprot.attr("level"));
+			expirys.push(moveprot.attr("expiry").replace("infinity", "indefinite"));
 		}
+
 		if (ctx.protectCreate) {
-			if (ctx.protectEdit || ctx.protectMove) {
-				protections += '|';
-				expiry += '|';
-			}
-			protections += 'create=' + ctx.protectCreate.level;
-			expiry += ctx.protectCreate.expiry;
+			protections.push('create=' + ctx.protectCreate.level);
+			expirys.push(ctx.protectCreate.expiry);
+		} else if (createprot.length) {
+			protections.push('create=' + createprot.attr("level"));
+			expirys.push(createprot.attr("expiry").replace("infinity", "indefinite"));
 		}
+
 		var query = {
 			action: 'protect',
 			title: $(xml).find('page').attr('title'),
 			token: protectToken,
-			protections: protections,
-			expiry: expiry,
+			protections: protections.join('|'),
+			expiry: expirys.join('|'),
 			reason: ctx.editSummary
 		};
 		if (ctx.protectCascade) {
@@ -2531,12 +2576,14 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		var missing = ($(xml).find('page').attr('missing') === "");
 		if (missing) {
 			ctx.statusElement.error("不能保护页面，因其已不存在");
+			ctx.onStabilizeFailure(this);
 			return;
 		}
 
 		var stabilizeToken = $(xml).find('page').attr('edittoken');
 		if (!stabilizeToken) {
 			ctx.statusElement.error("不能抓取stabilize令牌。");
+			ctx.onStabilizeFailure(this);
 			return;
 		}
 
@@ -2559,7 +2606,6 @@ Morebits.wiki.page = function(pageName, currentAction) {
 }; // end Morebits.wiki.page
 
 /** Morebits.wiki.page TODO: (XXX)
- * - Do we need the onFailure callbacks? How do we know when to call them? Timeouts? Enhance Morebits.wiki.api for failures?
  * - Should we retry loads also?
  * - Need to reset current action before the save?
  * - Deal with action.completed stuff
@@ -2742,7 +2788,7 @@ Morebits.wikitext.page.prototype = {
 		var unbinder = new Morebits.unbinder( this.text );
 		unbinder.unbind( '<!--', '-->' );
 
-		reason = reason ? ' ' + reason + '：' : '';
+		reason = reason ? (reason + '：') : '';
 		var first_char = image.substr( 0, 1 );
 		var image_re_string = "[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( image.substr( 1 ), true ); 
 
@@ -2766,7 +2812,7 @@ Morebits.wikitext.page.prototype = {
 		 * Will eat the whole line.
 		 */
 		var gallery_image_re = new RegExp( "(^\\s*(?:[Ii]mage|[Ff]ile|文件|檔案):\\s*" + image_re_string + ".*?$)", 'mg' );
-		unbinder.content.replace( gallery_image_re, "<!-- " + reason + "$1 -->" );
+		unbinder.content = unbinder.content.replace( gallery_image_re, "<!-- " + reason + "$1 -->" );
 
 		// unbind the newly created comments
 		unbinder.unbind( '<!--', '-->' );
@@ -2775,7 +2821,7 @@ Morebits.wikitext.page.prototype = {
 		 * Will only eat the image name and the preceeding bar and an eventual named parameter
 		 */
 		var free_image_re = new RegExp( "(\\|\\s*(?:[\\w\\s]+\\=)?\\s*(?:(?:[Ii]mage|[Ff]ile|文件|檔案):\\s*)?" + image_re_string + ")", 'mg' );
-		unbinder.content.replace( free_image_re, "<!-- " + reason + "$1 -->" );
+		unbinder.content = unbinder.content.replace( free_image_re, "<!-- " + reason + "$1 -->" );
 
 		// Rebind the content now, we are done!
 		this.text = unbinder.rebind();
@@ -2928,14 +2974,14 @@ Morebits.queryString.create = function( arr ) {
 		} else {
 			res = encodeURIComponent( arr[i] );
 		}
-		if( i === 'wpEditToken' ) {
+		if( i === 'token' ) {
 			editToken = res;
 		} else {
 			resarr.push( encodeURIComponent( i ) + '=' + res );
 		}
 	}
 	if( editToken !== undefined ) {
-		resarr.push( 'wpEditToken=' + editToken );
+		resarr.push( 'token=' + editToken );
 	}
 	return resarr.join('&');
 };
@@ -2948,6 +2994,7 @@ Morebits.queryString.prototype.create = Morebits.queryString.create;
  */
 
 Morebits.status = function Status( text, stat, type ) {
+	this.textRaw = text;
 	this.text = this.codify(text);
 	this.type = type || 'status';
 	this.generate(); 
@@ -2980,6 +3027,7 @@ Morebits.status.onError = function( handler ) {
 Morebits.status.prototype = {
 	stat: null,
 	text: null,
+	textRaw: null,
 	type: 'status',
 	target: null,
 	node: null,
@@ -3025,7 +3073,7 @@ Morebits.status.prototype = {
 				}
 				// also log error messages in the browser console
 				if (console && console.error) {
-					console.error(status);
+					console.error(this.textRaw + ": " + status);
 				}
 			}
 		}
@@ -3152,6 +3200,8 @@ Morebits.simpleWindow.prototype = {
 	// Focuses the dialog. This might work, or on the contrary, it might not.
 	focus: function(event) {
 		$(this.content).dialog("moveToTop");
+
+		return this;
 	},
 	// Closes the dialog.  If this is set as an event handler, it will stop the event from doing anything more.
 	close: function(event) {
@@ -3159,6 +3209,8 @@ Morebits.simpleWindow.prototype = {
 			event.preventDefault();
 		}
 		$(this.content).dialog("close");
+
+		return this;
 	},
 	// Shows the dialog.  Calling display() on a dialog that has previously been closed might work, but it is not guaranteed.
 	display: function() {
@@ -3177,19 +3229,27 @@ Morebits.simpleWindow.prototype = {
 			setupTooltips(dialog.parent()[0]);
 		}
 		this.setHeight( this.height );  // init height algorithm
+
+		return this;
 	},
 	// Sets the dialog title.
 	setTitle: function( title ) {
 		$(this.content).dialog("option", "title", title);
+
+		return this;
 	},
 	// Sets the script name, appearing as a prefix to the title to help users determine which
 	// user script is producing which dialog. For instance, Twinkle modules set this to "Twinkle".
 	setScriptName: function( name ) {
 		this.scriptName = name;
+
+		return this;
 	},
 	// Sets the dialog width.
 	setWidth: function( width ) {
 		$(this.content).dialog("option", "width", width);
+
+		return this;
 	},
 	// Sets the dialog's maximum height. The dialog will auto-size to fit its contents,
 	// but the content area will grow no larger than the height given here.
@@ -3205,6 +3265,8 @@ Morebits.simpleWindow.prototype = {
 			$(this.content).dialog("option", "height", "auto");
 		}
 		$(this.content).dialog("widget").find(".morebits-dialog-content")[0].style.maxHeight = parseInt(this.height - 30, 10) + "px";
+
+		return this;
 	},
 	// Sets the content of the dialog to the given element node, usually from rendering a Morebits.quickForm.
 	// Re-enumerates the footer buttons, but leaves the footer links as they are.
@@ -3212,6 +3274,8 @@ Morebits.simpleWindow.prototype = {
 	setContent: function( content ) {
 		this.purgeContent();
 		this.addContent( content );
+
+		return this;
 	},
 	addContent: function( content ) {
 		this.content.appendChild( content );
@@ -3232,6 +3296,8 @@ Morebits.simpleWindow.prototype = {
 		} else {
 			$(this.content).dialog("widget").find(".morebits-dialog-buttons")[0].setAttribute("data-empty", "data-empty");  // used by CSS
 		}
+
+		return this;
 	},
 	purgeContent: function( content ) {
 		this.buttons = [];
@@ -3241,6 +3307,8 @@ Morebits.simpleWindow.prototype = {
 		while( this.content.hasChildNodes() ) {
 			this.content.removeChild( this.content.firstChild );
 		}
+
+		return this;
 	},
 	// Adds a link in the bottom-right corner of the dialog.
 	// This can be used to provide help or policy links.
@@ -3260,9 +3328,13 @@ Morebits.simpleWindow.prototype = {
 		link.textContent = text;
 		$footerlinks.append(link);
 		this.hasFooterLinks = true;
+
+		return this;
 	},
 	setModality: function( modal ) {
 		$(this.content).dialog("option", "modal", modal);
+
+		return this;
 	}
 };
 
@@ -3292,7 +3364,7 @@ Morebits.simpleWindow.setButtonsEnabled = function( enabled ) {
  * Thanks.
  */
 
-if (typeof arguments === 'undefined') {  // typeof is here for a reason...
+if ( typeof arguments === "undefined" ) {  // typeof is here for a reason...
 	window.SimpleWindow = Morebits.simpleWindow;
 	window.QuickForm = Morebits.quickForm;
 	window.Wikipedia = Morebits.wiki;

@@ -109,6 +109,11 @@ Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event)
 	}
 
 	var reason = event.target.reason.value;
+	if (!reason) {
+		alert("您必须指定取消链入的理由。");
+		return;
+	}
+
 	var backlinks, imageusage;
 	if( event.target.backlinks ) {
 		backlinks = Twinkle.unlink.getChecked2(event.target.backlinks);

@@ -30,10 +30,6 @@ Twinkle.warn = function twinklewarn() {
 };
 
 Twinkle.warn.callback = function twinklewarnCallback() {
-	if ( !twinkleUserAuthorized ) {
-		alert("您还未达到自动确认。");
-		return;
-	}
 	if( mw.config.get('wgTitle').split( '/' )[0] === mw.config.get('wgUserName') &&
 			!confirm( '您将要警告自己！您确定要继续吗？' ) ) {
 		return;
@@ -66,6 +62,9 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	main_group.append( { type:'option', label:'层级4im', value:'level4im', selected: ( defaultGroup === 5 ) } );
 	main_group.append( { type:'option', label:'单层级通知', value:'singlenotice', selected: ( defaultGroup === 6 ) } );
 	main_group.append( { type:'option', label:'单层级警告', value:'singlewarn', selected: ( defaultGroup === 7 ) } );
+	if( Twinkle.getPref( 'customWarningList' ).length ) {
+		main_group.append( { type:'option', label:'自定义警告', value:'custom', selected: ( defaultGroup === 9 ) } );
+	}
 	if( Morebits.userIsInGroup( 'sysop' ) ) {
 		main_group.append( { type:'option', label:'封禁', value:'block', selected: ( defaultGroup === 8 ) } );
 	}
@@ -940,14 +939,17 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 	// worker function to create the combo box entries
 	var createEntries = function( contents, container ) {
 		$.each( contents, function( itemKey, itemProperties ) {
+			var key = (typeof itemKey === "string") ? itemKey : itemProperties.value;
+
 			var selected = false;
-			if( old_subvalue && old_subvalue_re.test( itemKey ) ) {
+			if( old_subvalue && old_subvalue_re.test( key ) ) {
 				selected = true;
 			}
+
 			var elem = new Morebits.quickForm.element( {
 				type: 'option',
-				label: "{{" + itemKey + "}}: " + itemProperties.label,
-				value: itemKey,
+				label: "{{" + key + "}}: " + itemProperties.label,
+				value: key,
 				selected: selected
 			} );
 			var elemRendered = container.appendChild( elem.render() );
@@ -958,6 +960,8 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 	if( value === "singlenotice" || value === "singlewarn" || value === "block" ) {
 		// no categories, just create the options right away
 		createEntries( Twinkle.warn.messages[ value ], sub_group );
+	} else if( value === "custom" ) {
+		createEntries( Twinkle.getPref("customWarningList"), sub_group );
 	} else {
 		// create the option-groups
 		$.each( Twinkle.warn.messages[ value ], function( groupLabel, groupContents ) {
@@ -1180,7 +1184,7 @@ Twinkle.warn.callbacks = {
 	main: function( pageobj ) {
 		var text = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
-		var messageData = params.messageData;//Twinkle.warn.messages[params.main_group][params.sub_group];
+		var messageData = params.messageData;
 
 		var history_re = /<!-- Template:(uw-.*?) -->.*?(\d{4})年(\d{1,2})月(\d{1,2})日 \([日一二三四五六]\) (\d{1,2}):(\d{1,2}) \(UTC\)/g;
 		var history = {};
@@ -1250,9 +1254,36 @@ Twinkle.warn.callbacks = {
 			text +=  "\n{{subst:SharedIPAdvice}}";
 		}
 
-		var summary = messageData.summary;
-		if ( messageData.suppressArticleInSummary !== true && params.article ) {
-			summary += "，关于[[" + params.article + "]]";
+		// build the edit summary
+		var summary;
+		if( params.main_group === 'custom' ) {
+			switch( params.sub_group.substr( -1 ) ) {
+				case "1":
+					summary = "提醒";
+					break;
+				case "2":
+					summary = "注意";
+					break;
+				case "3":
+					summary = "警告";
+					break;
+				case "4":
+					summary = "最后警告";
+					break;
+				default:
+					summary = "提示";
+					break;
+			}
+			summary += "：" + Morebits.string.toUpperCaseFirstChar(messageData.label);
+		} else {
+			summary = messageData.summary;
+			if ( messageData.suppressArticleInSummary !== true && params.article ) {
+				if ( params.sub_group === "uw-socksuspect" ) {  // this template requires a username
+					summary += "，[[User:" + params.article + "]]的";
+				} else {
+					summary += "，于[[" + params.article + "]]";
+				}
+			}
 		}
 		summary += "。" + Twinkle.getPref("summaryAd");
 

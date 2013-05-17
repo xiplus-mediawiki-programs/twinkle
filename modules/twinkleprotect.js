@@ -20,10 +20,6 @@ Twinkle.protect = function twinkleprotect() {
 };
 
 Twinkle.protect.callback = function twinkleprotectCallback() {
-	if (!twinkleUserAuthorized) {
-		alert("您还未达到自动确认。");
-		return;
-	}
 	var Window = new Morebits.simpleWindow( 620, 530 );
 	Window.setTitle( Morebits.userIsInGroup( 'sysop' ) ? "施行或请求保护页面" : "请求保护页面" );
 	Window.setScriptName( "Twinkle" );
@@ -102,15 +98,10 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 };
 
 Twinkle.protect.protectionLevel = null;
-Twinkle.protect.oldEditProtection = null;
-Twinkle.protect.oldMoveProtection = null;
 
 Twinkle.protect.callback.protectionLevel = function twinkleprotectCallbackProtectionLevel(apiobj) {
 	var xml = apiobj.getXML();
 	var result = [];
-
-	Twinkle.protect.oldEditProtection = {level: 'all', expiry: 'infinity'};
-	Twinkle.protect.oldMoveProtection = {level: 'all', expiry: 'infinity'};
 
 	$(xml).find('pr').each(function(index, pr) {
 		var $pr = $(pr);
@@ -124,18 +115,6 @@ Twinkle.protect.callback.protectionLevel = function twinkleprotectCallbackProtec
 		}
 		if ($pr.attr('cascade') === '') {
 			result.push("（联锁）");
-		}
-
-		if ($pr.attr('type') === "edit") {
-			Twinkle.protect.oldEditProtection = { 
-				level: $pr.attr('level'),
-				expiry: $pr.attr('expiry')
-			};
-		} else if ($pr.attr('type') === "move") {
-			Twinkle.protect.oldMoveProtection = { 
-				level: $pr.attr('level'),
-				expiry: $pr.attr('expiry')
-			};
 		}
 	});
 
@@ -353,7 +332,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			field2.append({
 					type: 'textarea',
 					name: 'protectReason',
-					label: '保护理由（日志）：'
+					label: '理由（保护日志）：'
 				});
 			if (!mw.config.get('wgArticleId')) {  // tagging isn't relevant for non-existing pages
 				break;
@@ -490,6 +469,8 @@ Twinkle.protect.doCustomExpiry = function twinkleprotectDoCustomExpiry(target) {
 		option.textContent = custom;
 		target.appendChild(option);
 		target.value = custom;
+	} else {
+		target.selectedIndex = 0;
 	}
 };
 
@@ -798,28 +779,9 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				if (mw.config.get('wgArticleId')) {
 					if (form.editmodify.checked) {
 						thispage.setEditProtection(form.editlevel.value, form.editexpiry.value);
-					} else if (form.movemodify.checked && Twinkle.protect.oldEditProtection) {
-						if (Twinkle.protect.oldEditProtection.expiry === "infinity") {
-							Twinkle.protect.oldEditProtection.expiry = "indefinite";  // stupid API bug
-						}
-						thispage.setEditProtection(Twinkle.protect.oldEditProtection.level,
-							Twinkle.protect.oldEditProtection.expiry);
-					} else {
-						alert("Twinkle未能抓取当前保护设置。");
-						return;
 					}
-
 					if (form.movemodify.checked) {
 						thispage.setMoveProtection(form.movelevel.value, form.moveexpiry.value);
-					} else if (form.editmodify.checked && Twinkle.protect.oldMoveProtection) {
-						if (Twinkle.protect.oldMoveProtection.expiry === "infinity") {
-							Twinkle.protect.oldMoveProtection.expiry = "indefinite";  // stupid API bug
-						}
-						thispage.setMoveProtection(Twinkle.protect.oldMoveProtection.level,
-							Twinkle.protect.oldMoveProtection.expiry);
-					} else {
-						alert("Twinkle未能抓取当前保护设置。");
-						return;
 					}
 				} else {
 					thispage.setCreateProtection(form.createlevel.value, form.createexpiry.value);
@@ -1016,6 +978,8 @@ Twinkle.protect.callbacks = {
 		} else {
 			if( params.noinclude ) {
 				text = "<noinclude>{{" + tag + "}}</noinclude>" + text;
+			} else if( Morebits.wiki.isPageRedirect() ) {
+				text = text + "\n{{" + tag + "}}";
 			} else {
 				text = "{{" + tag + "}}\n" + text;
 			}

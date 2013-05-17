@@ -23,6 +23,9 @@
 var Twinkle = {};
 window.Twinkle = Twinkle;  // allow global access
 
+// Check if account is experienced enough to use Twinkle
+var twinkleUserAuthorized = Morebits.userIsInGroup( "autoconfirmed" ) || Morebits.userIsInGroup( "confirmed" );
+
 // for use by custom modules (normally empty)
 Twinkle.initCallbacks = [];
 Twinkle.addInitCallback = function twinkleAddInitCallback( func ) {
@@ -87,6 +90,7 @@ Twinkle.defaultConfig.twinkle = {
 	showSharedIPNotice: true,
 	watchWarnings: false,
 	blankTalkpageOnIndefBlock: false,
+	customWarningList: [],
 	 // XfD
 	xfdWatchDiscussion: "default",
 	xfdWatchPage: "default",
@@ -129,6 +133,7 @@ Twinkle.defaultConfig.friendly = {
 	 // Tag
 	groupByDefault: true,
 	watchTaggedPages: false,
+	watchMergeDiscussions: false,
 	markTaggedPagesAsMinor: false,
 	markTaggedPagesAsPatrolled: true,
 	tagArticleSortOrder: "cat",
@@ -278,6 +283,10 @@ function twAddPortlet( navigation, id, text, type, nextnodeid )
 
 		$( a ).click(function ( e ) {
 			e.preventDefault();
+
+			if ( !twinkleUserAuthorized ) {
+				alert("抱歉，您需达自动确认后方可使用Twinkle。");
+			}
 		});
 
 		span = document.createElement( "span" );
@@ -319,6 +328,3 @@ function twAddPortletLink( task, text, id, tooltip )
 	}
 	return link;
 }
-
-// Check if account is experienced enough to use Twinkle
-var twinkleUserAuthorized = Morebits.userIsInGroup( "autoconfirmed" ) || Morebits.userIsInGroup( "confirmed" );

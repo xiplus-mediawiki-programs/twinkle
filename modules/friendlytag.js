@@ -118,44 +118,65 @@ Twinkle.tag.updateSortOrder = function(e) {
 		var checkbox = { value: tag, label: "{{" + tag + "}}: " + description };
 		if (Twinkle.tag.checkedTags.indexOf(tag) !== -1) {
 			checkbox.checked = true;
-		} else if (tag === "merge" || tag === "merge from" || tag === "merge to") {
-			var otherTagName = "merge";
-			switch (tag)
-			{
-				case "merge from":
-					otherTagName = "merge to";
-					break;
-				case "merge to":
-					otherTagName = "merge from";
-					break;
-			}
-			checkbox.subgroup = [
+		}
+		switch (tag) {
+			case "merge":
+			case "merge from":
+			case "merge to":
+				var otherTagName = "merge";
+				switch (tag)
 				{
-					name: 'mergeTarget',
-					type: 'input',
-					label: '其他条目：',
-					tooltip: '如指定复数个条目，请用管道符分隔：条目甲|条目乙'
-				},
-				{
-					name: 'mergeTagOther',
-					type: 'checkbox',
-					list: [
-						{
-							label: '用{{' + otherTagName + '}}标记其他条目',
-							checked: true,
-							tooltip: '仅在只输入了一个条目名时有效'
-						}
-					]
+					case "merge from":
+						otherTagName = "merge to";
+						break;
+					case "merge to":
+						otherTagName = "merge from";
+						break;
 				}
-			];
-			if (mw.config.get('wgNamespaceNumber') === 0) {
-				checkbox.subgroup.push({
-					name: 'mergeReason',
-					type: 'textarea',
-					label: '合并理由（会贴进讨论页）：',
-					tooltip: '可选，但强烈推荐。如无必要请留空。'
-				});
-			}
+				checkbox.subgroup = [
+					{
+						name: 'mergeTarget',
+						type: 'input',
+						label: '其他条目：',
+						tooltip: '如指定多个条目，请用管道符分隔：条目甲|条目乙'
+					},
+					{
+						name: 'mergeTagOther',
+						type: 'checkbox',
+						list: [
+							{
+								label: '用{{' + otherTagName + '}}标记其他条目',
+								checked: true,
+								tooltip: '仅在只输入了一个条目名时可用'
+							}
+						]
+					}
+				];
+				if (mw.config.get('wgNamespaceNumber') === 0) {
+					checkbox.subgroup.push({
+						name: 'mergeReason',
+						type: 'textarea',
+						label: '合并理由（会被贴上' + 
+							(tag === "merge to" ? '其他' : '这') + '条目的讨论页）：',
+						tooltip: '可选，但强烈推荐。如不需要请留空。仅在只输入了一个条目名时可用。'
+					});
+				}
+				break;
+			case "notability":
+				checkbox.subgroup = {
+					name: 'notability',
+					type: 'select',
+					list: [
+						{ label: "{{notability}}：通用的关注度指引", value: "none" },
+						{ label: "{{notability|Biographies}}：人物传记", value: "Biographies" },
+						{ label: "{{notability|Fiction}}：虚构事物", value: "Films" },
+						{ label: "{{notability|Neologisms}}：发明、研究", value: "Neologisms" },
+						{ label: "{{notability|Web}}：网站、网络内容", value: "Web"}
+					]
+				};
+				break;
+			default:
+				break;
 		}
 		return checkbox;
 	};
@@ -308,7 +329,7 @@ Twinkle.tag.article.tagCategories = {
 	},
 	"常规条目问题": {
 		"重要性和知名度": [
-			"notability"
+			"notability"  // has subcategories and special-cased code
 		],
 		"写作风格": [
 			"advert",
@@ -373,7 +394,7 @@ Twinkle.tag.article.tagCategories = {
 			"uncategorized"
 		]
 	},
-	"合并": [
+	"合并": [  // these three have a subgroup with several options
 		"merge",
 		"merge from",
 		"merge to"
@@ -503,6 +524,10 @@ Twinkle.tag.callbacks = {
 			} else {
 				currentTag += ( Twinkle.tag.mode === '重定向' ? '\n' : '' ) + '{{' + tagName;
 
+				if( tagName === 'notability' && params.tagParameters.notability !== 'none' ) {
+					currentTag += '|||' + params.tagParameters.notability;
+				}
+
 				// prompt for other parameters, based on the tag
 				switch( tagName ) {
 					case 'merge':
@@ -511,13 +536,20 @@ Twinkle.tag.callbacks = {
 						if (params.mergeTarget) {
 							// normalize the merge target for now and later
 							params.mergeTarget = Morebits.string.toUpperCaseFirstChar(params.mergeTarget.replace(/_/g, ' '));
+
 							currentTag += '|' + params.mergeTarget;
-							// link to the correct section on the talk page
-							if (!params.talkPageLink) {
-								params.talkPageLink = 'Talk:' + mw.config.get('wgTitle') + '#请求与' +
-									params.mergeTarget + '合并';
+
+							// link to the correct section on the talk page, for article space only
+							if (mw.config.get('wgNamespaceNumber') === 0 && (params.mergeReason || params.discussArticle)) {
+								if (!params.discussArticle) {
+									// discussArticle is the article whose talk page will contain the discussion
+									params.discussArticle = (tagName === "merge to" ? params.mergeTarget : mw.config.get('wgTitle'));
+									// nonDiscussArticle is the article which won't have the discussion
+									params.nonDiscussArticle = (tagName === "merge to" ? mw.config.get('wgTitle') : params.mergeTarget)
+									params.talkDiscussionTitle = '请求与' + params.nonDiscussArticle + '合并';
+								}
+								currentTag += '|discuss=Talk:' + params.discussArticle + '#' + params.talkDiscussionTitle;
 							}
-							currentTag += '|discuss=' + params.talkPageLink;
 						}
 						break;
 					default:
@@ -654,44 +686,45 @@ Twinkle.tag.callbacks = {
 		pageobj.setWatchlist(Twinkle.getFriendlyPref('watchTaggedPages'));
 		pageobj.setMinorEdit(Twinkle.getFriendlyPref('markTaggedPagesAsMinor'));
 		pageobj.setCreateOption('nocreate');
-		pageobj.save();
+		pageobj.save(function() {
+			// special functions for merge tags
+			if (params.mergeReason) {
+				// post the rationale on the talk page (only operates in main namespace)
+				var talkpageText = "\n\n== 请求与[[" + params.nonDiscussArticle + "]]合并 ==\n\n";
+				talkpageText += params.mergeReason.trim() + "--~~~~";
+
+				var talkpage = new Morebits.wiki.page("Talk:" + params.discussArticle, "将理由贴进讨论页");
+				talkpage.setAppendText(talkpageText);
+				talkpage.setEditSummary('请求将[[' + params.nonDiscussArticle + ']]' +
+					'与' + '[[' + params.discussArticle + ']]合并' + 
+					Twinkle.getPref('summaryAd'));
+				talkpage.setWatchlist(Twinkle.getFriendlyPref('watchMergeDiscussions'));
+				talkpage.setCreateOption('recreate');
+				talkpage.append();
+			}
+			if (params.mergeTagOther) {
+				// tag the target page if requested
+				var otherTagName = "merge";
+				if (tags.indexOf("merge from") !== -1) {
+					otherTagName = "merge to";
+				} else if (tags.indexOf("merge to") !== -1) {
+					otherTagName = "merge from";
+				}
+				var newParams = { 
+					tags: [otherTagName],
+					mergeTarget: mw.config.get("wgPageName"),
+					discussArticle: params.discussArticle,
+					talkDiscussionTitle: params.talkDiscussionTitle
+				};
+				var otherpage = new Morebits.wiki.page(params.mergeTarget, "标记其他页面（" +
+					params.mergeTarget + "）");
+				otherpage.setCallbackParameters(newParams);
+				otherpage.load(Twinkle.tag.callbacks.main);
+			}
+		});
 
 		if( Twinkle.getFriendlyPref('markTaggedPagesAsPatrolled') ) {
 			pageobj.patrol();
-		}
-		
-		// special functions for merge tags
-		var talkpageLink = null;
-		if (params.mergeReason) {
-			// post the rationale on the talk page
-			// (only operates in main namespace)
-			var talkpageText = "\n\n== 请求与[[" + params.mergeTarget + "]]合并 ==\n\n";
-			talkpageText += params.mergeReason.trim() + "--~~~~";
-			
-			var talkpage = new Morebits.wiki.page("Talk:" + mw.config.get("wgTitle"), "将理由贴进讨论页");
-			talkpage.setAppendText(talkpageText);
-			talkpage.setEditSummary('请求将[[' + mw.config.get("wgTitle") +
-				']]与[[' + params.mergeTarget + ']]合并' + Twinkle.getPref('summaryAd'));
-			talkpage.setCreateOption('recreate');
-			talkpage.append();
-		}
-		if (params.mergeTagOther) {
-			// tag the target page if requested
-			var otherTagName = "merge";
-			if (tags.indexOf("merge from") !== -1) {
-				otherTagName = "merge to";
-			} else if (tags.indexOf("merge to") !== -1) {
-				otherTagName = "merge from";
-			}
-			var newParams = { 
-				tags: [otherTagName],
-				mergeTarget: mw.config.get("wgPageName"),
-				talkPageLink: params.talkPageLink
-			};
-			var otherpage = new Morebits.wiki.page(params.mergeTarget, "标记其他页面（" +
-				params.mergeTarget + "）");
-			otherpage.setCallbackParameters(newParams);
-			otherpage.load(Twinkle.tag.callbacks.main);
 		}
 	},
 
@@ -707,6 +740,8 @@ Twinkle.tag.callbacks = {
 };
 
 Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
+	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' '));  // for queen/king/whatever and country!
+
 	var form = e.target;
 	var params = {};
 
@@ -714,6 +749,10 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		case '条目':
 			params.tags = form.getChecked( 'articleTags' );
 			params.group = form.group.checked;
+			params.tagParameters = {
+				notability: form["articleTags.notability"] ? form["articleTags.notability"].value : null
+			};
+			// common to {{merge}}, {{merge from}}, {{merge to}}
 			params.mergeTarget = form["articleTags.mergeTarget"] ? form["articleTags.mergeTarget"].value : null;
 			params.mergeReason = form["articleTags.mergeReason"] ? form["articleTags.mergeReason"].value : null;
 			params.mergeTagOther = form["articleTags.mergeTagOther"] ? form["articleTags.mergeTagOther"].checked : false;
@@ -726,12 +765,18 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			break;
 	}
 
+	// form validation
 	if( !params.tags.length ) {
 		alert( '必须选择至少一个标记！' );
 		return;
 	}
-	if( params.mergeTagOther && params.mergeTarget.indexOf('|') !== -1 ) {
-		alert( '目前还不支持在一次合并中标记多个条目。请不要勾选“标记其他条目”并重试。' );
+	if( ((params.tags.indexOf("merge") !== -1) + (params.tags.indexOf("merge from") !== -1) +
+		(params.tags.indexOf("merge to") !== -1)) > 1 ) {
+		alert( '请在{{merge}}、{{merge from}}和{{merge to}}中选择一个。如果需要多次合并，请使用{{merge}}并用管道符分隔条目名（但在这种情形中Twinkle不能自动标记其他条目）。' );
+		return;
+	}
+	if( (params.mergeTagOther || params.mergeReason) && params.mergeTarget.indexOf('|') !== -1 ) {
+		alert( '目前还不支持在一次合并中标记多个条目，与开启关于多个条目的讨论。请不要勾选“标记其他条目”和/或清理“理由”框，并重试。' );
 		return;
 	}
 

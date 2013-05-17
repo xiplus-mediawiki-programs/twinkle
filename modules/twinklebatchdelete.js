@@ -111,8 +111,15 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 			'rvprop': [ 'size' ]
 		};
 	}
+	
+	var statusdiv = document.createElement( 'div' );
+	statusdiv.style.padding = '15px';  // just so it doesn't look broken
+	Window.setContent(statusdiv);
+	Morebits.status.init(statusdiv);
+	Window.display();
 
-	var wikipedia_api = new Morebits.wiki.api( '抓取页面', query, function( self ) {
+	var statelem = new Morebits.status("抓取页面列表");
+	var wikipedia_api = new Morebits.wiki.api( '载入中…', query, function( self ) {
 			var xmlDoc = self.responseXML;
 			var snapshot = xmlDoc.evaluate('//page[@ns != "6" and not(@missing)]', xmlDoc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null );  // 6 = File: namespace
 			var list = [];
@@ -133,14 +140,10 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 
 			var result = self.params.form.render();
 			self.params.Window.setContent( result );
-		} );
+		}, statelem );
 
 	wikipedia_api.params = { form:form, Window:Window };
 	wikipedia_api.post();
-	var root = document.createElement( 'div' );
-	Morebits.status.init( root );
-	Window.setContent( root );
-	Window.display();
 };
 
 Twinkle.batchdelete.currentDeleteCounter = 0;

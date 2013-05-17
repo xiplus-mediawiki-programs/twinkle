@@ -39,11 +39,6 @@ Twinkle.xfd.printRationale = function twinklexfdPrintRationale() {
 };
 
 Twinkle.xfd.callback = function twinklexfdCallback() {
-	if (!twinkleUserAuthorized) {
-		alert("您尚未达到自动确认。");
-		return;
-	}
-
 	var Window = new Morebits.simpleWindow( 600, 350 );
 	Window.setTitle( "提交存废讨论" );
 	Window.setScriptName( "Twinkle" );

@@ -26,11 +26,6 @@ Twinkle.speedy = function twinklespeedy() {
 
 // This function is run when the CSD tab/header link is clicked
 Twinkle.speedy.callback = function twinklespeedyCallback() {
-	if ( !twinkleUserAuthorized ) {
-		alert("您尚未达到自动确认。");
-		return;
-	}
-
 	Twinkle.speedy.initDialog(Morebits.userIsInGroup( 'sysop' ) ? Twinkle.speedy.callback.evaluateSysop : Twinkle.speedy.callback.evaluateUser, true);
 };
 
@@ -213,7 +208,7 @@ Twinkle.speedy.callback.dbMultipleChanged = function twinklespeedyCallbackDbMult
 		case 6:  // file
 			work_area.append( { type: 'header', label: '文件' } );
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getFileList(value) } );
-			work_area.append( { type: 'div', label: '标记CSD F3、F4，请使用Twinkle的“图版”功能。' } );
+			work_area.append( { type: 'div', label: '标记CSD F3、F4，请使用Twinkle的“图权”功能。' } );
 			break;
 
 		case 14:  // category
@@ -481,10 +476,21 @@ Twinkle.speedy.reasonHash = {
 Twinkle.speedy.callbacks = {
 	sysop: {
 		main: function( params ) {
-			var thispage = new Morebits.wiki.page( mw.config.get('wgPageName'), "删除页面" );
+			var thispage;
+
+			Morebits.wiki.addCheckpoint();  // prevent actionCompleted from kicking in until user interaction is done
+			
+			// look up initial contributor. If prompting user for deletion reason, just display a link.
+			// Otherwise open the talk page directly
+			if( params.openusertalk ) {
+				thispage = new Morebits.wiki.page( mw.config.get('wgPageName') );  // a necessary evil, in order to clear incorrect status text
+				thispage.setCallbackParameters( params );
+				thispage.lookupCreator( Twinkle.speedy.callbacks.sysop.openUserTalkPage );
+			}
 
 			// delete page
 			var reason;
+			thispage = new Morebits.wiki.page( mw.config.get('wgPageName'), "删除页面" );
 			if (params.normalized === 'db') {
 				reason = prompt("输入删除理由：", "");
 			} else {
@@ -497,11 +503,17 @@ Twinkle.speedy.callbacks = {
 			}
 			if (!reason || !reason.replace(/^\s*/, "").replace(/\s*$/, "")) {
 				Morebits.status.error("询问理由", "您没有提供理由，取消操作。");
+				Morebits.wiki.removeCheckpoint();
 				return;
 			}
 			thispage.setEditSummary( reason + Twinkle.getPref('deletionSummaryAd') );
-			thispage.deletePage();
-
+			thispage.deletePage(function() { 
+				thispage.getStatusElement().info("完成");
+				Twinkle.speedy.callbacks.sysop.deleteTalk( params );
+			});
+			Morebits.wiki.removeCheckpoint();
+		},
+		deleteTalk: function( params ) {
 			// delete talk page
 			if (params.deleteTalkPage &&
 			    params.normalized !== 'f7' &&
@@ -510,6 +522,27 @@ Twinkle.speedy.callbacks = {
 				var talkpage = new Morebits.wiki.page( Morebits.wikipedia.namespaces[ mw.config.get('wgNamespaceNumber') + 1 ] + ':' + mw.config.get('wgTitle'), "删除讨论页" );
 				talkpage.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 已删除页面“' + mw.config.get('wgPageName') + "”的讨论页" + Twinkle.getPref('deletionSummaryAd'));
 				talkpage.deletePage();
+				// this is ugly, but because of the architecture of wiki.api, it is needed
+				// (otherwise success/failure messages for the previous action would be suppressed)
+				window.setTimeout(function() { Twinkle.speedy.callbacks.sysop.deleteRedirects( params ) }, 1800);
+			} else {
+				Twinkle.speedy.callbacks.sysop.deleteRedirects( params );
+			}
+		},
+		deleteRedirects: function( params ) {
+			// delete redirects
+			if (params.deleteRedirects) {
+				var query = {
+					'action': 'query',
+					'list': 'backlinks',
+					'blfilterredir': 'redirects',
+					'bltitle': mw.config.get('wgPageName'),
+					'bllimit': 5000  // 500 is max for normal users, 5000 for bots and sysops
+				};
+				var wikipedia_api = new Morebits.wiki.api( '取得重定向列表…', query, Twinkle.speedy.callbacks.sysop.deleteRedirectsMain,
+					new Morebits.status( '删除重定向' ) );
+				wikipedia_api.params = params;
+				wikipedia_api.post();
 			}
 
 			// prompt for protect on G11
@@ -568,33 +601,11 @@ Twinkle.speedy.callbacks = {
 				});
 				Morebits.status.info($bigtext[0], $link[0]);
 			}
-
-			// open talk page of first contributor
-			if( params.openusertalk ) {
-				thispage = new Morebits.wiki.page( mw.config.get('wgPageName') );  // a necessary evil, in order to clear incorrect status text
-				thispage.setCallbackParameters( params );
-				thispage.lookupCreator( Twinkle.speedy.callbacks.sysop.openUserTalkPage );
-			}
-
-			// delete redirects
-			if (params.deleteRedirects) {
-				var query = {
-					'action': 'query',
-					'list': 'backlinks',
-					'blfilterredir': 'redirects',
-					'bltitle': mw.config.get('wgPageName'),
-					'bllimit': 5000  // 500 is max for normal users, 5000 for bots and sysops
-				};
-				var wikipedia_api = new Morebits.wiki.api( '取得重定向列表…', query, Twinkle.speedy.callbacks.sysop.deleteRedirectsMain,
-					new Morebits.status( '删除重定向' ) );
-				wikipedia_api.params = params;
-				wikipedia_api.post();
-			}
 		},
 		openUserTalkPage: function( pageobj ) {
 			pageobj.getStatusElement().unlink();  // don't need it anymore
 			var user = pageobj.getCreator();
-			var statusIndicator = new Morebits.status('打开用户 ' + user + ' 的对话页', '正在打开…');
+			var params = pageobj.getCallbackParameters();
 
 			var query = {
 				'title': 'User talk:' + user,
@@ -602,55 +613,69 @@ Twinkle.speedy.callbacks = {
 				'preview': 'yes',
 				'vanarticle': mw.config.get('wgPageName').replace(/_/g, ' ')
 			};
-			switch( Twinkle.getPref('userTalkPageMode') ) {
-			case 'tab':
-				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_tab' );
-				break;
-			case 'blank':
-				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_blank', 'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
-				break;
-			case 'window':
-				/* falls through */
-			default:
-				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ),
-					( window.name === 'twinklewarnwindow' ? '_blank' : 'twinklewarnwindow' ),
-					'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
-				break;
-			}
 
-			statusIndicator.info( '完成' );
+			if (params.normalized === 'db' || Twinkle.getPref("promptForSpeedyDeletionSummary").indexOf(params.normalized) !== -1) {
+				// provide a link to the user talk page
+				var $link, $bigtext;
+				$link = $('<a/>', {
+					'href': mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ),
+					'text': '点此打开User talk:' + user,
+					'target': '_blank',
+					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
+				});
+				$bigtext = $('<span/>', {
+					'text': '通知页面创建者',
+					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
+				});
+				Morebits.status.info($bigtext[0], $link[0]);
+			} else {
+				// open the initial contributor's talk page
+				var statusIndicator = new Morebits.status('打开用户' + user + '对话页编辑表单', '打开中…');
+
+				switch( Twinkle.getPref('userTalkPageMode') ) {
+				case 'tab':
+					window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_tab' );
+					break;
+				case 'blank':
+					window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_blank', 'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
+					break;
+				case 'window':
+					/* falls through */
+				default:
+					window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ),
+						( window.name === 'twinklewarnwindow' ? '_blank' : 'twinklewarnwindow' ),
+						'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
+					break;
+				}
+
+				statusIndicator.info( '完成' );
+			}
 		},
 		deleteRedirectsMain: function( apiobj ) {
 			var xmlDoc = apiobj.getXML();
 			var $snapshot = $(xmlDoc).find('backlinks bl');
-
 			var total = $snapshot.length;
+			var statusIndicator = apiobj.statelem;
 
 			if( !total ) {
+				statusIndicator.status("未发现重定向");
 				return;
 			}
 
-			var statusIndicator = apiobj.statelem;
 			statusIndicator.status("0%");
 
-			var onsuccess = function( apiobj ) {
-				var obj = apiobj.parent.params.obj;
-				var total = apiobj.parent.params.total;
-				var now = parseInt( 100 * ++(apiobj.parent.params.current)/total, 10 ) + '%';
-				obj.update( now );
-				apiobj.statelem.unlink();
-				if( apiobj.parent.params.current >= total ) {
-					obj.info( now + '（完成）' );
+			var current = 0;
+			var onsuccess = function( apiobjInner ) {
+				var now = parseInt( 100 * (++current)/total, 10 ) + '%';
+				statusIndicator.update( now );
+				apiobjInner.statelem.unlink();
+				if( current >= total ) {
+					statusIndicator.info( now + '（完成）' );
 					Morebits.wiki.removeCheckpoint();
 				}
 			};
 
 			Morebits.wiki.addCheckpoint();
-
-			var params = $.extend( {}, apiobj.params );
-			params.current = 0;
-			params.total = total;
-			params.obj = statusIndicator;
 
 			$snapshot.each(function(key, value) {
 				var title = $(value).attr('title');

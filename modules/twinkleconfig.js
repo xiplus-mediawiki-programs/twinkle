@@ -438,6 +438,11 @@ Twinkle.config.sections = [
 			type: "boolean"
 		},
 		{
+			name: "watchMergeDiscussions",
+			label: "添加合并讨论时监视讨论页",
+			type: "boolean"
+		},
+		{
 			name: "markTaggedPagesAsMinor",
 			label: "将标记标记为小修改",
 			type: "boolean"
@@ -521,7 +526,17 @@ Twinkle.config.sections = [
 			name: "defaultWarningGroup",
 			label: "默认警告级别",
 			type: "enum",
-			enumValues: { "1": "层级1", "2": "层级2", "3": "层级3", "4": "层级4", "5": "层级4im", "6": "单层级通知", "7": "单层级警告", "8": "封禁" }
+			enumValues: {
+				"1": "层级1",
+				"2": "层级2",
+				"3": "层级3",
+				"4": "层级4",
+				"5": "层级4im",
+				"6": "单层级通知",
+				"7": "单层级警告",
+				"9": "自定义警告",
+				"8": "封禁（仅管理员）"
+			}
 		},
 
 		// TwinkleConfig.showSharedIPNotice may take arguments:
@@ -549,6 +564,14 @@ Twinkle.config.sections = [
 			label: "无限期封禁时清空对话页",
 			adminOnly: true,
 			type: "boolean"
+		},
+		{
+			name: "customWarningList",
+			label: "自定义警告模板",
+			helptip: "您可以加入模板或用户子页面。自定义警告会出现在警告对话框中“自定义警告”一节。",
+			type: "customList",
+			customListValueTitle: "模板名（不含大括号）",
+			customListLabelTitle: "显示的文字（和编辑摘要）"
 		}
 	]
 },
@@ -1015,7 +1038,9 @@ Twinkle.config.init = function twinkleconfigInit() {
 
 				cell.style.color = "gray";
 				if (pref.helptip) {
-					cell.innerHTML = pref.helptip;
+					// convert mentions of templates in the helptip to clickable links
+					cell.innerHTML = pref.helptip.replace(/{{(.+?)}}/g, 
+						'{{<a href="' + mw.util.wikiGetlink("Template:") + '$1" target="_blank">$1</a>}}');
 				}
 				// add reset link (custom lists don't need this, as their config value isn't displayed on the form)
 				if (pref.type !== "customList") {
