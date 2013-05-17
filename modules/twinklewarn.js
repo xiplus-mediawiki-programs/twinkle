@@ -1132,12 +1132,12 @@ Twinkle.warn.callbacks = {
 			// add linked article for user warnings (non-block templates)
 			text += '|1=' + article;
 		}
-		text += '}}';
 
 		// add extra message for non-block templates
 		if (reason) {
-			text += " ''" + reason + "''";
+			text += "|2=" + reason;
 		}
+		text += '}}';
 
 		return text;
 	},
@@ -1242,7 +1242,7 @@ Twinkle.warn.callbacks = {
 				Morebits.status.info( '信息', '未找到当月标题，将创建新的' );
 				text += "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
 			}
-			text += Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article, params.reason) + " ~~~~";
+			text += Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article, params.reason) + "--~~~~";
 		}
 
 		if ( Twinkle.getPref('showSharedIPNotice') && Morebits.isIPAddress( mw.config.get('wgTitle') ) ) {
