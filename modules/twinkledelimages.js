@@ -1,3 +1,9 @@
+//<nowiki>
+
+
+(function($){
+
+
 /*
  * vim: set noet sts=0 sw=8:
 ****************************************
@@ -13,7 +19,7 @@ Twinkle.delimages = function twinkledeli() {
 		return;
 	}
 	if( Morebits.userIsInGroup( 'sysop' ) ) {
-		twAddPortletLink( Twinkle.delimages.callback, "批图", "tw-deli", "批量删除此页内的文件" );
+		Twinkle.addPortletLink( Twinkle.delimages.callback, "批图", "tw-deli", "批量删除此页内的文件" );
 	}
 };
 
@@ -222,3 +228,7 @@ Twinkle.delimages.callbacks = {
 		self.save();
 	}
 };
+})(jQuery);
+
+
+//</nowiki>

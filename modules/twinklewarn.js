@@ -1,3 +1,9 @@
+//<nowiki>
+
+
+(function($){
+
+
 /*
  * vim: set noet sts=0 sw=8:
  ****************************************
@@ -10,7 +16,7 @@
 
 Twinkle.warn = function twinklewarn() {
 	if( mw.config.get('wgNamespaceNumber') === 3 ) {
-			twAddPortletLink( Twinkle.warn.callback, "警告", "tw-warn", "警告或提醒用户" );
+			Twinkle.addPortletLink( Twinkle.warn.callback, "警告", "tw-warn", "警告或提醒用户" );
 	}
 
 	// modify URL of talk page on rollback success pages
@@ -1327,3 +1333,7 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	wikipedia_page.setFollowRedirect( true );
 	wikipedia_page.load( Twinkle.warn.callbacks.main );
 };
+})(jQuery);
+
+
+//</nowiki>

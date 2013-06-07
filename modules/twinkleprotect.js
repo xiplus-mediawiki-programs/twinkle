@@ -1,3 +1,9 @@
+//<nowiki>
+
+
+(function($){
+
+
 /*
  * vim: set noet sts=0 sw=8:
  ****************************************
@@ -15,7 +21,7 @@ Twinkle.protect = function twinkleprotect() {
 		return;
 	}
 
-	twAddPortletLink(Twinkle.protect.callback, Morebits.userIsInGroup('sysop') ? "保护" : "保护", "tw-rpp",
+	Twinkle.addPortletLink(Twinkle.protect.callback, Morebits.userIsInGroup('sysop') ? "保护" : "保护", "tw-rpp",
 		Morebits.userIsInGroup('sysop') ? "保护页面" : "请求保护页面" );
 };
 
@@ -1056,3 +1062,7 @@ Twinkle.protect.callbacks = {
 		rppPage.save();
 	}
 };
+})(jQuery);
+
+
+//</nowiki>

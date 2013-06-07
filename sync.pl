@@ -41,7 +41,23 @@ my %pages = map +("$opt->{base}/$_" => $_), @ARGV;
 my %deploys = (
 	'twinkle.js' => 'MediaWiki:Gadget-Twinkle.js',
 	'morebits.js' => 'MediaWiki:Gadget-morebits.js',
-	'morebits.css' => 'MediaWiki:Gadget-morebits.css'
+	'morebits.css' => 'MediaWiki:Gadget-morebits.css',
+	'modules/friendlyshared.js' => 'MediaWiki:Gadget-friendlyshared.js',
+	'modules/friendlytag.js' => 'MediaWiki:Gadget-friendlytag.js',
+	'modules/friendlytalkback.js' => 'MediaWiki:Gadget-friendlytalkback.js',
+	'modules/twinklebatchdelete.js' => 'MediaWiki:Gadget-twinklebatchdelete.js',
+	'modules/twinklebatchundelete.js' => 'MediaWiki:Gadget-twinklebatchundelete.js',
+	'modules/twinkleconfig.js' => 'MediaWiki:Gadget-twinkleconfig.js',
+	'modules/twinklecopyvio.js' => 'MediaWiki:Gadget-twinklecopyvio.js',
+	'modules/twinkledelimages.js' => 'MediaWiki:Gadget-twinkledelimages.js',
+	'modules/twinklediff.js' => 'MediaWiki:Gadget-twinklediff.js',
+	'modules/twinklefluff.js' => 'MediaWiki:Gadget-twinklefluff.js',
+	'modules/twinkleimage.js' => 'MediaWiki:Gadget-twinkleimage.js',
+	'modules/twinkleprotect.js' => 'MediaWiki:Gadget-twinkleprotect.js',
+	'modules/twinklespeedy.js' => 'MediaWiki:Gadget-twinklespeedy.js',
+	'modules/twinkleunlink.js' => 'MediaWiki:Gadget-twinkleunlink.js',
+	'modules/twinklewarn.js' => 'MediaWiki:Gadget-twinklewarn.js',
+	'modules/twinklexfd.js' => 'MediaWiki:Gadget-twinklexfd.js',
 );
 
 # Config file should be an hash consisting of username and password keys
@@ -52,10 +68,10 @@ my $repo = Git::Repository->new();
 my $bot = MediaWiki::Bot->new({
         assert      => 'user',
         protocol    => 'https',
-        host        => 'zh.wikipedia.org',
+        host        => "$opt->{lang}.$opt->{family}.org",
         login_data  => { username => $opt->username, password => $opt->password},
         debug => $opt->{verbose} ? 2 : 0,
-		maxlag => 1000 # not a botty script, thus smash it!
+		maxlag => 1000000 # not a botty script, thus smash it!
     }
 );
 

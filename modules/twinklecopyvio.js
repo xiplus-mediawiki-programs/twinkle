@@ -1,3 +1,9 @@
+//<nowiki>
+
+
+(function($){
+
+
 /*
  * vim: set noet sts=0 sw=8:
  ****************************************
@@ -17,13 +23,7 @@ Twinkle.copyvio = function twinklecopyvio() {
 	if ( mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.wiki.isPageRedirect()))) ) {
 		return;
 	}
-	if (twinkleUserAuthorized) {
-		$(twAddPortletLink("#", "侵权", "tw-copyvio", "提报侵权页面", "")).click(Twinkle.copyvio.callback);
-	} else {
-		$(twAddPortletLink("#", '侵权', 'tw-copyvio', '提报侵权页面', '')).click(function() {
-			alert("您尚未达到自动确认。");
-		});
-	}
+	Twinkle.addPortletLink(Twinkle.copyvio.callback, "侵权", "tw-copyvio", "提报侵权页面", "");
 };
 
 Twinkle.copyvio.callback = function twinklecopyvioCallback() {
@@ -168,3 +168,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 
 	Morebits.wiki.removeCheckpoint();
 };
+})(jQuery);
+
+
+//</nowiki>

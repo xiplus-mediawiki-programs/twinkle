@@ -1,17 +1,23 @@
-all: twinkle.js
+all:
 
-twinkle.min.js: twinkle.js
-	uglifyjs --output $@ $^
+modules = modules/friendlyshared.js \
+		  modules/friendlytag.js \
+		  modules/friendlytalkback.js \
+		  modules/twinklebatchdelete.js \
+		  modules/twinklebatchundelete.js \
+		  modules/twinkleconfig.js \
+		  modules/twinklecopyvio.js \
+		  modules/twinkledelimages.js \
+		  modules/twinklediff.js \
+		  modules/twinklefluff.js \
+		  modules/twinkleimage.js \
+		  modules/twinkleprotect.js \
+		  modules/twinklespeedy.js \
+		  modules/twinkleunlink.js \
+		  modules/twinklewarn.js \
+		  modules/twinklexfd.js
 
-
-twinkle.js: twinkle.header.js $(wildcard modules/*.js) twinkle.footer.js
-	awk 'FNR==1{print ""}{print}' $^ > $@
-
-
-deploy: twinkle.js morebits.js morebits.css
+deploy: twinkle.js morebits.js morebits.css $(modules)
 	./sync.pl --deploy $^
 
-clean:
-	rm -f twinkle.js twinkle.min.js
-
-.PHONY: deploy clean
+.PHONY: deploy all

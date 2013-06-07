@@ -1,3 +1,9 @@
+//<nowiki>
+
+
+(function($){
+
+
 /*
  * vim: set noet sts=0 sw=8:
  ****************************************
@@ -15,12 +21,12 @@ Twinkle.tag = function friendlytag() {
 	// redirect tagging
 	if( Morebits.wiki.isPageRedirect() ) {
 		Twinkle.tag.mode = '重定向';
-		twAddPortletLink( Twinkle.tag.callback, "标记", "friendly-tag", "标记重定向" );
+		Twinkle.addPortletLink( Twinkle.tag.callback, "标记", "friendly-tag", "标记重定向" );
 	}
-	// article/draft article tagging
-	else if( ( mw.config.get('wgNamespaceNumber') === 0 && mw.config.get('wgCurRevisionId') ) || ( mw.config.get('wgPageName') === 'Wikipedia:沙盒' ) ) {
+	// article tagging
+	else if( ( mw.config.get('wgNamespaceNumber') === 0 && mw.config.get('wgCurRevisionId') ) || ( mw.config.get('wgPageName') === 'Wikipedia:沙盒') ) {
 		Twinkle.tag.mode = '条目';
-		twAddPortletLink( Twinkle.tag.callback, "标记", "friendly-tag", "标记条目" );
+		Twinkle.addPortletLink( Twinkle.tag.callback, "标记", "friendly-tag", "标记条目" );
 	}
 };
 
@@ -802,3 +808,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			break;
 	}
 };
+})(jQuery);
+
+
+//</nowiki>

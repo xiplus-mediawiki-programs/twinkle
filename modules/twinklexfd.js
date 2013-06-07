@@ -1,3 +1,9 @@
+//<nowiki>
+
+
+(function($){
+
+
 /*
  * vim: set noet sts=0 sw=8:
  ****************************************
@@ -17,7 +23,7 @@ Twinkle.xfd = function twinklexfd() {
 	if ( mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.wiki.isPageRedirect()))) ) {
 		return;
 	}
-	twAddPortletLink( Twinkle.xfd.callback, "提删", "tw-xfd", "提交删除讨论" );
+	Twinkle.addPortletLink( Twinkle.xfd.callback, "提删", "tw-xfd", "提交删除讨论" );
 };
 
 Twinkle.xfd.currentRationale = null;
@@ -493,3 +499,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		break;
 	}
 };
+})(jQuery);
+
+
+//</nowiki>

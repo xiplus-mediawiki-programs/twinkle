@@ -1,3 +1,9 @@
+//<nowiki>
+
+
+(function($){
+
+
 /*
  * vim: set noet sts=0 sw=8:
  ****************************************
@@ -13,7 +19,7 @@ Twinkle.unlink = function twinkleunlink() {
 		return;
 	}
 	if( Morebits.userIsInGroup( 'sysop' ) ) {
-		twAddPortletLink( Twinkle.unlink.callback, "链入", "tw-unlink", "取消到本页的链接" );
+		Twinkle.addPortletLink( Twinkle.unlink.callback, "链入", "tw-unlink", "取消到本页的链接" );
 	}
 };
 
@@ -33,7 +39,7 @@ Twinkle.unlink.getChecked2 = function twinkleunlinkGetChecked2( nodelist ) {
 // the parameter is used when invoking unlink from admin speedy
 Twinkle.unlink.callback = function(presetReason) {
 	var Window = new Morebits.simpleWindow( 800, 400 );
-	Window.setTitle( "取消链入" );
+	Window.setTitle( "取消链入" + (mw.config.get('wgNamespaceNumber') === 6 ? "和文件使用" : "") );
 	Window.setScriptName( "Twinkle" );
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#unlink" );
 
@@ -276,3 +282,7 @@ Twinkle.unlink.callbacks = {
 		}
 	}
 };
+})(jQuery);
+
+
+//</nowiki>

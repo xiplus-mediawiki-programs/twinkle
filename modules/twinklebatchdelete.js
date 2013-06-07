@@ -1,3 +1,9 @@
+//<nowiki>
+
+
+(function($){
+
+
 /*
  * vim: set noet sts=0 sw=8:
  ****************************************
@@ -11,7 +17,7 @@
 
 Twinkle.batchdelete = function twinklebatchdelete() {
 	if( Morebits.userIsInGroup( 'sysop' ) && (mw.config.get( 'wgNamespaceNumber' ) > 0 || mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Prefixindex') ) {
-		twAddPortletLink( Twinkle.batchdelete.callback, "批删", "tw-batch", "删除此分类或页面中的所有链接" );
+		Twinkle.addPortletLink( Twinkle.batchdelete.callback, "批删", "tw-batch", "删除此分类或页面中的所有链接" );
 	}
 };
 
@@ -380,3 +386,7 @@ Twinkle.batchdelete.callbacks = {
 		pageobj.save(params.onsuccess);
 	}
 };
+})(jQuery);
+
+
+//</nowiki>

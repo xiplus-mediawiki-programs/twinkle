@@ -1,3 +1,9 @@
+//<nowiki>
+
+
+(function($){
+
+
 /*
  * vim: set noet sts=0 sw=8:
  ****************************************
@@ -15,7 +21,7 @@
 			return;
 		}
 	
-		twAddPortletLink( callback, "回复", "friendly-talkback", "回复通告" );
+		Twinkle.addPortletLink( callback, "回复", "friendly-talkback", "回复通告" );
 	};
 	
 	var callback = function( ) {
@@ -243,3 +249,7 @@
 	};
 
 }());
+})(jQuery);
+
+
+//</nowiki>

@@ -1,3 +1,9 @@
+//<nowiki>
+
+
+(function($){
+
+
 /*
  * vim: set noet sts=0 sw=8:
  ****************************************
@@ -19,12 +25,12 @@ Twinkle.diff = function twinklediff() {
 		'oldid': 'prev'
 	};
 
-	twAddPortletLink( mw.util.wikiScript("index")+ "?" + $.param( query ), '最后', 'tw-lastdiff', '显示最后修改' );
+	Twinkle.addPortletLink( mw.util.wikiScript("index")+ "?" + $.param( query ), '最后', 'tw-lastdiff', '显示最后修改' );
 
 	// Show additional tabs only on diff pages
 	if (Morebits.queryString.exists('diff')) {
-		twAddPortletLink(function(){ Twinkle.diff.evaluate(false); }, '自前', 'tw-since', '显示与上一修订版本间的差异' );
-		twAddPortletLink( function(){ Twinkle.diff.evaluate(true); }, '自我', 'tw-sincemine', '显示与我做出的修订版本的差异' );
+		Twinkle.addPortletLink(function(){ Twinkle.diff.evaluate(false); }, '自上', 'tw-since', '显示与上一修订版本间的差异' );
+		Twinkle.addPortletLink( function(){ Twinkle.diff.evaluate(true); }, '自我', 'tw-sincemine', '显示与我做出的修订版本的差异' );
 
 		var oldid = /oldid=(.+)/.exec($('#mw-diff-ntitle1').find('strong a').first().attr("href"))[1];
 		query = {
@@ -32,7 +38,7 @@ Twinkle.diff = function twinklediff() {
 			'diff': 'cur',
 			'oldid' : oldid
 		};
-		twAddPortletLink( mw.util.wikiScript("index")+ "?" + $.param( query ), '当前', 'tw-curdiff', '显示与当前版本间的差异' );
+		Twinkle.addPortletLink( mw.util.wikiScript("index")+ "?" + $.param( query ), '当前', 'tw-curdiff', '显示与当前版本间的差异' );
 	}
 };
 
@@ -81,3 +87,7 @@ Twinkle.diff.callbacks = {
 		window.location = mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query );
 	}
 };
+})(jQuery);
+
+
+//</nowiki>

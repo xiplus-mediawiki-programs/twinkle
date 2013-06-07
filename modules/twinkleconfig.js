@@ -1,3 +1,9 @@
+//<nowiki>
+
+
+(function($){
+
+
 /*
  * vim: set noet sts=0 sw=8:
  ****************************************
@@ -1671,3 +1677,7 @@ Twinkle.config.saveSuccess = function twinkleconfigSaveSuccess(pageobj) {
 	noticeclear.style.clear = "both";
 	Morebits.status.root.appendChild(noticeclear);
 };
+})(jQuery);
+
+
+//</nowiki>
