@@ -281,6 +281,9 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 				if( current.tooltip ) {
 					Morebits.quickForm.element.generateTooltip( label, current );
 				}
+				if( current.style ) {
+					subnode.setAttribute( 'style', current.style );
+				}
 				var event;
 				if( current.subgroup ) {
 					var tmpgroup = current.subgroup;  // $.extend({}, current.subgroup); really needed?
