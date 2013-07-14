@@ -79,7 +79,6 @@ Twinkle.image.callback = function twinkleimageCallback() {
 
 Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 	var type;
-	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' '));  // for queen/king/whatever and country!
 
 	var notify = event.target.notify.checked;
 	var types = event.target.type;
@@ -131,7 +130,7 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		}
 		// No auto-notification, display what was going to be added.
 		var noteData = document.createElement( 'pre' );
-		noteData.appendChild( document.createTextNode( "{{subst:Uploadvionotice|" + mw.config.get('wgPageName') + "}}--~~~~" ) );
+		noteData.appendChild( document.createTextNode( "{{subst:Uploadvionotice|" + Morebits.pageNameNorm + "}}--~~~~" ) );
 		Morebits.status.info( '提示', [ '这些内容应贴进上传者对话页：', document.createElement( 'br' ),  noteData ] );
 	}
 };
@@ -172,10 +171,9 @@ Twinkle.image.callbacks = {
 		var params = pageobj.getCallbackParameters();
 		var initialContrib = pageobj.getCreator();
 		var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知上传者(" + initialContrib + ")");
-		var notifytext = "\n{{subst:Uploadvionotice|" + mw.config.get('wgPageName');
-		notifytext += "}}  ~~~~";
+		var notifytext = "\n{{subst:Uploadvionotice|" + Morebits.pageNameNorm + "}}--~~~~";
 		usertalkpage.setAppendText(notifytext);
-		usertalkpage.setEditSummary("通知：文件[[" + mw.config.get('wgPageName') + "]]快速删除提名。" + Twinkle.getPref('summaryAd'));
+		usertalkpage.setEditSummary("通知：文件[[" + Morebits.pageNameNorm + "]]快速删除提名。" + Twinkle.getPref('summaryAd'));
 		usertalkpage.setCreateOption('recreate');
 		switch (Twinkle.getPref('deliWatchUser')) {
 			case 'yes':
@@ -201,8 +199,8 @@ Twinkle.image.callbacks = {
 		var text = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
 
-		pageobj.setPageText(text + "\n* [[:" + mw.config.get('wgPageName') + "]]--~~~~");
-		pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]。" + Twinkle.getPref('summaryAd'));
+		pageobj.setPageText(text + "\n* [[:" + Morebits.pageNameNorm + "]]--~~~~");
+		pageobj.setEditSummary("添加[[" + Morebits.pageNameNorm + "]]。" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('recreate');
 		pageobj.save();
 	}

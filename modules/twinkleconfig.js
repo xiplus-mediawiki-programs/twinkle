@@ -1644,7 +1644,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 		"// twinkleoptions.js：用户Twinkle参数设置文件\n" +
 		"//\n" +
 		"// 注：修改您的参数设置最简单的办法是使用\n" +
-		"// Twinkle参数设置面板，在[[" + mw.config.get("wgPageName") + "]]。\n" +
+		"// Twinkle参数设置面板，在[[" + Morebits.pageNameNorm + "]]。\n" +
 		"//\n" +
 		"// 这个文件是自动生成的，您所做的任何修改（除了\n" +
 		"// 以一种合法的JavaScript的方式来修改这些属性值）会\n" +
@@ -1659,7 +1659,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 		"// twinkleoptions.js到此为止\n";
 
 	pageobj.setPageText(text);
-	pageobj.setEditSummary("保存Twinkle参数设置：从[[" + mw.config.get("wgPageName") + "]]的自动编辑。 ([[WP:TW|TW]])");
+	pageobj.setEditSummary("保存Twinkle参数设置：来自[[" + Morebits.pageNameNorm + "]]的自动编辑。 ([[WP:TW|TW]])");
 	pageobj.setCreateOption("recreate");
 	pageobj.save(Twinkle.config.saveSuccess);
 };

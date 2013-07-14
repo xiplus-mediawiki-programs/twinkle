@@ -527,7 +527,7 @@ Twinkle.speedy.callbacks = {
 					params.normalized !== 'o1' &&
 					document.getElementById( 'ca-talk' ).className !== 'new') {
 				var talkpage = new Morebits.wiki.page( Morebits.wikipedia.namespaces[ mw.config.get('wgNamespaceNumber') + 1 ] + ':' + mw.config.get('wgTitle'), "删除讨论页" );
-				talkpage.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 已删除页面“' + mw.config.get('wgPageName') + "”的讨论页" + Twinkle.getPref('deletionSummaryAd'));
+				talkpage.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 已删除页面“' + Morebits.pageNameNorm + "”的讨论页" + Twinkle.getPref('deletionSummaryAd'));
 				talkpage.deletePage();
 				// this is ugly, but because of the architecture of wiki.api, it is needed
 				// (otherwise success/failure messages for the previous action would be suppressed)
@@ -583,7 +583,7 @@ Twinkle.speedy.callbacks = {
 					'click': function(){
 						Morebits.wiki.actionCompleted.redirect = null;
 						Twinkle.speedy.dialog.close();
-						Twinkle.unlink.callback("取消对已删除文件 " + mw.config.get('wgPageName') + " 的使用");
+						Twinkle.unlink.callback("取消对已删除文件 " + Morebits.pageNameNorm + " 的使用");
 					}
 				});
 				$bigtext = $('<span/>', {
@@ -599,7 +599,7 @@ Twinkle.speedy.callbacks = {
 					'click': function(){
 						Morebits.wiki.actionCompleted.redirect = null;
 						Twinkle.speedy.dialog.close();
-						Twinkle.unlink.callback("取消对已删除页面 " + mw.config.get('wgPageName') + " 的链接");
+						Twinkle.unlink.callback("取消对已删除页面 " + Morebits.pageNameNorm + " 的链接");
 					}
 				});
 				$bigtext = $('<span/>', {
@@ -618,7 +618,7 @@ Twinkle.speedy.callbacks = {
 				'title': 'User talk:' + user,
 				'action': 'edit',
 				'preview': 'yes',
-				'vanarticle': mw.config.get('wgPageName').replace(/_/g, ' ')
+				'vanarticle': Morebits.pageNameNorm
 			};
 
 			if (params.normalized === 'db' || Twinkle.getPref("promptForSpeedyDeletionSummary").indexOf(params.normalized) !== -1) {
@@ -687,7 +687,7 @@ Twinkle.speedy.callbacks = {
 			$snapshot.each(function(key, value) {
 				var title = $(value).attr('title');
 				var page = new Morebits.wiki.page(title, '删除重定向 "' + title + '"');
-				page.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 重定向到已删除页面“' + mw.config.get('wgPageName') + "”" + Twinkle.getPref('deletionSummaryAd'));
+				page.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 重定向到已删除页面“' + Morebits.pageNameNorm + "”" + Twinkle.getPref('deletionSummaryAd'));
 				page.params = params;
 				page.deletePage(onsuccess);
 			});
@@ -823,12 +823,12 @@ Twinkle.speedy.callbacks = {
 					var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）"),
 					    notifytext, i;
 
-					notifytext = "\n{{subst:db-notice|target=" + mw.config.get('wgPageName');
+					notifytext = "\n{{subst:db-notice|target=" + Morebits.pageNameNorm;
 					notifytext += (params.welcomeuser ? "" : "|nowelcome=yes") + "}}--~~~~";
 
 					var editsummary = "通知：";
 					if (params.normalizeds.indexOf("g12") === -1) {  // no article name in summary for G10 deletions
-						editsummary += "页面[[" + mw.config.get('wgPageName') + "]]";
+						editsummary += "页面[[" + Morebits.pageNameNorm + "]]";
 					} else {
 						editsummary += "一攻击性页面";
 					}
@@ -845,7 +845,7 @@ Twinkle.speedy.callbacks = {
 						Twinkle.speedy.callbacks.user.addToLog(params, initialContrib);
 					}
 				};
-				var thispage = new Morebits.wiki.page(mw.config.get('wgPageName'));
+				var thispage = new Morebits.wiki.page(Morebits.pageNameNorm);
 				thispage.lookupCreator(callback);
 			}
 			// or, if not notifying, add this nomination to the user's userspace log without the initial contributor's name
@@ -887,7 +887,7 @@ Twinkle.speedy.callbacks = {
 				text += "\n\n=== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 ===";
 			}
 
-			text += "\n# [[:" + mw.config.get('wgPageName') + "]]: ";
+			text += "\n# [[:" + Morebits.pageNameNorm + "]]: ";
 			if (params.fromDI) {
 				text += "图版[[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]]（" + params.type + "）";
 			} else {
@@ -911,7 +911,7 @@ Twinkle.speedy.callbacks = {
 			text += " ~~~~~\n";
 
 			pageobj.setPageText(text);
-			pageobj.setEditSummary("记录对[[" + mw.config.get('wgPageName') + "]]的快速删除提名。" + Twinkle.getPref('summaryAd'));
+			pageobj.setEditSummary("记录对[[" + Morebits.pageNameNorm + "]]的快速删除提名。" + Twinkle.getPref('summaryAd'));
 			pageobj.setCreateOption("recreate");
 			pageobj.save();
 		}
@@ -933,14 +933,13 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(value, normal
 			parameters["1"] = dbrationale;
 			break;
 		case 'f7':
-			var pagenamespaces = mw.config.get('wgPageName').replace( '_', ' ' );
-			var filename = prompt( '[CSD F7] 请输入维基共享上的文件名：', pagenamespaces );
+			var filename = prompt( '[CSD F7] 请输入维基共享上的文件名：', Morebits.pageNameNorm );
 			if (filename === null)
 			{
 				statelem.error( '用户取消操作。' );
 				return null;
 			}
-			if (filename !== '' && filename !== pagenamespaces)
+			if (filename !== '' && filename !== Morebits.pageNameNorm)
 			{
 				if (filename.indexOf("Image:") === 0 || filename.indexOf("File:") === 0)
 				{
@@ -1019,7 +1018,6 @@ Twinkle.speedy.resolveCsdValues = function twinklespeedyResolveCsdValues(e) {
 
 Twinkle.speedy.callback.evaluateSysop = function twinklespeedyCallbackEvaluateSysop(e)
 {
-	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' ')); // for queen/king/whatever and country!
 	var form = (e.target.form ? e.target.form : e.target);
 
 	var tag_only = form.tag_only;
@@ -1051,7 +1049,6 @@ Twinkle.speedy.callback.evaluateSysop = function twinklespeedyCallbackEvaluateSy
 };
 
 Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUser(e) {
-	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' '));  // for queen/king/whatever and country!
 	var form = (e.target.form ? e.target.form : e.target);
 
 	if (e.target.type === "checkbox") {

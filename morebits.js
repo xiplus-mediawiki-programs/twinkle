@@ -899,22 +899,20 @@ Morebits.bytes.prototype.toString = function( magnitude ) {
  */
 
 if (!String.prototype.trimLeft) {
-	String.prototype.trimLeft = function stringPrototypeLtrim( chars ) {
-		chars = chars || "\\s";
-		return this.replace( new RegExp("^[" + chars + "]+", "g"), "" );
+	String.prototype.trimLeft = function stringPrototypeLtrim( ) {
+		return this.replace( /^[\s]+/g, "" );
 	};
 }
 
 if (!String.prototype.trimRight) {
-	String.prototype.trimRight = function stringPrototypeRtrim( chars ) {
-		chars = chars || "\\s";
-		return this.replace( new RegExp("[" + chars + "]+$", "g"), "" );
+	String.prototype.trimRight = function stringPrototypeRtrim( ) {
+		return this.replace( /[\s]+$/g, "" );
 	};
 }
 
 if (!String.prototype.trim) {
-	String.prototype.trim = function stringPrototypeTrim( chars ) {
-		return this.trimRight(chars).trimLeft(chars);
+	String.prototype.trim = function stringPrototypeTrim( ) {
+		return this.trimRight().trimLeft();
 	};
 }
 
@@ -968,6 +966,10 @@ Morebits.string = {
 		}
 
 		return result;
+	},
+	// for deletion/other templates taking a freeform "reason" from a textarea (e.g. PROD, XFD, RPP)
+	formatReasonText: function( str ) {
+		return str.toString().trimRight().replace(/\|/g, "{{subst:!}}");
 	}
 };
 
@@ -1056,6 +1058,15 @@ Morebits.getPageAssociatedUser = function(){
 
 	return false;
 };
+
+
+
+/**
+ * **************** Morebits.pageNameNorm ****************
+ * Stores a normalized version of the wgPageName variable (underscores converted to spaces).
+ * For queen/king/whatever and country!
+ */
+Morebits.pageNameNorm = mw.config.get('wgPageName').replace(/_/g, ' ');
 
 
 

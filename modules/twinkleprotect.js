@@ -1039,7 +1039,7 @@ Twinkle.protect.callbacks = {
 
 		words += params.typename;
 
-		newtag += "请求" + Morebits.string.toUpperCaseFirstChar(words) + ( params.reason !== '' ? "：" + params.reason : "。" ) + "--~~~~";
+		newtag += "请求" + Morebits.string.toUpperCaseFirstChar(words) + ( params.reason !== '' ? "：" + Morebits.string.formatReasonText(params.reason) : "。" ) + "--~~~~";
 
 		var reg;
 		if ( params.category === 'unprotect' ) {
@@ -1058,7 +1058,7 @@ Twinkle.protect.callbacks = {
 			return;
 		}
 		statusElement.status( '添加新提名…' );
-		rppPage.setEditSummary( '请求对[[' + mw.config.get('wgPageName').replace(/_/g, ' ') + ']]' + params.typename + Twinkle.getPref('summaryAd') );
+		rppPage.setEditSummary( '请求对[[' + Morebits.pageNameNorm + ']]' + params.typename + Twinkle.getPref('summaryAd') );
 		rppPage.setPageText( text );
 		rppPage.setCreateOption( 'recreate' );
 		rppPage.save();

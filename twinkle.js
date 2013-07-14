@@ -323,8 +323,10 @@ Twinkle.addPortletLink = function( task, text, id, tooltip )
 	}
 	return link;
 };
+
+
 /**
- * General initialization code
+ * **************** General initialization code ****************
  */
 
 var scriptpathbefore = mw.util.wikiScript( "index" ) + "?title=",

@@ -221,9 +221,9 @@ Twinkle.xfd.callbacks = {
 			if(params.usertalk) {
 				var initialContrib = pageobj.getCreator();
 				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
-				var notifytext = "\n{{subst:AFDNote|" + mw.config.get('wgPageName') + "}}--~~~~";
+				var notifytext = "\n{{subst:AFDNote|" + Morebits.pageNameNorm + "}}--~~~~";
 				usertalkpage.setAppendText(notifytext);
-				usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]存废讨论提名。" + Twinkle.getPref('summaryAd'));
+				usertalkpage.setEditSummary("通知：页面[[" + Morebits.pageNameNorm + "]]存废讨论提名。" + Twinkle.getPref('summaryAd'));
 				usertalkpage.setCreateOption('recreate');
 				switch (Twinkle.getPref('xfdWatchUser')) {
 					case 'yes':
@@ -247,7 +247,7 @@ Twinkle.xfd.callbacks = {
 			}
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
-			var tag = '{{vfd|' + params.reason;
+			var tag = '{{vfd|' + Morebits.string.formatReasonText(params.reason);
 
 			switch ( params.xfdcat ) {
 				case 'vmd':
@@ -276,7 +276,7 @@ Twinkle.xfd.callbacks = {
 			}
 
 			pageobj.setPageText(tag + text);
-			pageobj.setEditSummary("页面存废讨论：[[" + params.logpage + "#" + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('summaryAd'));
+			pageobj.setEditSummary("页面存废讨论：[[" + params.logpage + "#" + Morebits.pageNameNorm + "]]" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchPage')) {
 				case 'yes':
 					pageobj.setWatchlist(true);
@@ -317,8 +317,8 @@ Twinkle.xfd.callbacks = {
 					break;
 			}
 
-			pageobj.setAppendText("\n{{subst:DRItem|Type=" + type + "|DRarticles=" + mw.config.get('wgPageName') + "|Reason=" + params.reason + "|To=" + to + "}}~~~~");
-			pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]。" + Twinkle.getPref('summaryAd'));
+			pageobj.setAppendText("\n{{subst:DRItem|Type=" + type + "|DRarticles=" + Morebits.pageNameNorm + "|Reason=" + Morebits.string.formatReasonText(params.reason) + "|To=" + to + "}}~~~~");
+			pageobj.setEditSummary("添加[[" + Morebits.pageNameNorm + "]]。" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchDiscussion')) {
 				case 'yes':
 					pageobj.setWatchlist(true);
@@ -354,7 +354,7 @@ Twinkle.xfd.callbacks = {
 				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
 				var notifytext = "\n{{subst:idw|File:" + mw.config.get('wgTitle') + "}}--~~~~";
 				usertalkpage.setAppendText(notifytext);
-				usertalkpage.setEditSummary("通知：文件[[" + mw.config.get('wgPageName') + "]]存废讨论提名。" + Twinkle.getPref('summaryAd'));
+				usertalkpage.setEditSummary("通知：文件[[" + Morebits.pageNameNorm + "]]存废讨论提名。" + Twinkle.getPref('summaryAd'));
 				usertalkpage.setCreateOption('recreate');
 				switch (Twinkle.getPref('xfdWatchUser')) {
 					case 'yes':
@@ -374,8 +374,8 @@ Twinkle.xfd.callbacks = {
 		taggingImage: function(pageobj) {
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
-			pageobj.setPageText("{{ifd|" + params.reason + "|date={{subst:#time:c}}}}\n" + text);
-			pageobj.setEditSummary("文件存废讨论：[[" + params.logpage + "#" + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('summaryAd'));
+			pageobj.setPageText("{{ifd|" + Morebits.string.formatReasonText(params.reason) + "|date={{subst:#time:c}}}}\n" + text);
+			pageobj.setEditSummary("文件存废讨论：[[" + params.logpage + "#" + Morebits.pageNameNorm + "]]" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchPage')) {
 				case 'yes':
 					pageobj.setWatchlist(true);
@@ -394,8 +394,8 @@ Twinkle.xfd.callbacks = {
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
 
-			pageobj.setAppendText("\n{{subst:IfdItem|Filename=" + mw.config.get('wgTitle') + "|Uploader=" + params.uploader + "|Reason=" + params.reason + "}}--~~~~");
-			pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]。" + Twinkle.getPref('summaryAd'));
+			pageobj.setAppendText("\n{{subst:IfdItem|Filename=" + mw.config.get('wgTitle') + "|Uploader=" + params.uploader + "|Reason=" + Morebits.string.formatReasonText(params.reason) + "}}--~~~~");
+			pageobj.setEditSummary("添加[[" + Morebits.pageNameNorm + "]]。" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchDiscussion')) {
 				case 'yes':
 					pageobj.setWatchlist(true);
@@ -418,8 +418,6 @@ Twinkle.xfd.callbacks = {
 
 
 Twinkle.xfd.callback.evaluate = function(e) {
-	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' '));  // for queen/king/whatever and country!
-
 	var type = e.target.category.value;
 	var usertalk = e.target.notify.checked;
 	var reason = e.target.xfdreason.value;

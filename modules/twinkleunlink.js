@@ -56,8 +56,8 @@ Twinkle.unlink.callback = function(presetReason) {
 		query = {
 			'action': 'query',
 			'list': [ 'backlinks', 'imageusage' ],
-			'bltitle': mw.config.get('wgPageName'),
-			'iutitle': mw.config.get('wgPageName'),
+			'bltitle': Morebits.pageNameNorm,
+			'iutitle': Morebits.pageNameNorm,
 			'bllimit': Morebits.userIsInGroup( 'sysop' ) ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
 			'iulimit': Morebits.userIsInGroup( 'sysop' ) ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
 			'blnamespace': Twinkle.getPref('unlinkNamespaces'),
@@ -67,7 +67,7 @@ Twinkle.unlink.callback = function(presetReason) {
 		query = {
 			'action': 'query',
 			'list': 'backlinks',
-			'bltitle': mw.config.get('wgPageName'),
+			'bltitle': Morebits.pageNameNorm,
 			'blfilterredir': 'nonredirects',
 			'bllimit': Morebits.userIsInGroup( 'sysop' ) ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
 			'blnamespace': Twinkle.getPref('unlinkNamespaces')
@@ -86,8 +86,6 @@ Twinkle.unlink.callback = function(presetReason) {
 };
 
 Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event) {
-	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' '));  // for queen/king/whatever and country!
-
 	Twinkle.unlink.backlinksdone = 0;
 	Twinkle.unlink.imageusagedone = 0;
 
@@ -238,7 +236,7 @@ Twinkle.unlink.callbacks = {
 		var params = pageobj.getCallbackParameters();
 
 		var wikiPage = new Morebits.wikitext.page(text);
-		wikiPage.removeLink(mw.config.get('wgPageName'));
+		wikiPage.removeLink(Morebits.pageNameNorm);
 		text = wikiPage.getText();
 		if (text === oldtext) {
 			// Nothing to do, return
@@ -248,7 +246,7 @@ Twinkle.unlink.callbacks = {
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary("取消到页面“" + mw.config.get('wgPageName') + "”的链接：" + params.reason + "。" + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary("取消到页面“" + Morebits.pageNameNorm + "”的链接：" + params.reason + "。" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(Twinkle.unlink.callbacks.success);
 	},
@@ -268,7 +266,7 @@ Twinkle.unlink.callbacks = {
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary("注释出文件“" + mw.config.get('wgPageName') + "：" + params.reason + "。" + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary("注释出文件“" + Morebits.pageNameNorm + "：" + params.reason + "。" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(Twinkle.unlink.callbacks.success);
 	},
