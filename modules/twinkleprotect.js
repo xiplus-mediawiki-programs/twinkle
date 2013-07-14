@@ -124,8 +124,10 @@ Twinkle.protect.callback.protectionLevel = function twinkleprotectCallbackProtec
 		}
 	});
 
+	var boldnode;
+
 	if (!result.length) {
-		var boldnode = document.createElement('b');
+		boldnode = document.createElement('b');
 		boldnode.textContent = "未被保护";
 		result.push(boldnode);
 	}
@@ -770,8 +772,8 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 
 			var statusInited = false;
 			var thispage;
-			
-			var allDone = function twinkleprotectCallbackAllDone() { 
+
+			var allDone = function twinkleprotectCallbackAllDone() {
 				if (thispage) {
 					thispage.getStatusElement().info("完成");
 				}
@@ -792,7 +794,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				} else {
 					thispage.setCreateProtection(form.createlevel.value, form.createexpiry.value);
 				}
-				
+
 				if (form.protectReason.value) {
 					thispage.setEditSummary(form.protectReason.value);
 				} else {
@@ -815,7 +817,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			} else {
 				alert("请告诉Twinkle要做什么！\n如果您只是想标记该页，请选择上面的“用保护模板标记此页”选项。");
 			}
-			
+
 			break;
 
 		case 'tag':

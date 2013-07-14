@@ -759,8 +759,8 @@ Twinkle.config.sections = [
 Twinkle.config.init = function twinkleconfigInit() {
 
 	if ((mw.config.get("wgNamespaceNumber") === mw.config.get("wgNamespaceIds").project && mw.config.get("wgTitle") === "Twinkle/参数设置" ||
-	    (mw.config.get("wgNamespaceNumber") === mw.config.get("wgNamespaceIds").user && mw.config.get("wgTitle").lastIndexOf("/Twinkle参数") === (mw.config.get("wgTitle").length - 9))) &&
-	    mw.config.get("wgAction") === "view") {
+			(mw.config.get("wgNamespaceNumber") === mw.config.get("wgNamespaceIds").user && mw.config.get("wgTitle").lastIndexOf("/Twinkle参数") === (mw.config.get("wgTitle").length - 9))) &&
+			mw.config.get("wgAction") === "view") {
 		// create the config page at Wikipedia:Twinkle/参数设置, and at user subpages (for testing purposes)
 
 		if (!document.getElementById("twinkle-config")) {
@@ -1045,7 +1045,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 				cell.style.color = "gray";
 				if (pref.helptip) {
 					// convert mentions of templates in the helptip to clickable links
-					cell.innerHTML = pref.helptip.replace(/{{(.+?)}}/g, 
+					cell.innerHTML = pref.helptip.replace(/{{(.+?)}}/g,
 						'{{<a href="' + mw.util.wikiGetlink("Template:") + '$1" target="_blank">$1</a>}}');
 				}
 				// add reset link (custom lists don't need this, as their config value isn't displayed on the form)
@@ -1543,7 +1543,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 				if ((typeof asort[i] === "object") && (asort[i].label !== bsort[i].label ||
 					asort[i].value !== bsort[i].value)) {
 					return false;
-				} else if (asort[i].toString() !== bsort[i].toString()) { 
+				} else if (asort[i].toString() !== bsort[i].toString()) {
 					return false;
 				}
 			}

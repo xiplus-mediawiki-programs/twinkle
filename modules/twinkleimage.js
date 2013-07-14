@@ -16,8 +16,9 @@
 
 Twinkle.image = function twinkleimage() {
 	if (mw.config.get('wgNamespaceNumber') === 6 &&
-	    !document.getElementById("mw-sharedupload") &&
-	    document.getElementById("mw-imagepage-section-filehistory")) {
+			!document.getElementById("mw-sharedupload") &&
+			document.getElementById("mw-imagepage-section-filehistory")) {
+
 		Twinkle.addPortletLink(Twinkle.image.callback, "图权", "tw-di", "提交文件快速删除");
 	}
 };

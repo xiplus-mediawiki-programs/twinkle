@@ -44,7 +44,7 @@ window.Morebits = Morebits;  // allow global access
 
 Morebits.userIsInGroup = function ( group ) {
 	return $.inArray(group, mw.config.get( 'wgUserGroups' )) !== -1;
-}
+};
 
 
 
@@ -52,19 +52,11 @@ Morebits.userIsInGroup = function ( group ) {
  * **************** Morebits.isIPAddress() ****************
  * Helper function: Returns true if given string contains a valid IPv4 or
  * IPv6 address
- *
- * This is copied from mediaWiki.util
  */
 
-Morebits.RE_IP_ADD = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|0?[0-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|0?[0-9]?[0-9])$/;
-Morebits.RE_IPV6_ADD = /^(?::(?::|(?::[0-9A-Fa-f]{1,4}){1,7})|[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4}){0,6}::|[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4}){7})$/;
-Morebits.RE_IPV6_ADD2 = /^[0-9A-Fa-f]{1,4}(?:::?[0-9A-Fa-f]{1,4}){1,6}$/;
-
 Morebits.isIPAddress = function ( address ) {
-	return address.search( Morebits.RE_IP_ADD ) !== -1 ||  // IPv4
-		address.search( Morebits.RE_IPV6_ADD ) !== -1 ||  // IPv6
-		(address.search( Morebits.RE_IPV6_ADD2 ) !== -1	&& address.search( /::/ ) !== -1 && address.search( /::.*::/ ) === -1);
-}
+	return mw.util.isIPv4Address(address) || mw.util.isIPv6Address(address);
+};
 
 
 
@@ -298,7 +290,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 					}
 
 					var subgroupRaw = new Morebits.quickForm.element({
-						type: 'div', 
+						type: 'div',
 						id: id + '_' + i + '_subgroup'
 					});
 					$.each( tmpgroup, function( idx, el ) {
@@ -308,7 +300,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 						el.name = (current.name || data.name) + '.' + el.name;
 						subgroupRaw.append( el );
 					} );
-					
+
 					var subgroup = subgroupRaw.render( cur_id );
 					subgroup.className = "quickformSubgroup";
 					subnode.subgroup = subgroup;
@@ -340,7 +332,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 								e.target.form.names[name].parentNode.removeChild( e.target.form.names[name].subgroup );
 							}
 							delete e.target.form.names[name];
-						} 
+						}
 					};
 					subnode.addEventListener( 'change', event, true );
 				}
@@ -572,7 +564,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 
 	if( !childContainder ) {
 		childContainder = node;
-	} 
+	}
 	if( data.tooltip ) {
 		Morebits.quickForm.element.generateTooltip( label || node , data );
 	}
@@ -750,7 +742,7 @@ Morebits.quickForm.setElementTooltipVisibility = function QuickFormSetElementToo
 
 HTMLFormElement.prototype.getChecked = function( name, type ) {
 	var elements = this.elements[name];
-	if( !elements ) { 
+	if( !elements ) {
 		// if the element doesn't exists, return null.
 		return null;
 	}
@@ -1078,7 +1070,7 @@ Morebits.unbinder = function Unbinder( string ) {
 	this.history = {};
 	this.prefix = '%UNIQ::' + Math.random() + '::';
 	this.postfix = '::UNIQ%';
-}
+};
 
 Morebits.unbinder.prototype = {
 	unbind: function UnbinderUnbind( prefix, postfix ) {
@@ -1358,9 +1350,11 @@ Morebits.wiki.api.prototype = {
 			type: 'POST',
 			url: mw.util.wikiScript('api'),
 			data: Morebits.queryString.create(this.query),
-			datatype: 'xml',
+			datatype: 'xml'
+		}, callerAjaxParameters );
 
-			success: function(xml, statusText, jqXHR) {
+		return $.ajax( ajaxparams ).done(
+			function(xml, statusText, jqXHR) {
 				this.statusText = statusText;
 				this.responseXML = xml;
 				this.errorCode = $(xml).find('error').attr('code');
@@ -1384,24 +1378,21 @@ Morebits.wiki.api.prototype = {
 				}
 
 				Morebits.wiki.actionCompleted();
-			},
-
+			}
+		).fail(
 			// only network and server errors reach here – complaints from the API itself are caught in success()
-			error: function(jqXHR, statusText, errorThrown) {
+			function(jqXHR, statusText, errorThrown) {
 				this.statusText = statusText;
 				this.errorThrown = errorThrown; // frequently undefined
 				this.errorText = statusText + '在调用API时发生了错误“' + jqXHR.statusText + '”。';
 				this.returnError();
 			}
-
-		}, callerAjaxParameters );
-
-		return $.ajax( ajaxparams );  // the return value should be ignored, unless using callerAjaxParameters with |async: false|
+		);  // the return value should be ignored, unless using callerAjaxParameters with |async: false|
 	},
 
 	returnError: function() {
 		this.statelem.error( this.errorText );
-		
+
 		// invoke failure callback if one was supplied
 		if (this.onError) {
 
@@ -1497,6 +1488,11 @@ Morebits.wiki.api.prototype = {
  *    minorEdit is a boolean value:
  *       true  - When save is called, the resulting edit will be marked as "minor".
  *       false - When save is called, the resulting edit will not be marked as "minor". (default)
+ *
+ * setBotEdit(botEdit) 
+ *    botEdit is a boolean value:
+ *       true  - When save is called, the resulting edit will be marked as "bot".
+ *       false - When save is called, the resulting edit will not be marked as "bot". (default)
  *
  * setPageSection(pageSection)
  *    pageSection - integer specifying the section number to load or save. The default is |null|, which means
@@ -1630,6 +1626,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		prependText: null,  // can't reuse pageText for this because pageText is needed to follow a redirect
 		createOption: null,
 		minorEdit: false,
+		botEdit: false,
 		pageSection: null,
 		maxConflictRetries: 2,
 		maxRetries: 2,
@@ -1729,6 +1726,10 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		ctx.minorEdit = minorEdit;
 	};
 
+	this.setBotEdit = function(botEdit) {
+		ctx.botEdit = botEdit;
+	};
+
 	this.setPageSection = function(pageSection) {
 		ctx.pageSection = pageSection;
 	};
@@ -1792,7 +1793,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	this.setCascadingProtection = function(flag) {
 		ctx.protectCascade = !!flag;
 	};
-	
+
 	this.setFlaggedRevs = function(level, expiry) {
 		ctx.flaggedRevs = { level: level, expiry: expiry };
 	};
@@ -1916,6 +1917,11 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.notminor = true;  // force Twinkle config to override user preference setting for "all edits are minor"
 		}
 
+		// Set bot edit attribute. If this paramter is present with any value, it is interpreted as true
+		if (ctx.botEdit) {
+			query.bot = true;
+		}
+
 		switch (ctx.editMode) {
 		case 'append':
 			query.appendtext = ctx.appendText;  // use mode to append to current page contents
@@ -1978,11 +1984,11 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			'rvprop': 'user',
 			'rvdir': 'newer'
 		};
-		
+
 		if (ctx.followRedirect) {
 			query.redirects = '';  // follow all redirects
 		}
-		
+
 		ctx.lookupCreatorApi = new Morebits.wiki.api("抓取页面创建者信息", query, fnLookupCreatorSuccess, ctx.statusElement);
 		ctx.lookupCreatorApi.setParent(this);
 		ctx.lookupCreatorApi.post();
@@ -2129,7 +2135,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		ctx.protectApi.setParent(this);
 		ctx.protectApi.post();
 	};
-	
+
 	// apply FlaggedRevs protection-style settings
 	// only works where $wgFlaggedRevsProtection = true (i.e. where FlaggedRevs
 	// settings appear on the wiki's "protect" tab)
@@ -2264,7 +2270,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		// retrieve actual title of the page after normalization and redirects
 		if ( $(xml).find('page').attr('title') ) {
 			var resolvedName = $(xml).find('page').attr('title');
-			
+
 			// only notify user for redirects, not normalization
 			if ( $(xml).find('redirects').length > 0 ) {
 				Morebits.status.info("Info", "从 " + ctx.pageName + " 重定向到 " + resolvedName );
@@ -2290,7 +2296,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		// see if the API thinks we were successful
 		if ($(xml).find('edit').attr('result') === "Success") {
-		
+
 			// real success
 			// default on success action - display link for edited page
 			var link = document.createElement('a');
@@ -2302,7 +2308,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			}
 			return;
 		}
-		
+
 		// errors here are only generated by extensions which hook APIEditBeforeSave within MediaWiki
 		// Wikimedia wikis should only return spam blacklist errors and captchas
 		var blacklist = $(xml).find('edit').attr('spamblacklist');
@@ -2319,7 +2325,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		else {
 			ctx.statusElement.error("保存页面时由API得到未知错误");
 		}
-		
+
 		// force error to stay on the screen
 		++Morebits.wiki.numberOfActionsLeft;
 
@@ -2333,7 +2339,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		// check for edit conflict
 		if ( errorCode === "editconflict" && ctx.conflictRetries++ < ctx.maxConflictRetries ) {
-			 
+
 			// edit conflicts can occur when the page needs to be purged from the server cache
 			var purgeQuery = {
 				action: 'purge',
@@ -2344,14 +2350,14 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			var result = purgeApi.post( { async: false } );  // just wait for it, result is for debugging
 
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
-			
+
 			ctx.statusElement.info("检测到编辑冲突，重试修改");
 			ctx.loadApi.post(); // reload the page and reapply the edit
 
 		// check for loss of edit token
 		// it's impractical to request a new token here, so invoke edit conflict logic when this happens
 		} else if ( errorCode === "notoken" && ctx.conflictRetries++ < ctx.maxConflictRetries ) {
-			 
+
 			ctx.statusElement.info("编辑令牌不可用，重试");
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
 			ctx.loadApi.post(); // reload
@@ -2384,7 +2390,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 	var fnLookupCreatorSuccess = function() {
 		var xml = ctx.lookupCreatorApi.getXML();
-		
+
 		if ( !fnCheckPageName(xml) ) {
 			return; // abort
 		}
@@ -2532,7 +2538,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			expirys.push(editprot.attr("expiry").replace("infinity", "indefinite"));
 		}
 
-		if (ctx.protectMove) { 
+		if (ctx.protectMove) {
 			protections.push('move=' + ctx.protectMove.level);
 			expirys.push(ctx.protectMove.expiry);
 		} else if (moveprot.length) {
@@ -2788,7 +2794,7 @@ Morebits.wikitext.page.prototype = {
 
 		reason = reason ? (reason + '：') : '';
 		var first_char = image.substr( 0, 1 );
-		var image_re_string = "[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( image.substr( 1 ), true ); 
+		var image_re_string = "[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( image.substr( 1 ), true );
 
 		/*
 		 * Check for normal image links, i.e. [[Image:Foobar.png|...]]
@@ -2847,7 +2853,7 @@ Morebits.wikitext.page.prototype = {
 	},
 	removeTemplate: function( template ) {
 		var first_char = template.substr( 0, 1 );
-		var template_re_string = "(?:[Tt]emplate:|模板:)?\\s*[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( template.substr( 1 ), true ); 
+		var template_re_string = "(?:[Tt]emplate:|模板:)?\\s*[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( template.substr( 1 ), true );
 		var links_re = new RegExp( "\\{\\{" + template_re_string );
 		var allTemplates = Morebits.array.uniq(Morebits.string.splitWeightedByKeys( this.text, '{{', '}}', [ '{{{', '}}}' ] ));
 		for( var i = 0; i < allTemplates.length; ++i ) {
@@ -2995,7 +3001,7 @@ Morebits.status = function Status( text, stat, type ) {
 	this.textRaw = text;
 	this.text = this.codify(text);
 	this.type = type || 'status';
-	this.generate(); 
+	this.generate();
 	if( stat ) {
 		this.update( stat, type );
 	}
@@ -3132,7 +3138,7 @@ Morebits.htmlNode = function ( type, content, color ) {
 	}
 	node.appendChild( document.createTextNode( content ) );
 	return node;
-}
+};
 
 
 

@@ -241,6 +241,10 @@ Twinkle.xfd.callbacks = {
 			}
 		},
 		taggingArticle: function(pageobj) {
+			if (!pageobj.exists()) {
+				statelem.error("页面不存在，可能已被删除");
+				return;
+			}
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
 			var tag = '{{vfd|' + params.reason;
@@ -416,7 +420,7 @@ Twinkle.xfd.callbacks = {
 Twinkle.xfd.callback.evaluate = function(e) {
 	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' '));  // for queen/king/whatever and country!
 
-	var type =  e.target.category.value;
+	var type = e.target.category.value;
 	var usertalk = e.target.notify.checked;
 	var reason = e.target.xfdreason.value;
 	var xfdcat, mergeinto, noinclude;

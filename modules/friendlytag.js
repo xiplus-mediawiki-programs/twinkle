@@ -162,7 +162,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 					checkbox.subgroup.push({
 						name: 'mergeReason',
 						type: 'textarea',
-						label: '合并理由（会被贴上' + 
+						label: '合并理由（会被贴上' +
 							(tag === "merge to" ? '其他' : '这') + '条目的讨论页）：',
 						tooltip: '可选，但强烈推荐。如不需要请留空。仅在只输入了一个条目名时可用。'
 					});
@@ -551,7 +551,7 @@ Twinkle.tag.callbacks = {
 									// discussArticle is the article whose talk page will contain the discussion
 									params.discussArticle = (tagName === "merge to" ? params.mergeTarget : mw.config.get('wgTitle'));
 									// nonDiscussArticle is the article which won't have the discussion
-									params.nonDiscussArticle = (tagName === "merge to" ? mw.config.get('wgTitle') : params.mergeTarget)
+									params.nonDiscussArticle = (tagName === "merge to" ? mw.config.get('wgTitle') : params.mergeTarget);
 									params.talkDiscussionTitle = '请求与' + params.nonDiscussArticle + '合并';
 								}
 								currentTag += '|discuss=Talk:' + params.discussArticle + '#' + params.talkDiscussionTitle;
@@ -599,7 +599,7 @@ Twinkle.tag.callbacks = {
 					Morebits.status.warn( '信息', '在页面上找到{{' + params.tags[i] +
 						'}}…跳过' );
 					// don't do anything else with merge tags
-					if (params.tags[i] === "merge" || params.tags[i] === "merge from" || 
+					if (params.tags[i] === "merge" || params.tags[i] === "merge from" ||
 						params.tags[i] === "merge to") {
 						params.mergeTarget = params.mergeReason = params.mergeTagOther = false;
 					}
@@ -702,7 +702,7 @@ Twinkle.tag.callbacks = {
 				var talkpage = new Morebits.wiki.page("Talk:" + params.discussArticle, "将理由贴进讨论页");
 				talkpage.setAppendText(talkpageText);
 				talkpage.setEditSummary('请求将[[' + params.nonDiscussArticle + ']]' +
-					'与' + '[[' + params.discussArticle + ']]合并' + 
+					'与' + '[[' + params.discussArticle + ']]合并' +
 					Twinkle.getPref('summaryAd'));
 				talkpage.setWatchlist(Twinkle.getFriendlyPref('watchMergeDiscussions'));
 				talkpage.setCreateOption('recreate');
@@ -716,7 +716,7 @@ Twinkle.tag.callbacks = {
 				} else if (tags.indexOf("merge to") !== -1) {
 					otherTagName = "merge from";
 				}
-				var newParams = { 
+				var newParams = {
 					tags: [otherTagName],
 					mergeTarget: mw.config.get("wgPageName"),
 					discussArticle: params.discussArticle,

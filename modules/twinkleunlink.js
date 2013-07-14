@@ -110,6 +110,7 @@ Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event)
 			var myparams = $.extend({}, params);
 			var articlepage = new Morebits.wiki.page(pages[i], '在条目：“' + pages[i] + '”中');
 			articlepage.setCallbackParameters(myparams);
+			articlepage.setBotEdit(true);  // unlink considered a floody operation
 			articlepage.load(imageusage ? Twinkle.unlink.callbacks.unlinkImageInstances : Twinkle.unlink.callbacks.unlinkBacklinks);
 		}
 	}

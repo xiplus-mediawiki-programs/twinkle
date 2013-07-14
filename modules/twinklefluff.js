@@ -277,8 +277,8 @@ Twinkle.fluff.callbacks = {
 			}
 			var summary = "回退到由" + revertToUser + "做出的修订版本" + revertToRevID + (optional_summary ? "：" + optional_summary : '') +
 				Twinkle.getPref('summaryAd');
-		
-			var query = { 
+
+			var query = {
 				'action': 'edit',
 				'title': mw.config.get('wgPageName'),
 				'summary': summary,
@@ -336,7 +336,7 @@ Twinkle.fluff.callbacks = {
 					return;
 				}
 			}
-			else if(self.params.type === 'vand' && 
+			else if(self.params.type === 'vand' &&
 					Twinkle.fluff.whiteList.indexOf( top.getAttribute( 'user' ) ) !== -1 && revs.length > 1 &&
 					revs[1].getAttribute( 'pageId' ) === self.params.revid) {
 				Morebits.status.info( '信息', [ '最新修订版本由 ', Morebits.htmlNode( 'strong', lastuser ), '，一个可信的机器人做出，之前的版本被认为是破坏，继续回退操作。' ] );
@@ -423,7 +423,7 @@ Twinkle.fluff.callbacks = {
 			userHasAlreadyConfirmedAction = true;
 
 			userstr = self.params.user;
-			summary = "回退[[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" + 
+			summary = "回退[[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" +
 				userstr + "|讨论]])做出的出于[[WP:AGF|善意]]的编辑" + Twinkle.fluff.formatSummaryPostfix(extra_summary) + Twinkle.getPref('summaryAd');
 			break;
 
@@ -462,11 +462,11 @@ Twinkle.fluff.callbacks = {
 		}
 
 		var query;
-		if( (!self.params.autoRevert || Twinkle.getPref('openTalkPageOnAutoRevert')) && 
+		if( (!self.params.autoRevert || Twinkle.getPref('openTalkPageOnAutoRevert')) &&
 				Twinkle.getPref('openTalkPage').indexOf( self.params.type ) !== -1 &&
 				mw.config.get('wgUserName') !== self.params.user ) {
 			Morebits.status.info( '信息', [ '打开用户 ', Morebits.htmlNode( 'strong', self.params.user ), ' 的对话页' ] );
-			
+
 			query = {
 				'title': 'User talk:' + self.params.user,
 				'action': 'edit',
@@ -488,13 +488,13 @@ Twinkle.fluff.callbacks = {
 			case 'window':
 				/* falls through */
 			default:
-				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), 
+				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ),
 					( window.name === 'twinklewarnwindow' ? '_blank' : 'twinklewarnwindow' ),
 					'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
 				break;
 			}
 		}
-		
+
 		query = {
 			'action': 'edit',
 			'title': self.params.pagename,

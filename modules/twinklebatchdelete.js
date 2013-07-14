@@ -32,7 +32,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 	form.append( {
 			type: 'checkbox',
 			list: [
-				{ 
+				{
 					label: '删除页面',
 					name: 'delete_page',
 					value: 'delete',
@@ -117,7 +117,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 			'rvprop': [ 'size' ]
 		};
 	}
-	
+
 	var statusdiv = document.createElement( 'div' );
 	statusdiv.style.padding = '15px';  // just so it doesn't look broken
 	Window.setContent(statusdiv);
@@ -248,14 +248,14 @@ Twinkle.batchdelete.callbacks = {
 
 			var wikipedia_page = new Morebits.wiki.page( self.params.page, '删除页面 ' + self.params.page );
 			wikipedia_page.setEditSummary(self.params.reason + Twinkle.getPref('deletionSummaryAd'));
-			wikipedia_page.deletePage(function( apiobj ) { 
+			wikipedia_page.deletePage(function( apiobj ) {
 					--Twinkle.batchdelete.currentDeleteCounter;
 					var link = document.createElement( 'a' );
 					link.setAttribute( 'href', mw.util.wikiGetlink(self.params.page) );
 					link.setAttribute( 'title', self.params.page );
 					link.appendChild( document.createTextNode( self.params.page ) );
 					apiobj.statelem.info( [ '完成（' , link , '）' ] );
-				} );	
+				} );
 		} else {
 			--Twinkle.batchdelete.currentDeleteCounter;
 		}

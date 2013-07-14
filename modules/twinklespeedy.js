@@ -485,7 +485,7 @@ Twinkle.speedy.callbacks = {
 			var thispage;
 
 			Morebits.wiki.addCheckpoint();  // prevent actionCompleted from kicking in until user interaction is done
-			
+
 			// look up initial contributor. If prompting user for deletion reason, just display a link.
 			// Otherwise open the talk page directly
 			if( params.openusertalk ) {
@@ -513,7 +513,7 @@ Twinkle.speedy.callbacks = {
 				return;
 			}
 			thispage.setEditSummary( reason + Twinkle.getPref('deletionSummaryAd') );
-			thispage.deletePage(function() { 
+			thispage.deletePage(function() {
 				thispage.getStatusElement().info("完成");
 				Twinkle.speedy.callbacks.sysop.deleteTalk( params );
 			});
@@ -522,15 +522,15 @@ Twinkle.speedy.callbacks = {
 		deleteTalk: function( params ) {
 			// delete talk page
 			if (params.deleteTalkPage &&
-			    params.normalized !== 'f7' &&
-			    params.normalized !== 'o1' &&
-			    document.getElementById( 'ca-talk' ).className !== 'new') {
+					params.normalized !== 'f7' &&
+					params.normalized !== 'o1' &&
+					document.getElementById( 'ca-talk' ).className !== 'new') {
 				var talkpage = new Morebits.wiki.page( Morebits.wikipedia.namespaces[ mw.config.get('wgNamespaceNumber') + 1 ] + ':' + mw.config.get('wgTitle'), "删除讨论页" );
 				talkpage.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 已删除页面“' + mw.config.get('wgPageName') + "”的讨论页" + Twinkle.getPref('deletionSummaryAd'));
 				talkpage.deletePage();
 				// this is ugly, but because of the architecture of wiki.api, it is needed
 				// (otherwise success/failure messages for the previous action would be suppressed)
-				window.setTimeout(function() { Twinkle.speedy.callbacks.sysop.deleteRedirects( params ) }, 1800);
+				window.setTimeout(function() { Twinkle.speedy.callbacks.sysop.deleteRedirects( params ); }, 1800);
 			} else {
 				Twinkle.speedy.callbacks.sysop.deleteRedirects( params );
 			}
@@ -731,7 +731,7 @@ Twinkle.speedy.callbacks = {
 						breakFlag = true;
 						return false;  // the user aborted
 					}
-					for (i in parameters) {
+					for (var i in parameters) {
 						if (typeof parameters[i] === 'string' && !parseInt(i, 10)) {  // skip numeric parameters - {{db-multiple}} doesn't understand them
 							code += "|" + parameters[i];
 						}
