@@ -354,7 +354,7 @@ Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 		tooltip: '如果贡献者只有一人（对条目内容无实际修改的除外），并附有合理原因，适用此项。'
 	});
 	result.push({
-		style: 'height: 2em; width: 2em; height: -moz-initial; width: -moz-initial; -moz-transform: scale(2); -o-transform: scale(2);',
+		style: Twinkle.getPref('enlargeG11Input') ? 'height: 2em; width: 2em; height: -moz-initial; width: -moz-initial; -moz-transform: scale(2); -o-transform: scale(2);' : '',
 		label: 'G11: 明显以广告宣传为目的而建立的页面，或任何只有该页面名称中的人物或团体的联系方法的页面。',
 		value: 'g11',
 		tooltip: '只针对专门用于宣传的页面，这些页面需要经过完全重写才能体现百科全书性。需注意，仅仅以某公司或产品为主题的条目，并不直接导致其自然满足此速删标准。'
