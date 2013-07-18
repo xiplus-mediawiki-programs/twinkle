@@ -228,6 +228,7 @@ Twinkle.speedy.callback.dbMultipleChanged = function twinklespeedyCallbackDbMult
 
 	work_area.append( { type: 'header', label: '常规' } );
 	work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getGeneralList(value) });
+	work_area.append( { type: 'div', label: '标记CSD G16，请使用Twinkle的“侵权”功能。' } );
 
 	if (Morebits.wiki.isPageRedirect() || Morebits.userIsInGroup('sysop')) {
 		work_area.append( { type: 'header', label: '重定向' } );
@@ -353,7 +354,7 @@ Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
 		tooltip: '如果贡献者只有一人（对条目内容无实际修改的除外），并附有合理原因，适用此项。'
 	});
 	result.push({
-		style: 'height: 2em; width: 2em; -moz-transform: scale(2); -o-transform: scale(2);',
+		style: 'height: 2em; width: 2em; height: -moz-initial; width: -moz-initial; -moz-transform: scale(2); -o-transform: scale(2);',
 		label: 'G11: 明显以广告宣传为目的而建立的页面，或任何只有该页面名称中的人物或团体的联系方法的页面。',
 		value: 'g11',
 		tooltip: '只针对专门用于宣传的页面，这些页面需要经过完全重写才能体现百科全书性。需注意，仅仅以某公司或产品为主题的条目，并不直接导致其自然满足此速删标准。'
@@ -396,9 +397,25 @@ Twinkle.speedy.redirectList = [
 		tooltip: '由条目的名字空间重定向至非条目名字空间，或将用户页移出条目名字空间时遗留的重定向。'
 	},
 	{
-		label: 'R3: 格式错误，或明显笔误的重定向。',
-		value: 'r3',
-		tooltip: '包括标题繁简混用、消歧义使用的括号或空格错误、间隔号使用错误、标题中使用非常见的错别字、移动侵权页面的临时页后所产生的重定向。'
+		label: 'R3: 标题繁简混用的重定向。',
+		value: 'r3|标题繁简混用。'
+	},
+	{
+		label: 'R3: 消歧义使用的括号或空格错误的重定向。',
+		value: 'r3|消歧义使用的括号或空格错误。'
+	},
+	{
+		label: 'R3: 间隔号使用错误的重定向。',
+		value: 'r3|间隔号使用错误。'
+	},
+	{
+		label: 'R3: 标题中使用非常见的错别字的重定向。',
+		value: 'r3|标题中使用非常见的错别字。',
+		tooltip: '非一眼能看出的拼写错误和翻译或标题用字的争议应交由存废讨论处理。'
+	},
+	{
+		label: 'R3: 移动侵权页面的临时页后所产生的重定向。',
+		value: 'r3|移动侵权页面的临时页后所产生的。'
 	},
 	{
 		label: 'R5: 指向本身的重定向或循环的重定向。',
@@ -427,7 +444,11 @@ Twinkle.speedy.normalizeHash = {
 	'a3': 'a3',
 	'a5': 'a5',
 	'r2': 'r2',
-	'r3': 'r3',
+	'r3|标题繁简混用。': 'r3',
+	'r3|消歧义使用的括号或空格错误。': 'r3',
+	'r3|间隔号使用错误。': 'r3',
+	'r3|标题中使用非常见的错别字。': 'r3',
+	'r3|移动侵权页面的临时页后所产生的。': 'r3',
 	'r5': 'r5',
 	'f1': 'f1',
 	'f3': 'f3',
@@ -462,7 +483,11 @@ Twinkle.speedy.reasonHash = {
 	'a5': '条目建立时之内容即与其他现有条目内容相同',
 // Redirects
 	'r2': '跨名字空间重定向',
-	'r3': '标题错误的重定向',
+	'r3|标题繁简混用。': '标题错误的重定向',
+	'r3|消歧义使用的括号或空格错误。': '标题错误的重定向',
+	'r3|间隔号使用错误。': '标题错误的重定向',
+	'r3|标题中使用非常见的错别字。': '标题错误的重定向',
+	'r3|移动侵权页面的临时页后所产生的。': '标题错误的重定向',
 	'r5': '指向本身的重定向或循环的重定向',
 // Images and media
 	'f1': '重复的图片',
