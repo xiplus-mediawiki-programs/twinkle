@@ -1,11 +1,11 @@
 //<nowiki>
+// vim: set noet sts=0 sw=8:
 
 
 (function($){
 
 
 /*
- * vim: set noet sts=0 sw=8:
  ****************************************
  *** friendlytag.js: Tag module
  ****************************************

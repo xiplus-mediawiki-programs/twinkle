@@ -1,11 +1,11 @@
 //<nowiki>
+// vim: set noet sts=0 sw=8:
 
 
 (function($){
 
 
 /*
- * vim: set noet sts=0 sw=8:
 ****************************************
 *** twinkledelimages.js: Batch deletion of images (sysops only)
 ****************************************
