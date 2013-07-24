@@ -109,25 +109,30 @@ Twinkle.protect.callback.protectionLevel = function twinkleprotectCallbackProtec
 	var xml = apiobj.getXML();
 	var result = [];
 
-	$(xml).find('pr').each(function(index, pr) {
-		var $pr = $(pr);
+	$(xml).find('pr, flagged').each(function(index, protectionEntry) {
+		var $protectionEntry = $(protectionEntry);
+		var type, level, expiry, cascade = false;
+		
+		type = Morebits.string.toUpperCaseFirstChar($protectionEntry.attr('type'));
+		level = $protectionEntry.attr('level');
+		expiry = $protectionEntry.attr('expiry');
+		cascade = $protectionEntry.attr('cascade') === '';
+		
 		var boldnode = document.createElement('b');
-		boldnode.textContent = Morebits.string.toUpperCaseFirstChar($pr.attr('type')) + ": " + $pr.attr('level');
+		boldnode.textContent = type + ": " + level;
 		result.push(boldnode);
-		if ($pr.attr('expiry') === 'infinity') {
+		if (expiry === 'infinity') {
 			result.push("（永久）");
 		} else {
-			result.push("（过期：" + new Date($pr.attr('expiry')).toUTCString() + "）");
+			result.push("（过期：" + new Date(expiry).toUTCString() + "）");
 		}
-		if ($pr.attr('cascade') === '') {
+		if (cascade) {
 			result.push("（联锁）");
 		}
 	});
 
-	var boldnode;
-
 	if (!result.length) {
-		boldnode = document.createElement('b');
+		var boldnode = document.createElement('b');
 		boldnode.textContent = "未被保护";
 		result.push(boldnode);
 	}
