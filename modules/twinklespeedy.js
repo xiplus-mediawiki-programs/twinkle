@@ -713,7 +713,6 @@ Twinkle.speedy.callbacks = {
 				var title = $(value).attr('title');
 				var page = new Morebits.wiki.page(title, '删除重定向 "' + title + '"');
 				page.setEditSummary('[[WP:CSD#G15|CSD G15]]: 孤立页面: 重定向到已删除页面“' + Morebits.pageNameNorm + "”" + Twinkle.getPref('deletionSummaryAd'));
-				page.params = params;
 				page.deletePage(onsuccess);
 			});
 		}
@@ -894,14 +893,16 @@ Twinkle.speedy.callbacks = {
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
 
+			var appendText = "";
+
 			// add blurb if log page doesn't exist
 			if (!pageobj.exists()) {
-				text =
+				appendText +=
 					"这是该用户使用[[WP:TW|Twinkle]]的速删模块做出的[[WP:CSD|快速删除]]提名列表。\n\n" +
 					"如果您不再想保留此日志，请在[[Wikipedia:Twinkle/参数设置|参数设置]]中关掉，并" +
 					"使用[[WP:CSD#O1|CSD O1]]提交快速删除。\n";
 				if (Morebits.userIsInGroup("sysop")) {
-					text += "\n此日志并不记录用Twinkle直接执行的删除。\n";
+					appendText += "\n此日志并不记录用Twinkle直接执行的删除。\n";
 				}
 			}
 
@@ -909,36 +910,36 @@ Twinkle.speedy.callbacks = {
 			var date = new Date();
 			var headerRe = new RegExp("^==+\\s*" + date.getUTCFullYear() + "\\s*年\\s*" + (date.getUTCMonth() + 1) + "\\s*月\\s*==+", "m");
 			if (!headerRe.exec(text)) {
-				text += "\n\n=== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 ===";
+				appendText += "\n\n=== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 ===";
 			}
 
-			text += "\n# [[:" + Morebits.pageNameNorm + "]]: ";
+			appendText += "\n# [[:" + Morebits.pageNameNorm + "]]: ";
 			if (params.fromDI) {
-				text += "图版[[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]]（" + params.type + "）";
+				appendText += "图版[[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]]（" + params.type + "）";
 			} else {
 				if (params.normalizeds.length > 1) {
-					text += "多个理由（";
+					appendText += "多个理由（";
 					$.each(params.normalizeds, function(index, norm) {
-						text += "[[WP:CSD#" + norm.toUpperCase() + "|" + norm.toUpperCase() + ']]、';
+						appendText += "[[WP:CSD#" + norm.toUpperCase() + "|" + norm.toUpperCase() + ']]、';
 					});
-					text = text.substr(0, text.length - 1);  // remove trailing comma
-					text += '）';
+					appendText = appendText.substr(0, appendText.length - 1);  // remove trailing comma
+					appendText += '）';
 				} else if (params.normalizeds[0] === "db") {
-					text += "自定义理由";
+					appendText += "自定义理由";
 				} else {
-					text += "[[WP:CSD#" + params.normalizeds[0].toUpperCase() + "|CSD " + params.normalizeds[0].toUpperCase() + "]]";
+					appendText += "[[WP:CSD#" + params.normalizeds[0].toUpperCase() + "|CSD " + params.normalizeds[0].toUpperCase() + "]]";
 				}
 			}
 
 			if (params.logInitialContrib) {
-				text += "；通知{{user|" + params.logInitialContrib + "}}";
+				appendText += "；通知{{user|" + params.logInitialContrib + "}}";
 			}
-			text += " ~~~~~\n";
+			appendText += " ~~~~~\n";
 
-			pageobj.setPageText(text);
+			pageobj.setAppendText(appendText);
 			pageobj.setEditSummary("记录对[[" + Morebits.pageNameNorm + "]]的快速删除提名。" + Twinkle.getPref('summaryAd'));
 			pageobj.setCreateOption("recreate");
-			pageobj.save();
+			pageobj.append();
 		}
 	}
 };

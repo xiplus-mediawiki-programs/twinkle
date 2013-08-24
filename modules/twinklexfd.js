@@ -110,6 +110,17 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 
 	var oldreasontextbox = form.getElementsByTagName('textarea')[0];
 	var oldreason = (oldreasontextbox ? oldreasontextbox.value : '');
+	
+	var appendReasonBox = function twinklexfdAppendReasonBox() {
+		work_area.append( {
+			type: 'textarea',
+			name: 'xfdreason',
+			label: '理由：',
+			value: oldreason,
+			tooltip: '您可以使用维基格式，Twinkle将自动为您加入签名。'
+		} );
+		// TODO possible future "preview" link here
+	};
 
 	switch( value ) {
 	case 'afd':
@@ -150,13 +161,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 				label: '合并到：',
 				disabled: true
 			} );
-
-		work_area.append( {
-				type: 'textarea',
-				name: 'xfdreason',
-				label: '理由：',
-				value: oldreason
-			} );
+		appendReasonBox();
 		work_area = work_area.render();
 		old_area.parentNode.replaceChild( work_area, old_area );
 		break;
@@ -166,12 +171,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 				label: '文件存废讨论',
 				name: 'work_area'
 			} );
-		work_area.append( {
-				type: 'textarea',
-				name: 'xfdreason',
-				label: '理由：',
-				value: oldreason
-			} );
+		appendReasonBox();
 		work_area = work_area.render();
 		old_area.parentNode.replaceChild( work_area, old_area );
 		break;
