@@ -86,6 +86,11 @@ form.quickform textarea
 	font-size: 150%;
 }
 
+form.quickform input:disabled + label
+{
+	color: gray;
+}
+
 form.quickform span.quickformDescription
 {
 	font-style: italic;
@@ -242,6 +247,10 @@ body .ui-dialog.morebits-dialog .ui-dialog-titlebar {
 	background: repeat-x 50% 80% #cfd6e1 !important;  /* the actual image is specified in morebits.js - ResourceLoader mangles data: URIs in CSS */
 	font: bold 1em sans-serif;
 	padding: .4em .3em .5em !important;
+}
+
+body.skin-monobook .morebits-dialog .ui-dialog-titlebar {
+	line-height: 1em;
 }
 
 .morebits-dialog-scriptname {

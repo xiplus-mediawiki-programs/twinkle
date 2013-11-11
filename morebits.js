@@ -270,11 +270,6 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 				if( current.disabled ) {
 					subnode.setAttribute( 'disabled', 'disabled' );
 				}
-				if( data.event ) {
-					subnode.addEventListener( 'change', data.event, false );
-				} else if ( current.event ) {
-					subnode.addEventListener( 'change', current.event, true );
-				}
 				label = cur_div.appendChild( document.createElement( 'label' ) );
 				label.appendChild( document.createTextNode( current.label ) );
 				label.setAttribute( 'for', cur_id );
@@ -284,9 +279,10 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 				if( current.style ) {
 					subnode.setAttribute( 'style', current.style );
 				}
+
 				var event;
 				if( current.subgroup ) {
-					var tmpgroup = current.subgroup;  // $.extend({}, current.subgroup); really needed?
+					var tmpgroup = current.subgroup;
 
 					if( ! $.isArray( tmpgroup ) ) {
 						tmpgroup = [ tmpgroup ];
@@ -297,11 +293,12 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 						id: id + '_' + i + '_subgroup'
 					});
 					$.each( tmpgroup, function( idx, el ) {
-						if( ! el.type ) {
-							el.type = data.type;
+						var newEl = $.extend( {}, el );
+						if( ! newEl.type ) {
+							newEl.type = data.type;
 						}
-						el.name = (current.name || data.name) + '.' + el.name;
-						subgroupRaw.append( el );
+						newEl.name = (current.name || data.name) + '.' + newEl.name;
+						subgroupRaw.append( newEl );
 					} );
 
 					var subgroup = subgroupRaw.render( cur_id );
@@ -338,6 +335,12 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 						}
 					};
 					subnode.addEventListener( 'change', event, true );
+				}
+				// add users' event last, so it can interact with the subgroup
+				if( data.event ) {
+					subnode.addEventListener( 'change', data.event, false );
+				} else if ( current.event ) {
+					subnode.addEventListener( 'change', current.event, true );
 				}
 			}
 		}
@@ -795,7 +798,6 @@ HTMLFormElement.prototype.getChecked = function( name, type ) {
  */
 
 RegExp.escape = function( text, space_fix ) {
-
 	text = $.escapeRE(text);
 
 	// Special MediaWiki escape - underscore/space are often equivalent
@@ -1204,7 +1206,13 @@ Morebits.wikipedia.namespaces = {
 	'100': 'Portal',
 	'101': 'Portal talk',
 	'108': 'Book',
-	'109': 'Book talk'
+	'109': 'Book talk',
+	'446': 'Education Program',
+	'447': 'Education Program talk',
+	'710': 'TimedText',
+	'711': 'TimedText talk',
+	'828': 'Module',
+	'829': 'Module talk'
 };
 
 Morebits.wikipedia.namespacesFriendly = {
@@ -1227,7 +1235,13 @@ Morebits.wikipedia.namespacesFriendly = {
 	'100': 'Portal',
 	'101': 'Portal talk',
 	'108': 'Book',
-	'109': 'Book talk'
+	'109': 'Book talk',
+	'446': 'Education Program',
+	'447': 'Education Program talk',
+	'710': 'TimedText',
+	'711': 'TimedText talk',
+	'828': 'Module',
+	'829': 'Module talk'
 };
 
 
@@ -1239,10 +1253,10 @@ Morebits.wikipedia.namespacesFriendly = {
 
 Morebits.wiki = {};
 
-// Analyzes the HTML of the current page (i.e. no AJAX requests) to determine if it
-// is a redirect or soft redirect
+// Determines whether the current page is a redirect or soft redirect
+// (fails to detect soft redirects on edit, history, etc. pages)
 Morebits.wiki.isPageRedirect = function wikipediaIsPageRedirect() {
-	return !!($("span.redirectText").length > 0 || document.getElementById("softredirect"));
+	return !!(mw.config.get("wgIsRedirect") || document.getElementById("softredirect"));
 };
 
 
@@ -1578,6 +1592,8 @@ Morebits.wiki.api.prototype = {
  * 
  * getCreator(): returns the user who created the page following lookupCreator()
  *
+ * getCurrentID(): returns a string containing the current revision ID of the page
+ *
  * patrol(): marks the page as patrolled, if possible
  *
  * move(onSuccess, onFailure): Moves a page to another title
@@ -1669,6 +1685,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		revertCurID: null,
 		revertUser: null,
 		fullyProtected: false,
+		suppressProtectWarning: false,
 		conflictRetries: 0,
 		retries: 0,
 		 // callbacks
@@ -1772,6 +1789,10 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		ctx.revertOldID = oldID;
 	};
 
+	this.getCurrentID = function() {
+		return ctx.revertCurID;
+	};
+
 	this.getRevisionUser = function() {
 		return ctx.revertUser;
 	};
@@ -1840,6 +1861,10 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		}
 	};
 
+	this.suppressProtectWarning = function() {
+		ctx.suppressProtectWarning = true;
+	};
+
 	this.exists = function() {
 		return ctx.pageExists;
 	};
@@ -1902,7 +1927,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			return;
 		}
 
-		if (ctx.fullyProtected && !confirm('您即将编辑全保护页面 "' + ctx.pageName +
+		if (ctx.fullyProtected && !ctx.suppressProtectWarning && 
+			!confirm('您即将编辑全保护页面 "' + ctx.pageName +
 			(ctx.fullyProtected === 'infinity' ? '（永久）' : ('（到期：' + ctx.fullyProtected + ')')) +
 			'。\n\n点击确定以确定，或点击取消以取消。')) {
 			ctx.statusElement.error("对全保护页面的编辑被取消。");
@@ -2139,7 +2165,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			prop: 'info',
 			inprop: 'protection',
 			intoken: 'protect',
-			titles: ctx.pageName
+			titles: ctx.pageName,
+			watchlist: ctx.watchlistOption
 		};
 		if (ctx.followRedirect) {
 			query.redirects = '';  // follow all redirects
@@ -2226,20 +2253,19 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		}
 
 		ctx.editToken = $(xml).find('page').attr('edittoken');
-		if (!ctx.editToken)
-		{
+		if (!ctx.editToken) {
 			ctx.statusElement.error("未能抓取编辑令牌。");
 			ctx.onLoadFailure(this);
 			return;
 		}
 		ctx.loadTime = $(xml).find('page').attr('starttimestamp');
-		if (!ctx.loadTime)
-		{
+		if (!ctx.loadTime) {
 			ctx.statusElement.error("未能抓取起始时间戳。");
 			ctx.onLoadFailure(this);
 			return;
 		}
 		ctx.lastEditTime = $(xml).find('page').attr('touched');
+		ctx.revertCurID = $(xml).find('page').attr('lastrevid');
 
 		if (ctx.editMode === 'revert') {
 			ctx.revertCurID = $(xml).find('rev').attr('revid');
@@ -2324,19 +2350,29 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		}
 
 		// errors here are only generated by extensions which hook APIEditBeforeSave within MediaWiki
-		// Wikimedia wikis should only return spam blacklist errors and captchas
-		var blacklist = $(xml).find('edit').attr('spamblacklist');
+		// Wikimedia wikis should only return spam blacklist errors, captchas, and AbuseFilter messages
+		var $editNode = $(xml).find('edit');
+		var blacklist = $editNode.attr('spamblacklist');
 
 		if (blacklist) {
 			var code = document.createElement('code');
 			code.style.fontFamily = "monospace";
 			code.appendChild(document.createTextNode(blacklist));
 			ctx.statusElement.error(['不能保存页面，因URL ', code, ' 在垃圾黑名单中。']);
-		}
-		else if ( $(xml).find('captcha').length > 0 ) {
+		} else if ( $(xml).find('captcha').length > 0 ) {
 			ctx.statusElement.error("不能保存页面，因服务器试图让您完成一个全自动区分计算机和人类的图灵测试。");
-		}
-		else {
+		} else if ( $editNode.attr('code') === 'abusefilter-disallowed' ) {
+			ctx.statusElement.error('编辑被防滥用过滤器规则“' + $editNode.attr('info').substring(17) + '”阻止。');
+		} else if ( $editNode.attr('info').indexOf('Hit AbuseFilter:') === 0 ) {
+			var div = document.createElement('div');
+			div.className = "toccolours";
+			div.style.fontWeight = "normal";
+			div.style.color = "black";
+			div.innerHTML = $editNode.attr('warning');
+			ctx.statusElement.error([ '防滥用过滤器给出了如下警告：', div, '如果您仍希望做出该编辑，请重新提交。此警告不会再次出现。' ]);
+			// XXX provide the user with a way to automatically retry the action if they so choose -
+			// I can't see how to do this without creating a UI dependency on Morebits.wiki.page though -- TTO
+		} else {
 			ctx.statusElement.error("保存页面时由API得到未知错误");
 		}
 
@@ -2429,7 +2465,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		// extract protection info
 		if (Morebits.userIsInGroup('sysop')) {
 			var editprot = $(xml).find('pr[type="edit"]');
-			if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !confirm('您即将移动全保护页面“' + ctx.pageName + '”' +
+			if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !ctx.suppressProtectWarning && 
+				!confirm('您即将移动全保护页面“' + ctx.pageName + '”' +
 				(editprot.attr('expiry') === 'infinity' ? '（永久）' : ('（到期：' + editprot.attr('expiry') + '）')) +
 				'。\n\n点击确定以确定，或点击取消以取消。')) {
 				ctx.statusElement.error("对全保护页面的移动已取消。");
@@ -2481,7 +2518,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		// extract protection info
 		var editprot = $(xml).find('pr[type="edit"]');
-		if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !confirm('您即将删除全保护页面“' + ctx.pageName + "”" +
+		if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !ctx.suppressProtectWarning && 
+			!confirm('您即将删除全保护页面“' + ctx.pageName + "”" +
 			(editprot.attr('expiry') === 'infinity' ? '（永久）' : ('（到期 ' + editprot.attr('expiry') + '）')) +
 			'。\n\n点击确定以确定，或点击取消以取消。')) {
 			ctx.statusElement.error("对全保护页面的删除已取消。");
@@ -2797,7 +2835,7 @@ Morebits.wikitext.page.prototype = {
 	text: '',
 	removeLink: function( link_target ) {
 		var first_char = link_target.substr( 0, 1 );
-		var link_re_string = "[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( link_target.substr( 1 ), true );
+		var link_re_string = "[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' + RegExp.escape( link_target.substr( 1 ), true );
 		var link_simple_re = new RegExp( "\\[\\[:?(" + link_re_string + ")\\]\\]", 'g' );
 		var link_named_re = new RegExp( "\\[\\[:?" + link_re_string + "\\|(.+?)\\]\\]", 'g' );
 		this.text = this.text.replace( link_simple_re, "$1" ).replace( link_named_re, "$1" );
@@ -2808,7 +2846,7 @@ Morebits.wikitext.page.prototype = {
 
 		reason = reason ? (reason + '：') : '';
 		var first_char = image.substr( 0, 1 );
-		var image_re_string = "[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( image.substr( 1 ), true );
+		var image_re_string = "[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' + RegExp.escape( image.substr( 1 ), true );
 
 		/*
 		 * Check for normal image links, i.e. [[Image:Foobar.png|...]]
@@ -2867,7 +2905,7 @@ Morebits.wikitext.page.prototype = {
 	},
 	removeTemplate: function( template ) {
 		var first_char = template.substr( 0, 1 );
-		var template_re_string = "(?:[Tt]emplate:|模板:)?\\s*[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' +  RegExp.escape( template.substr( 1 ), true );
+		var template_re_string = "(?:[Tt]emplate:|模板:)?\\s*[" + first_char.toUpperCase() + first_char.toLowerCase() + ']' + RegExp.escape( template.substr( 1 ), true );
 		var links_re = new RegExp( "\\{\\{" + template_re_string );
 		var allTemplates = Morebits.array.uniq(Morebits.string.splitWeightedByKeys( this.text, '{{', '}}', [ '{{{', '}}}' ] ));
 		for( var i = 0; i < allTemplates.length; ++i ) {

@@ -275,8 +275,7 @@ Twinkle.fluff.callbacks = {
 				self.statelem.error( '由用户取消。' );
 				return;
 			}
-			var summary = "回退到由" + revertToUser + "做出的修订版本" + revertToRevID + (optional_summary ? "：" + optional_summary : '') +
-				Twinkle.getPref('summaryAd');
+			var summary = Twinkle.fluff.formatSummary("回退到由$USER做出的修订版本" + revertToRevID, revertToUser, optional_summary);
 
 			var query = {
 				'action': 'edit',
@@ -411,7 +410,7 @@ Twinkle.fluff.callbacks = {
 
 		self.statelem.status( [ Morebits.htmlNode( 'strong', count ), ' 个修订版本之前由 ', Morebits.htmlNode( 'strong', self.params.gooduser ), ' 做出的修订版本 ', Morebits.htmlNode( 'strong', self.params.goodid ) ] );
 
-		var summary, extra_summary, userstr, gooduserstr;
+		var summary, extra_summary;
 		switch( self.params.type ) {
 		case 'agf':
 			extra_summary = prompt( "可选的编辑摘要：                              ", "" );  // padded out to widen prompt in Firefox
@@ -422,18 +421,15 @@ Twinkle.fluff.callbacks = {
 			}
 			userHasAlreadyConfirmedAction = true;
 
-			userstr = self.params.user;
-			summary = "回退[[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" +
-				userstr + "|讨论]])做出的出于[[WP:AGF|善意]]的编辑" + Twinkle.fluff.formatSummaryPostfix(extra_summary) + Twinkle.getPref('summaryAd');
+			summary = Twinkle.fluff.formatSummary("回退$USER做出的出于[[WP:AGF|善意]]的编辑", self.params.user, extra_summary);
 			break;
 
 		case 'vand':
 
-			userstr = self.params.user;
-			gooduserstr = self.params.gooduser;
-			summary = "回退[[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" +
-				userstr + "|讨论]])做出的 " + self.params.count + " 次编辑，到由" +
-				gooduserstr + "做出的前一个修订版本。 "  + Twinkle.getPref('summaryAd');
+			summary = "回退[[Special:Contributions/" +
+				self.params.user + "|" + self.params.user + "]] ([[User talk:" + self.params.user + "|讨论]])" +
+				"做出的 " + self.params.count + " 次编辑，到由" +
+				self.params.gooduser + "做出的前一个修订版本。 "  + Twinkle.getPref('summaryAd');
 			break;
 
 		case 'norm':
@@ -449,10 +445,7 @@ Twinkle.fluff.callbacks = {
 				userHasAlreadyConfirmedAction = true;
 			}
 
-			userstr = self.params.user;
-			summary = "回退[[Special:Contributions/" + userstr + "|" + userstr + "]] ([[User talk:" +
-				userstr + "|讨论]])做出的 " + self.params.count + " 次编辑" + Twinkle.fluff.formatSummaryPostfix(extra_summary) +
-				Twinkle.getPref('summaryAd');
+			summary = Twinkle.fluff.formatSummary("回退$USER做出的" + self.params.count + "次编辑", self.params.user, extra_summary);
 			break;
 		}
 
@@ -480,10 +473,11 @@ Twinkle.fluff.callbacks = {
 
 			switch( Twinkle.getPref('userTalkPageMode') ) {
 			case 'tab':
-				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_tab' );
+				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_blank' );
 				break;
 			case 'blank':
-				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_blank', 'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
+				window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_blank',
+					'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
 				break;
 			case 'window':
 				/* falls through */
@@ -517,29 +511,55 @@ Twinkle.fluff.callbacks = {
 
 	},
 	complete: function (apiobj) {
-		var blacklist = $(apiobj.getXML()).find('edit').attr('spamblacklist');
+		var $edit = $(apiobj.getXML()).find('edit');
+		var blacklist = $edit.attr('spamblacklist');
 		if (blacklist) {
 			var code = document.createElement('code');
 			code.style.fontFamily = "monospace";
 			code.appendChild(document.createTextNode(blacklist));
 			apiobj.statelem.error(['不能回退，因URL', code, '在垃圾黑名单中。']);
+		} else if ($edit.attr('nochange') === '') {
+			apiobj.statelem.warn("要回退到的版本与当前版本相同，没什么要做的");
 		} else {
 			apiobj.statelem.info("完成");
 		}
 	}
 };
 
-Twinkle.fluff.formatSummaryPostfix = function(stringToAdd) {
-	if (stringToAdd) {
-		stringToAdd = '：' + Morebits.string.toUpperCaseFirstChar(stringToAdd);
-		if (stringToAdd.search(/[。？！]$/) === -1) {
-			stringToAdd = stringToAdd + '。';
+// builtInString should contain the string "$USER", which will be replaced
+// by an appropriate user link
+Twinkle.fluff.formatSummary = function(builtInString, userName, userString) {
+	var result = builtInString;
+
+	// append user's custom reason with requisite punctuation
+	if (userString) {
+		result += '：' + Morebits.string.toUpperCaseFirstChar(userString);
+		if (userString.search(/[。？！]$/) === -1) {
+			result += '。';
 		}
-		return stringToAdd;
+	} else {
+		result += '。';
 	}
-	else {
-		return '。';
+	result += Twinkle.getPref('summaryAd');
+
+	// find number of UTF-8 bytes the resulting string takes up, and possibly add
+	// a contributions or contributions+talk link if it doesn't push the edit summary
+	// over the 255-byte limit
+	var resultLen = unescape(encodeURIComponent(result.replace("$USER", ""))).length;
+	var contribsLink = "[[Special:Contributions/" + userName + "|" + userName + "]]";
+	var contribsLen = unescape(encodeURIComponent(contribsLink)).length;
+	if (resultLen + contribsLen <= 255) {
+		var talkLink = " ([[User talk:" + userName + "|讨论]])";
+		if (resultLen + contribsLen + unescape(encodeURIComponent(talkLink)).length <= 255) {
+			result = result.replace("$USER", contribsLink + talkLink);
+		} else {
+			result = result.replace("$USER", contribsLink);
+		}
+	} else {
+		result = result.replace("$USER", userName);
 	}
+
+	return result;
 };
 
 Twinkle.fluff.init = function twinklefluffinit() {

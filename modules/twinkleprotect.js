@@ -145,6 +145,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 	var field_preset;
 	var field1;
 	var field2;
+	var isTemplate = mw.config.get("wgNamespaceNumber") === 10 || mw.config.get("wgNamespaceNumber") === 828;
 
 	switch (e.target.values) {
 		case 'protect':
@@ -154,7 +155,9 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					name: 'category',
 					label: '选择预设：',
 					event: Twinkle.protect.callback.changePreset,
-					list: (mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypes : Twinkle.protect.protectionTypesCreate)
+					list: (mw.config.get('wgArticleId') ?
+						Twinkle.protect.protectionTypes :
+						Twinkle.protect.protectionTypesCreate)
 				});
 
 			field2 = new Morebits.quickForm.element({ type: 'field', label: '保护选项', name: 'field2' });
@@ -753,6 +756,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 		break;
 	}
 
+	var tagparams;
 	if( !mw.config.get('wgArticleId') ) {
 		tagparams = {
 			tag: 'noop'
@@ -1002,6 +1006,7 @@ Twinkle.protect.callbacks = {
 		protectedPage.setEditSummary( summary );
 		protectedPage.setPageText( text );
 		protectedPage.setCreateOption( 'nocreate' );
+		protectedPage.suppressProtectWarning(); // no need to let admins know they are editing through protection
 		protectedPage.save();
 	},
 

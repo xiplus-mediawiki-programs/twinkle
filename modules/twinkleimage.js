@@ -24,7 +24,7 @@ Twinkle.image = function twinkleimage() {
 };
 
 Twinkle.image.callback = function twinkleimageCallback() {
-	var Window = new Morebits.simpleWindow( 600, 300 );
+	var Window = new Morebits.simpleWindow( 600, 330 );
 	Window.setTitle( "文件快速删除候选" );
 	Window.setScriptName( "Twinkle" );
 	Window.addFooterLink( "快速删除方针", "WP:CSD" );

@@ -95,9 +95,9 @@ Twinkle.config.commonSets = {
 		"14": "Category",
 		"15": "Category talk",
 		"100": "Portal",
-		"101": "Portal talk"/*,
-		"108": "Book",
-		"109": "Book talk"*/
+		"101": "Portal talk",
+		"828": "Module",
+		"829": "Module talk"
 	}
 };
 
@@ -462,8 +462,7 @@ Twinkle.config.sections = [
 		},
 		{
 			name: "markTaggedPagesAsPatrolled",
-			label: "标记时标记页面为已巡查（如可能）",
-			helptip: "基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。",
+			label: "默认勾选“标记页面为已巡查”框",
 			type: "boolean"
 		},
 		{
@@ -793,11 +792,9 @@ Twinkle.config.init = function twinkleconfigInit() {
 		skinjs.load(Twinkle.config.legacyPrefsNotice);
 
 		// start a table of contents
-		var toctable = document.createElement("table");
+		var toctable = document.createElement("div");
 		toctable.className = "toc";
 		toctable.style.marginLeft = "0.4em";
-		var toctr = document.createElement("tr");
-		var toctd = document.createElement("td");
 		// create TOC title
 		var toctitle = document.createElement("div");
 		toctitle.id = "toctitle";
@@ -815,7 +812,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		toctoggle.appendChild(toctogglelink);
 		toctoggle.appendChild(document.createTextNode("]"));
 		toctitle.appendChild(toctoggle);
-		toctd.appendChild(toctitle);
+		toctable.appendChild(toctitle);
 		// create item container: this is what we add stuff to
 		var tocul = document.createElement("ul");
 		toctogglelink.addEventListener("click", function twinkleconfigTocToggle() {
@@ -827,9 +824,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 				toctogglelink.textContent = "显示";
 			}
 		}, false);
-		toctd.appendChild(tocul);
-		toctr.appendChild(toctd);
-		toctable.appendChild(toctr);
+		toctable.appendChild(tocul);
 		contentdiv.appendChild(toctable);
 
 		var tocnumber = 1;
@@ -1105,7 +1100,9 @@ Twinkle.config.init = function twinkleconfigInit() {
 			location.hash = location.hash;
 		}
 
-	} else if (mw.config.get("wgNamespaceNumber") === mw.config.get("wgNamespaceIds").user) {
+	} else if (mw.config.get("wgNamespaceNumber") === mw.config.get("wgNamespaceIds").user &&
+			mw.config.get("wgTitle").indexOf(mw.config.get("wgUserName")) === 0 &&
+			mw.config.get("wgPageName").slice(-3) === ".js") {
 
 		var box = document.createElement("div");
 		box.setAttribute("id", "twinkle-config-headerbox");
@@ -1115,8 +1112,11 @@ Twinkle.config.init = function twinkleconfigInit() {
 		box.style.margin = "0.5em auto";
 		box.style.textAlign = "center";
 
-		var link;
-		if (mw.config.get("wgTitle") === mw.config.get("wgUserName") + "/twinkleoptions.js") {
+		var link,
+			scriptPageName = mw.config.get("wgPageName").slice(mw.config.get("wgPageName").lastIndexOf("/") + 1,
+				mw.config.get("wgPageName").lastIndexOf(".js"));
+
+		if (scriptPageName === "twinkleoptions") {
 			// place "why not try the preference panel" notice
 			box.style.fontWeight = "bold";
 			box.style.width = "80%";
@@ -1134,8 +1134,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 			box.appendChild(document.createTextNode("，或直接编辑本页。"));
 			$(box).insertAfter($("#contentSub"));
 
-		} else if (mw.config.get("wgTitle").indexOf(mw.config.get("wgUserName")) === 0 &&
-				mw.config.get("wgPageName").lastIndexOf(".js") === mw.config.get("wgPageName").length - 3) {
+		} else if (["monobook", "vector", "cologneblue", "modern", "common"].indexOf(scriptPageName) !== -1) {
 			// place "Looking for Twinkle options?" notice
 			box.style.width = "60%";
 
@@ -1158,7 +1157,7 @@ Twinkle.config.legacyPrefsNotice = function twinkleconfigLegacyPrefsNotice(pageo
 		contentnotice.innerHTML = '<table class="plainlinks ombox ombox-content"><tr><td class="mbox-image">' +
 			'<img alt="" src="http://upload.wikimedia.org/wikipedia/en/3/38/Imbox_content.png" /></td>' +
 			'<td class="mbox-text"><p><big><b>在这里修改您的参数设置之前，</b>您必须移除在用户JavaScript文件中任何旧的Friendly设置。</big></p>' +
-			'<p>要这样做，您可以<a href="' + mw.config.get("wgScript") + '?title=User:' + encodeURIComponent(mw.config.get("wgUserName")) + '/' + mw.config.get("skin") + '.js&action=edit" target="_tab"><b>编辑您的个人JavaScript</b></a>。删除提到<code>FriendlyConfig</code>的代码。</p>' +
+			'<p>要这样做，您可以<a href="' + mw.config.get("wgScript") + '?title=User:' + encodeURIComponent(mw.config.get("wgUserName")) + '/' + mw.config.get("skin") + '.js&action=edit" target="_blank"><b>编辑您的个人JavaScript</b></a>。删除提到<code>FriendlyConfig</code>的代码。</p>' +
 			'</td></tr></table>';
 	} else {
 		$(contentnotice).remove();

@@ -275,6 +275,12 @@ Twinkle.xfd.callbacks = {
 				tag += '\n';
 			}
 
+			// Then, test if there are speedy deletion-related templates on the article.
+			var textNoSd = text.replace(/\{\{\s*(db(-\w*)?|d|delete|(?:hang|hold)[\- ]?on)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+			if (text !== textNoSd && confirm("在页面上找到快速删除模板，要移除吗？")) {
+				text = textNoSd;
+			}
+
 			pageobj.setPageText(tag + text);
 			pageobj.setEditSummary("页面存废讨论：[[" + params.logpage + "#" + Morebits.pageNameNorm + "]]" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchPage')) {

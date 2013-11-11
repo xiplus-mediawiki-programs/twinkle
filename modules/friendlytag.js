@@ -38,6 +38,20 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 
 	var form = new Morebits.quickForm( Twinkle.tag.callback.evaluate );
 
+	if (document.getElementsByClassName("patrollink").length) {
+		form.append( {
+			type: 'checkbox',
+			list: [
+				{
+					label: '标记页面为已巡查',
+					value: 'patrolPage',
+					name: 'patrolPage',
+					checked: Twinkle.getFriendlyPref('markTaggedPagesAsPatrolled')
+				}
+			]
+		} );
+	}
+
 	switch( Twinkle.tag.mode ) {
 		case '条目':
 			Window.setTitle( "条目维护标记" );
@@ -520,7 +534,7 @@ Twinkle.tag.callbacks = {
 		    tags = [], groupableTags = [], i, totalTags;
 
 		// Remove tags that become superfluous with this action
-		var pageText = pageobj.getPageText().replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+		var pageText = pageobj.getPageText().replace(/\{\{\s*([Nn]ew unreviewed article|[Uu]nreviewed|[Uu]serspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/g, "");
 
 		var addTag = function friendlytagAddTag( tagIndex, tagName ) {
 			var currentTag = "";
@@ -729,7 +743,7 @@ Twinkle.tag.callbacks = {
 			}
 		});
 
-		if( Twinkle.getFriendlyPref('markTaggedPagesAsPatrolled') ) {
+		if( params.patrol ) {
 			pageobj.patrol();
 		}
 	},
@@ -748,6 +762,9 @@ Twinkle.tag.callbacks = {
 Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	var form = e.target;
 	var params = {};
+	if (form.patrolPage) {
+		params.patrol = form.patrolPage.checked;
+	}
 
 	switch (Twinkle.tag.mode) {
 		case '条目':

@@ -14,9 +14,10 @@
  * Config directives in:   TwinkleConfig
  *
  * NOTE FOR DEVELOPERS:
- *   If adding a new criterion, check out the default values of the CSD preferences
- *   in twinkle.header.js, and add your new criterion to those if you think it would
- *   be good. 
+ *   If adding a new criterion, add it to the appropriate places at the top of
+ *   twinkleconfig.js.  Also check out the default values of the CSD preferences
+ *   in twinkle.js, and add your new criterion to those if you think it would be
+ *   good.
  */
 
 Twinkle.speedy = function twinklespeedy() {
@@ -35,7 +36,41 @@ Twinkle.speedy.callback = function twinklespeedyCallback() {
 	Twinkle.speedy.initDialog(Morebits.userIsInGroup( 'sysop' ) ? Twinkle.speedy.callback.evaluateSysop : Twinkle.speedy.callback.evaluateUser, true);
 };
 
-Twinkle.speedy.dialog = null;  // used by unlink feature
+// Used by unlink feature
+Twinkle.speedy.dialog = null;
+
+// The speedy criteria list can be in one of several modes
+Twinkle.speedy.mode = {
+	sysopSubmit: 1,  // radio buttons, no subgroups, submit when "Submit" button is clicked
+	sysopRadioClick: 2,  // radio buttons, no subgroups, submit when a radio button is clicked
+	userMultipleSubmit: 3,  // check boxes, subgroups, "Submit" button already pressent
+	userMultipleRadioClick: 4,  // check boxes, subgroups, need to add a "Submit" button
+	userSingleSubmit: 5,  // radio buttons, subgroups, submit when "Submit" button is clicked
+	userSingleRadioClick: 6,  // radio buttons, subgroups, submit when a radio button is clicked
+
+	// are we in "delete page" mode?
+	// (sysops can access both "delete page" [sysop] and "tag page only" [user] modes)
+	isSysop: function twinklespeedyModeIsSysop(mode) {
+		return mode === Twinkle.speedy.mode.sysopSubmit ||
+			mode === Twinkle.speedy.mode.sysopRadioClick;
+	},
+	// do we have a "Submit" button once the form is created?
+	hasSubmitButton: function twinklespeedyModeHasSubmitButton(mode) {
+		return mode === Twinkle.speedy.mode.sysopSubmit ||
+			mode === Twinkle.speedy.mode.userMultipleSubmit ||
+			mode === Twinkle.speedy.mode.userMultipleRadioClick ||
+			mode === Twinkle.speedy.mode.userSingleSubmit;
+	},
+	// is db-multiple the outcome here?
+	isMultiple: function twinklespeedyModeIsMultiple(mode) {
+		return mode === Twinkle.speedy.mode.userMultipleSubmit ||
+			mode === Twinkle.speedy.mode.userMultipleRadioClick;
+	},
+	// do we want subgroups? (if not we have to use prompt())
+	wantSubgroups: function twinklespeedyModeWantSubgroups(mode) {
+		return !Twinkle.speedy.mode.isSysop(mode);
+	}
+};
 
 // Prepares the speedy deletion dialog and displays it
 Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
@@ -77,7 +112,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 							cForm.multiple.disabled = !cChecked;
 							cForm.multiple.checked = false;
 
-							Twinkle.speedy.callback.dbMultipleChanged(cForm, false);
+							Twinkle.speedy.callback.modeChanged(cForm);
 
 							event.stopPropagation();
 						}
@@ -148,7 +183,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 					tooltip: "您可选择应用于该页的多个理由。",
 					disabled: Morebits.userIsInGroup( 'sysop' ) && !Twinkle.getPref('deleteSysopDefaultToTag'),
 					event: function( event ) {
-						Twinkle.speedy.callback.dbMultipleChanged( event.target.form, event.target.checked );
+						Twinkle.speedy.callback.modeChanged( event.target.form );
 						event.stopPropagation();
 					}
 				}
@@ -169,19 +204,34 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 	dialog.setContent( result );
 	dialog.display();
 
-	Twinkle.speedy.callback.dbMultipleChanged( result, false );
+	Twinkle.speedy.callback.modeChanged( result );
 };
 
-Twinkle.speedy.callback.dbMultipleChanged = function twinklespeedyCallbackDbMultipleChanged(form, checked) {
+Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(form) {
 	var namespace = mw.config.get('wgNamespaceNumber');
-	var value = checked;
+	var form = form;
+
+	// first figure out what mode we're in
+	var mode = Twinkle.speedy.mode.userSingleSubmit;
+	if (form.tag_only && !form.tag_only.checked) {
+		mode = Twinkle.speedy.mode.sysopSubmit;
+	} else {
+		if (form.multiple.checked) {
+			mode = Twinkle.speedy.mode.userMultipleSubmit;
+		} else {
+			mode = Twinkle.speedy.mode.userSingleSubmit;
+		}
+	}
+	if (Twinkle.getPref('speedySelectionStyle') === 'radioClick') {
+		mode++;
+	}
 
 	var work_area = new Morebits.quickForm.element( {
 			type: 'div',
 			name: 'work_area'
 		} );
 
-	if (checked && Twinkle.getPref('speedySelectionStyle') === 'radioClick') {
+	if (mode === Twinkle.speedy.mode.userMultipleRadioClick) {
 		work_area.append( {
 				type: 'div',
 				label: '当选择完成后，点击：'
@@ -197,29 +247,31 @@ Twinkle.speedy.callback.dbMultipleChanged = function twinklespeedyCallbackDbMult
 			} );
 	}
 
-	var radioOrCheckbox = (value ? 'checkbox' : 'radio');
+	var radioOrCheckbox = (Twinkle.speedy.mode.isMultiple(mode) ? 'checkbox' : 'radio');
 
 	switch (namespace) {
 		case 0:  // article
 			work_area.append( { type: 'header', label: '条目' } );
-			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getArticleList(value) } );
+			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.articleList, mode) } );
 			break;
 
 		case 2:  // user
 		case 3:  // user talk
 			work_area.append( { type: 'header', label: '用户页' } );
-			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getUserList(value) } );
+			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.userList, mode) } );
 			break;
 
 		case 6:  // file
 			work_area.append( { type: 'header', label: '文件' } );
-			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getFileList(value) } );
-			work_area.append( { type: 'div', label: '标记CSD F3、F4，请使用Twinkle的“图权”功能。' } );
+			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.fileList, mode) } );
+			if (!Twinkle.speedy.mode.isSysop(mode)) {
+				work_area.append( { type: 'div', label: '标记CSD F3、F4，请使用Twinkle的“图权”功能。' } );
+			}
 			break;
 
 		case 14:  // category
 			work_area.append( { type: 'header', label: '分类' } );
-			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.categoryList } );
+			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.categoryList, mode) } );
 			break;
 
 		default:
@@ -227,75 +279,172 @@ Twinkle.speedy.callback.dbMultipleChanged = function twinklespeedyCallbackDbMult
 	}
 
 	work_area.append( { type: 'header', label: '常规' } );
-	work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.getGeneralList(value) });
+	work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.generalList, mode) });
 	work_area.append( { type: 'div', label: '标记CSD G16，请使用Twinkle的“侵权”功能。' } );
 
 	if (Morebits.wiki.isPageRedirect() || Morebits.userIsInGroup('sysop')) {
 		work_area.append( { type: 'header', label: '重定向' } );
-		work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.redirectList } );
+		work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.redirectList, mode) } );
 	}
 
 	var old_area = Morebits.quickForm.getElements(form, "work_area")[0];
 	form.replaceChild(work_area.render(), old_area);
 };
 
-// this is a function to allow for db-multiple filtering
-Twinkle.speedy.getFileList = function twinklespeedyGetFileList(multiple) {
-	var result = [];
-	result.push({
-		label: 'F1: 重复的文件（完全相同或缩小），而且所有的链入连接已经被修改为指向保留的文件。',
-		value: 'f1'
-	});
-	if (Morebits.userIsInGroup('sysop')) {
-		result.push({
-			label: 'F3: 所有未知版权的文件和来源不明文件。',
-			value: 'f3'
-		});
-		result.push({
-			label: 'F4: 没有依据上载页面指示提供版权状况、来源等资讯的文件。',
-			value: 'f4'
-		});
-	}
-	result.push({
-		label: 'F5: 被高分辨率或SVG文件取代的图片。',
-		value: 'f5'
-	});
-	result.push({
-		label: 'F6: 孤立而没有被条目使用的非自由版权文件。',
-		value: 'f6'
-	});
-	if (!multiple) {
-		result.push({
-			label: 'F7: 被维基共享资源文件取代的文件。',
-			value: 'f7'
-		});
-	}
-	return result;
-};
+Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mode) {
+	// mode switches
+	var isSysop = Twinkle.speedy.mode.isSysop(mode);
+	var multiple = Twinkle.speedy.mode.isMultiple(mode);
+	var wantSubgroups = Twinkle.speedy.mode.wantSubgroups(mode);
+	var hasSubmitButton = Twinkle.speedy.mode.hasSubmitButton(mode);
 
-Twinkle.speedy.getArticleList = function twinklespeedyGetArticleList(multiple) {
-	var result = [];
-	result.push({
+	var openSubgroupHandler = function(e) { 
+		$(e.target.form).find('input').attr('disabled', 'disabled');
+		$(e.target.form).children().css('color', 'gray');
+		$(e.target).parent().css('color', 'black').find('input').attr('disabled', false);
+		$(e.target).parent().find('input:text')[0].focus();
+		e.stopPropagation();
+	};
+	var submitSubgroupHandler = function(e) {
+		Twinkle.speedy.callback.evaluateUser(e);
+		e.stopPropagation();
+	}
+
+	return $.map(list, function(critElement) {
+		var criterion = $.extend({}, critElement);
+
+		if (!wantSubgroups) {
+			criterion.subgroup = null;
+		}
+
+		if (multiple) {
+			if (criterion.hideWhenMultiple) {
+				return null;
+			}
+			if (criterion.hideSubgroupWhenMultiple) {
+				criterion.subgroup = null;
+			}
+		} else {
+			if (criterion.hideWhenSingle) {
+				return null;
+			}
+			if (criterion.hideSubgroupWhenSingle) {
+				criterion.subgroup = null;
+			}
+		}
+
+		if (isSysop) {
+			if (criterion.hideWhenSysop) {
+				return null;
+			}
+			if (criterion.hideSubgroupWhenSysop) {
+				criterion.subgroup = null;
+			}
+		} else {
+			if (criterion.hideWhenUser) {
+				return null;
+			}
+			if (criterion.hideSubgroupWhenUser) {
+				criterion.subgroup = null;
+			}
+		}
+
+		if (criterion.subgroup && !hasSubmitButton) {
+			if ($.isArray(criterion.subgroup)) {
+				criterion.subgroup.push({ 
+					type: 'button',
+					name: 'submit',
+					label: '提交',
+					event: submitSubgroupHandler
+				});
+			} else {
+				criterion.subgroup = [
+					criterion.subgroup,
+					{
+						type: 'button',
+						name: 'submit',  // ends up being called "csd.submit" so this is OK
+						label: '提交',
+						event: submitSubgroupHandler
+					}
+				];
+			}
+			criterion.event = openSubgroupHandler;
+		}
+
+		return criterion;
+	});
+}
+
+Twinkle.speedy.fileList = [
+	{
+		label: 'F1: 重复的档案（完全相同或缩小），而且不再被条目使用',
+		value: 'f1',
+		subgroup: {
+			name: 'f1_filename',
+			type: 'input',
+			label: '与此文件相同的文件名：',
+			tooltip: '可不含“File:”前缀。'
+		}
+	},
+	{
+		label: 'F3: 所有未知版权的档案和来源不明档案',
+		value: 'f3',
+		hideWhenUser: true
+	},
+	{
+		label: 'F4: 没有提供版权状况、来源等资讯的档案',
+		value: 'f4',
+		hideWhenUser: true
+	},
+	{
+		label: 'F5: 被高分辨率或SVG档案取代的图片',
+		value: 'f5',
+		subgroup: {
+			name: 'f5_filename',
+			type: 'input',
+			label: '新文件名：',
+			tooltip: '可不含“File:”前缀。'
+		}
+	},
+	{
+		label: 'F6: 没有被条目使用的非自由版权档案',
+		value: 'f6',
+	},
+	{
+		label: 'F7: 与维基共享资源档案重复的档案',
+		value: 'f7',
+		subgroup: {
+			name: 'f7_filename',
+			type: 'input',
+			label: '维基共享资源上的文件名：',
+			value: Morebits.pageNameNorm,
+			tooltip: '如与本文件名相同则可留空，可不含“File:”前缀。'
+		},
+		hideWhenMultiple: true
+	}
+];
+
+Twinkle.speedy.articleList = [
+	{
 		label: 'A1: 非常短，而且没有定义或内容。',
 		value: 'a1',
 		tooltip: '例如：“他是一个很有趣的人，他创建了工厂和庄园。并且，顺便提一下，他的妻子也很好。”如果能够发现任何相关的内容，可以将这个页面重定向到相关的条目上。'
-	});
-	result.push({
+	},
+	{
 		label: 'A2: 内容只包括外部连接、参见、图书参考、类别标签、模板标签、跨语言连接的条目。',
 		value: 'a2',
 		tooltip: '请注意：有些维基人创建条目时会分开多次保存，请避免删除有人正在工作的页面。带有{{inuse}}的不适用。'
-	});
-	result.push({
+	},
+	{
 		label: 'A3: 复制自其他中文维基计划，或是与其他中文维基计划内容相同的文章。或者是透过Transwiki系统移动的文章。',
 		value: 'a3'
-	});
-	result.push({
+	},
+	{
 		label: 'A5: 条目建立时之内容即与其他现有条目内容完全相同，且名称不适合做为其他条目之重定向。',
 		value: 'a5',
 		tooltip: '条目被建立时，第一个版本的内容与当时其他现存条目完全相同，且这个条目的名称不适合改为重定向，就可以提送快速删除。如果名称可以作为重定向，就应直接改重定向，不要提送快速删除。如果是多个条目合并产生的新条目，不适用。如果是从主条目拆分产生的条目，不适用；如有疑虑，应提送存废讨论处理。'
-	});
-	return result;
-};
+	}
+];
 
 Twinkle.speedy.categoryList = [
 	{
@@ -305,90 +454,99 @@ Twinkle.speedy.categoryList = [
 	}
 ];
 
-Twinkle.speedy.getUserList = function twinklespeedyGetTemplateList(multiple) {
-	var result = [];
-	result.push({
+Twinkle.speedy.userList = [
+	{
 		label: 'O1: 用户请求删除自己的用户页或其子页面。',
 		value: 'o1',
 		tooltip: '如果是从其他名字空间移动来的，须附有合理原因。'
-	});
-	result.push({
+	},
+	{
 		label: 'O3: 匿名用户的用户讨论页，其中的内容不再有用。',
-		value: 'o3'
-	});
-	return result;
-};
-
-Twinkle.speedy.getGeneralList = function twinklespeedyGetGeneralList(multiple) {
-	var result = [];
-	if (!multiple) {
-		result.push({
-			label: '自定义理由' + (Morebits.userIsInGroup('sysop') ? '（自定义删除理由）' : ''),
-			value: 'reason',
-			tooltip: '该页至少应该符合一条快速删除的标准，并且您必须在理由中提到。这不是万能的删除理由。'
-		});
+		value: 'o3',
+		tooltip: '避免给使用同一IP地址的用户带来混淆。不适用于用户讨论页的存盘页面。'
 	}
-	result.push({
-		label: 'G1: 没有实际内容或历史纪录的页面。',
+];
+
+Twinkle.speedy.generalList = [
+	{
+		label: '自定义理由' + (Morebits.userIsInGroup('sysop') ? '（自定义删除理由）' : ''),
+		value: 'reason',
+		tooltip: '该页至少应该符合一条快速删除的标准，并且您必须在理由中提到。这不是万能的删除理由。',
+		subgroup: {
+			name: 'reason_1',
+			type: 'input',
+			label: '理由：',
+			size: 60
+		},
+		hideWhenMultiple: true,
+		hideSubgroupWhenSysop: true
+	},
+	{
+		label: 'G1: 没有实际内容的页面',
 		value: 'g1',
-		tooltip: '如“adfasddd”。参见胡言乱语。但注意：图片也算是内容。'
-	});
-	result.push({
-		label: 'G2: 测试页面。',
+		tooltip: '如“adfasddd”。参见Wikipedia:胡言乱语。但注意：图片也算是内容。'
+	},
+	{
+		label: 'G2: 测试页面',
 		value: 'g2',
 		tooltip: '例如：“这是一个测试。”'
-	});
-	result.push({
-		label: 'G3: 纯粹破坏或明显的恶作剧。',
+	},
+	{
+		label: 'G3: 纯粹破坏，包括但不限于明显的恶作剧、错误信息、人身攻击等',
 		value: 'g3',
 		tooltip: '包括明显的错误信息、明显的恶作剧、信息明显错误的图片，以及清理移动破坏时留下的重定向。'
-	});
-	result.push({
-		label: 'G5: 曾经根据页面存废讨论、疑似侵权讨论、文件存废讨论被删除后又重新创建的内容，而有关内容与被删除的版本相同或非常相似，无论标题是否相同。',
+	},
+	{
+		label: 'G5: 曾经根据页面存废讨论、侵权审核或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同',
 		value: 'g5',
-		tooltip: '该内容之前必须是经存废讨论删除，如之前属于快速删除，请以相同理由重新提送快速删除。不适用于根据恢复守则被恢复的内容。在某些情况下，重新创建的条目有发展的机会。那么不应提交快速删除，而应该提交删除投票进行讨论。'
-	});
-	result.push({
-		label: 'G10: 原作者清空页面或提出删除，且贡献者只有一人。提请须出于善意，及附有合理原因。',
+		tooltip: '该内容之前必须是经存废讨论删除，如之前属于快速删除，请以相同理由重新提送快速删除。该内容如与被删除的版本明显不同，而提删者认为需要删除，请交到存废讨论，如果提删者对此不肯定，请先联络上次执行删除的管理人员。不适用于根据存废复核结果被恢复的内容。在某些情况下，重新创建的条目有机会发展。那么不应提交快速删除，而应该提交存废复核或存废讨论重新评核。',
+		subgroup: {
+			name: 'g5_1',
+			type: 'input',
+			label: '删除讨论位置：',
+			tooltip: '必须以“Wikipedia:”开头',
+			size: 60
+		}
+	},
+	{
+		label: 'G10: 原作者清空页面或提出删除，且贡献者只有一人',
 		value: 'g10',
-		tooltip: '如果贡献者只有一人（对条目内容无实际修改的除外），并附有合理原因，适用此项。'
-	});
-	result.push({
+		tooltip: '对条目内容无实际修改的除外；提请须出于善意，及附有合理原因。',
+		subgroup: {
+			name: 'g10_rationale',
+			type: 'input',
+			label: '可选的解释：',
+			tooltip: '比如作者在哪里请求了删除。',
+			size: 60
+		}
+	},
+	{
 		style: Twinkle.getPref('enlargeG11Input') ? 'height: 2em; width: 2em; height: -moz-initial; width: -moz-initial; -moz-transform: scale(2); -o-transform: scale(2);' : '',
-		label: 'G11: 明显以广告宣传为目的而建立的页面，或任何只有该页面名称中的人物或团体的联系方法的页面。',
+		label: 'G11: 明显的广告宣传页面，或只有相关人物或团体的联系方法的页面',
 		value: 'g11',
-		tooltip: '只针对专门用于宣传的页面，这些页面需要经过完全重写才能体现百科全书性。需注意，仅仅以某公司或产品为主题的条目，并不直接导致其自然满足此速删标准。'
-	});
-	result.push({
-		label: 'G12: 未列明来源且语调负面的生者传记，无任何版本可回退。',
+		tooltip: '页面只收宣传之用，并须完全重写才能贴合百科全书要求。须注意，仅仅以某公司或产品为主题的条目，并不直接导致其自然满足此速删标准。'
+	},
+	{
+		label: 'G12: 未列明来源且语调负面的生者传记',
 		value: 'g12',
 		tooltip: '注意是未列明来源且语调负面，必须2项均符合。'
-	});
-	result.push({
-		label: 'G13: 明显的、拙劣的机器翻译。',
+	},
+	{
+		label: 'G13: 明显、拙劣的机器翻译',
 		value: 'g13'
-	});
-	if (Morebits.userIsInGroup('sysop')) {
-		result.push({
-			label: 'G14: 超过两周没有进行任何翻译的非现代标准汉语页面。',
-			value: 'g14',
-			tooltip: '包括所有未翻译的外语、汉语方言以及文言文。'
-		});
-	}
-	result.push({
-		label: 'G15: 孤立页面。',
+	},
+	{
+		label: 'G14: 超过两周没有进行任何翻译的非现代标准汉语页面',
+		value: 'g14',
+		tooltip: '包括所有未翻译的外语、汉语方言以及文言文。',
+		hideWhenUser: true
+	},
+	{
+		label: 'G15: 孤立页面，比如没有主页面的讨论页、指向空页面的重定向等',
 		value: 'g15',
-		tooltip: '包括以下几种类型：1. 没有对应文件的文件页面；2. 没有对应母页面的子页面，用户页子页面除外；3. 指向不存在页面的重定向；4. 没有对应内容页面的讨论页，讨论页存档和用户讨论页除外；5. 对应内容页面为重定向的讨论页，前提是讨论页建立于重定向之后，或者讨论内容已经存档；6. 不存在用户的用户页及用户页子页面，随用户更名产生的用户页重定向除外。'
-	});
-	if (Morebits.userIsInGroup('sysop')) {
-		result.push({
-			label: 'G16: 临时页面依然侵权。',
-			value: 'g16',
-			tooltip: '因为主页面侵权而创建的临时页面仍然侵权。'
-		});
+		tooltip: '包括以下几种类型：1. 没有对应文件的文件页面；2. 没有对应母页面的子页面，用户页子页面除外；3. 指向不存在页面的重定向；4. 没有对应内容页面的讨论页，讨论页存档和用户讨论页除外；5. 不存在注册用户的用户页及用户页子页面，随用户更名产生的用户页重定向除外。请在删除时注意有无将内容移至他处的必要。不包括在主页面挂有{{CSD Placeholder}}模板的讨论页。'
 	}
-	return result;
-};
+];
 
 Twinkle.speedy.redirectList = [
 	{
@@ -533,8 +691,12 @@ Twinkle.speedy.callbacks = {
 					reason = presetReason;
 				}
 			}
-			if (!reason || !reason.replace(/^\s*/, "").replace(/\s*$/, "")) {
-				Morebits.status.error("询问理由", "您没有提供理由，取消操作。");
+			if (reason === null) {
+				Morebits.status.error("询问理由", "用户取消操作。");
+				Morebits.wiki.removeCheckpoint();
+				return;
+			} else if (!reason || !reason.replace(/^\s*/, "").replace(/\s*$/, "")) {
+				Morebits.status.error("询问理由", "你不给我理由…我就…不管了…");
 				Morebits.wiki.removeCheckpoint();
 				return;
 			}
@@ -666,7 +828,7 @@ Twinkle.speedy.callbacks = {
 
 				switch( Twinkle.getPref('userTalkPageMode') ) {
 				case 'tab':
-					window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_tab' );
+					window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_blank' );
 					break;
 				case 'blank':
 					window.open( mw.util.wikiScript('index') + '?' + Morebits.queryString.create( query ), '_blank', 'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800' );
@@ -745,39 +907,22 @@ Twinkle.speedy.callbacks = {
 			}
 
 			var code, parameters, i;
-			if (params.normalizeds.length > 1)
-			{
+			if (params.normalizeds.length > 1) {
 				code = "{{delete";
-				var breakFlag = false;
 				$.each(params.normalizeds, function(index, norm) {
 					code += "|" + norm.toUpperCase();
-					parameters = Twinkle.speedy.getParameters(params.values[index], norm, statelem);
-					if (!parameters) {
-						breakFlag = true;
-						return false;  // the user aborted
-					}
+					parameters = params.templateParams[index] || [];
 					for (var i in parameters) {
 						if (typeof parameters[i] === 'string' && !parseInt(i, 10)) {  // skip numeric parameters - {{db-multiple}} doesn't understand them
 							code += "|" + parameters[i];
 						}
 					}
 				});
-				if (breakFlag) {
-					return;
-				}
 				code += "}}";
 				params.utparams = [];
-			}
-			else
-			{
-				parameters = Twinkle.speedy.getParameters(params.values[0], params.normalizeds[0], statelem);
-				if (!parameters) {
-					return;  // the user aborted
-				}
-				code = "{{delete";
-				if (params.values[0] !== 'reason') {
-					code += "|" + params.values[0];
-				}
+			} else {
+				parameters = params.templateParams[0] || [];
+				code = "{{delete|" + params.values[0];
 				for (i in parameters) {
 					if (typeof parameters[i] === 'string') {
 						code += "|" + parameters[i];
@@ -800,7 +945,7 @@ Twinkle.speedy.callbacks = {
 			}
 
 			// Remove tags that become superfluous with this action
-			text = text.replace(/\{\{\s*(New unreviewed article|Userspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+			text = text.replace(/\{\{\s*([Nn]ew unreviewed article|[Uu]nreviewed|[Uu]serspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/g, "");
 			if (mw.config.get('wgNamespaceNumber') === 6) {
 				// remove "move to Commons" tag - deletion-tagged files cannot be moved to Commons
 				text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, "");
@@ -944,88 +1089,98 @@ Twinkle.speedy.callbacks = {
 	}
 };
 
-// prompts user for parameters to be passed into the speedy deletion tag
-Twinkle.speedy.getParameters = function twinklespeedyGetParameters(value, normalized, statelem)
-{
+// validate subgroups in the form passed into the speedy deletion tag
+Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values) {
 	var parameters = [];
-	switch( normalized ) {
-		case 'db':
-			var dbrationale = prompt('这个页面应当被快速删除，因为：', "");
-			if (!dbrationale || !dbrationale.replace(/^\s*/, "").replace(/\s*$/, ""))
-			{
-				statelem.error( '您必须提供理由，用户取消操作。' );
-				return null;
-			}
-			parameters["1"] = dbrationale;
-			break;
-		case 'f7':
-			var filename = prompt( '[CSD F7] 请输入维基共享上的文件名：', Morebits.pageNameNorm );
-			if (filename === null)
-			{
-				statelem.error( '用户取消操作。' );
-				return null;
-			}
-			if (filename !== '' && filename !== Morebits.pageNameNorm)
-			{
-				if (filename.indexOf("Image:") === 0 || filename.indexOf("File:") === 0)
-				{
-					parameters["1"] = filename;
+
+	$.each(values, function(index, value) {
+		var currentParams = [];
+		switch (value) {
+			case 'reason':
+				if (form["csd.reason_1"]) {
+					var dbrationale = form["csd.reason_1"].value;
+					if (!dbrationale || !dbrationale.trim()) {
+						alert( '自定义理由：请指定理由。' );
+						parameters = null;
+						return false;
+					}
+					currentParams["1"] = dbrationale;
 				}
-				else
-				{
-					statelem.error("缺少File:前缀，取消操作。");
-					return null;
+				break;
+
+			case 'g5':
+				if (form["csd.g5_1"]) {
+					var deldisc = form["csd.g5_1"].value;
+					if (deldisc) {
+						if (deldisc.substring(0, 9) !== "Wikipedia" &&
+							deldisc.substring(0, 3) !== "WP:" &&
+							deldisc.substring(0, 5) !== "维基百科:" &&
+							deldisc.substring(0, 5) !== "維基百科:") {
+							alert( 'CSD G5：您提供的讨论页名必须以“Wikipedia:”开头。' );
+							parameters = null;
+							return false;
+						}
+						currentParams["1"] = deldisc;
+					}
 				}
-			}
-			break;
-		case 'a5':
-			var duptitle = prompt('[CSD A5] 请输入该其它条目的标题：', "");
-			if (duptitle === null)
-			{
-				statelem.error( '用户取消操作。' );
-				return null;
-			}
-			if (duptitle !== '')
-			{
-				parameters.duptitle = '[[:' + duptitle + ']]';
-			}
-			break;
-		case 'g10':
-			if (Twinkle.getPref('speedyPromptOnG10'))
-			{
-				var g10rationale = prompt('[CSD G10] 请提供可选的理由（比如作者在哪里请求了删除——留空以跳过）：', "");
-				if (g10rationale === null)
-				{
-					statelem.error( '用户取消操作。' );
-					return null;
+				break;
+
+			case 'g10':
+				if (form["csd.g10_rationale"] && form["csd.g10_rationale"].value) {
+					currentParams.rationale = form["csd.g10_rationale"].value;
 				}
-				if (g10rationale !== '')
-				{
-					parameters.rationale = g10rationale;
+				break;
+
+			case 'f1':
+				if (form["csd.f1_filename"]) {
+					var redimage = form["csd.f1_filename"].value;
+					if (!redimage || !redimage.trim()) {
+						alert( 'CSD F1：请提供另一文件的名称。' );
+						parameters = null;
+						return false;
+					}
+					currentParams.filename = redimage.replace(/^\s*(Image|File|文件|檔案):/i, "");
 				}
-			}
-			break;
-		case 'f1':
-			var img = prompt( '[CSD F1] 输入与此文件相同的文件名（不含“File:”前缀）：', "" );
-			if (img === null)
-			{
-				statelem.error( '用户取消操作。' );
-				return null;
-			}
-			parameters.filename = img;
-			break;
-		default:
-			break;
-	}
+				break;
+
+			case 'f5':
+				if (form["csd.f5_filename"]) {
+					var redimage = form["csd.f5_filename"].value;
+					if (!redimage || !redimage.trim()) {
+						alert( 'CSD F5：请提供另一文件的名称。' );
+						parameters = null;
+						return false;
+					}
+					currentParams.filename = redimage.replace(/^\s*(Image|File|文件|檔案):/i, "");
+				}
+				break;
+
+			case 'f7':
+				if (form["csd.f7_filename"]) {
+					var filename = form["csd.f7_filename"].value;
+					if (filename && filename !== Morebits.pageNameNorm) {
+						if (filename.indexOf("Image:") === 0 || filename.indexOf("File:") === 0 ||
+							filename.indexOf("文件:") === 0 || filename.indexOf("檔案:") === 0) {
+							currentParams["1"] = filename;
+						} else {
+							currentParams["1"] = "File:" + filename;
+						}
+					}
+				}
+				break;
+
+			default:
+				break;
+		}
+		parameters.push(currentParams);
+	});
 	return parameters;
 };
 
 // function for processing talk page notification template parameters
-Twinkle.speedy.getUserTalkParameters = function twinklespeedyGetUserTalkParameters(normalized, parameters)
-{
+Twinkle.speedy.getUserTalkParameters = function twinklespeedyGetUserTalkParameters(normalized, parameters) {
 	var utparams = [];
-	switch (normalized)
-	{
+	switch (normalized) {
 		default:
 			break;
 	}
@@ -1042,8 +1197,7 @@ Twinkle.speedy.resolveCsdValues = function twinklespeedyResolveCsdValues(e) {
 	return values;
 };
 
-Twinkle.speedy.callback.evaluateSysop = function twinklespeedyCallbackEvaluateSysop(e)
-{
+Twinkle.speedy.callback.evaluateSysop = function twinklespeedyCallbackEvaluateSysop(e) {
 	var form = (e.target.form ? e.target.form : e.target);
 
 	var tag_only = form.tag_only;
@@ -1077,7 +1231,8 @@ Twinkle.speedy.callback.evaluateSysop = function twinklespeedyCallbackEvaluateSy
 Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUser(e) {
 	var form = (e.target.form ? e.target.form : e.target);
 
-	if (e.target.type === "checkbox") {
+	if (e.target.type === "checkbox" || e.target.type === "text" || 
+			e.target.type === "select") {
 		return;
 	}
 
@@ -1144,8 +1299,12 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 		watch: watchPage,
 		usertalk: notifyuser,
 		welcomeuser: welcomeuser,
-		lognomination: csdlog
+		lognomination: csdlog,
+		templateParams: Twinkle.speedy.getParameters( form, values )
 	};
+	if (!params.templateParams) {
+		return;
+	}
 
 	Morebits.simpleWindow.setButtonsEnabled( false );
 	Morebits.status.init( form );
