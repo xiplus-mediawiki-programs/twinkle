@@ -26,6 +26,8 @@ Twinkle.protect = function twinkleprotect() {
 };
 
 Twinkle.protect.callback = function twinkleprotectCallback() {
+	Twinkle.protect.protectionLevel = null;
+
 	var Window = new Morebits.simpleWindow( 620, 530 );
 	Window.setTitle( Morebits.userIsInGroup( 'sysop' ) ? "施行或请求保护页面" : "请求保护页面" );
 	Window.setScriptName( "Twinkle" );
@@ -88,57 +90,76 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 	result.actiontype[0].dispatchEvent( evt );
 
 	// get current protection level asynchronously
-	Morebits.wiki.actionCompleted.postfix = false;  // avoid Action: completed notice
 	if (Morebits.userIsInGroup('sysop')) {
-		var query = {
-			action: 'query',
-			prop: 'info',
-			inprop: 'protection',
-			titles: mw.config.get('wgPageName')
-		};
+		Morebits.wiki.actionCompleted.postfix = false;  // avoid Action: completed notice
 		Morebits.status.init($('div[name="currentprot"] span').last()[0]);
-		var statelem = new Morebits.status("当前保护级别");
-		var wpapi = new Morebits.wiki.api("抓取…", query, Twinkle.protect.callback.protectionLevel, statelem);
-		wpapi.post();
 	}
+	Twinkle.protect.fetchProtectionLevel();
 };
 
-Twinkle.protect.protectionLevel = null;
+Twinkle.protect.protectionLevel = null;  // a string, or null if no protection (only filled for sysops)
+Twinkle.protect.currentProtectionLevels = null;  // an array of objects { type, level, expiry, cascade }
 
-Twinkle.protect.callback.protectionLevel = function twinkleprotectCallbackProtectionLevel(apiobj) {
-	var xml = apiobj.getXML();
-	var result = [];
+Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLevel() {
 
-	$(xml).find('pr, flagged').each(function(index, protectionEntry) {
-		var $protectionEntry = $(protectionEntry);
-		var type, level, expiry, cascade = false;
-		
-		type = Morebits.string.toUpperCaseFirstChar($protectionEntry.attr('type'));
-		level = $protectionEntry.attr('level');
-		expiry = $protectionEntry.attr('expiry');
-		cascade = $protectionEntry.attr('cascade') === '';
-		
-		var boldnode = document.createElement('b');
-		boldnode.textContent = type + ": " + level;
-		result.push(boldnode);
-		if (expiry === 'infinity') {
-			result.push("（永久）");
-		} else {
-			result.push("（过期：" + new Date(expiry).toUTCString() + "）");
+	var api = new mw.Api();
+	api.get({
+		format: 'json',
+		indexpageids: true,
+		action: 'query',
+		prop: 'info',
+		inprop: 'protection',
+		titles: mw.config.get('wgPageName')
+	})
+	.done(function(data){
+		var pageid = data.query.pageids[0];
+		var page = data.query.pages[pageid];
+		var result = [];
+		var current = [];
+
+		var updateResult = function(label, level, expiry, cascade) {
+			// for sysops, stringify, so they can base their decision on existing protection
+			if (Morebits.userIsInGroup('sysop')) {
+				var boldnode = document.createElement('b');
+				boldnode.textContent = label + "：" + level;
+				result.push(boldnode);
+				if (expiry === 'infinity') {
+					result.push("（无限期）");
+				} else {
+					result.push("（过期：" + new Date(expiry).toUTCString() + "）");
+				}
+				if (cascade) {
+					result.push("（联锁）");
+				}
+			}
+		};
+
+		$.each(page.protection, function( index, protection ) {
+			if (protection.type !== "aft") {
+				current.push({
+					type: protection.type,
+					level: protection.level,
+					expiry: protection.expiry,
+					cascade: protection.cascade && protection.cascade === ''
+				});
+				updateResult( Morebits.string.toUpperCaseFirstChar(protection.type), protection.level, protection.expiry, protection.cascade );
+			}
+		});
+
+		// show the protection level to sysops
+		if (Morebits.userIsInGroup('sysop')) {
+			if (!result.length) {
+				var boldnode = document.createElement('b');
+				boldnode.textContent = "无保护";
+				result.push(boldnode);
+			}
+			Twinkle.protect.protectionLevel = result;
+			Morebits.status.init($('div[name="currentprot"] span').last()[0]);
+			Morebits.status.info("当前保护等级", Twinkle.protect.protectionLevel);
 		}
-		if (cascade) {
-			result.push("（联锁）");
-		}
+
+		Twinkle.protect.currentProtectionLevels = current;
 	});
-
-	if (!result.length) {
-		var boldnode = document.createElement('b');
-		boldnode.textContent = "未被保护";
-		result.push(boldnode);
-	}
-	Twinkle.protect.protectionLevel = result;
-	apiobj.statelem.info(result);
-	window.setTimeout(function() { Morebits.wiki.actionCompleted.postfix = "完成"; }, 500);  // restore actionCompleted message
 };
 
 Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAction(e) {
@@ -443,8 +464,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 		// re-add protection level text, if it's available
 		if (Twinkle.protect.protectionLevel) {
 			Morebits.status.init($('div[name="currentprot"] span').last()[0]);
-			// seems unneeded
-			//Morebits.status.info("当前保护级别", Twinkle.protect.protectionLevel);
+			Morebits.status.info("当前保护等级", Twinkle.protect.protectionLevel);
 		}
 
 		// reduce vertical height of dialog
@@ -802,6 +822,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 					}
 				} else {
 					thispage.setCreateProtection(form.createlevel.value, form.createexpiry.value);
+					thispage.setWatchlist(false);
 				}
 
 				if (form.protectReason.value) {
@@ -1020,7 +1041,7 @@ Twinkle.protect.callbacks = {
 		var tag = rppRe.exec( text );
 
 		var rppLink = document.createElement('a');
-		rppLink.setAttribute('href', mw.util.wikiGetlink(rppPage.getPageName()) );
+		rppLink.setAttribute('href', mw.util.getUrl(rppPage.getPageName()) );
 		rppLink.appendChild(document.createTextNode(rppPage.getPageName()));
 
 		if ( tag ) {
@@ -1052,6 +1073,7 @@ Twinkle.protect.callbacks = {
 		newtag += "请求" + Morebits.string.toUpperCaseFirstChar(words) + ( params.reason !== '' ? "：" + Morebits.string.formatReasonText(params.reason) : "。" ) + "--~~~~";
 
 		var reg;
+
 		if ( params.category === 'unprotect' ) {
 			reg = /(==\s*请求解除保护\s*==\n)/;
 		} else {
@@ -1062,7 +1084,7 @@ Twinkle.protect.callbacks = {
 		if (text.length === originalTextLength)
 		{
 			var linknode = document.createElement('a');
-			linknode.setAttribute("href", mw.util.wikiGetlink("Wikipedia:Twinkle/修复RFPP") );
+			linknode.setAttribute("href", mw.util.getUrl("Wikipedia:Twinkle/修复RFPP") );
 			linknode.appendChild(document.createTextNode('如何修复RFPP'));
 			statusElement.error( [ '无法在WP:RFPP上找到相关位点标记，要修复此问题，请参见', linknode, '。' ] );
 			return;

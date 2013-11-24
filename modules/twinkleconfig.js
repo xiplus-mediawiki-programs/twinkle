@@ -783,7 +783,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		// (settings in that file will still work, but they will be overwritten by twinkleoptions.js settings)
 		var contentnotice = document.createElement("p");
 		// I hate innerHTML, but this is one thing it *is* good for...
-		contentnotice.innerHTML = "<b>在这里修改您的参数设置之前，</b>确认您已移除了<a href=\"" + mw.util.wikiGetlink("Special:MyPage/skin.js") + "\" title=\"Special:MyPage/skin.js\">用户JavaScript文件</a>中任何旧的<code>FriendlyConfig</code>设置。";
+		contentnotice.innerHTML = "<b>在这里修改您的参数设置之前，</b>确认您已移除了<a href=\"" + mw.util.getUrl("Special:MyPage/skin.js") + "\" title=\"Special:MyPage/skin.js\">用户JavaScript文件</a>中任何旧的<code>FriendlyConfig</code>设置。";
 		contentdiv.appendChild(contentnotice);
 
 		// look and see if the user does in fact have any old settings in their skin JS file
@@ -1048,7 +1048,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 				if (pref.helptip) {
 					// convert mentions of templates in the helptip to clickable links
 					cell.innerHTML = pref.helptip.replace(/{{(.+?)}}/g,
-						'{{<a href="' + mw.util.wikiGetlink("Template:") + '$1" target="_blank">$1</a>}}');
+						'{{<a href="' + mw.util.getUrl("Template:") + '$1" target="_blank">$1</a>}}');
 				}
 				// add reset link (custom lists don't need this, as their config value isn't displayed on the form)
 				if (pref.type !== "customList") {
@@ -1128,7 +1128,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 				box.appendChild(document.createTextNode("您可配置您的Twinkle，通过使用"));
 			}
 			link = document.createElement("a");
-			link.setAttribute("href", mw.util.wikiGetlink(mw.config.get("wgFormattedNamespaces")[mw.config.get("wgNamespaceIds").project] + ":Twinkle/参数设置") );
+			link.setAttribute("href", mw.util.getUrl(mw.config.get("wgFormattedNamespaces")[mw.config.get("wgNamespaceIds").project] + ":Twinkle/参数设置") );
 			link.appendChild(document.createTextNode("Twinkle参数设置面板"));
 			box.appendChild(link);
 			box.appendChild(document.createTextNode("，或直接编辑本页。"));
@@ -1140,7 +1140,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 
 			box.appendChild(document.createTextNode("如果您想配置您的Twinkle，请使用"));
 			link = document.createElement("a");
-			link.setAttribute("href", mw.util.wikiGetlink(mw.config.get("wgFormattedNamespaces")[mw.config.get("wgNamespaceIds").project] + ":Twinkle/参数设置") );
+			link.setAttribute("href", mw.util.getUrl(mw.config.get("wgFormattedNamespaces")[mw.config.get("wgNamespaceIds").project] + ":Twinkle/参数设置") );
 			link.appendChild(document.createTextNode("Twinkle参数设置面板"));
 			box.appendChild(link);
 			box.appendChild(document.createTextNode("。"));
@@ -1677,7 +1677,7 @@ Twinkle.config.saveSuccess = function twinkleconfigSaveSuccess(pageobj) {
 	noticebox.className = "successbox";
 	noticebox.style.fontSize = "100%";
 	noticebox.style.marginTop = "2em";
-	noticebox.innerHTML = "<p><b>您的Twinkle参数设置已被保存。</b></p><p>要看到这些更改，您可能需要<a href=\"" + mw.util.wikiGetlink("WP:BYPASS") + "\" title=\"WP:BYPASS\"><b>绕过浏览器缓存</b></a>。</p>";
+	noticebox.innerHTML = "<p><b>您的Twinkle参数设置已被保存。</b></p><p>要看到这些更改，您可能需要<a href=\"" + mw.util.getUrl("WP:BYPASS") + "\" title=\"WP:BYPASS\"><b>绕过浏览器缓存</b></a>。</p>";
 	Morebits.status.root.appendChild(noticebox);
 	var noticeclear = document.createElement("br");
 	noticeclear.style.clear = "both";
