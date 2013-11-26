@@ -280,7 +280,9 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 
 	work_area.append( { type: 'header', label: '常规' } );
 	work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.generalList, mode) });
-	work_area.append( { type: 'div', label: '标记CSD G16，请使用Twinkle的“侵权”功能。' } );
+	if (!Twinkle.speedy.mode.isSysop(mode)) {
+		work_area.append( { type: 'div', label: '标记CSD G16，请使用Twinkle的“侵权”功能。' } );
+	}
 
 	if (Morebits.wiki.isPageRedirect() || Morebits.userIsInGroup('sysop')) {
 		work_area.append( { type: 'header', label: '重定向' } );
@@ -545,6 +547,11 @@ Twinkle.speedy.generalList = [
 		label: 'G15: 孤立页面，比如没有主页面的讨论页、指向空页面的重定向等',
 		value: 'g15',
 		tooltip: '包括以下几种类型：1. 没有对应文件的文件页面；2. 没有对应母页面的子页面，用户页子页面除外；3. 指向不存在页面的重定向；4. 没有对应内容页面的讨论页，讨论页存档和用户讨论页除外；5. 不存在注册用户的用户页及用户页子页面，随用户更名产生的用户页重定向除外。请在删除时注意有无将内容移至他处的必要。不包括在主页面挂有{{CSD Placeholder}}模板的讨论页。'
+	},
+	{
+		label: 'G16: 因为主页面侵权而创建的临时页面仍然侵权',
+		value: 'g16',
+		hideWhenUser: true
 	}
 ];
 
@@ -555,25 +562,23 @@ Twinkle.speedy.redirectList = [
 		tooltip: '由条目的名字空间重定向至非条目名字空间，或将用户页移出条目名字空间时遗留的重定向。'
 	},
 	{
-		label: 'R3: 标题繁简混用的重定向。',
-		value: 'r3|标题繁简混用。'
-	},
-	{
-		label: 'R3: 消歧义使用的括号或空格错误的重定向。',
-		value: 'r3|消歧义使用的括号或空格错误。'
-	},
-	{
-		label: 'R3: 间隔号使用错误的重定向。',
-		value: 'r3|间隔号使用错误。'
-	},
-	{
-		label: 'R3: 标题中使用非常见的错别字的重定向。',
-		value: 'r3|标题中使用非常见的错别字。',
-		tooltip: '非一眼能看出的拼写错误和翻译或标题用字的争议应交由存废讨论处理。'
-	},
-	{
-		label: 'R3: 移动侵权页面的临时页后所产生的重定向。',
-		value: 'r3|移动侵权页面的临时页后所产生的。'
+		label: 'R3: 格式错误，或明显笔误的重定向。',
+		value: 'r3',
+		tooltip: '非一眼能看出的拼写错误和翻译或标题用字的争议应交由存废讨论处理。',
+		subgroup: {
+			name: 'r3_type',
+			type: 'select',
+			label: '适用类别：',
+			list: [
+				{ label: '请选择', value: '' },
+				{ label: '标题繁简混用', value: '标题繁简混用。' },
+				{ label: '消歧义使用的括号或空格错误', value: '消歧义使用的括号或空格错误。' },
+				{ label: '间隔号使用错误', value: '间隔号使用错误。' },
+				{ label: '标题中使用非常见的错别字', value: '标题中使用非常见的错别字。' },
+				{ label: '移动侵权页面的临时页后所产生的重定向', value: '移动侵权页面的临时页后所产生的重定向。' }
+			]
+		},
+		hideSubgroupWhenSysop: true
 	},
 	{
 		label: 'R5: 指向本身的重定向或循环的重定向。',
@@ -602,11 +607,7 @@ Twinkle.speedy.normalizeHash = {
 	'a3': 'a3',
 	'a5': 'a5',
 	'r2': 'r2',
-	'r3|标题繁简混用。': 'r3',
-	'r3|消歧义使用的括号或空格错误。': 'r3',
-	'r3|间隔号使用错误。': 'r3',
-	'r3|标题中使用非常见的错别字。': 'r3',
-	'r3|移动侵权页面的临时页后所产生的。': 'r3',
+	'r3': 'r3',
 	'r5': 'r5',
 	'f1': 'f1',
 	'f3': 'f3',
@@ -641,11 +642,7 @@ Twinkle.speedy.reasonHash = {
 	'a5': '条目建立时之内容即与其他现有条目内容相同',
 // Redirects
 	'r2': '跨名字空间重定向',
-	'r3|标题繁简混用。': '标题错误的重定向',
-	'r3|消歧义使用的括号或空格错误。': '标题错误的重定向',
-	'r3|间隔号使用错误。': '标题错误的重定向',
-	'r3|标题中使用非常见的错别字。': '标题错误的重定向',
-	'r3|移动侵权页面的临时页后所产生的。': '标题错误的重定向',
+	'r3': '标题错误的重定向',
 	'r5': '指向本身的重定向或循环的重定向',
 // Images and media
 	'f1': '重复的图片',
@@ -1166,6 +1163,18 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 							currentParams["1"] = "File:" + filename;
 						}
 					}
+				}
+				break;
+
+			case 'r3':
+				if (form["csd.r3_type"]) {
+					var redirtype = form["csd.r3_type"].value;
+					if (!redirtype) {
+						alert( 'CSD R3：请选择适用类别。' );
+						parameters = null;
+						return false;
+					}
+					currentParams["1"] = redirtype;
 				}
 				break;
 
