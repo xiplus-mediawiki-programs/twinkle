@@ -26,7 +26,7 @@ Twinkle.close = function twinkleclose() {
 		return span;
 	};
 
-	var selector = ':has(.mw-headline a:only-of-type:not(.new)):not(:has(+ div.NavFrame))'
+	var selector = ':has(.mw-headline a:only-of-type):not(:has(+ div.NavFrame))'
 	var titles = $('#bodyContent').find('h3' + selector + ':not(:has(+ p + h4)), h4' + selector); // really needs to work on
 
 	var delNode = document.createElement('strong');
@@ -38,19 +38,21 @@ Twinkle.close = function twinkleclose() {
 
 	titles.each(function(key, current) {
 		var title = decodeURI($(current).find('.mw-headline a').attr('href').slice(6));
+		var pagenotexist = $(current).find('.mw-headline a').hasClass('new');
 		var section = /section=(\d+)/.exec($(current).find('.mw-editsection a').attr('href'))[1];
 		var node = current.getElementsByClassName('mw-headline')[0];
 		node.appendChild( document.createTextNode(' ') );
 		var tmpNode = delNode.cloneNode( true );
 		tmpNode.firstChild.href = '#' + section;
 		$(tmpNode.firstChild).click(function() {
-			Twinkle.close.callback(title, section);
+			Twinkle.close.callback(title, section, pagenotexist);
 			return false;
 		});
 		node.appendChild( tmpNode );
 	});
 };
 
+// Keep this synchronized with {{delh}}
 Twinkle.close.codes = {
 	'请求无效': {
 		'ir': {
@@ -128,11 +130,75 @@ Twinkle.close.codes = {
 			label: '多次被删除，条目锁定',
 			action: 'del'
 		}
+	},
+	'转移至其他维基计划': {
+		'twc': {
+			label: '转移至维基共享资源',
+			action: 'noop'
+		},
+		'twn': {
+			label: '转移至维基新闻',
+			action: 'noop'
+		},
+		'tws': {
+			label: '转移至维基文库',
+			action: 'noop'
+		},
+		'twb': {
+			label: '转移至维基教科书',
+			action: 'noop'
+		},
+		'twq': {
+			label: '转移至维基语录',
+			action: 'noop'
+		},
+		'twt': {
+			label: '转移至维基词典',
+			action: 'noop'
+		},
+		'two': {
+			label: '转移至其他维基计划',
+			action: 'noop'
+		}
+	},
+	'其他处理方法': {
+		'c': {
+			label: '转交侵权',
+			action: 'noop'
+		},
+		//'m2pfd': {
+		//	label: '转送页面存废讨论',
+		//	action: 'noop'
+		//},
+		'm2ifd': {
+			label: '转送文件存废讨论',
+			action: 'noop'
+		},
+		'r': {
+			label: '重定向',
+			action: 'noop'
+		},
+		'cr': {
+			label: '分类重定向',
+			action: 'noop'
+		},
+		'm': {
+			label: '移动',
+			action: 'noop'
+		},
+		'merge': {
+			label: '并入',
+			action: 'noop'
+		},
+		'nc': {
+			label: '无共识',
+			action: 'keep'
+		}
 	}
 }
 
-Twinkle.close.callback = function twinklecloseCallback(title, section) {
-	var Window = new Morebits.simpleWindow( 350, 200 );
+Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
+	var Window = new Morebits.simpleWindow( 400, 200 );
 	Window.setTitle( "结束存废讨论" );
 	Window.setScriptName( "Twinkle" );
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#close" );
@@ -140,28 +206,38 @@ Twinkle.close.callback = function twinklecloseCallback(title, section) {
 	var form = new Morebits.quickForm( Twinkle.close.callback.evaluate );
 
 	form.append( {
-			type: 'input',
-			label: '页面名：',
-			name: 'title',
-			value: title,
-			disabled: true
-		}
-	);
+		type: 'input',
+		label: '页面名：',
+		name: 'title',
+		value: title,
+		disabled: true
+	} );
 	form.append( {
-			type: 'input',
-			label: '小节号：',
-			name: 'section',
-			value: section,
-			disabled: true
-		}
-	);
+		type: 'input',
+		label: '章节：',
+		name: 'section',
+		value: section,
+		disabled: true
+	} );
 
 	form.append( {
-			type: 'select',
-			label: '理据：',
-			name: 'sub_group'
-		}
-	);
+		type: 'select',
+		label: '处理结果：',
+		name: 'sub_group'
+	} );
+
+	form.append( {
+		type: 'checkbox',
+		list: [
+			{
+				label: '只结束讨论，不修改页面',
+				value: 'noop',
+				name: 'noop',
+				checked: noop
+			}
+		]
+	} );
+
 	form.append( { type:'submit' } );
 
 	var result = form.render();
@@ -201,6 +277,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section) {
 Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 	var code = e.target.sub_group.value;
 	var messageData = $(e.target.sub_group).find('option[value="' + code + '"]').data("messageData");
+	var noop = e.target.noop.checked;
 	var params = {
 		title: e.target.title.value,
 		code: code,
@@ -213,20 +290,24 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 
 	Morebits.wiki.actionCompleted.notice = "操作完成";
 
-	switch (messageData.action) {
-		case 'del':
-			Twinkle.close.callbacks.del(params);
-			break;
-		case 'keep':
-			var wikipedia_page = new Morebits.wiki.page( params.title, '移除存废讨论模板' );
-			wikipedia_page.setCallbackParameters( params );
-			wikipedia_page.load( Twinkle.close.callbacks.keep );
-			break;
-		default:
-			alert("Twinkle.close：未定义 " + code);
-			return;
+	if (noop || messageData.action === 'noop') {
+		Twinkle.close.callbacks.talkend( params );
 	}
-	//Twinkle.close.callbacks.talkend( params );
+	else {
+		switch (messageData.action) {
+			case 'del':
+				Twinkle.close.callbacks.del(params);
+				break;
+			case 'keep':
+				var wikipedia_page = new Morebits.wiki.page( params.title, '移除存废讨论模板' );
+				wikipedia_page.setCallbackParameters( params );
+				wikipedia_page.load( Twinkle.close.callbacks.keep );
+				break;
+			default:
+				alert("Twinkle.close：未定义 " + code);
+				return;
+		}
+	}
 };
 
 Twinkle.close.callbacks = {
