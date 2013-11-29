@@ -48,6 +48,7 @@ my %deploys = (
 	'modules/friendlytalkback.js' => 'MediaWiki:Gadget-friendlytalkback.js',
 	'modules/twinklebatchdelete.js' => 'MediaWiki:Gadget-twinklebatchdelete.js',
 	'modules/twinklebatchundelete.js' => 'MediaWiki:Gadget-twinklebatchundelete.js',
+	'modules/twinkleclose.js' => 'MediaWiki:Gadget-twinkleclose.js',
 	'modules/twinkleconfig.js' => 'MediaWiki:Gadget-twinkleconfig.js',
 	'modules/twinklecopyvio.js' => 'MediaWiki:Gadget-twinklecopyvio.js',
 	'modules/twinkledelimages.js' => 'MediaWiki:Gadget-twinkledelimages.js',

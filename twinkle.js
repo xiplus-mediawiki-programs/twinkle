@@ -419,6 +419,7 @@ Twinkle.load = function () {
 		Twinkle.delimages();
 		Twinkle.batchdelete();
 		Twinkle.batchundelete();
+		Twinkle.close();
 	}
 	// Run the initialization callbacks for any custom modules
 	$( Twinkle.initCallbacks ).each(function ( k, v ) { v(); });
