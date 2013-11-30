@@ -198,7 +198,7 @@ Twinkle.close.codes = {
 }
 
 Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
-	var Window = new Morebits.simpleWindow( 400, 200 );
+	var Window = new Morebits.simpleWindow( 400, 150 );
 	Window.setTitle( "结束存废讨论" );
 	Window.setScriptName( "Twinkle" );
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#close" );
@@ -206,24 +206,10 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 	var form = new Morebits.quickForm( Twinkle.close.callback.evaluate );
 
 	form.append( {
-		type: 'input',
-		label: '页面名：',
-		name: 'title',
-		value: title,
-		disabled: true
-	} );
-	form.append( {
-		type: 'input',
-		label: '章节：',
-		name: 'section',
-		value: section,
-		disabled: true
-	} );
-
-	form.append( {
 		type: 'select',
 		label: '处理结果：',
-		name: 'sub_group'
+		name: 'sub_group',
+		event: Twinkle.close.callback.change_code
 	} );
 
 	form.append( {
@@ -246,6 +232,12 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 
 	var sub_group = result.getElementsByTagName('select')[0]; // hack
 
+	var resultData = {
+		title: title,
+		section: parseInt(section),
+		noop: noop
+	}
+	$(result).data("resultData", resultData);
 	// worker function to create the combo box entries
 	var createEntries = function( contents, container ) {
 		$.each( contents, function( itemKey, itemProperties ) {
@@ -255,7 +247,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 				type: 'option',
 				label: key + '：' + itemProperties.label,
 				value: key,
-			    	selected: itemProperties.selected
+				selected: itemProperties.selected
 			} );
 			var elemRendered = container.appendChild( elem.render() );
 			$(elemRendered).data("messageData", itemProperties);
@@ -272,16 +264,35 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 		// create the options
 		createEntries( groupContents, optgroup );
 	} );
+
+	var evt = document.createEvent( "Event" );
+	evt.initEvent( 'change', true, true );
+	result.sub_group.dispatchEvent( evt );
 };
+
+Twinkle.close.callback.change_code = function twinklecloseCallbackChangeCode(e) {
+	var resultData = $(e.target.form).data("resultData");
+	var messageData = $(e.target).find('option[value="' + e.target.value + '"]').data("messageData");
+	var noop = e.target.form.noop;
+	if (resultData.noop || messageData.action === 'noop') {
+		noop.checked = true;
+		noop.disabled = true;
+	}
+	else {
+		noop.checked = false;
+		noop.disabled = false;
+	}
+}
 
 Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 	var code = e.target.sub_group.value;
+	var resultData = $(e.target).data('resultData');
 	var messageData = $(e.target.sub_group).find('option[value="' + code + '"]').data("messageData");
 	var noop = e.target.noop.checked;
 	var params = {
-		title: e.target.title.value,
+		title: resultData.title,
 		code: code,
-		section: parseInt(e.target.section.value),
+		section: resultData.section,
 		messageData: messageData
 	};
 
