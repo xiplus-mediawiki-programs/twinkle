@@ -910,7 +910,7 @@ Twinkle.speedy.callbacks = {
 					code += "|" + norm.toUpperCase();
 					parameters = params.templateParams[index] || [];
 					for (var i in parameters) {
-						if (typeof parameters[i] === 'string' && !parseInt(i, 10)) {  // skip numeric parameters - {{db-multiple}} doesn't understand them
+						if (typeof parameters[i] === 'string') {
 							code += "|" + parameters[i];
 						}
 					}
@@ -919,7 +919,10 @@ Twinkle.speedy.callbacks = {
 				params.utparams = [];
 			} else {
 				parameters = params.templateParams[0] || [];
-				code = "{{delete|" + params.values[0];
+				code = "{{delete";
+				if (params.values[0] !== 'reason') {
+					code += '|' + params.values[0];
+				}
 				for (i in parameters) {
 					if (typeof parameters[i] === 'string') {
 						code += "|" + parameters[i];
