@@ -213,6 +213,12 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 	} );
 
 	form.append( {
+			type: 'input',
+			name: 'remark',
+			label: '补充说明：'
+	} );
+
+	form.append( {
 		type: 'checkbox',
 		list: [
 			{
@@ -292,6 +298,7 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 	var params = {
 		title: resultData.title,
 		code: code,
+		remark: e.target.remark.value,
 		section: resultData.section,
 		messageData: messageData
 	};
@@ -366,7 +373,7 @@ Twinkle.close.callbacks = {
 			Twinkle.close.callbacks.talkend( params );
 			return;
 		}
-		var editsummary = '存废讨论：[[' + mw.config.get('wgPageName') + ']]';
+		var editsummary = '存废讨论结束：[[' + mw.config.get('wgPageName') + ']]';
 
 		pageobj.setPageText(newtext);
 		pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
@@ -398,7 +405,14 @@ Twinkle.close.callbacks = {
 		var split = bar[0].split('\n');
 
 		text = split[0] + '\n{{delh|' + params.code + '}}\n' + split.slice(1).join('\n');
-		text += '\n----\n: ' + params.messageData.label + '。--~~~~\n{{delf}}';
+		text += '\n----\n: ' + params.messageData.label;
+		if (params.remark) {
+			text += '：' + params.remark;
+		}
+		else {
+			text += '。';
+		}
+		text += '--~~~~\n{{delf}}';
 
 		if (bar[1]) {
 			text += '\n----\n' + bar.slice(1).join('\n----\n');
