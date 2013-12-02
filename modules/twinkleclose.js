@@ -356,7 +356,11 @@ Twinkle.close.callbacks = {
 			talkpage.prepend();
 		}
 
-		var newtext = text.replace(/\{\{([rsaiftcmv]fd)[^{}]*?\}\}\n*/gi, '');
+		var newtext = text.replace(/\{\{([rsaiftcmv]fd)\|[^{}]*?\}\}\n*/gi, '');
+		if (params.code !== 'tk') {
+			newtext = newtext.replace(/\{\{(notability)\|[^{}]*?\}\}\n*/gi, '');
+			newtext = newtext.replace(/\{\{(substub)\|[^{}]*?\}\}\n*/gi, '');
+		}
 		if (newtext === text) {
 			statelem.warn("未找到存废讨论模板，可能已被移除");
 			Twinkle.close.callbacks.talkend( params );
