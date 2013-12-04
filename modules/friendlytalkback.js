@@ -20,7 +20,7 @@ Twinkle.talkback = function() {
 		return;
 	}
 
-	Twinkle.addPortletLink( Twinkle.talkback.callback, "回复", "friendly-talkback", "回复通告" );
+	Twinkle.addPortletLink( Twinkle.talkback.callback, "通告", "friendly-talkback", "回复通告" );
 };
 
 Twinkle.talkback.callback = function( ) {
