@@ -26,7 +26,7 @@ Twinkle.close = function twinkleclose() {
 		return span;
 	};
 
-	var selector = ':has(.mw-headline a:only-of-type):not(:has(+ div.NavFrame))'
+	var selector = ':has(.mw-headline a:only-of-type):not(:has(+ div.NavFrame))';
 	var titles = $('#bodyContent').find('h3' + selector + ':not(:has(+ p + h4)), h4' + selector); // really needs to work on
 
 	var delNode = document.createElement('strong');
@@ -37,7 +37,7 @@ Twinkle.close = function twinkleclose() {
 	delNode.appendChild(delLink);
 
 	titles.each(function(key, current) {
-		var title = decodeURI($(current).find('.mw-headline a').attr('href').slice(6));
+		var title = decodeURIComponent($(current).find('.mw-headline a').attr('href').slice(6));
 		var pagenotexist = $(current).find('.mw-headline a').hasClass('new');
 		var section = /section=(\d+)/.exec($(current).find('.mw-editsection a').attr('href'))[1];
 		var node = current.getElementsByClassName('mw-headline')[0];
