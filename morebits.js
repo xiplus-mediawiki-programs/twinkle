@@ -2550,9 +2550,31 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.watch = 'true';
 		}
 
-		ctx.deleteProcessApi = new Morebits.wiki.api("删除页面…", query, ctx.onDeleteSuccess, ctx.statusElement, ctx.onDeleteFailure);
+		ctx.deleteProcessApi = new Morebits.wiki.api("删除页面…", query, ctx.onDeleteSuccess, ctx.statusElement, fnProcessDeleteError);
 		ctx.deleteProcessApi.setParent(this);
 		ctx.deleteProcessApi.post();
+	};
+
+	// callback from deleteProcessApi.post()
+	var fnProcessDeleteError = function() {
+
+		var errorCode = ctx.deleteProcessApi.getErrorCode();
+
+		// check for "Database query error"
+		if ( errorCode === "internal_api_error_DBQueryError" && ctx.retries++ < ctx.maxRetries ) {
+
+			ctx.statusElement.info("数据库查询错误，重试");
+			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
+			ctx.deleteProcessApi.post(); // give it another go!
+
+		// hard error, give up
+		} else {
+
+			ctx.statusElement.error( "不能删除页面：" + ctx.deleteProcessApi.getErrorText() );
+			if (ctx.onDeleteFailure) {
+				ctx.onDeleteFailure(this);  // invoke callback
+			}
+		}
 	};
 
 	var fnProcessProtect = function() {
