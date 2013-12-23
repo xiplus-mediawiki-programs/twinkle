@@ -32,12 +32,20 @@ Twinkle.close = function twinkleclose() {
 	var delNode = document.createElement('strong');
 	var delLink = document.createElement('a');
 	delLink.appendChild( spanTag( 'Black', '[' ) );
-	delLink.appendChild( spanTag( 'Red', '结束讨论' ) );
+	delLink.appendChild( spanTag( 'Red', '关闭讨论' ) );
 	delLink.appendChild( spanTag( 'Black', ']' ) );
 	delNode.appendChild(delLink);
 
 	titles.each(function(key, current) {
-		var title = decodeURIComponent($(current).find('.mw-headline a').attr('href').slice(6));
+		var headlinehref = $(current).find('.mw-headline a').attr('href');
+		var title;
+		if (headlinehref.indexOf('redlink=1') === -1) {
+			title = headlinehref.slice(6);
+		}
+		else {
+			title = headlinehref.slice(19, -22);
+		}
+		title = decodeURIComponent(title);
 		var pagenotexist = $(current).find('.mw-headline a').hasClass('new');
 		var section = /section=(\d+)/.exec($(current).find('.mw-editsection a').attr('href'))[1];
 		var node = current.getElementsByClassName('mw-headline')[0];
@@ -199,7 +207,7 @@ Twinkle.close.codes = {
 
 Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 	var Window = new Morebits.simpleWindow( 400, 150 );
-	Window.setTitle( "结束存废讨论" );
+	Window.setTitle( "关闭存废讨论 \u00B7 " + title );
 	Window.setScriptName( "Twinkle" );
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#close" );
 
@@ -222,7 +230,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 		type: 'checkbox',
 		list: [
 			{
-				label: '只结束讨论，不修改页面',
+				label: '只关闭讨论，不进行其他操作',
 				value: 'noop',
 				name: 'noop',
 				checked: noop
@@ -373,7 +381,7 @@ Twinkle.close.callbacks = {
 			Twinkle.close.callbacks.talkend( params );
 			return;
 		}
-		var editsummary = '存废讨论结束：[[' + mw.config.get('wgPageName') + ']]';
+		var editsummary = '存废讨论关闭：[[' + mw.config.get('wgPageName') + ']]';
 
 		pageobj.setPageText(newtext);
 		pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
@@ -386,7 +394,7 @@ Twinkle.close.callbacks = {
 	},
 
 	talkend: function (params) {
-		var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), '结束讨论');
+		var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), '关闭讨论');
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.setPageSection(params.section);
 		wikipedia_page.load(Twinkle.close.callbacks.saveTalk);
@@ -397,7 +405,7 @@ Twinkle.close.callbacks = {
 		var params = pageobj.getCallbackParameters();
 
 		if (text.indexOf('{{delh') !== -1) {
-			statelem.error( "讨论已被结束" );
+			statelem.error( "讨论已被关闭" );
 			return;
 		}
 
