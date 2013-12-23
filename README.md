@@ -71,10 +71,13 @@ Twinkle是维基人用于快速执行常见维护工作（如提交删除候选�
 [Wikipedia:Twinkle]: https://zh.wikipedia.org/wiki/Wikipedia:Twinkle
 [AzaToth]: https://en.wikipedia.org/wiki/User:AzaToth
 [MediaWiki:Gadget-Twinkle.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-Twinkle.js
+[User:AzaToth/twinkle.js]: https://en.wikipedia.org/wiki/User:AzaToth/twinkle.js
 [MediaWiki:Gadget-morebits.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-morebits.js
+[User:AzaToth/morebits.js]: https://en.wikipedia.org/wiki/User:AzaToth/morebits.js
 [MediaWiki:Gadget-morebits.css]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-morebits.css
+[User:AzaToth/morebits.css]: https://en.wikipedia.org/wiki/User:AzaToth/morebits.css
 [MediaWiki:Gadgets-definition]: https://zh.wikipedia.org/wiki/MediaWiki:Gadgets-definition
-[Git::Repository]: http://search.cpan.org/~book/Git-Repository-1.17/lib/Git/Repository.pm
-[Mediawiki::Bot]: http://search.cpan.org/~lifeguard/MediaWiki-Bot-3.2.7/lib/MediaWiki/Bot.pm
-[App::cpanminus]: http://search.cpan.org/~miyagawa/App-cpanminus-1.4001/lib/App/cpanminus.pm
-[jq_style]: http://docs.jquery.com/JQuery_Core_Style_Guidelines
+[Git::Repository]: http://search.cpan.org/perldoc?Git%3A%3ARepository
+[MediaWiki::Bot]: http://search.cpan.org/perldoc?MediaWiki%3A%3ABot
+[App::cpanminus]: http://search.cpan.org/perldoc?App%3A%3Acpanminus
+[jq_style]: http://contribute.jquery.org/style-guide/js/

@@ -276,6 +276,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 				if( current.tooltip ) {
 					Morebits.quickForm.element.generateTooltip( label, current );
 				}
+				// styles go on the label, doesn't make sense to style a checkbox/radio
 				if( current.style ) {
 					subnode.setAttribute( 'style', current.style );
 				}
@@ -1212,6 +1213,8 @@ Morebits.wikipedia.namespaces = {
 	'101': 'Portal talk',
 	'108': 'Book',
 	'109': 'Book talk',
+	'118': 'Draft',
+	'119': 'Draft talk',
 	'446': 'Education Program',
 	'447': 'Education Program talk',
 	'710': 'TimedText',
@@ -1241,6 +1244,8 @@ Morebits.wikipedia.namespacesFriendly = {
 	'101': 'Portal talk',
 	'108': 'Book',
 	'109': 'Book talk',
+	'118': 'Draft',
+	'119': 'Draft talk',
 	'446': 'Education Program',
 	'447': 'Education Program talk',
 	'710': 'TimedText',

@@ -97,8 +97,13 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 	Twinkle.protect.fetchProtectionLevel();
 };
 
-Twinkle.protect.protectionLevel = null;  // a string, or null if no protection (only filled for sysops)
-Twinkle.protect.currentProtectionLevels = null;  // an array of objects { type, level, expiry, cascade }
+// Current protection level in a human-readable format
+// (a string, or null if no protection; only filled for sysops)
+Twinkle.protect.protectionLevel = null;  
+// Contains the current protection level in an object
+// Once filled, it will look something like:
+// { edit: { level: "sysop", expiry: <some date>, cascade: true }, ... }
+Twinkle.protect.currentProtectionLevels = {};
 
 Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLevel() {
 
@@ -115,7 +120,7 @@ Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLev
 		var pageid = data.query.pageids[0];
 		var page = data.query.pages[pageid];
 		var result = [];
-		var current = [];
+		var current = {};
 
 		var updateResult = function(label, level, expiry, cascade) {
 			// for sysops, stringify, so they can base their decision on existing protection
@@ -136,12 +141,11 @@ Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLev
 
 		$.each(page.protection, function( index, protection ) {
 			if (protection.type !== "aft") {
-				current.push({
-					type: protection.type,
+				current[protection.type] = {
 					level: protection.level,
 					expiry: protection.expiry,
-					cascade: protection.cascade && protection.cascade === ''
-				});
+					cascade: protection.cascade === ''
+				};
 				updateResult( Morebits.string.toUpperCaseFirstChar(protection.type), protection.level, protection.expiry, protection.cascade );
 			}
 		});
@@ -1070,7 +1074,8 @@ Twinkle.protect.callbacks = {
 
 		words += params.typename;
 
-		newtag += "请求" + Morebits.string.toUpperCaseFirstChar(words) + ( params.reason !== '' ? "：" + Morebits.string.formatReasonText(params.reason) : "。" ) + "--~~~~";
+		newtag += "请求" + Morebits.string.toUpperCaseFirstChar(words) + ( params.reason !== '' ? "：" +
+			Morebits.string.formatReasonText(params.reason) : "。" ) + "--~~~~";
 
 		var reg;
 

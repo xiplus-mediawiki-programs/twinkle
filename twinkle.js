@@ -62,7 +62,6 @@ Twinkle.defaultConfig.twinkle = {
 	deliWatchUser: "default",
 	 // CSD
 	speedySelectionStyle: "buttonClick",
-	speedyPromptOnG10: false,
 	watchSpeedyPages: [ ],
 	markSpeedyPagesAsPatrolled: true,
 	// these next two should probably be identical by default
