@@ -315,6 +315,11 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 	return $.map(list, function(critElement) {
 		var criterion = $.extend({}, critElement);
 
+		// hack to get the g11 radio / checkbox right
+		if (criterion.value === 'g11') {
+			criterion.style = Twinkle.getPref('enlargeG11Input') ? 'height: 2em; width: 2em; height: -moz-initial; width: -moz-initial; -moz-transform: scale(2); -o-transform: scale(2);' : '';
+		}
+
 		if (!wantSubgroups) {
 			criterion.subgroup = null;
 		}
@@ -444,7 +449,13 @@ Twinkle.speedy.articleList = [
 	{
 		label: 'A5: 条目建立时之内容即与其他现有条目内容完全相同，且名称不适合做为其他条目之重定向。',
 		value: 'a5',
-		tooltip: '条目被建立时，第一个版本的内容与当时其他现存条目完全相同，且这个条目的名称不适合改为重定向，就可以提送快速删除。如果名称可以作为重定向，就应直接改重定向，不要提送快速删除。如果是多个条目合并产生的新条目，不适用。如果是从主条目拆分产生的条目，不适用；如有疑虑，应提送存废讨论处理。'
+		tooltip: '条目被建立时，第一个版本的内容与当时其他现存条目完全相同，且这个条目的名称不适合改为重定向，就可以提送快速删除。如果名称可以作为重定向，就应直接改重定向，不要提送快速删除。如果是多个条目合并产生的新条目，不适用。如果是从主条目拆分产生的条目，不适用；如有疑虑，应提送存废讨论处理。',
+		subgroup: {
+			name: 'a5_pagename',
+			type: 'input',
+			label: '现有条目名：',
+			size: 60
+		}
 	}
 ];
 
@@ -529,7 +540,6 @@ Twinkle.speedy.generalList = [
 		}
 	},
 	{
-		style: Twinkle.getPref('enlargeG11Input') ? 'height: 2em; width: 2em; height: -moz-initial; width: -moz-initial; -moz-transform: scale(2); -o-transform: scale(2);' : '',
 		label: 'G11: 明显的广告宣传页面，或只有相关人物或团体的联系方法的页面',
 		value: 'g11',
 		tooltip: '页面只收宣传之用，并须完全重写才能贴合百科全书要求。须注意，仅仅以某公司或产品为主题的条目，并不直接导致其自然满足此速删标准。'
@@ -1113,6 +1123,18 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 						return false;
 					}
 					currentParams["1"] = dbrationale;
+				}
+				break;
+
+			case 'a5':
+				if (form["csd.a5_pagename"]) {
+					var otherpage = form["csd.a5_pagename"].value;
+					if (!otherpage || !otherpage.trim()) {
+						alert( 'CSD A5：请提供现有条目的名称。' );
+						parameters = null;
+						return false;
+					}
+					currentParams.pagename = otherpage;
 				}
 				break;
 
