@@ -154,6 +154,11 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		afd_category.append( { type:'option', label:'移动到维基文库', value:'vms' } );
 		afd_category.append( { type:'option', label:'移动到维基教科书', value:'vmb' } );
 		afd_category.append( { type:'option', label:'移动到维基语录', value:'vmq' } );
+		afd_category.append( { type:'option', label:'移动到维基导游', value:'vmvoy' } );
+		if ( Morebits.userIsInGroup('sysop') ) {
+			afd_category.append( { type:'option', label:'转交自快速删除候选', value:'fwdcsd' } );
+		}
+
 
 		work_area.append( {
 				type: 'input',
@@ -200,6 +205,11 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdCategory(e) {
 	if( e.target.value === 'merge' ) {
 		e.target.form.mergeinto.disabled = false;
+		e.target.form.mergeinto.previousElementSibling.innerHTML = '合并到：';
+	} else if( e.target.value === 'fwdcsd' ) {
+		e.target.form.mergeinto.disabled = false;
+		e.target.form.mergeinto.previousElementSibling.innerHTML = '提交人：';
+		
 	} else {
 		e.target.form.mergeinto.disabled = true;
 	}
@@ -262,6 +272,9 @@ Twinkle.xfd.callbacks = {
 				case 'vmq':
 					tag += '|q';
 					break;
+				case 'vmvoy':
+					tag += '|voy';
+					break;
 				default:
 					break;
 			}
@@ -312,9 +325,11 @@ Twinkle.xfd.callbacks = {
 				case 'vms':
 				case 'vmb':
 				case 'vmq':
+				case 'vmvoy':
 					type = 'vm';
 					to = params.xfdcat;
 					break;
+				case 'fwdcsd':
 				case 'merge':
 					to = params.mergeinto;
 					/* Fall through */
@@ -431,9 +446,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	if( type === 'afd' ) {
 		var noinclude = e.target.noinclude.checked
 		xfdcat = e.target.xfdcat.value;
-		if( xfdcat === 'merge' ) {
-			mergeinto = e.target.mergeinto.value;
-		}
+		mergeinto = e.target.mergeinto.value;
 	}
 
 	Morebits.simpleWindow.setButtonsEnabled( false );
