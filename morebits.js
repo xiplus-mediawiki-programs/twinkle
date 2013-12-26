@@ -2577,7 +2577,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 			ctx.statusElement.error( "不能删除页面：" + ctx.deleteProcessApi.getErrorText() );
 			if (ctx.onDeleteFailure) {
-				ctx.onDeleteFailure(this);  // invoke callback
+				ctx.onDeleteFailure.call(this, ctx.deleteProcessApi);  // invoke callback
 			}
 		}
 	};
