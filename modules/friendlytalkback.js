@@ -16,7 +16,7 @@
 
 Twinkle.talkback = function() {
 
-	if ( Morebits.getPageAssociatedUser() === false ) {
+	if ( !mw.config.get('wgRelevantUserName') ) {
 		return;
 	}
 
@@ -24,7 +24,7 @@ Twinkle.talkback = function() {
 };
 
 Twinkle.talkback.callback = function( ) {
-	if( Morebits.getPageAssociatedUser() === mw.config.get("wgUserName") && !confirm("您寂寞到了要自己回复自己的程度么？") ){
+	if( mw.config.get('wgRelevantUserName') === mw.config.get("wgUserName") && !confirm("您寂寞到了要自己回复自己的程度么？") ){
 		return;
 	}
 
@@ -101,7 +101,7 @@ Twinkle.talkback.callback.optoutStatus = function(apiobj) {
 	var $el = $(xml).find('el');
 
 	if ($el.length) {
-		Twinkle.talkback.optout = Morebits.getPageAssociatedUser() + "不希望收到回复通告";
+		Twinkle.talkback.optout = mw.config.get('wgRelevantUserName') + "不希望收到回复通告";
 		var url = $el.text();
 		if (url.indexOf("reason=") > -1) {
 			Twinkle.talkback.optout += "：" + decodeURIComponent(url.substring(url.indexOf("reason=") + 7)) + "。";
@@ -236,7 +236,7 @@ var callback_evaluate = function( e ) {
 	var tbtarget = e.target.getChecked( "tbtarget" )[0];
 	var page = null;
 	var section = e.target.section.value;
-	var fullUserTalkPageName = mw.config.get("wgFormattedNamespaces")[ mw.config.get("wgNamespaceIds").user_talk ] + ":" + Morebits.getPageAssociatedUser();
+	var fullUserTalkPageName = mw.config.get("wgFormattedNamespaces")[ mw.config.get("wgNamespaceIds").user_talk ] + ":" + mw.config.get('wgRelevantUserName');
 
 	if( tbtarget === "usertalk" || tbtarget === "other" ) {
 		page = e.target.page.value;
