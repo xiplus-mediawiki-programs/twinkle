@@ -409,6 +409,11 @@ Twinkle.close.callbacks = {
 			return;
 		}
 
+		var sbegin = text.indexOf('<section begin=backlog />') !== -1;
+		var send = text.indexOf('<section end=backlog />') !== -1;
+		text = text.replace('\n<section begin=backlog />', '');
+		text = text.replace('\n<section end=backlog />', '');
+
 		var bar = text.split('\n----\n');
 		var split = bar[0].split('\n');
 
@@ -424,6 +429,13 @@ Twinkle.close.callbacks = {
 
 		if (bar[1]) {
 			text += '\n----\n' + bar.slice(1).join('\n----\n');
+		}
+		if (send) {
+			text += '\n<section end=backlog />';
+		}
+		if (sbegin) {
+			// guaranteed to be at tne end?
+			text += '\n<section begin=backlog />';
 		}
 
 		pageobj.setPageText(text);
