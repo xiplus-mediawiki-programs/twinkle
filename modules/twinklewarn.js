@@ -1137,7 +1137,7 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 };
 
 Twinkle.warn.callbacks = {
-	getWarningWikitext: function(templateName, article, reason) {
+	getWarningWikitext: function(templateName, article, reason, isCustom) {
 		var text = "{{subst:" + templateName;
 
 		if (article) {
@@ -1145,8 +1145,8 @@ Twinkle.warn.callbacks = {
 			text += '|1=' + article;
 		}
 
-		// add extra message for non-block templates
-		if (reason) {
+		if (reason && isCustom) {
+			// we assume that custom warnings lack a {{{2}}} parameter
 			text += "|2=" + reason;
 		}
 		text += '}}';
@@ -1184,7 +1184,8 @@ Twinkle.warn.callbacks = {
 			templatetext = Twinkle.warn.callbacks.getBlockNoticeWikitext(templatename, linkedarticle, form.block_timer.value,
 				form.block_reason.value, Twinkle.warn.messages.block[templatename].indefinite);
 		} else {
-			templatetext = Twinkle.warn.callbacks.getWarningWikitext(templatename, linkedarticle, form.reason.value);
+			templatetext = Twinkle.warn.callbacks.getWarningWikitext(templatename, linkedarticle, 
+				form.reason.value, form.main_group.value === 'custom');
 		}
 
 		form.previewer.beginRender(templatetext);
@@ -1254,7 +1255,8 @@ Twinkle.warn.callbacks = {
 				Morebits.status.info( '信息', '未找到当月标题，将创建新的' );
 				text += "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
 			}
-			text += Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article, params.reason) + "--~~~~";
+			text += Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article, 
+				params.reason, params.main_group === 'custom') + "--~~~~";
 		}
 
 		if ( Twinkle.getPref('showSharedIPNotice') && Morebits.isIPAddress( mw.config.get('wgTitle') ) ) {
