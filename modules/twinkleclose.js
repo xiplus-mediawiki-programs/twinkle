@@ -27,7 +27,7 @@ Twinkle.close = function twinkleclose() {
 	};
 
 	var selector = ':has(.mw-headline a:only-of-type):not(:has(+ div.NavFrame))';
-	var titles = $('#bodyContent').find('h3' + selector + ':not(:has(+ p + h4)), h4' + selector); // really needs to work on
+	var titles = $('#bodyContent').find('h2' + selector + ':not(:has(+ p + h3)), h3' + selector); // really needs to work on
 
 	var delNode = document.createElement('strong');
 	var delLink = document.createElement('a');
