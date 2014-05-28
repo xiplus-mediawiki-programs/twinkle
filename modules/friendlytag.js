@@ -191,7 +191,9 @@ Twinkle.tag.updateSortOrder = function(e) {
 					list: [
 						{ label: "{{notability}}：通用的关注度指引", value: "none" },
 						{ label: "{{notability|Biographies}}：人物传记", value: "Biographies" },
-						{ label: "{{notability|Fiction}}：虚构事物", value: "Films" },
+						{ label: "{{notability|Book}}：书籍", value: "Book" },
+						{ label: "{{notability|Number}}：数字", value: "Number" },
+						{ label: "{{notability|Fiction}}：虚构事物", value: "Fiction" },
 						{ label: "{{notability|Neologisms}}：发明、研究", value: "Neologisms" },
 						{ label: "{{notability|Web}}：网站、网络内容", value: "Web"}
 					]
