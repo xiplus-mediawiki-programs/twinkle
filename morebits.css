@@ -117,9 +117,9 @@ form.quickform .tooltipButton
 }
 
 
-/* Scrollbox styles, for use within Morebits.quickForm */
+/* Scrollbox styles, for use within Morebits.simpleWindow */
 
-div.quickform-scrollbox
+div.morebits-scrollbox
 {
 	background: white;
 	border: 1px solid gray;
@@ -130,14 +130,14 @@ div.quickform-scrollbox
 	padding: 6px 6px 0;
 }
 
-div.quickform-scrollbox h5:first-child
+div.morebits-scrollbox > h5:first-child
 {
 	border: none;
 	margin-top: 0;
 	padding-top: 0;
 }
 
-div.quickform-scrollbox :last-child
+div.morebits-scrollbox > :last-child
 {
 	margin-bottom: 6px;
 }
@@ -168,27 +168,6 @@ div.morebits-previewbox .mw-editsection
 
 
 /* Portlet */
-
-.skin-vector div div.extraMenu h3 span {
-	background-position: 90% 50%;
-}
-
-.skin-vector div.extraMenu h3 a {
-	padding-left: .4em;
-	padding-right: .4em;
-	width: auto;
-	font-size: 0.78em;
-	padding-bottom: 0.5em;
-}
-
-.skin-vector div.extraMenu h3 a span {
-	display: inline-block;
-	font-size: .8em;
-	height: 2.5em;
-	font-weight: normal;
-	padding-top: 1.25em;
-	margin-right: 14px;
-}
 
 .skin-modern #mw_contentwrapper div.portlet {
 	overflow: hidden;
@@ -284,8 +263,6 @@ body .ui-dialog.morebits-dialog .ui-dialog-buttonpane {
 body .ui-dialog.morebits-dialog .ui-dialog-buttonpane button {
 	float: none;
 	margin: .2em 0 -.1em;
-	padding-top: 0;
-	padding-bottom: 0;
 	cursor: auto;
 }
 

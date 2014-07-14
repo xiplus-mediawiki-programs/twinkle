@@ -31,14 +31,7 @@ Twinkle.xfd.currentRationale = null;
 // error callback on Morebits.status.object
 Twinkle.xfd.printRationale = function twinklexfdPrintRationale() {
 	if (Twinkle.xfd.currentRationale) {
-		var p = document.createElement("p");
-		p.textContent = "您理由已在下方提供，如果您想重新提交，请将其复制到一新窗口中：";
-		var pre = document.createElement("pre");
-		pre.className = "toccolours";
-		pre.style.marginTop = "0";
-		pre.textContent = Twinkle.xfd.currentRationale;
-		p.appendChild(pre);
-		Morebits.status.root.appendChild(p);
+		Morebits.status.printUserText(Twinkle.xfd.currentRationale, "您的理由已在下方提供，如果您想重新提交，请将其复制到一新窗口中：");
 		// only need to print the rationale once
 		Twinkle.xfd.currentRationale = null;
 	}
@@ -110,7 +103,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 
 	var oldreasontextbox = form.getElementsByTagName('textarea')[0];
 	var oldreason = (oldreasontextbox ? oldreasontextbox.value : '');
-	
+
 	var appendReasonBox = function twinklexfdAppendReasonBox() {
 		work_area.append( {
 			type: 'textarea',
@@ -230,6 +223,13 @@ Twinkle.xfd.callbacks = {
 			// Notification to first contributor
 			if(params.usertalk) {
 				var initialContrib = pageobj.getCreator();
+
+				// Disallow warning yourself
+				if (initialContrib === mw.config.get('wgUserName')) {
+					pageobj.getStatusElement().warn("您（" + initialContrib + "）创建了该页，跳过通知");
+					return;
+				}
+
 				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
 				var notifytext = "\n{{subst:AFDNote|" + Morebits.pageNameNorm + "}}--~~~~";
 				usertalkpage.setAppendText(notifytext);
@@ -372,6 +372,12 @@ Twinkle.xfd.callbacks = {
 
 			// Notification to first contributor
 			if(params.usertalk) {
+				// Disallow warning yourself
+				if (initialContrib === mw.config.get('wgUserName')) {
+					pageobj.getStatusElement().warn("您（" + initialContrib + "）创建了该页，跳过通知");
+					return;
+				}
+
 				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
 				var notifytext = "\n{{subst:idw|File:" + mw.config.get('wgTitle') + "}}--~~~~";
 				usertalkpage.setAppendText(notifytext);

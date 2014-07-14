@@ -79,7 +79,7 @@ Twinkle.defaultConfig.twinkle = {
 	noLogOnSpeedyNomination: [ "o1" ],
 	enlargeG11Input: true,
 	 // Unlink
-	unlinkNamespaces: [ "0", "100" ],
+	unlinkNamespaces: [ "0", "10", "100", "118" ],
 	 // Warn
 	defaultWarningGroup: "1",
 	showSharedIPNotice: true,
@@ -226,6 +226,7 @@ Twinkle.addPortlet = function( navigation, id, text, type, nextnodeid )
 	}
 
 	//verify/normalize input
+	var skin = mw.config.get("skin");
 	type = ( skin === "vector" && type === "menu" && ( navigation === "left-navigation" || navigation === "right-navigation" )) ? "menu" : "";
 	var outerDivClass;
 	var innerDivClass;
@@ -235,7 +236,7 @@ Twinkle.addPortlet = function( navigation, id, text, type, nextnodeid )
 			if ( navigation !== "portal" && navigation !== "left-navigation" && navigation !== "right-navigation" ) {
 				navigation = "mw-panel";
 			}
-			outerDivClass = ( navigation === "mw-panel" ) ? "portal" : ( type === "menu" ? "vectorMenu extraMenu" : "vectorTabs extraMenu" );
+			outerDivClass = ( navigation === "mw-panel" ) ? "portal" : ( type === "menu" ? "vectorMenu" : "vectorTabs" );
 			innerDivClass = ( navigation === "mw-panel" ) ? "body" : ( type === "menu" ? "menu" : "" );
 			break;
 		case "modern":
@@ -284,21 +285,20 @@ Twinkle.addPortlet = function( navigation, id, text, type, nextnodeid )
 			}
 		});
 
-		span = document.createElement( "span" );
-		span.appendChild( document.createTextNode( text ) );
-		a.appendChild( span );
 		h5.appendChild( a );
 	} else {
 		h5.appendChild( document.createTextNode( text ) );
 	}
 	outerDiv.appendChild( h5 );
 
-	var innerDiv = document.createElement( "div" ); // Not strictly necessary with type vectorTabs, or other skins.
-	innerDiv.className = innerDivClass;
-	outerDiv.appendChild(innerDiv);
+	if ( type === "menu" ) {
+		var innerDiv = document.createElement( "div" );
+		innerDiv.className = innerDivClass;
+		outerDiv.appendChild(innerDiv);
+	}
 
 	var ul = document.createElement( "ul" );
-	innerDiv.appendChild( ul );
+	(innerDiv || outerDiv).appendChild( ul );
 
 	return outerDiv;
 };

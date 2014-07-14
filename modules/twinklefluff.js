@@ -128,8 +128,6 @@ Twinkle.fluff = {
 
 			if( document.getElementById('differences-nextlink') ) {
 				// Not latest revision
-				var curVersion = false;
-
 				var new_rev_url = $("#mw-diff-ntitle1").find("strong a").attr("href");
 				query = new Morebits.queryString( new_rev_url.split( '?', 2 )[1] );
 				var newrev = query.get('oldid');
@@ -204,6 +202,9 @@ Twinkle.fluff = {
 };
 
 Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page ) {
+	if (mw.util.isIPv6Address(vandal)) {
+		vandal = Morebits.sanitizeIPv6(vandal);
+	}
 
 	var pagename = page || mw.config.get('wgPageName');
 	var revid = rev || mw.config.get('wgCurRevisionId');

@@ -31,7 +31,7 @@ Twinkle.tag = function friendlytag() {
 };
 
 Twinkle.tag.callback = function friendlytagCallback( uid ) {
-	var Window = new Morebits.simpleWindow( 630, (Twinkle.tag.mode === "条目") ? 450 : 400 );
+	var Window = new Morebits.simpleWindow( 630, (Twinkle.tag.mode === "条目") ? 500 : 400 );
 	Window.setScriptName( "Twinkle" );
 	// anyone got a good policy/guideline/info page/instructional page link??
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#tag" );
@@ -56,6 +56,25 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 		case '条目':
 			Window.setTitle( "条目维护标记" );
 
+			form.append({
+				type: 'select',
+				name: 'sortorder',
+				label: '察看列表：',
+				tooltip: '您可以在Twinkle参数设置（WP:TWPREFS）中更改此项。',
+				event: Twinkle.tag.updateSortOrder,
+				list: [
+					{ type: 'option', value: 'cat', label: '按类别', selected: Twinkle.getFriendlyPref('tagArticleSortOrder') === 'cat' },
+					{ type: 'option', value: 'alpha', label: '按字母', selected: Twinkle.getFriendlyPref('tagArticleSortOrder') === 'alpha' }
+				]
+			});
+
+			form.append({
+				type: 'div',
+				id: 'tagWorkArea',
+				className: 'morebits-scrollbox',
+				style: 'max-height: 28em'
+			});
+
 			form.append( {
 					type: 'checkbox',
 					list: [
@@ -70,24 +89,6 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 				}
 			);
 
-			form.append({
-				type: 'select',
-				name: 'sortorder',
-				label: '察看列表：',
-				tooltip: '您可以在Twinkle参数设置中更改此项。',
-				event: Twinkle.tag.updateSortOrder,
-				list: [
-					{ type: 'option', value: 'cat', label: '按类别', selected: Twinkle.getFriendlyPref('tagArticleSortOrder') === 'cat' },
-					{ type: 'option', value: 'alpha', label: '按字母', selected: Twinkle.getFriendlyPref('tagArticleSortOrder') === 'alpha' }
-				]
-			});
-
-			form.append( { type: 'div', id: 'tagWorkArea' } );
-
-			if( Twinkle.getFriendlyPref('customTagList').length ) {
-				form.append( { type:'header', label:'自定义模板' } );
-				form.append( { type: 'checkbox', name: 'articleTags', list: Twinkle.getFriendlyPref('customTagList') } );
-			}
 			break;
 
 		case '重定向':
@@ -126,12 +127,13 @@ Twinkle.tag.checkedTags = [];
 
 Twinkle.tag.updateSortOrder = function(e) {
 	var sortorder = e.target.value;
-	var $workarea = $(e.target.form).find("div#tagWorkArea");
 
 	Twinkle.tag.checkedTags = e.target.form.getChecked("articleTags");
 	if (!Twinkle.tag.checkedTags) {
 		Twinkle.tag.checkedTags = [];
 	}
+	
+	var container = new Morebits.quickForm.element({ type: "fragment" });
 
 	// function to generate a checkbox, with appropriate subgroup if needed
 	var makeCheckbox = function(tag, description) {
@@ -203,11 +205,6 @@ Twinkle.tag.updateSortOrder = function(e) {
 
 	// categorical sort order
 	if (sortorder === "cat") {
-		var div = new Morebits.quickForm.element({
-			type: "div",
-			id: "tagWorkArea"
-		});
-
 		// function to iterate through the tags and create a checkbox for each one
 		var doCategoryCheckboxes = function(subdiv, array) {
 			var checkboxes = [];
@@ -225,8 +222,8 @@ Twinkle.tag.updateSortOrder = function(e) {
 		var i = 0;
 		// go through each category and sub-category and append lists of checkboxes
 		$.each(Twinkle.tag.article.tagCategories, function(title, content) {
-			div.append({ type: "header", id: "tagHeader" + i, label: title });
-			var subdiv = div.append({ type: "div", id: "tagSubdiv" + i++ });
+			container.append({ type: "header", id: "tagHeader" + i, label: title });
+			var subdiv = container.append({ type: "div", id: "tagSubdiv" + i++ });
 			if ($.isArray(content)) {
 				doCategoryCheckboxes(subdiv, content);
 			} else {
@@ -236,12 +233,6 @@ Twinkle.tag.updateSortOrder = function(e) {
 				});
 			}
 		});
-
-		var rendered = div.render();
-		$workarea.replaceWith(rendered);
-		var $rendered = $(rendered);
-		$rendered.find("h5").css({ 'font-size': '110%', 'margin-top': '1em' });
-		$rendered.find("div").filter(":has(span.quickformDescription)").css({ 'margin-top': '0.4em' });
 	}
 	// alphabetical sort order
 	else {
@@ -249,13 +240,38 @@ Twinkle.tag.updateSortOrder = function(e) {
 		$.each(Twinkle.tag.article.tags, function(tag, description) {
 			checkboxes.push(makeCheckbox(tag, description));
 		});
-		var tags = new Morebits.quickForm.element({
+		container.append({
 			type: "checkbox",
 			name: "articleTags",
 			list: checkboxes
 		});
-		$workarea.empty().append(tags.render());
 	}
+
+	// append any custom tags
+	if (Twinkle.getFriendlyPref('customTagList').length) {
+		container.append({ type: 'header', label: '自定义模板' });
+		container.append({ type: 'checkbox', name: 'articleTags', list: Twinkle.getFriendlyPref('customTagList') });
+	}
+
+	var $workarea = $(e.target.form).find("div#tagWorkArea");
+	var rendered = container.render();
+	$workarea.empty().append(rendered);
+
+	// style adjustments
+	$workarea.find("h5").css({ 'font-size': '110%' });
+	$workarea.find("h5:not(:first-child)").css({ 'margin-top': '1em' });
+	$workarea.find("div").filter(":has(span.quickformDescription)").css({ 'margin-top': '0.4em' });
+
+	// add a link to each template's description page
+	$.each(Morebits.quickForm.getElements(e.target.form, "articleTags"), function(index, checkbox) {
+		var $checkbox = $(checkbox);
+		var link = Morebits.htmlNode("a", ">");
+		link.setAttribute("class", "tag-template-link");
+		link.setAttribute("href", mw.util.getUrl("Template:" + 
+			Morebits.string.toUpperCaseFirstChar($checkbox.val())));
+		link.setAttribute("target", "_blank");
+		$checkbox.parent().append(["\u00A0", link]);
+	});
 };
 
 

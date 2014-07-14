@@ -61,6 +61,63 @@ Morebits.isIPAddress = function ( address ) {
 
 
 /**
+ * **************** Morebits.sanitizeIPv6() ****************
+ * JavaScript translation of the MediaWiki core function IP::sanitizeIP() in
+ * includes/utils/IP.php.
+ * Converts an IPv6 address to the canonical form stored and used by MediaWiki.
+ */
+
+Morebits.sanitizeIPv6 = function ( address ) {
+	address = address.trim();
+	if ( address === '' ) {
+		return null;
+	}
+	if ( mw.util.isIPv4Address( address ) || !mw.util.isIPv6Address( address ) ) {
+		return address; // nothing else to do for IPv4 addresses or invalid ones
+	}
+	// Remove any whitespaces, convert to upper case
+	address = address.toUpperCase();
+	// Expand zero abbreviations
+	var abbrevPos = address.indexOf( '::' );
+	if ( abbrevPos > -1 ) {
+		// We know this is valid IPv6. Find the last index of the
+		// address before any CIDR number (e.g. "a:b:c::/24").
+		var CIDRStart = address.indexOf( '/' );
+		var addressEnd = ( CIDRStart > -1 ) ? CIDRStart - 1 : address.length - 1;
+		// If the '::' is at the beginning...
+		var repeat, extra, pad;
+		if ( abbrevPos === 0 ) {
+			repeat = '0:';
+			extra = ( address == '::' ) ? '0' : ''; // for the address '::'
+			pad = 9; // 7+2 (due to '::')
+		// If the '::' is at the end...
+		} else if ( abbrevPos === ( addressEnd - 1 ) ) {
+			repeat = ':0';
+			extra = '';
+			pad = 9; // 7+2 (due to '::')
+		// If the '::' is in the middle...
+		} else {
+			repeat = ':0';
+			extra = ':';
+			pad = 8; // 6+2 (due to '::')
+		}
+		var replacement = repeat;
+		pad -= address.split( ':' ).length - 1;
+		for ( var i = 1; i < pad; i++ ) {
+			replacement += repeat;
+		}
+		replacement += extra;
+		address = address.replace( '::', replacement );
+	}
+	// Remove leading zeros from each bloc as needed
+	address = address.replace( /(^|:)0+([0-9A-Fa-f]{1,4})/g, '$1$2' );
+
+	return address;
+};
+
+
+
+/**
  * **************** Morebits.quickForm ****************
  * Morebits.quickForm is a class for creation of simple and standard forms without much
  * specific coding.
@@ -97,8 +154,10 @@ Morebits.isIPAddress = function ( address ) {
  *              - Attributes: name, label, disabled, event
  *   textarea  A big, multi-line text box.
  *              - Attributes: name, label, value, cols, rows, disabled, readonly
+ *   fragment  A DocumentFragment object.
+ *              - No attributes, and no global attributes except adminonly
  *
- * Global attributes: id, style, tooltip, extra, adminonly
+ * Global attributes: id, className, style, tooltip, extra, adminonly
  */
 
 Morebits.quickForm = function QuickForm( event, eventType ) {
@@ -165,6 +224,10 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 			node.addEventListener( data.eventType || 'submit', data.event , false );
 		}
 		break;
+	case 'fragment':
+		node = document.createDocumentFragment();
+		// fragments can't have any attributes, so just return it straight away
+		return [ node, node ];
 	case 'select':
 		node = document.createElement( 'div' );
 
@@ -581,6 +644,11 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 	}
 	if( data.style ) {
 		childContainder.setAttribute( 'style', data.style );
+	}
+	if( data.className ) {
+		childContainder.className = ( childContainder.className ? 
+			childContainder.className + " " + data.className :
+			data.className );
 	}
 	childContainder.setAttribute( 'id', data.id || id );
 
@@ -3187,6 +3255,20 @@ Morebits.status.error = function( text, status ) {
 	return new Morebits.status( text, status, 'error' );
 };
 
+// display the user's rationale, comments, etc. back to them after a failure,
+// so they don't use it
+Morebits.status.printUserText = function( comments, message ) {
+	var p = document.createElement( 'p' );
+	p.textContent = message;
+	var div = document.createElement( 'div' );
+	div.className = 'toccolours';
+	div.style.marginTop = '0';
+	div.style.whiteSpace = 'pre-wrap';
+	div.textContent = comments;
+	p.appendChild( div );
+	Morebits.status.root.appendChild( p );
+};
+
 
 
 /**
@@ -3206,6 +3288,53 @@ Morebits.htmlNode = function ( type, content, color ) {
 
 
 /**
+ * **************** Morebits.checkboxClickHandler() ****************
+ * shift-click-support for checkboxes
+ * wikibits version (window.addCheckboxClickHandlers) has some restrictions, and doesn't work with checkboxes inside a sortable table, so let's build our own.
+ */
+
+Morebits.checkboxShiftClickSupport = function (jQuerySelector, jQueryContext)
+{
+	var lastCheckbox = null;
+
+	function clickHandler(event) {
+		var cb = this;
+		if (event.shiftKey && lastCheckbox!==null)
+		{
+			var cbs = $(jQuerySelector, jQueryContext); //can't cache them, obviously, if we want to support resorting
+			var index=-1, lastIndex=-1;
+			for (var i=0; i<cbs.length; i++)
+			{
+				if (cbs[i]==cb) { index=i; if (lastIndex>-1) break; }
+				if (cbs[i]==lastCheckbox) { lastIndex=i; if (index>-1) break; }
+			}
+			if (index>-1 && lastIndex>-1)
+			{
+				//inspired by wikibits
+				var endState = cb.checked;
+				var start, finish;
+				if (index<lastIndex)
+				{
+					start = index+1;
+					finish = lastIndex;
+				}
+				else
+				{
+					start = lastIndex;
+					finish = index-1;
+				}
+				for (var i=start; i<=finish; i++) cbs[i].checked = endState;
+			}
+		}
+		lastCheckbox = cb;
+		return true;
+	};
+
+  $(jQuerySelector, jQueryContext).click(clickHandler);
+};
+
+
+/**
  * **************** Morebits.simpleWindow ****************
  * A simple draggable window
  * now a wrapper for jQuery UI's dialog feature
@@ -3216,6 +3345,7 @@ Morebits.simpleWindow = function SimpleWindow( width, height ) {
 	var content = document.createElement( 'div' );
 	this.content = content;
 	content.className = 'morebits-dialog-content';
+	content.id = 'morebits-dialog-content-' + Math.round(Math.random() * 1e15);
 
 	this.height = height;
 
@@ -3233,8 +3363,20 @@ Morebits.simpleWindow = function SimpleWindow( width, height ) {
 				// dialogs and their content can be destroyed once closed
 				$(event.target).dialog("destroy").remove();
 			},
+			resizeStart: function(event, ui) {
+				this.scrollbox = $(this).find(".morebits-scrollbox")[0];
+				if (this.scrollbox) {
+					this.scrollbox.style.maxHeight = "none";
+				}
+			},
+			resizeEnd: function(event, ui) {
+				this.scrollbox = null;
+			},
 			resize: function(event, ui) {
 				this.style.maxHeight = "";
+				if (this.scrollbox) {
+					this.scrollbox.style.width = "";
+				}
 			}
 		});
 
@@ -3256,6 +3398,9 @@ Morebits.simpleWindow = function SimpleWindow( width, height ) {
 	var linksspan = document.createElement("span");
 	linksspan.className = "morebits-dialog-footerlinks";
 	$widget.find(".ui-dialog-buttonpane").append(buttonspan, linksspan);
+	
+	// resize the scrollbox with the dialog, if one is present
+	$widget.resizable("option", "alsoResize", "#" + this.content.id + " .morebits-scrollbox, #" + this.content.id);
 };
 
 Morebits.simpleWindow.prototype = {
@@ -3411,7 +3556,7 @@ Morebits.simpleWindow.prototype = {
 // Morebits.simpleWindow object sitting around somewhere. Anyway, most of the time there will only be one
 // Morebits.simpleWindow open, so this shouldn't matter.
 Morebits.simpleWindow.setButtonsEnabled = function( enabled ) {
-	$(".morebits-dialog-buttons button").attr("disabled", !enabled);
+	$(".morebits-dialog-buttons button").prop("disabled", !enabled);
 };
 
 

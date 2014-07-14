@@ -209,7 +209,6 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 
 Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(form) {
 	var namespace = mw.config.get('wgNamespaceNumber');
-	var form = form;
 
 	// first figure out what mode we're in
 	var mode = Twinkle.speedy.mode.userSingleSubmit;
@@ -301,16 +300,16 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 	var hasSubmitButton = Twinkle.speedy.mode.hasSubmitButton(mode);
 
 	var openSubgroupHandler = function(e) { 
-		$(e.target.form).find('input').attr('disabled', 'disabled');
+		$(e.target.form).find('input').prop('disabled', true);
 		$(e.target.form).children().css('color', 'gray');
-		$(e.target).parent().css('color', 'black').find('input').attr('disabled', false);
+		$(e.target).parent().css('color', 'black').find('input').prop('disabled', false);
 		$(e.target).parent().find('input:text')[0].focus();
 		e.stopPropagation();
 	};
 	var submitSubgroupHandler = function(e) {
 		Twinkle.speedy.callback.evaluateUser(e);
 		e.stopPropagation();
-	}
+	};
 
 	return $.map(list, function(critElement) {
 		var criterion = $.extend({}, critElement);
@@ -380,7 +379,7 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 
 		return criterion;
 	});
-}
+};
 
 Twinkle.speedy.fileList = [
 	{
@@ -924,6 +923,7 @@ Twinkle.speedy.callbacks = {
 			var code, parameters, i;
 			if (params.normalizeds.length > 1) {
 				code = "{{delete";
+				params.utparams = {};
 				$.each(params.normalizeds, function(index, norm) {
 					code += "|" + norm.toUpperCase();
 					parameters = params.templateParams[index] || [];
@@ -932,9 +932,9 @@ Twinkle.speedy.callbacks = {
 							code += "|" + parameters[i];
 						}
 					}
+					$.extend(params.utparams, Twinkle.speedy.getUserTalkParameters(norm, parameters));
 				});
 				code += "}}";
-				params.utparams = [];
 			} else {
 				parameters = params.templateParams[0] || [];
 				code = "{{delete";
@@ -1008,7 +1008,7 @@ Twinkle.speedy.callbacks = {
 					}
 
 					var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）"),
-					    notifytext, i;
+						notifytext, i;
 
 					notifytext = "\n{{subst:db-notice|target=" + Morebits.pageNameNorm;
 					notifytext += (params.welcomeuser ? "" : "|nowelcome=yes") + "}}--~~~~";

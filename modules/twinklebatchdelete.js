@@ -380,7 +380,7 @@ Twinkle.batchdelete.callbacks = {
 			Morebits.wiki.actionCompleted();
 			return;
 		}
-		pageobj.setEditSummary('取消到页面 ' + self.params.page + ' 的链接' + Twinkle.getPref('deletionSummaryAd'));
+		pageobj.setEditSummary('取消到页面 ' + params.page + ' 的链接' + Twinkle.getPref('deletionSummaryAd'));
 		pageobj.setPageText(text);
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(params.onsuccess);
