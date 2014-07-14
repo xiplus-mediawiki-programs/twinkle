@@ -1145,11 +1145,11 @@ Twinkle.warn.callbacks = {
 			text += '|1=' + article;
 		}
 
-		if (reason && isCustom) {
+		if (reason && !isCustom) {
 			// we assume that custom warnings lack a {{{2}}} parameter
 			text += "|2=" + reason;
 		}
-		text += '}}';
+		text += '|subst=subst:}}';
 
 		return text;
 	},
@@ -1172,7 +1172,7 @@ Twinkle.warn.callbacks = {
 			text += '|reason=' + blockReason;
 		}
 
-		text += "|sig=true}}";
+		text += "|sig=true|subst=subst:}}";
 		return text;
 	},
 	preview: function(form) {
