@@ -296,6 +296,7 @@ Twinkle.tag.article.tags = {
 	"cleanup": "可能需要进行清理，以符合维基百科的质量标准",
 	"cleanup-jargon": "包含过多行话或专业术语，可能需要简化或提出进一步解释",
 	"coi": "主要贡献者与本条目所宣扬的内容可能存在利益冲突",
+	"copypaste": "内容可能是从某个来源处拷贝后贴上",
 	"contradict": "内容自相矛盾",
 	"copyedit": "需要编修，以确保文法、用词、语气、格式、标点等使用恰当",
 	"dead end": "需要更多内部连接以构筑百科全书的链接网络",
@@ -353,6 +354,7 @@ Twinkle.tag.article.tagCategories = {
 			"copyedit"
 		],
 		"可能多余的内容": [
+			"copypaste",
 			"external links",
 			"non-free"
 		],
