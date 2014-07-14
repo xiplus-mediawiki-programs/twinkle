@@ -170,24 +170,30 @@ Twinkle.image.callbacks = {
 	userNotification: function(pageobj) {
 		var params = pageobj.getCallbackParameters();
 		var initialContrib = pageobj.getCreator();
-		var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知上传者(" + initialContrib + ")");
-		var notifytext = "\n{{subst:Uploadvionotice|" + Morebits.pageNameNorm + "}}--~~~~";
-		usertalkpage.setAppendText(notifytext);
-		usertalkpage.setEditSummary("通知：文件[[" + Morebits.pageNameNorm + "]]快速删除提名。" + Twinkle.getPref('summaryAd'));
-		usertalkpage.setCreateOption('recreate');
-		switch (Twinkle.getPref('deliWatchUser')) {
-			case 'yes':
-				usertalkpage.setWatchlist(true);
-				break;
-			case 'no':
-				usertalkpage.setWatchlistFromPreferences(false);
-				break;
-			default:
-				usertalkpage.setWatchlistFromPreferences(true);
-				break;
+
+		// disallow warning yourself
+		if (initialContrib === mw.config.get('wgUserName')) {
+			pageobj.getStatusElement().warn("您（" + initialContrib + "）创建了该页，跳过通知");
+		} else {
+			var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知上传者(" + initialContrib + ")");
+			var notifytext = "\n{{subst:Uploadvionotice|" + Morebits.pageNameNorm + "}}--~~~~";
+			usertalkpage.setAppendText(notifytext);
+			usertalkpage.setEditSummary("通知：文件[[" + Morebits.pageNameNorm + "]]快速删除提名。" + Twinkle.getPref('summaryAd'));
+			usertalkpage.setCreateOption('recreate');
+			switch (Twinkle.getPref('deliWatchUser')) {
+				case 'yes':
+					usertalkpage.setWatchlist(true);
+					break;
+				case 'no':
+					usertalkpage.setWatchlistFromPreferences(false);
+					break;
+				default:
+					usertalkpage.setWatchlistFromPreferences(true);
+					break;
+			}
+			usertalkpage.setFollowRedirect(true);
+			usertalkpage.append();
 		}
-		usertalkpage.setFollowRedirect(true);
-		usertalkpage.append();
 
 		// add this nomination to the user's userspace log, if the user has enabled it
 		if (params.lognomination) {

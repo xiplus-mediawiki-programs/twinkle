@@ -321,6 +321,9 @@ Twinkle.addPortletLink = function( task, text, id, tooltip )
 			ev.preventDefault();
 		});
 	}
+	if ( $.collapsibleTabs ) {
+		$.collapsibleTabs.handleResize();
+	}
 	return link;
 };
 

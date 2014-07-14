@@ -1001,31 +1001,35 @@ Twinkle.speedy.callbacks = {
 				var callback = function(pageobj) {
 					var initialContrib = pageobj.getCreator();
 
+					// disallow warning yourself
+					if (initialContrib === mw.config.get('wgUserName')) {
+						Morebits.status.warn("您（" + initialContrib + "）创建了该页，跳过通知");
+
 					// don't notify users when their user talk page is nominated
-					if (initialContrib === mw.config.get('wgTitle') && mw.config.get('wgNamespaceNumber') === 3) {
+					} else if (initialContrib === mw.config.get('wgTitle') && mw.config.get('wgNamespaceNumber') === 3) {
 						Morebits.status.warn("通知页面创建者：用户创建了自己的对话页");
-						return;
-					}
 
-					var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）"),
-						notifytext, i;
-
-					notifytext = "\n{{subst:db-notice|target=" + Morebits.pageNameNorm;
-					notifytext += (params.welcomeuser ? "" : "|nowelcome=yes") + "}}--~~~~";
-
-					var editsummary = "通知：";
-					if (params.normalizeds.indexOf("g12") === -1) {  // no article name in summary for G10 deletions
-						editsummary += "页面[[" + Morebits.pageNameNorm + "]]";
 					} else {
-						editsummary += "一攻击性页面";
-					}
-					editsummary += "快速删除提名";
+						var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）"),
+							notifytext, i;
 
-					usertalkpage.setAppendText(notifytext);
-					usertalkpage.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
-					usertalkpage.setCreateOption('recreate');
-					usertalkpage.setFollowRedirect(true);
-					usertalkpage.append();
+						notifytext = "\n{{subst:db-notice|target=" + Morebits.pageNameNorm;
+						notifytext += (params.welcomeuser ? "" : "|nowelcome=yes") + "}}--~~~~";
+
+						var editsummary = "通知：";
+						if (params.normalizeds.indexOf("g12") === -1) {  // no article name in summary for G10 deletions
+							editsummary += "页面[[" + Morebits.pageNameNorm + "]]";
+						} else {
+							editsummary += "一攻击性页面";
+						}
+						editsummary += "快速删除提名";
+
+						usertalkpage.setAppendText(notifytext);
+						usertalkpage.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
+						usertalkpage.setCreateOption('recreate');
+						usertalkpage.setFollowRedirect(true);
+						usertalkpage.append();
+					}
 
 					// add this nomination to the user's userspace log, if the user has enabled it
 					if (params.lognomination) {
@@ -1286,12 +1290,6 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 	var normalizeds = [];
 	$.each(values, function(index, value) {
 		var norm = Twinkle.speedy.normalizeHash[ value ];
-
-		// for sysops only
-		if (['f3', 'f4'].indexOf(norm) !== -1) {
-			alert("您不能使用此工具标记CSD F3、F4，请使用“图版”工具，或取消勾选“仅标记”。");
-			return;
-		}
 
 		normalizeds.push(norm);
 	});

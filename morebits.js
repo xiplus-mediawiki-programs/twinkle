@@ -341,7 +341,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 				}
 				// styles go on the label, doesn't make sense to style a checkbox/radio
 				if( current.style ) {
-					subnode.setAttribute( 'style', current.style );
+					label.setAttribute( 'style', current.style );
 				}
 
 				var event;
@@ -1973,7 +1973,10 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		ctx.onSaveSuccess = onSuccess;
 		ctx.onSaveFailure = onFailure || emptyFunction;
 
-		if (!ctx.pageLoaded) {
+		// are we getting our edit token from mw.user.tokens?
+		var canUseMwUserToken = fnCanUseMwUserToken('edit');
+
+		if (!ctx.pageLoaded && !canUseMwUserToken) {
 			ctx.statusElement.error("内部错误：试图保存未被加载的页面！");
 			ctx.onSaveFailure(this);
 			return;
@@ -1984,6 +1987,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			return;
 		}
 
+		// shouldn't happen if canUseMwUserToken === true
 		if (ctx.fullyProtected && !ctx.suppressProtectWarning && 
 			!confirm('您即将编辑全保护页面 "' + ctx.pageName +
 			(ctx.fullyProtected === 'infinity' ? '（永久）' : ('（到期：' + ctx.fullyProtected + ')')) +
@@ -1999,7 +2003,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			action: 'edit',
 			title: ctx.pageName,
 			summary: ctx.editSummary,
-			token: ctx.editToken,
+			token: canUseMwUserToken ? mw.user.tokens.get('editToken') : ctx.editToken,
 			watchlist: ctx.watchlistOption
 		};
 
@@ -2047,6 +2051,10 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query[ctx.createOption] = '';
 		}
 
+		if (canUseMwUserToken && ctx.followRedirect) {
+			query.redirect = true;
+		}
+
 		ctx.saveApi = new Morebits.wiki.api( "保存页面…", query, fnSaveSuccess, ctx.statusElement, fnSaveError);
 		ctx.saveApi.setParent(this);
 		ctx.saveApi.post();
@@ -2054,16 +2062,26 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 	this.append = function(onSuccess, onFailure) {
 		ctx.editMode = 'append';
-		ctx.onSaveSuccess = onSuccess;
-		ctx.onSaveFailure = onFailure || emptyFunction;
-		this.load(fnAutoSave, ctx.onSaveFailure);
+
+		if (fnCanUseMwUserToken('edit')) {
+			this.save(onSuccess, onFailure);
+		} else {
+			ctx.onSaveSuccess = onSuccess;
+			ctx.onSaveFailure = onFailure || emptyFunction;
+			this.load(fnAutoSave, ctx.onSaveFailure);
+		}
 	};
 
 	this.prepend = function(onSuccess, onFailure) {
 		ctx.editMode = 'prepend';
-		ctx.onSaveSuccess = onSuccess;
-		ctx.onSaveFailure = onFailure || emptyFunction;
-		this.load(fnAutoSave, ctx.onSaveFailure);
+
+		if (fnCanUseMwUserToken('edit')) {
+			this.save(onSuccess, onFailure);
+		} else {
+			ctx.onSaveSuccess = onSuccess;
+			ctx.onSaveFailure = onFailure || emptyFunction;
+			this.load(fnAutoSave, ctx.onSaveFailure);
+		}
 	};
 
 	this.lookupCreator = function(onSuccess) {
@@ -2180,20 +2198,24 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			return;
 		}
 
-		var query = {
-			action: 'query',
-			prop: 'info',
-			inprop: 'protection',
-			intoken: 'delete',
-			titles: ctx.pageName
-		};
-		if (ctx.followRedirect) {
-			query.redirects = '';  // follow all redirects
-		}
+		if (fnCanUseMwUserToken('delete')) {
+			fnProcessDelete.call(this, this);
+		} else {
+			var query = {
+				action: 'query',
+				prop: 'info',
+				inprop: 'protection',
+				intoken: 'delete',
+				titles: ctx.pageName
+			};
+			if (ctx.followRedirect) {
+				query.redirects = '';  // follow all redirects
+			}
 
-		ctx.deleteApi = new Morebits.wiki.api("抓取删除令牌…", query, fnProcessDelete, ctx.statusElement, ctx.onDeleteFailure);
-		ctx.deleteApi.setParent(this);
-		ctx.deleteApi.post();
+			ctx.deleteApi = new Morebits.wiki.api("抓取删除令牌…", query, fnProcessDelete, ctx.statusElement, ctx.onDeleteFailure);
+			ctx.deleteApi.setParent(this);
+			ctx.deleteApi.post();
+		}
 	};
 
 	this.protect = function(onSuccess, onFailure) {
@@ -2217,6 +2239,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			return;
 		}
 
+		// because of the way MW API interprets protection levels (absolute, not
+		// differential), we need to request protection levels from the server
 		var query = {
 			action: 'query',
 			prop: 'info',
@@ -2273,11 +2297,44 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		ctx.stabilizeApi.post();
 	};
 
-	/**
-	 * Private member functions
+	/* Private member functions
 	 *
 	 * These are not exposed outside
 	 */
+
+	/**
+	 * Determines whether we can save an API call by using the edit token sent with the page
+	 * HTML, or whether we need to ask the server for more info (e.g. protection expiry).
+	 *
+	 * Currently only used for append, prepend, and deletePage.
+	 *
+	 * @param {string} action  The action being undertaken, e.g. "edit", "delete".
+	 */
+	var fnCanUseMwUserToken = function(action) {
+		// API-based redirect resolution only works for action=query and 
+		// action=edit in append/prepend modes (and section=new, but we don't
+		// really support that)
+		if (ctx.followRedirect && (action !== 'edit' ||
+			(ctx.editMode !== 'append' && ctx.editMode !== 'prepend'))) {
+			return false;
+		}
+
+		// do we need to fetch the edit protection expiry?
+		if (Morebits.userIsInGroup('sysop') && !ctx.suppressProtectWarning) {
+			// poor man's normalisation
+			if (Morebits.string.toUpperCaseFirstChar(mw.config.get('wgPageName')).replace(/ /g, '_').trim() !==
+				Morebits.string.toUpperCaseFirstChar(ctx.pageName).replace(/ /g, '_').trim()) {
+				return false;
+			}
+
+			var editRestriction = mw.config.get('wgRestrictionEdit');
+			if (!editRestriction || editRestriction.indexOf('sysop') !== -1) {
+				return false;
+			}
+		}
+
+		return !!mw.user.tokens.get('editToken');
+	};
 
 	// callback from loadSuccess() for append() and prepend() threads
 	var fnAutoSave = function(pageobj) {
@@ -2459,7 +2516,11 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
 
 			ctx.statusElement.info("检测到编辑冲突，重试修改");
-			ctx.loadApi.post(); // reload the page and reapply the edit
+			if (fnCanUseMwUserToken('edit')) {
+				ctx.saveApi.post(); // necessarily append or prepend, so this should work as desired
+			} else {
+				ctx.loadApi.post(); // reload the page and reapply the edit
+			}
 
 		// check for loss of edit token
 		// it's impractical to request a new token here, so invoke edit conflict logic when this happens
@@ -2467,7 +2528,11 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 			ctx.statusElement.info("编辑令牌不可用，重试");
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
-			ctx.loadApi.post(); // reload
+			if (fnCanUseMwUserToken('edit')) {
+				this.load(fnAutoSave, ctx.onSaveFailure); // try the append or prepend again
+			} else {
+				ctx.loadApi.post(); // reload the page and reapply the edit
+			}
 
 		// check for network or server error
 		} else if ( errorCode === "undefined" && ctx.retries++ < ctx.maxRetries ) {
@@ -2565,36 +2630,45 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	};
 
 	var fnProcessDelete = function() {
-		var xml = ctx.deleteApi.getXML();
+		var pageTitle, token;
 
-		if ($(xml).find('page').attr('missing') === "") {
-			ctx.statusElement.error("不能删除页面，因其已不存在");
-			ctx.onDeleteFailure(this);
-			return;
-		}
+		if (fnCanUseMwUserToken('delete')) {
+			token = mw.user.tokens.get('editToken');
+			pageTitle = ctx.pageName;
+		} else {
+			var xml = ctx.deleteApi.getXML();
 
-		// extract protection info
-		var editprot = $(xml).find('pr[type="edit"]');
-		if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !ctx.suppressProtectWarning && 
-			!confirm('您即将删除全保护页面“' + ctx.pageName + "”" +
-			(editprot.attr('expiry') === 'infinity' ? '（永久）' : ('（到期 ' + editprot.attr('expiry') + '）')) +
-			'。\n\n点击确定以确定，或点击取消以取消。')) {
-			ctx.statusElement.error("对全保护页面的删除已取消。");
-			ctx.onDeleteFailure(this);
-			return;
-		}
+			if ($(xml).find('page').attr('missing') === "") {
+				ctx.statusElement.error("不能删除页面，因其已不存在");
+				ctx.onDeleteFailure(this);
+				return;
+			}
 
-		var deleteToken = $(xml).find('page').attr('deletetoken');
-		if (!deleteToken) {
-			ctx.statusElement.error("不能抓取删除令牌。");
-			ctx.onDeleteFailure(this);
-			return;
+			// extract protection info
+			var editprot = $(xml).find('pr[type="edit"]');
+			if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !ctx.suppressProtectWarning &&
+				!confirm('您即将删除全保护页面“' + ctx.pageName + "”" +
+				(editprot.attr('expiry') === 'infinity' ? '（永久）' : ('（到期 ' + editprot.attr('expiry') + '）')) +
+				'。\n\n点击确定以确定，或点击取消以取消。')) {
+				ctx.statusElement.error("对全保护页面的删除已取消。");
+				ctx.onDeleteFailure(this);
+				return;
+			}
+
+			token = $(xml).find('page').attr('deletetoken');
+			if (!token) {
+				ctx.statusElement.error("不能抓取删除令牌。");
+				ctx.onDeleteFailure(this);
+				return;
+			}
+
+			pageTitle = $(xml).find('page').attr('title');
 		}
 
 		var query = {
 			'action': 'delete',
-			'title': $(xml).find('page').attr('title'),
-			'token': deleteToken,
+			'title': pageTitle,
+			'token': token,
 			'reason': ctx.editSummary
 		};
 		if (ctx.watchlistOption === 'watch') {
@@ -2618,6 +2692,21 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
 			ctx.deleteProcessApi.post(); // give it another go!
 
+		} else if ( errorCode === "badtoken" ) {
+			// this is pathetic, but given the current state of Morebits.wiki.page it would
+			// be a dog's breakfast to try and fix this
+			ctx.statusElement.error("无效令牌，请刷新页面并重试。");
+			if (ctx.onDeleteFailure) {
+				ctx.onDeleteFailure.call(this, this, ctx.deleteProcessApi);
+			}
+
+		} else if ( errorCode === "missingtitle" ) {
+		
+			ctx.statusElement.error("不能删除页面，因其已不存在");
+			if (ctx.onDeleteFailure) {
+				ctx.onDeleteFailure.call(this, ctx.deleteProcessApi);  // invoke callback
+			}
+			
 		// hard error, give up
 		} else {
 
@@ -2847,7 +2936,7 @@ Morebits.wikitext.template = {
 				++level;
 				continue;
 			}
-			if( test2 === '[[' ) {
+			if( test2 === ']]' ) {
 				current += test2;
 				++i;
 				--level;
