@@ -129,7 +129,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 
 	var statelem = new Morebits.status("抓取页面列表");
 	var wikipedia_api = new Morebits.wiki.api( '载入中…', query, function( apiobj ) {
-			var xmlDoc = apiobj.responseXML;
+			var xml = apiobj.responseXML;
 			var $pages = $(xml).find('page').filter(':not([missing])');
 			var list = [];
 			$pages.each(function(index, page) {
