@@ -46,21 +46,21 @@ Twinkle.unlink.callback = function(presetReason) {
 	var form = new Morebits.quickForm( Twinkle.unlink.callback.evaluate );
 
 	// prepend some basic documentation
-	var node1 = Morebits.htmlNode("code", "[[" + Morebits.pageNameNorm + "|link text]]")
-	var node2 = Morebits.htmlNode("code", "link text");
+	var node1 = Morebits.htmlNode("code", "[[" + Morebits.pageNameNorm + "|链接文本]]")
+	var node2 = Morebits.htmlNode("code", "链接文本");
 	node1.style.fontFamily = node2.style.fontFamily = "monospace";
 	node1.style.fontStyle = node2.style.fontStyle = "normal";
 	form.append( {
 		type: 'div',
 		style: 'margin-bottom: 0.5em',
 		label: [ 
-			'This tool allows you to unlink all incoming links ("backlinks") that point to this page' + 
-				(mw.config.get('wgNamespaceNumber') === 6 ? ", and/or hide all inclusions of this file by wrapping them in <!-- --> comment markup" : "") + 
-				". For instance, ",
+			'这个工具可以取消所有指向该页的链接（“链入”）' + 
+				(mw.config.get('wgNamespaceNumber') === 6 ? "，和/或通过加入<!-- -->注释标记隐藏所有对此文件的使用" : "") + 
+				"。比如，",
 			node1,
-			" would become ",
+			"将会变成",
 			node2,
-			". Use it with caution."
+			"。请小心使用。"
 		]
 	} );
 
