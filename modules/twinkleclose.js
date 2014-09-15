@@ -15,7 +15,7 @@
  */
 
 Twinkle.close = function twinkleclose() {
-	if ( !Morebits.userIsInGroup('sysop') || !(/^Wikipedia:頁面存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(mw.config.get('wgPageName'))) ) {
+	if ( !Morebits.userIsInGroup('sysop') || !(/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(mw.config.get('wgPageName'))) ) {
 		return;
 	}
 
