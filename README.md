@@ -37,7 +37,7 @@ Twinkle是维基人用于快速执行常见维护工作（如提交删除候选�
 
 [MediaWiki:Gadgets-definition][]应当包含这一行：
 
-    * Twinkle[ResourceLoader|dependencies=jquery.ui.dialog,jquery.tipsy]|morebits.js|morebits.css|Twinkle.js
+    * Twinkle[ResourceLoader|dependencies=mediawiki.user,mediawiki.util,mediawiki.Title,jquery.ui.dialog,jquery.tipsy|rights=autoconfirmed]|morebits.js|morebits.css|Twinkle.js
 
 ### 使用`sync.pl`同步
 

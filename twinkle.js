@@ -389,10 +389,13 @@ Twinkle.load = function () {
 	    // Also, Twinkle is incompatible with Internet Explorer versions 8 or lower, so don't load there either.
 	    isOldIE = ( $.client.profile().name === 'msie' );
 
-    // Prevent users that are not autoconfirmed from loading Twinkle as well.
+	// Prevent users that are not autoconfirmed from loading Twinkle as well.
 	if ( isSpecialPage || isOldIE || !Twinkle.userAuthorized ) {
 		return;
 	}
+
+	// Set custom Api-User-Agent header, for server-side logging purposes
+	Morebits.wiki.api.setApiUserAgent( 'Twinkle~zh/2.0 (' + mw.config.get( 'wgDBname' ) + ')' );
 
 	// Load the modules in the order that the tabs should appears
 	// User/user talk-related

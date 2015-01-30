@@ -1434,7 +1434,10 @@ Morebits.wiki.api.prototype = {
 			type: 'POST',
 			url: mw.util.wikiScript('api'),
 			data: Morebits.queryString.create(this.query),
-			dataType: 'xml'
+			dataType: 'xml',
+			headers: {
+				'Api-User-Agent': morebitsWikiApiUserAgent
+			}
 		}, callerAjaxParameters );
 
 		return $.ajax( ajaxparams ).done(
@@ -1502,6 +1505,15 @@ Morebits.wiki.api.prototype = {
 	getXML: function() {
 		return this.responseXML;
 	}
+};
+
+// Custom user agent header, used by WMF for server-side logging
+// See https://lists.wikimedia.org/pipermail/mediawiki-api-announce/2014-November/000075.html
+var morebitsWikiApiUserAgent = 'morebits.js~zh/2.0 ([[w:zh:WT:TW]])';
+
+// Sets the custom user agent header
+Morebits.wiki.api.setApiUserAgent = function( ua ) {
+	morebitsWikiApiUserAgent = ( ua ? ua + ' ' : '' ) + 'morebits.js~zh/2.0 ([[w:zh:WT:TW]])';
 };
 
 
