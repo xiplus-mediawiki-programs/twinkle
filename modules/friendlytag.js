@@ -325,6 +325,8 @@ Twinkle.tag.article.tags = {
 	"original research": "可能包含原创研究或未查证内容",
 	"orphan": "没有或只有很少链入页面",
 	"overlinked": "含有过多、重复、或不必要的内部链接",
+	"overly detailed": "包含太多过度细节内容",
+	"plot": "可能包含过于详细的剧情摘要",
 	"pov": "中立性有争议。内容、语调可能带有明显的个人观点或地方色彩",
 	"primarysources": "依赖第一手来源",
 	"prose": "使用了日期或时间列表式记述，需要改写为连贯的叙述性文字",
@@ -363,8 +365,9 @@ Twinkle.tag.article.tagCategories = {
 			"lead section too long",
 			"verylong"
 		],
-		"小说相关清理": [
-			"in-universe"
+		"虚构作品相关清理": [
+			"in-universe",
+			"plot"
 		]
 	},
 	"常规条目问题": {
@@ -388,6 +391,7 @@ Twinkle.tag.article.tagCategories = {
 		],
 		"信息和细节": [
 			"expert",
+			"overly detailed",
 			"trivia"
 		],
 		"时间性": [
