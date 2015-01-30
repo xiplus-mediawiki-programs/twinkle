@@ -94,14 +94,14 @@ Twinkle.tag.callback = function friendlytagCallback( uid ) {
 		case '重定向':
 			Window.setTitle( "重定向标记" );
 
-			form.append({ type: 'header', label:'拼写、错误拼写、时态和大小写模板' });
-			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.spellingList });
+			form.append({ type: 'header', label:'常用模板' });
+			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.frequentList });
 
-			form.append({ type: 'header', label:'其他名称模板' });
-			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.alternativeList });
+			form.append({ type: 'header', label:'偶用模板' });
+			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.lessFrequentList });
 
-			form.append({ type: 'header', label:'杂项和管理用重定向模板' });
-			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.administrativeList });
+			form.append({ type: 'header', label:'鲜用模板' });
+			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.rareList });
 			break;
 
 		default:
@@ -443,91 +443,135 @@ Twinkle.tag.article.tagCategories = {
 
 // Tags for REDIRECTS start here
 
-Twinkle.tag.spellingList = [
+Twinkle.tag.frequentList = [
 	{
-		label: "{{簡繁重定向}}: 引导简体至繁体，或繁体至简体",
-		value: '簡繁重定向'
+		label: '{{合并重定向}}：保持页面题名至相应主条目，令页面内容在合并后仍能保存其编辑历史',
+		value: '合并重定向'
 	},
 	{
-		label: "{{模板重定向}}: 指向模板",
+		label: '{{简繁重定向}}：引导简体至繁体，或繁体至简体',
+		value: '简繁重定向'
+	},
+	{
+		label: '{{模板重定向}}：指向模板的重定向页面',
 		value: '模板重定向'
 	},
 	{
-		label: "{{别名重定向}}: 标题的其他名称、笔名、绰号、同义字等",
+		label: '{{别名重定向}}：标题的其他名称、笔名、绰号、同义字等',
 		value: '别名重定向'
 	},
 	{
-		label: "{{縮寫重定向}}: 标题缩写",
-		value: '縮寫重定向'
+		label: '{{译名重定向}}：人物、作品等各项事物的其他翻译名称',
+		value: '译名重定向'
 	},
 	{
-		label: "{{拼寫重定向}}: 标题的其他不同拼写",
-		value: '拼寫重定向'
+		label: '{{缩写重定向}}：标题缩写',
+		value: '缩写重定向'
 	},
 	{
-		label: "{{錯字重定向}}: 标题的常见错误拼写或误植",
-		value: '錯字重定向'
+		label: '{{拼写重定向}}：标题的其他不同拼写',
+		value: '拼写重定向'
 	},
-];
-
-Twinkle.tag.alternativeList = [
 	{
-		label: "{{全名重定向}}: 标题的完整或更完整名称",
+		label: '{{错字重定向}}：纠正标题的常见错误拼写或误植',
+		value: '错字重定向'
+	},
+	{
+		label: '{{旧名重定向}}：将事物早前的名称引导至更改后的主题',
+		value: '旧名重定向'
+	},
+	{
+		label: '{{历史名称重定向}}：具有历史意义的别名、笔名、同义词',
+		value: '历史名称重定向'
+	},
+	{
+		label: '{{全名重定向}}：标题的完整或更完整名称',
 		value: '全名重定向'
 	},
 	{
-		label: "{{短名重定向}}: 完整标题名称或人物全名的部分、不完整的名称或简称",
+		label: '{{短名重定向}}：完整标题名称或人物全名的部分、不完整的名称或简称',
 		value: '短名重定向'
 	},
 	{
-		label: "{{姓氏重定向}}: 人物姓氏",
+		label: '{{姓氏重定向}}：人物姓氏',
 		value: '姓氏重定向'
 	},
 	{
-		label: "{{人名重定向}}: 人物人名",
-		value: '人名重定向'
+		label: '{{名字重定向}}：人物人名',
+		value: '名字重定向'
 	},
 	{
-		label: "{{非中文重定向}}: 非中文标题",
+		label: '{{本名重定向}}：人物本名',
+		value: '本名重定向'
+	},
+	{
+		label: '{{非中文重定向}}：非中文标题',
 		value: '非中文重定向'
 	},
 	{
-		label: "{{日文重定向}}: 日语名称",
+		label: '{{日文重定向}}：日语名称',
 		value: '日文重定向'
 	}
 ];
 
-Twinkle.tag.administrativeList = [
+Twinkle.tag.lessFrequentList = [
 	{
-		label: "{{角色重定向}}: 电视剧、电影、书籍等作品的角色",
+		label: '{{角色重定向}}：电视剧、电影、书籍等作品的角色',
 		value: '角色重定向'
 	},
 	{
-		label: "{{章節重定向}}: 导向至较高密度（散文般密集）组织的页面",
-		value: '章節重定向'
+		label: '{{章节重定向}}：导向至较高密度组织的页面',
+		value: '章节重定向'
 	},
 	{
-		label: "{{列表重定向}}: 导向至低密度的列表",
+		label: '{{列表重定向}}：导向至低密度的列表',
 		value: '列表重定向'
 	},
 	{
-		label: "{{可能性重定向}}: 导向至当前提供内容更为详尽的目标页面、或该页面的章节段落",
+		label: '{{可能性重定向}}：导向至当前提供内容更为详尽的目标页面',
 		value: '可能性重定向'
 	},
 	{
-		label: "{{關聯字重定向}}: 标题名称关联字",
-		value: '關聯字重定向'
+		label: '{{关联字重定向}}：标题名称关联字',
+		value: '关联字重定向'
 	},
 	{
-		label: "{{捷徑重定向}}: 维基百科捷径",
-		value: '捷徑重定向'
+		label: '{{条目请求重定向}}：需要独立条目的页面',
+		value: '条目请求重定向'
 	},
 	{
-		label: "{{重定向模板用重定向}}: 重定向模板用",
+		label: '{{快捷方式重定向}}：维基百科快捷方式',
+		value: '快捷方式重定向'
+	}
+];
+
+Twinkle.tag.rareList = [
+	{
+		label: '{{词组重定向}}：将词组/词组/成语指向切题的条目及恰当章节',
+		value: '词组重定向'
+	},
+	{
+		label: '{{消歧义页重定向}}：指向消歧义页',
+		value: '消歧义页重定向'
+	},
+	{
+		label: '{{域名重定向}}：网域名称',
+		value: '域名重定向'
+	},
+	{
+		label: '{{年代重定向}}：于年份条目导向至年代条目',
+		value: '年代重定向'
+	},
+	{
+		label: '{{用户框模板重定向}}：用户框模板',
+		value: '用户框模板重定向'
+	},
+	{
+		label: '{{重定向模板用重定向}}：导向至重定向模板',
 		value: '重定向模板用重定向'
 	},
 	{
-		label: "{{EXIF重定向}}: JPEG图像包含EXIF信息",
+		label: '{{EXIF重定向}}：JPEG图像包含EXIF信息',
 		value: 'EXIF重定向'
 	}
 ];
