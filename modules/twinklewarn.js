@@ -726,6 +726,18 @@ Twinkle.warn.messages = {
 			label: "在侵权页面直接重写条目",
 			summary: "单层级通知：在侵权页面直接重写条目"
 		},
+		"uw-crystal": {
+			label: "加入臆测或未确认的讯息",
+			summary: "单层级通知：加入臆测或未确认的讯息"
+		},
+		"uw-csd": {
+			label: "快速删除标记不当",
+			summary: "单层级通知：快速删除标记不当"
+		},
+		"uw-dab": {
+			label: "消歧义页格式错误",
+			summary: "单层级通知：消歧义页格式错误"
+		},
 		"uw-date": {
 			label: "不必要地更换日期格式",
 			summary: "单层级通知：不必要地更换日期格式"
@@ -786,6 +798,10 @@ Twinkle.warn.messages = {
 			label: "没有在讨论页上签名",
 			summary: "单层级通知：没有在讨论页上签名"
 		},
+		"uw-translated": {
+			label: "翻译条目未标注原作者",
+			summary: "单层级通知：翻译条目未标注原作者"
+		},
 		"uw-uaa": {
 			label: "向更改用户名回报的用户名称并不违反方针",
 			summary: "单层级通知：向更改用户名回报的用户名称并不违反方针"
@@ -823,9 +839,17 @@ Twinkle.warn.messages = {
 			label: "连结到有版权的材料",
 			summary: "单层级警告：连结到有版权的材料"
 		},
+		"uw-fakesource": {
+			label: "虚构资料来源或引文",
+			summary: "单层级警告：虚构资料来源或引文"
+		},
 		"uw-hoax": {
 			label: "建立恶作剧",
 			summary: "单层级警告：建立恶作剧"
+		},
+		"uw-incompletecite": {
+			label: "列出的资料来源欠缺若干详情而不易查找",
+			summary: "单层级警告：列出的资料来源欠缺若干详情而不易查找"
 		},
 		"uw-legal": {
 			label: "诉诸法律威胁",
@@ -850,6 +874,10 @@ Twinkle.warn.messages = {
 		"uw-upv": {
 			label: "用户页破坏",
 			summary: "单层级警告：用户页破坏"
+		},
+		"uw-selfinventedname": {
+			label: "不适当的自创新名词、新译名",
+			summary: "单层级警告：不适当的自创新名词、新译名"
 		},
 		"uw-substub": {
 			label: "创建小小作品",
