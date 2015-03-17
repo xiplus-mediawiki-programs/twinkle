@@ -32,7 +32,7 @@ Twinkle.config.commonSets = {
 	csdCriteria: {
 		db: "自定义理由",
 		g1: "G1", g2: "G2", g3: "G3", g5: "G5", g10: "G10", g11: "G11", g12: "G12", g13: "G13", g14: "G14", g15: "G15", g16: "G16",
-		a1: "A1", a2: "A2", a3: "A3", a5: "A5",
+		a1: "A1", a2: "A2", a3: "A3", a5: "A5", a6: "A6",
 		o1: "O1", o3: "O3", o4: "O4",
 		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
 		r2: "R2", r3: "R3", r5: "R5"
@@ -40,7 +40,7 @@ Twinkle.config.commonSets = {
 	csdCriteriaDisplayOrder: [
 		"db",
 		"g1", "g2", "g3", "g5", "g10", "g11", "g12", "g13", "g14", "g15", "g16",
-		"a1", "a2", "a3", "a5",
+		"a1", "a2", "a3", "a5", "a6",
 		"o1", "o3", "o4",
 		"f1", "f3", "f4", "f5", "f6", "f7",
 		"r2", "r3", "r5"
@@ -48,7 +48,7 @@ Twinkle.config.commonSets = {
 	csdCriteriaNotification: {
 		db: "自定义理由",
 		g1: "G1", g2: "G2", g3: "G3", g5: "G5", g10: "G10", g11: "G11", g12: "G12", g13: "G13", g14: "G14", g15: "G15", g16: "G16",
-		a1: "A1", a2: "A2", a3: "A3", a5: "A5",
+		a1: "A1", a2: "A2", a3: "A3", a5: "A5", a6: "A6",
 		o1: "O1", o3: "O3", o4: "O4",
 		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
 		r2: "R2", r3: "R3", r5: "R5"
@@ -56,7 +56,7 @@ Twinkle.config.commonSets = {
 	csdCriteriaNotificationDisplayOrder: [
 		"db",
 		"g1", "g2", "g3", "g5", "g10", "g11", "g12", "g13", "g14", "g15", "g16",
-		"a1", "a2", "a3", "a5",
+		"a1", "a2", "a3", "a5", "a6",
 		"o1", "o3", "o4",
 		"f1", "f3", "f4", "f5", "f6", "f7",
 		"r2", "r3", "r5"
@@ -64,7 +64,7 @@ Twinkle.config.commonSets = {
 	csdAndDICriteria: {
 		db: "自定义理由",
 		g1: "G1", g2: "G2", g3: "G3", g5: "G5", g10: "G10", g11: "G11", g12: "G12", g13: "G13", g14: "G14", g15: "G15", g16: "G16",
-		a1: "A1", a2: "A2", a3: "A3", a5: "A5",
+		a1: "A1", a2: "A2", a3: "A3", a5: "A5", a6: "A6",
 		o1: "O1", o3: "O3", o4: "O4",
 		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
 		r2: "R2", r3: "R3", r5: "R5"
@@ -72,7 +72,7 @@ Twinkle.config.commonSets = {
 	csdAndDICriteriaDisplayOrder: [
 		"db",
 		"g1", "g2", "g3", "g5", "g10", "g11", "g12", "g13", "g14", "g15", "g16",
-		"a1", "a2", "a3", "a5",
+		"a1", "a2", "a3", "a5", "a6",
 		"o1", "o3", "o4",
 		"f1", "f3", "f4", "f5", "f6", "f7",
 		"r2", "r3", "r5"
@@ -358,7 +358,7 @@ Twinkle.config.sections = [
 		// What types of actions that should result user talk page to be opened when speedily deleting (admin only)
 		{
 			name: "openUserTalkPageOnSpeedyDelete",
-			label: "使用以下理由是打开用户对话页",
+			label: "使用以下理由时打开用户对话页",
 			adminOnly: true,
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdAndDICriteria,
