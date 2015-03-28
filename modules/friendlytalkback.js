@@ -281,8 +281,8 @@ var callback_evaluate = function( e ) {
 
 		talkpage.setEditSummary("通知：有新邮件" + Twinkle.getPref("summaryAd"));
 
-	} else {
-		//clean talkback heading: strip section header markers, were erroneously suggested in the documentation
+	} else {  // tbtarget one of mytalk, usertalk, other
+		// clean talkback heading: strip section header markers that were erroneously suggested in the documentation
 		text = "\n\n==" + Twinkle.getFriendlyPref("talkbackHeading").replace( /^\s*=+\s*(.*?)\s*=+$\s*/, "$1" ) + "==\n{{talkback|";
 		text += tbPageName;
 
@@ -298,8 +298,12 @@ var callback_evaluate = function( e ) {
 			text += "\n~~~~";
 		}
 
-		talkpage.setEditSummary("回复通告（[[" + (tbtarget === "other" ? "" : "User talk:") + tbPageName +
-			(section ? ("#" + section) : "") + "]]）" + Twinkle.getPref("summaryAd"));
+		var editSummary = "回复通告（[[";
+		if (tbtarget !== "other" && !/^\s*user talk:/i.test(tbPageName)) {
+			editSummary += "User talk:";
+		}
+		editSummary += tbPageName + (section ? ("#" + section) : "") + "]]）";
+		talkpage.setEditSummary(editSummary + Twinkle.getPref("summaryAd"));
 	}
 
 	talkpage.setAppendText( text );

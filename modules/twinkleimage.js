@@ -102,9 +102,11 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 	}
 
 	var lognomination = Twinkle.getPref('logSpeedyNominations') && Twinkle.getPref('noLogOnSpeedyNomination').indexOf(csdcrit.toLowerCase()) === -1;
+	var templatename = type;
 
 	var params = {
 		'type': type,
+		'templatename': templatename,
 		'normalized': csdcrit,
 		'lognomination': lognomination
 	};
@@ -148,7 +150,7 @@ Twinkle.image.callbacks = {
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.image.callbacks.imageList);
 
-		var tag = "{{subst:" + params.type + "/auto";
+		var tag = "{{subst:" + params.templatename + "/auto";
 		tag += "}}\n";
 
 		pageobj.setPageText(tag + text);

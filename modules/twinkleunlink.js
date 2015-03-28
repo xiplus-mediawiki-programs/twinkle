@@ -10,12 +10,12 @@
  *** twinkleunlink.js: Unlink module
  ****************************************
  * Mode of invocation:     Tab ("Unlink")
- * Active on:              Non-special pages
+ * Active on:              Non-special pages, except Wikipedia:Sandbox
  * Config directives in:   TwinkleConfig
  */
 
 Twinkle.unlink = function twinkleunlink() {
-	if( mw.config.get('wgNamespaceNumber') < 0 ) {
+	if( mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageName') === 'Wikipedia:沙盒' ) {
 		return;
 	}
 	if( Morebits.userIsInGroup( 'sysop' ) ) {
