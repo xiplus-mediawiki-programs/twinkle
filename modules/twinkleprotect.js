@@ -232,24 +232,22 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							if (e.target.value === 'custom') {
 								Twinkle.protect.doCustomExpiry(e.target);
 							}
+							$('input[name=small]', $(e.target).closest('form'))[0].checked = (e.target.selectedIndex >= 8); // 1 month
 						},
 						list: [
 							{ label: '1小时', value: '1 hour' },
 							{ label: '2小时', value: '2 hours' },
 							{ label: '3小时', value: '3 hours' },
 							{ label: '6小时', value: '6 hours' },
-							{ label: '12小时', value: '12 hours' },
 							{ label: '1日', value: '1 day' },
-							{ label: '2日', selected: true, value: '2 days' },
 							{ label: '3日', value: '3 days' },
-							{ label: '4日', value: '4 days' },
-							{ label: '1周', value: '1 week' },
+							{ label: '1周', selected: true, value: '1 week' },
 							{ label: '2周', value: '2 weeks' },
 							{ label: '1月', value: '1 month' },
-							{ label: '2月', value: '2 months' },
 							{ label: '3月', value: '3 months' },
+							{ label: '6月', value: '6 months' },
 							{ label: '1年', value: '1 year' },
-							{ label: '无限期', value:'indefinite' },
+							{ label: '无限期', value: 'indefinite' },
 							{ label: '自定义…', value: 'custom' }
 						]
 					});
@@ -302,18 +300,15 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							{ label: '2小时', value: '2 hours' },
 							{ label: '3小时', value: '3 hours' },
 							{ label: '6小时', value: '6 hours' },
-							{ label: '12小时', value: '12 hours' },
 							{ label: '1日', value: '1 day' },
-							{ label: '2日', value: '2 days' },
 							{ label: '3日', value: '3 days' },
-							{ label: '4日', value: '4 days' },
 							{ label: '1周', value: '1 week' },
 							{ label: '2周', value: '2 weeks' },
 							{ label: '1月', selected: true, value: '1 month' },
-							{ label: '2月', value: '2 months' },
 							{ label: '3月', value: '3 months' },
+							{ label: '6月', value: '6 months' },
 							{ label: '1年', value: '1 year' },
-							{ label: '无限期', value:'indefinite' },
+							{ label: '无限期', value: 'indefinite' },
 							{ label: '自定义…', value: 'custom' }
 						]
 					});
@@ -350,22 +345,19 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							}
 						},
 						list: [
-							{ label: '1小时', selected: true, value: '1 hour' },
+							{ label: '1小时', value: '1 hour' },
 							{ label: '2小时', value: '2 hours' },
 							{ label: '3小时', value: '3 hours' },
 							{ label: '6小时', value: '6 hours' },
-							{ label: '12小时', value: '12 hours' },
 							{ label: '1日', value: '1 day' },
-							{ label: '2日', value: '2 days' },
 							{ label: '3日', value: '3 days' },
-							{ label: '4日', value: '4 days' },
 							{ label: '1周', value: '1 week' },
 							{ label: '2周', value: '2 weeks' },
 							{ label: '1月', value: '1 month' },
-							{ label: '2月', value: '2 months' },
 							{ label: '3月', value: '3 months' },
-							{ label: '1年', value: '1 year' },
-							{ label: '无限期', value:'indefinite' },
+							{ label: '6月', value: '6 months' },
+							{ label: '1年', selected: true, value: '1 year' },
+							{ label: '无限期', value: 'indefinite' },
 							{ label: '自定义…', value: 'custom' }
 						]
 					});
@@ -394,8 +386,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						{
 							name: 'small',
 							label: '使用图标（small=yes）',
-							tooltip: '将给模板加上|small=yes参数，显示成右上角的一把挂锁。',
-							checked: true
+							tooltip: '将给模板加上|small=yes参数，显示成右上角的一把挂锁。'
 						},
 						{
 							name: 'noinclude',
