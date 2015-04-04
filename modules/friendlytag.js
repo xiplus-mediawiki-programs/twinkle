@@ -10,9 +10,7 @@
  *** friendlytag.js: Tag module
  ****************************************
  * Mode of invocation:     Tab ("Tag")
- * Active on:              Existing articles; file pages with a corresponding file
- *                         which is local (not on Commons); existing subpages of
- *                         {Wikipedia|Wikipedia talk}:Articles for creation;
+ * Active on:              Existing articles;
  *                         all redirects
  * Config directives in:   FriendlyConfig
  */
@@ -23,8 +21,8 @@ Twinkle.tag = function friendlytag() {
 		Twinkle.tag.mode = '重定向';
 		Twinkle.addPortletLink( Twinkle.tag.callback, "标记", "friendly-tag", "标记重定向" );
 	}
-	// article tagging
-	else if( ( mw.config.get('wgNamespaceNumber') === 0 && mw.config.get('wgCurRevisionId') ) || ( Morebits.pageNameNorm === 'Wikipedia:沙盒') ) {
+	// article/draft tagging
+	else if( ( ( mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 118 ) && mw.config.get('wgCurRevisionId') ) || ( Morebits.pageNameNorm === 'Wikipedia:沙盒' ) ) {
 		Twinkle.tag.mode = '条目';
 		Twinkle.addPortletLink( Twinkle.tag.callback, "标记", "friendly-tag", "标记条目" );
 	}
