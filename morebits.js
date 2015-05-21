@@ -2013,6 +2013,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		var query = {
 			action: 'edit',
+			tags: 'Twinkle',
 			title: ctx.pageName,
 			summary: ctx.editSummary,
 			token: canUseMwUserToken ? mw.user.tokens.get('editToken') : ctx.editToken,
