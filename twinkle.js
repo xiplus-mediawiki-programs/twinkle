@@ -43,7 +43,7 @@ Twinkle.defaultConfig = {};
  */
 Twinkle.defaultConfig.twinkle = {
 	 // General
-	summaryAd: " ([[WP:TW|TW]])",
+	summaryAd: "",
 	deletionSummaryAd: " ([[WP:TW|TW]])",
 	protectionSummaryAd: " ([[WP:TW|TW]])",
 	userTalkPageMode: "window",
