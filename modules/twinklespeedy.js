@@ -285,6 +285,9 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 
 	if (Morebits.wiki.isPageRedirect() || Morebits.userIsInGroup('sysop')) {
 		work_area.append( { type: 'header', label: '重定向' } );
+		if (namespace === 0) {
+			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.redirectArticleList, mode) } );
+		}
 		work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.redirectList, mode) } );
 	}
 
@@ -575,12 +578,15 @@ Twinkle.speedy.generalList = [
 	}
 ];
 
-Twinkle.speedy.redirectList = [
+Twinkle.speedy.redirectArticleList = [
 	{
 		label: 'R2: 跨名字空间重定向。',
 		value: 'r2',
 		tooltip: '由条目的名字空间重定向至非条目名字空间，或将用户页移出条目名字空间时遗留的重定向。'
-	},
+	}
+];
+
+Twinkle.speedy.redirectList = [
 	{
 		label: 'R3: 格式错误，或明显笔误的重定向。',
 		value: 'r3',
