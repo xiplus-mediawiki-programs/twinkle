@@ -431,7 +431,7 @@ Twinkle.fluff.callbacks = {
 			summary = "回退[[Special:Contributions/" +
 				self.params.user + "|" + self.params.user + "]] ([[User talk:" + self.params.user + "|讨论]])" +
 				"做出的 " + self.params.count + " 次编辑，到由" +
-				self.params.gooduser + "做出的前一个修订版本。 "  + Twinkle.getPref('summaryAd');
+				self.params.gooduser + "做出的前一个修订版本 "  + Twinkle.getPref('summaryAd');
 			break;
 
 		case 'norm':

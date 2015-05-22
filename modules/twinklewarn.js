@@ -1353,7 +1353,7 @@ Twinkle.warn.callbacks = {
 				}
 			}
 		}
-		summary += "。" + Twinkle.getPref("summaryAd");
+		summary += Twinkle.getPref("summaryAd");
 
 		pageobj.setPageText( text );
 		pageobj.setEditSummary( summary );

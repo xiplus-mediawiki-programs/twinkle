@@ -819,7 +819,7 @@ Twinkle.tag.callbacks = {
 		var params = pageobj.getCallbackParameters();
 
 		pageobj.setAppendText("\n{{subst:Wikipedia:关注度/提报/item|title=" + Morebits.pageNameNorm + "}}");
-		pageobj.setEditSummary("添加[[" + Morebits.pageNameNorm + "]]。" + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary("添加[[" + Morebits.pageNameNorm + "]]" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
 	}
