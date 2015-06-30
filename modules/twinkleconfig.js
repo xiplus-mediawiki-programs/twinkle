@@ -9,8 +9,8 @@
  ****************************************
  *** twinkleconfig.js: Preferences module
  ****************************************
- * Mode of invocation:     Adds configuration form to Wikipedia:Twinkle/Preferences and user 
-                           subpages named "/Twinkle preferences", and adds ad box to the top of user 
+ * Mode of invocation:     Adds configuration form to Wikipedia:Twinkle/Preferences and user
+                           subpages named "/Twinkle preferences", and adds ad box to the top of user
                            subpages belonging to the currently logged-in user which end in '.js'
  * Active on:              What I just said.  Yeah.
  * Config directives in:   TwinkleConfig
@@ -543,8 +543,7 @@ Twinkle.config.sections = [
 				"5": "层级4im",
 				"6": "单层级通知",
 				"7": "单层级警告",
-				"9": "自定义警告",
-				"8": "封禁（仅管理员）"
+				"9": "自定义警告"
 			}
 		},
 
@@ -566,14 +565,6 @@ Twinkle.config.sections = [
 			type: "boolean"
 		},
 
-		// TwinkleConfig.blankTalkpageOnIndefBlock (boolean)
-		// if true, blank the talk page when issuing an indef block notice (per [[WP:UW#Indefinitely blocked users]])
-		{
-			name: "blankTalkpageOnIndefBlock",
-			label: "无限期封禁时清空对话页",
-			adminOnly: true,
-			type: "boolean"
-		},
 		{
 			name: "customWarningList",
 			label: "自定义警告模板",

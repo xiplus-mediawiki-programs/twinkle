@@ -175,6 +175,7 @@ var callback_change_target = function( e ) {
 					tooltip:"您留下消息的用户名。",
 					value: prev_page
 				});
+
 			work_area.append({
 					type:"input",
 					name:"section",
@@ -197,7 +198,7 @@ var callback_change_target = function( e ) {
 					tooltip:"您留下消息的完整页面名，比如“Wikipedia talk:Twinkle”。",
 					value: prev_page
 				});
-			
+
 			work_area.append({
 					type:"input",
 					name:"section",

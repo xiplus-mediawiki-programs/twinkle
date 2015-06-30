@@ -22,15 +22,17 @@ Twinkle.warn = function twinklewarn() {
 	// modify URL of talk page on rollback success pages
 	if( mw.config.get('wgAction') === 'rollback' ) {
 		var $vandalTalkLink = $("#mw-rollback-success").find(".mw-usertoollinks a").first();
-		$vandalTalkLink.css("font-weight", "bold");
-		$vandalTalkLink.wrapInner($("<span/>").attr("title", "如果合适，您可以用Twinkle在该用户对话页上做出警告。"));
+		if ( $vandalTalkLink.length ) {
+			$vandalTalkLink.css("font-weight", "bold");
+			$vandalTalkLink.wrapInner($("<span/>").attr("title", "如果合适，您可以用Twinkle在该用户对话页上做出警告。"));
 
-		var extraParam = "vanarticle=" + mw.util.rawurlencode(Morebits.pageNameNorm);
-		var href = $vandalTalkLink.attr("href");
-		if (href.indexOf("?") === -1) {
-			$vandalTalkLink.attr("href", href + "?" + extraParam);
-		} else {
-			$vandalTalkLink.attr("href", href + "&" + extraParam);
+			var extraParam = "vanarticle=" + mw.util.rawurlencode(Morebits.pageNameNorm);
+			var href = $vandalTalkLink.attr("href");
+			if (href.indexOf("?") === -1) {
+				$vandalTalkLink.attr("href", href + "?" + extraParam);
+			} else {
+				$vandalTalkLink.attr("href", href + "&" + extraParam);
+			}
 		}
 	}
 };
@@ -70,9 +72,6 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	main_group.append( { type: 'option', label: '单层级警告', value: 'singlewarn', selected: ( defaultGroup === 7 ) } );
 	if( Twinkle.getPref( 'customWarningList' ).length ) {
 		main_group.append( { type: 'option', label: '自定义警告', value: 'custom', selected: ( defaultGroup === 9 ) } );
-	}
-	if( Morebits.userIsInGroup( 'sysop' ) ) {
-		main_group.append( { type: 'option', label: '封禁', value: 'block', selected: ( defaultGroup === 8 ) } );
 	}
 
 	main_select.append( { type: 'select', name: 'sub_group', event:Twinkle.warn.callback.change_subcategory } ); //Will be empty to begin with.
@@ -891,67 +890,9 @@ Twinkle.warn.messages = {
 			label: "在编辑摘要制造不适当的内容",
 			summary: "单层级警告：在编辑摘要制造不适当的内容"
 		}
-	},
-
-
-	block: {
-		"uw-block1": {
-			label: "层级1封禁",
-			summary: "层级1封禁",
-			reasonParam: true
-		},
-		"uw-block2": {
-			label: "层级2封禁",
-			summary: "层级2封禁",
-			reasonParam: true
-		},
-		"uw-block3": {
-			label: "层级3封禁",
-			summary: "层级3封禁",
-			reasonParam: true,
-			indefinite: true
-		},
-		"uw-3block": {
-			label: "回退不过三原则封禁",
-			summary: "回退不过三原则封禁",
-			reasonParam: true,
-		},
-		"uw-ablock": {
-			label: "匿名封禁",
-			summary: "匿名封禁",
-			reasonParam: true,
-		},
-		"uw-bblock": {
-			label: "机器人失灵封禁",
-			summary: "机器人失灵封禁"
-		},
-		"uw-dblock": {
-			label: "删除封禁",
-			summary: "删除封禁"
-		},
-		"uw-sblock": {
-			label: "广告封禁",
-			summary: "广告封禁"
-		},
-		"uw-ublock": {
-			label: "用户名称封禁",
-			summary: "用户名称封禁",
-			indefinite: true
-		},
-		"uw-vblock": {
-			label: "破坏封禁",
-			summary: "破坏封禁"
-		},
-		"uw-cblock": {
-			label: "用户核查封禁",
-			summary: "用户核查封禁",
-			indefinite: true
-		}
 	}
 };
 
-Twinkle.warn.prev_block_timer = null;
-Twinkle.warn.prev_block_reason = null;
 Twinkle.warn.prev_article = null;
 Twinkle.warn.prev_reason = null;
 
@@ -963,7 +904,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 	var old_subvalue_re;
 	if( old_subvalue ) {
 		old_subvalue = old_subvalue.replace(/\d*(im)?$/, '' );
-		old_subvalue_re = new RegExp( $.escapeRE( old_subvalue ) + "(\\d*(?:im)?)$" );
+		old_subvalue_re = new RegExp( mw.RegExp.escape( old_subvalue ) + "(\\d*(?:im)?)$" );
 	}
 
 	while( sub_group.hasChildNodes() ){
@@ -1003,7 +944,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 		} );
 	};
 
-	if( value === "singlenotice" || value === "singlewarn" || value === "block" ) {
+	if( value === "singlenotice" || value === "singlewarn" ) {
 		// no categories, just create the options right away
 		createEntries( Twinkle.warn.messages[ value ], sub_group, true );
 	} else if( value === "custom" ) {
@@ -1020,63 +961,6 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 			// create the options
 			createEntries( groupContents, optgroup, false );
 		} );
-	}
-
-	if( value === 'block' ) {
-		// create the block-related fields
-		var more = new Morebits.quickForm.element( { type: 'div', id: 'block_fields' } );
-		more.append( {
-			type: 'input',
-			name: 'block_timer',
-			label: '封禁时间： ',
-			tooltip: '例如24小时、2天等…'
-		} );
-		more.append( {
-			type: 'input',
-			name: 'block_reason',
-			label: '“由于……您已被封禁”',
-			tooltip: '可选的理由。'
-		} );
-		e.target.root.insertBefore( more.render(), e.target.root.lastChild );
-
-		// restore saved values of fields
-		if(Twinkle.warn.prev_block_timer !== null) {
-			e.target.root.block_timer.value = Twinkle.warn.prev_block_timer;
-			Twinkle.warn.prev_block_timer = null;
-		}
-		if(Twinkle.warn.prev_block_reason !== null) {
-			e.target.root.block_reason.value = Twinkle.warn.prev_block_reason;
-			Twinkle.warn.prev_block_reason = null;
-		}
-		if(Twinkle.warn.prev_article === null) {
-			Twinkle.warn.prev_article = e.target.root.article.value;
-		}
-		e.target.root.article.disabled = false;
-
-		$(e.target.root.reason).parent().hide();
-		e.target.root.previewer.closePreview();
-	} else if( e.target.root.block_timer ) {
-		// hide the block-related fields
-		if(!e.target.root.block_timer.disabled && Twinkle.warn.prev_block_timer === null) {
-			Twinkle.warn.prev_block_timer = e.target.root.block_timer.value;
-		}
-		if(!e.target.root.block_reason.disabled && Twinkle.warn.prev_block_reason === null) {
-			Twinkle.warn.prev_block_reason = e.target.root.block_reason.value;
-		}
-
-		// hack to fix something really weird - removed elements seem to somehow keep an association with the form
-		e.target.root.block_reason = null;
-
-		$(e.target.root).find("#block_fields").remove();
-
-		if(e.target.root.article.disabled && Twinkle.warn.prev_article !== null) {
-			e.target.root.article.value = Twinkle.warn.prev_article;
-			Twinkle.warn.prev_article = null;
-		}
-		e.target.root.article.disabled = false;
-
-		$(e.target.root.reason).parent().show();
-		e.target.root.previewer.closePreview();
 	}
 
 	// clear overridden label on article textbox
@@ -1104,48 +988,6 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 				Twinkle.warn.prev_article = null;
 			}
 			e.target.form.article.notArticle = false;
-		}
-	} else if( main_group === 'block' ) {
-		if( Twinkle.warn.messages.block[value].indefinite ) {
-			if(Twinkle.warn.prev_block_timer === null) {
-				Twinkle.warn.prev_block_timer = e.target.form.block_timer.value;
-			}
-			e.target.form.block_timer.disabled = true;
-			e.target.form.block_timer.value = 'indefinite';
-		} else if( e.target.form.block_timer.disabled ) {
-			if(Twinkle.warn.prev_block_timer !== null) {
-				e.target.form.block_timer.value = Twinkle.warn.prev_block_timer;
-				Twinkle.warn.prev_block_timer = null;
-			}
-			e.target.form.block_timer.disabled = false;
-		}
-
-		if( Twinkle.warn.messages.block[value].pageParam ) {
-			if(Twinkle.warn.prev_article !== null) {
-				e.target.form.article.value = Twinkle.warn.prev_article;
-				Twinkle.warn.prev_article = null;
-			}
-			e.target.form.article.disabled = false;
-		} else if( !e.target.form.article.disabled ) {
-			if(Twinkle.warn.prev_article === null) {
-				Twinkle.warn.prev_article = e.target.form.article.value;
-			}
-			e.target.form.article.disabled = true;
-			e.target.form.article.value = '';
-		}
-
-		if( Twinkle.warn.messages.block[value].reasonParam ) {
-			if(Twinkle.warn.prev_block_reason !== null) {
-				e.target.form.block_reason.value = Twinkle.warn.prev_block_reason;
-				Twinkle.warn.prev_block_reason = null;
-			}
-			e.target.form.block_reason.disabled = false;
-		} else if( !e.target.form.block_reason.disabled ) {
-			if(Twinkle.warn.prev_block_reason === null) {
-				Twinkle.warn.prev_block_reason = e.target.form.block_reason.value;
-			}
-			e.target.form.block_reason.disabled = true;
-			e.target.form.block_reason.value = '';
 		}
 	}
 
@@ -1181,7 +1023,7 @@ Twinkle.warn.callbacks = {
 		var text = "{{subst:" + templateName;
 
 		if (article) {
-			// add linked article for user warnings (non-block templates)
+			// add linked article for user warnings
 			text += '|1=' + article;
 		}
 
@@ -1193,40 +1035,13 @@ Twinkle.warn.callbacks = {
 
 		return text;
 	},
-	getBlockNoticeWikitext: function(templateName, article, blockTime, blockReason, isIndefTemplate) {
-		var text = "{{subst:" + templateName;
-
-		if (article && Twinkle.warn.messages.block[templateName].pageParam) {
-			text += '|page=' + article;
-		}
-
-		if (!/te?mp|^\s*$|min/.exec(blockTime) && !isIndefTemplate) {
-			if (/indef|\*|max/.exec(blockTime)) {
-				text += '|indef=yes';
-			} else {
-				text += '|time=' + blockTime;
-			}
-		}
-
-		if (blockReason) {
-			text += '|reason=' + blockReason;
-		}
-
-		text += "|sig=true|subst=subst:}}";
-		return text;
-	},
 	preview: function(form) {
 		var templatename = form.sub_group.value;
 		var linkedarticle = form.article.value;
 		var templatetext;
 
-		if (templatename in Twinkle.warn.messages.block) {
-			templatetext = Twinkle.warn.callbacks.getBlockNoticeWikitext(templatename, linkedarticle, form.block_timer.value,
-				form.block_reason.value, Twinkle.warn.messages.block[templatename].indefinite);
-		} else {
-			templatetext = Twinkle.warn.callbacks.getWarningWikitext(templatename, linkedarticle, 
-				form.reason.value, form.main_group.value === 'custom');
-		}
+		templatetext = Twinkle.warn.callbacks.getWarningWikitext(templatename, linkedarticle,
+			form.reason.value, form.main_group.value === 'custom');
 
 		form.previewer.beginRender(templatetext);
 	},
@@ -1283,32 +1098,20 @@ Twinkle.warn.callbacks = {
 		// If dateHeaderRegexResult is null then lastHeaderIndex is never checked. If it is not null but
 		// \n== is not found, then the date header must be at the very start of the page. lastIndexOf
 		// returns -1 in this case, so lastHeaderIndex gets set to 0 as desired.
-		var lastHeaderIndex = text.lastIndexOf( "\n==" ) + 1;   
+		var lastHeaderIndex = text.lastIndexOf( "\n==" ) + 1;
 
 		if( text.length > 0 ) {
 			text += "\n\n";
 		}
 
-		if( params.main_group === 'block' ) {
-			if( Twinkle.getPref('blankTalkpageOnIndefBlock') && ( messageData.indefinite || (/indef|\*|max/).exec( params.block_timer ) ) ) {
-				Morebits.status.info( '信息', '根据参数设置清空讨论页并创建新标题' );
-				text = "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
-			} else if( !dateHeaderRegexResult || dateHeaderRegexResult.index !== lastHeaderIndex ) {
-				Morebits.status.info( '信息', '未找到当月标题，将创建新的' );
-				text += "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
-			}
-
-			text += Twinkle.warn.callbacks.getBlockNoticeWikitext(params.sub_group, params.article, params.block_timer, params.reason, messageData.indefinite);
-		} else {
-			if( messageData.heading ) {
-				text += "== " + messageData.heading + " ==\n";
-			} else if( !dateHeaderRegexResult || dateHeaderRegexResult.index !== lastHeaderIndex ) {
-				Morebits.status.info( '信息', '未找到当月标题，将创建新的' );
-				text += "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
-			}
-			text += Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article, 
-				params.reason, params.main_group === 'custom') + "--~~~~";
+		if( messageData.heading ) {
+			text += "== " + messageData.heading + " ==\n";
+		} else if( !dateHeaderRegexResult || dateHeaderRegexResult.index !== lastHeaderIndex ) {
+			Morebits.status.info( '信息', '未找到当月标题，将创建新的' );
+			text += "== " + date.getUTCFullYear() + "年" + (date.getUTCMonth() + 1) + "月 " + " ==\n";
 		}
+		text += Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
+			params.reason, params.main_group === 'custom') + "--~~~~";
 
 		if ( Twinkle.getPref('showSharedIPNotice') && Morebits.isIPAddress( mw.config.get('wgTitle') ) ) {
 			Morebits.status.info( '信息', '添加共享IP说明' );
@@ -1376,11 +1179,10 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 
 	// Then, grab all the values provided by the form
 	var params = {
-		reason: e.target.block_reason ? e.target.block_reason.value : e.target.reason.value,
+		reason: e.target.reason.value,
 		main_group: e.target.main_group.value,
 		sub_group: e.target.sub_group.value,
 		article: e.target.article.value,  // .replace( /^(Image|Category):/i, ':$1:' ),  -- apparently no longer needed...
-		block_timer: e.target.block_timer ? e.target.block_timer.value : null,
 		messageData: selectedEl.data("messageData")
 	};
 

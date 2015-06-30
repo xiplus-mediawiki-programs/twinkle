@@ -99,7 +99,7 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 
 // Current protection level in a human-readable format
 // (a string, or null if no protection; only filled for sysops)
-Twinkle.protect.protectionLevel = null;  
+Twinkle.protect.protectionLevel = null;
 // Contains the current protection level in an object
 // Once filled, it will look something like:
 // { edit: { level: "sysop", expiry: <some date>, cascade: true }, ... }
@@ -1034,7 +1034,7 @@ Twinkle.protect.callbacks = {
 		var text = rppPage.getPageText();
 		var statusElement = rppPage.getStatusElement();
 
-		var rppRe = new RegExp( '===\\s*[[:?' + RegExp.escape( mw.config.get('wgPageName'), true ) + ']]\\s*===', 'm' );
+		var rppRe = new RegExp( '===\\s*(\\[\\[)?\s*:?\s*' + RegExp.escape( Morebits.pageNameNorm, true ) + '\s*(\\]\\])?\\s*===', 'm' );
 		var tag = rppRe.exec( text );
 
 		var rppLink = document.createElement('a');

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/local/bin/perl
 
 use v5.10;
 
@@ -42,23 +42,23 @@ my %deploys = (
 	'twinkle.js' => 'MediaWiki:Gadget-Twinkle.js',
 	'morebits.js' => 'MediaWiki:Gadget-morebits.js',
 	'morebits.css' => 'MediaWiki:Gadget-morebits.css',
-	'modules/friendlyshared.js' => 'MediaWiki:Gadget-friendlyshared.js',
-	'modules/friendlytag.js' => 'MediaWiki:Gadget-friendlytag.js',
-	'modules/friendlytalkback.js' => 'MediaWiki:Gadget-friendlytalkback.js',
-	'modules/twinklebatchdelete.js' => 'MediaWiki:Gadget-twinklebatchdelete.js',
-	'modules/twinklebatchundelete.js' => 'MediaWiki:Gadget-twinklebatchundelete.js',
-	'modules/twinkleclose.js' => 'MediaWiki:Gadget-twinkleclose.js',
-	'modules/twinkleconfig.js' => 'MediaWiki:Gadget-twinkleconfig.js',
-	'modules/twinklecopyvio.js' => 'MediaWiki:Gadget-twinklecopyvio.js',
-	'modules/twinkledelimages.js' => 'MediaWiki:Gadget-twinkledelimages.js',
-	'modules/twinklediff.js' => 'MediaWiki:Gadget-twinklediff.js',
-	'modules/twinklefluff.js' => 'MediaWiki:Gadget-twinklefluff.js',
 	'modules/twinkleimage.js' => 'MediaWiki:Gadget-twinkleimage.js',
-	'modules/twinkleprotect.js' => 'MediaWiki:Gadget-twinkleprotect.js',
-	'modules/twinklespeedy.js' => 'MediaWiki:Gadget-twinklespeedy.js',
-	'modules/twinkleunlink.js' => 'MediaWiki:Gadget-twinkleunlink.js',
+	'modules/twinklebatchundelete.js' => 'MediaWiki:Gadget-twinklebatchundelete.js',
 	'modules/twinklewarn.js' => 'MediaWiki:Gadget-twinklewarn.js',
+	'modules/twinklespeedy.js' => 'MediaWiki:Gadget-twinklespeedy.js',
+	'modules/friendlyshared.js' => 'MediaWiki:Gadget-friendlyshared.js',
+	'modules/twinklediff.js' => 'MediaWiki:Gadget-twinklediff.js',
+	'modules/twinkleunlink.js' => 'MediaWiki:Gadget-twinkleunlink.js',
+	'modules/friendlytag.js' => 'MediaWiki:Gadget-friendlytag.js',
 	'modules/twinklexfd.js' => 'MediaWiki:Gadget-twinklexfd.js',
+	'modules/twinklebatchdelete.js' => 'MediaWiki:Gadget-twinklebatchdelete.js',
+	'modules/twinkleconfig.js' => 'MediaWiki:Gadget-twinkleconfig.js',
+	'modules/twinklefluff.js' => 'MediaWiki:Gadget-twinklefluff.js',
+	'modules/twinkleprotect.js' => 'MediaWiki:Gadget-twinkleprotect.js',
+	'modules/friendlytalkback.js' => 'MediaWiki:Gadget-friendlytalkback.js',
+	'modules/twinkleblock.js' => 'MediaWiki:Gadget-twinkleblock.js',
+	'modules/twinkleclose.js' => 'MediaWiki:Gadget-twinkleclose.js',
+	'modules/twinklecopyvio.js' => 'MediaWiki:Gadget-twinklecopyvio.js'
 );
 
 # Config file should be an hash consisting of username and password keys

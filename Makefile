@@ -7,7 +7,6 @@ modules = modules/friendlyshared.js \
 		  modules/twinklebatchundelete.js \
 		  modules/twinkleconfig.js \
 		  modules/twinklecopyvio.js \
-		  modules/twinkledelimages.js \
 		  modules/twinklediff.js \
 		  modules/twinklefluff.js \
 		  modules/twinkleimage.js \

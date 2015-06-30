@@ -53,9 +53,9 @@ Twinkle.unlink.callback = function(presetReason) {
 	form.append( {
 		type: 'div',
 		style: 'margin-bottom: 0.5em',
-		label: [ 
-			'这个工具可以取消所有指向该页的链接（“链入”）' + 
-				(mw.config.get('wgNamespaceNumber') === 6 ? "，和/或通过加入<!-- -->注释标记隐藏所有对此文件的使用" : "") + 
+		label: [
+			'这个工具可以取消所有指向该页的链接（“链入”）' +
+				(mw.config.get('wgNamespaceNumber') === 6 ? "，和/或通过加入<!-- -->注释标记隐藏所有对此文件的使用" : "") +
 				"。比如，",
 			node1,
 			"将会变成",
@@ -82,7 +82,8 @@ Twinkle.unlink.callback = function(presetReason) {
 			'bllimit': Morebits.userIsInGroup( 'sysop' ) ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
 			'iulimit': Morebits.userIsInGroup( 'sysop' ) ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
 			'blnamespace': Twinkle.getPref('unlinkNamespaces'),
-			'iunamespace': Twinkle.getPref('unlinkNamespaces')
+			'iunamespace': Twinkle.getPref('unlinkNamespaces'),
+			'rawcontinue': true
 		};
 	} else {
 		query = {
@@ -91,7 +92,8 @@ Twinkle.unlink.callback = function(presetReason) {
 			'bltitle': Morebits.pageNameNorm,
 			'blfilterredir': 'nonredirects',
 			'bllimit': Morebits.userIsInGroup( 'sysop' ) ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
-			'blnamespace': Twinkle.getPref('unlinkNamespaces')
+			'blnamespace': Twinkle.getPref('unlinkNamespaces'),
+			'rawcontinue': true
 		};
 	}
 	var wikipedia_api = new Morebits.wiki.api( '抓取链入', query, Twinkle.unlink.callbacks.display.backlinks );
@@ -107,40 +109,13 @@ Twinkle.unlink.callback = function(presetReason) {
 };
 
 Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event) {
-	Twinkle.unlink.backlinksdone = 0;
-	Twinkle.unlink.imageusagedone = 0;
-
-	function processunlink(pages, imageusage) {
-		var statusIndicator = new Morebits.status((imageusage ? '取消文件使用' : '取消链入'), '0%');
-		var total = pages.length;  // removing doubling of this number - no apparent reason for it
-
-		Morebits.wiki.addCheckpoint();
-
-		if( !pages.length ) {
-			statusIndicator.info( '100% （完成）' );
-			Morebits.wiki.removeCheckpoint();
-			return;
-		}
-
-		// get an edit token
-		var params = { reason: reason, imageusage: imageusage, globalstatus: statusIndicator, current: 0, total: total };
-		for (var i = 0; i < pages.length; ++i)
-		{
-			var myparams = $.extend({}, params);
-			var articlepage = new Morebits.wiki.page(pages[i], '在条目：“' + pages[i] + '”中');
-			articlepage.setCallbackParameters(myparams);
-			articlepage.setBotEdit(true);  // unlink considered a floody operation
-			articlepage.load(imageusage ? Twinkle.unlink.callbacks.unlinkImageInstances : Twinkle.unlink.callbacks.unlinkBacklinks);
-		}
-	}
-
 	var reason = event.target.reason.value;
 	if (!reason) {
 		alert("您必须指定取消链入的理由。");
 		return;
 	}
 
-	var backlinks, imageusage;
+	var backlinks = [], imageusage = [];
 	if( event.target.backlinks ) {
 		backlinks = Twinkle.unlink.getChecked2(event.target.backlinks);
 	}
@@ -150,18 +125,23 @@ Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event)
 
 	Morebits.simpleWindow.setButtonsEnabled( false );
 	Morebits.status.init( event.target );
-	Morebits.wiki.addCheckpoint();
-	if (backlinks) {
-		processunlink(backlinks, false);
-	}
-	if (imageusage) {
-		processunlink(imageusage, true);
-	}
-	Morebits.wiki.removeCheckpoint();
-};
 
-Twinkle.unlink.backlinksdone = 0;
-Twinkle.unlink.imageusagedone = 0;
+	var pages = Morebits.array.uniq(backlinks.concat(imageusage));
+
+	var unlinker = new Morebits.batchOperation("取消链入" + (imageusage ? "与文件使用" : ""));
+	unlinker.setOption("preserveIndividualStatusLines", true);
+	unlinker.setPageList(pages);
+	var params = { reason: reason, unlinker: unlinker };
+	unlinker.run(function(pageName) {
+		var wikipedia_page = new Morebits.wiki.page(pageName, "在条目“" + pageName + "”中取消链入");
+		wikipedia_page.setBotEdit(true);  // unlink considered a floody operation
+		var innerParams = $.extend({}, params);
+		innerParams.doBacklinks = backlinks && backlinks.indexOf(pageName) !== -1;
+		innerParams.doImageusage = imageusage && imageusage.indexOf(pageName) !== -1;
+		wikipedia_page.setCallbackParameters(innerParams);
+		wikipedia_page.load(Twinkle.unlink.callbacks.unlinkBacklinks);
+	});
+};
 
 Twinkle.unlink.callbacks = {
 	display: {
@@ -201,14 +181,14 @@ Twinkle.unlink.callbacks = {
 					}
 					apiobj.params.form.append({
 						type: 'button',
-						label: "Select All",
+						label: "全选",
 						event: function(e) {
 							$(Morebits.quickForm.getElements(e.target.form, "imageusage")).prop('checked', true);
 						}
 					});
 					apiobj.params.form.append({
 						type: 'button',
-						label: "Deselect All",
+						label: "全不选",
 						event: function(e) {
 							$(Morebits.quickForm.getElements(e.target.form, "imageusage")).prop('checked', false);
 						}
@@ -247,14 +227,14 @@ Twinkle.unlink.callbacks = {
 				}
 				apiobj.params.form.append({
 					type: 'button',
-					label: "Select All",
+					label: "全选",
 						event: function(e) {
 							$(Morebits.quickForm.getElements(e.target.form, "backlinks")).prop('checked', true);
 						}
 				});
 				apiobj.params.form.append({
 					type: 'button',
-					label: "Deselect All",
+					label: "全不选",
 						event: function(e) {
 							$(Morebits.quickForm.getElements(e.target.form, "backlinks")).prop('checked', false);
 						}
@@ -284,54 +264,51 @@ Twinkle.unlink.callbacks = {
 		}
 	},
 	unlinkBacklinks: function twinkleunlinkCallbackUnlinkBacklinks(pageobj) {
-		var text, oldtext;
-		text = oldtext = pageobj.getPageText();
+		var oldtext = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
+		var wikiPage = new Morebits.wikitext.page(oldtext);
 
-		var wikiPage = new Morebits.wikitext.page(text);
-		wikiPage.removeLink(Morebits.pageNameNorm);
-		text = wikiPage.getText();
-		if (text === oldtext) {
-			// Nothing to do, return
-			Twinkle.unlink.callbacks.success(pageobj);
-			Morebits.wiki.actionCompleted();
+		var removedBacklinks = false, removedImageusage = false;
+		var summaryText = "", warningString = false;
+		var text;
+
+		// remove image usages
+		if (params.doImageusage) {
+			wikiPage.commentOutImage(mw.config.get('wgTitle'), '注释出');
+			text = wikiPage.getText();
+			// did we actually make any changes?
+			if (text === oldtext) {
+				warningString = "文件使用";
+			} else {
+				summaryText = "注释出文件使用";
+				oldtext = text;
+			}
+		}
+
+		// remove backlinks
+		if (params.doBacklinks) {
+			wikiPage.removeLink(Morebits.pageNameNorm);
+			text = wikiPage.getText();
+			// did we actually make any changes?
+			if (text === oldtext) {
+				warningString = (warningString ? "反链或文件使用" : "反链");
+			} else {
+				summaryText = (summaryText ? (summaryText + " / ") : "") + "取消链接到";
+				oldtext = text;
+			}
+		}
+
+		if (warningString) {
+			// nothing to do!
+			pageobj.getStatusElement().error("未能在页面上找到" + warningString + "。");
+			params.unlinker.workerFailure(pageobj);
 			return;
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary("取消到页面“" + Morebits.pageNameNorm + "”的链接：" + params.reason + "。" + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary(summaryText + " \"" + Morebits.pageNameNorm + "\": " + params.reason + "." + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('nocreate');
-		pageobj.save(Twinkle.unlink.callbacks.success);
-	},
-	unlinkImageInstances: function twinkleunlinkCallbackUnlinkImageInstances(pageobj) {
-		var text, oldtext;
-		text = oldtext = pageobj.getPageText();
-		var params = pageobj.getCallbackParameters();
-
-		var wikiPage = new Morebits.wikitext.page(text);
-		wikiPage.commentOutImage(mw.config.get('wgTitle'), '注释出');
-		text = wikiPage.getText();
-		if (text === oldtext) {
-			// Nothing to do, return
-			Twinkle.unlink.callbacks.success(pageobj);
-			Morebits.wiki.actionCompleted();
-			return;
-		}
-
-		pageobj.setPageText(text);
-		pageobj.setEditSummary("注释出文件“" + Morebits.pageNameNorm + "：" + params.reason + "。" + Twinkle.getPref('summaryAd'));
-		pageobj.setCreateOption('nocreate');
-		pageobj.save(Twinkle.unlink.callbacks.success);
-	},
-	success: function twinkleunlinkCallbackSuccess(pageobj) {
-		var params = pageobj.getCallbackParameters();
-		var total = params.total;
-		var now = parseInt( 100 * (params.imageusage ? ++(Twinkle.unlink.imageusagedone) : ++(Twinkle.unlink.backlinksdone))/total, 10 ) + '%';
-		params.globalstatus.update( now );
-		if((params.imageusage ? Twinkle.unlink.imageusagedone : Twinkle.unlink.backlinksdone) >= total) {
-			params.globalstatus.info( now + '（完成）' );
-			Morebits.wiki.removeCheckpoint();
-		}
+		pageobj.save(params.unlinker.workerSuccess, params.unlinker.workerFailure);
 	}
 };
 })(jQuery);

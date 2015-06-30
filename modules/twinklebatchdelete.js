@@ -10,13 +10,17 @@
  *** twinklebatchdelete.js: Batch delete module (sysops only)
  ****************************************
  * Mode of invocation:     Tab ("D-batch")
- * Active on:              Existing and non-existing non-articles, and Special:PrefixIndex
+ * Active on:              Existing non-articles, and Special:PrefixIndex
  * Config directives in:   TwinkleConfig
  */
 
-
 Twinkle.batchdelete = function twinklebatchdelete() {
-	if( Morebits.userIsInGroup( 'sysop' ) && (mw.config.get( 'wgNamespaceNumber' ) > 0 || mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Prefixindex') ) {
+	if(
+		Morebits.userIsInGroup( 'sysop' ) && (
+			( mw.config.get( 'wgCurRevisionId' ) && mw.config.get( 'wgNamespaceNumber' ) > 0 ) ||
+			mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Prefixindex'
+		)
+	) {
 		Twinkle.addPortletLink( Twinkle.batchdelete.callback, "批删", "tw-batch", "删除此分类或页面中的所有链接" );
 	}
 };
@@ -36,18 +40,35 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 					label: '删除页面',
 					name: 'delete_page',
 					value: 'delete',
-					checked: true
+					checked: true,
+					subgroup: {
+						type: 'checkbox',
+						list: [
+							{
+								label: '删除关联的讨论页（用户对话页除外）',
+								name: 'delete_talk',
+								value: 'delete_talk',
+								checked: true
+							},
+							{
+								label: '删除重定向',
+								name: 'delete_redirects',
+								value: 'delete_redirects',
+								checked: true
+							}
+						]
+					}
 				},
 				{
-					label: '取消链入',
+					label: '取消链入（仅处理条目及Portal名字空间）',
 					name: 'unlink_page',
 					value: 'unlink',
-					checked: true
+					checked: false
 				},
 				{
-					label: '删除重定向',
-					name: 'delete_redirects',
-					value: 'delete_redirects',
+					label: '移除文件使用（所有名字空间）',
+					name: 'unlink_file',
+					value: 'unlink_file',
 					checked: true
 				}
 			]
@@ -59,24 +80,24 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 			size: 60
 		} );
 
-	var query;
+	var query = {
+		'action': 'query',
+		'prop': 'revisions|info|imageinfo',
+		'inprop': 'protection',
+		'rvprop': 'size|user'
+	};
 	if( mw.config.get( 'wgNamespaceNumber' ) === 14 ) {  // Category:
-
-		query = {
-			'action': 'query',
-			'generator': 'categorymembers',
-			'gcmtitle': mw.config.get( 'wgPageName' ),
-			'gcmlimit' : Twinkle.getPref('batchMax'), // the max for sysops
-			'prop': [ 'categories', 'revisions' ],
-			'rvprop': [ 'size' ]
-		};
+		query.generator = 'categorymembers';
+		query.gcmtitle = mw.config.get('wgPageName');
+		query.gcmlimit = Twinkle.getPref('batchMax'); // the max for sysops
 	} else if( mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Prefixindex' ) {
 
-		var gapnamespace, gapprefix;
+		query.generator = 'allpages';
+		query.gaplimit = Twinkle.getPref('batchMax'); // the max for sysops
 		if(Morebits.queryString.exists( 'prefix' ) )
 		{
-			gapnamespace = Morebits.queryString.get( 'namespace' );
-			gapprefix = Morebits.string.toUpperCaseFirstChar( Morebits.queryString.get( 'prefix' ) );
+			query.gapnamespace = Morebits.queryString.get( 'namespace' );
+			query.gapprefix = Morebits.string.toUpperCaseFirstChar( Morebits.queryString.get( 'prefix' ) );
 		}
 		else
 		{
@@ -85,40 +106,23 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 				return;
 			}
 			var titleSplit = pathSplit[3].split(':');
-			gapnamespace = mw.config.get("wgNamespaceIds")[titleSplit[0].toLowerCase()];
-			if ( titleSplit.length < 2 || typeof gapnamespace === 'undefined' )
+			query.gapnamespace = mw.config.get("wgNamespaceIds")[titleSplit[0].toLowerCase()];
+			if ( titleSplit.length < 2 || typeof query.gapnamespace === 'undefined' )
 			{
-				gapnamespace = 0;  // article namespace
-				gapprefix = pathSplit.splice(3).join('/');
+				query.gapnamespace = 0;  // article namespace
+				query.gapprefix = pathSplit.splice(3).join('/');
 			}
 			else
 			{
 				pathSplit = pathSplit.splice(4);
 				pathSplit.splice(0,0,titleSplit.splice(1).join(':'));
-				gapprefix = pathSplit.join('/');
+				query.gapprefix = pathSplit.join('/');
 			}
 		}
-
-		query = {
-			'action': 'query',
-			'generator': 'allpages',
-			'gapnamespace': gapnamespace ,
-			'gapprefix': gapprefix,
-			'gaplimit' : Twinkle.getPref('batchMax'), // the max for sysops
-			'prop' : 'revisions|info',
-			'inprop': 'protection',
-			'rvprop': 'size'
-		};
 	} else {
-		query = {
-			'action': 'query',
-			'generator': 'links',
-			'titles': mw.config.get( 'wgPageName' ),
-			'gpllimit' : Twinkle.getPref('batchMax'), // the max for sysops
-			'prop': 'revisions|info',
-			'inprop': 'protection',
-			'rvprop': 'size'
-		};
+		query.generator = 'links';
+		query.titles = mw.config.get('wgPageName');
+		query.gpllimit = Twinkle.getPref('batchMax'); // the max for sysops
 	}
 
 	var statusdiv = document.createElement( 'div' );
@@ -130,30 +134,36 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 	var statelem = new Morebits.status("抓取页面列表");
 	var wikipedia_api = new Morebits.wiki.api( '载入中…', query, function( apiobj ) {
 			var xml = apiobj.responseXML;
-			var $pages = $(xml).find('page').filter(':not([missing])');
+			var $pages = $(xml).find('page').filter(':not([missing])');  // :not([imagerepository="shared"])
 			var list = [];
 			$pages.each(function(index, page) {
 				var $page = $(page);
+				var ns = $page.attr('ns');
 				var title = $page.attr('title');
 				var isRedir = $page.attr('redirect') === "";
 				var $editprot = $page.find('pr[type="edit"][level="sysop"]');
-				var protected = $editprot.length > 0;
+				var isProtected = $editprot.length > 0;
 				var size = $page.find('rev').attr('size');
 
 				var metadata = [];
 				if (isRedir) {
 					metadata.push("重定向");
 				}
-				if (protected) {
-					metadata.push("全保护，" + 
+				if (isProtected) {
+					metadata.push("全保护，" +
 						($editprot.attr('expiry') === 'infinity' ? '无限期' : ('过期时间' + $editprot.attr('expiry'))));
 				}
-				metadata.push(size + "字节");
+				if (ns === "6") {  // mimic what delimages used to show for files
+					metadata.push("上传者：" + $page.find('ii').attr('user'));
+					metadata.push("最后编辑：" + $page.find('rev').attr('user'));
+				} else {
+					metadata.push(size + "字节");
+				}
 				list.push({
 					label: title + (metadata.length ? ('（' + metadata.join('，') + '）') : ''),
 					value: title,
 					checked: true,
-					style: (protected ? 'color:red' : '')
+					style: (isProtected ? 'color:red' : '')
 				});
 			});
 
@@ -189,9 +199,6 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 	wikipedia_api.post();
 };
 
-Twinkle.batchdelete.currentDeleteCounter = 0;
-Twinkle.batchdelete.currentUnlinkCounter = 0;
-Twinkle.batchdelete.currentdeletor = 0;
 Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvaluate(event) {
 	Morebits.wiki.actionCompleted.notice = '状态';
 	Morebits.wiki.actionCompleted.postfix = '批量删除已完成';
@@ -206,8 +213,10 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 	var pages = event.target.getChecked( 'pages' );
 	var reason = event.target.reason.value;
 	var delete_page = event.target.delete_page.checked;
+	var delete_talk = event.target.delete_talk && event.target.delete_talk.checked;
+	var delete_redirects = event.target.delete_redirects && event.target.delete_redirects.checked;
 	var unlink_page = event.target.unlink_page.checked;
-	var delete_redirects = event.target.delete_redirects.checked;
+	var unlink_file = event.target.unlink_file.checked;
 	if( ! reason ) {
 		alert("您需要给出理由！");
 		return;
@@ -219,178 +228,160 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 		return;
 	}
 
-	function toCall( work ) {
-		if( work.length === 0 &&  Twinkle.batchdelete.currentDeleteCounter <= 0 && Twinkle.batchdelete.currentUnlinkCounter <= 0 ) {
-			window.clearInterval( Twinkle.batchdelete.currentdeletor );
-			Morebits.wiki.removeCheckpoint();
-			return;
-		} else if( work.length !== 0 && ( Twinkle.batchdelete.currentDeleteCounter <= Twinkle.getPref('batchDeleteMinCutOff') || Twinkle.batchdelete.currentUnlinkCounter <= Twinkle.getPref('batchDeleteMinCutOff')  ) ) {
-			Twinkle.batchdelete.unlinkCache = []; // Clear the cache
-			var pages = work.shift();
-			Twinkle.batchdelete.currentDeleteCounter += pages.length;
-			Twinkle.batchdelete.currentUnlinkCounter += pages.length;
-			for( var i = 0; i < pages.length; ++i ) {
-				var page = pages[i];
-				var params = { page:page, reason:reason };
-				
-				var query, wikipedia_api;
-				if( unlink_page ) {
-					query = {
-						'action': 'query',
-						'list': 'backlinks',
-						'blfilterredir': 'nonredirects',
-						'blnamespace': [0, 100], // main space and portal space only
-						'bltitle': page,
-						'bllimit': Morebits.userIsInGroup( 'sysop' ) ? 5000 : 500 // 500 is max for normal users, 5000 for bots and sysops
-					};
-					wikipedia_api = new Morebits.wiki.api( '抓取反向链接', query, Twinkle.batchdelete.callbacks.unlinkBacklinksMain );
-					wikipedia_api.params = params;
-					wikipedia_api.post();
-				} else {
-					--Twinkle.batchdelete.currentUnlinkCounter;
-				}
-				if( delete_page ) {
-					if (delete_redirects)
-					{
-						query = {
-							'action': 'query',
-							'list': 'backlinks',
-							'blfilterredir': 'redirects',
-							'bltitle': page,
-							'bllimit': Morebits.userIsInGroup( 'sysop' ) ? 5000 : 500 // 500 is max for normal users, 5000 for bots and sysops
-						};
-						wikipedia_api = new Morebits.wiki.api( '抓取重定向', query, Twinkle.batchdelete.callbacks.deleteRedirectsMain );
-						wikipedia_api.params = params;
-						wikipedia_api.post();
-					}
+	var pageDeleter = new Morebits.batchOperation(delete_page ? "正在删除页面" : "初始化作业请求");
+	pageDeleter.setOption("chunkSize", Twinkle.getPref('batchdeleteChunks'));
+	// we only need the initial status lines if we're deleting the pages in the pages array
+	pageDeleter.setOption("preserveIndividualStatusLines", delete_page);
+	pageDeleter.setPageList(pages);
+	pageDeleter.run(function(pageName) {
+		var params = {
+			page: pageName,
+			delete_page: delete_page,
+			delete_talk: delete_talk,
+			delete_redirects: delete_redirects,
+			unlink_page: unlink_page,
+			unlink_file: unlink_file && /^(File|Image)\:/i.test(pageName),
+			reason: reason,
+			pageDeleter: pageDeleter
+		};
 
-					var wikipedia_page = new Morebits.wiki.page( page, '删除页面 ' + page );
-					wikipedia_page.setEditSummary(reason + Twinkle.getPref('deletionSummaryAd'));
-					wikipedia_page.suppressProtectWarning();
-					wikipedia_page.deletePage(function( apiobj ) {
-							--Twinkle.batchdelete.currentDeleteCounter;
-							var link = document.createElement( 'a' );
-							var innerPage = apiobj.parent.getPageName();
-							link.setAttribute( 'href', mw.util.getUrl( innerPage ) );
-							link.setAttribute( 'title', innerPage );
-							link.appendChild( document.createTextNode( innerPage ) );
-							apiobj.getStatusElement().info( [ '完成（' , link , '）' ] );
-						} );
-				} else {
-					--Twinkle.batchdelete.currentDeleteCounter;
-				}
-			}
+		var wikipedia_page = new Morebits.wiki.page( pageName, '删除页面' + pageName );
+		wikipedia_page.setCallbackParameters(params);
+		if( delete_page ) {
+			wikipedia_page.setEditSummary(reason + Twinkle.getPref('deletionSummaryAd'));
+			wikipedia_page.suppressProtectWarning();
+			wikipedia_page.deletePage(Twinkle.batchdelete.callbacks.doExtras, pageDeleter.workerFailure);
+		} else {
+			Twinkle.batchdelete.callbacks.doExtras(wikipedia_page);
 		}
-	}
-	var work = Morebits.array.chunk( pages, Twinkle.getPref('batchdeleteChunks') );
-	Morebits.wiki.addCheckpoint();
-	Twinkle.batchdelete.currentdeletor = window.setInterval( toCall, 1000, work );
+	});
 };
 
 Twinkle.batchdelete.callbacks = {
-	deleteRedirectsMain: function( self ) {
-		var xmlDoc = self.responseXML;
-		var snapshot = xmlDoc.evaluate('//backlinks/bl/@title', xmlDoc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null );
+	// this stupid parameter name is a temporary thing until I implement an overhaul
+	// of Morebits.wiki.* callback parameters
+	doExtras: function( thingWithParameters ) {
+		var params = thingWithParameters.parent ? thingWithParameters.parent.getCallbackParameters() :
+			thingWithParameters.getCallbackParameters();
+		// the initial batch operation's job is to delete the page, and that has
+		// succeeded by now
+		params.pageDeleter.workerSuccess(thingWithParameters);
 
-		var total = snapshot.snapshotLength;
+		var query, wikipedia_api;
 
-		if( snapshot.snapshotLength === 0 ) {
-			return;
+		if( params.unlink_page ) {
+			Twinkle.batchdelete.unlinkCache = {};
+			query = {
+				'action': 'query',
+				'list': 'backlinks',
+				'blfilterredir': 'nonredirects',
+				'blnamespace': [0, 100], // main space and portal space only
+				'bltitle': params.page,
+				'bllimit': 5000  // 500 is max for normal users, 5000 for bots and sysops
+			};
+			wikipedia_api = new Morebits.wiki.api( '抓取链入', query, Twinkle.batchdelete.callbacks.unlinkBacklinksMain );
+			wikipedia_api.params = params;
+			wikipedia_api.post();
 		}
 
-		var statusIndicator = new Morebits.status('删除到 ' + self.params.page + ' 的重定向', '0%');
+		if( params.unlink_file ) {
+			query = {
+				'action': 'query',
+				'list': 'imageusage',
+				'iutitle': params.page,
+				'iulimit': 5000  // 500 is max for normal users, 5000 for bots and sysops
+			};
+			wikipedia_api = new Morebits.wiki.api( '抓取文件链接', query, Twinkle.batchdelete.callbacks.unlinkImageInstancesMain );
+			wikipedia_api.params = params;
+			wikipedia_api.post();
+		}
 
-		var onsuccess = function( self ) {
-			var obj = self.params.obj;
-			var total = self.params.total;
-			var now = parseInt( 100 * ++(self.params.current)/total, 10 ) + '%';
-			obj.update( now );
-			self.statelem.unlink();
-			if( self.params.current >= total ) {
-				obj.info( now + '（完成）' );
-				Morebits.wiki.removeCheckpoint();
+		if( params.delete_page ) {
+			if ( params.delete_redirects ) {
+				query = {
+					'action': 'query',
+					'list': 'backlinks',
+					'blfilterredir': 'redirects',
+					'bltitle': params.page,
+					'bllimit': 5000  // 500 is max for normal users, 5000 for bots and sysops
+				};
+				wikipedia_api = new Morebits.wiki.api( '抓取重定向', query, Twinkle.batchdelete.callbacks.deleteRedirectsMain );
+				wikipedia_api.params = params;
+				wikipedia_api.post();
 			}
-		};
-
-
-		Morebits.wiki.addCheckpoint();
-		if( snapshot.snapshotLength === 0 ) {
-			statusIndicator.info( '100%（完成）' );
-			Morebits.wiki.removeCheckpoint();
-			return;
-		}
-
-		var params = $.extend({}, self.params);
-		params.current = 0;
-		params.total = total;
-		params.obj = statusIndicator;
-
-
-		for ( var i = 0; i < snapshot.snapshotLength; ++i ) {
-			var title = snapshot.snapshotItem(i).value;
-			var wikipedia_page = new Morebits.wiki.page( title, "删除 " + title );
-			wikipedia_page.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 重定向到已删除页面“' + self.params.page + '”' + Twinkle.getPref('deletionSummaryAd'));
-			wikipedia_page.setCallbackParameters(params);
-			wikipedia_page.deletePage(onsuccess);
+			if ( params.delete_talk ) {
+				var pageTitle = mw.Title.newFromText(params.page);
+				if (pageTitle && pageTitle.namespace % 2 === 0 && pageTitle.namespace !== 2) {
+					pageTitle.namespace++;  // now pageTitle is the talk page title!
+					query = {
+						'action': 'query',
+						'titles': pageTitle.toText()
+					};
+					wikipedia_api = new Morebits.wiki.api( '检查讨论页是否存在', query, Twinkle.batchdelete.callbacks.deleteTalk );
+					wikipedia_api.params = params;
+					wikipedia_api.params.talkPage = pageTitle.toText();
+					wikipedia_api.post();
+				}
+			}
 		}
 	},
-	unlinkBacklinksMain: function( self ) {
-		var xmlDoc = self.responseXML;
-		var snapshot = xmlDoc.evaluate('//backlinks/bl/@title', xmlDoc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null );
-
-		if( snapshot.snapshotLength === 0 ) {
-			--Twinkle.batchdelete.currentUnlinkCounter;
+	deleteRedirectsMain: function( apiobj ) {
+		var xml = apiobj.responseXML;
+		var pages = $(xml).find('bl').map(function() { return $(this).attr('title'); }).get();
+		if (!pages.length) {
 			return;
 		}
 
-		var statusIndicator = new Morebits.status('取消到 ' + self.params.page + ' 的链接', '0%');
+		var redirectDeleter = new Morebits.batchOperation("删除到" + apiobj.params.page + "的重定向");
+		redirectDeleter.setOption("chunkSize", Twinkle.getPref('batchdeleteChunks'));
+		redirectDeleter.setPageList(pages);
+		redirectDeleter.run(function(pageName) {
+			var wikipedia_page = new Morebits.wiki.page(pageName, "删除" + pageName);
+			wikipedia_page.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 重定向到已删除页面“' + apiobj.params.page + '”' + Twinkle.getPref('deletionSummaryAd'));
+			wikipedia_page.deletePage(redirectDeleter.workerSuccess, redirectDeleter.workerFailure);
+		});
+	},
+	deleteTalk: function( apiobj ) {
+		var xml = apiobj.responseXML;
+		var exists = $(xml).find('page:not([missing])').length > 0;
 
-		var total = snapshot.snapshotLength * 2;
-
-		var onsuccess = function( self ) {
-			var obj = self.params.obj;
-			var total = self.params.total;
-			var now = parseInt( 100 * ++(self.params.current)/total, 10 ) + '%';
-			obj.update( now );
-			self.statelem.unlink();
-			if( self.params.current >= total ) {
-				obj.info( now + '（完成）' );
-				--Twinkle.batchdelete.currentUnlinkCounter;
-				Morebits.wiki.removeCheckpoint();
-			}
-		};
-
-		Morebits.wiki.addCheckpoint();
-		if( snapshot.snapshotLength === 0 ) {
-			statusIndicator.info( '100%（完成）' );
-			--Twinkle.batchdelete.currentUnlinkCounter;
-			Morebits.wiki.removeCheckpoint();
+		if( !exists ) {
+			// no talk page; forget about it
 			return;
 		}
-		self.params.total = total;
-		self.params.obj = statusIndicator;
-		self.params.current =   0;
 
-		for ( var i = 0; i < snapshot.snapshotLength; ++i ) {
-			var title = snapshot.snapshotItem(i).value;
-			var wikipedia_page = new Morebits.wiki.page( title, "在页面 " + title + " 中" );
-			var params = $.extend( {}, self.params );
-			params.title = title;
-			params.onsuccess = onsuccess;
+		var page = new Morebits.wiki.page(apiobj.params.talkPage, "删除条目" + apiobj.params.page + "的讨论页");
+		page.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 已删除页面“' + apiobj.params.page + '”的讨论页' + Twinkle.getPref('deletionSummaryAd'));
+		page.deletePage();
+	},
+	unlinkBacklinksMain: function( apiobj ) {
+		var xml = apiobj.responseXML;
+		var pages = $(xml).find('bl').map(function() { return $(this).attr('title'); }).get();
+		if (!pages.length) {
+			return;
+		}
+
+		var unlinker = new Morebits.batchOperation("取消到" + apiobj.params.page + "的链入");
+		unlinker.setOption("chunkSize", Twinkle.getPref('batchdeleteChunks'));
+		unlinker.setPageList(pages);
+		unlinker.run(function(pageName) {
+			var wikipedia_page = new Morebits.wiki.page(pageName, "取消链入于" + pageName);
+			var params = $.extend({}, apiobj.params);
+			params.title = pageName;
+			params.unlinker = unlinker;
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.batchdelete.callbacks.unlinkBacklinks);
-		}
+		});
 	},
 	unlinkBacklinks: function( pageobj ) {
 		var params = pageobj.getCallbackParameters();
 		if( ! pageobj.exists() ) {
 			// we probably just deleted it, as a recursive backlink
-			params.onsuccess( { params: params, statelem: pageobj.getStatusElement() } );
-			Morebits.wiki.actionCompleted();
+			params.unlinker.workerSuccess(pageobj);
 			return;
 		}
-		var text;
 
+		var text;
 		if( params.title in Twinkle.batchdelete.unlinkCache ) {
 			text = Twinkle.batchdelete.unlinkCache[ params.title ];
 		} else {
@@ -404,14 +395,65 @@ Twinkle.batchdelete.callbacks = {
 		Twinkle.batchdelete.unlinkCache[ params.title ] = text;
 		if( text === old_text ) {
 			// Nothing to do, return
-			params.onsuccess( { params: params, statelem: pageobj.getStatusElement() } );
-			Morebits.wiki.actionCompleted();
+			params.unlinker.workerSuccess(pageobj);
 			return;
 		}
-		pageobj.setEditSummary('取消到页面 ' + params.page + ' 的链接' + Twinkle.getPref('deletionSummaryAd'));
+		pageobj.setEditSummary('取消到页面“' + params.page + '”的链接' + Twinkle.getPref('deletionSummaryAd'));
 		pageobj.setPageText(text);
 		pageobj.setCreateOption('nocreate');
-		pageobj.save(params.onsuccess);
+		pageobj.setMaxConflictRetries(10);
+		pageobj.save(params.unlinker.workerSuccess, params.unlinker.workerFailure);
+	},
+	unlinkImageInstancesMain: function( apiobj ) {
+		var xml = apiobj.responseXML;
+		var pages = $(xml).find('iu').map(function() { return $(this).attr('title'); }).get();
+		if (!pages.length) {
+			return;
+		}
+
+		var unlinker = new Morebits.batchOperation("取消到" + apiobj.params.page + "的链入");
+		unlinker.setOption("chunkSize", Twinkle.getPref('batchdeleteChunks'));
+		unlinker.setPageList(pages);
+		unlinker.run(function(pageName) {
+			var wikipedia_page = new Morebits.wiki.page(pageName, "移除文件使用于" + pageName);
+			var params = $.extend({}, apiobj.params);
+			params.title = pageName;
+			params.unlinker = unlinker;
+			wikipedia_page.setCallbackParameters(params);
+			wikipedia_page.load(Twinkle.batchdelete.callbacks.unlinkImageInstances);
+		});
+	},
+	unlinkImageInstances: function( pageobj ) {
+		var params = pageobj.getCallbackParameters();
+		if( ! pageobj.exists() ) {
+			// we probably just deleted it, as a recursive backlink
+			params.unlinker.workerSuccess(pageobj);
+			return;
+		}
+
+		var image = params.image.replace( /^(?:Image|File):/, '' );
+		var text;
+		if( params.title in Twinkle.batchdelete.unlinkCache ) {
+			text = Twinkle.batchdelete.unlinkCache[ params.title ];
+		} else {
+			text = pageobj.getPageText();
+		}
+		var old_text = text;
+		var wikiPage = new Morebits.wikitext.page( text );
+		wikiPage.commentOutImage( image , '注释出文件，因其已被删除' );
+
+		text = wikiPage.getText();
+		Twinkle.batchdelete.unlinkCache[ params.title ] = text;
+		if( text === old_text ) {
+			pageobj.getStatusElement().error( '未能取消文件' + image + '在' + pageobj.getPageName() + '的使用' );
+			params.unlinker.workerFailure(pageobj);
+			return;
+		}
+		pageobj.setEditSummary('移除对文件' + image + "的使用（" + params.reason + "）" + Twinkle.getPref('deletionSummaryAd'));
+		pageobj.setPageText(text);
+		pageobj.setCreateOption('nocreate');
+		pageobj.setMaxConflictRetries(10);
+		pageobj.save(params.unlinker.workerSuccess, params.unlinker.workerFailure);
 	}
 };
 })(jQuery);

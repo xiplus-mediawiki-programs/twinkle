@@ -48,6 +48,8 @@ Twinkle.defaultConfig.twinkle = {
 	protectionSummaryAd: " ([[WP:TW|TW]])",
 	userTalkPageMode: "window",
 	dialogLargeFont: false,
+	 // Block
+	blankTalkpageOnIndefBlock: false,
 	 // Fluff (revert and rollback)
 	openTalkPage: [  ],
 	openTalkPageOnAutoRevert: false,
@@ -84,7 +86,6 @@ Twinkle.defaultConfig.twinkle = {
 	defaultWarningGroup: "1",
 	showSharedIPNotice: true,
 	watchWarnings: false,
-	blankTalkpageOnIndefBlock: false,
 	customWarningList: [],
 	 // XfD
 	xfdWatchDiscussion: "default",
@@ -98,12 +99,9 @@ Twinkle.defaultConfig.twinkle = {
 	 // Hidden preferences
 	revertMaxRevisions: 50,
 	batchdeleteChunks: 50,
-	batchDeleteMinCutOff: 5,
 	batchMax: 5000,
 	batchProtectChunks: 50,
-	batchProtectMinCutOff: 5,
 	batchundeleteChunks: 50,
-	batchUndeleteMinCutOff: 5,
 	deliChunks: 500,
 	deliMax: 5000,
 	proddeleteChunks: 50
@@ -402,6 +400,9 @@ Twinkle.load = function () {
 	Twinkle.warn();
 	// Twinkle.shared();
 	Twinkle.talkback();
+	if ( Morebits.userIsInGroup('sysop') ) {
+		Twinkle.block();
+	}
 	// Deletion
 	Twinkle.speedy();
 	Twinkle.copyvio();
@@ -416,7 +417,6 @@ Twinkle.load = function () {
 	Twinkle.config.init();
 	Twinkle.fluff.init();
 	if ( Morebits.userIsInGroup('sysop') ) {
-		Twinkle.delimages();
 		Twinkle.batchdelete();
 		Twinkle.batchundelete();
 		Twinkle.close();

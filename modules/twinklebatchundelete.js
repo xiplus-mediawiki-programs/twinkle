@@ -10,13 +10,14 @@
  *** twinklebatchundelete.js: Batch undelete module
  ****************************************
  * Mode of invocation:     Tab ("Und-batch")
- * Active on:              Existing user pages
+ * Active on:              Existing user and project pages
  * Config directives in:   TwinkleConfig
  */
 
 
 Twinkle.batchundelete = function twinklebatchundelete() {
-	if( mw.config.get("wgNamespaceNumber") !== mw.config.get("wgNamespaceIds").user || 
+	if( ( mw.config.get("wgNamespaceNumber") !== mw.config.get("wgNamespaceIds").user &&
+		mw.config.get("wgNamespaceNumber") !== mw.config.get("wgNamespaceIds").project ) ||
 		!mw.config.get("wgArticleId") ) {
 		return;
 	}
@@ -29,6 +30,8 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 	var Window = new Morebits.simpleWindow( 600, 400 );
 	Window.setScriptName("Twinkle");
 	Window.setTitle("批量反删除");
+	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#batchundelete" );
+
 	var form = new Morebits.quickForm( Twinkle.batchundelete.callback.evaluate );
 	form.append( {
 			type: 'input',
@@ -37,14 +40,21 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 			size: 60
 		} );
 
+	var statusdiv = document.createElement( 'div' );
+	statusdiv.style.padding = '15px';  // just so it doesn't look broken
+	Window.setContent(statusdiv);
+	Morebits.status.init(statusdiv);
+	Window.display();
+
 	var query = {
 		'action': 'query',
 		'generator': 'links',
 		'titles': mw.config.get("wgPageName"),
 		'gpllimit' : Twinkle.getPref('batchMax') // the max for sysops
 	};
-	var wikipedia_api = new Morebits.wiki.api( '抓取页面', query, function( apiobj ) {
-			var xmlDoc = apiobj.responseXML;
+	var statelem = new Morebits.status("抓取页面列表");
+	var wikipedia_api = new Morebits.wiki.api( "载入中…", query, function( apiobj ) {
+			var xml = apiobj.responseXML;
 			var $pages = $(xml).find('page[missing]');
 			var list = [];
 			$pages.each(function(index, page) {
@@ -78,16 +88,11 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 			apiobj.params.Window.setContent( result );
 
 			Morebits.checkboxShiftClickSupport(Morebits.quickForm.getElements(result, 'pages'));
-		} );
+		}, statelem );
 	wikipedia_api.params = { form:form, Window:Window };
 	wikipedia_api.post();
-	var root = document.createElement( 'div' );
-	Morebits.status.init( root );
-	Window.setContent( root );
-	Window.display();
 };
-Twinkle.batchundelete.currentUndeleteCounter = 0;
-Twinkle.batchundelete.currentundeletor = 0;
+
 Twinkle.batchundelete.callback.evaluate = function( event ) {
 	Morebits.wiki.actionCompleted.notice = '状态';
 	Morebits.wiki.actionCompleted.postfix = '反删除已完成';
@@ -106,45 +111,25 @@ Twinkle.batchundelete.callback.evaluate = function( event ) {
 		return;
 	}
 
-	var work = Morebits.array.chunk( pages, Twinkle.getPref('batchUndeleteChunks') );
-	Morebits.wiki.addCheckpoint();
-	Twinkle.batchundelete.currentundeletor = window.setInterval( Twinkle.batchundelete.callbacks.main, 1000, work, reason );
+	var batchOperation = new Morebits.batchOperation("反删除页面");
+	batchOperation.setOption("chunkSize", Twinkle.getPref('batchUndeleteChunks'));
+	batchOperation.setOption("preserveIndividualStatusLines", true);
+	batchOperation.setPageList(pages);
+	batchOperation.run(function(pageName) {
+		var query = {
+			'token': mw.user.tokens.get().editToken,
+			'title': pageName,
+			'action': 'undelete',
+			'reason': reason + Twinkle.getPref('deletionSummaryAd')
+		};
+		var wikipedia_api = new Morebits.wiki.api( "反删除页面" + pageName, query,
+			batchOperation.workerSuccess, null, batchOperation.workerFailure );
+		wikipedia_api.statelem.status("反删除中…");
+		wikipedia_api.pageName = pageName;
+		wikipedia_api.post();
+	});
 };
 
-Twinkle.batchundelete.callbacks = {
-	main: function( work, reason ) {
-		if( work.length === 0 && Twinkle.batchundelete.currentUndeleteCounter <= 0 ) {
-			Morebits.status.info( '完成' );
-			window.clearInterval( Twinkle.batchundelete.currentundeletor );
-			Morebits.wiki.removeCheckpoint();
-			return;
-		} else if( work.length !== 0 && Twinkle.batchundelete.currentUndeleteCounter <= Twinkle.getPref('batchUndeleteMinCutOff') ) {
-			var pages = work.shift();
-			Twinkle.batchundelete.currentUndeleteCounter += pages.length;
-			for( var i = 0; i < pages.length; ++i ) {
-				var title = pages[i];
-				var query = { 
-					'token': mw.user.tokens.get().editToken,
-					'title': title,
-					'action': 'undelete',
-					'reason': reason + Twinkle.getPref('deletionSummaryAd')
-				};
-				var wikipedia_api = new Morebits.wiki.api( "反删除 " + title, query, function( self ) { 
-						--Twinkle.batchundelete.currentUndeleteCounter;
-						var link = document.createElement( 'a' );
-						link.setAttribute( 'href', mw.util.getUrl(self.itsTitle) );
-						link.setAttribute( 'title', self.itsTitle );
-						link.appendChild( document.createTextNode(self.itsTitle) );
-						self.statelem.info( ['完成（',link,'）'] );
-
-					});
-				wikipedia_api.itsTitle = title;
-				wikipedia_api.post();
-
-			}
-		}
-	}
-};
 })(jQuery);
 
 

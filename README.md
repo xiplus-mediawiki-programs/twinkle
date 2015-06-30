@@ -27,6 +27,8 @@ Twinkle是维基人用于快速执行常见维护工作（如提交删除候选�
 
 ### 手工拼接
 
+**此处的指引已过时，请勿使用否则你很可能搞坏东西。**
+
 要生成拼接后的Twinkle脚本，请使用以下`bash`命令：
 
     awk 'FNR==1{print ""}{print}' twinkle.js modules/*.js > alltwinkle.js
@@ -37,7 +39,7 @@ Twinkle是维基人用于快速执行常见维护工作（如提交删除候选�
 
 [MediaWiki:Gadgets-definition][]应当包含这一行：
 
-    * Twinkle[ResourceLoader|dependencies=mediawiki.user,mediawiki.util,mediawiki.Title,jquery.ui.dialog,jquery.tipsy|rights=autoconfirmed]|morebits.js|morebits.css|Twinkle.js
+    * Twinkle[ResourceLoader|dependencies=mediawiki.user,mediawiki.util,mediawiki.RegExp,jquery.ui.dialog,jquery.tipsy,moment|rights=autoconfirmed]|morebits.js|morebits.css|Twinkle.js|twinkleprod.js|twinkleimage.js|twinklebatchundelete.js|twinklewarn.js|twinklespeedy.js|friendlyshared.js|twinklediff.js|twinkleunlink.js|twinkledelimages.js|friendlytag.js|twinkledeprod.js|friendlywelcome.js|twinklexfd.js|twinklebatchdelete.js|twinklebatchprotect.js|twinkleconfig.js|twinklefluff.js|twinkleprotect.js|twinklearv.js|twinkleblock.js|friendlytalkback.js
 
 ### 使用`sync.pl`同步
 
