@@ -401,7 +401,7 @@ Twinkle.load = function () {
 	// Twinkle.shared();
 	Twinkle.talkback();
 	if ( Morebits.userIsInGroup('sysop') ) {
-		Twinkle.block();
+		// Twinkle.block();
 	}
 	// Deletion
 	Twinkle.speedy();
