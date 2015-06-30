@@ -1078,7 +1078,7 @@ Twinkle.protect.callbacks = {
 			reg = /(\/header2}}\n)/;
 		}
 		var originalTextLength = text.length;
-		text = text.replace( reg, "$1" + newtag + "\n");
+		text = text.replace( reg, "$1" + newtag + "\n\n");
 		if (text.length === originalTextLength)
 		{
 			var linknode = document.createElement('a');
