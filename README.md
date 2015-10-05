@@ -49,13 +49,15 @@ Twinkle是维基人用于快速执行常见维护工作（如提交删除候选�
 
     cpanm --sudo install Git::Repository MediaWiki::Bot
 
+注意：在一些系统上，您可能需要安装附加的模块如`File::Slurp`、`Getopt::Long::Descriptive`和其他依赖。建议您通过系统的包管理工具安装这些（如`apt-get install libgetopt-long-descriptive-perl`），但您也可以通过cpanm来安装。
+
 在运行这个程序时，您可以在命令行中使用`--username`和`--password`参数提供您的凭据，但更推荐将它们保存到`~/.mwbotrc`的文件中，采用以下格式：
 
     username => "Username",
     password => "password",
     base     => "User::Username"
 
-其中`base`是`pull`和`push`文件时的wiki路径前缀。
+其中`base`是`pull`和`push`文件时的wiki路径前缀。如果你不指定`base`参数，文件将会被推到MediaWiki名字空间。
 
 留意您的工作目录**不需要**是干净的；亦可以`stash`或`commit`您的修改。
 
@@ -71,6 +73,10 @@ Twinkle是维基人用于快速执行常见维护工作（如提交删除候选�
 
     ./sync.pl --deploy twinkle.js
     make deploy
+
+请留意，要同步到一个自定义的维基，您也需要指定--lang和--family参数。比如，要同步文件到`test.wmflabs.org`，您应当指定`--lang=test --family=wmflabs`。如果您希望使用`make deploy`来部署所有文件，您也可能需要将相关参数通过Makefile传递给脚本，如：
+
+    make ARGS="--lang=test --family=wmflabs" deploy
 
 编辑摘要会包含分支和上次提交的SHA。
 

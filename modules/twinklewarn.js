@@ -15,7 +15,7 @@
  */
 
 Twinkle.warn = function twinklewarn() {
-	if( mw.config.get('wgNamespaceNumber') === 3 ) {
+	if( mw.config.get( 'wgRelevantUserName' ) ) {
 			Twinkle.addPortletLink( Twinkle.warn.callback, "警告", "tw-warn", "警告或提醒用户" );
 	}
 
@@ -38,7 +38,7 @@ Twinkle.warn = function twinklewarn() {
 };
 
 Twinkle.warn.callback = function twinklewarnCallback() {
-	if( mw.config.get('wgTitle').split( '/' )[0] === mw.config.get('wgUserName') &&
+	if( mw.config.get( 'wgRelevantUserName' ) === mw.config.get( 'wgUserName' ) &&
 			!confirm( '您将要警告自己！您确定要继续吗？' ) ) {
 		return;
 	}
@@ -1166,6 +1166,7 @@ Twinkle.warn.callbacks = {
 };
 
 Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
+	var userTalkPage = 'User_talk:' + mw.config.get('wgRelevantUserName');
 
 	// First, check to make sure a reason was filled in if uw-username was selected
 
@@ -1189,10 +1190,10 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	Morebits.simpleWindow.setButtonsEnabled( false );
 	Morebits.status.init( e.target );
 
-	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
+	Morebits.wiki.actionCompleted.redirect = userTalkPage;
 	Morebits.wiki.actionCompleted.notice = "警告完成，将在几秒后刷新";
 
-	var wikipedia_page = new Morebits.wiki.page( mw.config.get('wgPageName'), '用户对话页修改' );
+	var wikipedia_page = new Morebits.wiki.page( userTalkPage, '用户对话页修改' );
 	wikipedia_page.setCallbackParameters( params );
 	wikipedia_page.setFollowRedirect( true );
 	wikipedia_page.load( Twinkle.warn.callbacks.main );

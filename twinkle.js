@@ -398,11 +398,11 @@ Twinkle.load = function () {
 	// Load the modules in the order that the tabs should appears
 	// User/user talk-related
 	Twinkle.warn();
-	// Twinkle.shared();
-	Twinkle.talkback();
 	if ( Morebits.userIsInGroup('sysop') ) {
 		// Twinkle.block();
 	}
+	// Twinkle.shared();
+	Twinkle.talkback();
 	// Deletion
 	Twinkle.speedy();
 	Twinkle.copyvio();

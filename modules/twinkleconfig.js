@@ -319,7 +319,6 @@ Twinkle.config.sections = [
 		{
 			name: "markSpeedyPagesAsPatrolled",
 			label: "标记时标记页面为已巡查（如可能）",
-			helptip: "基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。",
 			type: "boolean"
 		},
 
@@ -572,6 +571,12 @@ Twinkle.config.sections = [
 			type: "customList",
 			customListValueTitle: "模板名（不含大括号）",
 			customListLabelTitle: "显示的文字（和编辑摘要）"
+		},
+
+		{
+			name: "markXfdPagesAsPatrolled",
+			label: "在提交存废讨论时将页面标记为已巡查（如可能）",
+			type: "boolean"
 		}
 	]
 },

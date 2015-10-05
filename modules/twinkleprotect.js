@@ -742,7 +742,7 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 			if( /template/.test( form.category.value ) ) {
 				form.noinclude.checked = true;
 				form.editexpiry.value = form.moveexpiry.value = "indefinite";
-			} else {
+			} else if( mw.config.get('wgNamespaceNumber') !== 10 ) {
 				form.noinclude.checked = false;
 			}
 		}
