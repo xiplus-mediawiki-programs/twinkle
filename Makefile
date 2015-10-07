@@ -5,6 +5,7 @@ modules = modules/friendlyshared.js \
 		  modules/friendlytalkback.js \
 		  modules/twinklebatchdelete.js \
 		  modules/twinklebatchundelete.js \
+		  modules/twinkleblock.js \
 		  modules/twinkleconfig.js \
 		  modules/twinklecopyvio.js \
 		  modules/twinklediff.js \

@@ -399,7 +399,7 @@ Twinkle.load = function () {
 	// User/user talk-related
 	Twinkle.warn();
 	if ( Morebits.userIsInGroup('sysop') ) {
-		// Twinkle.block();
+		Twinkle.block();
 	}
 	// Twinkle.shared();
 	Twinkle.talkback();
