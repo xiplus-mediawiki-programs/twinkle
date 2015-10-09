@@ -585,11 +585,10 @@ Twinkle.tag.multipleIssuesExceptions = [
 	'merge',
 	'merge from',
 	'merge to',
+	'notability',
 	'notmandarin',
-	'roughtranslation',
 	"substub",
-	'uncategorized',
-	'update'
+	'uncategorized'
 ];
 
 
