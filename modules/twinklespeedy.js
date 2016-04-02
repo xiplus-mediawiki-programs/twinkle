@@ -41,22 +41,28 @@ Twinkle.speedy.dialog = null;
 
 // The speedy criteria list can be in one of several modes
 Twinkle.speedy.mode = {
-	sysopSubmit: 1,  // radio buttons, no subgroups, submit when "Submit" button is clicked
+	sysopSingleSubmit: 1,  // radio buttons, no subgroups, submit when "Submit" button is clicked
 	sysopRadioClick: 2,  // radio buttons, no subgroups, submit when a radio button is clicked
-	userMultipleSubmit: 3,  // check boxes, subgroups, "Submit" button already pressent
-	userMultipleRadioClick: 4,  // check boxes, subgroups, need to add a "Submit" button
-	userSingleSubmit: 5,  // radio buttons, subgroups, submit when "Submit" button is clicked
-	userSingleRadioClick: 6,  // radio buttons, subgroups, submit when a radio button is clicked
+	sysopMultipleSubmit: 3, // check boxes, subgroups, "Submit" button already present
+	sysopMultipleRadioClick: 4, // check boxes, subgroups, need to add a "Submit" button
+	userMultipleSubmit: 5,  // check boxes, subgroups, "Submit" button already pressent
+	userMultipleRadioClick: 6,  // check boxes, subgroups, need to add a "Submit" button
+	userSingleSubmit: 7,  // radio buttons, subgroups, submit when "Submit" button is clicked
+	userSingleRadioClick: 8,  // radio buttons, subgroups, submit when a radio button is clicked
 
 	// are we in "delete page" mode?
 	// (sysops can access both "delete page" [sysop] and "tag page only" [user] modes)
 	isSysop: function twinklespeedyModeIsSysop(mode) {
-		return mode === Twinkle.speedy.mode.sysopSubmit ||
-			mode === Twinkle.speedy.mode.sysopRadioClick;
+		return mode === Twinkle.speedy.mode.sysopSingleSubmit ||
+			mode === Twinkle.speedy.mode.sysopMultipleSubmit ||
+			mode === Twinkle.speedy.mode.sysopRadioClick ||
+			mode === Twinkle.speedy.mode.sysopMultipleRadioClick;
 	},
 	// do we have a "Submit" button once the form is created?
 	hasSubmitButton: function twinklespeedyModeHasSubmitButton(mode) {
-		return mode === Twinkle.speedy.mode.sysopSubmit ||
+		return mode === Twinkle.speedy.mode.sysopSingleSubmit ||
+			mode === Twinkle.speedy.mode.sysopMultipleSubmit ||
+			mode === Twinkle.speedy.mode.sysopMultipleRadioClick ||
 			mode === Twinkle.speedy.mode.userMultipleSubmit ||
 			mode === Twinkle.speedy.mode.userMultipleRadioClick ||
 			mode === Twinkle.speedy.mode.userSingleSubmit;
@@ -64,12 +70,10 @@ Twinkle.speedy.mode = {
 	// is db-multiple the outcome here?
 	isMultiple: function twinklespeedyModeIsMultiple(mode) {
 		return mode === Twinkle.speedy.mode.userMultipleSubmit ||
-			mode === Twinkle.speedy.mode.userMultipleRadioClick;
+			mode === Twinkle.speedy.mode.sysopMultipleSubmit ||
+			mode === Twinkle.speedy.mode.userMultipleRadioClick ||
+			mode === Twinkle.speedy.mode.sysopMultipleRadioClick;
 	},
-	// do we want subgroups? (if not we have to use prompt())
-	wantSubgroups: function twinklespeedyModeWantSubgroups(mode) {
-		return !Twinkle.speedy.mode.isSysop(mode);
-	}
 };
 
 // Prepares the speedy deletion dialog and displays it
@@ -104,6 +108,12 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 							// enable/disable redirects checkbox
 							cForm.redirects.disabled = cChecked;
 							cForm.redirects.checked = !cChecked;
+							// enable/disable delete multiple
+							cForm.delmultiple.disabled = cChecked;
+							cForm.delmultiple.checked = false;
+							// enable/disable open talk page checkbox
+							cForm.openusertalk.disabled = cChecked;
+							cForm.openusertalk.checked = false;
 
 							// enable/disable notify checkbox
 							cForm.notify.disabled = !cChecked;
@@ -151,6 +161,33 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 						event: function( event ) {
 							event.stopPropagation();
 						}
+					}
+				]
+			} );
+		form.append( {
+			type: 'checkbox',
+			list: [
+				{
+					label: '应用多个理由删除',
+					value: 'delmultiple',
+					name: 'delmultiple',
+					tooltip: "您可选择应用于该页的多个理由。",
+					event: function( event ) {
+						Twinkle.speedy.callback.modeChanged( event.target.form );
+						event.stopPropagation();
+					}
+				}
+			]
+		} );
+		form.append( {
+				type: 'checkbox',
+				list: [
+					{
+						label: '开启用户对话页',
+						value: 'openusertalk',
+						name: 'openusertalk',
+						tooltip: '此项的默认值为您的开启对话页设置。在您选择应用多条理由删除时此项将保持不变。',
+						checked : false
 					}
 				]
 			} );
@@ -205,6 +242,19 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 	dialog.display();
 
 	Twinkle.speedy.callback.modeChanged( result );
+
+	// if sysop, check if CSD is already on the page and fill in custom rationale
+	if (Morebits.userIsInGroup('sysop') && $("#delete-reason").length) {
+		var customOption = $("input[name=csd][value=reason]")[0];
+
+		if (Twinkle.getPref('speedySelectionStyle') !== 'radioClick') {
+			// force listeners to re-init
+			customOption.click();
+			customOption.parentNode.appendChild(customOption.subgroup);
+		}
+
+		customOption.subgroup.querySelector('input').value = decodeURIComponent($("#delete-reason").text()).replace(/\+/g, ' ');
+	}
 };
 
 Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(form) {
@@ -213,7 +263,11 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 	// first figure out what mode we're in
 	var mode = Twinkle.speedy.mode.userSingleSubmit;
 	if (form.tag_only && !form.tag_only.checked) {
-		mode = Twinkle.speedy.mode.sysopSubmit;
+		if (form.delmultiple.checked) {
+			mode = Twinkle.speedy.mode.sysopMultipleSubmit;
+		} else {
+			mode = Twinkle.speedy.mode.sysopSingleSubmit;
+		}
 	} else {
 		if (form.multiple.checked) {
 			mode = Twinkle.speedy.mode.userMultipleSubmit;
@@ -230,7 +284,9 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			name: 'work_area'
 		} );
 
-	if (mode === Twinkle.speedy.mode.userMultipleRadioClick) {
+	if (mode === Twinkle.speedy.mode.userMultipleRadioClick || mode === Twinkle.speedy.mode.sysopMultipleRadioClick) {
+		var evaluateType = Twinkle.speedy.mode.isSysop(mode) ? 'evaluateSysop' : 'evaluateUser';
+
 		work_area.append( {
 				type: 'div',
 				label: '当选择完成后，点击：'
@@ -240,13 +296,18 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 				name: 'submit-multiple',
 				label: '提交',
 				event: function( event ) {
-					Twinkle.speedy.callback.evaluateUser( event );
+					Twinkle.speedy.callback[evaluateType]( event );
 					event.stopPropagation();
 				}
 			} );
 	}
 
 	var radioOrCheckbox = (Twinkle.speedy.mode.isMultiple(mode) ? 'checkbox' : 'radio');
+
+	if (Twinkle.speedy.mode.isSysop(mode) && !Twinkle.speedy.mode.isMultiple(mode)) {
+		work_area.append( { type: 'header', label: '自定义理由' } );
+		work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.customRationale, mode) } );
+	}
 
 	switch (namespace) {
 		case 0:  // article
@@ -277,8 +338,13 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			break;
 	}
 
+	// custom rationale lives under general criteria when tagging
+	var generalCriteria = Twinkle.speedy.generalList;
+	if(!Twinkle.speedy.mode.isSysop(mode)) {
+		generalCriteria = Twinkle.speedy.customRationale.concat(generalCriteria);
+	}
 	work_area.append( { type: 'header', label: '常规' } );
-	work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.generalList, mode) });
+	work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(generalCriteria, mode) });
 	if (!Twinkle.speedy.mode.isSysop(mode)) {
 		work_area.append( { type: 'div', label: '标记CSD G16，请使用Twinkle的“侵权”功能。' } );
 	}
@@ -299,7 +365,6 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 	// mode switches
 	var isSysop = Twinkle.speedy.mode.isSysop(mode);
 	var multiple = Twinkle.speedy.mode.isMultiple(mode);
-	var wantSubgroups = Twinkle.speedy.mode.wantSubgroups(mode);
 	var hasSubmitButton = Twinkle.speedy.mode.hasSubmitButton(mode);
 
 	var openSubgroupHandler = function(e) {
@@ -310,7 +375,8 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 		e.stopPropagation();
 	};
 	var submitSubgroupHandler = function(e) {
-		Twinkle.speedy.callback.evaluateUser(e);
+		var evaluateType = Twinkle.speedy.mode.isSysop(mode) ? 'evaluateSysop' : 'evaluateUser';
+		Twinkle.speedy.callback[evaluateType](e);
 		e.stopPropagation();
 	};
 
@@ -320,10 +386,6 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 		// hack to get the g11 radio / checkbox right
 		if (criterion.value === 'g11') {
 			criterion.style = Twinkle.getPref('enlargeG11Input') ? 'height: 2em; width: 2em; height: -moz-initial; width: -moz-initial; -moz-transform: scale(2); -o-transform: scale(2);' : '';
-		}
-
-		if (!wantSubgroups) {
-			criterion.subgroup = null;
 		}
 
 		if (multiple) {
@@ -377,12 +439,43 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 					}
 				];
 			}
+			// FIXME: does this do anything?
 			criterion.event = openSubgroupHandler;
+		}
+
+		if ( isSysop ) {
+			var originalEvent = criterion.event;
+			criterion.event = function(e) {
+				if (multiple) return originalEvent(e);
+
+				var normalizedCriterion = Twinkle.speedy.normalizeHash[e.target.value];
+				$('[name=openusertalk]').prop('checked',
+						Twinkle.getPref('openUserTalkPageOnSpeedyDelete').indexOf(normalizedCriterion) !== -1
+					);
+				if ( originalEvent ) {
+					return originalEvent(e);
+				}
+			};
 		}
 
 		return criterion;
 	});
 };
+
+Twinkle.speedy.customRationale = [
+	{
+		label: '自定义理由' + (Morebits.userIsInGroup('sysop') ? '（自定义删除理由）' : ''),
+		value: 'reason',
+		tooltip: '该页至少应该符合一条快速删除的标准，并且您必须在理由中提到。这不是万能的删除理由。',
+		subgroup: {
+			name: 'reason_1',
+			type: 'input',
+			label: '理由：',
+			size: 60
+		},
+		hideWhenMultiple: true
+	}
+];
 
 Twinkle.speedy.fileList = [
 	{
@@ -489,19 +582,6 @@ Twinkle.speedy.userList = [
 
 Twinkle.speedy.generalList = [
 	{
-		label: '自定义理由' + (Morebits.userIsInGroup('sysop') ? '（自定义删除理由）' : ''),
-		value: 'reason',
-		tooltip: '该页至少应该符合一条快速删除的标准，并且您必须在理由中提到。这不是万能的删除理由。',
-		subgroup: {
-			name: 'reason_1',
-			type: 'input',
-			label: '理由：',
-			size: 60
-		},
-		hideWhenMultiple: true,
-		hideSubgroupWhenSysop: true
-	},
-	{
 		label: 'G1: 没有实际内容的页面',
 		value: 'g1',
 		tooltip: '如“adfasddd”。参见Wikipedia:胡言乱语。但注意：图片也算是内容。'
@@ -526,7 +606,8 @@ Twinkle.speedy.generalList = [
 			label: '删除讨论位置：',
 			tooltip: '必须以“Wikipedia:”开头',
 			size: 60
-		}
+		},
+		hideSubgroupWhenMultiple: true
 	},
 	{
 		label: 'G8: 管理员因技术原因删除页面',
@@ -544,7 +625,8 @@ Twinkle.speedy.generalList = [
 			label: '可选的解释：',
 			tooltip: '比如作者在哪里请求了删除。',
 			size: 60
-		}
+		},
+		hideSubgroupWhenSysop: true
 	},
 	{
 		label: 'G11: 明显的广告宣传页面，或只有相关人物或团体的联系方法的页面',
@@ -691,48 +773,99 @@ Twinkle.speedy.reasonHash = {
 };
 
 Twinkle.speedy.callbacks = {
-	sysop: {
-		main: function( params ) {
-			var thispage;
-
-			Morebits.wiki.addCheckpoint();  // prevent actionCompleted from kicking in until user interaction is done
-
-			// look up initial contributor. If prompting user for deletion reason, just display a link.
-			// Otherwise open the talk page directly
-			if( params.openusertalk ) {
-				thispage = new Morebits.wiki.page( mw.config.get('wgPageName') );  // a necessary evil, in order to clear incorrect status text
-				thispage.setCallbackParameters( params );
-				thispage.lookupCreator( Twinkle.speedy.callbacks.sysop.openUserTalkPage );
-			}
-
-			// delete page
-			var reason;
-			thispage = new Morebits.wiki.page( mw.config.get('wgPageName'), "删除页面" );
-			if (params.normalized === 'db') {
-				reason = prompt("输入删除理由：", "");
-			} else {
-				var presetReason = "[[WP:CSD#" + params.normalized.toUpperCase() + "|" + params.normalized.toUpperCase() + "]]: " + params.reason;
-				if (Twinkle.getPref("promptForSpeedyDeletionSummary").indexOf(params.normalized) !== -1) {
-					reason = prompt("输入删除理由，或点击确定以接受自动生成的：", presetReason);
-				} else {
-					reason = presetReason;
+	getTemplateCodeAndParams: function(params) {
+		var code, parameters, i;
+		if (params.normalizeds.length > 1) {
+			code = "{{delete";
+			params.utparams = {};
+			$.each(params.normalizeds, function(index, norm) {
+				code += "|" + norm.toUpperCase();
+				parameters = params.templateParams[index] || [];
+				for (var i in parameters) {
+					if (typeof parameters[i] === 'string') {
+						code += "|" + parameters[i];
+					}
+				}
+				$.extend(params.utparams, Twinkle.speedy.getUserTalkParameters(norm, parameters));
+			});
+			code += "}}";
+		} else {
+			parameters = params.templateParams[0] || [];
+			code = "{{delete";
+			/*if (params.values[0] !== 'reason') {
+				code += '|' + params.values[0];
+			}*/
+			for (i in parameters) {
+				if (typeof parameters[i] === 'string') {
+					code += "|" + parameters[i];
 				}
 			}
+			code += "}}";
+			params.utparams = Twinkle.speedy.getUserTalkParameters(params.normalizeds[0], parameters);
+		}
+
+		return [code, params.utparams];
+	},
+
+	parseWikitext: function(wikitext, callback) {
+		var query = {
+			action: "parse",
+			prop: "text",
+			pst: "true",
+			text: wikitext,
+			title: mw.config.get("wgPageName")
+		};
+
+		var statusIndicator = new Morebits.status( '构造删除理由' );
+		var api = new Morebits.wiki.api( '解析删除模板', query, function(apiObj) {
+				var reason = decodeURIComponent($(apiObj.getXML().querySelector('text').childNodes[0].nodeValue).find('#delete-reason').text()).replace(/\+/g, ' ');
+				if (!reason) {
+					statusIndicator.warn( '未能从删除模板生成删除理由' );
+				} else {
+					statusIndicator.info( '完成' );
+				}
+				callback(reason);
+			}, statusIndicator);
+		api.post();
+	},
+
+	sysop: {
+		main: function( params ) {
+			var reason;
+
+			if (!params.normalizeds.length && params.normalizeds[0] === 'db') {
+				reason = prompt("输入删除理由：", "");
+				Twinkle.speedy.callbacks.sysop.deletePage( reason, params );
+			} else {
+				var code = Twinkle.speedy.callbacks.getTemplateCodeAndParams(params)[0];
+				Twinkle.speedy.callbacks.parseWikitext(code, function(reason) {
+					if (params.promptForSummary) {
+						reason = prompt("输入删除理由，或点击确定以接受自动生成的：", presetReason);
+					}
+					Twinkle.speedy.callbacks.sysop.deletePage( reason, params );
+				});
+			}
+		},
+		deletePage: function( reason, params ) {
+			var thispage = new Morebits.wiki.page( mw.config.get('wgPageName'), "删除页面" );
+
 			if (reason === null) {
-				Morebits.status.error("询问理由", "用户取消操作。");
-				Morebits.wiki.removeCheckpoint();
-				return;
+				return Morebits.status.error("询问理由", "用户取消操作。");
 			} else if (!reason || !reason.replace(/^\s*/, "").replace(/\s*$/, "")) {
-				Morebits.status.error("询问理由", "你不给我理由…我就…不管了…");
-				Morebits.wiki.removeCheckpoint();
-				return;
+				return Morebits.status.error("询问理由", "你不给我理由…我就…不管了…");
 			}
 			thispage.setEditSummary( reason + Twinkle.getPref('deletionSummaryAd') );
 			thispage.deletePage(function() {
 				thispage.getStatusElement().info("完成");
 				Twinkle.speedy.callbacks.sysop.deleteTalk( params );
 			});
-			Morebits.wiki.removeCheckpoint();
+
+			// look up initial contributor. If prompting user for deletion reason, just display a link.
+			// Otherwise open the talk page directly
+			if( params.openUserTalk ) {
+				thispage.setCallbackParameters( params );
+				thispage.lookupCreator( Twinkle.speedy.callbacks.sysop.openUserTalkPage );
+			}
 		},
 		deleteTalk: function( params ) {
 			// delete talk page
@@ -755,10 +888,9 @@ Twinkle.speedy.callbacks = {
 			if (params.deleteRedirects) {
 				var query = {
 					'action': 'query',
-					'list': 'backlinks',
-					'blfilterredir': 'redirects',
-					'bltitle': mw.config.get('wgPageName'),
-					'bllimit': 5000  // 500 is max for normal users, 5000 for bots and sysops
+					'titles': mw.config.get('wgPageName'),
+					'prop': 'redirects',
+					'rdlimit': 5000  // 500 is max for normal users, 5000 for bots and sysops
 				};
 				var wikipedia_api = new Morebits.wiki.api( '取得重定向列表…', query, Twinkle.speedy.callbacks.sysop.deleteRedirectsMain,
 					new Morebits.status( '删除重定向' ) );
@@ -874,7 +1006,7 @@ Twinkle.speedy.callbacks = {
 		},
 		deleteRedirectsMain: function( apiobj ) {
 			var xmlDoc = apiobj.getXML();
-			var $snapshot = $(xmlDoc).find('backlinks bl');
+			var $snapshot = $(xmlDoc).find('redirects rd');
 			var total = $snapshot.length;
 			var statusIndicator = apiobj.statelem;
 
@@ -933,35 +1065,11 @@ Twinkle.speedy.callbacks = {
 				return;
 			}
 
-			var code, parameters, i;
-			if (params.normalizeds.length > 1) {
-				code = "{{delete";
-				params.utparams = {};
-				$.each(params.normalizeds, function(index, norm) {
-					code += "|" + norm.toUpperCase();
-					parameters = params.templateParams[index] || [];
-					for (var i in parameters) {
-						if (typeof parameters[i] === 'string') {
-							code += "|" + parameters[i];
-						}
-					}
-					$.extend(params.utparams, Twinkle.speedy.getUserTalkParameters(norm, parameters));
-				});
-				code += "}}";
-			} else {
-				parameters = params.templateParams[0] || [];
-				code = "{{delete";
-				if (params.values[0] !== 'reason') {
-					code += '|' + params.values[0];
-				}
-				for (i in parameters) {
-					if (typeof parameters[i] === 'string') {
-						code += "|" + parameters[i];
-					}
-				}
-				code += "}}";
-				params.utparams = Twinkle.speedy.getUserTalkParameters(params.normalizeds[0], parameters);
-			}
+			// given the params, builds the template and also adds the user talk page parameters to the params that were passed in
+			// returns => [<string> wikitext, <object> utparams]
+			var buildData = Twinkle.speedy.callbacks.getTemplateCodeAndParams(params),
+				code = buildData[0];
+			params.utparams = buildData[1];
 
 			var thispage = new Morebits.wiki.page(mw.config.get('wgPageName'));
 			// patrol the page, if reached from Special:NewPages
@@ -992,9 +1100,7 @@ Twinkle.speedy.callbacks = {
 				editsummary = editsummary.substr(0, editsummary.length - 1); // remove trailing comma
 				editsummary += '）。';
 			} else if (params.normalizeds[0] === "db") {
-				editsummary = '请求[[WP:CSD|快速删除]]：' + parameters["1"];
-			/*} else if (params.values[0] === "histmerge") {
-				editsummary = "Requesting history merge with [[" + parameters["1"] + "]] ([[WP:CSD#G6|CSD G6]]).";*/
+				editsummary = '请求[[WP:CSD|快速删除]]：' + params["1"];
 			} else {
 				editsummary = "请求快速删除（[[WP:CSD#" + params.normalizeds[0].toUpperCase() + "|CSD " + params.normalizeds[0].toUpperCase() + "]]）";
 			}
@@ -1259,27 +1365,50 @@ Twinkle.speedy.resolveCsdValues = function twinklespeedyResolveCsdValues(e) {
 Twinkle.speedy.callback.evaluateSysop = function twinklespeedyCallbackEvaluateSysop(e) {
 	var form = (e.target.form ? e.target.form : e.target);
 
+	if (e.target.type === "checkbox" || e.target.type === "text" ||
+			e.target.type === "select") {
+		return;
+	}
+
 	var tag_only = form.tag_only;
 	if( tag_only && tag_only.checked ) {
 		Twinkle.speedy.callback.evaluateUser(e);
 		return;
 	}
 
-	var value = Twinkle.speedy.resolveCsdValues(e)[0];
-	if (!value) {
+	var values = Twinkle.speedy.resolveCsdValues(e);
+	if (!values) {
 		return;
 	}
-	var normalized = Twinkle.speedy.normalizeHash[ value ];
+
+	var normalizeds = values.map(function(value) {
+		return Twinkle.speedy.normalizeHash[ value ];
+	});
+
+	// analyse each criterion to determine whether to watch the page, prompt for summary, or open user talk page
+	var watchPage, promptForSummary;
+	normalizeds.forEach(function(norm) {
+		if (Twinkle.getPref("watchSpeedyPages").indexOf(norm) !== -1) {
+			watchPage = true;
+		}
+		if (Twinkle.getPref("promptForSpeedyDeletionSummary").indexOf(norm) !== -1) {
+			promptForSummary = true;
+		}
+	});
 
 	var params = {
-		value: value,
-		normalized: normalized,
-		watch: Twinkle.getPref('watchSpeedyPages').indexOf( normalized ) !== -1,
-		reason: Twinkle.speedy.reasonHash[ value ],
-		openusertalk: Twinkle.getPref('openUserTalkPageOnSpeedyDelete').indexOf( normalized ) !== -1,
+		values: values,
+		normalizeds: normalizeds,
+		watch: watchPage,
 		deleteTalkPage: form.talkpage && form.talkpage.checked,
-		deleteRedirects: form.redirects.checked
+		deleteRedirects: form.redirects.checked,
+		openUserTalk: form.openusertalk.checked,
+		promptForSummary: promptForSummary,
+		templateParams: Twinkle.speedy.getParameters( form, values )
 	};
+	if(!params.templateParams) {
+		return;
+	}
 
 	Morebits.simpleWindow.setButtonsEnabled( false );
 	Morebits.status.init( form );

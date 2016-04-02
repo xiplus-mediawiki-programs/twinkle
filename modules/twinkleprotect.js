@@ -26,8 +26,6 @@ Twinkle.protect = function twinkleprotect() {
 };
 
 Twinkle.protect.callback = function twinkleprotectCallback() {
-	Twinkle.protect.protectionLevel = null;
-
 	var Window = new Morebits.simpleWindow( 620, 530 );
 	Window.setTitle( Morebits.userIsInGroup( 'sysop' ) ? "施行或请求保护页面" : "请求保护页面" );
 	Window.setScriptName( "Twinkle" );
@@ -89,17 +87,12 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 	evt.initEvent( 'change', true, true );
 	result.actiontype[0].dispatchEvent( evt );
 
+	Morebits.wiki.actionCompleted.postfix = false;  // avoid Action: completed notice
+
 	// get current protection level asynchronously
-	if (Morebits.userIsInGroup('sysop')) {
-		Morebits.wiki.actionCompleted.postfix = false;  // avoid Action: completed notice
-		Morebits.status.init($('div[name="currentprot"] span').last()[0]);
-	}
 	Twinkle.protect.fetchProtectionLevel();
 };
 
-// Current protection level in a human-readable format
-// (a string, or null if no protection; only filled for sysops)
-Twinkle.protect.protectionLevel = null;
 // Contains the current protection level in an object
 // Once filled, it will look something like:
 // { edit: { level: "sysop", expiry: <some date>, cascade: true }, ... }
@@ -108,36 +101,22 @@ Twinkle.protect.currentProtectionLevels = {};
 Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLevel() {
 
 	var api = new mw.Api();
-	api.get({
+	var protectDeferred = api.get({
 		format: 'json',
 		indexpageids: true,
 		action: 'query',
+		list: 'logevents',
+		letype: 'protect',
+		letitle: mw.config.get('wgPageName'),
 		prop: 'info',
 		inprop: 'protection',
 		titles: mw.config.get('wgPageName')
-	})
-	.done(function(data){
-		var pageid = data.query.pageids[0];
-		var page = data.query.pages[pageid];
-		var result = [];
-		var current = {};
+	});
 
-		var updateResult = function(label, level, expiry, cascade) {
-			// for sysops, stringify, so they can base their decision on existing protection
-			if (Morebits.userIsInGroup('sysop')) {
-				var boldnode = document.createElement('b');
-				boldnode.textContent = label + "：" + level;
-				result.push(boldnode);
-				if (expiry === 'infinity') {
-					result.push("（无限期）");
-				} else {
-					result.push("（过期：" + new Date(expiry).toUTCString() + "）");
-				}
-				if (cascade) {
-					result.push("（联锁）");
-				}
-			}
-		};
+	$.when.apply($, [protectDeferred]).done(function(protectData){
+		var pageid = protectData.query.pageids[0];
+		var page = protectData.query.pages[pageid];
+		var current = {};
 
 		$.each(page.protection, function( index, protection ) {
 			if (protection.type !== "aft") {
@@ -146,24 +125,57 @@ Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLev
 					expiry: protection.expiry,
 					cascade: protection.cascade === ''
 				};
-				updateResult( Morebits.string.toUpperCaseFirstChar(protection.type), protection.level, protection.expiry, protection.cascade );
 			}
 		});
 
-		// show the protection level to sysops
-		if (Morebits.userIsInGroup('sysop')) {
-			if (!result.length) {
-				var boldnode = document.createElement('b');
-				boldnode.textContent = "无保护";
-				result.push(boldnode);
-			}
-			Twinkle.protect.protectionLevel = result;
-			Morebits.status.init($('div[name="currentprot"] span').last()[0]);
-			Morebits.status.info("当前保护等级", Twinkle.protect.protectionLevel);
-		}
-
+		// show the protection level and log info
+		Twinkle.protect.hasProtectLog = !!protectData.query.logevents.length;
 		Twinkle.protect.currentProtectionLevels = current;
+		Twinkle.protect.callback.showLogAndCurrentProtectInfo();
 	});
+};
+
+Twinkle.protect.callback.showLogAndCurrentProtectInfo = function twinkleprotectCallbackShowLogAndCurrentProtectInfo() {
+	var currentlyProtected = !$.isEmptyObject(Twinkle.protect.currentProtectionLevels);
+
+	if (Twinkle.protect.hasProtectLog || Twinkle.protect.hasStableLog) {
+		var $linkMarkup = $("<span>");
+
+		if (Twinkle.protect.hasProtectLog)
+			$linkMarkup.append(
+				$( '<a target="_blank" href="' + mw.util.getUrl('Special:Log', {action: 'view', page: mw.config.get('wgPageName'), type: 'protect'}) + '">保护日志</a>' ),
+				Twinkle.protect.hasStableLog ? $("<span> &bull; </span>") : null
+			);
+
+		Morebits.status.init($('div[name="hasprotectlog"] span')[0]);
+		Morebits.status.warn(
+			currentlyProtected ? '早前保护' : '此页面曾在过去被保护',
+			$linkMarkup[0]
+		);
+	}
+
+	Morebits.status.init($('div[name="currentprot"] span')[0]);
+	var protectionNode = [], statusLevel = 'info';
+
+	if (currentlyProtected) {
+		$.each(Twinkle.protect.currentProtectionLevels, function(type, settings) {
+			var label = Morebits.string.toUpperCaseFirstChar(type);
+			protectionNode.push($("<b>" + label + ": " + settings.level + "</b>")[0]);
+			if (settings.expiry === 'infinity') {
+				protectionNode.push("（无限期）");
+			} else {
+				protectionNode.push("（过期：" + new Date(settings.expiry).toUTCString() + ") ");
+			}
+			if (settings.cascade) {
+				protectionNode.push("（连锁）");
+			}
+		});
+		statusLevel = 'warn';
+	} else {
+		protectionNode.push($("<b>无保护</b>")[0]);
+	}
+
+	Morebits.status[statusLevel]("当前保护等级", protectionNode);
 };
 
 Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAction(e) {
@@ -187,6 +199,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 
 			field2 = new Morebits.quickForm.element({ type: 'field', label: '保护选项', name: 'field2' });
 			field2.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
+			field2.append({ type: 'div', name: 'hasprotectlog', label: ' ' });
 			// for existing pages
 			if (mw.config.get('wgArticleId')) {
 				field2.append({
@@ -373,6 +386,8 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			/* falls through */
 		case 'tag':
 			field1 = new Morebits.quickForm.element({ type: 'field', label: '标记选项', name: 'field1' });
+			field1.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
+			field1.append({ type: 'div', name: 'hasprotectlog', label: ' ' });
 			field1.append( {
 					type: 'select',
 					name: 'tagtype',
@@ -409,6 +424,8 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				});
 
 			field1 = new Morebits.quickForm.element({ type: 'field', label: '选项', name: 'field1' });
+			field1.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
+			field1.append({ type: 'div', name: 'hasprotectlog', label: ' ' });
 			field1.append( {
 					type: 'select',
 					name: 'expiry',
@@ -431,6 +448,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 	}
 
 	var oldfield;
+
 	if (field_preset) {
 		oldfield = $(e.target.form).find('fieldset[name="field_preset"]')[0];
 		oldfield.parentNode.replaceChild(field_preset.render(), oldfield);
@@ -456,15 +474,12 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 		evt.initEvent( 'change', true, true );
 		e.target.form.category.dispatchEvent( evt );
 
-		// re-add protection level text, if it's available
-		if (Twinkle.protect.protectionLevel) {
-			Morebits.status.init($('div[name="currentprot"] span').last()[0]);
-			Morebits.status.info("当前保护等级", Twinkle.protect.protectionLevel);
-		}
-
 		// reduce vertical height of dialog
 		$(e.target.form).find('fieldset[name="field2"] select').parent().css({ display: 'inline-block', marginRight: '0.5em' });
 	}
+
+	// re-add protection level and log info, if it's available
+	Twinkle.protect.callback.showLogAndCurrentProtectInfo();
 };
 
 Twinkle.protect.formevents = {
@@ -477,6 +492,14 @@ Twinkle.protect.formevents = {
 		e.target.form.editexpiry.disabled = (e.target.value === 'all');
 	},
 	movemodify: function twinkleprotectFormMovemodifyEvent(e) {
+		// sync move settings with edit settings if applicable
+		if (e.target.form.movelevel.disabled && !e.target.form.editlevel.disabled) {
+			e.target.form.movelevel.value = e.target.form.editlevel.value;
+			e.target.form.moveexpiry.value = e.target.form.editexpiry.value;
+		} else if (e.target.form.editlevel.disabled) {
+			e.target.form.movelevel.value = 'sysop';
+			e.target.form.moveexpiry.value = 'indefinite';
+		}
 		e.target.form.movelevel.disabled = !e.target.checked;
 		e.target.form.moveexpiry.disabled = !e.target.checked || (e.target.form.movelevel.value === 'all');
 		e.target.form.movelevel.style.color = e.target.form.moveexpiry.style.color = (e.target.checked ? "" : "transparent");
@@ -1077,6 +1100,7 @@ Twinkle.protect.callbacks = {
 		} else {
 			reg = /({{\/header}}\n)/;
 		}
+
 		var originalTextLength = text.length;
 		text = text.replace( reg, "$1" + newtag + "\n\n");
 		if (text.length === originalTextLength)

@@ -28,7 +28,7 @@ Twinkle.tag = function friendlytag() {
 	}
 };
 
-Twinkle.tag.callback = function friendlytagCallback( uid ) {
+Twinkle.tag.callback = function friendlytagCallback() {
 	var Window = new Morebits.simpleWindow( 630, (Twinkle.tag.mode === "条目") ? 500 : 400 );
 	Window.setScriptName( "Twinkle" );
 	// anyone got a good policy/guideline/info page/instructional page link??

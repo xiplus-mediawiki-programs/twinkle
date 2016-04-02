@@ -675,7 +675,6 @@ Twinkle.warn.messages = {
 		}
 	},
 
-
 	singlenotice: {
 		"uw-2redirect": {
 			label: "透过不适当的页面移动建立双重重定向",

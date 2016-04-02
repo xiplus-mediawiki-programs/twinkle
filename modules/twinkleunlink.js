@@ -46,7 +46,7 @@ Twinkle.unlink.callback = function(presetReason) {
 	var form = new Morebits.quickForm( Twinkle.unlink.callback.evaluate );
 
 	// prepend some basic documentation
-	var node1 = Morebits.htmlNode("code", "[[" + Morebits.pageNameNorm + "|链接文本]]")
+	var node1 = Morebits.htmlNode("code", "[[" + Morebits.pageNameNorm + "|链接文本]]");
 	var node2 = Morebits.htmlNode("code", "链接文本");
 	node1.style.fontFamily = node2.style.fontFamily = "monospace";
 	node1.style.fontStyle = node2.style.fontStyle = "normal";
@@ -268,7 +268,6 @@ Twinkle.unlink.callbacks = {
 		var params = pageobj.getCallbackParameters();
 		var wikiPage = new Morebits.wikitext.page(oldtext);
 
-		var removedBacklinks = false, removedImageusage = false;
 		var summaryText = "", warningString = false;
 		var text;
 
