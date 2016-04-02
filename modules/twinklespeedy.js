@@ -129,9 +129,17 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 					}
 				]
 			} );
-		form.append( { type: 'header', label: '删除相关选项' } );
+
+		var deleteOptions = form.append( {
+				type: 'div',
+				name: 'delete_options'
+			} );
+		deleteOptions.append( {
+				type: 'header',
+				label: '删除相关选项'
+			} );
 		if (mw.config.get('wgNamespaceNumber') % 2 === 0 && (mw.config.get('wgNamespaceNumber') !== 2 || (/\//).test(mw.config.get('wgTitle')))) {  // hide option for user pages, to avoid accidentally deleting user talk page
-			form.append( {
+			deleteOptions.append( {
 				type: 'checkbox',
 				list: [
 					{
@@ -148,7 +156,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				]
 			} );
 		}
-		form.append( {
+		deleteOptions.append( {
 				type: 'checkbox',
 				list: [
 					{
@@ -164,7 +172,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 					}
 				]
 			} );
-		form.append( {
+		deleteOptions.append( {
 			type: 'checkbox',
 			list: [
 				{
@@ -179,7 +187,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				}
 			]
 		} );
-		form.append( {
+		deleteOptions.append( {
 				type: 'checkbox',
 				list: [
 					{
@@ -191,10 +199,21 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 					}
 				]
 			} );
-		form.append( { type: 'header', label: '标记相关选项' } );
 	}
 
-	form.append( {
+	var tagOptions = form.append( {
+			type: 'div',
+			name: 'tag_options'
+		} );
+
+	if( Morebits.userIsInGroup( 'sysop' ) ) {
+		tagOptions.append( {
+				type: 'header',
+				label: '标记相关选项'
+			} );
+	}
+
+	tagOptions.append( {
 			type: 'checkbox',
 			list: [
 				{
@@ -210,7 +229,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				}
 			]
 		} );
-	form.append( {
+	tagOptions.append( {
 			type: 'checkbox',
 			list: [
 				{
@@ -257,10 +276,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 	}
 };
 
-Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(form) {
-	var namespace = mw.config.get('wgNamespaceNumber');
-
-	// first figure out what mode we're in
+Twinkle.speedy.callback.getMode = function twinklespeedyCallbackGetMode(form) {
 	var mode = Twinkle.speedy.mode.userSingleSubmit;
 	if (form.tag_only && !form.tag_only.checked) {
 		if (form.delmultiple.checked) {
@@ -277,6 +293,23 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 	}
 	if (Twinkle.getPref('speedySelectionStyle') === 'radioClick') {
 		mode++;
+	}
+
+	return mode;
+};
+
+Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(form) {
+	var namespace = mw.config.get('wgNamespaceNumber');
+
+	// first figure out what mode we're in
+	var mode = Twinkle.speedy.callback.getMode(form);
+
+	if (Twinkle.speedy.mode.isSysop(mode)) {
+		$("[name=delete_options]").show();
+		$("[name=tag_options]").hide();
+	} else {
+		$("[name=delete_options]").hide();
+		$("[name=tag_options]").show();
 	}
 
 	var work_area = new Morebits.quickForm.element( {
@@ -349,7 +382,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 		work_area.append( { type: 'div', label: '标记CSD G16，请使用Twinkle的“侵权”功能。' } );
 	}
 
-	if (Morebits.wiki.isPageRedirect() || Morebits.userIsInGroup('sysop')) {
+	if (mw.config.get('wgIsRedirect') || Morebits.userIsInGroup('sysop')) {
 		work_area.append( { type: 'header', label: '重定向' } );
 		if (namespace === 0) {
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.redirectArticleList, mode) } );
@@ -418,6 +451,10 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 			if (criterion.hideSubgroupWhenUser) {
 				criterion.subgroup = null;
 			}
+		}
+
+		if (mw.config.get('wgIsRedirect') && criterion.hideWhenRedirect) {
+			return null;
 		}
 
 		if (criterion.subgroup && !hasSubmitButton) {
@@ -792,9 +829,9 @@ Twinkle.speedy.callbacks = {
 		} else {
 			parameters = params.templateParams[0] || [];
 			code = "{{delete";
-			/*if (params.values[0] !== 'reason') {
+			if (params.values[0] !== 'reason') {
 				code += '|' + params.values[0];
-			}*/
+			}
 			for (i in parameters) {
 				if (typeof parameters[i] === 'string') {
 					code += "|" + parameters[i];
@@ -1100,7 +1137,7 @@ Twinkle.speedy.callbacks = {
 				editsummary = editsummary.substr(0, editsummary.length - 1); // remove trailing comma
 				editsummary += '）。';
 			} else if (params.normalizeds[0] === "db") {
-				editsummary = '请求[[WP:CSD|快速删除]]：' + params["1"];
+				editsummary = '请求[[WP:CSD|快速删除]]：' + params.templateParams[0]["1"];
 			} else {
 				editsummary = "请求快速删除（[[WP:CSD#" + params.normalizeds[0].toUpperCase() + "|CSD " + params.normalizeds[0].toUpperCase() + "]]）";
 			}
