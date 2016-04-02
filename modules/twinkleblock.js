@@ -474,18 +474,22 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-ublock|误导' : {
 		expiry: 'infinity',
+		reason: '{{uw-ublock|误导}}',
 		forRegisteredOnly: true
 	},
 	'uw-ublock|宣传' : {
 		expiry: 'infinity',
+		reason: '{{uw-ublock|宣传}}',
 		forRegisteredOnly: true
 	},
 	'uw-ublock|攻击|或侮辱性' : {
 		expiry: 'infinity',
+		reason: '{{uw-ublock|攻击|或侮辱性}}',
 		forRegisteredOnly: true
 	},
 	'uw-ublock|混淆' : {
 		expiry: 'infinity',
+		reason: '{{uw-ublock|混淆}}',
 		forRegisteredOnly: true
 	},
 	'uw-vblock' : {
@@ -757,6 +761,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	if (toBlock) {
 		if (!blockoptions.expiry) return alert('请提供过期时间！');
 		if (!blockoptions.reason) return alert('请提供封禁理由！');
+		blockoptions.reason += Twinkle.getPref('deletionSummaryAd');
 
 		Morebits.simpleWindow.setButtonsEnabled( false );
 		Morebits.status.init( e.target );
