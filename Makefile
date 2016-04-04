@@ -6,6 +6,7 @@ modules = modules/friendlyshared.js \
 		  modules/twinklebatchdelete.js \
 		  modules/twinklebatchundelete.js \
 		  modules/twinkleblock.js \
+		  modules/twinkleclose.js \
 		  modules/twinkleconfig.js \
 		  modules/twinklecopyvio.js \
 		  modules/twinklediff.js \
@@ -20,4 +21,7 @@ modules = modules/friendlyshared.js \
 deploy: twinkle.js morebits.js morebits.css $(modules)
 	./sync.pl ${ARGS} --deploy $^
 
-.PHONY: deploy all
+test: twinkle.js morebits.js morebits.css $(modules)
+	./sync.pl ${ARGS} --lang=test --family=wikipedia --push $^
+
+.PHONY: deploy test all
