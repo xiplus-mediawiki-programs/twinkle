@@ -371,7 +371,8 @@ Twinkle.close.callbacks = {
 			talkpage.prepend();
 		}
 
-		var newtext = text.replace(/\{\{([rsaiftcmv]fd)\|[^{}]*?\}\}\n*/gi, '');
+		var newtext = text.replace(/<noinclude>\s*\{\{([rsaiftcmv]fd)\|[^{}]*?\}\}\s*<\/noinclude>\s*/gi, '');
+		newtext = newtext.replace(/\{\{([rsaiftcmv]fd)\|[^{}]*?\}\}\s*/gi, '');
 		if (params.code !== 'tk') {
 			newtext = newtext.replace(/\{\{(notability)\|[^{}]*?\}\}\n*/gi, '');
 			newtext = newtext.replace(/\{\{(substub)\|[^{}]*?\}\}\n*/gi, '');
