@@ -1092,6 +1092,7 @@ Twinkle.protect.callbacks = {
 
 		newtag += "请求" + Morebits.string.toUpperCaseFirstChar(words) + ( params.reason !== '' ? "：" +
 			Morebits.string.formatReasonText(params.reason) : "。" ) + "--~~~~";
+		newtag += '\n:: <small>当前保护状态：{{protection status|' + mw.config.get('wgPageName') + '}}</small>';
 
 		var reg;
 
