@@ -123,8 +123,18 @@ Twinkle.copyvio.callbacks = {
 	copyvioList: function(pageobj) {
 		var text = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
+		var output = '';
+		var date = new Date();
 
-		pageobj.setAppendText("\n{{subst:CopyvioVFDRecord|" + mw.config.get('wgPageName') + "}}");
+		var dateHeaderRegex = new RegExp( "^===+\\s*" + (date.getUTCMonth() + 1) + "月" + date.getUTCDate() + "日" +
+			"\\s*===+", 'mg' );
+
+		if (!dateHeaderRegex.exec(text)) {
+			output = "\n\n===" + (date.getUTCMonth() + 1) + "月" + date.getUTCDate() + "日" + "===";
+		}
+
+		output += "\n{{subst:CopyvioVFDRecord|" + mw.config.get('wgPageName') + "}}";
+		pageobj.setAppendText(output);
 		pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
