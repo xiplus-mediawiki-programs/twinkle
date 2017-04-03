@@ -453,5 +453,6 @@ Twinkle.close.callbacks = {
 
 })(jQuery);
 
+Twinkle.close();
 
 //</nowiki>
