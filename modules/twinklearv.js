@@ -19,63 +19,58 @@ Twinkle.arv = function twinklearv() {
 		return;
 	}
 
-	var title = Morebits.isIPAddress( username ) ? 'Report IP to administrators' : 'Report user to administrators';
+	var title = Morebits.isIPAddress( username ) ? '报告IP给管理员' : '报告用户给管理员';
 
-	Twinkle.addPortletLink( function(){ Twinkle.arv.callback(username); }, "ARV", "tw-arv", title );
+	Twinkle.addPortletLink( function(){ Twinkle.arv.callback(username); }, "告状", "tw-arv", title );
 };
 
 Twinkle.arv.callback = function ( uid ) {
 	if ( uid === mw.config.get('wgUserName') ) {
-		alert( 'You don\'t want to report yourself, do you?' );
+		alert( '你不想报告你自己，对吧？' );
 		return;
 	}
 
 	var Window = new Morebits.simpleWindow( 600, 500 );
-	Window.setTitle( "Advance Reporting and Vetting" ); //Backronym
+	Window.setTitle( "Very Important Person" ); //Backronym
 	Window.setScriptName( "Twinkle" );
-	Window.addFooterLink( "Guide to AIV", "WP:GAIV" );
-	Window.addFooterLink( "UAA instructions", "WP:UAAI" );
-	Window.addFooterLink( "About SPI", "WP:SPI" );
-	Window.addFooterLink( "Twinkle help", "WP:TW/DOC#arv" );
+	Window.addFooterLink( "VIP指导", "WP:VIP" );
+	Window.addFooterLink( "UAA指引", "WP:U" );
+	Window.addFooterLink( "关于RFCU", "WP:RFCU" );
+	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#arv" );
 
 	var form = new Morebits.quickForm( Twinkle.arv.callback.evaluate );
 	var categories = form.append( {
 			type: 'select',
 			name: 'category',
-			label: 'Select report type: ',
+			label: '选择报告类型：',
 			event: Twinkle.arv.callback.changeCategory
 		} );
 	categories.append( {
 			type: 'option',
-			label: 'Vandalism (WP:AIV)',
+			label: '破坏（WP:VIP）',
 			value: 'aiv'
 		} );
 	categories.append( {
 			type: 'option',
-			label: 'Username (WP:UAA)',
+			label: '用户名（WP:UAA）',
 			value: 'username'
 		} );
 	categories.append( {
 			type: 'option',
-			label: 'Sockpuppeteer (WP:SPI)',
+			label: '用户查核 - 主账户（WP:RFCU）',
 			value: 'sock'
 		} );
 	categories.append( {
 			type: 'option',
-			label: 'Sockpuppet (WP:SPI)',
+			label: '用户查核 - 傀儡（WP:RFCU）',
 			value: 'puppet'
-		} );
-	categories.append( {
-			type: 'option',
-			label: 'Edit warring (WP:AN3)',
-			value: 'an3'
 		} );
 	form.append( {
 			type: 'field',
 			label: 'Work area',
 			name: 'work_area'
 		} );
-	form.append( { type: 'submit' } );
+	form.append( { type: 'submit', label: '提交〜工具测试中，请检查执行结果！〜' } );
 	form.append( {
 			type: 'hidden',
 			name: 'uid',
@@ -104,14 +99,14 @@ Twinkle.arv.callback.changeCategory = function (e) {
 	default:
 		work_area = new Morebits.quickForm.element( {
 				type: 'field',
-				label: 'Report user for vandalism',
+				label: '报告用户破坏',
 				name: 'work_area'
 			} );
 		work_area.append( {
 				type: 'input',
 				name: 'page',
-				label: 'Primary linked page: ',
-				tooltip: 'Leave blank to not link to the page in the report',
+				label: '相关页面：',
+				tooltip: '如不希望让报告链接到页面，请留空',
 				value: Morebits.queryString.exists( 'vanarticle' ) ? Morebits.queryString.get( 'vanarticle' ) : '',
 				event: function(e) {
 					var value = e.target.value;
@@ -127,8 +122,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 		work_area.append( {
 				type: 'input',
 				name: 'badid',
-				label: 'Revision ID for target page when vandalised: ',
-				tooltip: 'Leave blank for no diff link',
+				label: '受到破坏的修订版本：',
+				tooltip: '留空以略过差异',
 				value: Morebits.queryString.exists( 'vanarticlerevid' ) ? Morebits.queryString.get( 'vanarticlerevid' ) : '',
 				disabled: !Morebits.queryString.exists( 'vanarticle' ),
 				event: function(e) {
@@ -140,8 +135,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 		work_area.append( {
 				type: 'input',
 				name: 'goodid',
-				label: 'Last good revision ID before vandalism of target page: ',
-				tooltip: 'Leave blank for diff link to previous revision',
+				label: '破坏前的修订版本：',
+				tooltip: '留空以略过差异较早版本',
 				value: Morebits.queryString.exists( 'vanarticlegoodrevid' ) ? Morebits.queryString.get( 'vanarticlegoodrevid' ) : '',
 				disabled: !Morebits.queryString.exists( 'vanarticle' ) || Morebits.queryString.exists( 'vanarticlerevid' )
 			} );
@@ -150,24 +145,24 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'arvtype',
 				list: [
 					{
-						label: 'Vandalism after final (level 4 or 4im) warning given',
+						label: '已发出最后（层级4或4im）警告',
 						value: 'final'
 					},
 					{
-						label: 'Vandalism after recent (within 1 day) release of block',
+						label: '封禁过期后随即破坏',
 						value: 'postblock'
 					},
 					{
-						label: 'Evidently a vandalism-only account',
+						label: '显而易见的纯破坏用户',
 						value: 'vandalonly',
 						disabled: Morebits.isIPAddress( root.uid.value )
 					},
 					{
-						label: 'Account is evidently a spambot or a compromised account',
+						label: '显而易见的spambot或失窃账户',
 						value: 'spambot'
 					},
 					{
-						label: 'Account is a promotion-only account',
+						label: '仅用来散发广告宣传的用户',
 						value: 'promoonly'
 					}
 				]
@@ -175,7 +170,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 		work_area.append( {
 				type: 'textarea',
 				name: 'reason',
-				label: 'Comment: '
+				label: '评论：'
 			} );
 		work_area = work_area.render();
 		old_area.parentNode.replaceChild( work_area, old_area );
@@ -183,49 +178,49 @@ Twinkle.arv.callback.changeCategory = function (e) {
 	case 'username':
 		work_area = new Morebits.quickForm.element( {
 				type: 'field',
-				label: 'Report username violation',
+				label: '报告不当用户名',
 				name: 'work_area'
 			} );
 		work_area.append ( {
 				type: 'header',
-				label: 'Type(s) of inappropriate username',
-				tooltip: 'Wikipedia does not allow usernames that are misleading, promotional, offensive or disruptive. Domain names and email addresses are likewise prohibited. These criteria apply to both usernames and signatures. Usernames that are inappropriate in another language, or that represent an inappropriate name with misspellings and substitutions, or do so indirectly or by implication, are still considered inappropriate.'
+				label: '不当用户名类别',
+				tooltip: '維基百科不允許具有誤導性、宣傳性、侮辱性或破壞性的用戶名。域名和電子郵件地址也同樣被禁止。這些標準適用於用戶名和簽名。若在其他語言不恰當，或是不恰當名字的拼寫錯誤或文字替換，間接或暗示的用戶名，仍然被認為是不恰當的。'
 			} );
 		work_area.append( {
 				type: 'checkbox',
 				name: 'arvtype',
 				list: [
 					{
-						label: 'Misleading username',
-						value: 'misleading',
-						tooltip: 'Misleading usernames imply relevant, misleading things about the contributor. For example, misleading points of fact, an impression of undue authority, or usernames giving the impression of a bot account.'
+						label: '误导性用户名',
+						value: '误导性',
+						tooltip: '誤導性用戶名隱含著與貢獻者相關或誤導他人的事情。例如︰不實觀點、予人擁有非實質擁有權限或是機器人帳戶的印象'
 					},
 					{
-						label: 'Promotional username',
-						value: 'promotional',
-						tooltip: 'Promotional usernames are advertisements for a company, website or group. Please do not report these names to UAA unless the user has also made promotional edits related to the name.'
+						label: '宣传性用户名',
+						value: '宣传性',
+						tooltip: '宣傳性用戶名是公司、網站或團體的廣告。如果用戶沒有在與其用戶名相關的頁面做出廣告編輯，請不要提報到UAA。'
 					},
 					{
-						label: 'Username that implies shared use',
+						label: '暗示并非由一人拥有',
 						value: 'shared',
-						tooltip: 'Usernames that imply the likelihood of shared use (names of companies or groups, or the names of posts within organizations) are not permitted. Usernames are acceptable if they contain a company or group name but are clearly intended to denote an individual person, such as "Mark at WidgetsUSA", "Jack Smith at the XY Foundation", "WidgetFan87", etc.'
+						tooltip: '暗示並非一人擁有的用戶名（公司或團體名，職位名）是不被允許的。如果用戶名包含公司或團體名，但顯然可以表示出是個人帳戶是可以接受的，例如"Mark at WidgetsUSA", "Jack Smith at the XY Foundation", "WidgetFan87"。'
 					},
 					{
-						label: 'Offensive username',
-						value: 'offensive',
-						tooltip: 'Offensive usernames make harmonious editing difficult or impossible.'
+						label: '侮辱性用户名',
+						value: '侮辱性',
+						tooltip: '侮辱性用戶名令到協調編輯變得困難，甚至無可能。'
 					},
 					{
-						label: 'Disruptive username',
-						value: 'disruptive',
-						tooltip: 'Disruptive usernames include outright trolling or personal attacks, or otherwise show a clear intent to disrupt Wikipedia.'
+						label: '破坏性用户名',
+						value: '破坏性',
+						tooltip: '破壞性用戶名包括人身攻擊、偽冒他人或其他一切有著清晰可見的破壞維基百科意圖的使用者名稱。'
 					}
 				]
 			} );
 		work_area.append( {
 				type: 'textarea',
 				name: 'reason',
-				label: 'Comment:'
+				label: '评论：'
 			} );
 		work_area = work_area.render();
 		old_area.parentNode.replaceChild( work_area, old_area );
@@ -234,35 +229,30 @@ Twinkle.arv.callback.changeCategory = function (e) {
 	case 'puppet':
 		work_area = new Morebits.quickForm.element( {
 				type: 'field',
-				label: 'Report suspected sockpuppet',
+				label: '报告疑似主账户',
 				name: 'work_area'
 			} );
 		work_area.append(
 			{
 				type: 'input',
 				name: 'sockmaster',
-				label: 'Sockpuppeteer',
-				tooltip: 'The username of the sockpuppeteer (sockmaster) without the User:-prefix'
+				label: '主账户',
+				tooltip: '主账户的用户名（不含User:前缀）'
 			}
 		);
 		work_area.append( {
 				type: 'textarea',
-				label: 'Evidence:',
+				label: '证据：',
 				name: 'evidence',
-				tooltip: 'Enter your evidence. It should make clear that each of these users is likely to be abusing multiple accounts. Usually this means diffs, page histories or other information that justifies why the users are a) the same and b) disruptive. This should purely be evidence and information needed to judge the matter. Avoid all other discussion that is not evidence of sockpuppetry or other multiple account abuse.'
+				tooltip: '键入能够用来体现这些用户可能滥用多重账户的证据，这通常包括茶语、页面历史或其他有关的信息。请避免在此处提供非与傀儡或滥用多重账户相关的其他讨论。'
 			} );
 		work_area.append( {
 				type: 'checkbox',
 				list: [
 					{
-						label: 'Request CheckUser evidence',
-						name: 'checkuser',
-						tooltip: 'CheckUser is a tool used to obtain technical evidence related to a sock-puppetry allegation. It will not be used without good cause, which you must clearly demonstrate. Make sure your evidence explains why CheckUser is appropriate.'
-					},
-					{
-						label: 'Notify reported users',
+						label: '通知相关用户',
 						name: 'notify',
-						tooltip: 'Notification is not mandatory. In many cases, especially of chronic sockpuppeteers, notification may be counterproductive. However, especially in less egregious cases involving users who has not been reported before, notification may make the cases fairer and also appear to be fairer in the eyes of the accused. Use your judgment.'
+						tooltip: '通知用户不是必须的，在许多情况下（如长期破坏者）通知更可能适得其反。但是，对于涉及新用户的报告而言，通知他们能让报告显得更公平。请使用常识。'
 					}
 				]
 			} );
@@ -272,34 +262,30 @@ Twinkle.arv.callback.changeCategory = function (e) {
 	case 'sock':
 		work_area = new Morebits.quickForm.element( {
 				type: 'field',
-				label: 'Report suspected sockpuppeteer',
+				label: '报告疑似傀儡',
 				name: 'work_area'
 			} );
 		work_area.append(
 			{
 				type: 'dyninput',
 				name: 'sockpuppet',
-				label: 'Sockpuppets',
-				sublabel: 'Sock: ',
-				tooltip: 'The username of the sockpuppet without the User:-prefix',
+				label: '傀儡',
+				sublabel: '傀儡：',
+				tooltip: '傀儡的用户名（不含User:前缀）',
 				min: 2
 			} );
 		work_area.append( {
 				type: 'textarea',
-				label: 'Evidence:',
+				label: '证据：',
 				name: 'evidence',
-				tooltip: 'Enter your evidence. It should make clear that each of these users is likely to be abusing multiple accounts. Usually this means diffs, page histories or other information that justifies why the users are a) the same and b) disruptive. This should purely be evidence and information needed to judge the matter. Avoid all other discussion that is not evidence of sockpuppetry or other multiple account abuse.'
+				tooltip: '键入能够用来体现这些用户可能滥用多重账户的证据，这通常包括茶语、页面历史或其他有关的信息。请避免在此处提供非与傀儡或滥用多重账户相关的其他讨论。'
 			} );
 		work_area.append( {
 				type: 'checkbox',
 				list: [ {
-					label: 'Request CheckUser evidence',
-					name: 'checkuser',
-					tooltip: 'CheckUser is a tool used to obtain technical evidence related to a sock-puppetry allegation. It will not be used without good cause, which you must clearly demonstrate. Make sure your evidence explains why CheckUser is appropriate.'
-				}, {
-					label: 'Notify reported users',
+					label: '通知相关用户',
 					name: 'notify',
-					tooltip: 'Notification is not mandatory. In many cases, especially of chronic sockpuppeteers, notification may be counterproductive. However, especially in less egregious cases involving users who has not been reported before, notification may make the cases fairer and also appear to be fairer in the eyes of the accused. Use your judgment.'
+					tooltip: '通知用户不是必须的，在许多情况下（如长期破坏者）通知更可能适得其反。但是，对于涉及新用户的报告而言，通知他们能让报告显得更公平。请使用常识。'
 				} ]
 			} );
 		work_area = work_area.render();
@@ -513,74 +499,74 @@ Twinkle.arv.callback.evaluate = function(e) {
 		default:
 			types = form.getChecked( 'arvtype' );
 			if( !types.length && comment === '' ) {
-				alert( 'You must specify some reason' );
+				alert( '您必须指定理由' );
 				return;
 			}
 
 			types = types.map( function(v) {
 					switch(v) {
 						case 'final':
-							return 'vandalism after final warning';
+							return '已发出最后警告';
 						case 'postblock':
-							return 'vandalism after recent release of block';
+							return '封禁过期后随即破坏';
 						case 'spambot':
-							return 'account is evidently a spambot or a compromised account';
+							return '显而易见的spambot或失窃账户';
 						case 'vandalonly':
-							return 'actions evidently indicate a vandalism-only account';
+							return '显而易见的纯破坏用户';
 						case 'promoonly':
-							return 'account is being used only for promotional purposes';
+							return '仅用来散发广告宣传的用户';
 						default:
-							return 'unknown reason';
+							return '位置理由';
 					}
-				} ).join( '; ' );
+				} ).join( '，' );
 
 
 			if ( form.page.value !== '' ) {
 
 				// add a leading : on linked page namespace to prevent transclusion
-				reason = 'On [[' + form.page.value.replace( /^(Image|Category|File):/i, ':$1:' ) + ']]';
+				reason = '* {{pagelinks|' + form.page.value + '}}';
 
 				if ( form.badid.value !== '' ) {
-					reason += ' ({{diff|' + form.page.value + '|' + form.badid.value + '|' + form.goodid.value + '|diff}})';
+					reason += '（{{diff|' + form.page.value + '|' + form.badid.value + '|' + form.goodid.value + '|diff}}）';
 				}
-				reason += ':';
+				reason += '\n';
 			}
 
 			if ( types ) {
-				reason += " " + types;
+				reason += '* ' + types;
 			}
 			if (comment !== "" ) {
-				reason += (reason === "" ? "" : ". ") + comment;
+				comment = comment.replace(/\r?\n/g, "\n*:");  // indent newlines
+				reason += (types ? "。" : "* ") + comment;
 			}
 			reason = reason.trim();
-			if (reason.search(/[.?!;]$/) === -1) {
-				reason += ".";
+			if (reason.search(/[.?!;。？！；]$/) === -1) {
+				reason += "。";
 			}
-			reason += " ~~~~";
-			reason = reason.replace(/\r?\n/g, "\n*:");  // indent newlines
+			reason += "\n* 发现人：~~~~\n* 处理：";
 
 			Morebits.simpleWindow.setButtonsEnabled( false );
 			Morebits.status.init( form );
 
-			Morebits.wiki.actionCompleted.redirect = "Wikipedia:Administrator intervention against vandalism";
-			Morebits.wiki.actionCompleted.notice = "Reporting complete";
+			Morebits.wiki.actionCompleted.redirect = "Wikipedia:当前的破坏";
+			Morebits.wiki.actionCompleted.notice = "报告完成";
 
-			var aivPage = new Morebits.wiki.page( 'Wikipedia:Administrator intervention against vandalism', 'Processing AIV request' );
-			aivPage.setPageSection( 1 );
+			var aivPage = new Morebits.wiki.page( 'Wikipedia:当前的破坏', '处理VIP请求' );
 			aivPage.setFollowRedirect( true );
 
 			aivPage.load( function() {
 				var text = aivPage.getPageText();
 
 				// check if user has already been reported
-				if (new RegExp( "\\{\\{\\s*(?:(?:[Ii][Pp])?[Vv]andal|[Uu]serlinks)\\s*\\|\\s*(?:1=)?\\s*" + RegExp.escape( uid, true ) + "\\s*\\}\\}" ).test(text)) {
-					aivPage.getStatusElement().error( 'Report already present, will not add a new one' );
-					Morebits.status.printUserText( reason, 'The comments you typed are provided below, in case you wish to manually post them under the existing report for this user at AIV:' );
+				if (new RegExp( "===\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\s*" + RegExp.escape( uid, true ) + "\\s*\\}\\}\s*===" ).test(text)) {
+					aivPage.getStatusElement().error( '报告已存在，将不会加入新的' );
+					Morebits.status.printUserText( reason, '您键入的评论已在下方提供，您可以将其加入到VIP已存在的小节中：' );
 					return;
 				}
-				aivPage.getStatusElement().status( 'Adding new report...' );
-				aivPage.setEditSummary( 'Reporting [[Special:Contributions/' + uid + '|' + uid + ']].' + Twinkle.getPref('summaryAd') );
-				aivPage.setAppendText( '\n*{{' + ( Morebits.isIPAddress( uid ) ? 'IPvandal' : 'vandal' ) + '|' + (/\=/.test( uid ) ? '1=' : '' ) + uid + '}} &ndash; ' + reason );
+				aivPage.setPageSection( 0 );
+				aivPage.getStatusElement().status( '加入新报告…' );
+				aivPage.setEditSummary( '报告[[Special:Contributions/' + uid + '|' + uid + ']]。' + Twinkle.getPref('summaryAd') );
+				aivPage.setAppendText( '\n=== {{vandal|' + (/\=/.test( uid ) ? '1=' : '' ) + uid + '}} ===\n' + reason );
 				aivPage.append();
 			} );
 			break;
@@ -595,32 +581,28 @@ Twinkle.arv.callback.evaluate = function(e) {
 			}
 
 			if ( types.length <= 2 ) {
-				types = types.join( ' and ' );
+				types = types.join( '和' );
 			} else {
-				types = [ types.slice( 0, -1 ).join( ', ' ), types.slice( -1 ) ].join( ' and ' );
-			}
-			var article = 'a';
-			if ( /[aeiouwyh]/.test( types[0] || '' ) ) { // non 100% correct, but whatever, including 'h' for Cockney
-				article = 'an';
+				types = [ types.slice( 0, -1 ).join( '、' ), types.slice( -1 ) ].join( '和' );
 			}
 			reason = "*{{user-uaa|1=" + uid + "}} &ndash; ";
 			if ( types.length || hasShared ) {
-				reason += "Violation of the username policy as " + article + " " + types + " username" +
-					( hasShared ? " that implies shared use. " : ". " );
+				reason += types + "用户名" +
+					( hasShared ? "，暗示该账户并非由一人拥有。" : "。" );
 			}
 			if ( comment !== '' ) {
-				reason += Morebits.string.toUpperCaseFirstChar(comment) + ". ";
+				reason += Morebits.string.toUpperCaseFirstChar(comment) + "。";
 			}
-			reason += "~~~~";
+			reason += "--~~~~";
 			reason = reason.replace(/\r?\n/g, "\n*:");  // indent newlines
 
 			Morebits.simpleWindow.setButtonsEnabled( false );
 			Morebits.status.init( form );
 
-			Morebits.wiki.actionCompleted.redirect = "Wikipedia:Usernames for administrator attention";
-			Morebits.wiki.actionCompleted.notice = "Reporting complete";
+			Morebits.wiki.actionCompleted.redirect = "Wikipedia:需要管理員注意的用戶名";
+			Morebits.wiki.actionCompleted.notice = "报告完成";
 
-			var uaaPage = new Morebits.wiki.page( 'Wikipedia:Usernames for administrator attention', 'Processing UAA request' );
+			var uaaPage = new Morebits.wiki.page( 'Wikipedia:需要管理員注意的用戶名', '处理UAA请求' );
 			uaaPage.setFollowRedirect( true );
 
 			uaaPage.load( function() {
@@ -628,14 +610,14 @@ Twinkle.arv.callback.evaluate = function(e) {
 
 				// check if user has already been reported
 				if (new RegExp( "\\{\\{\\s*user-uaa\\s*\\|\\s*(1\\s*=\\s*)?" + RegExp.escape(uid, true) + "\\s*(\\||\\})" ).test(text)) {
-					uaaPage.getStatusElement().error( 'User is already listed.' );
-					Morebits.status.printUserText( reason, 'The comments you typed are provided below, in case you wish to manually post them under the existing report for this user at UAA:' );
+					uaaPage.getStatusElement().error( '用户已被列入。' );
+					Morebits.status.printUserText( reason, '您键入的评论已在下方提供，您可以将其手工加入UAA上该用户的报告中：' );
 					return;
 				}
-				uaaPage.getStatusElement().status( 'Adding new report...' );
-				uaaPage.setEditSummary( 'Reporting [[Special:Contributions/' + uid + '|' + uid + ']].'+ Twinkle.getPref('summaryAd') );
-				uaaPage.setPageText( text + "\n\n" + reason );
-				uaaPage.save();
+				uaaPage.getStatusElement().status( '添加新报告…' );
+				uaaPage.setEditSummary( '报告[[Special:Contributions/' + uid + '|' + uid + ']]。'+ Twinkle.getPref('summaryAd') );
+				uaaPage.setAppendText( "\n" + reason );
+				uaaPage.append();
 			} );
 			break;
 
@@ -645,13 +627,12 @@ Twinkle.arv.callback.evaluate = function(e) {
 		case "puppet":
 			var sockParameters = {
 				evidence: form.evidence.value.trim(),
-				checkuser: form.checkuser.checked,
 				notify: form.notify.checked
 			};
 
 			var puppetReport = form.category.value === "puppet";
 			if (puppetReport && !(form.sockmaster.value.trim())) {
-				if (!confirm("You have not entered a sockmaster account for this puppet. Do you want to report this account as a sockpuppeteer instead?")) {
+				if (!confirm("您未对这个傀儡账户输入主账户，您是否希望报告这个账户为傀儡操作者？")) {
 					return;
 				}
 				puppetReport = false;
@@ -731,17 +712,17 @@ Twinkle.arv.processSock = function( params ) {
 	// notify all user accounts if requested
 	if (params.notify && params.sockpuppets.length>0) {
 
-		var notifyEditSummary = "Notifying about suspicion of sockpuppeteering." + Twinkle.getPref('summaryAd');
-		var notifyText = "\n\n{{subst:socksuspectnotice|1=" + params.uid + "}} ~~~~";
+		var notifyEditSummary = "通知用户查核请求。" + Twinkle.getPref('summaryAd');
+		var notifyText = "\n\n{{subst:socksuspectnotice}}";
 
 		// notify user's master account
-		var masterTalkPage = new Morebits.wiki.page( 'User talk:' + params.uid, 'Notifying suspected sockpuppeteer' );
+		var masterTalkPage = new Morebits.wiki.page( 'User talk:' + params.uid, '通知主账户' );
 		masterTalkPage.setFollowRedirect( true );
 		masterTalkPage.setEditSummary( notifyEditSummary );
 		masterTalkPage.setAppendText( notifyText );
 		masterTalkPage.append();
 
-		var statusIndicator = new Morebits.status( 'Notifying suspected sockpuppets', '0%' );
+		var statusIndicator = new Morebits.status( '通知傀儡', '0%' );
 		var total = params.sockpuppets.length;
 		var current =   0;
 
@@ -751,7 +732,7 @@ Twinkle.arv.processSock = function( params ) {
 			statusIndicator.update( now );
 			sockTalkPage.getStatusElement().unlink();
 			if ( current >= total ) {
-				statusIndicator.info( now + ' (completed)' );
+				statusIndicator.info( now + '（完成）' );
 			}
 		};
 
@@ -759,7 +740,7 @@ Twinkle.arv.processSock = function( params ) {
 
 		// notify each puppet account
 		for( var i = 0; i < socks.length; ++i ) {
-			var sockTalkPage = new Morebits.wiki.page( 'User talk:' + socks[i], "Notification for " +  socks[i] );
+			var sockTalkPage = new Morebits.wiki.page( 'User talk:' + socks[i], "通知" +  socks[i] );
 			sockTalkPage.setFollowRedirect( true );
 			sockTalkPage.setEditSummary( notifyEditSummary );
 			sockTalkPage.setAppendText( notifyText );
@@ -768,36 +749,22 @@ Twinkle.arv.processSock = function( params ) {
 	}
 
 	// prepare the SPI report
-	var text = "\n\n{{subst:SPI report|socksraw=" +
+	var text = "\n\n=== " + params.uid + " ===\n" +
+		"{{status2}}<!-- 请勿更改本行 -->\n" +
+		"{{checkuser|1=" + params.uid + "}}\n" +
 		params.sockpuppets.map( function(v) {
-				return "* {{" + ( Morebits.isIPAddress( v ) ? "checkip" : "checkuser" ) + "|1=" + v + "}}";
-			} ).join( "\n" ) + "\n|evidence=" + params.evidence + " \n";
+				return "{{checkuser|1=" + v + "}}";
+			} ).join( "\n" ) + "\n" + params.evidence + "--~~~~";
 
-	if ( params.checkuser ) {
-		text += "|checkuser=yes";
-	}
-	text += "}}";
-
-	var reportpage = 'Wikipedia:Sockpuppet investigations/' + params.uid;
+	var reportpage = 'Wikipedia:用戶查核請求';
 
 	Morebits.wiki.actionCompleted.redirect = reportpage;
-	Morebits.wiki.actionCompleted.notice = "Reporting complete";
+	Morebits.wiki.actionCompleted.notice = "报告完成";
 
-	var spiPage = new Morebits.wiki.page( reportpage, 'Retrieving discussion page' );
+	var spiPage = new Morebits.wiki.page( reportpage, '抓取讨论页面' );
 	spiPage.setFollowRedirect( true );
-	spiPage.setEditSummary( 'Adding new report for [[Special:Contributions/' + params.uid + '|' + params.uid + ']].'+ Twinkle.getPref('summaryAd') );
+	spiPage.setEditSummary( '报告[[Special:Contributions/' + params.uid + '|' + params.uid + ']]。'+ Twinkle.getPref('summaryAd') );
 	spiPage.setAppendText( text );
-	switch( Twinkle.getPref( 'spiWatchReport' ) ) {
-		case 'yes':
-			spiPage.setWatchlist( true );
-			break;
-		case 'no':
-			spiPage.setWatchlistFromPreferences( false );
-			break;
-		default:
-			spiPage.setWatchlistFromPreferences( true );
-			break;
-	}
 	spiPage.append();
 
 	Morebits.wiki.removeCheckpoint();  // all page updates have been started
