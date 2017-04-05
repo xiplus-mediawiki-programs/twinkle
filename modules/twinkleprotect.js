@@ -247,6 +247,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							}
 							$('input[name=small]', $(e.target).closest('form'))[0].checked = (e.target.selectedIndex >= 8); // 1 month
 						},
+						// default expiry selection is conditionally set in Twinkle.protect.callback.changePreset
 						list: [
 							{ label: '1小时', value: '1 hour' },
 							{ label: '2小时', value: '2 hours' },
@@ -254,7 +255,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							{ label: '6小时', value: '6 hours' },
 							{ label: '1日', value: '1 day' },
 							{ label: '3日', value: '3 days' },
-							{ label: '1周', selected: true, value: '1 week' },
+							{ label: '1周', value: '1 week' },
 							{ label: '2周', value: '2 weeks' },
 							{ label: '1月', value: '1 month' },
 							{ label: '3月', value: '3 months' },
@@ -308,6 +309,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 								Twinkle.protect.doCustomExpiry(e.target);
 							}
 						},
+						// default expiry selection is conditionally set in Twinkle.protect.callback.changePreset
 						list: [
 							{ label: '1小时', value: '1 hour' },
 							{ label: '2小时', value: '2 hours' },
@@ -317,7 +319,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							{ label: '3日', value: '3 days' },
 							{ label: '1周', value: '1 week' },
 							{ label: '2周', value: '2 weeks' },
-							{ label: '1月', selected: true, value: '1 month' },
+							{ label: '1月', value: '1 month' },
 							{ label: '3月', value: '3 months' },
 							{ label: '6月', value: '6 months' },
 							{ label: '1年', value: '1 year' },
@@ -725,6 +727,8 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 				Twinkle.protect.formevents.editmodify({ target: form.editmodify });
 				form.editlevel.value = item.edit;
 				Twinkle.protect.formevents.editlevel({ target: form.editlevel });
+
+				form.editexpiry.value = '1 week';
 			} else {
 				form.editmodify.checked = false;
 				Twinkle.protect.formevents.editmodify({ target: form.editmodify });
@@ -735,6 +739,7 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 				Twinkle.protect.formevents.movemodify({ target: form.movemodify });
 				form.movelevel.value = item.move;
 				Twinkle.protect.formevents.movelevel({ target: form.movelevel });
+				form.moveexpiry.value = '1 month';
 			} else {
 				form.movemodify.checked = false;
 				Twinkle.protect.formevents.movemodify({ target: form.movemodify });
@@ -775,6 +780,7 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 			form.expiry.value = '';
 			form.expiry.disabled = true;
 		} else {
+			form.expiry.value = '';
 			form.expiry.disabled = false;
 		}
 	}
@@ -860,8 +866,8 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 
 				thispage.protect(next);
 			};
-			
-			if ((form.editmodify && form.editmodify.checked) || (form.movemodify && form.movemodify.checked) || 
+
+			if ((form.editmodify && form.editmodify.checked) || (form.movemodify && form.movemodify.checked) ||
 				!mw.config.get('wgArticleId')) {
 				protectIt(allDone);
 			} else {
