@@ -14,9 +14,10 @@
  * Config directives in:   TwinkleConfig
  */
 
+
 Twinkle.warn = function twinklewarn() {
-	if( mw.config.get( 'wgRelevantUserName' ) ) {
-			Twinkle.addPortletLink( Twinkle.warn.callback, "警告", "tw-warn", "警告或提醒用户" );
+	if ( Morebits.wiki.flow.relevantUserName() ) {
+		Twinkle.addPortletLink( Twinkle.warn.callback, "警告", "tw-warn", "警告或提醒用户" );
 	}
 
 	// modify URL of talk page on rollback success pages
@@ -38,7 +39,7 @@ Twinkle.warn = function twinklewarn() {
 };
 
 Twinkle.warn.callback = function twinklewarnCallback() {
-	if( mw.config.get( 'wgRelevantUserName' ) === mw.config.get( 'wgUserName' ) &&
+	if( Morebits.wiki.flow.relevantUserName() === mw.config.get( 'wgUserName' ) &&
 			!confirm( '您将要警告自己！您确定要继续吗？' ) ) {
 		return;
 	}
@@ -1161,11 +1162,57 @@ Twinkle.warn.callbacks = {
 		pageobj.setEditSummary( summary );
 		pageobj.setWatchlist( Twinkle.getPref('watchWarnings') );
 		pageobj.save();
+	},
+	main_flow: function (flowobj) {
+		var params = flowobj.getCallbackParameters();
+		var messageData = params.messageData;
+
+		var date = new Date();
+
+		var topic;
+		if (messageData.heading) {
+			topic = messageData.heading;
+		} else {
+			var summary;
+			switch( params.sub_group.substr( -1 ) ) {
+				case "1":
+					summary = "提醒";
+					break;
+				case "2":
+					summary = "注意";
+					break;
+				case "3":
+					summary = "警告";
+					break;
+				case "4":
+					summary = "最后警告";
+					break;
+				case "m":
+					if( params.sub_group.substr( -3 ) === "4im" ) {
+						summary = "唯一警告";
+						break;
+					}
+					summary = "提示";
+					break;
+				default:
+					summary = "提示";
+					break;
+			}
+			// 因为Flow讨论串自带时间，所以不需要再另外标注
+			topic = summary + " (" + Morebits.string.toUpperCaseFirstChar(messageData.label) + ")";
+		}
+
+		var content = Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
+			params.reason, params.main_group === 'custom');
+
+		flowobj.setTopic(topic);
+		flowobj.setContent(content);
+		flowobj.newTopic();
 	}
 };
 
 Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
-	var userTalkPage = 'User_talk:' + mw.config.get('wgRelevantUserName');
+	var userTalkPage = 'User_talk:' + Morebits.wiki.flow.relevantUserName();
 
 	// First, check to make sure a reason was filled in if uw-username was selected
 
@@ -1192,10 +1239,17 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
 	Morebits.wiki.actionCompleted.notice = "警告完成，将在几秒后刷新";
 
-	var wikipedia_page = new Morebits.wiki.page( userTalkPage, '用户对话页修改' );
-	wikipedia_page.setCallbackParameters( params );
-	wikipedia_page.setFollowRedirect( true );
-	wikipedia_page.load( Twinkle.warn.callbacks.main );
+	Morebits.wiki.flow.check(userTalkPage, function () {
+		var flow_page = new Morebits.wiki.flow( userTalkPage, '用户Flow对话页留言' );
+		flow_page.setCallbackParameters( params );
+		Twinkle.warn.callbacks.main_flow( flow_page );
+	}, function () {
+		var wikipedia_page = new Morebits.wiki.page( userTalkPage, '用户对话页修改' );
+		wikipedia_page.setCallbackParameters( params );
+		wikipedia_page.setFollowRedirect( true );
+		wikipedia_page.load( Twinkle.warn.callbacks.main );
+	});
+
 };
 })(jQuery);
 

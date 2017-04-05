@@ -23,6 +23,9 @@ Twinkle.copyvio = function twinklecopyvio() {
 	if ( mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.wiki.isPageRedirect()))) ) {
 		return;
 	}
+	if ( mw.config.get('wgPageContentModel') === 'flow-board' ) {
+		return;
+	}
 	Twinkle.addPortletLink(Twinkle.copyvio.callback, "侵权", "tw-copyvio", "提报侵权页面", "");
 };
 
@@ -73,24 +76,33 @@ Twinkle.copyvio.callbacks = {
 
 		// Notification to first contributor
 		if(params.usertalk) {
-			var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
-			var notifytext = "\n{{subst:CopyvioNotice|" + mw.config.get('wgPageName') +  "}}";
-			usertalkpage.setAppendText(notifytext);
-			usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]疑似侵犯版权" + Twinkle.getPref('summaryAd'));
-			usertalkpage.setCreateOption('recreate');
-			switch (Twinkle.getPref('copyvioWatchUser')) {
-				case 'yes':
-					usertalkpage.setWatchlist(true);
-					break;
-				case 'no':
-					usertalkpage.setWatchlistFromPreferences(false);
-					break;
-				default:
-					usertalkpage.setWatchlistFromPreferences(true);
-					break;
-			}
-			usertalkpage.setFollowRedirect(true);
-			usertalkpage.append();
+			Morebits.wiki.flow.check('User talk:' + initialContrib, function () {
+				var flowpage = new Morebits.wiki.flow('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
+				var topic = '您建立的页面[[' + mw.config.get('wgPageName') + ']]可能侵犯版权';
+				var content = "{{subst:CopyvioNotice|" + mw.config.get('wgPageName') +  "|flow=yes}}";
+				flowpage.setTopic(topic);
+				flowpage.setContent(content);
+				flowpage.newTopic();
+			}, function () {
+				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
+				var notifytext = "\n{{subst:CopyvioNotice|" + mw.config.get('wgPageName') +  "}}";
+				usertalkpage.setAppendText(notifytext);
+				usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]疑似侵犯版权" + Twinkle.getPref('summaryAd'));
+				usertalkpage.setCreateOption('recreate');
+				switch (Twinkle.getPref('copyvioWatchUser')) {
+					case 'yes':
+						usertalkpage.setWatchlist(true);
+						break;
+					case 'no':
+						usertalkpage.setWatchlistFromPreferences(false);
+						break;
+					default:
+						usertalkpage.setWatchlistFromPreferences(true);
+						break;
+				}
+				usertalkpage.setFollowRedirect(true);
+				usertalkpage.append();
+			});
 		}
 	},
 	taggingArticle: function(pageobj) {
@@ -122,7 +134,6 @@ Twinkle.copyvio.callbacks = {
 	},
 	copyvioList: function(pageobj) {
 		var text = pageobj.getPageText();
-		var params = pageobj.getCallbackParameters();
 		var output = '';
 		var date = new Date();
 

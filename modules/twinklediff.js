@@ -15,7 +15,7 @@
  */
 
 Twinkle.diff = function twinklediff() {
-	if( mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId') ) {
+	if( mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageContentModel') === 'flow-board' || !mw.config.get('wgArticleId') ) {
 		return;
 	}
 

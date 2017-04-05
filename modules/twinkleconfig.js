@@ -495,6 +495,7 @@ Twinkle.config.sections = [
 		{
 			name: "insertTalkbackSignature",
 			label: "回复时添加签名",
+			helptip: "Flow页除外。",
 			type: "boolean"
 		},
 		{
@@ -561,6 +562,7 @@ Twinkle.config.sections = [
 		{
 			name: "watchWarnings",
 			label: "警告时添加用户对话页到监视列表",
+			helptip: "注意：如果对方使用Flow，对应讨论串总会被加到监视列表中。",
 			type: "boolean"
 		},
 

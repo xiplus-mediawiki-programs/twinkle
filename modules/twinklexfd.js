@@ -17,10 +17,11 @@
 Twinkle.xfd = function twinklexfd() {
 	// Disable on:
 	// * special pages
+	// * Flow pages
 	// * non-existent pages
 	// * files on Commons, whether there is a local page or not (unneeded local pages of files on Commons are eligible for CSD F2)
 	// * file pages without actual files (these are eligible for CSD G8)
-	if ( mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.wiki.isPageRedirect()))) ) {
+	if ( mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageContentModel') === 'flow-board' || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.wiki.isPageRedirect()))) ) {
 		return;
 	}
 	Twinkle.addPortletLink( Twinkle.xfd.callback, "提删", "tw-xfd", "提交删除讨论" );
@@ -202,7 +203,7 @@ Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdC
 	} else if( e.target.value === 'fwdcsd' ) {
 		e.target.form.mergeinto.disabled = false;
 		e.target.form.mergeinto.previousElementSibling.innerHTML = '提交人：';
-		
+		e.target.form.xfdreason.value = decodeURIComponent($("#delete-reason").text()).replace(/\+/g, ' ');
 	} else {
 		e.target.form.mergeinto.disabled = true;
 	}
@@ -230,24 +231,32 @@ Twinkle.xfd.callbacks = {
 					return;
 				}
 
-				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
-				var notifytext = "\n{{subst:AFDNote|" + Morebits.pageNameNorm + "}}--~~~~";
-				usertalkpage.setAppendText(notifytext);
-				usertalkpage.setEditSummary("通知：页面[[" + Morebits.pageNameNorm + "]]存废讨论提名" + Twinkle.getPref('summaryAd'));
-				usertalkpage.setCreateOption('recreate');
-				switch (Twinkle.getPref('xfdWatchUser')) {
-					case 'yes':
-						usertalkpage.setWatchlist(true);
-						break;
-					case 'no':
-						usertalkpage.setWatchlistFromPreferences(false);
-						break;
-					default:
-						usertalkpage.setWatchlistFromPreferences(true);
-						break;
-				}
-				usertalkpage.setFollowRedirect(true);
-				usertalkpage.append();
+				var talkPageName = 'User talk:' + initialContrib;
+				Morebits.wiki.flow.check(talkPageName, function () {
+					var flowpage = new Morebits.wiki.flow(talkPageName, "通知页面创建者（" + initialContrib + "）");
+					flowpage.setTopic("页面[[:" + Morebits.pageNameNorm + "]]存废讨论通知");
+					flowpage.setContent("{{subst:AFDNote|" + Morebits.pageNameNorm + "|flow=yes}}");
+					flowpage.newTopic();
+				}, function () {
+					var usertalkpage = new Morebits.wiki.page(talkPageName, "通知页面创建者（" + initialContrib + "）");
+					var notifytext = "\n{{subst:AFDNote|" + Morebits.pageNameNorm + "}}--~~~~";
+					usertalkpage.setAppendText(notifytext);
+					usertalkpage.setEditSummary("通知：页面[[" + Morebits.pageNameNorm + "]]存废讨论提名" + Twinkle.getPref('summaryAd'));
+					usertalkpage.setCreateOption('recreate');
+					switch (Twinkle.getPref('xfdWatchUser')) {
+						case 'yes':
+							usertalkpage.setWatchlist(true);
+							break;
+						case 'no':
+							usertalkpage.setWatchlistFromPreferences(false);
+							break;
+						default:
+							usertalkpage.setWatchlistFromPreferences(true);
+							break;
+					}
+					usertalkpage.setFollowRedirect(true);
+					usertalkpage.append();
+				});
 			}
 		},
 		taggingArticle: function(pageobj) {
@@ -383,24 +392,33 @@ Twinkle.xfd.callbacks = {
 					return;
 				}
 
-				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
-				var notifytext = "\n{{subst:idw|File:" + mw.config.get('wgTitle') + "}}--~~~~";
-				usertalkpage.setAppendText(notifytext);
-				usertalkpage.setEditSummary("通知：文件[[" + Morebits.pageNameNorm + "]]存废讨论提名" + Twinkle.getPref('summaryAd'));
-				usertalkpage.setCreateOption('recreate');
-				switch (Twinkle.getPref('xfdWatchUser')) {
-					case 'yes':
-						usertalkpage.setWatchlist(true);
-						break;
-					case 'no':
-						usertalkpage.setWatchlistFromPreferences(false);
-						break;
-					default:
-						usertalkpage.setWatchlistFromPreferences(true);
-						break;
-				}
-				usertalkpage.setFollowRedirect(true);
-				usertalkpage.append();
+				var talkPageName = 'User talk:' + initialContrib;
+
+				Morebits.wiki.flow.check(talkPageName, function () {
+					var flowpage = new Morebits.wiki.flow(talkPageName, "通知页面创建者（" + initialContrib + "）");
+					flowpage.setTopic("文件[[:File:" + mw.config.get('wgTitle') + "]]存废讨论通知");
+					flowpage.setContent("{{subst:idw|File:" + mw.config.get('wgTitle') + "|flow=yes}}");
+					flowpage.newTopic();
+				}, function () {
+					var usertalkpage = new Morebits.wiki.page(talkPageName, "通知页面创建者（" + initialContrib + "）");
+					var notifytext = "\n{{subst:idw|File:" + mw.config.get('wgTitle') + "}}--~~~~";
+					usertalkpage.setAppendText(notifytext);
+					usertalkpage.setEditSummary("通知：文件[[" + Morebits.pageNameNorm + "]]存废讨论提名" + Twinkle.getPref('summaryAd'));
+					usertalkpage.setCreateOption('recreate');
+					switch (Twinkle.getPref('xfdWatchUser')) {
+						case 'yes':
+							usertalkpage.setWatchlist(true);
+							break;
+						case 'no':
+							usertalkpage.setWatchlistFromPreferences(false);
+							break;
+						default:
+							usertalkpage.setWatchlistFromPreferences(true);
+							break;
+					}
+					usertalkpage.setFollowRedirect(true);
+					usertalkpage.append();
+				});
 			}
 		},
 		taggingImage: function(pageobj) {
@@ -455,7 +473,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	var reason = e.target.xfdreason.value;
 	var xfdcat, mergeinto, noinclude;
 	if( type === 'afd' ) {
-		var noinclude = e.target.noinclude.checked
+		var noinclude = e.target.noinclude.checked;
 		xfdcat = e.target.xfdcat.value;
 		mergeinto = e.target.mergeinto.value;
 	}
@@ -475,7 +493,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	var date = new Date();
 	function twodigits(num) {
 		return num < 10 ? '0' + num : num;
-	};
+	}
 	switch( type ) {
 
 	case 'afd': // AFD

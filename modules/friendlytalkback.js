@@ -16,7 +16,7 @@
 
 Twinkle.talkback = function() {
 
-	if ( !mw.config.get('wgRelevantUserName') ) {
+	if ( !Morebits.wiki.flow.relevantUserName() ) {
 		return;
 	}
 
@@ -24,7 +24,7 @@ Twinkle.talkback = function() {
 };
 
 Twinkle.talkback.callback = function( ) {
-	if( mw.config.get('wgRelevantUserName') === mw.config.get("wgUserName") && !confirm("您寂寞到了要自己回复自己的程度么？") ){
+	if( Morebits.wiki.flow.relevantUserName() === mw.config.get("wgUserName") && !confirm("您寂寞到了要自己回复自己的程度么？") ){
 		return;
 	}
 
@@ -101,7 +101,7 @@ Twinkle.talkback.callback.optoutStatus = function(apiobj) {
 	var $el = $(xml).find('el');
 
 	if ($el.length) {
-		Twinkle.talkback.optout = mw.config.get('wgRelevantUserName') + "不希望收到回复通告";
+		Twinkle.talkback.optout = Morebits.wiki.flow.relevantUserName() + "不希望收到回复通告";
 		var url = $el.text();
 		if (url.indexOf("reason=") > -1) {
 			Twinkle.talkback.optout += "：" + decodeURIComponent(url.substring(url.indexOf("reason=") + 7)) + "。";
@@ -237,7 +237,8 @@ var callback_evaluate = function( e ) {
 	var tbtarget = e.target.getChecked( "tbtarget" )[0];
 	var page = null;
 	var section = e.target.section.value;
-	var fullUserTalkPageName = mw.config.get("wgFormattedNamespaces")[ mw.config.get("wgNamespaceIds").user_talk ] + ":" + mw.config.get('wgRelevantUserName');
+	var userName = Morebits.wiki.flow.relevantUserName();
+	var fullUserTalkPageName = mw.config.get("wgFormattedNamespaces")[ mw.config.get("wgNamespaceIds").user_talk ] + ":" + userName;
 
 	if( tbtarget === "usertalk" || tbtarget === "other" ) {
 		page = e.target.page.value;
@@ -266,53 +267,67 @@ var callback_evaluate = function( e ) {
 	Morebits.wiki.actionCompleted.redirect = fullUserTalkPageName;
 	Morebits.wiki.actionCompleted.notice = "回复通告完成，将在几秒内刷新";
 
-	var talkpage = new Morebits.wiki.page(fullUserTalkPageName, "添加回复通告");
 	var tbPageName = (tbtarget === "mytalk") ? mw.config.get("wgUserName") : page;
 
 	var text;
+	var title, content, editSummary;
 	if ( tbtarget === "mail" ) {
-		text = "\n\n==" + Twinkle.getFriendlyPref("mailHeading") + "==\n{{you've got mail|subject=";
-		text += section + "|ts=~~~~~}}";
+		title = Twinkle.getFriendlyPref("mailHeading");
+		content = "{{you've got mail|subject=" + section + "|ts=~~~~~}}";
+
+		text = "\n\n==" + title + "==\n" + content;
 
 		if( message ) {
+			content += "\n" + message.trim();
 			text += "\n" + message.trim() + "--~~~~";
 		} else if( Twinkle.getFriendlyPref("insertTalkbackSignature") ) {
 			text += "\n~~~~";
 		}
 
-		talkpage.setEditSummary("通知：有新邮件" + Twinkle.getPref("summaryAd"));
-
+		editSummary = "通知：有新邮件" + Twinkle.getPref("summaryAd");
 	} else {  // tbtarget one of mytalk, usertalk, other
 		// clean talkback heading: strip section header markers that were erroneously suggested in the documentation
-		text = "\n\n==" + Twinkle.getFriendlyPref("talkbackHeading").replace( /^\s*=+\s*(.*?)\s*=+$\s*/, "$1" ) + "==\n{{talkback|";
-		text += tbPageName;
+		title = Twinkle.getFriendlyPref("talkbackHeading").replace( /^\s*=+\s*(.*?)\s*=+$\s*/, "$1" );
+		content = "{{talkback|" + tbPageName;
 
 		if( section ) {
-			text += "|" + section;
+			content += "|" + section;
 		}
+		content += "|target=" + userName + "|ts=~~~~~}}";
 
-		text += "|ts=~~~~~}}";
+		text = "\n\n==" + title + "==\n" + content;
 
 		if( message ) {
+			content += "\n" + message.trim();
 			text += "\n" + message.trim() + "--~~~~";
 		} else if( Twinkle.getFriendlyPref("insertTalkbackSignature") ) {
 			text += "\n~~~~";
 		}
 
-		var editSummary = "回复通告（[[";
+		editSummary = "回复通告（[[";
 		if (tbtarget !== "other" && !/^\s*user talk:/i.test(tbPageName)) {
 			editSummary += "User talk:";
 		}
 		editSummary += tbPageName + (section ? ("#" + section) : "") + "]]）";
-		talkpage.setEditSummary(editSummary + Twinkle.getPref("summaryAd"));
+		editSummary += Twinkle.getPref("summaryAd");
 	}
 
-	talkpage.setAppendText( text );
-	talkpage.setCreateOption("recreate");
-	talkpage.setMinorEdit(Twinkle.getFriendlyPref("markTalkbackAsMinor"));
-	talkpage.setFollowRedirect( true );
-	talkpage.append();
-}
+	Morebits.wiki.flow.check(fullUserTalkPageName, function () {
+		var flowpage = new Morebits.wiki.flow(fullUserTalkPageName, "添加回复通告");
+		flowpage.setTopic(title);
+		flowpage.setContent(content);
+		flowpage.newTopic();
+	}, function () {
+		var talkpage = new Morebits.wiki.page(fullUserTalkPageName, "添加回复通告");
+		talkpage.setEditSummary(editSummary);
+		talkpage.setAppendText( text );
+		talkpage.setCreateOption("recreate");
+		talkpage.setMinorEdit(Twinkle.getFriendlyPref("markTalkbackAsMinor"));
+		talkpage.setFollowRedirect( true );
+		talkpage.append();
+	});
+
+};
 
 })(jQuery);
 

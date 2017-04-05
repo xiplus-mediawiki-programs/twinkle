@@ -177,24 +177,32 @@ Twinkle.image.callbacks = {
 		if (initialContrib === mw.config.get('wgUserName')) {
 			pageobj.getStatusElement().warn("您（" + initialContrib + "）创建了该页，跳过通知");
 		} else {
-			var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知上传者(" + initialContrib + ")");
-			var notifytext = "\n{{subst:Uploadvionotice|" + Morebits.pageNameNorm + "}}--~~~~";
-			usertalkpage.setAppendText(notifytext);
-			usertalkpage.setEditSummary("通知：文件[[" + Morebits.pageNameNorm + "]]快速删除提名" + Twinkle.getPref('summaryAd'));
-			usertalkpage.setCreateOption('recreate');
-			switch (Twinkle.getPref('deliWatchUser')) {
-				case 'yes':
-					usertalkpage.setWatchlist(true);
-					break;
-				case 'no':
-					usertalkpage.setWatchlistFromPreferences(false);
-					break;
-				default:
-					usertalkpage.setWatchlistFromPreferences(true);
-					break;
-			}
-			usertalkpage.setFollowRedirect(true);
-			usertalkpage.append();
+			var talkPageName = 'User talk:' + initialContrib;
+			Morebits.wiki.flow.check(talkPageName, function () {
+				var flowpage = new Morebits.wiki.flow(talkPageName, "通知上传者(" + initialContrib + ")");
+				flowpage.setTopic("请补充文件[[:" + Morebits.pageNameNorm + "]]的版权或来源信息");
+				flowpage.setContent("{{subst:Uploadvionotice|" + Morebits.pageNameNorm + "|flow=yes}}");
+				flowpage.newTopic();
+			}, function () {
+				var usertalkpage = new Morebits.wiki.page(talkPageName, "通知上传者(" + initialContrib + ")");
+				var notifytext = "\n{{subst:Uploadvionotice|" + Morebits.pageNameNorm + "}}--~~~~";
+				usertalkpage.setAppendText(notifytext);
+				usertalkpage.setEditSummary("通知：文件[[" + Morebits.pageNameNorm + "]]快速删除提名" + Twinkle.getPref('summaryAd'));
+				usertalkpage.setCreateOption('recreate');
+				switch (Twinkle.getPref('deliWatchUser')) {
+					case 'yes':
+						usertalkpage.setWatchlist(true);
+						break;
+					case 'no':
+						usertalkpage.setWatchlistFromPreferences(false);
+						break;
+					default:
+						usertalkpage.setWatchlistFromPreferences(true);
+						break;
+				}
+				usertalkpage.setFollowRedirect(true);
+				usertalkpage.append();
+			});
 		}
 
 		// add this nomination to the user's userspace log, if the user has enabled it

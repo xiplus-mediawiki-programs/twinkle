@@ -17,20 +17,20 @@ var api = new mw.Api(), relevantUserName;
 
 Twinkle.block = function twinkleblock() {
 	// should show on Contributions pages, anywhere there's a relevant user
-	if ( Morebits.userIsInGroup('sysop') && mw.config.get('wgRelevantUserName') ) {
+	if ( Morebits.userIsInGroup('sysop') && Morebits.wiki.flow.relevantUserName() ) {
 		Twinkle.addPortletLink(Twinkle.block.callback, '封禁', 'tw-block', '封禁相关用户' );
 	}
 };
 
 Twinkle.block.callback = function twinkleblockCallback() {
-	if( mw.config.get('wgRelevantUserName') === mw.config.get('wgUserName') &&
+	if( Morebits.wiki.flow.relevantUserName() === mw.config.get('wgUserName') &&
 			!confirm( '您即将封禁自己！确认要继续吗？' ) ) {
 		return;
 	}
 
 	var Window = new Morebits.simpleWindow( 650, 530 );
 	// need to be verbose about who we're blocking
-	Window.setTitle( '封禁或向' + mw.config.get('wgRelevantUserName') + '发出封禁模板' );
+	Window.setTitle( '封禁或向' + Morebits.wiki.flow.relevantUserName() + '发出封禁模板' );
 	Window.setScriptName( 'Twinkle' );
 	Window.addFooterLink( '封禁模板', 'Wikipedia:模板消息/用戶討論名字空間#.E5.B0.81.E7.A6.81' );
 	Window.addFooterLink( '封禁方针', 'WP:BLOCK' );
@@ -69,7 +69,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	form.append({ type: 'field', label: '模板选项', name: 'field_template_options' });
 	form.append({ type: 'field', label: '封禁选项', name: 'field_block_options' });
 
-	form.append( { type:'submit', label: '提交〜工具测试中，请检查执行结果！〜' } );
+	form.append( { type:'submit', label: '提交' } );
 
 	var result = form.render();
 	Window.setContent( result );
@@ -88,6 +88,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 };
 
 Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
+	var userName = Morebits.wiki.flow.relevantUserName();
 
 	api.get({
 		format: 'json',
@@ -95,16 +96,16 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 		list: 'blocks|users|logevents',
 		letype: 'block',
 		lelimit: 1,
-		bkusers: mw.config.get('wgRelevantUserName'),
-		ususers: mw.config.get('wgRelevantUserName'),
-		letitle: 'User:' + mw.config.get('wgRelevantUserName')
+		bkusers: userName,
+		ususers: userName,
+		letitle: 'User:' + userName
 	})
 	.then(function(data){
 		var blockinfo = data.query.blocks[0],
 			userinfo = data.query.users[0];
 
 		Twinkle.block.isRegistered = !!userinfo.userid;
-		relevantUserName = Twinkle.block.isRegistered ? 'User:' + mw.config.get('wgRelevantUserName') : mw.config.get('wgRelevantUserName');
+		relevantUserName = Twinkle.block.isRegistered ? ('User:' + userName) : userName;
 
 		if (blockinfo) {
 			// handle frustrating system of inverted boolean values
@@ -336,7 +337,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	}
 
 	if (Twinkle.block.hasBlockLog) {
-		var $blockloglink = $( '<a target="_blank" href="' + mw.util.getUrl('Special:Log', {action: 'view', page: mw.config.get('wgRelevantUserName'), type: 'block'}) + '">封禁日志</a>)' );
+		var $blockloglink = $( '<a target="_blank" href="' + mw.util.getUrl('Special:Log', {action: 'view', page: Morebits.wiki.flow.relevantUserName(), type: 'block'}) + '">封禁日志</a>)' );
 
 		Morebits.status.init($('div[name="hasblocklog"] span').last()[0]);
 		Morebits.status.warn('此用户曾在过去被封禁', $blockloglink[0]);
@@ -551,9 +552,9 @@ Twinkle.block.blockGroups = [
 			{ label: '[[WP:VAN|破坏]]', value: 'uw-vblock' },
 			{ label: '[[WP:VAN#LANG|繁简破坏]]', value: 'uw-block1' },
 			{ label: '跨维基项目破坏', value: 'uw-block1' },
-			{ label: '[[WP:VOA|纯破坏用户]]', value: 'uw-block3' },
+			{ label: '[[WP:VOA|纯粹破坏]]', value: 'uw-block3' },
 			{ label: '[[WP:SOAP|散发广告或宣传]]', value: 'uw-sblock' },
-			{ label: '仅[[WP:SOAP|散发广告/宣传]]的用户', value: 'uw-block3' },
+			{ label: '仅[[WP:SOAP|散发广告/宣传]]', value: 'uw-block3' },
 			{ label: '违反[[WP:3RR|回退不过三原则]]', value: 'uw-3block' },
 			{ label: '无礼的行为、[[WP:NPA|攻击别人]]', value: 'uw-block1' },
 			{ label: '[[WP:骚扰|骚扰用户]]', value: 'uw-block1' },
@@ -767,14 +768,16 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		Morebits.status.init( e.target );
 		var statusElement = new Morebits.status('执行封禁');
 		blockoptions.action = 'block';
-		blockoptions.user = mw.config.get('wgRelevantUserName');
+		blockoptions.user = Morebits.wiki.flow.relevantUserName();
 
 		// boolean-flipped options
 		blockoptions.anononly = blockoptions.hardblock ? undefined : true;
 		blockoptions.allowusertalk = blockoptions.disabletalk ? undefined : true;
 
 		// fix for bug with block API, see [[phab:T68646]]
-		if (blockoptions.expiry === 'infinity') blockoptions.expiry = 'infinite';
+		if (blockoptions.expiry === 'infinity') {
+			blockoptions.expiry = 'infinite';
+		}
 
 		// execute block
 		api.getToken('block').then(function(token) {
@@ -799,25 +802,32 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 };
 
 Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTemplate(formData) {
-	var userTalkPage = 'User_talk:' + mw.config.get('wgRelevantUserName');
+	var userTalkPage = 'User_talk:' + Morebits.wiki.flow.relevantUserName();
 
 	var params = $.extend(formData, {
 		messageData: Twinkle.block.blockPresetsInfo[formData.template],
 		reason: Twinkle.block.field_template_options.block_reason,
 		disabletalk: Twinkle.block.field_template_options.notalk
 	});
-	params.template = params.template.split(':', 1)[0]
+	params.template = params.template.split(':', 1)[0];
 
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
 	Morebits.wiki.actionCompleted.notice = '完成，将在几秒后载入用户对话页';
 
-	var wikipedia_page = new Morebits.wiki.page( userTalkPage, '用户对话页修改' );
-	wikipedia_page.setCallbackParameters( params );
-	wikipedia_page.setFollowRedirect( true );
-	wikipedia_page.load( Twinkle.block.callback.main );
+	Morebits.wiki.flow.check(userTalkPage, function () {
+		var flowpage = new Morebits.wiki.flow(userTalkPage, '用户Flow对话页留言');
+		flowpage.setCallbackParameters(params);
+		Twinkle.block.callback.main_flow(flowpage);
+	}, function () {
+		var wikipedia_page = new Morebits.wiki.page( userTalkPage, '用户对话页修改' );
+		wikipedia_page.setCallbackParameters( params );
+		wikipedia_page.setFollowRedirect( true );
+		wikipedia_page.load( Twinkle.block.callback.main );
+	});
+
 };
 
-Twinkle.block.callback.getBlockNoticeWikitext = function(params) {
+Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 	var text = '{{', settings = Twinkle.block.blockPresetsInfo[params.template];
 
 	if (!settings.nonstandard) {
@@ -843,9 +853,9 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params) {
 	}
 	text += '|subst=subst:';
 
-	if (settings.sig === '~~~~') {
+	if (settings.sig === '~~~~' && !nosign) {
 		text += '}}--~~~~';
-	} else if (settings.sig) {
+	} else if (settings.sig && !nosign) {
 		text += '|sig=' + settings.sig;
 		text += '}}';
 	} else {
@@ -902,6 +912,20 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain( pageobj ) {
 	pageobj.setEditSummary( summary );
 	pageobj.setWatchlist( Twinkle.getPref('watchWarnings') );
 	pageobj.save();
+};
+
+Twinkle.block.callback.main_flow = function twinkleblockcallbackMain( flowobj ) {
+	var params = flowobj.getCallbackParameters();
+
+	params.indefinite = (/indef|infinity|never|\*|max/).test( params.expiry );
+	params.expiry = typeof params.template_expiry !== "undefined" ? params.template_expiry : params.expiry;
+
+	var title = "封禁通知";
+	var content = Twinkle.block.callback.getBlockNoticeWikitext(params, true);
+
+	flowobj.setTopic(title);
+	flowobj.setContent(content);
+	flowobj.newTopic();
 };
 
 })(jQuery);

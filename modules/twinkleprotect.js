@@ -21,6 +21,11 @@ Twinkle.protect = function twinkleprotect() {
 		return;
 	}
 
+	// 如果是Flow讨论版而且是“Topic:”开头的帖子则不显示
+	if ( mw.config.get('wgPageContentModel') === 'flow-board' && mw.config.get('wgPageName').indexOf('Topic:') === 0 ) {
+		return;
+	}
+
 	Twinkle.addPortletLink(Twinkle.protect.callback, Morebits.userIsInGroup('sysop') ? "保护" : "保护", "tw-rpp",
 		Morebits.userIsInGroup('sysop') ? "保护页面" : "请求保护页面" );
 };
@@ -1007,13 +1012,18 @@ Twinkle.protect.callbacks = {
 			return;
 		}
 
-		var protectedPage = new Morebits.wiki.page( mw.config.get('wgPageName'), '标记页面');
-		protectedPage.setCallbackParameters( tagparams );
-		protectedPage.load( Twinkle.protect.callbacks.taggingPage );
+		var pageName = mw.config.get('wgPageName');
+		Morebits.wiki.flow.check(pageName, function () {
+			var flowpage = new Morebits.wiki.flow(pageName, '标记Flow页描述');
+			flowpage.setCallbackParameters( tagparams );
+			flowpage.viewHeader( Twinkle.protect.callbacks.taggingFlowPage );
+		}, function () {
+			var protectedPage = new Morebits.wiki.page(pageName, '标记页面');
+			protectedPage.setCallbackParameters( tagparams );
+			protectedPage.load( Twinkle.protect.callbacks.taggingPage );
+		});
 	},
-	taggingPage: function( protectedPage ) {
-		var params = protectedPage.getCallbackParameters();
-		var text = protectedPage.getPageText();
+	getTaggedPage: function( params, text ) {
 		var tag, summary;
 
 		var oldtag_re = /\s*(?:<noinclude>)?\s*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
@@ -1050,11 +1060,28 @@ Twinkle.protect.callbacks = {
 			summary = "添加{{" + params.tag + "}}" + Twinkle.getPref('summaryAd');
 		}
 
-		protectedPage.setEditSummary( summary );
-		protectedPage.setPageText( text );
+		return {
+			text: text,
+			summary: summary,
+		};
+	},
+	taggingPage: function( protectedPage ) {
+		var params = protectedPage.getCallbackParameters();
+		var text = protectedPage.getPageText();
+		var newVersion = Twinkle.protect.callbacks.getTaggedPage(params, text);
+
+		protectedPage.setEditSummary( newVersion.summary );
+		protectedPage.setPageText( newVersion.text );
 		protectedPage.setCreateOption( 'nocreate' );
 		protectedPage.suppressProtectWarning(); // no need to let admins know they are editing through protection
 		protectedPage.save();
+	},
+	taggingFlowPage: function( flowpage ) {
+		var params = flowpage.getCallbackParameters();
+		var text = flowpage.getHeader();
+		var newVersion = Twinkle.protect.callbacks.getTaggedPage(params, text);
+		flowpage.setHeader(newVersion.text);
+		flowpage.editHeader();
 	},
 
 	fileRequest: function( rppPage ) {

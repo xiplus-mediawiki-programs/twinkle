@@ -15,7 +15,7 @@
  */
 
 Twinkle.arv = function twinklearv() {
-	var username = mw.config.get('wgRelevantUserName');
+	var username = Morebits.wiki.flow.relevantUserName();
 	if ( !username ) {
 		return;
 	}
@@ -71,7 +71,7 @@ Twinkle.arv.callback = function ( uid ) {
 			label: 'Work area',
 			name: 'work_area'
 		} );
-	form.append( { type: 'submit', label: '提交〜工具测试中，请检查执行结果！〜' } );
+	form.append( { type: 'submit', label: '提交' } );
 	form.append( {
 			type: 'hidden',
 			name: 'uid',
@@ -185,7 +185,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 		work_area.append ( {
 				type: 'header',
 				label: '不当用户名类别',
-				tooltip: 'Wikipedia does not allow usernames that are misleading, promotional, offensive or disruptive. Domain names and email addresses are likewise prohibited. These criteria apply to both usernames and signatures. Usernames that are inappropriate in another language, or that represent an inappropriate name with misspellings and substitutions, or do so indirectly or by implication, are still considered inappropriate.'
+				tooltip: '维基百科不允许使用带有误导性、宣传性、侮辱性或破坏性的用户名。此外，使用域名及电邮地址的用户名亦被禁止。这些准则俱应应用至用户名及签名。在其他语言中不当的用户名或通过错拼、替代、暗示、拆字或任何间接方法达成的非妥当用户名会同被视作违规。'
 			} );
 		work_area.append( {
 				type: 'checkbox',
@@ -194,27 +194,27 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					{
 						label: '误导性用户名',
 						value: '误导性',
-						tooltip: 'Misleading usernames imply relevant, misleading things about the contributor. For example, misleading points of fact, an impression of undue authority, or usernames giving the impression of a bot account.'
+						tooltip: '误导性用户名隐含着与贡献者相关或误导他人的事情。例如︰不实观点、暗示账户拥有特定权限或暗示该账户并非由一人拥有而是由一个组群、一个计划或一个集体运作。'
 					},
 					{
 						label: '宣传性用户名',
 						value: '宣传性',
-						tooltip: 'Promotional usernames are advertisements for a company, website or group. Please do not report these names to UAA unless the user has also made promotional edits related to the name.'
+						tooltip: '宣传性用户名会于维基百科上起推销一个组群或一间公司的作用。'
 					},
 					{
 						label: '暗示并非由一人拥有',
 						value: 'shared',
-						tooltip: 'Usernames that imply the likelihood of shared use (names of companies or groups, or the names of posts within organizations) are not permitted. Usernames are acceptable if they contain a company or group name but are clearly intended to denote an individual person, such as "Mark at WidgetsUSA", "Jack Smith at the XY Foundation", "WidgetFan87", etc.'
+						tooltip: '每个维基账户只可以代表个人（个别特例除外），所有与他人分享账户的行为，包括分享账户密码均被禁止。'
 					},
 					{
 						label: '侮辱性用户名',
 						value: '侮辱性',
-						tooltip: 'Offensive usernames make harmonious editing difficult or impossible.'
+						tooltip: '侮辱性用户名令到协调编辑变得困难，甚至无可能。'
 					},
 					{
 						label: '破坏性用户名',
 						value: '破坏性',
-						tooltip: 'Disruptive usernames include outright trolling or personal attacks, or otherwise show a clear intent to disrupt Wikipedia.'
+						tooltip: '破坏性用户名包括人身攻击、伪冒他人或其他一切有着清晰可见的破坏维基百科意图的用户名。'
 					}
 				]
 			} );
@@ -291,7 +291,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			} );
 		work_area = work_area.render();
 		old_area.parentNode.replaceChild( work_area, old_area );
-        break;
+		break;
 	case 'an3':
 		work_area = new Morebits.quickForm.element( {
 			type: 'field',
@@ -716,12 +716,23 @@ Twinkle.arv.processSock = function( params ) {
 		var notifyEditSummary = "通知用户查核请求。" + Twinkle.getPref('summaryAd');
 		var notifyText = "\n\n{{subst:socksuspectnotice}}";
 
+		var notify = function (username, taskname, callback) {
+			Morebits.wiki.flow.check('User talk:' + username, function () {
+				var flowpage = new Morebits.wiki.flow( 'User talk:' + username, '通知' + (taskname || '主账户') );
+				flowpage.setTopic('用户查核通知');
+				flowpage.setContent( notifyText );
+				flowpage.newTopic(callback);
+			}, function () {
+				var talkpage = new Morebits.wiki.page( 'User talk:' + username, '通知' + (taskname || '主账户') );
+				talkpage.setFollowRedirect( true );
+				talkpage.setEditSummary( notifyEditSummary );
+				talkpage.setAppendText( notifyText );
+				talkpage.append(callback);
+			});
+		};
+
 		// notify user's master account
-		var masterTalkPage = new Morebits.wiki.page( 'User talk:' + params.uid, '通知主账户' );
-		masterTalkPage.setFollowRedirect( true );
-		masterTalkPage.setEditSummary( notifyEditSummary );
-		masterTalkPage.setAppendText( notifyText );
-		masterTalkPage.append();
+		notify(params.uid);
 
 		var statusIndicator = new Morebits.status( '通知傀儡', '0%' );
 		var total = params.sockpuppets.length;
@@ -741,11 +752,7 @@ Twinkle.arv.processSock = function( params ) {
 
 		// notify each puppet account
 		for( var i = 0; i < socks.length; ++i ) {
-			var sockTalkPage = new Morebits.wiki.page( 'User talk:' + socks[i], "通知" +  socks[i] );
-			sockTalkPage.setFollowRedirect( true );
-			sockTalkPage.setEditSummary( notifyEditSummary );
-			sockTalkPage.setAppendText( notifyText );
-			sockTalkPage.append( onSuccess );
+			notify(socks[i], socks[i], onSuccess);
 		}
 	}
 
