@@ -1094,13 +1094,20 @@ Twinkle.speedy.callbacks = {
 
 			// check for existing deletion tags
 			var tag = /(?:\{\{\s*(db|d|delete|db-.*?)(?:\s*\||\s*\}\}))/i.exec( text );
-			if( tag ) {
+			if ( tag ) {
 				statelem.error( [ Morebits.htmlNode( 'strong', tag[1] ) , " 已被置于页面中。" ] );
 				return;
 			}
 
-			var xfd = /(?:\{\{([rsaiftcm]fd|md1|proposed deletion)[^{}]*?\}\})/i.exec( text );
-			if( xfd && !confirm( "删除相关模板{{" + xfd[1] + "}}已被置于页面中，您是否仍想添加一个快速删除模板？" ) ) {
+			var copyvio = /(?:\{\{\s*(copyvio)[^{}]*?\}\})/i.exec( text );
+			if ( copyvio ) {
+				statelem.error( '页面中已有版权验证模板。' );
+				return;
+			}
+
+			var xfd = /(?:\{\{([rsaiftcmv]fd|md1|proposed deletion)[^{}]*?\}\})/i.exec( text );
+			if ( xfd && !confirm( "删除相关模板{{" + xfd[1] + "}}已被置于页面中，您是否仍想添加一个快速删除模板？" ) ) {
+				statelem.error( '页面已被提交至存废讨论。' );
 				return;
 			}
 

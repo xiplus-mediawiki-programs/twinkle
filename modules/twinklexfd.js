@@ -207,7 +207,7 @@ Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdC
 	} else {
 		e.target.form.mergeinto.disabled = true;
 	}
-}
+};
 
 Twinkle.xfd.callbacks = {
 	afd: {
@@ -216,7 +216,7 @@ Twinkle.xfd.callbacks = {
 			var params = pageobj.getCallbackParameters();
 
 			// Adding discussion
-			wikipedia_page = new Morebits.wiki.page(params.logpage, "添加讨论到当日列表");
+			var wikipedia_page = new Morebits.wiki.page(params.logpage, "添加讨论到当日列表");
 			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.xfd.callbacks.afd.todaysList);
@@ -260,12 +260,9 @@ Twinkle.xfd.callbacks = {
 			}
 		},
 		taggingArticle: function(pageobj) {
-			if (!pageobj.exists()) {
-				statelem.error("页面不存在，可能已被删除");
-				return;
-			}
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
+
 			var tag = '{{vfd|' + Morebits.string.formatReasonText(params.reason);
 
 			switch ( params.xfdcat ) {
@@ -368,6 +365,34 @@ Twinkle.xfd.callbacks = {
 			pageobj.setCreateOption('recreate');
 			pageobj.append();
 			Twinkle.xfd.currentRationale = null;  // any errors from now on do not need to print the rationale, as it is safely saved on-wiki
+		},
+		tryTagging: function (pageobj) {
+			var statelem = pageobj.getStatusElement();
+			if (!pageobj.exists()) {
+				statelem.error("页面不存在，可能已被删除");
+				return;
+			}
+
+			var text = pageobj.getPageText();
+
+			var xfd = /(?:\{\{([rsaiftcmv]fd|md1|proposed deletion)[^{}]*?\}\})/i.exec( text );
+			if ( xfd && !confirm( "删除相关模板{{" + xfd[1] + "}}已被置于页面中，您是否仍想继续提报？" ) ) {
+				statelem.error( '页面已被提交至存废讨论。' );
+				return;
+			}
+
+			var copyvio = /(?:\{\{\s*(copyvio)[^{}]*?\}\})/i.exec( text );
+			if ( copyvio ) {
+				statelem.error( '页面中已有版权验证模板。' );
+				return;
+			}
+
+			Twinkle.xfd.callbacks.afd.taggingArticle(pageobj);
+
+			// Notification to first contributor
+			var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
+			wikipedia_page.setCallbackParameters(pageobj.getCallbackParameters());
+			wikipedia_page.lookupCreator(Twinkle.xfd.callbacks.afd.main);
 		}
 	},
 
@@ -379,7 +404,7 @@ Twinkle.xfd.callbacks = {
 			params.uploader = initialContrib;
 
 			// Adding discussion
-			wikipedia_page = new Morebits.wiki.page(params.logpage, "添加讨论到当日列表");
+			var wikipedia_page = new Morebits.wiki.page(params.logpage, "添加讨论到当日列表");
 			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.xfd.callbacks.ffd.todaysList);
@@ -424,6 +449,7 @@ Twinkle.xfd.callbacks = {
 		taggingImage: function(pageobj) {
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
+
 			pageobj.setPageText("{{ifd|" + Morebits.string.formatReasonText(params.reason) + "|date={{subst:#time:c}}}}\n" + text);
 			pageobj.setEditSummary("文件存废讨论：[[" + params.logpage + "#" + Morebits.pageNameNorm + "]]" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchPage')) {
@@ -461,6 +487,28 @@ Twinkle.xfd.callbacks = {
 			pageobj.append(function() {
 				Twinkle.xfd.currentRationale = null;  // any errors from now on do not need to print the rationale, as it is safely saved on-wiki
 			});
+		},
+		tryTagging: function (pageobj) {
+			var statelem = pageobj.getStatusElement();
+			if (!pageobj.exists()) {
+				statelem.error("页面不存在，可能已被删除");
+				return;
+			}
+
+			var text = pageobj.getPageText();
+
+			var xfd = /(?:\{\{([rsaiftcmv]fd|md1|proposed deletion)[^{}]*?\}\})/i.exec( text );
+			if ( xfd && !confirm( "删除相关模板{{" + xfd[1] + "}}已被置于页面中，您是否仍想继续提报？" ) ) {
+				statelem.error( '页面已被提交至存废讨论。' );
+				return;
+			}
+
+			Twinkle.xfd.callbacks.ffd.taggingImage(pageobj);
+
+			// Contributor specific edits
+			var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
+			wikipedia_page.setCallbackParameters(pageobj.getCallbackParameters());
+			wikipedia_page.lookupCreator(Twinkle.xfd.callbacks.ffd.main);
 		}
 	}
 };
@@ -510,12 +558,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), "添加存废讨论模板到页面");
 		wikipedia_page.setFollowRedirect(false);
 		wikipedia_page.setCallbackParameters(params);
-		wikipedia_page.load(Twinkle.xfd.callbacks.afd.taggingArticle);
-
-		// Notification to first contributor
-		wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
-		wikipedia_page.setCallbackParameters(params);
-		wikipedia_page.lookupCreator(Twinkle.xfd.callbacks.afd.main);
+		wikipedia_page.load(Twinkle.xfd.callbacks.afd.tryTagging);
 
 		Morebits.wiki.removeCheckpoint();
 		break;
@@ -534,12 +577,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), "添加存废讨论模板到文件描述页");
 		wikipedia_page.setFollowRedirect(false);
 		wikipedia_page.setCallbackParameters(params);
-		wikipedia_page.load(Twinkle.xfd.callbacks.ffd.taggingImage);
-
-		// Contributor specific edits
-		wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
-		wikipedia_page.setCallbackParameters(params);
-		wikipedia_page.lookupCreator(Twinkle.xfd.callbacks.ffd.main);
+		wikipedia_page.load(Twinkle.xfd.callbacks.ffd.tryTagging);
 
 		Morebits.wiki.removeCheckpoint();
 		break;
