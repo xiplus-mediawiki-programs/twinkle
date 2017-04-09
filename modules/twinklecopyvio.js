@@ -60,13 +60,28 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 };
 
 Twinkle.copyvio.callbacks = {
+	tryTagging: function (pageobj) {
+		// 先尝试标记页面，如果发现已经标记则停止提报
+		var text = pageobj.getPageText();
+
+		if (text.indexOf('{{Copyvio|') === -1) {
+			Twinkle.copyvio.callbacks.taggingArticle(pageobj);
+
+			// Contributor specific edits
+			var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
+			wikipedia_page.setCallbackParameters(pageobj.getCallbackParameters());
+			wikipedia_page.lookupCreator(Twinkle.copyvio.callbacks.main);
+		} else {
+			Morebits.status.error( '错误', '页面已经标记侵权，请人工确认是否已经提报。' );
+		}
+	},
 	main: function(pageobj) {
 		// this is coming in from lookupCreator...!
 		var params = pageobj.getCallbackParameters();
 		var initialContrib = pageobj.getCreator();
 
 		// Adding discussion
-		wikipedia_page = new Morebits.wiki.page(params.logpage, "添加侵权记录项");
+		var wikipedia_page = new Morebits.wiki.page(params.logpage, "添加侵权记录项");
 		wikipedia_page.setFollowRedirect(true);
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.copyvio.callbacks.copyvioList);
@@ -123,8 +138,18 @@ Twinkle.copyvio.callbacks = {
 	copyvioList: function(pageobj) {
 		var text = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
+		var output = '';
+		var date = new Date();
 
-		pageobj.setAppendText("\n{{subst:CopyvioVFDRecord|" + mw.config.get('wgPageName') + "}}");
+		var dateHeaderRegex = new RegExp( "^===+\\s*" + (date.getUTCMonth() + 1) + "月" + date.getUTCDate() + "日" +
+			"\\s*===+", 'mg' );
+
+		if (!dateHeaderRegex.exec(text)) {
+			output = "\n\n===" + (date.getUTCMonth() + 1) + "月" + date.getUTCDate() + "日" + "===";
+		}
+
+		output += "\n{{subst:CopyvioVFDRecord|" + mw.config.get('wgPageName') + "}}";
+		pageobj.setAppendText(output);
 		pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
@@ -159,12 +184,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 	wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), "添加侵权模板到页面");
 	wikipedia_page.setFollowRedirect(true);
 	wikipedia_page.setCallbackParameters(params);
-	wikipedia_page.load(Twinkle.copyvio.callbacks.taggingArticle);
-
-	// Contributor specific edits
-	wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
-	wikipedia_page.setCallbackParameters(params);
-	wikipedia_page.lookupCreator(Twinkle.copyvio.callbacks.main);
+	wikipedia_page.load(Twinkle.copyvio.callbacks.tryTagging);
 
 	Morebits.wiki.removeCheckpoint();
 };

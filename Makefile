@@ -3,6 +3,7 @@ all:
 modules = modules/friendlyshared.js \
 		  modules/friendlytag.js \
 		  modules/friendlytalkback.js \
+		  modules/twinklearv.js \
 		  modules/twinklebatchdelete.js \
 		  modules/twinklebatchundelete.js \
 		  modules/twinkleblock.js \

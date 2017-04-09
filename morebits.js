@@ -455,7 +455,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 
 		var more = this.compute( {
 				type: 'button',
-				label: 'more',
+				label: '更多',
 				disabled: min >= max,
 				event: function(e) {
 					var new_node =  new Morebits.quickForm.element( e.target.sublist );
@@ -522,7 +522,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 		if( data.remove ) {
 			var remove = this.compute( {
 					type: 'button',
-					label: 'remove',
+					label: '移除',
 					event: function(e) {
 						var list = e.target.listnode;
 						var node = e.target.inputnode;
