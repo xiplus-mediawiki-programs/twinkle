@@ -572,10 +572,9 @@ Twinkle.fluff.init = function twinklefluffinit() {
 		// This is for handling quick bots that makes edits seconds after the original edit is made.
 		// This only affects vandalism rollback; for good faith rollback, it will stop, indicating a bot
 		// has no faith, and for normal rollback, it will rollback that edit.
-		Twinkle.fluff.whiteList = [/*
-			'AnomieBOT',
-			'SineBot'
-		*/];
+		Twinkle.fluff.whiteList = [
+			'WhitePhosphorus-bot'
+		];
 
 		if ( Morebits.queryString.exists( 'twinklerevert' ) ) {
 			Twinkle.fluff.auto();
