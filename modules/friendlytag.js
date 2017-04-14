@@ -182,6 +182,21 @@ Twinkle.tag.updateSortOrder = function(e) {
 					});
 				}
 				break;
+			case "requested move":
+				checkbox.subgroup = [
+					{
+						name: 'moveTarget',
+						type: 'input',
+						label: '新名稱：'
+					},
+					{
+						name: 'moveReason',
+						type: 'textarea',
+						label: '移動理由（这条目的讨论页）：',
+						tooltip: '可选，但强烈推荐。如不需要请留空。'
+					}
+				];
+				break;
 			case "notability":
 				checkbox.subgroup = {
 					name: 'notability',
@@ -329,6 +344,7 @@ Twinkle.tag.article.tags = {
 	"primarysources": "依赖第一手来源",
 	"prose": "使用了日期或时间列表式记述，需要改写为连贯的叙述性文字",
 	"refimprove": "需要补充更多来源",
+	"requested move": "建议将此页面移動到新名稱",
 	"review": "阅读起来类似评论，需要清理",
 	"rewrite": "不符合维基百科的质量标准，需要完全重写",
 	"roughtranslation": "翻译品质不佳",
@@ -440,6 +456,9 @@ Twinkle.tag.article.tagCategories = {
 		"merge",
 		"merge from",
 		"merge to"
+	],
+	"移動": [  // these three have a subgroup with several options
+		"requested move"
 	]
 };
 
@@ -588,6 +607,7 @@ Twinkle.tag.multipleIssuesExceptions = [
 	'notability',
 	'notmandarin',
 	"substub",
+	'requested move',
 	'uncategorized'
 ];
 
@@ -637,6 +657,14 @@ Twinkle.tag.callbacks = {
 							}
 						}
 						break;
+					case 'requested move':
+						if (params.moveTarget) {
+							// normalize the move target for now and later
+							params.moveTarget = Morebits.string.toUpperCaseFirstChar(params.moveTarget.replace(/_/g, ' '));
+							params.discussArticle = mw.config.get('wgTitle');
+							currentTag += '|' + params.moveTarget;
+						}
+						break;
 					default:
 						break;
 				}
@@ -681,6 +709,10 @@ Twinkle.tag.callbacks = {
 					if (params.tags[i] === "merge" || params.tags[i] === "merge from" ||
 						params.tags[i] === "merge to") {
 						params.mergeTarget = params.mergeReason = params.mergeTagOther = false;
+					}
+					// don't do anything else with requested move tags
+					if (params.tags[i] === "requested move") {
+						params.moveTarget = params.moveReason = false;
 					}
 				}
 			}
@@ -806,6 +838,22 @@ Twinkle.tag.callbacks = {
 				otherpage.setCallbackParameters(newParams);
 				otherpage.load(Twinkle.tag.callbacks.main);
 			}
+			// special functions for requested move tags
+			if (params.moveReason) {
+				// post the rationale on the talk page (only operates in main namespace)
+				var talkpageText = "\n\n{{subst:RM|"+params.moveReason.trim();
+				if (params.moveTarget) {
+					talkpageText += "|" + params.moveTarget;
+				}
+				talkpageText += "}}";
+
+				var talkpage = new Morebits.wiki.page("Talk:" + params.discussArticle, "将理由贴进讨论页");
+				talkpage.setAppendText(talkpageText);
+				talkpage.setEditSummary('请求移動' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : "") +
+					Twinkle.getPref('summaryAd'));
+				talkpage.setCreateOption('recreate');
+				talkpage.append();
+			}
 		});
 
 		if( params.patrol ) {
@@ -842,6 +890,9 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			params.mergeTarget = form["articleTags.mergeTarget"] ? form["articleTags.mergeTarget"].value : null;
 			params.mergeReason = form["articleTags.mergeReason"] ? form["articleTags.mergeReason"].value : null;
 			params.mergeTagOther = form["articleTags.mergeTagOther"] ? form["articleTags.mergeTagOther"].checked : false;
+			// common to {{requested move}}
+			params.moveTarget = form["articleTags.moveTarget"] ? form["articleTags.moveTarget"].value : null;
+			params.moveReason = form["articleTags.moveReason"] ? form["articleTags.moveReason"].value : null;
 			break;
 		case '重定向':
 			params.tags = form.getChecked( 'redirectTags' );
