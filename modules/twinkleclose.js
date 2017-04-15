@@ -15,7 +15,7 @@
  */
 
 Twinkle.close = function twinkleclose() {
-	if ( !Morebits.userIsInGroup('sysop') || !(/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(mw.config.get('wgPageName'))) ) {
+	if ( !(/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(mw.config.get('wgPageName'))) ) {
 		return;
 	}
 
@@ -26,8 +26,8 @@ Twinkle.close = function twinkleclose() {
 		return span;
 	};
 
-	// 把section序号直接标在h2上以免在用某些编辑器时不正常
-	$('h2:has(.mw-headline)', '#bodyContent').each(function (index, current) {
+	// 把section序号直接标在h2和h3上以免在用某些编辑器时不正常
+	$('h2:has(.mw-headline),h3:has(.mw-headline)', '#bodyContent').each(function (index, current) {
 		current.setAttribute('data-section', index + 1);
 	});
 
