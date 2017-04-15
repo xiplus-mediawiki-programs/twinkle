@@ -26,6 +26,11 @@ Twinkle.close = function twinkleclose() {
 		return span;
 	};
 
+	// 把section序号直接标在h2和h3上以免在用某些编辑器时不正常
+	$('h2:has(.mw-headline),h3:has(.mw-headline)', '#bodyContent').each(function (index, current) {
+		current.setAttribute('data-section', index + 1);
+	});
+
 	var selector = ':has(.mw-headline a:only-of-type):not(:has(+ div.NavFrame))';
 	var titles = $('#bodyContent').find('h2' + selector + ':not(:has(+ p + h3)), h3' + selector); // really needs to work on
 
@@ -47,7 +52,7 @@ Twinkle.close = function twinkleclose() {
 		}
 		title = decodeURIComponent(title);
 		var pagenotexist = $(current).find('.mw-headline a').hasClass('new');
-		var section = /section=(\d+)/.exec($(current).find('.mw-editsection a:last').attr('href'))[1];
+		var section = current.getAttribute('data-section');
 		var node = current.getElementsByClassName('mw-headline')[0];
 		node.appendChild( document.createTextNode(' ') );
 		var tmpNode = delNode.cloneNode( true );
