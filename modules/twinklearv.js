@@ -185,7 +185,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 		work_area.append ( {
 				type: 'header',
 				label: '不当用户名类别',
-				tooltip: 'Wikipedia does not allow usernames that are misleading, promotional, offensive or disruptive. Domain names and email addresses are likewise prohibited. These criteria apply to both usernames and signatures. Usernames that are inappropriate in another language, or that represent an inappropriate name with misspellings and substitutions, or do so indirectly or by implication, are still considered inappropriate.'
+				tooltip: '維基百科不允許具有誤導性、宣傳性、侮辱性或破壞性的用戶名。域名和電子郵件地址也同樣被禁止。這些標準適用於用戶名和簽名。若在其他語言不恰當，或是不恰當名字的拼寫錯誤或文字替換，間接或暗示的用戶名，仍然被認為是不恰當的。'
 			} );
 		work_area.append( {
 				type: 'checkbox',
@@ -194,27 +194,27 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					{
 						label: '误导性用户名',
 						value: '误导性',
-						tooltip: 'Misleading usernames imply relevant, misleading things about the contributor. For example, misleading points of fact, an impression of undue authority, or usernames giving the impression of a bot account.'
+						tooltip: '誤導性用戶名隱含著與貢獻者相關或誤導他人的事情。例如︰不實觀點、予人擁有非實質擁有權限或是機器人帳戶的印象'
 					},
 					{
 						label: '宣传性用户名',
 						value: '宣传性',
-						tooltip: 'Promotional usernames are advertisements for a company, website or group. Please do not report these names to UAA unless the user has also made promotional edits related to the name.'
+						tooltip: '宣傳性用戶名是公司、網站或團體的廣告。如果用戶沒有在與其用戶名相關的頁面做出廣告編輯，請不要提報到UAA。'
 					},
 					{
 						label: '暗示并非由一人拥有',
 						value: 'shared',
-						tooltip: 'Usernames that imply the likelihood of shared use (names of companies or groups, or the names of posts within organizations) are not permitted. Usernames are acceptable if they contain a company or group name but are clearly intended to denote an individual person, such as "Mark at WidgetsUSA", "Jack Smith at the XY Foundation", "WidgetFan87", etc.'
+						tooltip: '暗示並非一人擁有的用戶名（公司或團體名，職位名）是不被允許的。如果用戶名包含公司或團體名，但顯然可以表示出是個人帳戶是可以接受的，例如"Mark at WidgetsUSA", "Jack Smith at the XY Foundation", "WidgetFan87"。'
 					},
 					{
 						label: '侮辱性用户名',
 						value: '侮辱性',
-						tooltip: 'Offensive usernames make harmonious editing difficult or impossible.'
+						tooltip: '侮辱性用戶名令到協調編輯變得困難，甚至無可能。'
 					},
 					{
 						label: '破坏性用户名',
 						value: '破坏性',
-						tooltip: 'Disruptive usernames include outright trolling or personal attacks, or otherwise show a clear intent to disrupt Wikipedia.'
+						tooltip: '破壞性用戶名包括人身攻擊、偽冒他人或其他一切有著清晰可見的破壞維基百科意圖的使用者名稱。'
 					}
 				]
 			} );
@@ -538,13 +538,13 @@ Twinkle.arv.callback.evaluate = function(e) {
 			}
 			if (comment !== "" ) {
 				comment = comment.replace(/\r?\n/g, "\n*:");  // indent newlines
-				reason += (types ? "。" : "") + comment;
+				reason += (types ? "。" : "* ") + comment;
 			}
 			reason = reason.trim();
 			if (reason.search(/[.?!;。？！；]$/) === -1) {
 				reason += "。";
 			}
-			reason += "\n* 发现人：~~~~";
+			reason += "\n* 发现人：~~~~\n* 处理：";
 
 			Morebits.simpleWindow.setButtonsEnabled( false );
 			Morebits.status.init( form );
@@ -617,8 +617,8 @@ Twinkle.arv.callback.evaluate = function(e) {
 				}
 				uaaPage.getStatusElement().status( '添加新报告…' );
 				uaaPage.setEditSummary( '报告[[Special:Contributions/' + uid + '|' + uid + ']]。'+ Twinkle.getPref('summaryAd') );
-				uaaPage.setPageText( text + "\n\n" + reason );
-				uaaPage.save();
+				uaaPage.setAppendText( "\n" + reason );
+				uaaPage.append();
 			} );
 			break;
 
@@ -750,7 +750,7 @@ Twinkle.arv.processSock = function( params ) {
 	}
 
 	// prepare the SPI report
-	var text = "\n\n=== User:" + params.uid + " ===\n" +
+	var text = "\n\n=== " + params.uid + " ===\n" +
 		"{{status2}}<!-- 请勿更改本行 -->\n" +
 		"{{checkuser|1=" + params.uid + "}}\n" +
 		params.sockpuppets.map( function(v) {
