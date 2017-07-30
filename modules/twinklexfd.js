@@ -290,6 +290,11 @@ Twinkle.xfd.callbacks = {
 			tag += '|date={{subst:#time:Y/m/d}}}}';
 			if ( params.noinclude ) {
 				tag = '<noinclude>' + tag + '</noinclude>';
+				
+				// 只有表格需要单独加回车，其他情况加回车会破坏模板。
+				if (text.indexOf('{|') === 0) {
+					tag += '\n';
+				}
 			} else {
 				tag += '\n';
 			}
