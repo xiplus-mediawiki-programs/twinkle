@@ -573,8 +573,7 @@ Twinkle.fluff.init = function twinklefluffinit() {
 		// This only affects vandalism rollback; for good faith rollback, it will stop, indicating a bot
 		// has no faith, and for normal rollback, it will rollback that edit.
 		Twinkle.fluff.whiteList = [/*
-			'AnomieBOT',
-			'SineBot'
+			'WhitePhosphorus-bot'
 		*/];
 
 		if ( Morebits.queryString.exists( 'twinklerevert' ) ) {
