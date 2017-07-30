@@ -154,7 +154,11 @@ Twinkle.warn.messages = {
 			"uw-image1": {
 				label: "与图像相关之破坏",
 				summary: "层级1：与图像相关之破坏"
-			}
+			},
+			"uw-nor1": {
+				label: "加入原创研究",
+				summary: "层级1：加入原创研究"
+			},
 		},
 		"增加商品或政治广告": {
 			"uw-spam1": {
@@ -286,7 +290,11 @@ Twinkle.warn.messages = {
 			"uw-image2": {
 				label: "与图像相关之破坏",
 				summary: "层级2：与图像相关之破坏"
-			}
+			},
+			"uw-nor2": {
+				label: "加入原创研究",
+				summary: "层级2：加入原创研究"
+			},
 		},
 		"增加商品或政治广告": {
 			"uw-spam2": {
@@ -418,7 +426,11 @@ Twinkle.warn.messages = {
 			"uw-image3": {
 				label: "与图像相关之破坏",
 				summary: "层级3：与图像相关之破坏"
-			}
+			},
+			"uw-nor3": {
+				label: "加入原创研究",
+				summary: "层级3：加入原创研究"
+			},
 		},
 		"增加商品或政治广告": {
 			"uw-spam3": {
@@ -808,7 +820,11 @@ Twinkle.warn.messages = {
 		"uw-warn": {
 			label: "警告破坏用户",
 			summary: "单层级通知：警告破坏用户"
-		}
+		},
+		"uw-mosiw": {
+			label: "不要使用跨语言链接",
+			summary: "单层级通知：不要使用跨语言链接"
+		},
 	},
 
 
