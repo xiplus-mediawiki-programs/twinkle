@@ -27,7 +27,7 @@ Twinkle.close = function twinkleclose() {
 	};
 
 	// 把section序号直接标在h2和h3上以免在用某些编辑器时不正常
-	$('h2:has(.mw-headline),h3:has(.mw-headline)', '#bodyContent').each(function (index, current) {
+	$('h1:has(.mw-headline),h2:has(.mw-headline),h3:has(.mw-headline),h4:has(.mw-headline),h5:has(.mw-headline),h6:has(.mw-headline)', '#bodyContent').each(function (index, current) {
 		current.setAttribute('data-section', index + 1);
 	});
 
