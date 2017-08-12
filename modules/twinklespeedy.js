@@ -888,22 +888,44 @@ Twinkle.speedy.callbacks = {
 		deletePage: function( reason, params ) {
 			var thispage = new Morebits.wiki.page( mw.config.get('wgPageName'), "删除页面" );
 
-			if (reason === null) {
-				return Morebits.status.error("询问理由", "用户取消操作。");
-			} else if (!reason || !reason.replace(/^\s*/, "").replace(/\s*$/, "")) {
-				return Morebits.status.error("询问理由", "你不给我理由…我就…不管了…");
-			}
-			thispage.setEditSummary( reason + Twinkle.getPref('deletionSummaryAd') );
-			thispage.deletePage(function() {
-				thispage.getStatusElement().info("完成");
-				Twinkle.speedy.callbacks.sysop.deleteTalk( params );
-			});
+			if (mw.config.get('wgPageName') === mw.config.get('wgMainPageTitle')) {
+				new mw.Api().getToken('block').then(function(token) {
+					thispage.getStatusElement().status('The Enrichment Center is required to remind you that you will be baked. 恭喜您！您是继[[User:燃玉]]之后又一个通过Twinkle删除首页的管理员！');
 
-			// look up initial contributor. If prompting user for deletion reason, just display a link.
-			// Otherwise open the talk page directly
-			if( params.openUserTalk ) {
-				thispage.setCallbackParameters( params );
-				thispage.lookupCreator( Twinkle.speedy.callbacks.sysop.openUserTalkPage );
+					var mbApi = new Morebits.wiki.api( '颁发荣誉', {
+						action: 'block',
+						user: mw.config.get('wgUserName'),
+						reason: '[[Wikipedia:不要删除首页|试图删除首页]]' + Twinkle.getPref('deletionSummaryAd'),
+						allowusertalk: true,
+						expiry: '31 hours',
+						tags: 'Twinkle',
+						token: token,
+					}, function(data) {
+						statusElement.info('请记得阅读[[Wikipedia:不要删除首页]]。');
+					});
+					mbApi.post();
+				}, function() {
+					statusElement.error('未能抓取操作令牌');
+				});
+			} else {
+				if (reason === null) {
+					return Morebits.status.error("询问理由", "用户取消操作。");
+				} else if (!reason || !reason.replace(/^\s*/, "").replace(/\s*$/, "")) {
+					return Morebits.status.error("询问理由", "你不给我理由…我就…不管了…");
+				}
+				thispage.setEditSummary( reason + Twinkle.getPref('deletionSummaryAd') );
+
+				thispage.deletePage(function() {
+					thispage.getStatusElement().info("完成");
+					Twinkle.speedy.callbacks.sysop.deleteTalk( params );
+				});
+
+				// look up initial contributor. If prompting user for deletion reason, just display a link.
+				// Otherwise open the talk page directly
+				if( params.openUserTalk ) {
+					thispage.setCallbackParameters( params );
+					thispage.lookupCreator( Twinkle.speedy.callbacks.sysop.openUserTalkPage );
+				}
 			}
 		},
 		deleteTalk: function( params ) {
