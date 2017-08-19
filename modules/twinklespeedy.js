@@ -85,6 +85,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 	dialog.setTitle( "选择快速删除理由" );
 	dialog.setScriptName( "Twinkle" );
 	dialog.addFooterLink( "快速删除方针", "WP:CSD" );
+	dialog.addFooterLink( "常见错误", "Wikipedia:管理员错误自查表/快速删除" );
 	dialog.addFooterLink( "Twinkle帮助", "WP:TW/DOC#speedy" );
 
 	var form = new Morebits.quickForm( callbackfunc, (Twinkle.getPref('speedySelectionStyle') === 'radioClick' ? 'change' : null) );

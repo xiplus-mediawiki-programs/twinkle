@@ -33,6 +33,7 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 	var Window = new Morebits.simpleWindow( 600, 350 );
 	Window.setTitle( "提报侵权页面" );
 	Window.setScriptName( "Twinkle" );
+	Window.addFooterLink( "常见错误", "Wikipedia:管理员错误自查表/侵权处理" );
 	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#copyvio" );
 
 	var form = new Morebits.quickForm( Twinkle.copyvio.callback.evaluate );
