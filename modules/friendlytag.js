@@ -23,13 +23,13 @@ Twinkle.tag = function friendlytag() {
 	}
 	// article/draft tagging
 	else if( ( ( mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 118 ) && mw.config.get('wgCurRevisionId') ) || ( Morebits.pageNameNorm === 'Wikipedia:沙盒' ) ) {
-		Twinkle.tag.mode = '条目';
+		Twinkle.tag.mode = wgULS('条目', '條目');
 		Twinkle.addPortletLink( Twinkle.tag.callback, wgULS("标记", "標記"), "friendly-tag", wgULS("标记条目", "標記條目") );
 	}
 };
 
 Twinkle.tag.callback = function friendlytagCallback() {
-	var Window = new Morebits.simpleWindow( 630, (Twinkle.tag.mode === "条目") ? 500 : 400 );
+	var Window = new Morebits.simpleWindow( 630, (Twinkle.tag.mode === "条目" || Twinkle.tag.mode === "條目") ? 500 : 400 );
 	Window.setScriptName( "Twinkle" );
 	// anyone got a good policy/guideline/info page/instructional page link??
 	Window.addFooterLink( wgULS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#tag" );
@@ -51,6 +51,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 	}
 
 	switch( Twinkle.tag.mode ) {
+		case '條目':
 		case '条目':
 			Window.setTitle( wgULS("条目维护标记", "條目維護標記") );
 
@@ -114,7 +115,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 	Window.setContent( result );
 	Window.display();
 
-	if (Twinkle.tag.mode === "条目") {
+	if (Twinkle.tag.mode === "条目" || Twinkle.tag.mode === "條目") {
 		// fake a change event on the sort dropdown, to initialize the tag list
 		var evt = document.createEvent("Event");
 		evt.initEvent("change", true, true);
@@ -1118,6 +1119,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	}
 
 	switch (Twinkle.tag.mode) {
+		case '條目':
 		case '条目':
 			params.tags = form.getChecked( 'articleTags' );
 			params.group = form.group.checked;
@@ -1164,6 +1166,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	var wikipedia_page = new Morebits.wiki.page(Morebits.pageNameNorm, wgULS("正在标记", "正在標記") + Twinkle.tag.mode);
 	wikipedia_page.setCallbackParameters(params);
 	switch (Twinkle.tag.mode) {
+		case '條目':
 		case '条目':
 			/* falls through */
 		case '重定向':
