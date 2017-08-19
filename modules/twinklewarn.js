@@ -174,27 +174,27 @@ Twinkle.warn.messages = {
 	level1: {
 		"不同类型的非建设编辑": {
 			"uw-vandalism1": {
-				label: "破坏",
-				summary: "层级1：破坏"
+				label: "明显的破坏",
+				summary: "层级1：明显破坏"
 			},
 			"uw-test1": {
-				label: "编辑测试",
-				summary: "层级1：编辑测试"
+				label: "进行编辑测试而未及时清理",
+				summary: "层级1：进行编辑测试而未及时清理"
 			},
 			"uw-delete1": {
-				label: "清空页面、移除内容或模板",
-				summary: "层级1：清空页面、移除内容或模板"
+				label: "不恰当地移除页面内容、模板或资料",
+				summary: "层级1：不恰当地页面条目内容、模板或资料"
 			},
 			"uw-redirect1": {
-				label: "创建恶意重定向",
-				summary: "层级1：创建恶意重定向"
+				label: "创建破坏性的重定向",
+				summary: "层级1：创建破坏性的重定向"
 			},
 			"uw-tdel1": {
-				label: "移除维护性模板",
+				label: "在问题仍未解决的情况下移除维护性模板",
 				summary: "层级1：移除维护性模板"
 			},
 			"uw-joke1": {
-				label: "加入不当玩笑",
+				label: "在百科全书内容中加入玩笑",
 				summary: "层级1：加入不当玩笑"
 			},
 			"uw-create1": {
@@ -206,18 +206,18 @@ Twinkle.warn.messages = {
 				summary: "层级1：上传不当图像"
 			},
 			"uw-image1": {
-				label: "与图像相关之破坏",
-				summary: "层级1：与图像相关之破坏"
+				label: "在页面中加入不当图片",
+				summary: "层级1：在页面中加入不当图片"
 			},
 			"uw-nor1": {
-				label: "加入原创研究",
-				summary: "层级1：加入原创研究"
+				label: "在条目中加入原创研究",
+				summary: "层级1：在条目中加入原创研究"
 			},
 		},
 		"增加商品或政治广告": {
 			"uw-spam1": {
-				label: "增加垃圾连结",
-				summary: "层级1：增加垃圾连结"
+				label: "增加不合适的外部链接",
+				summary: "层级1：增加不合适的外部链接"
 			},
 			"uw-advert1": {
 				label: "利用维基百科来发布广告或推广",
@@ -230,60 +230,60 @@ Twinkle.warn.messages = {
 		},
 		"加插不实及/或诽谤文字": {
 			"uw-unsourced1": {
-				label: "没有使用适当的引用方法而增加没有来源的资料",
-				summary: "层级1：没有使用适当的引用方法而增加没有来源的资料"
+				label: "加入没有可靠来源佐证的内容",
+				summary: "层级1：加入没有可靠来源佐证的内容"
 			},
 			"uw-error1": {
 				label: "故意加入不实内容",
 				summary: "层级1：故意加入不实内容"
 			},
 			"uw-biog1": {
-				label: "加入有关在生人物而又缺乏来源的资料",
-				summary: "层级1：加入有关在生人物而又缺乏来源的资料"
+				label: "在生者传记中加入没有可靠来源佐证而且可能引发争议的内容",
+				summary: "层级1：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容"
 			},
 			"uw-defamatory1": {
-				label: "没有特定目标的诽谤",
-				summary: "层级1：没有特定目标的诽谤"
+				label: "加入诽谤内容",
+				summary: "层级1：加入诽谤内容"
 			}
 		},
 		"翻译品质": {
 			"uw-roughtranslation1": {
-				label: "粗劣翻译",
-				summary: "层级1：粗劣翻译"
+				label: "您翻译的质量有待改善",
+				summary: "您翻译的质量有待改善"
 			}
 		},
 		"非能接受且违反方针或指引的单方面行为或操作": {
 			"uw-notcensored1": {
-				label: "资料的审查",
-				summary: "层级1：资料的审查"
+				label: "因为“内容使人反感”而删除条目内容",
+				summary: "层级1：审查条目内容"
 			},
 			"uw-mos1": {
-				label: "格式、日期、语言等",
-				summary: "层级1：格式、日期、语言等"
+				label: "不恰当的条目格式、日期、语言等",
+				summary: "层级1：不恰当的条目格式、日期、语言等"
 			},
 			"uw-move1": {
-				label: "页面移动",
-				summary: "层级1：页面移动"
+				label: "无故移动条目/新名称不符合命名规范",
+				summary: "层级1：不恰当地移动页面"
 			},
 			"uw-cd1": {
-				label: "把讨论页清空",
-				summary: "层级1：把讨论页清空"
+				label: "清空讨论页",
+				summary: "层级1：清空讨论页"
 			},
 			"uw-chat1": {
-				label: "把讨论页当为论坛",
-				summary: "层级1：把讨论页当为论坛"
+				label: "在讨论页发表与改善条目无关的内容",
+				summary: "层级1：在讨论页发表与改善条目无关的内容"
 			},
 			"uw-tpv1": {
-				label: "改写其他用户在讨论页留下的意见",
-				summary: "层级1：改写其他用户在讨论页留下的意见"
+				label: "修改他人留言",
+				summary: "层级1：修改他人留言"
 			},
 			"uw-afd1": {
-				label: "移除{{afd}}模板",
-				summary: "层级1：移除{{afd}}模板"
+				label: "移除{{afd}}（页面存废讨论）模板",
+				summary: "层级1：移除{{afd}}（页面存废讨论）模板"
 			},
 			"uw-speedy1": {
-				label: "移除{{delete}}模板",
-				summary: "层级1：移除{{delete}}模板"
+				label: "移除{{delete}}（快速删除）模板",
+				summary: "层级1：移除{{delete}}（快速删除）模板"
 			}
 		},
 		"对其他用户和条目的态度": {
@@ -296,12 +296,12 @@ Twinkle.warn.messages = {
 				summary: "层级1：没有善意推定"
 			},
 			"uw-own1": {
-				label: "条目的所有权",
-				summary: "层级1：条目的所有权"
+				label: "主张条目所有权",
+				summary: "层级1：主张条目所有权"
 			},
 			"uw-tempabuse1": {
-				label: "不当使用警告或封锁模板",
-				summary: "层级1：不当使用警告或封锁模板"
+				label: "不当使用警告或封禁模板",
+				summary: "层级1：不当使用警告或封禁模板"
 			}
 		}
 	},
@@ -310,27 +310,27 @@ Twinkle.warn.messages = {
 	level2: {
 		"不同类型的非建设编辑": {
 			"uw-vandalism2": {
-				label: "破坏",
-				summary: "层级2：破坏"
+				label: "明显的破坏",
+				summary: "层级2：明显破坏"
 			},
 			"uw-test2": {
-				label: "编辑测试",
-				summary: "层级2：编辑测试"
+				label: "进行损毁性的编辑测试",
+				summary: "层级2：进行编辑测试"
 			},
 			"uw-delete2": {
-				label: "清空页面、移除内容或模板",
-				summary: "层级2：清空页面、移除内容或模板"
+				label: "不恰当地移除页面内容、模板或资料",
+				summary: "层级2：不恰当地移除页面内容、模板或资料"
 			},
 			"uw-redirect2": {
 				label: "创建恶意重定向",
 				summary: "层级2：创建恶意重定向"
 			},
 			"uw-tdel2": {
-				label: "移除维护性模板",
+				label: "在问题仍未解决的情况下移除维护性模板",
 				summary: "层级2：移除维护性模板"
 			},
 			"uw-joke2": {
-				label: "加入不当玩笑",
+				label: "在百科全书内容中加入玩笑",
 				summary: "层级2：加入不当玩笑"
 			},
 			"uw-create2": {
@@ -342,18 +342,18 @@ Twinkle.warn.messages = {
 				summary: "层级2：上传不当图像"
 			},
 			"uw-image2": {
-				label: "与图像相关之破坏",
-				summary: "层级2：与图像相关之破坏"
+				label: "在页面中加入不当图片",
+				summary: "层级2：在页面中加入不当图片"
 			},
 			"uw-nor2": {
-				label: "加入原创研究",
-				summary: "层级2：加入原创研究"
+				label: "在条目中加入原创研究",
+				summary: "层级2：在条目中加入原创研究"
 			},
 		},
 		"增加商品或政治广告": {
 			"uw-spam2": {
-				label: "增加垃圾连结",
-				summary: "层级2：增加垃圾连结"
+				label: "增加垃圾链接",
+				summary: "层级2：增加垃圾链接"
 			},
 			"uw-advert2": {
 				label: "利用维基百科来发布广告或推广",
@@ -366,20 +366,20 @@ Twinkle.warn.messages = {
 		},
 		"加插不实及/或诽谤文字": {
 			"uw-unsourced2": {
-				label: "没有使用适当的引用方法而增加没有来源的资料",
-				summary: "层级2：没有使用适当的引用方法而增加没有来源的资料"
+				label: "加入没有可靠来源佐证的内容",
+				summary: "层级2：加入没有可靠来源佐证的内容"
 			},
 			"uw-error2": {
 				label: "故意加入不实内容",
 				summary: "层级2：故意加入不实内容"
 			},
 			"uw-biog2": {
-				label: "加入有关在生人物而又缺乏来源的资料",
-				summary: "层级2：加入有关在生人物而又缺乏来源的资料"
+				label: "在生者传记中加入没有可靠来源佐证而且可能引发争议的内容",
+				summary: "层级2：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容"
 			},
 			"uw-defamatory2": {
-				label: "没有特定目标的诽谤",
-				summary: "层级2：没有特定目标的诽谤"
+				label: "加入诽谤内容",
+				summary: "层级2：加入诽谤内容"
 			}
 		},
 		"翻译品质": {
@@ -390,36 +390,36 @@ Twinkle.warn.messages = {
 		},
 		"非能接受且违反方针或指引的单方面行为或操作": {
 			"uw-notcensored2": {
-				label: "资料的审查",
-				summary: "层级2：资料的审查"
+				label: "内容审查",
+				summary: "层级2：内容审查"
 			},
 			"uw-mos2": {
-				label: "格式、日期、语言等",
-				summary: "层级2：格式、日期、语言等"
+				label: "不恰当的条目格式、日期、语言等",
+				summary: "层级2：不恰当的条目格式、日期、语言等"
 			},
 			"uw-move2": {
-				label: "页面移动",
-				summary: "层级2：页面移动"
+				label: "把页面移动到不恰当、违反命名常规或违反共识的标题",
+				summary: "层级2：不恰当地移动页面"
 			},
 			"uw-cd2": {
-				label: "把讨论页清空",
-				summary: "层级2：把讨论页清空"
+				label: "清空讨论页",
+				summary: "层级2：清空讨论页"
 			},
 			"uw-chat2": {
-				label: "把讨论页当为论坛",
-				summary: "层级2：把讨论页当为论坛"
+				label: "在讨论页发表与改善条目无关的内容",
+				summary: "层级2：在讨论页发表与改善条目无关的内容"
 			},
 			"uw-tpv2": {
-				label: "改写其他用户在讨论页留下的意见",
-				summary: "层级2：改写其他用户在讨论页留下的意见"
+				label: "修改他人留言",
+				summary: "层级2：修改他人留言"
 			},
 			"uw-afd2": {
-				label: "移除{{afd}}模板",
-				summary: "层级2：移除{{afd}}模板"
+				label: "移除{{afd}}（页面存废讨论）模板",
+				summary: "层级2：移除{{afd}}（页面存废讨论）模板"
 			},
 			"uw-speedy2": {
-				label: "移除{{delete}}模板",
-				summary: "层级2：移除{{delete}}模板"
+				label: "移除{{delete}}（快速删除）模板",
+				summary: "层级2：移除{{delete}}（快速删除）模板"
 			}
 		},
 		"对其他用户和条目的态度": {
@@ -432,12 +432,12 @@ Twinkle.warn.messages = {
 				summary: "层级2：没有善意推定"
 			},
 			"uw-own2": {
-				label: "条目的所有权",
-				summary: "层级2：条目的所有权"
+				label: "主张条目的所有权",
+				summary: "层级2：主张条目的所有权"
 			},
 			"uw-tempabuse2": {
-				label: "不当使用警告或封锁模板",
-				summary: "层级2：不当使用警告或封锁模板"
+				label: "不当使用警告或封禁模板",
+				summary: "层级2：不当使用警告或封禁模板"
 			}
 		}
 	},
@@ -446,16 +446,16 @@ Twinkle.warn.messages = {
 	level3: {
 		"不同类型的非建设编辑": {
 			"uw-vandalism3": {
-				label: "破坏",
-				summary: "层级3：破坏"
+				label: "恶意破坏",
+				summary: "层级3：恶意破坏"
 			},
 			"uw-test3": {
 				label: "编辑测试",
 				summary: "层级3：编辑测试"
 			},
 			"uw-delete3": {
-				label: "清空页面、移除内容或模板",
-				summary: "层级3：清空页面、移除内容或模板"
+				label: "不恰当地移除页面内容、模板或资料",
+				summary: "层级3：不恰当地移除页面内容、模板或资料"
 			},
 			"uw-redirect3": {
 				label: "创建恶意重定向",
@@ -466,8 +466,8 @@ Twinkle.warn.messages = {
 				summary: "层级3：移除维护性模板"
 			},
 			"uw-joke3": {
-				label: "加入不当玩笑",
-				summary: "层级3：加入不当玩笑"
+				label: "在百科全书内容中加入不当玩笑",
+				summary: "层级3：在百科全书内容中加入不当玩笑"
 			},
 			"uw-create3": {
 				label: "创建不当页面",
@@ -478,44 +478,44 @@ Twinkle.warn.messages = {
 				summary: "层级3：上传不当图像"
 			},
 			"uw-image3": {
-				label: "与图像相关之破坏",
-				summary: "层级3：与图像相关之破坏"
+				label: "在页面中加入不当图片",
+				summary: "层级3：在页面中加入不当图片"
 			},
 			"uw-nor3": {
-				label: "加入原创研究",
-				summary: "层级3：加入原创研究"
+				label: "在条目中加入原创研究",
+				summary: "层级3：在条目中加入原创研究"
 			},
 		},
 		"增加商品或政治广告": {
 			"uw-spam3": {
-				label: "增加垃圾连结",
-				summary: "层级3：增加垃圾连结"
+				label: "增加垃圾链接",
+				summary: "层级3：增加垃圾链接"
 			},
 			"uw-advert3": {
 				label: "利用维基百科来发布广告或推广",
 				summary: "层级3：利用维基百科来发布广告或推广"
 			},
 			"uw-npov3": {
-				label: "不遵守中立的观点方针",
-				summary: "层级3：不遵守中立的观点方针"
+				label: "违反中立的观点方针",
+				summary: "层级3：违反中立的观点方针"
 			}
 		},
 		"加插不实及/或诽谤文字": {
 			"uw-unsourced3": {
-				label: "没有使用适当的引用方法而增加没有来源的资料",
-				summary: "层级3：没有使用适当的引用方法而增加没有来源的资料"
+				label: "加入没有可靠来源佐证的内容",
+				summary: "层级3：加入没有可靠来源佐证的内容"
 			},
 			"uw-error3": {
 				label: "故意加入不实内容",
 				summary: "层级3：故意加入不实内容"
 			},
 			"uw-biog3": {
-				label: "加入有关在生人物而又缺乏来源的资料",
-				summary: "层级3：加入有关在生人物而又缺乏来源的资料"
+				label: "在生者传记中加入没有可靠来源佐证而且带有争议的内容",
+				summary: "层级3：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容"
 			},
 			"uw-defamatory3": {
-				label: "没有特定目标的诽谤",
-				summary: "层级3：没有特定目标的诽谤"
+				label: "加入诽谤内容",
+				summary: "层级3：加入诽谤内容"
 			}
 		},
 		"翻译品质": {
@@ -526,36 +526,36 @@ Twinkle.warn.messages = {
 		},
 		"非能接受且违反方针或指引的单方面行为或操作": {
 			"uw-notcensored3": {
-				label: "资料的审查",
-				summary: "层级3：资料的审查"
+				label: "审查内容",
+				summary: "层级3：审查内容"
 			},
 			"uw-mos3": {
-				label: "格式、日期、语言等",
-				summary: "层级3：格式、日期、语言等"
+				label: "违反格式、日期、语言等规定",
+				summary: "层级3：违反格式、日期、语言等规定"
 			},
 			"uw-move3": {
-				label: "页面移动",
-				summary: "层级3：页面移动"
+				label: "不恰当地移动页面",
+				summary: "层级3：不恰当地移动页面"
 			},
 			"uw-cd3": {
-				label: "把讨论页清空",
-				summary: "层级3：把讨论页清空"
+				label: "清空讨论页",
+				summary: "层级3：清空讨论页"
 			},
 			"uw-chat3": {
-				label: "把讨论页当为论坛",
-				summary: "层级3：把讨论页当为论坛"
+				label: "在讨论页发表无关内容",
+				summary: "层级3：在讨论页发表无关内容"
 			},
 			"uw-tpv3": {
-				label: "改写其他用户在讨论页留下的意见",
-				summary: "层级3：改写其他用户在讨论页留下的意见"
+				label: "修改他人留言",
+				summary: "层级3：修改他人留言"
 			},
 			"uw-afd3": {
-				label: "移除{{afd}}模板",
-				summary: "层级3：移除{{afd}}模板"
+				label: "移除{{afd}}（页面存废讨论）模板",
+				summary: "层级3：移除{{afd}}（页面存废讨论）模板"
 			},
 			"uw-speedy3": {
-				label: "移除{{delete}}模板",
-				summary: "层级3：移除{{delete}}模板"
+				label: "移除{{delete}}（快速删除）模板",
+				summary: "层级3：移除{{delete}}（快速删除）模板"
 			}
 		},
 		"对其他用户和条目的态度": {
@@ -568,12 +568,12 @@ Twinkle.warn.messages = {
 				summary: "层级3：没有善意推定"
 			},
 			"uw-own3": {
-				label: "条目的所有权",
-				summary: "层级3：条目的所有权"
+				label: "主张条目的所有权",
+				summary: "层级3：主张条目的所有权"
 			},
 			"uw-tempabuse3": {
-				label: "不当使用警告或封锁模板",
-				summary: "层级3：不当使用警告或封锁模板"
+				label: "不当使用警告或封禁模板",
+				summary: "层级3：不当使用警告或封禁模板"
 			}
 		}
 	},
@@ -582,16 +582,16 @@ Twinkle.warn.messages = {
 	level4: {
 		"不同类型的非建设编辑": {
 			"uw-vandalism4": {
-				label: "破坏",
-				summary: "层级4：破坏"
+				label: "恶意破坏",
+				summary: "层级4：恶意破坏"
 			},
 			"uw-test4": {
 				label: "编辑测试",
 				summary: "层级4：编辑测试"
 			},
 			"uw-delete4": {
-				label: "清空页面、移除内容或模板",
-				summary: "层级4：清空页面、移除内容或模板"
+				label: "移除页面、移除内容或模板",
+				summary: "层级4：移除页面、移除内容或模板"
 			},
 			"uw-redirect4": {
 				label: "创建恶意重定向",
@@ -602,8 +602,8 @@ Twinkle.warn.messages = {
 				summary: "层级4：移除维护性模板"
 			},
 			"uw-joke4": {
-				label: "加入不当玩笑",
-				summary: "层级4：加入不当玩笑"
+				label: "在百科全书内容中加入不当玩笑",
+				summary: "层级4：在百科全书内容中加入不当玩笑"
 			},
 			"uw-create4": {
 				label: "创建不当页面",
@@ -614,22 +614,22 @@ Twinkle.warn.messages = {
 				summary: "层级4：上传不当图像"
 			},
 			"uw-image4": {
-				label: "与图像相关之破坏",
-				summary: "层级4：与图像相关之破坏"
+				label: "在页面中加入不当图片",
+				summary: "层级4：在页面中加入不当图片"
 			}
 		},
 		"增加商品或政治广告": {
 			"uw-spam4": {
-				label: "增加垃圾连结",
-				summary: "层级4：增加垃圾连结"
+				label: "增加垃圾链接",
+				summary: "层级4：增加垃圾链接"
 			},
 			"uw-advert4": {
 				label: "利用维基百科来发布广告或推广",
 				summary: "层级4：利用维基百科来发布广告或推广"
 			},
 			"uw-npov4": {
-				label: "不遵守中立的观点方针",
-				summary: "层级4：不遵守中立的观点方针"
+				label: "违反中立的观点方针",
+				summary: "层级4：违反中立的观点方针"
 			}
 		},
 		"加插不实及/或诽谤文字": {
@@ -638,22 +638,22 @@ Twinkle.warn.messages = {
 				summary: "层级4：加入有关在生人物而又缺乏来源的资料"
 			},
 			"uw-defamatory4": {
-				label: "没有特定目标的诽谤",
-				summary: "层级4：没有特定目标的诽谤"
+				label: "加入诽谤内容",
+				summary: "层级4：加入诽谤内容"
 			}
 		},
 		"非能接受且违反方针或指引的单方面行为或操作": {
 			"uw-mos4": {
-				label: "格式、日期、语言等",
-				summary: "层级4：格式、日期、语言等"
+				label: "违反格式、日期、语言等相关规定",
+				summary: "层级4：违反格式、日期、语言等相关规定"
 			},
 			"uw-move4": {
-				label: "页面移动",
-				summary: "层级4：页面移动"
+				label: "不恰当地移动页面",
+				summary: "层级4：不恰当地移动页面"
 			},
 			"uw-chat4": {
-				label: "把讨论页当为论坛",
-				summary: "层级4：把讨论页当为论坛"
+				label: "在讨论页进行不当讨论",
+				summary: "层级4：在讨论页进行不当讨论"
 			},
 			"uw-afd4": {
 				label: "移除{{afd}}模板",
@@ -670,8 +670,8 @@ Twinkle.warn.messages = {
 				summary: "层级4：针对特定用户的人身攻击"
 			},
 			"uw-tempabuse4": {
-				label: "不当使用警告或封锁模板",
-				summary: "层级4：不当使用警告或封锁模板"
+				label: "不当使用警告或封禁模板",
+				summary: "层级4：不当使用警告或封禁模板"
 			}
 		}
 	},
@@ -680,12 +680,12 @@ Twinkle.warn.messages = {
 	level4im: {
 		"不同类型的非建设编辑": {
 			"uw-vandalism4im": {
-				label: "破坏",
-				summary: "层级4im：破坏"
+				label: "恶意破坏",
+				summary: "层级4im：恶意破坏"
 			},
 			"uw-delete4im": {
-				label: "清空页面、移除内容或模板",
-				summary: "层级4im：清空页面、移除内容或模板"
+				label: "移除页面内容、模板或资料",
+				summary: "层级4im：移除页面内容、模板或资料"
 			},
 			"uw-redirect4im": {
 				label: "创建恶意重定向",
@@ -704,8 +704,8 @@ Twinkle.warn.messages = {
 				summary: "层级4im：上传不当图像"
 			},
 			"uw-image4im": {
-				label: "与图像相关之破坏",
-				summary: "层级4im：与图像相关之破坏"
+				label: "加入不恰当的图片",
+				summary: "层级4im：加入不恰当的图片"
 			}
 		},
 		"增加商品或政治广告": {
@@ -720,14 +720,14 @@ Twinkle.warn.messages = {
 				summary: "层级4im：加入有关在生人物而又缺乏来源的资料"
 			},
 			"uw-defamatory4im": {
-				label: "没有特定目标的诽谤",
-				summary: "层级4im：没有特定目标的诽谤"
+				label: "加入诽谤内容",
+				summary: "层级4im：加入诽谤内容"
 			}
 		},
 		"非能接受且违反方针或指引的单方面行为或操作": {
 			"uw-move4im": {
-				label: "页面移动",
-				summary: "层级4im：页面移动"
+				label: "不恰当地移动页面",
+				summary: "层级4im：不恰当地移动页面"
 			}
 		},
 		"对其他用户和条目的态度": {
@@ -736,24 +736,24 @@ Twinkle.warn.messages = {
 				summary: "层级4im：针对特定用户的人身攻击"
 			},
 			"uw-tempabuse4im": {
-				label: "不当使用警告或封锁模板",
-				summary: "层级4im：不当使用警告或封锁模板"
+				label: "不当使用警告或封禁模板",
+				summary: "层级4im：不当使用警告或封禁模板"
 			}
 		}
 	},
 
 	singlenotice: {
 		"uw-2redirect": {
-			label: "透过不适当的页面移动建立双重重定向",
-			summary: "单层级通知：透过不适当的页面移动建立双重重定向"
+			label: "在移动页面后应该修复双重重定向",
+			summary: "单层级通知：在移动页面后应该修复双重重定向"
 		},
 		"uw-aiv": {
-			label: "不恰当的破坏回报",
-			summary: "单层级通知：不恰当的破坏回报"
+			label: "举报的并不是破坏者，或者举报破坏前未进行警告",
+			summary: "单层级通知：不恰当地举报破坏"
 		},
 		"uw-articlesig": {
-			label: "在条目页中签名",
-			summary: "单层级通知：在条目页中签名"
+			label: "在条目中签名",
+			summary: "单层级通知：在条目中签名"
 		},
 		"uw-autobiography": {
 			label: "建立自传",
@@ -796,8 +796,8 @@ Twinkle.warn.messages = {
 			summary: "单层级通知：加入臆测或未确认的讯息"
 		},
 		"uw-csd": {
-			label: "快速删除标记不当",
-			summary: "单层级通知：快速删除标记不当"
+			label: "快速删除理由不当",
+			summary: "单层级通知：快速删除理由不当"
 		},
 		"uw-dab": {
 			label: "消歧义页格式错误",
@@ -832,27 +832,27 @@ Twinkle.warn.messages = {
 			summary: "单层级通知：不适当地使用小修改选项"
 		},
 		"uw-notaiv": {
-			label: "不要向当前的破坏回报复杂的用户纷争",
-			summary: "单层级通知：不要向当前的破坏回报复杂的用户纷争"
+			label: "向“当前的破坏”中报告的是用户纷争而不是破坏",
+			summary: "单层级通知：向“当前的破坏”中报告的是用户纷争而不是破坏"
 		},
 		"uw-notvote": {
-			label: "我们是以共识处事，不仅是投票",
-			summary: "单层级通知：我们是以共识处事，不仅是投票"
+			label: "我们以共识处事，而不仅仅是投票",
+			summary: "单层级通知：我们以共识处事，而不仅仅是投票"
 		},
 		"uw-preview": {
-			label: "使用预览按钮来避免不必要的错误",
-			summary: "单层级通知：使用预览按钮来避免不必要的错误"
+			label: "请使用预览按钮来避免不必要的错误",
+			summary: "单层级通知：请使用预览按钮来避免不必要的错误"
 		},
 		"uw-sandbox": {
 			label: "移除沙盒的置顶模板{{sandbox}}",
 			summary: "单层级通知：移除沙盒的置顶模板{{sandbox}}"
 		},
 		"uw-selfrevert": {
-			label: "回退个人的测试",
+			label: "感谢您自行回退自己的测试，以后不要再这样做了",
 			summary: "单层级通知：回退个人的测试"
 		},
 		"uw-subst": {
-			label: "谨记要替代模板",
+			label: "谨记要替代模板（subst）",
 			summary: "单层级通知：谨记要替代模板"
 		},
 		"uw-talkinarticle": {
@@ -879,6 +879,10 @@ Twinkle.warn.messages = {
 			label: "不要使用跨语言链接",
 			summary: "单层级通知：不要使用跨语言链接"
 		},
+		"uw-badtwinkle": {
+			label: "不恰当地使用Twinkle警告别人",
+			summary: "单层级通知：不恰当地使用Twinkle警告别人"
+		},
 	},
 
 
@@ -893,12 +897,12 @@ Twinkle.warn.messages = {
 			suppressArticleInSummary: true
 		},
 		"uw-bv": {
-			label: "公然的破坏",
-			summary: "单层级警告：公然的破坏"
+			label: "公然地破坏",
+			summary: "单层级警告：公然地破坏"
 		},
 		"uw-canvass": {
-			label: "不恰当的拉票",
-			summary: "单层级警告：不恰当的拉票"
+			label: "不恰当地拉票",
+			summary: "单层级警告：不恰当地拉票"
 		},
 		"uw-copyright": {
 			label: "侵犯版权",
@@ -937,29 +941,29 @@ Twinkle.warn.messages = {
 			summary: "单层级警告：在剧集条目中加入奸角等非中立描述"
 		},
 		"uw-pinfo": {
-			label: "个人资料",
-			summary: "单层级警告：个人资料"
+			label: "张贴他人隐私",
+			summary: "单层级警告：张贴他人隐私"
 		},
 		"uw-upv": {
-			label: "用户页破坏",
-			summary: "单层级警告：用户页破坏"
+			label: "破坏他人用户页",
+			summary: "单层级警告：破坏他人用户页"
 		},
 		"uw-selfinventedname": {
-			label: "不适当的自创新名词、新译名",
-			summary: "单层级警告：不适当的自创新名词、新译名"
+			label: "不适当地自创新名词、新译名",
+			summary: "单层级警告：不适当地自创新名词、新译名"
 		},
 		"uw-substub": {
 			label: "创建小小作品",
 			summary: "单层级警告：创建小小作品"
 		},
 		"uw-username": {
-			label: "不恰当的用户名",
-			summary: "单层级警告：不恰当的用户名"
+			label: "使用不恰当的用户名",
+			summary: "单层级警告：使用不恰当的用户名"
 		},
 		"uw-wrongsummary": {
 			label: "在编辑摘要制造不适当的内容",
 			summary: "单层级警告：在编辑摘要制造不适当的内容"
-		}
+		},
 	}
 };
 

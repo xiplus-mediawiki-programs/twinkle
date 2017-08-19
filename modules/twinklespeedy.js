@@ -1115,13 +1115,13 @@ Twinkle.speedy.callbacks = {
 			statelem.status( '检查页面已有标记…' );
 
 			// check for existing deletion tags
-			var tag = /(?:\{\{\s*(db|d|delete|db-.*?)(?:\s*\||\s*\}\}))/i.exec( text );
+			var tag = /(?:\{\{\s*(db|d|delete|deletebecause|speedy|csd|速刪|速删|快删|快刪|db-.*?)(?:\s*\||\s*\}\}))/i.exec( text );
 			if ( tag ) {
 				statelem.error( [ Morebits.htmlNode( 'strong', tag[1] ) , " 已被置于页面中。" ] );
 				return;
 			}
 
-			var copyvio = /(?:\{\{\s*(copyvio)[^{}]*?\}\})/i.exec( text );
+			var copyvio = /(?:\{\{\s*(copyvio|侵权|侵權|PD-CAGov)[^{}]*?\}\})/i.exec( text );
 			if ( copyvio ) {
 				statelem.error( '页面中已有版权验证模板。' );
 				return;
