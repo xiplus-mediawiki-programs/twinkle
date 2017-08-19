@@ -27,7 +27,7 @@ Twinkle.xfd = function twinklexfd() {
 	Twinkle.addPortletLink( Twinkle.xfd.callback, "提删", "tw-xfd", "提交删除讨论" );
 
 	var date = new Date();
-	if (date.getMonth===3 && date.getDate()===1) {
+	if (date.getUTCMonth()===3 && date.getUTCDate()===1) {
 		Twinkle.addPortletLink( Twinkle.xfd.aprilfool, "愚人节提删", "tw-xfd-april-fool", "愚人节提删" );
 	}
 };
