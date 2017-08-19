@@ -20,6 +20,29 @@
 
 ( function ( window, document, $, undefined ) { // Wrap with anonymous function
 
+// MediaWiki:Gadget-site-lib.js
+window.wgUXS = function (wg, hans, hant, cn, tw, hk, sg, zh, mo, my) {
+    var ret = {
+        'zh': zh || hans || hant || cn || tw || hk || sg || mo || my,
+        'zh-hans': hans || cn || sg || my,
+        'zh-hant': hant || tw || hk || mo,
+        'zh-cn': cn || hans || sg || my,
+        'zh-sg': sg || hans || cn || my,
+        'zh-tw': tw || hant || hk || mo,
+        'zh-hk': hk || hant || mo || tw,
+        'zh-mo': mo || hant || hk || tw
+    };
+    return ret[wg] || zh || hans || hant || cn || tw || hk || sg || mo || my; //保證每一語言有值
+};
+
+window.wgULS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
+    return wgUXS(mw.config.get('wgUserLanguage'), hans, hant, cn, tw, hk, sg, zh, mo, my);
+};
+
+window.wgUVS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
+    return wgUXS(mw.config.get('wgUserVariant'), hans, hant, cn, tw, hk, sg, zh, mo, my);
+};
+
 var Twinkle = {};
 window.Twinkle = Twinkle;  // allow global access
 
@@ -132,8 +155,8 @@ Twinkle.defaultConfig.friendly = {
 	 // Talkback
 	markTalkbackAsMinor: true,
 	insertTalkbackSignature: true,  // always sign talkback templates
-	talkbackHeading: "回复通告",
-	mailHeading: "您有新邮件！",
+	talkbackHeading: wgULS("回复通告", "回覆通告"),
+	mailHeading: wgULS("您有新邮件！", "您有新郵件！"),
 	 // Shared
 	markSharedIPAsMinor: true
 };
@@ -402,6 +425,7 @@ Twinkle.load = function () {
 
 	// Load the modules in the order that the tabs should appear
 	// User/user talk-related
+	Twinkle.arv();
 	Twinkle.warn();
 	if ( Morebits.userIsInGroup('sysop') ) {
 		Twinkle.block();

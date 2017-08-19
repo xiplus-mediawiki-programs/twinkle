@@ -22,15 +22,15 @@ Twinkle.batchundelete = function twinklebatchundelete() {
 		return;
 	}
 	if( Morebits.userIsInGroup( 'sysop' ) ) {
-		Twinkle.addPortletLink( Twinkle.batchundelete.callback, "批复", "tw-batch-undel", "反删除页面" );
+		Twinkle.addPortletLink( Twinkle.batchundelete.callback, wgULS("批复", "批復"), "tw-batch-undel", wgULS("反删除页面", "反刪除頁面") );
 	}
 };
 
 Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 	var Window = new Morebits.simpleWindow( 600, 400 );
 	Window.setScriptName("Twinkle");
-	Window.setTitle("批量反删除");
-	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#batchundelete" );
+	Window.setTitle(wgULS("批量反删除", "批量反刪除"));
+	Window.addFooterLink( wgULS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#batchundelete" );
 
 	var form = new Morebits.quickForm( Twinkle.batchundelete.callback.evaluate );
 	form.append( {
@@ -52,8 +52,8 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 		'titles': mw.config.get("wgPageName"),
 		'gpllimit' : Twinkle.getPref('batchMax') // the max for sysops
 	};
-	var statelem = new Morebits.status("抓取页面列表");
-	var wikipedia_api = new Morebits.wiki.api( "载入中…", query, function( apiobj ) {
+	var statelem = new Morebits.status(wgULS("抓取页面列表", "擷取頁面列表"));
+	var wikipedia_api = new Morebits.wiki.api( wgULS("加载中…", "載入中…"), query, function( apiobj ) {
 			var xml = apiobj.responseXML;
 			var $pages = $(xml).find('page[missing]');
 			var list = [];
@@ -62,17 +62,17 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 				var title = $page.attr('title');
 				list.push({ label: title, value: title, checked: true });
 			});
-			apiobj.params.form.append({ type: 'header', label: '待恢复页面' });
+			apiobj.params.form.append({ type: 'header', label: wgULS('待恢复页面', '待恢復頁面') });
 			apiobj.params.form.append({
 					type: 'button',
-					label: "全选",
+					label: wgULS("全选", "全選"),
 					event: function(e) {
 						$(Morebits.quickForm.getElements(e.target.form, 'pages')).prop('checked', true);
 					}
 				});
 			apiobj.params.form.append({
 					type: 'button',
-					label: "全不选",
+					label: wgULS("全不选", "全不選"),
 					event: function(e) {
 						$(Morebits.quickForm.getElements(e.target.form, 'pages')).prop('checked', false);
 					}
@@ -94,8 +94,8 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 };
 
 Twinkle.batchundelete.callback.evaluate = function( event ) {
-	Morebits.wiki.actionCompleted.notice = '状态';
-	Morebits.wiki.actionCompleted.postfix = '反删除已完成';
+	Morebits.wiki.actionCompleted.notice = wgULS('状态', '狀態');
+	Morebits.wiki.actionCompleted.postfix = wgULS('反删除已完成', '反刪除已完成');
 
 	var pages = event.target.getChecked( 'pages' );
 	var reason = event.target.reason.value;
@@ -107,11 +107,11 @@ Twinkle.batchundelete.callback.evaluate = function( event ) {
 	Morebits.status.init( event.target );
 
 	if( !pages ) {
-		Morebits.status.error( '错误', '没什么要反删除的，取消操作' );
+		Morebits.status.error( wgULS('错误', '錯誤'), wgULS('没什么要反删除的，取消操作', '沒什麼要反刪除的，取消操作') );
 		return;
 	}
 
-	var batchOperation = new Morebits.batchOperation("反删除页面");
+	var batchOperation = new Morebits.batchOperation(wgULS("反删除页面", "反刪除頁面"));
 	batchOperation.setOption("chunkSize", Twinkle.getPref('batchUndeleteChunks'));
 	batchOperation.setOption("preserveIndividualStatusLines", true);
 	batchOperation.setPageList(pages);
@@ -122,9 +122,9 @@ Twinkle.batchundelete.callback.evaluate = function( event ) {
 			'action': 'undelete',
 			'reason': reason + Twinkle.getPref('deletionSummaryAd')
 		};
-		var wikipedia_api = new Morebits.wiki.api( "反删除页面" + pageName, query,
+		var wikipedia_api = new Morebits.wiki.api( wgULS("反删除页面", "反刪除頁面") + pageName, query,
 			batchOperation.workerSuccess, null, batchOperation.workerFailure );
-		wikipedia_api.statelem.status("反删除中…");
+		wikipedia_api.statelem.status(wgULS("反删除中…", "反刪除中…"));
 		wikipedia_api.pageName = pageName;
 		wikipedia_api.post();
 	});

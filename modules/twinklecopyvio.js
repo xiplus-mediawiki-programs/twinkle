@@ -26,20 +26,20 @@ Twinkle.copyvio = function twinklecopyvio() {
 	if ( mw.config.get('wgPageContentModel') === 'flow-board' ) {
 		return;
 	}
-	Twinkle.addPortletLink(Twinkle.copyvio.callback, "侵权", "tw-copyvio", "提报侵权页面", "");
+	Twinkle.addPortletLink(Twinkle.copyvio.callback, wgULS("侵权", "侵權"), "tw-copyvio", wgULS("提报侵权页面", "提報侵權頁面"), "");
 };
 
 Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 	var Window = new Morebits.simpleWindow( 600, 350 );
-	Window.setTitle( "提报侵权页面" );
+	Window.setTitle( wgULS("提报侵权页面", "提報侵權頁面") );
 	Window.setScriptName( "Twinkle" );
-	Window.addFooterLink( "常见错误", "Wikipedia:管理员错误自查表/侵权处理" );
-	Window.addFooterLink( "Twinkle帮助", "WP:TW/DOC#copyvio" );
+	Window.addFooterLink( wgULS("常见错误", "常見錯誤"), "Wikipedia:管理员错误自查表/侵权处理" );
+	Window.addFooterLink( wgULS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#copyvio" );
 
 	var form = new Morebits.quickForm( Twinkle.copyvio.callback.evaluate );
 	form.append( {
 			type: 'textarea',
-			label:'侵权来源：',
+			label:wgULS('侵权来源：', '侵權來源：'),
 			name: 'source'
 		}
 	);
@@ -47,10 +47,10 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 			type: 'checkbox',
 			list: [
 				{
-					label: '通知页面创建者',
+					label: wgULS('通知页面创建者', '通知頁面建立者'),
 					value: 'notify',
 					name: 'notify',
-					tooltip: "在页面创建者对话页上放置一通知模板。",
+					tooltip: wgULS("在页面创建者对话页上放置一通知模板。", "在頁面建立者對話頁上放置一通知模板。"),
 					checked: true
 				}
 			]
@@ -76,7 +76,7 @@ Twinkle.copyvio.callbacks = {
 			wikipedia_page.setCallbackParameters(pageobj.getCallbackParameters());
 			wikipedia_page.lookupCreator(Twinkle.copyvio.callbacks.main);
 		} else {
-			Morebits.status.error( '错误', '页面已经标记侵权，请人工确认是否已经提报。' );
+			Morebits.status.error( wgULS('错误', '錯誤'), wgULS('页面已经标记侵权，请人工确认是否已经提报。', '頁面已經標記侵權，請人工確認是否已經提報。') );
 		}
 	},
 	main: function(pageobj) {
@@ -85,7 +85,7 @@ Twinkle.copyvio.callbacks = {
 		var initialContrib = pageobj.getCreator();
 
 		// Adding discussion
-		var wikipedia_page = new Morebits.wiki.page(params.logpage, "添加侵权记录项");
+		var wikipedia_page = new Morebits.wiki.page(params.logpage, wgULS("添加侵权记录项", "加入侵權記錄項"));
 		wikipedia_page.setFollowRedirect(true);
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.copyvio.callbacks.copyvioList);
@@ -93,14 +93,14 @@ Twinkle.copyvio.callbacks = {
 		// Notification to first contributor
 		if(params.usertalk) {
 			Morebits.wiki.flow.check('User talk:' + initialContrib, function () {
-				var flowpage = new Morebits.wiki.flow('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
+				var flowpage = new Morebits.wiki.flow('User talk:' + initialContrib, wgULS("通知页面创建者（" + initialContrib + "）", "通知頁面建立者（" + initialContrib + "）"));
 				var topic = '您建立的页面[[' + mw.config.get('wgPageName') + ']]可能侵犯版权';
 				var content = "{{subst:CopyvioNotice|" + mw.config.get('wgPageName') +  "|flow=yes}}";
 				flowpage.setTopic(topic);
 				flowpage.setContent(content);
 				flowpage.newTopic();
 			}, function () {
-				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, "通知页面创建者（" + initialContrib + "）");
+				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, wgULS("通知页面创建者（" + initialContrib + "）", "通知頁面建立者（" + initialContrib + "）"));
 				var notifytext = "\n{{subst:CopyvioNotice|" + mw.config.get('wgPageName') +  "}}";
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]疑似侵犯版权" + Twinkle.getPref('summaryAd'));
@@ -129,7 +129,7 @@ Twinkle.copyvio.callbacks = {
 		}
 
 		pageobj.setPageText(tag);
-		pageobj.setEditSummary("本页面疑似侵犯版权" + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary(wgULS("本页面疑似侵犯版权", "本頁面疑似侵犯版權") + Twinkle.getPref('summaryAd'));
 		switch (Twinkle.getPref('copyvioWatchPage')) {
 			case 'yes':
 				pageobj.setWatchlist(true);
@@ -162,7 +162,7 @@ Twinkle.copyvio.callbacks = {
 
 		output += "\n{{subst:CopyvioVFDRecord|" + mw.config.get('wgPageName') + "}}";
 		pageobj.setAppendText(output);
-		pageobj.setEditSummary("添加[[" + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary(wgULS("添加[[", "加入[[") + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
 	}
@@ -179,7 +179,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 	Morebits.status.init( e.target );
 
 	if( !source.trim() ) {
-		Morebits.status.error( '错误', '未指定侵权来源' );
+		Morebits.status.error( wgULS('错误', '錯誤'), wgULS('未指定侵权来源', '未指定侵權來源') );
 		return;
 	}
 
@@ -190,10 +190,10 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 	Morebits.wiki.addCheckpoint();
 	// Updating data for the action completed event
 	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
-	Morebits.wiki.actionCompleted.notice = "提报完成，将在几秒内刷新";
+	Morebits.wiki.actionCompleted.notice = wgULS("提报完成，将在几秒内刷新", "提報完成，將在幾秒內重新整理");
 
 	// Tagging file
-	wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), "添加侵权模板到页面");
+	wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS("添加侵权模板到页面", "加入侵權模板到頁面"));
 	wikipedia_page.setFollowRedirect(true);
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.copyvio.callbacks.tryTagging);
