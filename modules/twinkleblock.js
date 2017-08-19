@@ -233,10 +233,43 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			});
 		field_block_options.append({
 				type: 'textarea',
-				label: '理由（为了封禁日志）：',
+				label: '理由（用于封禁日志）：',
 				name: 'reason',
 				value: Twinkle.block.field_block_options.reason
 			});
+		field_block_options.append({
+				type: 'div',
+				name: 'filerlog_label',
+				label: '“参见”：',
+				style: 'display:inline-block;font-style:normal !important',
+				tooltip: '在封禁理由中标清特殊情况以供其他管理员参考'
+			});
+		field_block_options.append({
+				type: 'checkbox',
+				name: 'filter_see_also',
+				event: Twinkle.block.callback.toggle_see_alsos,
+				style: 'display:inline-block; margin-right:5px',
+				list: [
+					{
+						label: '过滤器日志',
+						checked: false,
+						value: '过滤器日志'
+					}
+				]
+			} );
+		field_block_options.append({
+				type: 'checkbox',
+				name: 'deleted_see_also',
+				event: Twinkle.block.callback.toggle_see_alsos,
+				style: 'display:inline-block',
+				list: [
+					{
+						label: '已删除的编辑',
+						checked: false,
+						value: '已删除的编辑'
+					}
+				]
+			} );
 
 		if (Twinkle.block.currentBlockInfo) {
 			field_block_options.append( { type: 'hidden', name: 'reblock', value: '1' } );
@@ -638,6 +671,30 @@ Twinkle.block.callback.change_expiry = function twinkleblockCallbackChangeExpiry
 	} else {
 		Morebits.quickForm.setElementVisibility(expiry.parentNode, false);
 		expiry.value = e.target.value;
+	}
+};
+
+Twinkle.block.seeAlsos = [];
+Twinkle.block.callback.toggle_see_alsos = function twinkleblockCallbackToggleSeeAlso(e) {
+	var reason = this.form.reason.value.replace(
+		new RegExp('( <!--|;) ' + '参见' + Twinkle.block.seeAlsos.join('、') + '( -->)?'), ''
+	);
+
+	Twinkle.block.seeAlsos = Twinkle.block.seeAlsos.filter(function(el) {
+		return el !== this.value;
+	}.bind(this));
+
+	if (this.checked) {
+		Twinkle.block.seeAlsos.push(this.value);
+	}
+	var seeAlsoMessage = Twinkle.block.seeAlsos.join('、');
+
+	if (!Twinkle.block.seeAlsos.length) {
+		this.form.reason.value = reason;
+	} else if (reason.indexOf('{{') !== -1) {
+		this.form.reason.value = reason + ' <!-- 参见' + seeAlsoMessage + ' -->';
+	} else {
+		this.form.reason.value = reason + '; 参见' + seeAlsoMessage;
 	}
 };
 

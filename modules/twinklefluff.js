@@ -289,8 +289,8 @@ Twinkle.fluff.callbacks = {
 				'undoafter': revertToRevID,
 				'basetimestamp': touched,
 				'starttimestamp': starttimestamp,
-				'watchlist': Twinkle.getPref('watchRevertedPages').indexOf( self.params.type ) !== -1 ? 'watch' : undefined,
-				'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf( self.params.type ) !== -1  ? true : undefined
+				'watchlist': Twinkle.getPref('watchRevertedPages').indexOf( 'torev' ) !== -1 ? 'watch' : undefined,
+				'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf( 'torev' ) !== -1  ? true : undefined
 			};
 
 			Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
@@ -513,13 +513,26 @@ Twinkle.fluff.callbacks = {
 
 	},
 	complete: function (apiobj) {
-		var $edit = $(apiobj.getXML()).find('edit');
+		// TODO Most of this is copy-pasted from Morebits.wiki.page#fnSaveSuccess. Unify it
+		var xml = apiobj.getXML();
+		var $edit = $(xml).find('edit');
 		var blacklist = $edit.attr('spamblacklist');
 		if (blacklist) {
 			var code = document.createElement('code');
 			code.style.fontFamily = "monospace";
 			code.appendChild(document.createTextNode(blacklist));
 			apiobj.statelem.error(['不能回退，因URL', code, '在垃圾黑名单中。']);
+		} else if ( $(xml).find('captcha').length > 0 ) {
+			apiobj.statelem.error("不能回退，因维基服务器要求您输入验证码。");
+		} else if ( $edit.attr('code') === 'abusefilter-disallowed' ) {
+			apiobj.statelem.error('此编辑被滥用过滤器“' + $edit.attr('info').substring(17) + '”禁止。');
+		} else if ( $edit.attr('info') && $edit.attr('info').indexOf('Hit AbuseFilter:') === 0 ) {
+			var div = document.createElement('div');
+			div.className = "toccolours";
+			div.style.fontWeight = "normal";
+			div.style.color = "black";
+			div.innerHTML = $edit.attr('warning');
+			apiobj.statelem.error([ '编辑过滤器返回了以下警告：', div, '如果您仍希望回退，请重新整理本页（F5或Ctrl+R）然后重试，此警告将不会再次出现。' ]);
 		} else if ($edit.attr('nochange') === '') {
 			apiobj.statelem.warn("要回退到的版本与当前版本相同，没什么要做的");
 		} else {
@@ -553,12 +566,12 @@ Twinkle.fluff.formatSummary = function(builtInString, userName, userString) {
 	if (resultLen + contribsLen <= 255) {
 		var talkLink = " ([[User talk:" + userName + "|讨论]])";
 		if (resultLen + contribsLen + unescape(encodeURIComponent(talkLink)).length <= 255) {
-			result = result.replace("$USER", contribsLink + talkLink);
+			result = Morebits.string.safeReplace(result, "$USER", contribsLink + talkLink);
 		} else {
-			result = result.replace("$USER", contribsLink);
+			result = Morebits.string.safeReplace(result, "$USER", contribsLink);
 		}
 	} else {
-		result = result.replace("$USER", userName);
+		result = Morebits.string.safeReplace(result, "$USER", userName);
 	}
 
 	return result;
@@ -572,9 +585,9 @@ Twinkle.fluff.init = function twinklefluffinit() {
 		// This is for handling quick bots that makes edits seconds after the original edit is made.
 		// This only affects vandalism rollback; for good faith rollback, it will stop, indicating a bot
 		// has no faith, and for normal rollback, it will rollback that edit.
-		Twinkle.fluff.whiteList = [/*
+		Twinkle.fluff.whiteList = [
 			'WhitePhosphorus-bot'
-		*/];
+		];
 
 		if ( Morebits.queryString.exists( 'twinklerevert' ) ) {
 			Twinkle.fluff.auto();

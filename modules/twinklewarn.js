@@ -20,21 +20,75 @@ Twinkle.warn = function twinklewarn() {
 		Twinkle.addPortletLink( Twinkle.warn.callback, "警告", "tw-warn", "警告或提醒用户" );
 	}
 
-	// modify URL of talk page on rollback success pages
+	// Modify URL of talk page on rollback success pages. This is only used
+	// when a user Ctrl+clicks on a rollback link.
 	if( mw.config.get('wgAction') === 'rollback' ) {
 		var $vandalTalkLink = $("#mw-rollback-success").find(".mw-usertoollinks a").first();
 		if ( $vandalTalkLink.length ) {
+			Twinkle.warn.makeVandalTalkLink($vandalTalkLink);
 			$vandalTalkLink.css("font-weight", "bold");
-			$vandalTalkLink.wrapInner($("<span/>").attr("title", "如果合适，您可以用Twinkle在该用户对话页上做出警告。"));
-
-			var extraParam = "vanarticle=" + mw.util.rawurlencode(Morebits.pageNameNorm);
-			var href = $vandalTalkLink.attr("href");
-			if (href.indexOf("?") === -1) {
-				$vandalTalkLink.attr("href", href + "?" + extraParam);
-			} else {
-				$vandalTalkLink.attr("href", href + "&" + extraParam);
-			}
 		}
+	}
+	// Override the mw.notify function to allow us to inject a link into the
+	// rollback success popup. Only users with the 'rollback' right need this,
+	// but we have no nice way of knowing who has that right (what with global
+	// groups and the like)
+	/*
+	else if( mw.config.get('wgAction') === 'history' ) {
+		mw.notifyOriginal = mw.notify;
+		mw.notify = function mwNotifyTwinkleOverride(message, options) {
+			// This is a horrible, awful hack to add a link to the rollback success
+			// popup. All other notification popups should be left untouched.
+			// It won't work for people whose user language is not English.
+			// As it's a hack, it's liable to stop working or break sometimes,
+			// particularly if the text or format of the confirmation message
+			// (MediaWiki:Rollback-success-notify) changes.
+			var regexMatch;
+			if ( options && options.title && mw.msg && options.title === mw.msg('actioncomplete') &&
+				message && $.isArray(message) && message[0] instanceof HTMLParagraphElement &&
+				(regexMatch = /^(?:回退|還原|取消|撤销|撤銷)(.+)(?:编辑|編輯|做出的編輯|做出的编辑|做出的修订版本|做出的修訂版本)/.exec(message[0].innerText))
+			) {
+				// Create a nicely-styled paragraph to place the link in
+				var $p = $('<p/>');
+				$p.css("margin", "0.5em -1.5em -1.5em");
+				$p.css("padding", "0.5em 1.5em 0.8em");
+				$p.css("border-top", "1px #666 solid");
+				$p.css("cursor", "default");
+				$p.click(function(e) { e.stopPropagation(); });
+
+				// Create the new talk link and append it to the end of the message
+				var $vandalTalkLink = $('<a/>');
+				$vandalTalkLink.text("用Twinkle警告用户");
+				//$vandalTalkLink.css("display", "block");
+				$vandalTalkLink.attr("href", mw.util.getUrl("User talk:" + regexMatch[1]));
+				Twinkle.warn.makeVandalTalkLink($vandalTalkLink);
+
+				$p.append($vandalTalkLink);
+				message[0].appendChild($p.get()[0]);
+
+				// Don't auto-hide the notification. It only stays around for 5 seconds by
+				// default, which might not be enough time for the user to read it and
+				// click the link
+				options.autoHide = false;
+			}
+			mw.notifyOriginal.apply(mw, arguments);
+		};
+	}
+	*/
+
+	// for testing, use:
+	// mw.notify([ $("<p>Reverted edits by foo; changed</p>")[0] ], { title: mw.msg('actioncomplete') } );
+};
+
+Twinkle.warn.makeVandalTalkLink = function($vandalTalkLink) {
+	$vandalTalkLink.wrapInner($("<span/>").attr("title", "如果合适，您可以用Twinkle在该用户对话页上做出警告。"));
+
+	var extraParam = "vanarticle=" + mw.util.rawurlencode(Morebits.pageNameNorm);
+	var href = $vandalTalkLink.attr("href");
+	if (href.indexOf("?") === -1) {
+		$vandalTalkLink.attr("href", href + "?" + extraParam);
+	} else {
+		$vandalTalkLink.attr("href", href + "&" + extraParam);
 	}
 };
 
@@ -991,19 +1045,34 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 	var main_group = e.target.form.main_group.value;
 	var value = e.target.form.sub_group.value;
 
+	// Tags that don't take a linked article, but something else (often a username).
+	// The value of each tag is the label next to the input field
+	var notLinkedArticle = {
+		"uw-agf-sock": "Optional username of other account (without User:) ",
+		"uw-bite": "Username of 'bitten' user (without User:) ",
+		"uw-socksuspect": "Username of sock master, if known (without User:) ",
+		"uw-username": "Username violates policy because... "
+	};
+
 	if( main_group === 'singlenotice' || main_group === 'singlewarn' ) {
-		if( value === 'uw-bite' || value === 'uw-username' || value === 'uw-socksuspect' ) {
+		if( notLinkedArticle[value] ) {
 			if(Twinkle.warn.prev_article === null) {
 				Twinkle.warn.prev_article = e.target.form.article.value;
 			}
 			e.target.form.article.notArticle = true;
 			e.target.form.article.value = '';
+
+			// change form labels according to the warning selected
+			Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
+			Morebits.quickForm.overrideElementLabel(e.target.form.article, notLinkedArticle[value]);
 		} else if( e.target.form.article.notArticle ) {
 			if(Twinkle.warn.prev_article !== null) {
 				e.target.form.article.value = Twinkle.warn.prev_article;
 				Twinkle.warn.prev_article = null;
 			}
 			e.target.form.article.notArticle = false;
+			Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, true);
+			Morebits.quickForm.resetElementLabel(e.target.form.article);
 		}
 	}
 
@@ -1031,7 +1100,7 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 			"明显的违反方针应被报告给UAA。" +
 			"{{uw-username}}应只被用在边界情况下需要与用户讨论时。</div>");
 		$redWarning.insertAfter(Morebits.quickForm.getElementLabelObject(e.target.form.reasonGroup));
-	};
+	}
 };
 
 Twinkle.warn.callbacks = {
