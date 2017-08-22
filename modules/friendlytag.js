@@ -322,6 +322,7 @@ Twinkle.tag.article.tags = wgULS({
 	"no footnotes": "因为没有内文引用而来源仍然不明",
 	"non-free": "可能过多或不当地使用了受版权保护的文字、图像或/及多媒体文件",
 	"notability": "可能不符合通用关注度指引",
+	"Notability Unreferenced": "可能具备关注度，但需要来源加以彰显",
 	"notmandarin": "包含过多不是现代标准汉语的内容",
 	"onesource": "极大或完全地依赖于某个单一的来源",
 	"original research": "可能包含原创研究或未查证内容",
@@ -380,6 +381,7 @@ Twinkle.tag.article.tags = wgULS({
 	"no footnotes": "因為沒有內文引用而來源仍然不明",
 	"non-free": "可能過多或不當地使用了受版權保護的文字、圖像或/及多媒體檔案",
 	"notability": "可能不符合通用關注度指引",
+	"Notability Unreferenced": "可能具備關注度，但需要來源加以彰顯",
 	"notmandarin": "包含過多不是現代標準漢語的內容",
 	"onesource": "極大或完全地依賴於某個單一的來源",
 	"original research": "可能包含原創研究或未查證內容",
@@ -432,7 +434,8 @@ Twinkle.tag.article.tagCategories = wgULS({
 	},
 	"常规条目问题": {
 		"重要性和知名度": [
-			"notability"  // has subcategories and special-cased code
+			"notability",  // has subcategories and special-cased code
+			"Notability Unreferenced"
 		],
 		"写作风格": [
 			"advert",
@@ -527,7 +530,8 @@ Twinkle.tag.article.tagCategories = wgULS({
 	},
 	"常規條目問題": {
 		"重要性和知名度": [
-			"notability"  // has subcategories and special-cased code
+			"notability",  // has subcategories and special-cased code
+			"Notability Unreferenced"
 		],
 		"寫作風格": [
 			"advert",
