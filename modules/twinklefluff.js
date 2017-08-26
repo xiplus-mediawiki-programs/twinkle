@@ -77,6 +77,53 @@ Twinkle.fluff = {
 					});
 				}
 			}
+		} else if (mw.config.get('wgAction') === 'history' && Twinkle.getPref('showRollbackLinks').indexOf('history') !== -1) {
+			var historylist = $('#pagehistory');
+
+			// 如果不是第一頁或只有一條歷史記錄則結束
+			if ($('.mw-firstlink').length > 0 || historylist.children().length === 1) {
+				return;
+			}
+
+			var item = $('li:first', historylist);
+			var revid = parseInt($('input[name="diff"]',item).val());
+			var vandal = $('.history-user bdi',item).text().trim();
+
+			var revAgfNode = document.createElement('strong');
+			var revAgfLink = document.createElement('a');
+			revAgfLink.appendChild( spanTag( 'Black', '[' ) );
+			revAgfLink.appendChild( spanTag( 'DarkOliveGreen', wgULS('回退（AGF）', '回退（AGF）') ) );
+			revAgfLink.appendChild( spanTag( 'Black', ']' ) );
+			revAgfNode.appendChild(revAgfLink);
+
+			var revNode = document.createElement('strong');
+			var revLink = document.createElement('a');
+			revLink.appendChild( spanTag( 'Black', '[' ) );
+			revLink.appendChild( spanTag( 'SteelBlue', '回退' ) );
+			revLink.appendChild( spanTag( 'Black', ']' ) );
+			revNode.appendChild(revLink);
+
+			var revVandNode = document.createElement('strong');
+			var revVandLink = document.createElement('a');
+			revVandLink.appendChild( spanTag( 'Black', '[' ) );
+			revVandLink.appendChild( spanTag( 'Red', wgULS('破坏', '破壞') ) );
+			revVandLink.appendChild( spanTag( 'Black', ']' ) );
+			revVandNode.appendChild(revVandLink);
+
+			item.append(' ').append(revAgfNode)
+				.append(' ').append(revNode)
+				.append(' ').append(revVandNode);
+
+
+			$(revAgfLink).click(function () {
+				Twinkle.fluff.revert('agf', vandal, false, revid);
+			});
+			$(revLink).click(function () {
+				Twinkle.fluff.revert('norm', vandal, false, revid);
+			});
+			$(revVandLink).click(function () {
+				Twinkle.fluff.revert('vand', vandal, false, revid);
+			});
 		} else {
 
 			if( mw.config.get('wgCanonicalSpecialPageName') === "Undelete" ) {
@@ -324,7 +371,7 @@ Twinkle.fluff.callbacks = {
 		}
 		var index = 1;
 		if( self.params.revid !== lastrevid  ) {
-			Morebits.status.warn( '警告', wgULS([ '最新修订版本 ', Morebits.htmlNode( 'strong', lastrevid ), ' 与我们的修订版本 ', Morebits.htmlNode( 'strong', self.params.revid ), '不等' ], [ '最新修訂版本 ', Morebits.htmlNode( 'strong', lastrevid ), ' 與我們的修訂版本 ', Morebits.htmlNode( 'strong', self.params.revid ), '不等' ]) );
+			Morebits.status.warn( '警告', wgULS([ '最新修订版本 ', Morebits.htmlNode( 'strong', lastrevid ), ' 与我们的修订版本 ', Morebits.htmlNode( 'strong', self.params.revid ), '不等' ], [ '最新修訂版本 ', Morebits.htmlNode( 'strong', lastrevid ), ' 與我們的修訂版本 ', Morebits.htmlNode( 'strong', self.params.revid ), ' 不等' ]) );
 			if( lastuser === self.params.user ) {
 				switch( self.params.type ) {
 				case 'vand':
