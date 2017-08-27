@@ -455,6 +455,9 @@ Twinkle.load = function () {
 		Twinkle.batchundelete();
 		Twinkle.close();
 	}
+
+	Twinkle.addPortletLink( mw.util.wikiScript("index")+ "?title=Wikipedia:Twinkle/参数设置", wgULS('设置', '設定'), 'tw-config', wgULS('设置Twinkle参数', '設定Twinkle參數') );
+
 	// Run the initialization callbacks for any custom modules
 	$( Twinkle.initCallbacks ).each(function ( k, v ) { v(); });
 	Twinkle.addInitCallback = function ( func ) { func(); };

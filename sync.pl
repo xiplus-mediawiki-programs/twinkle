@@ -39,26 +39,27 @@ print($usage->text), exit if $opt->help || !scalar(@ARGV);
 
 my %pages = map +("$opt->{base}/$_" => $_), @ARGV;
 my %deploys = (
-	'twinkle.js' => 'MediaWiki:Gadget-Twinkle.js',
-	'morebits.js' => 'MediaWiki:Gadget-morebits.js',
-	'morebits.css' => 'MediaWiki:Gadget-morebits.css',
-	'modules/twinkleimage.js' => 'MediaWiki:Gadget-twinkleimage.js',
-	'modules/twinklebatchundelete.js' => 'MediaWiki:Gadget-twinklebatchundelete.js',
-	'modules/twinklewarn.js' => 'MediaWiki:Gadget-twinklewarn.js',
-	'modules/twinklespeedy.js' => 'MediaWiki:Gadget-twinklespeedy.js',
-	'modules/friendlyshared.js' => 'MediaWiki:Gadget-friendlyshared.js',
-	'modules/twinklediff.js' => 'MediaWiki:Gadget-twinklediff.js',
-	'modules/twinkleunlink.js' => 'MediaWiki:Gadget-twinkleunlink.js',
-	'modules/friendlytag.js' => 'MediaWiki:Gadget-friendlytag.js',
-	'modules/twinklexfd.js' => 'MediaWiki:Gadget-twinklexfd.js',
-	'modules/twinklebatchdelete.js' => 'MediaWiki:Gadget-twinklebatchdelete.js',
-	'modules/twinkleconfig.js' => 'MediaWiki:Gadget-twinkleconfig.js',
-	'modules/twinklefluff.js' => 'MediaWiki:Gadget-twinklefluff.js',
-	'modules/twinkleprotect.js' => 'MediaWiki:Gadget-twinkleprotect.js',
-	'modules/friendlytalkback.js' => 'MediaWiki:Gadget-friendlytalkback.js',
-	'modules/twinkleblock.js' => 'MediaWiki:Gadget-twinkleblock.js',
-	'modules/twinkleclose.js' => 'MediaWiki:Gadget-twinkleclose.js',
-	'modules/twinklecopyvio.js' => 'MediaWiki:Gadget-twinklecopyvio.js'
+    'twinkle.js' => 'MediaWiki:Gadget-Twinkle.js',
+    'morebits.js' => 'MediaWiki:Gadget-morebits.js',
+    'morebits.css' => 'MediaWiki:Gadget-morebits.css',
+    'modules/friendlyshared.js' => 'MediaWiki:Gadget-friendlyshared.js',
+    'modules/friendlytag.js' => 'MediaWiki:Gadget-friendlytag.js',
+    'modules/friendlytalkback.js' => 'MediaWiki:Gadget-friendlytalkback.js',
+    'modules/twinklearv.js' => 'MediaWiki:Gadget-twinklearv.js',
+    'modules/twinklebatchdelete.js' => 'MediaWiki:Gadget-twinklebatchdelete.js',
+    'modules/twinklebatchundelete.js' => 'MediaWiki:Gadget-twinklebatchundelete.js',
+    'modules/twinkleblock.js' => 'MediaWiki:Gadget-twinkleblock.js',
+    'modules/twinkleclose.js' => 'MediaWiki:Gadget-twinkleclose.js',
+    'modules/twinkleconfig.js' => 'MediaWiki:Gadget-twinkleconfig.js',
+    'modules/twinklecopyvio.js' => 'MediaWiki:Gadget-twinklecopyvio.js',
+    'modules/twinklediff.js' => 'MediaWiki:Gadget-twinklediff.js',
+    'modules/twinklefluff.js' => 'MediaWiki:Gadget-twinklefluff.js',
+    'modules/twinkleimage.js' => 'MediaWiki:Gadget-twinkleimage.js',
+    'modules/twinkleprotect.js' => 'MediaWiki:Gadget-twinkleprotect.js',
+    'modules/twinklespeedy.js' => 'MediaWiki:Gadget-twinklespeedy.js',
+    'modules/twinkleunlink.js' => 'MediaWiki:Gadget-twinkleunlink.js',
+    'modules/twinklewarn.js' => 'MediaWiki:Gadget-twinklewarn.js',
+    'modules/twinklexfd.js' => 'MediaWiki:Gadget-twinklexfd.js',
 );
 
 # Config file should be an hash consisting of username and password keys
@@ -73,7 +74,7 @@ my $bot = MediaWiki::Bot->new({
         operator    => $opt->username,
         login_data  => { username => $opt->username, password => $opt->password},
         debug => $opt->{verbose} ? 2 : 0,
-		maxlag => 1000000 # not a botty script, thus smash it!
+        maxlag => 1000000 # not a botty script, thus smash it!
     }
 );
 
@@ -82,7 +83,7 @@ if( $opt->mode eq "pull" ) {
 
     if( scalar @status ) {
         say "repository is not clean. aborting...";
-		#exit;
+        #exit;
     }
 
     while(my($page, $file) = each %pages) {
@@ -111,11 +112,11 @@ if( $opt->mode eq "pull" ) {
     }
 } elsif( $opt->mode eq "deploy" ) {
     foreach my $file (values %pages) {
-		unless(defined $deploys{$file}) {
-			die "file not deployable";
-		}
-		$page = $deploys{$file};
-		say "$file -> https://$opt->{lang}.$opt->{family}.org/wiki/$page";
+        unless(defined $deploys{$file}) {
+            die "file not deployable";
+        }
+        $page = $deploys{$file};
+        say "$file -> https://$opt->{lang}.$opt->{family}.org/wiki/$page";
         my $tag = $repo->run(describe => '--always', '--dirty');
         my $log = $repo->run(log => '-1', '--pretty=format:%s', '--no-color');
         my $text = read_file($file,  {binmode => ':raw' });
@@ -124,8 +125,8 @@ if( $opt->mode eq "pull" ) {
                 text    => decode("UTF-8", $text),
                 summary => "$tag",
             });
-		unless($ret) {
-			die "Error $bot->{error}->{code}: $bot->{error}->{details}";
-		}
+        unless($ret) {
+            die "Error $bot->{error}->{code}: $bot->{error}->{details}";
+        }
     }
 }

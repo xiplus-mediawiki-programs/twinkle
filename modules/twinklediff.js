@@ -25,7 +25,7 @@ Twinkle.diff = function twinklediff() {
 		'oldid': 'prev'
 	};
 
-	Twinkle.addPortletLink( mw.util.wikiScript("index")+ "?" + $.param( query ), wgULS('最后', '最後'), 'tw-lastdiff', '显示最后修改' );
+	Twinkle.addPortletLink( mw.util.wikiScript("index")+ "?" + $.param( query ), wgULS('最后', '最後'), 'tw-lastdiff', wgULS('显示最后修改', '顯示最後變更') );
 
 	// Show additional tabs only on diff pages
 	if (Morebits.queryString.exists('diff')) {
