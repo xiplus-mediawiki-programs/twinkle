@@ -281,7 +281,14 @@ Twinkle.config.sections = [
 			label: wgULS("在这些页面上显示回退链接", "在這些頁面上顯示回退連結"),
 			type: "set",
 			setValues: wgULS({ diff: "差异", history: "历史记录", others: "其它用户的贡献", mine: "我的贡献" }, { diff: "差異", history: "歷史記錄", others: "其它用戶的貢獻", mine: "我的貢獻" })
-		}
+		},
+
+		{
+			name: "rollbackInCurrentWindow",
+			label: wgULS("在当前窗口内执行回退", "在目前視窗內執行回退"),
+			helptip: wgULS("不要开新窗口或者改变当前窗口的状态，或者意志不坚定的。", "不要開新視窗或者改變目前視窗的狀態。"),
+			type: "boolean"
+		},
 	]
 },
 

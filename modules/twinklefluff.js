@@ -48,7 +48,7 @@ Twinkle.fluff = {
 				if( Twinkle.getPref('showRollbackLinks').indexOf('contribs') !== -1 ||
 					( mw.config.get('wgUserName') !== username && Twinkle.getPref('showRollbackLinks').indexOf('others') !== -1 ) ||
 					( mw.config.get('wgUserName') === username && Twinkle.getPref('showRollbackLinks').indexOf('mine') !== -1 ) ) {
-					var list = $("#mw-content-text").find("ul li:has(span.mw-uctop)");
+					var list = $("#mw-content-text").find("ul li:has(span.mw-uctop):not(:has(abbr.newpage))");
 
 					var revNode = document.createElement('strong');
 					var revLink = document.createElement('a');
@@ -66,14 +66,27 @@ Twinkle.fluff = {
 
 					list.each(function(key, current) {
 						var href = $(current).children("a:eq(1)").attr("href");
-						current.appendChild( document.createTextNode(' ') );
 						var tmpNode = revNode.cloneNode( true );
-						tmpNode.firstChild.setAttribute( 'href', href + '&' + Morebits.queryString.create( { 'twinklerevert': 'norm' } ) );
+						var tmpNode2 = revVandNode.cloneNode( true );
+						current.appendChild( document.createTextNode(' ') );
 						current.appendChild( tmpNode );
 						current.appendChild( document.createTextNode(' ') );
-						tmpNode = revVandNode.cloneNode( true );
-						tmpNode.firstChild.setAttribute( 'href', href + '&' + Morebits.queryString.create( { 'twinklerevert': 'vand' } ) );
-						current.appendChild( tmpNode );
+						current.appendChild( tmpNode2 );
+						if (Twinkle.getPref('rollbackInCurrentWindow')) {
+							var revid = parseInt(href.match(/oldid=(\d*)/)[1]);
+							var page = decodeURI(href.match(/title=(.*?)&/)[1]);
+							$(tmpNode).click(function () {
+								Twinkle.fluff.disableLinks([tmpNode, tmpNode2]);
+								Twinkle.fluff.revert('norm', username, false, revid, page);
+							});
+							$(tmpNode2).click(function () {
+								Twinkle.fluff.disableLinks([tmpNode, tmpNode2]);
+								Twinkle.fluff.revert('vand', username, false, revid, page);
+							});
+						} else {
+							tmpNode.firstChild.setAttribute( 'href', href + '&' + Morebits.queryString.create( { 'twinklerevert': 'norm' } ) );
+							tmpNode2.firstChild.setAttribute( 'href', href + '&' + Morebits.queryString.create( { 'twinklerevert': 'vand' } ) );
+						}
 					});
 				}
 			}
@@ -114,14 +127,16 @@ Twinkle.fluff = {
 				.append(' ').append(revNode)
 				.append(' ').append(revVandNode);
 
-
 			$(revAgfLink).click(function () {
+				Twinkle.fluff.disableLinks([revAgfLink, revLink, revVandLink]);
 				Twinkle.fluff.revert('agf', vandal, false, revid);
 			});
 			$(revLink).click(function () {
+				Twinkle.fluff.disableLinks([revAgfLink, revLink, revVandLink]);
 				Twinkle.fluff.revert('norm', vandal, false, revid);
 			});
 			$(revVandLink).click(function () {
+				Twinkle.fluff.disableLinks([revAgfLink, revLink, revVandLink]);
 				Twinkle.fluff.revert('vand', vandal, false, revid);
 			});
 		} else {
@@ -158,13 +173,16 @@ Twinkle.fluff = {
 
 			var oldrev = query.get('oldid');
 
+
 			var revertToRevision = document.createElement('div');
 			revertToRevision.setAttribute( 'id', 'tw-revert-to-orevision' );
 			revertToRevision.style.fontWeight = 'bold';
 
 			var revertToRevisionLink = revertToRevision.appendChild( document.createElement('a') );
+			var links = [revertToRevisionLink];
 			revertToRevisionLink.href = "#";
 			$(revertToRevisionLink).click(function(){
+				Twinkle.fluff.disableLinks(links);
 				Twinkle.fluff.revertToRevision(oldrev);
 			});
 			revertToRevisionLink.appendChild( spanTag( 'Black', '[' ) );
@@ -183,7 +201,9 @@ Twinkle.fluff = {
 				revertToRevision.style.fontWeight = 'bold';
 				revertToRevisionLink = revertToRevision.appendChild( document.createElement('a') );
 				revertToRevisionLink.href = "#";
+				links.push(revertToRevisionLink);
 				$(revertToRevisionLink).click(function(){
+					Twinkle.fluff.disableLinks(links);
 					Twinkle.fluff.revertToRevision(newrev);
 				});
 				revertToRevisionLink.appendChild( spanTag( 'Black', '[' ) );
@@ -210,13 +230,19 @@ Twinkle.fluff = {
 				agfLink.href = "#";
 				vandLink.href = "#";
 				normLink.href = "#";
+				links.push(agfLink);
+				links.push(vandLink);
+				links.push(normLink);
 				$(agfLink).click(function(){
+					Twinkle.fluff.disableLinks(links);
 					Twinkle.fluff.revert('agf', vandal);
 				});
 				$(vandLink).click(function(){
+					Twinkle.fluff.disableLinks(links);
 					Twinkle.fluff.revert('vand', vandal);
 				});
 				$(normLink).click(function(){
+					Twinkle.fluff.disableLinks(links);
 					Twinkle.fluff.revert('norm', vandal);
 				});
 
@@ -248,6 +274,17 @@ Twinkle.fluff = {
 	}
 };
 
+Twinkle.fluff.disableLinks = function (links) {
+	for (var i=0; i<links.length; i++) {
+		var link = $(links[i]);
+		link.off('click')
+			.attr('href', '#')
+			.css('color', 'grey')
+			.css('cursor', 'default');
+		$('span', link).css('color', 'grey');
+	}
+};
+
 Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page ) {
 	if (mw.util.isIPv6Address(vandal)) {
 		vandal = Morebits.sanitizeIPv6(vandal);
@@ -256,7 +293,16 @@ Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page 
 	var pagename = page || mw.config.get('wgPageName');
 	var revid = rev || mw.config.get('wgCurRevisionId');
 
-	Morebits.status.init( document.getElementById('mw-content-text') );
+	var statusElement = document.getElementById('mw-content-text');
+	if (Twinkle.getPref('rollbackInCurrentWindow') && !Twinkle.fluff.autoMode) {
+		statusElement = document.createElement('small');
+		statusElement.id = 'twinklefluff_' + (Twinkle.fluff.notifyId++);
+		statusElement.textContent = wgULS('正在准备回退……', '正在準備回退……');
+		mw.notify(statusElement, {
+			autoHide: false
+		});
+	}
+	Morebits.status.init( statusElement );
 	$( '#catlinks' ).remove();
 
 	var params = {
@@ -281,7 +327,16 @@ Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page 
 
 Twinkle.fluff.revertToRevision = function revertToRevision( oldrev ) {
 
-	Morebits.status.init( document.getElementById('mw-content-text') );
+	var statusElement = document.getElementById('mw-content-text');
+	if (Twinkle.getPref('rollbackInCurrentWindow') && !Twinkle.fluff.autoMode) {
+		statusElement = document.createElement('small');
+		statusElement.id = 'twinklefluff_' + (Twinkle.fluff.notifyId++);
+		statusElement.textContent = wgULS('正在准备回退……', '正在準備回退……');
+		mw.notify(statusElement, {
+			autoHide: false
+		});
+	}
+	Morebits.status.init( statusElement );
 
 	var query = {
 		'action': 'query',
@@ -340,7 +395,9 @@ Twinkle.fluff.callbacks = {
 				'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf( 'torev' ) !== -1  ? true : undefined
 			};
 
-			Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
+			if (Twinkle.fluff.autoMode || !Twinkle.getPref('rollbackInCurrentWindow')) {
+				Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
+			}
 			Morebits.wiki.actionCompleted.notice = wgULS("修订版本完成", "修訂版本完成");
 
 			var wikipedia_api = new Morebits.wiki.api( wgULS('保存回退内容', '儲存回退內容'), query, Twinkle.fluff.callbacks.complete, self.statelem);
@@ -541,6 +598,7 @@ Twinkle.fluff.callbacks = {
 		query = {
 			'action': 'edit',
 			'title': self.params.pagename,
+			'tags': 'Twinkle',
 			'summary': summary,
 			'token': edittoken,
 			'undo': lastrevid,
@@ -551,7 +609,9 @@ Twinkle.fluff.callbacks = {
 			'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf( self.params.type ) !== -1 ? true : undefined
 		};
 
-		Morebits.wiki.actionCompleted.redirect = self.params.pagename;
+		if (Twinkle.fluff.autoMode || !Twinkle.getPref('rollbackInCurrentWindow')) {
+			Morebits.wiki.actionCompleted.redirect = self.params.pagename;
+		}
 		Morebits.wiki.actionCompleted.notice = "回退完成";
 
 		var wikipedia_api = new Morebits.wiki.api( wgULS('保存回退内容', '儲存回退內容'), query, Twinkle.fluff.callbacks.complete, self.statelem);
@@ -643,8 +703,11 @@ Twinkle.fluff.init = function twinklefluffinit() {
 		];
 
 		if ( Morebits.queryString.exists( 'twinklerevert' ) ) {
+			Twinkle.fluff.autoMode = true;
 			Twinkle.fluff.auto();
 		} else {
+			Twinkle.fluff.autoMode = false;
+			Twinkle.fluff.notifyId = 0;
 			Twinkle.fluff.normal();
 		}
 	}
