@@ -172,7 +172,7 @@ Twinkle.fluff = {
 			var query = new Morebits.queryString( old_rev_url.split( '?', 2 )[1] );
 
 			var oldrev = query.get('oldid');
-
+			var title = query.get('title');
 
 			var revertToRevision = document.createElement('div');
 			revertToRevision.setAttribute( 'id', 'tw-revert-to-orevision' );
@@ -183,7 +183,7 @@ Twinkle.fluff = {
 			revertToRevisionLink.href = "#";
 			$(revertToRevisionLink).click(function(){
 				Twinkle.fluff.disableLinks(links);
-				Twinkle.fluff.revertToRevision(oldrev);
+				Twinkle.fluff.revertToRevision(oldrev, title);
 			});
 			revertToRevisionLink.appendChild( spanTag( 'Black', '[' ) );
 			revertToRevisionLink.appendChild( spanTag( 'SaddleBrown', wgULS('恢复此版本', '恢復此版本') ) );
@@ -196,15 +196,18 @@ Twinkle.fluff = {
 				var new_rev_url = $("#mw-diff-ntitle1").find("strong a").attr("href");
 				query = new Morebits.queryString( new_rev_url.split( '?', 2 )[1] );
 				var newrev = query.get('oldid');
+				title = query.get('title');
 				revertToRevision = document.createElement('div');
 				revertToRevision.setAttribute( 'id', 'tw-revert-to-nrevision' );
 				revertToRevision.style.fontWeight = 'bold';
 				revertToRevisionLink = revertToRevision.appendChild( document.createElement('a') );
 				revertToRevisionLink.href = "#";
+
 				links.push(revertToRevisionLink);
+
 				$(revertToRevisionLink).click(function(){
 					Twinkle.fluff.disableLinks(links);
-					Twinkle.fluff.revertToRevision(newrev);
+					Twinkle.fluff.revertToRevision(newrev, title);
 				});
 				revertToRevisionLink.appendChild( spanTag( 'Black', '[' ) );
 				revertToRevisionLink.appendChild( spanTag( 'SaddleBrown', wgULS('恢复此版本', '恢復此版本') ) );
@@ -305,9 +308,15 @@ Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page 
 		statusElement = document.createElement('small');
 		statusElement.id = 'twinklefluff_' + (Twinkle.fluff.notifyId++);
 		statusElement.textContent = wgULS('正在准备回退……', '正在準備回退……');
-		mw.notify(statusElement, {
-			autoHide: false
-		});
+		if (Twinkle.fluff.isRTRC) {
+			// TODO 实现反馈
+			statusElement.style.display = 'none';
+			document.getElementById('content').appendChild(statusElement);
+		} else {
+			mw.notify(statusElement, {
+				autoHide: false
+			});
+		}
 	}
 	Morebits.status.init( statusElement );
 	$( '#catlinks' ).remove();
@@ -332,23 +341,31 @@ Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page 
 	wikipedia_api.post();
 };
 
-Twinkle.fluff.revertToRevision = function revertToRevision( oldrev ) {
+Twinkle.fluff.revertToRevision = function revertToRevision( oldrev, page ) {
 
 	var statusElement = document.getElementById('mw-content-text');
 	if (Twinkle.fluff.useNotify) {
 		statusElement = document.createElement('small');
 		statusElement.id = 'twinklefluff_' + (Twinkle.fluff.notifyId++);
 		statusElement.textContent = wgULS('正在准备回退……', '正在準備回退……');
-		mw.notify(statusElement, {
-			autoHide: false
-		});
+		if (Twinkle.fluff.isRTRC) {
+			// TODO 实现反馈
+			statusElement.style.display = 'none';
+			document.getElementById('content').appendChild(statusElement);
+		} else {
+			mw.notify(statusElement, {
+				autoHide: false
+			});
+		}
 	}
 	Morebits.status.init( statusElement );
+
+	var title = page || mw.config.get('wgPageName');
 
 	var query = {
 		'action': 'query',
 		'prop': ['info',  'revisions'],
-		'titles': mw.config.get('wgPageName'),
+		'titles': title,
 		'rvlimit': 1,
 		'rvstartid': oldrev,
 		'rvprop': [ 'ids', 'timestamp', 'user', 'comment' ],
@@ -356,7 +373,7 @@ Twinkle.fluff.revertToRevision = function revertToRevision( oldrev ) {
 		'format': 'xml'
 	};
 	var wikipedia_api = new Morebits.wiki.api( wgULS('抓取较早修订版本信息', '擷取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.toRevision.main );
-	wikipedia_api.params = { rev: oldrev };
+	wikipedia_api.params = { rev: oldrev, title: title };
 	wikipedia_api.post();
 };
 
@@ -377,7 +394,7 @@ Twinkle.fluff.callbacks = {
 			var revertToUser = $(xmlDoc).find('rev').attr('user');
 
 			if (revertToRevID !== self.params.rev) {
-				self.statitem.error( wgULS('抓取到的修订版本与请求的修订版本不符，取消。', '擷取到的修訂版本與請求的修訂版本不符，取消。') );
+				self.statelem.error( wgULS('抓取到的修订版本与请求的修订版本不符，取消。', '擷取到的修訂版本與請求的修訂版本不符，取消。') );
 				return;
 			}
 
@@ -391,7 +408,7 @@ Twinkle.fluff.callbacks = {
 
 			var query = {
 				'action': 'edit',
-				'title': mw.config.get('wgPageName'),
+				'title': self.params.title,
 				'summary': summary,
 				'token': edittoken,
 				'undo': lastrevid,
@@ -402,7 +419,7 @@ Twinkle.fluff.callbacks = {
 				'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf( 'torev' ) !== -1  ? true : undefined
 			};
 
-			if (Twinkle.fluff.autoMode || !Twinkle.getPref('rollbackInCurrentWindow')) {
+			if (!Twinkle.fluff.useNotify) {
 				Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 			}
 			Morebits.wiki.actionCompleted.notice = wgULS("修订版本完成", "修訂版本完成");
@@ -616,7 +633,7 @@ Twinkle.fluff.callbacks = {
 			'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf( self.params.type ) !== -1 ? true : undefined
 		};
 
-		if (Twinkle.fluff.autoMode || !Twinkle.getPref('rollbackInCurrentWindow')) {
+		if (!Twinkle.fluff.useNotify) {
 			Morebits.wiki.actionCompleted.redirect = self.params.pagename;
 		}
 		Morebits.wiki.actionCompleted.notice = "回退完成";
