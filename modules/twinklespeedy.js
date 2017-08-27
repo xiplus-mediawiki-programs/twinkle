@@ -339,10 +339,10 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 
 	var radioOrCheckbox = (Twinkle.speedy.mode.isMultiple(mode) ? 'checkbox' : 'radio');
 
-	if (Twinkle.speedy.mode.isSysop(mode) && !Twinkle.speedy.mode.isMultiple(mode)) {
+	//if (Twinkle.speedy.mode.isSysop(mode) && !Twinkle.speedy.mode.isMultiple(mode)) {
 		work_area.append( { type: 'header', label: wgULS('自定义理由', '自訂理由') } );
 		work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.customRationale, mode) } );
-	}
+	//}
 
 	switch (namespace) {
 		case 0:  // article
@@ -512,7 +512,7 @@ Twinkle.speedy.customRationale = [
 			label: '理由：',
 			size: 60
 		},
-		hideWhenMultiple: true
+		//hideWhenMultiple: true
 	}
 ];
 
