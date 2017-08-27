@@ -227,6 +227,13 @@ Twinkle.fluff = {
 				var vandLink = document.createElement('a');
 				var normLink = document.createElement('a');
 
+				var revid = mw.config.get('wgCurRevisionId');
+				var page = mw.config.get('wgPageName');
+				if (Twinkle.fluff.isRTRC) {
+					revid = parseInt($('#mw-diff-ntitle1 a:first').attr('href').match(/oldid=(\d*)/)[1]);
+					page = $('#krRTRC_DiffFrame > h3').text();
+				}
+
 				agfLink.href = "#";
 				vandLink.href = "#";
 				normLink.href = "#";
@@ -235,15 +242,15 @@ Twinkle.fluff = {
 				links.push(normLink);
 				$(agfLink).click(function(){
 					Twinkle.fluff.disableLinks(links);
-					Twinkle.fluff.revert('agf', vandal);
+					Twinkle.fluff.revert('agf', vandal, false, revid, page);
 				});
 				$(vandLink).click(function(){
 					Twinkle.fluff.disableLinks(links);
-					Twinkle.fluff.revert('vand', vandal);
+					Twinkle.fluff.revert('vand', vandal, false, revid, page);
 				});
 				$(normLink).click(function(){
 					Twinkle.fluff.disableLinks(links);
-					Twinkle.fluff.revert('norm', vandal);
+					Twinkle.fluff.revert('norm', vandal, false, revid, page);
 				});
 
 				agfLink.appendChild( spanTag( 'Black', '[' ) );
@@ -294,7 +301,7 @@ Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page 
 	var revid = rev || mw.config.get('wgCurRevisionId');
 
 	var statusElement = document.getElementById('mw-content-text');
-	if (Twinkle.getPref('rollbackInCurrentWindow') && !Twinkle.fluff.autoMode) {
+	if (Twinkle.fluff.useNotify) {
 		statusElement = document.createElement('small');
 		statusElement.id = 'twinklefluff_' + (Twinkle.fluff.notifyId++);
 		statusElement.textContent = wgULS('正在准备回退……', '正在準備回退……');
@@ -328,7 +335,7 @@ Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page 
 Twinkle.fluff.revertToRevision = function revertToRevision( oldrev ) {
 
 	var statusElement = document.getElementById('mw-content-text');
-	if (Twinkle.getPref('rollbackInCurrentWindow') && !Twinkle.fluff.autoMode) {
+	if (Twinkle.fluff.useNotify) {
 		statusElement = document.createElement('small');
 		statusElement.id = 'twinklefluff_' + (Twinkle.fluff.notifyId++);
 		statusElement.textContent = wgULS('正在准备回退……', '正在準備回退……');
@@ -704,10 +711,14 @@ Twinkle.fluff.init = function twinklefluffinit() {
 
 		if ( Morebits.queryString.exists( 'twinklerevert' ) ) {
 			Twinkle.fluff.autoMode = true;
+			Twinkle.fluff.useNotify = false;
 			Twinkle.fluff.auto();
 		} else {
 			Twinkle.fluff.autoMode = false;
 			Twinkle.fluff.notifyId = 0;
+			Twinkle.fluff.isRTRC = (mw.config.get('wgTitle') === 'Krinkle/RTRC' && mw.config.get('wgAction') === 'view') ||
+				(mw.config.get('wgCanonicalSpecialPageName') === 'Blankpage' && mw.config.get('wgTitle').split('/', 2)[1] === 'RTRC');
+			Twinkle.fluff.useNotify = Twinkle.getPref('rollbackInCurrentWindow') || Twinkle.fluff.isRTRC;
 			Twinkle.fluff.normal();
 		}
 	}

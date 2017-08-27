@@ -46,6 +46,8 @@ window.wgUVS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
 var Twinkle = {};
 window.Twinkle = Twinkle;  // allow global access
 
+Twinkle.amanojaku = true;
+
 // Check if account is experienced enough to use Twinkle
 Twinkle.userAuthorized = Morebits.userIsInGroup( "autoconfirmed" ) || Morebits.userIsInGroup( "confirmed" );
 
