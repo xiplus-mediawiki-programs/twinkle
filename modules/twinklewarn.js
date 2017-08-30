@@ -1048,7 +1048,7 @@ Twinkle.warn.messages = wgULS({
 				summary: "您翻譯的質量有待改善"
 			}
 		},
-		"非能接受且違反方針或指引的單方麵行為或操作": {
+		"非能接受且違反方針或指引的單方面行為或操作": {
 			"uw-notcensored1": {
 				label: "因為「內容使人反感」而刪除條目內容",
 				summary: "層級1：審查條目內容"
@@ -1184,7 +1184,7 @@ Twinkle.warn.messages = wgULS({
 				summary: "層級2：粗劣翻譯"
 			}
 		},
-		"非能接受且違反方針或指引的單方麵行為或操作": {
+		"非能接受且違反方針或指引的單方面行為或操作": {
 			"uw-notcensored2": {
 				label: "內容審查",
 				summary: "層級2：內容審查"
@@ -1320,7 +1320,7 @@ Twinkle.warn.messages = wgULS({
 				summary: "層級3：粗劣翻譯"
 			}
 		},
-		"非能接受且違反方針或指引的單方麵行為或操作": {
+		"非能接受且違反方針或指引的單方面行為或操作": {
 			"uw-notcensored3": {
 				label: "審查內容",
 				summary: "層級3：審查內容"
@@ -1438,7 +1438,7 @@ Twinkle.warn.messages = wgULS({
 				summary: "層級4：加入誹謗內容"
 			}
 		},
-		"非能接受且違反方針或指引的單方麵行為或操作": {
+		"非能接受且違反方針或指引的單方面行為或操作": {
 			"uw-mos4": {
 				label: "違反格式、日期、語言等相關規定",
 				summary: "層級4：違反格式、日期、語言等相關規定"
@@ -1520,7 +1520,7 @@ Twinkle.warn.messages = wgULS({
 				summary: "層級4im：加入誹謗內容"
 			}
 		},
-		"非能接受且違反方針或指引的單方麵行為或操作": {
+		"非能接受且違反方針或指引的單方面行為或操作": {
 			"uw-move4im": {
 				label: "不恰當地移動頁面",
 				summary: "層級4im：不恰當地移動頁面"
@@ -1540,8 +1540,8 @@ Twinkle.warn.messages = wgULS({
 
 	singlenotice: {
 		"uw-2redirect": {
-			label: "在移動頁面後應該修複雙重重定向",
-			summary: "單層級通知：在移動頁面後應該修複雙重重定向"
+			label: "在移動頁面後應該修復雙重重定向",
+			summary: "單層級通知：在移動頁面後應該修復雙重重定向"
 		},
 		"uw-aiv": {
 			label: "舉報的並不是破壞者，或者舉報破壞前未進行警告",
@@ -1660,8 +1660,8 @@ Twinkle.warn.messages = wgULS({
 			summary: "單層級通知：沒有在討論頁上簽名"
 		},
 		"uw-translated": {
-			label: "翻譯條目未標注原作者",
-			summary: "單層級通知：翻譯條目未標注原作者"
+			label: "翻譯條目未標註原作者",
+			summary: "單層級通知：翻譯條目未標註原作者"
 		},
 		"uw-uaa": {
 			label: "向更改用戶名回報的用戶名稱並不違反方針",
@@ -1717,8 +1717,8 @@ Twinkle.warn.messages = wgULS({
 			summary: "單層級警告：建立惡作劇"
 		},
 		"uw-incompletecite": {
-			label: "列出的資料來源欠缺若幹詳情而不易查找",
-			summary: "單層級警告：列出的資料來源欠缺若幹詳情而不易查找"
+			label: "列出的資料來源欠缺若干詳情而不易查找",
+			summary: "單層級警告：列出的資料來源欠缺若干詳情而不易查找"
 		},
 		"uw-legal": {
 			label: "訴諸法律威脅",
