@@ -6,11 +6,12 @@
  * |                           修改前请联系维护者。                          |
  * +-------------------------------------------------------------------------+
  *
- * 从Github导入[https://github.com/vjudge1/twinkle]
+ * 从Github导入[https://github.com/Xi-Plus/twinkle]
+ * 基於 [https://github.com/jimmyxu/twinkle] 和 [https://github.com/vjudge1/twinkle] 的修改
  *
  * ----------
  *
- * 这是经过篡改的Twinkle，是让新手、管理员及他们之间的用户破坏维基百科的
+ * 这是经过亂改的Twinkle，是让維護者自己方便使用维基百科的
  * 好帮手。请参见[[WP:TW]]以获取更多信息。
  *
  * 维护者：~~~
