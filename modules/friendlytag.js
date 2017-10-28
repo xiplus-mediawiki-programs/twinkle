@@ -182,7 +182,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 							(tag === "merge to" ? '其他' : '这') + '条目的讨论页）：',
 							'合併理由（會被貼上' +
 							(tag === "merge to" ? '其他' : '這') + '條目的討論頁）：'),
-						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。仅在只输入了一个条目名时可用。', '可選，但強烈推薦。如不需要請留空。僅在隻輸入了一個條目名時可用。')
+						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。仅在只输入了一个条目名时可用。', '可選，但強烈推薦。如不需要請留空。僅在只輸入了一個條目名時可用。')
 					});
 				}
 				break;
@@ -191,13 +191,13 @@ Twinkle.tag.updateSortOrder = function(e) {
 					{
 						name: 'moveTarget',
 						type: 'input',
-						label: '新名稱：'
+						label: wgULS('新名称：', '新名稱：')
 					},
 					{
 						name: 'moveReason',
 						type: 'textarea',
-						label: '移動理由（这条目的讨论页）：',
-						tooltip: '可选，但强烈推荐。如不需要请留空。'
+						label: wgULS('移动理由（会被贴上这条目的讨论页）：', '移動理由（會被貼上這條目的討論頁）：'),
+						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。', '可選，但強烈推薦。如不需要請留空。')
 					}
 				];
 				break;
@@ -349,7 +349,7 @@ Twinkle.tag.article.tags = wgULS({
 	"primarysources": "依赖第一手来源",
 	"prose": "使用了日期或时间列表式记述，需要改写为连贯的叙述性文字",
 	"refimprove": "需要补充更多来源",
-	"requested move": "建议将此页面移動到新名稱",
+	"requested move": "建议将此页面移动到新名称",
 	"review": "阅读起来类似评论，需要清理",
 	"rewrite": "不符合维基百科的质量标准，需要完全重写",
 	"roughtranslation": "翻译品质不佳",
@@ -523,7 +523,7 @@ Twinkle.tag.article.tagCategories = wgULS({
 		"merge from",
 		"merge to"
 	],
-	"移動": [  // these three have a subgroup with several options
+	"移动": [  // this one have a subgroup with several options
 		"requested move"
 	]
 }, {
@@ -621,6 +621,9 @@ Twinkle.tag.article.tagCategories = wgULS({
 		"merge",
 		"merge from",
 		"merge to"
+	],
+	"移動": [  // this one have a subgroup with several options
+		"requested move"
 	]
 });
 
@@ -707,6 +710,10 @@ Twinkle.tag.frequentList = wgULS([
 	{
 		label: '{{簡繁重定向}}：引導簡體至繁體，或繁體至簡體',
 		value: '簡繁重定向'
+	},
+	{
+		label: '{{關注度重定向}}：缺乏關注度的子主題向有關注度的母主題的重定向',
+		value: '關注度重定向'
 	},
 	{
 		label: '{{模板重定向}}：指向模板的重定向頁面',
@@ -996,7 +1003,7 @@ Twinkle.tag.callbacks = {
 						tags = tags.concat( params.tags[i] );
 					}
 				} else {
-					Morebits.status.warn( '信息', wgULS('在页面上找到{{' + params.tags[i] +
+					Morebits.status.warn( wgULS('信息', '資訊'), wgULS('在页面上找到{{' + params.tags[i] +
 						'}}…跳过', '在頁面上找到{{' + params.tags[i] +
 						'}}…跳過') );
 					// don't do anything else with merge tags
@@ -1016,7 +1023,7 @@ Twinkle.tag.callbacks = {
 			var miOldStyleTest = miOldStyleRegex.exec(pageText);
 
 			if( ( miTest || miOldStyleTest ) && groupableTags.length > 0 ) {
-				Morebits.status.info( '信息', wgULS('添加支持的标记入已存在的{{multiple issues}}', '添加支持的標記入已存在的{{multiple issues}}') );
+				Morebits.status.info( wgULS('信息', '資訊'), wgULS('添加支持的标记入已存在的{{multiple issues}}', '添加支持的標記入已存在的{{multiple issues}}') );
 
 				groupableTags.sort();
 				tagText = "";
@@ -1042,7 +1049,7 @@ Twinkle.tag.callbacks = {
 				}
 				tagText = "";
 			} else if( params.group && groupableTags.length >= 3 ) {
-				Morebits.status.info( '信息', wgULS('合并支持的模板入{{multiple issues}}', '合併支援的模板入{{multiple issues}}') );
+				Morebits.status.info( wgULS('信息', '資訊'), wgULS('合并支持的模板入{{multiple issues}}', '合併支援的模板入{{multiple issues}}') );
 
 				groupableTags.sort();
 				tagText += '{{multiple issues|\n';
@@ -1065,7 +1072,7 @@ Twinkle.tag.callbacks = {
 				if( !tagRe.exec( pageText ) ) {
 					tags = tags.concat( params.tags[i] );
 				} else {
-					Morebits.status.warn( '信息', wgULS('在重定向上找到{{' + params.tags[i] +
+					Morebits.status.warn( wgULS('信息', '資訊'), wgULS('在重定向上找到{{' + params.tags[i] +
 						'}}…跳过', '在重定向上找到{{' + params.tags[i] +
 						'}}…跳過') );
 				}
@@ -1143,9 +1150,9 @@ Twinkle.tag.callbacks = {
 				}
 				talkpageText += "}}";
 
-				var talkpage = new Morebits.wiki.page("Talk:" + params.discussArticle, "将理由贴进讨论页");
+				var talkpage = new Morebits.wiki.page("Talk:" + params.discussArticle, wgULS("将理由贴进讨论页", "將理由貼進討論頁"));
 				talkpage.setAppendText(talkpageText);
-				talkpage.setEditSummary('请求移動' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : "") +
+				talkpage.setEditSummary(wgULS('请求移动' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : ""), '請求移動' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : "")) +
 					Twinkle.getPref('summaryAd'));
 				talkpage.setCreateOption('recreate');
 				talkpage.append();
