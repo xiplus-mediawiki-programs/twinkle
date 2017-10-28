@@ -644,6 +644,15 @@ Twinkle.config.sections = [
 			label: wgULS("标记时标记页面为已巡查（如可能）", "標記時標記頁面為已巡查（如可能）"),
 			helptip: wgULS("基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。", "基於技術原因，頁面僅會在由Special:NewPages到達時被標記為已巡查。"),
 			type: "boolean"
+		},
+
+		// TwinkleConfig.markXfdPagesAsPatrolled (boolean)
+		// If, when applying xfd template to page, to mark the page as patrolled (if the page was reached from NewPages)
+		{
+			name: "XfdClose",
+			label: wgULS("在存废讨论显示关闭讨论按钮", "在存廢討論顯示關閉討論按鈕"),
+			helptip: wgULS("请确保您充分了解[[Wikipedia:关闭删除讨论指南]]才开启此功能。", "請確保您充分了解[[Wikipedia:關閉刪除討論指南]]才開啟此功能。"),
+			type: "boolean"
 		}
 	]
 

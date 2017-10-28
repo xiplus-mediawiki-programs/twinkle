@@ -47,8 +47,6 @@ window.wgUVS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
 var Twinkle = {};
 window.Twinkle = Twinkle;  // allow global access
 
-Twinkle.amanojaku = true;
-
 // Check if account is experienced enough to use Twinkle
 Twinkle.userAuthorized = Morebits.userIsInGroup( "autoconfirmed" ) || Morebits.userIsInGroup( "confirmed" );
 
@@ -118,6 +116,7 @@ Twinkle.defaultConfig.twinkle = {
 	xfdWatchPage: "default",
 	xfdWatchUser: "default",
 	markXfdPagesAsPatrolled: true,
+	XfdClose: Morebits.userIsInGroup('sysop'),
 	 // Copyvio
 	copyvioWatchPage: "default",
 	copyvioWatchUser: "default",
@@ -456,6 +455,8 @@ Twinkle.load = function () {
 	if ( Morebits.userIsInGroup('sysop') ) {
 		Twinkle.batchdelete();
 		Twinkle.batchundelete();
+	}
+	if (Twinkle.getPref('XfdClose')) {
 		Twinkle.close();
 	}
 
