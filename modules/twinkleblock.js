@@ -17,24 +17,24 @@ var api = new mw.Api(), relevantUserName;
 
 Twinkle.block = function twinkleblock() {
 	// should show on Contributions pages, anywhere there's a relevant user
-	if ( Morebits.userIsInGroup('sysop') && mw.config.get('wgRelevantUserName') ) {
-		Twinkle.addPortletLink(Twinkle.block.callback, '封禁', 'tw-block', '封禁相关用户' );
+	if ( Morebits.userIsInGroup('sysop') && Morebits.wiki.flow.relevantUserName() ) {
+		Twinkle.addPortletLink(Twinkle.block.callback, '封禁', 'tw-block', wgULS('封禁相关用户', '封禁相關用戶') );
 	}
 };
 
 Twinkle.block.callback = function twinkleblockCallback() {
-	if( mw.config.get('wgRelevantUserName') === mw.config.get('wgUserName') &&
-			!confirm( '您即将封禁自己！确认要继续吗？' ) ) {
+	if( Morebits.wiki.flow.relevantUserName() === mw.config.get('wgUserName') &&
+			!confirm( wgULS('您即将封禁自己！确认要继续吗？', '您即將封禁自己！確認要繼續嗎？') ) ) {
 		return;
 	}
 
 	var Window = new Morebits.simpleWindow( 650, 530 );
 	// need to be verbose about who we're blocking
-	Window.setTitle( '封禁或向' + mw.config.get('wgRelevantUserName') + '发出封禁模板' );
+	Window.setTitle( '封禁或向' + Morebits.wiki.flow.relevantUserName() + wgULS('发出封禁模板', '發出封禁模板') );
 	Window.setScriptName( 'Twinkle' );
 	Window.addFooterLink( '封禁模板', 'Wikipedia:模板消息/用戶討論名字空間#.E5.B0.81.E7.A6.81' );
-	Window.addFooterLink( '封禁方针', 'WP:BLOCK' );
-	Window.addFooterLink( 'Twinkle帮助', 'WP:TW/DOC#block' );
+	Window.addFooterLink( wgULS('封禁方针', '封禁方針'), 'WP:BLOCK' );
+	Window.addFooterLink( wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#block' );
 
 	Twinkle.block.currentBlockInfo = undefined;
 	Twinkle.block.field_block_options = {};
@@ -43,7 +43,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	var form = new Morebits.quickForm( Twinkle.block.callback.evaluate );
 	var actionfield = form.append( {
 			type: 'field',
-			label: '操作类型'
+			label: wgULS('操作类型', '操作類別')
 		} );
 	actionfield.append({
 			type: 'checkbox',
@@ -51,25 +51,25 @@ Twinkle.block.callback = function twinkleblockCallback() {
 			event: Twinkle.block.callback.change_action,
 			list: [
 				{
-					label: '封禁用户',
+					label: wgULS('封禁用户', '封禁用戶'),
 					value: 'block',
-					tooltip: '用选择的选项封禁相关用户。',
+					tooltip: wgULS('用选择的选项封禁相关用户。', '用選擇的選項封禁相關用戶。'),
 					checked: true
 				},
 				{
-					label: '添加封禁模板到用户对话页',
+					label: wgULS('添加封禁模板到用户对话页', '加入封禁模板到用戶對話頁'),
 					value: 'template',
-					tooltip: '如果执行封禁的管理员忘记发出保护模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。',
+					tooltip: wgULS('如果执行封禁的管理员忘记发出保护模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。', '如果執行封禁的管理員忘記發出保護模板，或你封禁了用戶而沒有給其發出模板，則你可以用此來發出合適的模板。'),
 					checked: true
 				}
 			]
 		});
 
-	form.append({ type: 'field', label: '预设', name: 'field_preset' });
-	form.append({ type: 'field', label: '模板选项', name: 'field_template_options' });
-	form.append({ type: 'field', label: '封禁选项', name: 'field_block_options' });
+	form.append({ type: 'field', label: wgULS('预设', '預設'), name: 'field_preset' });
+	form.append({ type: 'field', label: wgULS('模板选项', '模板設定'), name: 'field_template_options' });
+	form.append({ type: 'field', label: wgULS('封禁选项', '封禁設定'), name: 'field_block_options' });
 
-	form.append( { type:'submit', label: '提交〜工具测试中，请检查执行结果！〜' } );
+	form.append( { type:'submit', label: '提交' } );
 
 	var result = form.render();
 	Window.setContent( result );
@@ -88,6 +88,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 };
 
 Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
+	var userName = Morebits.wiki.flow.relevantUserName();
 
 	api.get({
 		format: 'json',
@@ -95,16 +96,16 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 		list: 'blocks|users|logevents',
 		letype: 'block',
 		lelimit: 1,
-		bkusers: mw.config.get('wgRelevantUserName'),
-		ususers: mw.config.get('wgRelevantUserName'),
-		letitle: 'User:' + mw.config.get('wgRelevantUserName')
+		bkusers: userName,
+		ususers: userName,
+		letitle: 'User:' + userName
 	})
 	.then(function(data){
 		var blockinfo = data.query.blocks[0],
 			userinfo = data.query.users[0];
 
 		Twinkle.block.isRegistered = !!userinfo.userid;
-		relevantUserName = Twinkle.block.isRegistered ? 'User:' + mw.config.get('wgRelevantUserName') : mw.config.get('wgRelevantUserName');
+		relevantUserName = Twinkle.block.isRegistered ? ('User:' + userName) : userName;
 
 		if (blockinfo) {
 			// handle frustrating system of inverted boolean values
@@ -118,7 +119,7 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 		if (typeof fn === 'function') return fn();
 	}, function(msg) {
 		Morebits.status.init($('div[name="currentblock"] span').last()[0]);
-		Morebits.status.warn('抓取用户信息出错', msg);
+		Morebits.status.warn(wgULS('抓取用户信息出错', '擷取用戶資訊出錯'), msg);
 	});
 };
 
@@ -136,36 +137,36 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	Twinkle.block.callback.saveFieldset($('[name=field_template_options]'));
 
 	if ($form.find('[name=actiontype][value=block]').is(':checked')) {
-		field_preset = new Morebits.quickForm.element({ type: 'field', label: '预设', name: 'field_preset' });
+		field_preset = new Morebits.quickForm.element({ type: 'field', label: wgULS('预设', '預設'), name: 'field_preset' });
 		field_preset.append({
 				type: 'select',
 				name: 'preset',
-				label: '选择预设：',
+				label: wgULS('选择预设：', '選擇預設：'),
 				event: Twinkle.block.callback.change_preset,
 				list: Twinkle.block.callback.filtered_block_groups()
 			});
 
-		field_block_options = new Morebits.quickForm.element({ type: 'field', label: '封禁选项', name: 'field_block_options' });
+		field_block_options = new Morebits.quickForm.element({ type: 'field', label: wgULS('封禁选项', '封禁設定'), name: 'field_block_options' });
 		field_block_options.append({ type: 'div', name: 'hasblocklog', label: ' ' });
 		field_block_options.append({ type: 'div', name: 'currentblock', label: ' ' });
 		field_block_options.append({
 				type: 'select',
 				name: 'expiry_preset',
-				label: '过期时间：',
+				label: wgULS('过期时间：', '過期時間：'),
 				event: Twinkle.block.callback.change_expiry,
 				list: [
-					{ label: '自定义', value: 'custom', selected: true },
-					{ label: '无限期', value: 'infinity' },
-					{ label: '3小时', value: '3 hours' },
-					{ label: '12小时', value: '12 hours' },
-					{ label: '24小时', value: '24 hours' },
-					{ label: '31小时', value: '31 hours' },
-					{ label: '36小时', value: '36 hours' },
-					{ label: '48小时', value: '48 hours' },
-					{ label: '60小时', value: '60 hours' },
-					{ label: '72小时', value: '72 hours' },
-					{ label: '1周', value: '1 week' },
-					{ label: '2周', value: '2 weeks' },
+					{ label: wgULS('自定义', '自訂'), value: 'custom', selected: true },
+					{ label: wgULS('无限期', '無限期'), value: 'infinity' },
+					{ label: wgULS('3小时', '3小時'), value: '3 hours' },
+					{ label: wgULS('12小时', '12小時'), value: '12 hours' },
+					{ label: wgULS('24小时', '24小時'), value: '24 hours' },
+					{ label: wgULS('31小时', '31小時'), value: '31 hours' },
+					{ label: wgULS('36小时', '36小時'), value: '36 hours' },
+					{ label: wgULS('48小时', '48小時'), value: '48 hours' },
+					{ label: wgULS('60小时', '60小時'), value: '60 hours' },
+					{ label: wgULS('72小时', '72小時'), value: '72 hours' },
+					{ label: wgULS('1周', '1週'), value: '1 week' },
+					{ label: wgULS('2周', '2週'), value: '2 weeks' },
 					{ label: '1月', value: '1 month' },
 					{ label: '3月', value: '3 months' },
 					{ label: '6月', value: '6 months' },
@@ -177,26 +178,26 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			field_block_options.append({
 					type: 'input',
 					name: 'expiry',
-					label: '自定义过期时间',
-					tooltip: '您可以使用相对时间，如“1 minute”或“19 days”；或绝对是间，“yyyymmddhhmm”（如“200602011405”是2006年2月1日14:05 UTC。）',
+					label: wgULS('自定义过期时间', '自訂過期時間'),
+					tooltip: wgULS('您可以使用相对时间，如“1 minute”或“19 days”；或绝对时间，“yyyymmddhhmm”（如“200602011405”是2006年2月1日14:05 UTC。）', '您可以使用相對時間，如「1 minute」或「19 days」；或絕對時間，「yyyymmddhhmm」（如「200602011405」是2006年2月1日14:05 UTC。）'),
 					value: Twinkle.block.field_block_options.expiry || Twinkle.block.field_template_options.template_expiry
 				});
 		var blockoptions = [
 				{
 					checked: Twinkle.block.field_block_options.nocreate,
-					label: '禁止创建帐户',
+					label: wgULS('禁止创建帐户', '禁止建立帳戶'),
 					name: 'nocreate',
 					value: '1'
 				},
 				{
 					checked: Twinkle.block.field_block_options.noemail,
-					label: '电子邮件停用',
+					label: wgULS('电子邮件停用', '電子郵件停用'),
 					name: 'noemail',
 					value: '1'
 				},
 				{
 					checked: Twinkle.block.field_block_options.disabletalk,
-					label: '不能编辑自己的讨论页',
+					label: wgULS('不能编辑自己的讨论页', '不能編輯自己的討論頁'),
 					name: 'disabletalk',
 					value: '1'
 				}
@@ -205,14 +206,14 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		if (Twinkle.block.isRegistered) {
 			blockoptions.push({
 					checked: Twinkle.block.field_block_options.autoblock,
-					label: '自动封禁',
+					label: wgULS('自动封禁', '自動封禁'),
 					name: 'autoblock',
 					value: '1'
 				});
 		} else {
 			blockoptions.push({
 					checked: Twinkle.block.field_block_options.hardblock,
-					label: '阻止登录用户使用该IP地址编辑',
+					label: wgULS('阻止登录用户使用该IP地址编辑', '阻止登入用戶使用該IP位址編輯'),
 					name: 'hardblock',
 					value: '1'
 				});
@@ -220,7 +221,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 
 		blockoptions.push({
 				checked: Twinkle.block.field_block_options.watchuser,
-				label: '监视该用户的用户页和讨论页',
+				label: wgULS('监视该用户的用户页和讨论页', '監視該用戶的用戶頁和討論頁'),
 				name: 'watchuser',
 				value: '1'
 			});
@@ -232,10 +233,69 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			});
 		field_block_options.append({
 				type: 'textarea',
-				label: '理由（为了封禁日志）：',
+				label: wgULS('理由（用于封禁日志）：', '理由（用於封禁日誌）：'),
 				name: 'reason',
 				value: Twinkle.block.field_block_options.reason
 			});
+		field_block_options.append({
+				type: 'div',
+				name: 'filerlog_label',
+				label: wgULS('“参见”：', '「參見」：'),
+				style: 'display:inline-block;font-style:normal !important',
+				tooltip: wgULS('在封禁理由中标清特殊情况以供其他管理员参考', '在封禁理由中標清特殊情況以供其他管理員參考')
+			});
+		field_block_options.append({
+				type: 'checkbox',
+				name: 'filter_see_also',
+				event: Twinkle.block.callback.toggle_see_alsos,
+				style: 'display:inline-block; margin-right:5px',
+				list: [
+					{
+						label: wgULS('过滤器日志', '過濾器日誌'),
+						checked: false,
+						value: '过滤器日志'
+					}
+				]
+			} );
+		field_block_options.append({
+				type: 'checkbox',
+				name: 'deleted_see_also',
+				event: Twinkle.block.callback.toggle_see_alsos,
+				style: 'display:inline-block',
+				list: [
+					{
+						label: wgULS('已删除的编辑', '已刪除的編輯'),
+						checked: false,
+						value: '已删除的编辑'
+					}
+				]
+			} );
+		field_block_options.append({
+				type: 'checkbox',
+				name: 'filter_see_also',
+				event: Twinkle.block.callback.toggle_see_alsos,
+				style: 'display:inline-block; margin-right:5px',
+				list: [
+					{
+						label: wgULS('用户讨论页', '用戶討論頁'),
+						checked: false,
+						value: '用户讨论页'
+					}
+				]
+			} );
+		field_block_options.append({
+				type: 'checkbox',
+				name: 'filter_see_also',
+				event: Twinkle.block.callback.toggle_see_alsos,
+				style: 'display:inline-block; margin-right:5px',
+				list: [
+					{
+						label: wgULS('过去的封禁记录', '過去的封禁記錄'),
+						checked: false,
+						value: '过去的封禁记录'
+					}
+				]
+			} );
 
 		if (Twinkle.block.currentBlockInfo) {
 			field_block_options.append( { type: 'hidden', name: 'reblock', value: '1' } );
@@ -243,11 +303,11 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	}
 
 	if ($form.find('[name=actiontype][value=template]').is(':checked')) {
-		field_template_options = new Morebits.quickForm.element({ type: 'field', label: '模板选项', name: 'field_template_options' });
+		field_template_options = new Morebits.quickForm.element({ type: 'field', label: wgULS('模板选项', '模板設定'), name: 'field_template_options' });
 		field_template_options.append( {
 				type: 'select',
 				name: 'template',
-				label: '选择对话页模板：',
+				label: wgULS('选择对话页模板：', '選擇對話頁模板：'),
 				event: Twinkle.block.callback.change_template,
 				list: Twinkle.block.callback.filtered_block_groups(true),
 				value: Twinkle.block.field_template_options.template
@@ -256,9 +316,9 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				type: 'input',
 				name: 'article',
 				display: 'none',
-				label: '条目链接',
+				label: wgULS('条目链接', '條目連結'),
 				value: '',
-				tooltip: '可以随通知链接条目，比如扰乱的主目标。没有条目需要链接则请留空。'
+				tooltip: wgULS('可以随通知链接条目，比如扰乱的主目标。没有条目需要链接则请留空。', '可以隨通知連結條目，比如擾亂的主目標。沒有條目需要連結則請留空。')
 			} );
 		if (!$form.find('[name=actiontype][value=block]').is(':checked')) {
 			field_template_options.append( {
@@ -267,15 +327,15 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				display: 'none',
 				label: '封禁期限：',
 				value: '',
-				tooltip: '封禁时长，如24小时、2周、无限期等。'
+				tooltip: wgULS('封禁时长，如24小时、2周、无限期等。', '封禁時長，如24小時、2週、無限期等。')
 			} );
 		}
 		field_template_options.append( {
 			type: 'input',
 			name: 'block_reason',
-			label: '“由于…您已被封禁”',
+			label: wgULS('“由于…您已被封禁”', '「由於…您已被封禁」'),
 			display: 'none',
-			tooltip: '可选的理由，用于替换默认理由。只在常规封禁模板中有效。',
+			tooltip: wgULS('可选的理由，用于替换默认理由。只在常规封禁模板中有效。', '可選的理由，用於替換預設理由。只在常規封禁模板中有效。'),
 			value: Twinkle.block.field_template_options.block_reason
 		} );
 
@@ -287,7 +347,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 					{
 						label: '不在模板中包含封禁期限',
 						checked: Twinkle.block.field_template_options.blank_duration,
-						tooltip: '模板将会显示“一段时间”而不是具体时长'
+						tooltip: wgULS('模板将会显示“一段时间”而不是具体时长', '模板將會顯示「一段時間」而不是具體時長')
 					}
 				]
 			} );
@@ -297,15 +357,15 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			//	name: 'notalk',
 			//	list: [
 			//		{
-			//			label: '不能编辑自己的讨论页',
+			//			label: wgULS('不能编辑自己的讨论页', '不能編輯自己的討論頁'),
 			//			checked: Twinkle.block.field_template_options.notalk,
-			//			tooltip: '用此在保护模板中指明该用户编辑对话页的权限已被移除'
+			//			tooltip: wgULS('用此在保护模板中指明该用户编辑对话页的权限已被移除', '用此在保護模板中指明該用戶編輯對話頁的權限已被移除')
 			//		}
 			//	]
 			//} );
 		}
 
-		var $previewlink = $( '<a id="twinkleblock-preivew-link">预览</a>' );
+		var $previewlink = $( '<a id="twinkleblock-preivew-link">'+wgULS('预览', '預覽')+'</a>' );
 		$previewlink.off('click').on('click', function(){
 			Twinkle.block.callback.preview($form[0]);
 		});
@@ -336,15 +396,15 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	}
 
 	if (Twinkle.block.hasBlockLog) {
-		var $blockloglink = $( '<a target="_blank" href="' + mw.util.getUrl('Special:Log', {action: 'view', page: mw.config.get('wgRelevantUserName'), type: 'block'}) + '">封禁日志</a>)' );
+		var $blockloglink = $( '<a target="_blank" href="' + mw.util.getUrl('Special:Log', {action: 'view', page: Morebits.wiki.flow.relevantUserName(), type: 'block'}) + '">'+wgULS('封禁日志', '封禁日誌')+'</a>)' );
 
 		Morebits.status.init($('div[name="hasblocklog"] span').last()[0]);
-		Morebits.status.warn('此用户曾在过去被封禁', $blockloglink[0]);
+		Morebits.status.warn(wgULS('此用户曾在过去被封禁', '此用戶曾在過去被封禁'), $blockloglink[0]);
 	}
 
 	if (Twinkle.block.currentBlockInfo) {
 		Morebits.status.init($('div[name="currentblock"] span').last()[0]);
-		Morebits.status.warn(relevantUserName + '已被封禁', '提交请求来用给定的选项重新封禁');
+		Morebits.status.warn(relevantUserName + wgULS('已被封禁', '已被封禁'), wgULS('提交请求来用给定的选项重新封禁', '提交請求來用給定的設定重新封禁'));
 		Twinkle.block.callback.update_form(e, Twinkle.block.currentBlockInfo);
 	} else if ($form.find('[name=actiontype][value=template]').is(':checked')) {
 		// make sure all the fields are correct based on defaults
@@ -474,17 +534,17 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-ublock|误导' : {
 		expiry: 'infinity',
-		reason: '{{uw-ublock|误导}}',
+		reason: wgULS('{{uw-ublock|误导}}', '{{uw-ublock|誤導}}'),
 		forRegisteredOnly: true
 	},
 	'uw-ublock|宣传' : {
 		expiry: 'infinity',
-		reason: '{{uw-ublock|宣传}}',
+		reason: wgULS('{{uw-ublock|宣传}}', '{{uw-ublock|宣傳}}'),
 		forRegisteredOnly: true
 	},
 	'uw-ublock|攻击|或侮辱性' : {
 		expiry: 'infinity',
-		reason: '{{uw-ublock|攻击|或侮辱性}}',
+		reason: wgULS('{{uw-ublock|攻击|或侮辱性}}', '{{uw-ublock|攻擊|或侮辱性}}'),
 		forRegisteredOnly: true
 	},
 	'uw-ublock|混淆' : {
@@ -539,38 +599,38 @@ Twinkle.block.blockGroups = [
 		meta: true,
 		label: '封禁模板',
 		list: [
-			{ label: '层级1封禁', value: 'uw-block1' },
-			{ label: '层级2封禁', value: 'uw-block2' },
-			{ label: '层级3封禁', value: 'uw-block3' },
+			{ label: wgULS('层级1封禁', '層級1封禁'), value: 'uw-block1' },
+			{ label: wgULS('层级2封禁', '層級2封禁'), value: 'uw-block2' },
+			{ label: wgULS('层级3封禁', '層級3封禁'), value: 'uw-block3' },
 			{ label: '匿名封禁', value: 'uw-ablock' }
 		]
 	},
 	{
 		label: '一般的封禁理由',
 		list: [
-			{ label: '[[WP:VAN|破坏]]', value: 'uw-vblock' },
-			{ label: '[[WP:VAN#LANG|繁简破坏]]', value: 'uw-block1' },
-			{ label: '跨维基项目破坏', value: 'uw-block1' },
-			{ label: '[[WP:VOA|纯破坏用户]]', value: 'uw-block3' },
-			{ label: '[[WP:SOAP|散发广告或宣传]]', value: 'uw-sblock' },
-			{ label: '仅[[WP:SOAP|散发广告/宣传]]的用户', value: 'uw-block3' },
-			{ label: '违反[[WP:3RR|回退不过三原则]]', value: 'uw-3block' },
-			{ label: '无礼的行为、[[WP:NPA|攻击别人]]', value: 'uw-block1' },
-			{ label: '[[WP:骚扰|骚扰用户]]', value: 'uw-block1' },
-			{ label: '[[WP:扰乱|扰乱]]', value: 'uw-block1' },
-			{ label: '[[WP:GAME|游戏维基规则]]', value: 'uw-block1' },
-			{ label: '确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]]', value: 'uw-block3' },
-			{ label: '滥用[[WP:SOCK|傀儡]]', value: 'uw-block1' },
-			{ label: '屡次增加不实资料', value: 'uw-block1' },
-			{ label: '在条目中增加无意义文字', value: 'uw-block1' },
-			{ label: '无故删除条目内容', value: 'uw-dblock' },
-			{ label: '多次加入[[WP:COPYVIO|侵犯版权]]的内容', value: 'uw-block1' },
-			{ label: '机器人发生故障并必须紧急停止', value: 'uw-bblock' }
-			//{ label: '剥夺编辑对话页权限', value: '' }
+			{ label: wgULS('[[WP:VAN|破坏]]', '[[WP:VAN|破壞]]'), value: 'uw-vblock' },
+			{ label: wgULS('[[WP:VAN#LANG|繁简破坏]]', '[[WP:VAN#LANG|繁簡破壞]]'), value: 'uw-block1' },
+			{ label: wgULS('跨维基项目破坏', '跨維基項目破壞'), value: 'uw-block1' },
+			{ label: wgULS('[[WP:VOA|纯粹破坏]]', '[[WP:VOA|純粹破壞]]'), value: 'uw-block3' },
+			{ label: wgULS('[[WP:SOAP|散发广告或宣传]]', '[[WP:SOAP|散發廣告或宣傳]]'), value: 'uw-sblock' },
+			{ label: wgULS('仅[[WP:SOAP|散发广告/宣传]]', '僅[[WP:SOAP|散發廣告/宣傳]]'), value: 'uw-block3' },
+			{ label: wgULS('违反[[WP:3RR|回退不过三原则]]', '違反[[WP:3RR|回退不過三原則]]'), value: 'uw-3block' },
+			{ label: wgULS('无礼的行为、[[WP:NPA|攻击别人]]', '無禮的行為、[[WP:NPA|攻擊別人]]'), value: 'uw-block1' },
+			{ label: wgULS('[[WP:骚扰|骚扰用户]]', '[[WP:騷擾|騷擾用戶]]'), value: 'uw-block1' },
+			{ label: wgULS('[[WP:扰乱|扰乱]]', '[[WP:擾亂|擾亂]]'), value: 'uw-block1' },
+			{ label: wgULS('[[WP:GAME|游戏维基规则]]', '[[WP:GAME|遊戲維基規則]]'), value: 'uw-block1' },
+			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]]', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]]'), value: 'uw-block3' },
+			{ label: wgULS('滥用[[WP:SOCK|傀儡]]', '濫用[[WP:SOCK|傀儡]]'), value: 'uw-block1' },
+			{ label: wgULS('屡次增加不实资料', '屢次增加不實資料'), value: 'uw-block1' },
+			{ label: wgULS('在条目中增加无意义文字', '在條目中增加無意義文字'), value: 'uw-block1' },
+			{ label: wgULS('无故删除条目内容', '無故刪除條目內容'), value: 'uw-dblock' },
+			{ label: wgULS('多次加入[[WP:COPYVIO|侵犯版权]]的内容', '多次加入[[WP:COPYVIO|侵犯版權]]的內容'), value: 'uw-block1' },
+			{ label: wgULS('机器人发生故障并必须紧急停止', '機器人發生故障並必須緊急停止'), value: 'uw-bblock' }
+			//{ label: wgULS('剥夺编辑对话页权限', '剝奪編輯對話頁權限'), value: '' }
 		]
 	},
 	{
-		label: '用户名封禁',
+		label: wgULS('用户名封禁', '用戶名封禁'),
 		list: [
 			{ label: '', value: 'uw-ublock|误导' },
 			{ label: '', value: 'uw-ublock|宣传' },
@@ -637,6 +697,30 @@ Twinkle.block.callback.change_expiry = function twinkleblockCallbackChangeExpiry
 	} else {
 		Morebits.quickForm.setElementVisibility(expiry.parentNode, false);
 		expiry.value = e.target.value;
+	}
+};
+
+Twinkle.block.seeAlsos = [];
+Twinkle.block.callback.toggle_see_alsos = function twinkleblockCallbackToggleSeeAlso(e) {
+	var reason = this.form.reason.value.replace(
+		new RegExp('( <!--|;) ' + '参见' + Twinkle.block.seeAlsos.join('、') + '( -->)?'), ''
+	);
+
+	Twinkle.block.seeAlsos = Twinkle.block.seeAlsos.filter(function(el) {
+		return el !== this.value;
+	}.bind(this));
+
+	if (this.checked) {
+		Twinkle.block.seeAlsos.push(this.value);
+	}
+	var seeAlsoMessage = Twinkle.block.seeAlsos.join('、');
+
+	if (!Twinkle.block.seeAlsos.length) {
+		this.form.reason.value = reason;
+	} else if (reason.indexOf('{{') !== -1) {
+		this.form.reason.value = reason + ' <!-- 参见' + seeAlsoMessage + ' -->';
+	} else {
+		this.form.reason.value = reason + '; 参见' + seeAlsoMessage;
 	}
 };
 
@@ -759,34 +843,36 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	templateoptions.expiry = templateoptions.template_expiry || blockoptions.expiry;
 
 	if (toBlock) {
-		if (!blockoptions.expiry) return alert('请提供过期时间！');
-		if (!blockoptions.reason) return alert('请提供封禁理由！');
+		if (!blockoptions.expiry) return alert(wgULS('请提供过期时间！', '請提供過期時間！'));
+		if (!blockoptions.reason) return alert(wgULS('请提供封禁理由！', '請提供封禁理由！'));
 		blockoptions.reason += Twinkle.getPref('deletionSummaryAd');
 
 		Morebits.simpleWindow.setButtonsEnabled( false );
 		Morebits.status.init( e.target );
-		var statusElement = new Morebits.status('执行封禁');
+		var statusElement = new Morebits.status(wgULS('执行封禁', '執行封禁'));
 		blockoptions.action = 'block';
-		blockoptions.user = mw.config.get('wgRelevantUserName');
+		blockoptions.user = Morebits.wiki.flow.relevantUserName();
 
 		// boolean-flipped options
 		blockoptions.anononly = blockoptions.hardblock ? undefined : true;
 		blockoptions.allowusertalk = blockoptions.disabletalk ? undefined : true;
 
 		// fix for bug with block API, see [[phab:T68646]]
-		if (blockoptions.expiry === 'infinity') blockoptions.expiry = 'infinite';
+		if (blockoptions.expiry === 'infinity') {
+			blockoptions.expiry = 'infinite';
+		}
 
 		// execute block
 		api.getToken('block').then(function(token) {
-			statusElement.status('处理中…');
+			statusElement.status(wgULS('处理中…', '處理中…'));
 			blockoptions.token = token;
-			var mbApi = new Morebits.wiki.api( '执行封禁', blockoptions, function(data) {
+			var mbApi = new Morebits.wiki.api( wgULS('执行封禁', '執行封禁'), blockoptions, function(data) {
 				statusElement.info('完成');
 				if (toWarn) Twinkle.block.callback.issue_template(templateoptions);
 			});
 			mbApi.post();
 		}, function() {
-			statusElement.error('未能抓取封禁令牌');
+			statusElement.error(wgULS('未能抓取封禁令牌', '未能擷取封禁權杖'));
 		});
 	} else if (toWarn) {
 		Morebits.simpleWindow.setButtonsEnabled( false );
@@ -794,30 +880,37 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		Morebits.status.init( e.target );
 		Twinkle.block.callback.issue_template(templateoptions);
 	} else {
-		return alert('请给Twinkle点事做！');
+		return alert(wgULS('请给Twinkle点事做！', '請給Twinkle點事做！'));
 	}
 };
 
 Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTemplate(formData) {
-	var userTalkPage = 'User_talk:' + mw.config.get('wgRelevantUserName');
+	var userTalkPage = 'User_talk:' + Morebits.wiki.flow.relevantUserName();
 
 	var params = $.extend(formData, {
 		messageData: Twinkle.block.blockPresetsInfo[formData.template],
 		reason: Twinkle.block.field_template_options.block_reason,
 		disabletalk: Twinkle.block.field_template_options.notalk
 	});
-	params.template = params.template.split(':', 1)[0]
+	params.template = params.template.split(':', 1)[0];
 
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
-	Morebits.wiki.actionCompleted.notice = '完成，将在几秒后载入用户对话页';
+	Morebits.wiki.actionCompleted.notice = wgULS('完成，将在几秒后加载用户对话页', '完成，將在幾秒後載入用戶對話頁');
 
-	var wikipedia_page = new Morebits.wiki.page( userTalkPage, '用户对话页修改' );
-	wikipedia_page.setCallbackParameters( params );
-	wikipedia_page.setFollowRedirect( true );
-	wikipedia_page.load( Twinkle.block.callback.main );
+	Morebits.wiki.flow.check(userTalkPage, function () {
+		var flowpage = new Morebits.wiki.flow(userTalkPage, wgULS('用户Flow对话页留言', '用戶Flow對話頁留言'));
+		flowpage.setCallbackParameters(params);
+		Twinkle.block.callback.main_flow(flowpage);
+	}, function () {
+		var wikipedia_page = new Morebits.wiki.page( userTalkPage, wgULS('用户对话页修改', '用戶對話頁修改') );
+		wikipedia_page.setCallbackParameters( params );
+		wikipedia_page.setFollowRedirect( true );
+		wikipedia_page.load( Twinkle.block.callback.main );
+	});
+
 };
 
-Twinkle.block.callback.getBlockNoticeWikitext = function(params) {
+Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 	var text = '{{', settings = Twinkle.block.blockPresetsInfo[params.template];
 
 	if (!settings.nonstandard) {
@@ -843,9 +936,9 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params) {
 	}
 	text += '|subst=subst:';
 
-	if (settings.sig === '~~~~') {
+	if (settings.sig === '~~~~' && !nosign) {
 		text += '}}--~~~~';
-	} else if (settings.sig) {
+	} else if (settings.sig && !nosign) {
 		text += '|sig=' + settings.sig;
 		text += '}}';
 	} else {
@@ -879,10 +972,10 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain( pageobj ) {
 	params.indefinite = (/indef|infinity|never|\*|max/).test( params.expiry );
 
 	if ( Twinkle.getPref('blankTalkpageOnIndefBlock') && params.template !== 'uw-lblock' && params.indefinite ) {
-		Morebits.status.info( '信息', '根据参数设置清空讨论页并为日期创建新2级标题' );
+		Morebits.status.info( '信息', wgULS('根据参数设置清空讨论页并为日期创建新2级标题', '根據偏好設定清空討論頁並為日期創建新2級標題') );
 		text = '== ' + date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月 ' + ' ==\n';
 	} else if( !dateHeaderRegexResult || dateHeaderRegexResult.index !== lastHeaderIndex ) {
-		Morebits.status.info( '信息', '未找到当月标题，将创建新的' );
+		Morebits.status.info( '信息', wgULS('未找到当月标题，将创建新的', '未找到當月標題，將建立新的') );
 		text += '== ' + date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月 ' + ' ==\n';
 	}
 
@@ -894,7 +987,7 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain( pageobj ) {
 	var templateName = messageData.templateName || messageData.template || messageData.value;
 	var summary = '{{' + templateName + '}}: ' + params.reason;
 	if ( messageData.suppressArticleInSummary !== true && params.article ) {
-		summary += '，于[[' + params.article + ']]';
+		summary += wgULS('，于[[', '，於[[') + params.article + ']]';
 	}
 	summary += Twinkle.getPref('summaryAd');
 
@@ -902,6 +995,20 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain( pageobj ) {
 	pageobj.setEditSummary( summary );
 	pageobj.setWatchlist( Twinkle.getPref('watchWarnings') );
 	pageobj.save();
+};
+
+Twinkle.block.callback.main_flow = function twinkleblockcallbackMain( flowobj ) {
+	var params = flowobj.getCallbackParameters();
+
+	params.indefinite = (/indef|infinity|never|\*|max/).test( params.expiry );
+	params.expiry = typeof params.template_expiry !== "undefined" ? params.template_expiry : params.expiry;
+
+	var title = "封禁通知";
+	var content = Twinkle.block.callback.getBlockNoticeWikitext(params, true);
+
+	flowobj.setTopic(title);
+	flowobj.setContent(content);
+	flowobj.newTopic();
 };
 
 })(jQuery);

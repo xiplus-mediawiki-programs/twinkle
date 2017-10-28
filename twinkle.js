@@ -6,12 +6,12 @@
  * |                           修改前请联系维护者。                          |
  * +-------------------------------------------------------------------------+
  *
- * 从Github导入[https://github.com/jimmyxu/twinkle]
+ * 从Github导入[https://github.com/vjudge1/twinkle]
  *
  * ----------
  *
- * 这是Twinkle，新手、管理员及他们之间的用户的
- * 好搭档。请参见[[WP:TW]]以获取更多信息。
+ * 这是经过篡改的Twinkle，是让新手、管理员及他们之间的用户破坏维基百科的
+ * 好帮手。请参见[[WP:TW]]以获取更多信息。
  *
  * 维护者：~~~
  */
@@ -20,8 +20,33 @@
 
 ( function ( window, document, $, undefined ) { // Wrap with anonymous function
 
+// MediaWiki:Gadget-site-lib.js
+window.wgUXS = function (wg, hans, hant, cn, tw, hk, sg, zh, mo, my) {
+    var ret = {
+        'zh': zh || hans || hant || cn || tw || hk || sg || mo || my,
+        'zh-hans': hans || cn || sg || my,
+        'zh-hant': hant || tw || hk || mo,
+        'zh-cn': cn || hans || sg || my,
+        'zh-sg': sg || hans || cn || my,
+        'zh-tw': tw || hant || hk || mo,
+        'zh-hk': hk || hant || mo || tw,
+        'zh-mo': mo || hant || hk || tw
+    };
+    return ret[wg] || zh || hans || hant || cn || tw || hk || sg || mo || my; //保證每一語言有值
+};
+
+window.wgULS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
+    return wgUXS(mw.config.get('wgUserLanguage'), hans, hant, cn, tw, hk, sg, zh, mo, my);
+};
+
+window.wgUVS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
+    return wgUXS(mw.config.get('wgUserVariant'), hans, hant, cn, tw, hk, sg, zh, mo, my);
+};
+
 var Twinkle = {};
 window.Twinkle = Twinkle;  // allow global access
+
+Twinkle.amanojaku = true;
 
 // Check if account is experienced enough to use Twinkle
 Twinkle.userAuthorized = Morebits.userIsInGroup( "autoconfirmed" ) || Morebits.userIsInGroup( "confirmed" );
@@ -79,7 +104,7 @@ Twinkle.defaultConfig.twinkle = {
 	logSpeedyNominations: false,
 	speedyLogPageName: "CSD日志",
 	noLogOnSpeedyNomination: [ "o1" ],
-	enlargeG11Input: true,
+	enlargeG11Input: false,
 	 // Unlink
 	unlinkNamespaces: [ "0", "10", "100", "118" ],
 	 // Warn
@@ -132,8 +157,8 @@ Twinkle.defaultConfig.friendly = {
 	 // Talkback
 	markTalkbackAsMinor: true,
 	insertTalkbackSignature: true,  // always sign talkback templates
-	talkbackHeading: "回复通告",
-	mailHeading: "您有新邮件！",
+	talkbackHeading: wgULS("回复通告", "回覆通告"),
+	mailHeading: wgULS("您有新邮件！", "您有新郵件！"),
 	 // Shared
 	markSharedIPAsMinor: true
 };
@@ -381,20 +406,31 @@ Twinkle.load = function () {
 	// Don't activate on special pages other than "Contributions" so that they load faster, especially the watchlist.
 	var isSpecialPage = ( mw.config.get('wgNamespaceNumber') === -1 &&
 		mw.config.get('wgCanonicalSpecialPageName') !== "Contributions" &&
+		mw.config.get('wgCanonicalSpecialPageName') !== "DeletedContributions" &&
 		mw.config.get('wgCanonicalSpecialPageName') !== "Prefixindex" ),
 
 		// Also, Twinkle is incompatible with Internet Explorer versions 8 or lower, so don't load there either.
-		isOldIE = ( $.client.profile().name === 'msie' );
+		isOldIE = ( window.attachEvent && !window.addEventListener );
 
 	// Prevent users that are not autoconfirmed from loading Twinkle as well.
-	if ( isSpecialPage || isOldIE || !Twinkle.userAuthorized ) {
+	if ( isSpecialPage || !Twinkle.userAuthorized ) {
+		return;
+	}
+
+	if (isOldIE) {
+		mw.notify(wgULS('警告：Twinkle不兼容旧版本IE浏览器，请更换浏览器之后再使用。', '警告：Twinkle與舊版本IE瀏覽器不相容，請更換瀏覽器之後再使用。'));
+		return;
+	}
+
+	// Prevent clickjacking
+	if ( window.top !== window.self ) {
 		return;
 	}
 
 	// Set custom Api-User-Agent header, for server-side logging purposes
-	Morebits.wiki.api.setApiUserAgent( 'Twinkle~zh/2.0 (' + mw.config.get( 'wgDBname' ) + ')' );
+	Morebits.wiki.api.setApiUserAgent( 'Twinkle~zh~/2.0 (' + mw.config.get( 'wgDBname' ) + ', cracked by Amanojaku)' );
 
-	// Load the modules in the order that the tabs should appears
+	// Load the modules in the order that the tabs should appear
 	// User/user talk-related
 	Twinkle.arv();
 	Twinkle.warn();
@@ -421,6 +457,9 @@ Twinkle.load = function () {
 		Twinkle.batchundelete();
 		Twinkle.close();
 	}
+
+	Twinkle.addPortletLink( mw.util.wikiScript("index")+ "?title=Wikipedia:Twinkle/参数设置", wgULS('设置', '設定'), 'tw-config', wgULS('设置Twinkle参数', '設定Twinkle參數') );
+
 	// Run the initialization callbacks for any custom modules
 	$( Twinkle.initCallbacks ).each(function ( k, v ) { v(); });
 	Twinkle.addInitCallback = function ( func ) { func(); };
