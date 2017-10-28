@@ -1052,7 +1052,9 @@ Twinkle.config.init = function twinkleconfigInit() {
 				if (pref.helptip) {
 					// convert mentions of templates in the helptip to clickable links
 					cell.innerHTML = pref.helptip.replace(/{{(.+?)}}/g,
-						'{{<a href="' + mw.util.getUrl("Template:") + '$1" target="_blank">$1</a>}}');
+						'{{<a href="' + mw.util.getUrl("Template:") + '$1" target="_blank">$1</a>}}')
+							.replace(/\[\[(.+?)]]/g,
+						'<a href="' + mw.util.getUrl("") + '$1" target="_blank">$1</a>');
 				}
 				// add reset link (custom lists don't need this, as their config value isn't displayed on the form)
 				if (pref.type !== "customList") {
