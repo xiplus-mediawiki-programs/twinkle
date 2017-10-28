@@ -409,6 +409,7 @@ Twinkle.tag.article.tags = wgULS({
 	"primarysources": "依賴第一手來源",
 	"prose": "使用了日期或時間列表式記述，需要改寫為連貫的敘述性文字",
 	"refimprove": "需要補充更多來源",
+	"requested move": "建議將此頁面移動到新名稱",
 	"review": "閱讀起來類似評論，需要清理",
 	"rewrite": "不符合維基百科的質量標準，需要完全重寫",
 	"roughtranslation": "翻譯品質不佳",
