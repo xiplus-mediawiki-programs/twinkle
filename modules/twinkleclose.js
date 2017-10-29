@@ -15,7 +15,7 @@
  */
 
 Twinkle.close = function twinkleclose() {
-	if ( !Twinkle.getPref('XfdClose') || !(/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(mw.config.get('wgPageName'))) ) {
+	if ( Twinkle.getPref('XfdClose') === 'hide' || !(/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(mw.config.get('wgPageName'))) ) {
 		return;
 	}
 
@@ -91,7 +91,8 @@ Twinkle.close.codes = wgULS({
 	'保留': {
 		'k': {
 			label: '保留',
-			action: 'keep'
+			action: 'keep',
+			adminonly: true
 		},
 		'sk': {
 			label: '快速保留',
@@ -99,26 +100,31 @@ Twinkle.close.codes = wgULS({
 		},
 		'tk': {
 			label: '暂时保留',
-			action: 'keep'
+			action: 'keep',
+			adminonly: true
 		},
 		'rr': {
 			label: '请求理由消失',
-			action: 'keep'
+			action: 'keep',
+			selected: (Twinkle.getPref('XfdClose') === 'nonadminonly')
 		},
 		'dan': {
 			label: '删后重建',
-			action: 'keep'
+			action: 'keep',
+			adminonly: true
 		}
 	},
 	'删除': {
 		'd': {
 			label: '删除',
 			action: 'del',
-			selected: true
+			adminonly: true,
+			selected: (Twinkle.getPref('XfdClose') === 'all')
 		},
 		'ic': {
 			label: '图像因侵权被删',
-			action: 'del'
+			action: 'del',
+			adminonly: true
 		}
 	},
 	'快速删除': {
@@ -140,37 +146,45 @@ Twinkle.close.codes = wgULS({
 		},
 		'drep': {
 			label: '多次被删除，条目锁定',
-			action: 'del'
+			action: 'del',
+			adminonly: true
 		}
 	},
 	'转移至其他维基计划': {
 		'twc': {
 			label: '转移至维基共享资源',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'twn': {
 			label: '转移至维基新闻',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'tws': {
 			label: '转移至维基文库',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'twb': {
 			label: '转移至维基教科书',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'twq': {
 			label: '转移至维基语录',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'twt': {
 			label: '转移至维基词典',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'two': {
 			label: '转移至其他维基计划',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		}
 	},
 	'其他处理方法': {
@@ -188,23 +202,28 @@ Twinkle.close.codes = wgULS({
 		},
 		'r': {
 			label: '重定向',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'cr': {
 			label: '分类重定向',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'm': {
 			label: '移动',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'merge': {
 			label: '并入',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'nc': {
 			label: '无共识',
-			action: 'keep'
+			action: 'keep',
+			adminonly: true
 		}
 	}
 }, {
@@ -233,7 +252,8 @@ Twinkle.close.codes = wgULS({
 	'保留': {
 		'k': {
 			label: '保留',
-			action: 'keep'
+			action: 'keep',
+			adminonly: true
 		},
 		'sk': {
 			label: '快速保留',
@@ -241,26 +261,31 @@ Twinkle.close.codes = wgULS({
 		},
 		'tk': {
 			label: '暫時保留',
-			action: 'keep'
+			action: 'keep',
+			adminonly: true
 		},
 		'rr': {
 			label: '請求理由消失',
-			action: 'keep'
+			action: 'keep',
+			selected: (Twinkle.getPref('XfdClose') === 'nonadminonly')
 		},
 		'dan': {
 			label: '刪後重建',
-			action: 'keep'
+			action: 'keep',
+			adminonly: true
 		}
 	},
 	'刪除': {
 		'd': {
 			label: '刪除',
 			action: 'del',
-			selected: true
+			adminonly: true,
+			selected: (Twinkle.getPref('XfdClose') === 'all')
 		},
 		'ic': {
 			label: '圖像因侵權被刪',
-			action: 'del'
+			action: 'del',
+			adminonly: true
 		}
 	},
 	'快速刪除': {
@@ -282,37 +307,45 @@ Twinkle.close.codes = wgULS({
 		},
 		'drep': {
 			label: '多次被刪除，條目鎖定',
-			action: 'del'
+			action: 'del',
+			adminonly: true
 		}
 	},
 	'轉移至其他維基計劃': {
 		'twc': {
 			label: '轉移至維基共享資源',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'twn': {
 			label: '轉移至維基新聞',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'tws': {
 			label: '轉移至維基文庫',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'twb': {
 			label: '轉移至維基教科書',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'twq': {
 			label: '轉移至維基語錄',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'twt': {
 			label: '轉移至維基詞典',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'two': {
 			label: '轉移至其他維基計劃',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		}
 	},
 	'其他處理方法': {
@@ -330,23 +363,28 @@ Twinkle.close.codes = wgULS({
 		},
 		'r': {
 			label: '重定向',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'cr': {
 			label: '分類重定向',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'm': {
 			label: '移動',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'merge': {
 			label: '併入',
-			action: 'noop'
+			action: 'noop',
+			adminonly: true
 		},
 		'nc': {
 			label: '無共識',
-			action: 'keep'
+			action: 'keep',
+			adminonly: true
 		}
 	}
 });
@@ -407,7 +445,8 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 				type: 'option',
 				label: key + '：' + itemProperties.label,
 				value: key,
-				selected: itemProperties.selected
+				selected: itemProperties.selected,
+				disabled: (Twinkle.getPref('XfdClose') !== 'all' && itemProperties.adminonly)
 			} );
 			var elemRendered = container.appendChild( elem.render() );
 			$(elemRendered).data("messageData", itemProperties);

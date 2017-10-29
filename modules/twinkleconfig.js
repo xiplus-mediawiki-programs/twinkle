@@ -646,14 +646,21 @@ Twinkle.config.sections = [
 			type: "boolean"
 		},
 
-		// TwinkleConfig.markXfdPagesAsPatrolled (boolean)
-		// If, when applying xfd template to page, to mark the page as patrolled (if the page was reached from NewPages)
 		{
 			name: "XfdClose",
 			label: wgULS("在存废讨论显示关闭讨论按钮", "在存廢討論顯示關閉討論按鈕"),
 			helptip: wgULS("请确保您充分了解[[Wikipedia:关闭删除讨论指南]]才开启此功能。", "請確保您充分了解[[Wikipedia:關閉刪除討論指南]]才開啟此功能。"),
-			type: "boolean"
-		}
+			type: "enum",
+			enumValues: wgULS({
+				"hide": "不显示",
+				"nonadminonly": "只包含非管理员可使用选项",
+				"all": "显示所有选项"
+			}, {
+				"hide": "不顯示",
+				"nonadminonly": "只包含非管理員可使用選項",
+				"all": "顯示所有選項"
+			})
+		},
 	]
 
 },

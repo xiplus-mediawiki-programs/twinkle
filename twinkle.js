@@ -116,7 +116,7 @@ Twinkle.defaultConfig.twinkle = {
 	xfdWatchPage: "default",
 	xfdWatchUser: "default",
 	markXfdPagesAsPatrolled: true,
-	XfdClose: Morebits.userIsInGroup('sysop'),
+	XfdClose: ( Morebits.userIsInGroup('sysop') ? 'all' : 'hide' ),
 	 // Copyvio
 	copyvioWatchPage: "default",
 	copyvioWatchUser: "default",
@@ -456,7 +456,7 @@ Twinkle.load = function () {
 		Twinkle.batchdelete();
 		Twinkle.batchundelete();
 	}
-	if (Twinkle.getPref('XfdClose')) {
+	if (Twinkle.getPref('XfdClose') !== 'hide') {
 		Twinkle.close();
 	}
 
