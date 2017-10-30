@@ -647,6 +647,13 @@ Twinkle.config.sections = [
 		},
 
 		{
+			name: "FwdCsdToXfd",
+			label: wgULS("提删类别增加转交自快速删除候选", "提刪類別增加轉交自快速刪除候選"),
+			helptip: wgULS("请确保您充分了解[[Wikipedia:快速删除方针]]才开启此功能。", "請確保您充分了解[[Wikipedia:快速刪除方針]]才開啟此功能。"),
+			type: "boolean"
+		},
+
+		{
 			name: "XfdClose",
 			label: wgULS("在存废讨论显示关闭讨论按钮", "在存廢討論顯示關閉討論按鈕"),
 			helptip: wgULS("请确保您充分了解[[Wikipedia:关闭删除讨论指南]]才开启此功能。", "請確保您充分了解[[Wikipedia:關閉刪除討論指南]]才開啟此功能。"),

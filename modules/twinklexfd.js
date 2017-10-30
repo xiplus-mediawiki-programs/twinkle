@@ -154,7 +154,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		afd_category.append( { type:'option', label:wgULS('移动到维基教科书', '移動到維基教科書'), value:'vmb' } );
 		afd_category.append( { type:'option', label:wgULS('移动到维基语录', '移動到維基語錄'), value:'vmq' } );
 		afd_category.append( { type:'option', label:wgULS('移动到维基导游', '移動到維基導遊'), value:'vmvoy' } );
-		if ( Morebits.userIsInGroup('sysop') ) {
+		if ( Twinkle.getPref('FwdCsdToXfd') ) {
 			afd_category.append( { type:'option', label:wgULS('转交自快速删除候选', '轉交自快速刪除候選'), value:'fwdcsd' } );
 		}
 
