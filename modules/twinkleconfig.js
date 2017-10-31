@@ -167,6 +167,16 @@ Twinkle.config.sections = [
 			type: "string"
 		},
 
+		// TwinkleConfig.blockSummaryAd (string)
+		// Text to be appended to the edit summary of block made using Twinkle
+		{
+			name: "blockSummaryAd",
+			label: wgULS("封禁摘要后缀", "封禁摘要後綴"),
+			helptip: wgULS("通常和编辑摘要后缀一样。", "通常和編輯摘要後綴一樣。"),
+			adminOnly: true,
+			type: "string"
+		},
+
 		// TwinkleConfig.userTalkPageMode may take arguments:
 		// 'window': open a new window, remember the opened window
 		// 'tab': opens in a new tab, if possible.

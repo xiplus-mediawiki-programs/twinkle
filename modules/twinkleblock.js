@@ -845,7 +845,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	if (toBlock) {
 		if (!blockoptions.expiry) return alert(wgULS('请提供过期时间！', '請提供過期時間！'));
 		if (!blockoptions.reason) return alert(wgULS('请提供封禁理由！', '請提供封禁理由！'));
-		blockoptions.reason += Twinkle.getPref('deletionSummaryAd');
+		blockoptions.reason += Twinkle.getPref('blockSummaryAd');
 
 		Morebits.simpleWindow.setButtonsEnabled( false );
 		Morebits.status.init( e.target );

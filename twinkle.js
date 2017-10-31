@@ -70,6 +70,7 @@ Twinkle.defaultConfig.twinkle = {
 	summaryAd: "",
 	deletionSummaryAd: " ([[WP:TW|TW]])",
 	protectionSummaryAd: " ([[WP:TW|TW]])",
+	blockSummaryAd: " ([[WP:TW|TW]])",
 	userTalkPageMode: "tab",
 	dialogLargeFont: false,
 	 // Block
