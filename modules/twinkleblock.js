@@ -449,7 +449,6 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 Twinkle.block.blockPresetsInfo = {
 	'blocked proxy' : {
 		expiry: '2 years',
-		forAnonOnly: true,
 		nocreate: true,
 		nonstandard: true,
 		reason: '{{blocked proxy}}',
@@ -462,7 +461,6 @@ Twinkle.block.blockPresetsInfo = {
 		sig: '~~~~'
 	},
 	'checkuserblock-account' : {
-		forRegisteredOnly: true,
 		expiry: '1 month',
 		nonstandard: true,
 		reason: '{{checkuserblock-account}}',
@@ -478,7 +476,6 @@ Twinkle.block.blockPresetsInfo = {
 	//	sig: null
 	//},
 	'schoolblock' : {
-		forAnonOnly: true,
 		nocreate: true,
 		nonstandard: true,
 		reason: '{{schoolblock}}',
@@ -493,30 +490,25 @@ Twinkle.block.blockPresetsInfo = {
 	'uw-ablock' : {
 		autoblock: true,
 		expiry: '31 hours',
-		forAnonOnly: true,
 		nocreate: true,
 		reasonParam: true
 	},
 	'uw-bblock': {
-		forRegisteredOnly: true,
 	},
 	'uw-block1' : {
 		autoblock: true,
-		forRegisteredOnly: true,
 		nocreate: true,
 		reasonParam: true
 	},
 	'uw-block2' : {
 		autoblock: true,
 		expiry: '1 week',
-		forRegisteredOnly: true,
 		nocreate: true,
 		reasonParam: true
 	},
 	'uw-block3' : {
 		autoblock: true,
 		expiry: 'infinity',
-		forRegisteredOnly: true,
 		nocreate: true,
 		reasonParam: true
 	},
@@ -530,32 +522,30 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-ublock' : {
 		expiry: 'infinity',
-		forRegisteredOnly: true
 	},
 	'uw-ublock|误导' : {
 		expiry: 'infinity',
 		reason: wgULS('{{uw-ublock|误导}}', '{{uw-ublock|誤導}}'),
-		forRegisteredOnly: true
 	},
 	'uw-ublock|宣传' : {
 		expiry: 'infinity',
 		reason: wgULS('{{uw-ublock|宣传}}', '{{uw-ublock|宣傳}}'),
-		forRegisteredOnly: true
 	},
 	'uw-ublock|攻击|或侮辱性' : {
 		expiry: 'infinity',
 		reason: wgULS('{{uw-ublock|攻击|或侮辱性}}', '{{uw-ublock|攻擊|或侮辱性}}'),
-		forRegisteredOnly: true
 	},
 	'uw-ublock|混淆' : {
 		expiry: 'infinity',
 		reason: '{{uw-ublock|混淆}}',
-		forRegisteredOnly: true
 	},
 	'uw-vblock' : {
 		autoblock: true,
 		expiry: '31 hours',
 		nocreate: true
+	},
+	'Bot block message' : {
+		expiry: 'infinity'
 	}
 };
 
@@ -602,7 +592,7 @@ Twinkle.block.blockGroups = [
 			{ label: wgULS('层级1封禁', '層級1封禁'), value: 'uw-block1' },
 			{ label: wgULS('层级2封禁', '層級2封禁'), value: 'uw-block2' },
 			{ label: wgULS('层级3封禁', '層級3封禁'), value: 'uw-block3' },
-			{ label: '匿名封禁', value: 'uw-ablock' }
+			{ label: '匿名封禁', value: 'uw-ablock', forAnonOnly: true }
 		]
 	},
 	{
@@ -610,43 +600,43 @@ Twinkle.block.blockGroups = [
 		list: [
 			{ label: wgULS('[[WP:VAN|破坏]]', '[[WP:VAN|破壞]]'), value: 'uw-vblock' },
 			{ label: wgULS('[[WP:VAN#LANG|繁简破坏]]', '[[WP:VAN#LANG|繁簡破壞]]'), value: 'uw-block1' },
-			{ label: wgULS('跨维基项目破坏', '跨維基項目破壞'), value: 'uw-block1' },
+			{ label: wgULS('跨维基项目破坏', '跨維基項目破壞'), value: 'uw-block1', forRegisteredOnly:true },
 			{ label: wgULS('[[WP:VOA|纯粹破坏]]', '[[WP:VOA|純粹破壞]]'), value: 'uw-block3' },
 			{ label: wgULS('[[WP:SOAP|散发广告或宣传]]', '[[WP:SOAP|散發廣告或宣傳]]'), value: 'uw-sblock' },
-			{ label: wgULS('仅[[WP:SOAP|散发广告/宣传]]', '僅[[WP:SOAP|散發廣告/宣傳]]'), value: 'uw-block3' },
+			{ label: wgULS('仅[[WP:SOAP|散发广告/宣传]]', '僅[[WP:SOAP|散發廣告/宣傳]]'), value: 'uw-block3', forRegisteredOnly: true },
 			{ label: wgULS('违反[[WP:3RR|回退不过三原则]]', '違反[[WP:3RR|回退不過三原則]]'), value: 'uw-3block' },
 			{ label: wgULS('无礼的行为、[[WP:NPA|攻击别人]]', '無禮的行為、[[WP:NPA|攻擊別人]]'), value: 'uw-block1' },
 			{ label: wgULS('[[WP:骚扰|骚扰用户]]', '[[WP:騷擾|騷擾用戶]]'), value: 'uw-block1' },
 			{ label: wgULS('[[WP:扰乱|扰乱]]', '[[WP:擾亂|擾亂]]'), value: 'uw-block1' },
 			{ label: wgULS('[[WP:GAME|游戏维基规则]]', '[[WP:GAME|遊戲維基規則]]'), value: 'uw-block1' },
 			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]]', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]]'), value: 'uw-block3' },
-			{ label: wgULS('滥用[[WP:SOCK|傀儡]]', '濫用[[WP:SOCK|傀儡]]'), value: 'uw-block1' },
+			{ label: wgULS('滥用[[WP:SOCK|傀儡]]', '濫用[[WP:SOCK|傀儡]]'), value: 'uw-block1', forRegisteredOnly: true },
 			{ label: wgULS('屡次增加不实资料', '屢次增加不實資料'), value: 'uw-block1' },
 			{ label: wgULS('在条目中增加无意义文字', '在條目中增加無意義文字'), value: 'uw-block1' },
 			{ label: wgULS('无故删除条目内容', '無故刪除條目內容'), value: 'uw-dblock' },
 			{ label: wgULS('多次加入[[WP:COPYVIO|侵犯版权]]的内容', '多次加入[[WP:COPYVIO|侵犯版權]]的內容'), value: 'uw-block1' },
-			{ label: wgULS('机器人发生故障并必须紧急停止', '機器人發生故障並必須緊急停止'), value: 'uw-bblock' }
+			{ label: wgULS('机器人发生故障并必须紧急停止', '機器人發生故障並必須緊急停止'), value: 'Bot block message', forRegisteredOnly: true }
 			//{ label: wgULS('剥夺编辑对话页权限', '剝奪編輯對話頁權限'), value: '' }
 		]
 	},
 	{
 		label: wgULS('用户名封禁', '用戶名封禁'),
 		list: [
-			{ label: '', value: 'uw-ublock|误导' },
-			{ label: '', value: 'uw-ublock|宣传' },
-			{ label: '', value: 'uw-ublock|攻击|或侮辱性' },
-			{ label: '', value: 'uw-ublock|混淆' }
+			{ label: '', value: 'uw-ublock|误导', forRegisteredOnly: true },
+			{ label: '', value: 'uw-ublock|宣传', forRegisteredOnly: true },
+			{ label: '', value: 'uw-ublock|攻击|或侮辱性', forRegisteredOnly: true },
+			{ label: '', value: 'uw-ublock|混淆', forRegisteredOnly: true }
 		]
 	},
 	{
 		label: '其他模板',
 		list: [
-			{ label: '', value: 'uw-ublock' },
+			{ label: '', value: 'uw-ublock', forRegisteredOnly: true },
 			//{ label: '', value: 'range block' },
-			{ label: '', value: 'schoolblock' },
-			{ label: '', value: 'blocked proxy' },
-			{ label: '', value: 'checkuserblock' },
-			{ label: '', value: 'checkuserblock-account' }
+			{ label: '', value: 'schoolblock', forAnonOnly: true },
+			{ label: '', value: 'blocked proxy', forAnonOnly: true },
+			{ label: '', value: 'checkuserblock', forAnonOnly: true },
+			{ label: '', value: 'checkuserblock-account', forRegisteredOnly: true }
 		]
 	}
 ];
@@ -659,7 +649,7 @@ Twinkle.block.callback.filtered_block_groups = function twinkleblockCallbackFilt
 				if (!Twinkle.block.currentBlockInfo && blockPreset.value === "uw-talkrevoked") return;
 
 				var blockSettings = Twinkle.block.blockPresetsInfo[blockPreset.value];
-				var registrationRestrict = blockSettings.forRegisteredOnly ? Twinkle.block.isRegistered : (blockSettings.forAnonOnly ? !Twinkle.block.isRegistered : true);
+				var registrationRestrict = blockPreset.forRegisteredOnly ? Twinkle.block.isRegistered : (blockPreset.forAnonOnly ? !Twinkle.block.isRegistered : true);
 				if (!(blockSettings.templateName && show_template) && registrationRestrict) {
 					var templateName = blockSettings.templateName || blockSettings.template || blockPreset.value;
 					return {
