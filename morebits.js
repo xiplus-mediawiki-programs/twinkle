@@ -153,7 +153,7 @@ Morebits.sanitizeIPv6 = function ( address ) {
  *   button    A generic button.
  *              - Attributes: name, label, disabled, event
  *   textarea  A big, multi-line text box.
- *              - Attributes: name, label, value, cols, rows, disabled, readonly
+ *              - Attributes: name, label, value, cols, rows, disabled, readonly, hidden
  *   fragment  A DocumentFragment object.
  *              - No attributes, and no global attributes except adminonly
  *
@@ -609,6 +609,9 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 	case 'textarea':
 		node = document.createElement( 'div' );
 		node.setAttribute( 'id', 'div_' + id );
+		if( data.hidden ) {
+			node.setAttribute( 'hidden', '' );
+		}
 		if( data.label ) {
 			label = node.appendChild( document.createElement( 'h5' ) );
 			label.appendChild( document.createTextNode( data.label ) );

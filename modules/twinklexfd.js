@@ -114,7 +114,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		work_area.append( {
 			type: 'textarea',
 			name: 'xfdreason',
-			label: '理由：',
+			label: wgULS('提删理由：', '提刪理由：'),
 			value: oldreason,
 			tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您加入签名。', '您可以使用維基格式，Twinkle將自動為您加入簽名。')
 		} );
@@ -166,6 +166,14 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 				hidden: true
 			} );
 		appendReasonBox();
+		work_area.append( {
+			type: 'textarea',
+			name: 'fwdcsdreason',
+			label: wgULS('转交理由：', '轉交理由：'),
+			tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您加入签名。', '您可以使用維基格式，Twinkle將自動為您加入簽名。'),
+			hidden: true
+		} );
+
 		work_area = work_area.render();
 		old_area.parentNode.replaceChild( work_area, old_area );
 		break;
@@ -362,7 +370,7 @@ Twinkle.xfd.callbacks = {
 					break;
 			}
 
-			pageobj.setAppendText("\n{{subst:DRItem|Type=" + type + "|DRarticles=" + Morebits.pageNameNorm + "|Reason=" + Morebits.string.formatReasonText(params.reason) + "|To=" + to + "}}~~~~");
+			pageobj.setAppendText("\n{{subst:DRItem|Type=" + type + "|DRarticles=" + Morebits.pageNameNorm + "|Reason=" + Morebits.string.formatReasonText(params.reason) + (params.fwdcsdreason.trim() !== "" ? "<br>\n轉交理由："+params.fwdcsdreason : "") + "|To=" + to + "}}~~~~");
 			pageobj.setEditSummary(wgULS("添加[[", "加入[[") + Morebits.pageNameNorm + "]]" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchDiscussion')) {
 				case 'yes':
@@ -532,6 +540,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	var type = e.target.category.value;
 	var usertalk = e.target.notify.checked;
 	var reason = e.target.xfdreason.value;
+	var fwdcsdreason = e.target.fwdcsdreason.value;
 	var xfdcat, mergeinto, noinclude;
 	if( type === 'afd' ) {
 		noinclude = e.target.noinclude.checked;
@@ -561,7 +570,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	case 'afd': // AFD
 		dateString = date.getUTCFullYear() + '/' + twodigits(date.getUTCMonth() + 1) + '/' + twodigits(date.getUTCDate());
 		logpage = 'Wikipedia:頁面存廢討論/記錄/' + dateString;
-		params = { usertalk: usertalk, xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, logpage: logpage };
+		params = { usertalk: usertalk, xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, fwdcsdreason: fwdcsdreason, logpage: logpage };
 
 		Morebits.wiki.addCheckpoint();
 		// Updating data for the action completed event
