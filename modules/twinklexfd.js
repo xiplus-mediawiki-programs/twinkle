@@ -163,7 +163,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 				type: 'input',
 				name: 'mergeinto',
 				label: wgULS('合并到：', '合併到：'),
-				disabled: true
+				hidden: true
 			} );
 		appendReasonBox();
 		work_area = work_area.render();
@@ -203,14 +203,17 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 
 Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdCategory(e) {
 	if( e.target.value === 'merge' ) {
-		e.target.form.mergeinto.disabled = false;
+		e.target.form.mergeinto.parentElement.removeAttribute('hidden');
+		e.target.form.fwdcsdreason.parentElement.setAttribute('hidden', '');
 		e.target.form.mergeinto.previousElementSibling.innerHTML = wgULS('合并到：', '合併到：');
 	} else if( e.target.value === 'fwdcsd' ) {
-		e.target.form.mergeinto.disabled = false;
+		e.target.form.mergeinto.parentElement.removeAttribute('hidden');
+		e.target.form.fwdcsdreason.parentElement.removeAttribute('hidden');
 		e.target.form.mergeinto.previousElementSibling.innerHTML = '提交人：';
 		e.target.form.xfdreason.value = decodeURIComponent($("#delete-reason").text()).replace(/\+/g, ' ');
 	} else {
-		e.target.form.mergeinto.disabled = true;
+		e.target.form.mergeinto.parentElement.setAttribute('hidden', '');
+		e.target.form.fwdcsdreason.parentElement.setAttribute('hidden', '');
 	}
 };
 

@@ -139,7 +139,7 @@ Morebits.sanitizeIPv6 = function ( address ) {
  *              - Attributes: name, list, event
  *              - Attributes (within list): name, label, value, checked, disabled, event, subgroup
  *   input     A text box.
- *              - Attributes: name, label, value, size, disabled, readonly, maxlength, event
+ *              - Attributes: name, label, value, size, disabled, readonly, hidden, maxlength, event
  *   dyninput  A set of text boxes with "Remove" buttons and an "Add" button.
  *              - Attributes: name, label, min, max, sublabel, value, size, maxlength, event
  *   hidden    An invisible form field.
@@ -415,6 +415,9 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 	case 'input':
 		node = document.createElement( 'div' );
 		node.setAttribute( 'id', 'div_' + id );
+		if( data.hidden ) {
+			node.setAttribute( 'hidden', '' );
+		}
 
 		if( data.label ) {
 			label = node.appendChild( document.createElement( 'label' ) );
