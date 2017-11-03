@@ -1258,7 +1258,7 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 	var dlgtable = document.createElement("table");
 	dlgtable.className = "wikitable";
 	dlgtable.style.margin = "1.4em 1em";
-	dlgtable.style.width = "auto";
+	dlgtable.style.width = "97%";
 
 	var dlgtbody = document.createElement("tbody");
 
