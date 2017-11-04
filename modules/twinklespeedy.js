@@ -892,14 +892,15 @@ Twinkle.speedy.callbacks = {
 		return [code, params.utparams];
 	},
 
-	parseWikitext: function(wikitext, callback) {
+	parseWikitext: function(title, wikitext, callback) {
+		console.log(wikitext);
 		var query = {
 			action: "parse",
 			prop: "text",
 			pst: "true",
 			text: wikitext,
 			contentmodel: "wikitext",
-			title: mw.config.get("wgPageName")
+			title: title
 		};
 
 		var statusIndicator = new Morebits.status( wgULS('构造删除理由', '構造刪除理由') );
@@ -924,7 +925,7 @@ Twinkle.speedy.callbacks = {
 				Twinkle.speedy.callbacks.sysop.deletePage( reason, params );
 			} else {
 				var code = Twinkle.speedy.callbacks.getTemplateCodeAndParams(params)[0];
-				Twinkle.speedy.callbacks.parseWikitext(code, function(reason) {
+				Twinkle.speedy.callbacks.parseWikitext(mw.config.get("wgPageName"), code, function(reason) {
 					if (params.promptForSummary) {
 						reason = prompt(wgULS("输入删除理由，或点击确定以接受自动生成的：", "輸入刪除理由，或點選確定以接受自動生成的："), reason);
 					}

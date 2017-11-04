@@ -406,6 +406,14 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 
 	form.append( {
 			type: 'input',
+			name: 'sdreason',
+			label: wgULS('速删理由：', '速刪理由：'),
+			tooltip: wgULS('用于删除日誌，使用{{delete}}的参数格式，例如 A1 或 A1|G1', '用於刪除日誌，使用{{delete}}的參數格式，例如 A1 或 A1|G1'),
+			hidden: true
+	} );
+
+	form.append( {
+			type: 'input',
 			name: 'remark',
 			label: wgULS('补充说明：', '補充說明：')
 	} );
@@ -480,6 +488,11 @@ Twinkle.close.callback.change_code = function twinklecloseCallbackChangeCode(e) 
 	else {
 		noop.checked = false;
 		noop.disabled = false;
+		if (e.target.value === 'sd') {
+			e.target.form.sdreason.parentElement.removeAttribute('hidden');
+		} else {
+			e.target.form.sdreason.parentElement.setAttribute('hidden', '');
+		}
 	}
 };
 
@@ -492,6 +505,7 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 		title: resultData.title,
 		code: code,
 		remark: e.target.remark.value,
+		sdreason: e.target.sdreason.value,
 		section: resultData.section,
 		messageData: messageData
 	};
@@ -527,11 +541,28 @@ Twinkle.close.callbacks = {
 
 		var page = new Morebits.wiki.page( params.title, "删除页面" );
 
-		page.setEditSummary( wgULS('存废讨论通过：[[', '存廢討論通過：[[') + mw.config.get('wgPageName') + ']]' + Twinkle.getPref('deletionSummaryAd') );
-		page.deletePage(function() {
-			page.getStatusElement().info("完成");
-			Twinkle.close.callbacks.talkend( params );
-		});
+		if (params.code === 'sd') {
+			Twinkle.speedy.callbacks.parseWikitext(params.title, '{{delete|' + params.sdreason + '}}', function(reason) {
+				reason = prompt(wgULS('输入删除理由，或点击确定以接受自动生成的：', '輸入刪除理由，或點選確定以接受自動生成的：'), reason);
+				if (reason === null) {
+					page.getStatusElement().warn(wgULS('没有执行删除', '沒有執行刪除'));
+					Twinkle.close.callbacks.talkend( params );
+				} else {
+					page.setEditSummary( reason + Twinkle.getPref('deletionSummaryAd') );
+					page.deletePage(function() {
+						page.getStatusElement().info('完成');
+						Twinkle.close.callbacks.talkend( params );
+					});
+				}
+			});
+		} else {
+			page.setEditSummary( wgULS('存废讨论通过：[[', '存廢討論通過：[[') + mw.config.get('wgPageName') + ']]' + Twinkle.getPref('deletionSummaryAd') );
+			page.deletePage(function() {
+				page.getStatusElement().info("完成");
+				Twinkle.close.callbacks.talkend( params );
+			});
+		}
+
 		Morebits.wiki.removeCheckpoint();
 	},
 	keep: function (pageobj) {
