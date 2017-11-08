@@ -566,6 +566,9 @@ Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets
 		Twinkle.block.blockPresetsInfo[preset] = settings;
 	});
 	$.each(Twinkle.block.blockGroups, function(_, blockGroup) {
+		if (blockGroup.custom) {
+			blockGroup.list = Twinkle.getPref( 'customBlockReasonList' );
+		}
 		$.each(blockGroup.list, function(_, blockPreset) {
 			var value = blockPreset.value, reason = blockPreset.label, newPreset = value + ':' + reason;
 			Twinkle.block.blockPresetsInfo[newPreset] = jQuery.extend(true, {}, Twinkle.block.blockPresetsInfo[value]);
@@ -618,6 +621,10 @@ Twinkle.block.blockGroups = [
 			{ label: wgULS('机器人发生故障并必须紧急停止', '機器人發生故障並必須緊急停止'), value: 'Bot block message', forRegisteredOnly: true }
 			//{ label: wgULS('剥夺编辑对话页权限', '剝奪編輯對話頁權限'), value: '' }
 		]
+	},
+	{
+		custom: true,
+		label: wgULS('自订的封禁理由', '自訂的封禁理由')
 	},
 	{
 		label: wgULS('用户名封禁', '用戶名封禁'),

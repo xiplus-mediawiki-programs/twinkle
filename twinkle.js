@@ -75,6 +75,7 @@ Twinkle.defaultConfig.twinkle = {
 	dialogLargeFont: false,
 	 // Block
 	blankTalkpageOnIndefBlock: false,
+	customBlockReasonList: [],
 	 // Fluff (revert and rollback)
 	openTalkPage: [  ],
 	openTalkPageOnAutoRevert: false,

@@ -613,6 +613,20 @@ Twinkle.config.sections = [
 },
 
 {
+	title: wgULS("封禁", "封禁"),
+	preferences: [
+		{
+			name: "customBlockReasonList",
+			label: wgULS("自定义封禁理由", "自訂封禁理由"),
+			helptip: wgULS("您可以加入常用的封禁理由。自订的封禁理由会出现在一般的封禁理由下方。", "您可以加入常用的封禁理由。自訂的封禁理由會出現在一般的封禁理由下方。"),
+			type: "customList",
+			customListValueTitle: wgULS("使用封禁模板（预设为 uw-block1）", "使用封禁模板（預設為 uw-block1）"),
+			customListLabelTitle: wgULS("「由于…您已被封禁」及封禁日志理由", "「由於…您已被封禁」及封禁日誌理由")
+		}
+	]
+},
+
+{
 	title: wgULS("存废讨论", "存廢討論"),
 	preferences: [
 		// TwinkleConfig.xfdWatchPage (string)
