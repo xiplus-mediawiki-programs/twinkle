@@ -194,13 +194,13 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				list: [
 					{
 						label: wgULS('误导性用户名', '誤導性用戶名'),
-						value: '误导性',
+						value: wgULS('误导性', '誤導性'),
 						tooltip: wgULS('误导性用户名隐含着与贡献者相关或误导他人的事情。例如︰不实观点、暗示账户拥有特定权限或暗示该账户并非由一人拥有而是由一个组群、一个计划或一个集体运作。',
 							'誤導性用戶名隱含著與貢獻者相關或誤導他人的事情。例如︰不實觀點、暗示帳戶擁有特定權限或暗示該帳戶並非由一人擁有而是由一個組群、一個計劃或一個集體運作。')
 					},
 					{
 						label: wgULS('宣传性用户名', '宣傳性用戶名'),
-						value: '宣传性',
+						value: wgULS('宣传性', '宣傳性'),
 						tooltip: wgULS('宣传性用户名会于维基百科上起推销一个组织或一家公司的作用。', '宣傳性用戶名會於維基百科上起推銷一個組織或一間公司的作用。')
 					},
 					{
@@ -215,7 +215,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					},
 					{
 						label: wgULS('破坏性用户名', '破壞性用戶名'),
-						value: '破坏性',
+						value: wgULS('破坏性', '破壞性'),
 						tooltip: wgULS('破坏性用户名包括人身攻击、伪冒他人或其他一切有着清晰可见的破坏维基百科意图的用户名。', '破壞性用戶名包括人身攻擊、偽冒他人或其他一切有著清晰可見的破壞維基百科意圖的用戶名。')
 					}
 				]
@@ -596,10 +596,16 @@ Twinkle.arv.callback.evaluate = function(e) {
 				types = [ types.slice( 0, -1 ).join( '、' ), types.slice( -1 ) ].join( '和' );
 			}
 			reason = "*{{user-uaa|1=" + uid + "}} &ndash; ";
-			if ( types.length || hasShared ) {
-				reason += types + "用户名" +
-					( hasShared ? "，暗示该账户并非由一人拥有。" : "。" );
+			if ( types.length ) {
+				reason += types + wgULS("用户名", "用戶名");
 			}
+			if ( types.length && hasShared ) {
+				reason += "，";
+			}
+			if ( hasShared ) {
+				reason += wgULS("暗示该账户并非由一人拥有", "暗示該帳戶並非由一人擁有");
+			}
+			reason += "。";
 			if ( comment !== '' ) {
 				reason += Morebits.string.toUpperCaseFirstChar(comment) + "。";
 			}
@@ -621,7 +627,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				// check if user has already been reported
 				if (new RegExp( "\\{\\{\\s*user-uaa\\s*\\|\\s*(1\\s*=\\s*)?" + RegExp.escape(uid, true) + "\\s*(\\||\\})" ).test(text)) {
 					uaaPage.getStatusElement().error( wgULS('用户已被列入。', '用戶已被列入。') );
-					Morebits.status.printUserText( reason, wgULS('您键入的评论已在下方提供，您可以将其手工加入UAA上该用户的报告中：', '您鍵入的評論已在下方提供，您可以將其手工加入UAA上該用戶的報告中：') );
+					Morebits.status.printUserText( reason, wgULS('您键入的评论已在下方提供，您可以将其手工加入UAA上该用户的报告中：', '您輸入的評論已在下方提供，您可以將其手工加入UAA上該用戶的報告中：') );
 					return;
 				}
 				uaaPage.getStatusElement().status( wgULS('添加新报告…', '加入新報告…') );
