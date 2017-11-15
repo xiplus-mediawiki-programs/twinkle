@@ -1086,7 +1086,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				!mw.config.get('wgArticleId')) {
 				protectIt(allDone);
 			} else {
-				alert(wgULS("请告诉Twinkle要做什么！\n如果您只是想标记该页，请选择上面的“用保护模板标记此页”选项。", "請告訴Twinkle要做什麼！\n如果您只是想標記該頁，請選擇上麵的「用保護模板標記此頁」選項。"));
+				alert(wgULS("请告诉Twinkle要做什么！\n如果您只是想标记该页，请选择上面的“用保护模板标记此页”选项。", "請告訴Twinkle要做什麼！\n如果您只是想標記該頁，請選擇上面的「用保護模板標記此頁」選項。"));
 			}
 
 			break;

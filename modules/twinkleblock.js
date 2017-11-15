@@ -253,7 +253,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 					{
 						label: wgULS('过滤器日志', '過濾器日誌'),
 						checked: false,
-						value: '过滤器日志'
+						value: wgULS('过滤器日志', '過濾器日誌')
 					}
 				]
 			} );
@@ -266,7 +266,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 					{
 						label: wgULS('已删除的编辑', '已刪除的編輯'),
 						checked: false,
-						value: '已删除的编辑'
+						value: wgULS('已删除的编辑', '已刪除的編輯')
 					}
 				]
 			} );
@@ -279,7 +279,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 					{
 						label: wgULS('用户讨论页', '用戶討論頁'),
 						checked: false,
-						value: '用户讨论页'
+						value: wgULS('用户讨论页', '用戶討論頁')
 					}
 				]
 			} );
@@ -292,7 +292,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 					{
 						label: wgULS('过去的封禁记录', '過去的封禁記錄'),
 						checked: false,
-						value: '过去的封禁记录'
+						value: wgULS('过去的封禁记录', '過去的封禁記錄')
 					}
 				]
 			} );
@@ -700,7 +700,7 @@ Twinkle.block.callback.change_expiry = function twinkleblockCallbackChangeExpiry
 Twinkle.block.seeAlsos = [];
 Twinkle.block.callback.toggle_see_alsos = function twinkleblockCallbackToggleSeeAlso(e) {
 	var reason = this.form.reason.value.replace(
-		new RegExp('( <!--|;) ' + '参见' + Twinkle.block.seeAlsos.join('、') + '( -->)?'), ''
+		new RegExp('( <!-- |；)(参见|參見)' + Twinkle.block.seeAlsos.join('、') + '( -->)?'), ''
 	);
 
 	Twinkle.block.seeAlsos = Twinkle.block.seeAlsos.filter(function(el) {
@@ -715,9 +715,9 @@ Twinkle.block.callback.toggle_see_alsos = function twinkleblockCallbackToggleSee
 	if (!Twinkle.block.seeAlsos.length) {
 		this.form.reason.value = reason;
 	} else if (reason.indexOf('{{') !== -1) {
-		this.form.reason.value = reason + ' <!-- 参见' + seeAlsoMessage + ' -->';
+		this.form.reason.value = reason + ' <!-- ' + wgULS('参见', '參見') + seeAlsoMessage + ' -->';
 	} else {
-		this.form.reason.value = reason + '; 参见' + seeAlsoMessage;
+		this.form.reason.value = reason + '；' + wgULS('参见', '參見') + seeAlsoMessage;
 	}
 };
 
