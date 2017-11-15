@@ -209,6 +209,20 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 					label: wgULS('自动封禁', '自動封禁'),
 					name: 'autoblock',
 					value: '1'
+				},
+				{
+					checked: true,
+					label: wgULS('将用户页替换成{{indef}}', '將用戶頁替換成{{indef}}'),
+					tooltip: wgULS('如果用户页不存在，将自动创建', '如果用戶頁不存在，將自動建立'),
+					name: 'taguserpage',
+					value: '1'
+				},
+				{
+					checked: true,
+					label: wgULS('保护用户页', '保護用戶頁'),
+					tooltip: wgULS('如果用户页不存在且不自动创建，将白纸保护', '如果用戶頁不存在且不自動建立，將白紙保護'),
+					name: 'protectuserpage',
+					value: '1'
 				});
 		} else {
 			blockoptions.push({
@@ -451,12 +465,16 @@ Twinkle.block.blockPresetsInfo = {
 		expiry: '2 years',
 		nocreate: true,
 		nonstandard: true,
+		taguserpage: true,
+		protectuserpage: true,
 		reason: '{{blocked proxy}}',
 		sig: null
 	},
 	'checkuserblock' : {
 		expiry: 'infinity',
 		nonstandard: true,
+		taguserpage: true,
+		protectuserpage: true,
 		reason: '{{checkuserblock}}',
 		sig: '~~~~'
 	},
@@ -510,6 +528,8 @@ Twinkle.block.blockPresetsInfo = {
 		autoblock: true,
 		expiry: 'infinity',
 		nocreate: true,
+		taguserpage: true,
+		protectuserpage: true,
 		reasonParam: true
 	},
 	'uw-dblock': {
@@ -522,21 +542,31 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-ublock' : {
 		expiry: 'infinity',
+		taguserpage: true,
+		protectuserpage: true
 	},
 	'uw-ublock|误导' : {
 		expiry: 'infinity',
+		taguserpage: true,
+		protectuserpage: true,
 		reason: wgULS('{{uw-ublock|误导}}', '{{uw-ublock|誤導}}'),
 	},
 	'uw-ublock|宣传' : {
 		expiry: 'infinity',
+		taguserpage: true,
+		protectuserpage: true,
 		reason: wgULS('{{uw-ublock|宣传}}', '{{uw-ublock|宣傳}}'),
 	},
 	'uw-ublock|攻击|或侮辱性' : {
 		expiry: 'infinity',
+		taguserpage: true,
+		protectuserpage: true,
 		reason: wgULS('{{uw-ublock|攻击|或侮辱性}}', '{{uw-ublock|攻擊|或侮辱性}}'),
 	},
 	'uw-ublock|混淆' : {
 		expiry: 'infinity',
+		taguserpage: true,
+		protectuserpage: true,
 		reason: '{{uw-ublock|混淆}}',
 	},
 	'uw-vblock' : {
@@ -695,6 +725,17 @@ Twinkle.block.callback.change_expiry = function twinkleblockCallbackChangeExpiry
 		Morebits.quickForm.setElementVisibility(expiry.parentNode, false);
 		expiry.value = e.target.value;
 	}
+	var taguserpage = e.target.form.taguserpage;
+	var protectuserpage = e.target.form.protectuserpage;
+	if (e.target.value === 'infinity') {
+		Morebits.quickForm.setElementVisibility(taguserpage.parentNode, true);
+		Morebits.quickForm.setElementVisibility(protectuserpage.parentNode, true);
+		taguserpage.checked = true;
+		protectuserpage.checked = true;
+	} else {
+		Morebits.quickForm.setElementVisibility(taguserpage.parentNode, false);
+		Morebits.quickForm.setElementVisibility(protectuserpage.parentNode, false);
+	}
 };
 
 Twinkle.block.seeAlsos = [];
@@ -739,6 +780,16 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 		} else {
 			Morebits.quickForm.setElementVisibility(form.expiry.parentNode, false);
 		}
+	}
+
+	if (expiry === 'infinity') {
+		Morebits.quickForm.setElementVisibility(form.taguserpage.parentNode, true);
+		Morebits.quickForm.setElementVisibility(form.protectuserpage.parentNode, true);
+		form.taguserpage.checked = true;
+		form.protectuserpage.checked = true;
+	} else {
+		Morebits.quickForm.setElementVisibility(form.taguserpage.parentNode, false);
+		Morebits.quickForm.setElementVisibility(form.protectuserpage.parentNode, false);
 	}
 
 	// boolean-flipped options, more at [[mw:API:Block]]
@@ -823,7 +874,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	var $form = $(e.target),
 		toBlock = $form.find('[name=actiontype][value=block]').is(':checked'),
 		toWarn = $form.find('[name=actiontype][value=template]').is(':checked'),
-		blockoptions = {}, templateoptions = {};
+		blockoptions = {}, templateoptions = {}, tagprotectoptions = {};
 
 	Twinkle.block.callback.saveFieldset($form.find('[name=field_block_options]'));
 	Twinkle.block.callback.saveFieldset($form.find('[name=field_template_options]'));
@@ -833,7 +884,14 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	templateoptions = Twinkle.block.field_template_options;
 	templateoptions.disabletalk = !!(templateoptions.disabletalk || blockoptions.disabletalk);
 	templateoptions.hardblock = !!blockoptions.hardblock;
-	delete blockoptions.expiry_preset; // remove extraneous
+
+	tagprotectoptions.tag = (blockoptions.expiry === 'infinity') && blockoptions.taguserpage;
+	tagprotectoptions.protect = (blockoptions.expiry === 'infinity') && blockoptions.protectuserpage;
+
+	// remove extraneous
+	delete blockoptions.expiry_preset;
+	delete blockoptions.taguserpage;
+	delete blockoptions.protectuserpage;
 
 	// use block settings as warn options where not supplied
 	templateoptions.summary = templateoptions.summary || blockoptions.reason;
@@ -866,6 +924,9 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			var mbApi = new Morebits.wiki.api( wgULS('执行封禁', '執行封禁'), blockoptions, function(data) {
 				statusElement.info('完成');
 				if (toWarn) Twinkle.block.callback.issue_template(templateoptions);
+				userpage = new Morebits.wiki.page("User:"+blockoptions.user, wgULS("标记并保护页面", "標記並保護頁面"));
+				userpage.setCallbackParameters(tagprotectoptions);
+				userpage.load(Twinkle.block.callback.taguserpage);
 			});
 			mbApi.post();
 		}, function() {
@@ -880,6 +941,38 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		return alert(wgULS('请给Twinkle点事做！', '請給Twinkle點事做！'));
 	}
 };
+
+Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pageobj) {
+	var params = pageobj.getCallbackParameters();
+	var statelem = pageobj.getStatusElement();
+	if (params.tag) {
+		pageobj.setPageText("{{indef}}");
+		pageobj.setEditSummary(wgULS("标记被永久封禁的用户页", "標記被永久封禁的用戶頁") + Twinkle.getPref('summaryAd'));
+		pageobj.save(function(){
+			Morebits.status.info(wgULS("标记用户页", "標記用戶頁"), "完成");
+			pageobj.load(Twinkle.block.callback.protectuserpage);
+		});
+	} else {
+		Twinkle.block.callback.protectuserpage(pageobj);
+	}
+}
+
+Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUserpage(pageobj) {
+	var params = pageobj.getCallbackParameters();
+	var statelem = pageobj.getStatusElement();
+	if (params.protect) {
+		if (pageobj.exists()) {
+			pageobj.setEditProtection('sysop', 'indefinite');
+			pageobj.setMoveProtection('sysop', 'indefinite');
+		} else {
+			pageobj.setCreateProtection('sysop', 'indefinite');
+		}
+		pageobj.setEditSummary('被永久封禁的用戶頁' + Twinkle.getPref('protectionSummaryAd'));
+		pageobj.protect(function(){
+			Morebits.status.info(wgULS("保护用户页", "保護用戶頁"), ( pageobj.exists() ? wgULS("已全保护", "已全保護") : wgULS("已白纸保护", "已白紙保護") ));
+		});
+	}
+}
 
 Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTemplate(formData) {
 	var userTalkPage = 'User_talk:' + Morebits.wiki.flow.relevantUserName();
