@@ -299,6 +299,15 @@ Twinkle.config.sections = [
 			helptip: wgULS("不要开新窗口或者改变当前窗口的状态，或者意志不坚定的。", "不要開新視窗或者改變目前視窗的狀態。"),
 			type: "boolean"
 		},
+
+		{
+			name: "customRevertSummary",
+			label: wgULS("回退理由", "回退理由"),
+			helptip: wgULS("在检视差异时可选，仅善意回退、常规回退、恢復此版本", "在檢視差異時可選，僅善意回退、常規回退、恢復此版本"),
+			type: "customList",
+			customListValueTitle: wgULS("理由", "理由"),
+			customListLabelTitle: wgULS("显示的文字", "顯示的文字")
+		},
 	]
 },
 

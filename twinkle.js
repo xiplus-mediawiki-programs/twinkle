@@ -84,6 +84,7 @@ Twinkle.defaultConfig.twinkle = {
 	offerReasonOnNormalRevert: true,
 	confirmOnFluff: false,
 	showRollbackLinks: [ "diff", "others" ],
+	customRevertSummary: [],
 	 // DI (twinkleimage)
 	notifyUserOnDeli: true,
 	deliWatchPage: "default",

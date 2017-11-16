@@ -189,6 +189,24 @@ Twinkle.fluff = {
 			revertToRevisionLink.appendChild( spanTag( 'SaddleBrown', wgULS('恢复此版本', '恢復此版本') ) );
 			revertToRevisionLink.appendChild( spanTag( 'Black', ']' ) );
 
+			revertToRevision.appendChild( document.createTextNode(' || ') );
+
+			revertsummary = new Morebits.quickForm.element({ type: 'select', name: 'revertsummary' })
+			revertsummary.append({
+					type: 'option',
+					label: wgULS('选择回退理由', '選擇回退理由'),
+					value: ''
+				});
+			$(Twinkle.getPref('customRevertSummary')).each(function(_, e){
+				revertsummary.append({
+						type: 'option',
+						label: e.label,
+						value: e.value
+					});
+			});
+
+			var revertSummary = revertToRevision.appendChild( revertsummary.render().childNodes[0] );
+
 			otitle.insertBefore( revertToRevision, otitle.firstChild );
 
 			if( document.getElementById('differences-nextlink') ) {
@@ -302,6 +320,7 @@ Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page 
 
 	var pagename = page || mw.config.get('wgPageName');
 	var revid = rev || mw.config.get('wgCurRevisionId');
+	var summary = document.getElementsByName('revertsummary')[0].value;
 
 	var statusElement = document.getElementById('mw-content-text');
 	if (Twinkle.fluff.useNotify) {
@@ -326,7 +345,8 @@ Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page 
 		user: vandal,
 		pagename: pagename,
 		revid: revid,
-		autoRevert: !!autoRevert
+		autoRevert: !!autoRevert,
+		summary: summary
 	};
 	var query = {
 		'action': 'query',
@@ -341,7 +361,7 @@ Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page 
 	wikipedia_api.post();
 };
 
-Twinkle.fluff.revertToRevision = function revertToRevision( oldrev, page ) {
+Twinkle.fluff.revertToRevision = function revertToRevision( oldrev, page, summary ) {
 
 	var statusElement = document.getElementById('mw-content-text');
 	if (Twinkle.fluff.useNotify) {
@@ -358,6 +378,7 @@ Twinkle.fluff.revertToRevision = function revertToRevision( oldrev, page ) {
 			});
 		}
 	}
+	var summary = document.getElementsByName('revertsummary')[0].value;
 	Morebits.status.init( statusElement );
 
 	var title = page || mw.config.get('wgPageName');
@@ -373,7 +394,7 @@ Twinkle.fluff.revertToRevision = function revertToRevision( oldrev, page ) {
 		'format': 'xml'
 	};
 	var wikipedia_api = new Morebits.wiki.api( wgULS('抓取较早修订版本信息', '擷取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.toRevision.main );
-	wikipedia_api.params = { rev: oldrev, title: title };
+	wikipedia_api.params = { rev: oldrev, title: title, summary: summary };
 	wikipedia_api.post();
 };
 
@@ -398,7 +419,7 @@ Twinkle.fluff.callbacks = {
 				return;
 			}
 
-			var optional_summary = prompt( wgULS("请输入回退理由：", "請輸入回退理由：")+"                                ", "" );  // padded out to widen prompt in Firefox
+			var optional_summary = prompt( wgULS("请输入回退理由：", "請輸入回退理由：")+"                                ", self.params.summary );  // padded out to widen prompt in Firefox
 			if (optional_summary === null)
 			{
 				self.statelem.error( wgULS('由用户取消。', '由用戶取消。') );
@@ -543,7 +564,7 @@ Twinkle.fluff.callbacks = {
 		var summary, extra_summary;
 		switch( self.params.type ) {
 		case 'agf':
-			extra_summary = prompt( wgULS("可选的编辑摘要：", "可選的編輯摘要：")+"                              ", "" );  // padded out to widen prompt in Firefox
+			extra_summary = prompt( wgULS("可选的编辑摘要：", "可選的編輯摘要：")+"                              ", self.params.summary );  // padded out to widen prompt in Firefox
 			if (extra_summary === null)
 			{
 				self.statelem.error( wgULS('用户取消操作。', '用戶取消操作。') );
@@ -566,7 +587,7 @@ Twinkle.fluff.callbacks = {
 			/* falls through */
 		default:
 			if( Twinkle.getPref('offerReasonOnNormalRevert') ) {
-				extra_summary = prompt( wgULS("可选的编辑摘要：", "可選的編輯摘要：")+"                              ", "" );  // padded out to widen prompt in Firefox
+				extra_summary = prompt( wgULS("可选的编辑摘要：", "可選的編輯摘要：")+"                              ", self.params.summary );  // padded out to widen prompt in Firefox
 				if (extra_summary === null)
 				{
 					self.statelem.error( wgULS('用户取消操作。', '用戶取消操作。') );
