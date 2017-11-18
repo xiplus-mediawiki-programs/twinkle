@@ -725,17 +725,19 @@ Twinkle.block.callback.change_expiry = function twinkleblockCallbackChangeExpiry
 		Morebits.quickForm.setElementVisibility(expiry.parentNode, false);
 		expiry.value = e.target.value;
 	}
-	var taguserpage = e.target.form.taguserpage;
-	var protectuserpage = e.target.form.protectuserpage;
-	if (e.target.value === 'infinity') {
-		Morebits.quickForm.setElementVisibility(taguserpage.parentNode, true);
-		Morebits.quickForm.setElementVisibility(protectuserpage.parentNode, true);
-		taguserpage.checked = true;
-		protectuserpage.checked = true;
-	} else {
-		Morebits.quickForm.setElementVisibility(taguserpage.parentNode, false);
-		Morebits.quickForm.setElementVisibility(protectuserpage.parentNode, false);
-	}
+	if (Twinkle.block.isRegistered) {
+		var taguserpage = e.target.form.taguserpage;
+		var protectuserpage = e.target.form.protectuserpage;
+		if (e.target.value === 'infinity') {
+			Morebits.quickForm.setElementVisibility(taguserpage.parentNode, true);
+			Morebits.quickForm.setElementVisibility(protectuserpage.parentNode, true);
+			taguserpage.checked = true;
+			protectuserpage.checked = true;
+		} else {
+			Morebits.quickForm.setElementVisibility(taguserpage.parentNode, false);
+			Morebits.quickForm.setElementVisibility(protectuserpage.parentNode, false);
+		}
+	}	
 };
 
 Twinkle.block.seeAlsos = [];
@@ -782,14 +784,16 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 		}
 	}
 
-	if (expiry === 'infinity') {
-		Morebits.quickForm.setElementVisibility(form.taguserpage.parentNode, true);
-		Morebits.quickForm.setElementVisibility(form.protectuserpage.parentNode, true);
-		form.taguserpage.checked = true;
-		form.protectuserpage.checked = true;
-	} else {
-		Morebits.quickForm.setElementVisibility(form.taguserpage.parentNode, false);
-		Morebits.quickForm.setElementVisibility(form.protectuserpage.parentNode, false);
+	if (Twinkle.block.isRegistered) {
+		if (expiry === 'infinity') {
+			Morebits.quickForm.setElementVisibility(form.taguserpage.parentNode, true);
+			Morebits.quickForm.setElementVisibility(form.protectuserpage.parentNode, true);
+			form.taguserpage.checked = true;
+			form.protectuserpage.checked = true;
+		} else {
+			Morebits.quickForm.setElementVisibility(form.taguserpage.parentNode, false);
+			Morebits.quickForm.setElementVisibility(form.protectuserpage.parentNode, false);
+		}
 	}
 
 	// boolean-flipped options, more at [[mw:API:Block]]
