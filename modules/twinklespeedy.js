@@ -1309,7 +1309,7 @@ Twinkle.speedy.callbacks = {
 			if (!pageobj.exists()) {
 				appendText +=
 					"这是该用户使用[[WP:TW|Twinkle]]的速删模块做出的[[WP:CSD|快速删除]]提名列表。\n\n" +
-					"如果您不再想保留此日志，请在[[Wikipedia:Twinkle/参数设置|参数设置]]中关掉，并" +
+					"如果您不再想保留此日志，请在[[" + Twinkle.getPref('configPage') + "|参数设置]]中关掉，并" +
 					"使用[[WP:CSD#O1|CSD O1]]提交快速删除。\n";
 				if (Morebits.userIsInGroup("sysop")) {
 					appendText += "\n此日志并不记录用Twinkle直接执行的删除。\n";

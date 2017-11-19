@@ -131,7 +131,8 @@ Twinkle.defaultConfig.twinkle = {
 	batchMax: 5000,
 	batchProtectChunks: 50,
 	batchundeleteChunks: 50,
-	proddeleteChunks: 50
+	proddeleteChunks: 50,
+	configPage: "Wikipedia:Twinkle/参数设置"
 };
 
 // now some skin dependent config.
@@ -464,7 +465,7 @@ Twinkle.load = function () {
 		Twinkle.close();
 	}
 
-	Twinkle.addPortletLink( mw.util.wikiScript("index")+ "?title=Wikipedia:Twinkle/参数设置", wgULS('设置', '設定'), 'tw-config', wgULS('设置Twinkle参数', '設定Twinkle參數') );
+	Twinkle.addPortletLink( mw.util.wikiScript("index") + "?title=" + Twinkle.getPref('configPage'), wgULS('设置', '設定'), 'tw-config', wgULS('设置Twinkle参数', '設定Twinkle參數') );
 
 	// Run the initialization callbacks for any custom modules
 	$( Twinkle.initCallbacks ).each(function ( k, v ) { v(); });

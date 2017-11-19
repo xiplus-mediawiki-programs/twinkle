@@ -824,10 +824,10 @@ Twinkle.config.sections = [
 
 Twinkle.config.init = function twinkleconfigInit() {
 
-	if ((mw.config.get("wgNamespaceNumber") === mw.config.get("wgNamespaceIds").project && mw.config.get("wgTitle") === "Twinkle/参数设置" ||
-			(mw.config.get("wgNamespaceNumber") === mw.config.get("wgNamespaceIds").user && mw.config.get("wgTitle").lastIndexOf("/Twinkle参数") === (mw.config.get("wgTitle").length - 9))) &&
+	if ((mw.config.get('wgPageName') === Twinkle.getPref('configPage') ||
+			(mw.config.get("wgNamespaceNumber") === mw.config.get("wgNamespaceIds").user && mw.config.get("wgTitle").lastIndexOf("/Twinkle参数") === (mw.config.get("wgTitle").length - 10))) &&
 			mw.config.get("wgAction") === "view") {
-		// create the config page at Wikipedia:Twinkle/参数设置, and at user subpages (for testing purposes)
+		// create the config page at Twinkle.getPref('configPage'), and at user subpages (for testing purposes)
 
 		if (!document.getElementById("twinkle-config")) {
 			return;  // maybe the page is misconfigured, or something - but any attempt to modify it will be pointless
@@ -1190,7 +1190,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 				box.appendChild(document.createTextNode(wgULS("您可配置您的Twinkle，通过使用", "您可配置您的Twinkle，通過使用")));
 			}
 			link = document.createElement("a");
-			link.setAttribute("href", mw.util.getUrl(mw.config.get("wgFormattedNamespaces")[mw.config.get("wgNamespaceIds").project] + ":Twinkle/参数设置") );
+			link.setAttribute("href", mw.util.getUrl(Twinkle.getPref('configPage')) );
 			link.appendChild(document.createTextNode(wgULS("Twinkle参数设置面板", "Twinkle偏好設定面板")));
 			box.appendChild(link);
 			box.appendChild(document.createTextNode(wgULS("，或直接编辑本页。", "，或直接編輯本頁。")));
@@ -1202,7 +1202,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 
 			box.appendChild(document.createTextNode(wgULS("如果您想配置您的Twinkle，请使用", "如果您想配置您的Twinkle，請使用")));
 			link = document.createElement("a");
-			link.setAttribute("href", mw.util.getUrl(mw.config.get("wgFormattedNamespaces")[mw.config.get("wgNamespaceIds").project] + ":Twinkle/参数设置") );
+			link.setAttribute("href", mw.util.getUrl(Twinkle.getPref('configPage')) );
 			link.appendChild(document.createTextNode(wgULS("Twinkle参数设置面板", "Twinkle偏好設定面板")));
 			box.appendChild(link);
 			box.appendChild(document.createTextNode("。"));
