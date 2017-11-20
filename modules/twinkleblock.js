@@ -59,7 +59,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 				{
 					label: wgULS('添加封禁模板到用户对话页', '加入封禁模板到用戶對話頁'),
 					value: 'template',
-					tooltip: wgULS('如果执行封禁的管理员忘记发出保护模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。', '如果執行封禁的管理員忘記發出保護模板，或你封禁了用戶而沒有給其發出模板，則你可以用此來發出合適的模板。'),
+					tooltip: wgULS('如果执行封禁的管理员忘记发出封禁模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。', '如果執行封禁的管理員忘記發出封禁模板，或你封禁了用戶而沒有給其發出模板，則你可以用此來發出合適的模板。'),
 					checked: true
 				},
 				{
@@ -461,6 +461,20 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			Twinkle.block.callback.change_preset(e);
 		} else {
 			Twinkle.block.callback.change_template(e);
+		}
+	} else {
+		if (Twinkle.block.isRegistered) {
+			var taguserpage = $form.find('input[name="taguserpage"]')[0];
+			var protectuserpage = $form.find('input[name="protectuserpage"]')[0];
+			if ($form.find('input[name="expiry"]')[0].value === 'infinity') {
+				Morebits.quickForm.setElementVisibility(taguserpage.parentNode, true);
+				Morebits.quickForm.setElementVisibility(protectuserpage.parentNode, true);
+				taguserpage.checked = true;
+				protectuserpage.checked = true;
+			} else {
+				Morebits.quickForm.setElementVisibility(taguserpage.parentNode, false);
+				Morebits.quickForm.setElementVisibility(protectuserpage.parentNode, false);
+			}
 		}
 	}
 };
@@ -873,7 +887,7 @@ Twinkle.block.callback.change_template = function twinkleblockcallbackChangeTemp
 			form.template_expiry.parentNode.style.display = 'block';
 		}
 		if (Twinkle.block.prev_template_expiry) form.expiry.value = Twinkle.block.prev_template_expiry;
-		Morebits.quickForm.setElementVisibility(form.notalk.parentNode, !settings.nonstandard);
+		// Morebits.quickForm.setElementVisibility(form.notalk.parentNode, !settings.nonstandard);
 	} else {
 		Morebits.quickForm.setElementVisibility(
 			form.blank_duration.parentNode,
@@ -1029,7 +1043,7 @@ Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUse
 		} else {
 			pageobj.setCreateProtection('sysop', 'indefinite');
 		}
-		pageobj.setEditSummary('被永久封禁的用戶頁' + Twinkle.getPref('protectionSummaryAd'));
+		pageobj.setEditSummary(wgULS("被永久封禁的用户页", "被永久封禁的用戶頁") + Twinkle.getPref('protectionSummaryAd'));
 		pageobj.protect(function(){
 			Morebits.status.info(wgULS("保护用户页", "保護用戶頁"), ( pageobj.exists() ? wgULS("已全保护", "已全保護") : wgULS("已白纸保护", "已白紙保護") ));
 		});
