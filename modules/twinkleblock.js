@@ -61,6 +61,11 @@ Twinkle.block.callback = function twinkleblockCallback() {
 					value: 'template',
 					tooltip: wgULS('如果执行封禁的管理员忘记发出保护模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。', '如果執行封禁的管理員忘記發出保護模板，或你封禁了用戶而沒有給其發出模板，則你可以用此來發出合適的模板。'),
 					checked: true
+				},
+				{
+					label: wgULS('解除封禁用户', '解除封禁用戶'),
+					value: 'unblock',
+					tooltip: wgULS('解除封禁相关用户。', '解除封禁相關用戶。')
 				}
 			]
 		});
@@ -68,6 +73,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	form.append({ type: 'field', label: wgULS('预设', '預設'), name: 'field_preset' });
 	form.append({ type: 'field', label: wgULS('模板选项', '模板設定'), name: 'field_template_options' });
 	form.append({ type: 'field', label: wgULS('封禁选项', '封禁設定'), name: 'field_block_options' });
+	form.append({ type: 'field', label: wgULS('解除封禁选项', '解除封禁設定'), name: 'field_unblock_options' });
 
 	form.append( { type:'submit', label: '提交' } );
 
@@ -131,10 +137,22 @@ Twinkle.block.callback.saveFieldset = function twinkleblockCallbacksaveFieldset(
 };
 
 Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction(e) {
-	var field_preset, field_template_options, field_block_options, $form = $(e.target.form);
+	var field_preset, field_template_options, field_block_options, field_unblock_options, $form = $(e.target.form);
+
+	if (e.target.value === 'unblock') {
+		if (!Twinkle.block.currentBlockInfo) {
+			$form.find('[name=actiontype][value=unblock]').prop('checked', false);
+			return alert(wgULS("用户没有被封禁", "用戶沒有被封禁"));
+		}
+		$form.find('[name=actiontype][value=block]').prop('checked', false);
+		$form.find('[name=actiontype][value=template]').prop('checked', false);
+	} else if (e.target.value === 'block' || e.target.value === 'template') {
+		$form.find('[name=actiontype][value=unblock]').prop('checked', false);
+	}
 
 	Twinkle.block.callback.saveFieldset($('[name=field_block_options]'));
 	Twinkle.block.callback.saveFieldset($('[name=field_template_options]'));
+	Twinkle.block.callback.saveFieldset($('[name=field_unblock_options]'));
 
 	if ($form.find('[name=actiontype][value=block]').is(':checked')) {
 		field_preset = new Morebits.quickForm.element({ type: 'field', label: wgULS('预设', '預設'), name: 'field_preset' });
@@ -388,6 +406,17 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		field_template_options.append( { type: 'div', id: 'twinkleblock-previewbox', style: 'display: none' } );
 	}
 
+	if ($form.find('[name=actiontype][value=unblock]').is(':checked')) {
+		field_unblock_options = new Morebits.quickForm.element({ type: 'field', label: wgULS('解除封禁选项', '解除封禁設定'), name: 'field_unblock_options' });
+
+		field_unblock_options.append({
+				type: 'textarea',
+				label: wgULS('理由（用于封禁日志）：', '理由（用於封禁日誌）：'),
+				name: 'reason',
+				value: Twinkle.block.field_unblock_options.reason
+			});
+	}
+
 	var oldfield;
 	if (field_preset) {
 		oldfield = $form.find('fieldset[name="field_preset"]')[0];
@@ -400,6 +429,12 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		oldfield.parentNode.replaceChild(field_block_options.render(), oldfield);
 	} else {
 		$form.find('fieldset[name="field_block_options"]').hide();
+	}
+	if (field_unblock_options) {
+		oldfield = $form.find('fieldset[name="field_unblock_options"]')[0];
+		oldfield.parentNode.replaceChild(field_unblock_options.render(), oldfield);
+	} else {
+		$form.find('fieldset[name="field_unblock_options"]').hide();
 	}
 	if (field_template_options) {
 		oldfield = $form.find('fieldset[name="field_template_options"]')[0];
@@ -878,12 +913,15 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	var $form = $(e.target),
 		toBlock = $form.find('[name=actiontype][value=block]').is(':checked'),
 		toWarn = $form.find('[name=actiontype][value=template]').is(':checked'),
-		blockoptions = {}, templateoptions = {}, tagprotectoptions = {};
+		toUnblock = $form.find('[name=actiontype][value=unblock]').is(':checked'),
+		blockoptions = {}, templateoptions = {}, unblockoptions = {}, tagprotectoptions = {};
 
 	Twinkle.block.callback.saveFieldset($form.find('[name=field_block_options]'));
 	Twinkle.block.callback.saveFieldset($form.find('[name=field_template_options]'));
+	Twinkle.block.callback.saveFieldset($form.find('[name=field_unblock_options]'));
 
 	blockoptions = Twinkle.block.field_block_options;
+	unblockoptions = Twinkle.block.field_unblock_options;
 
 	templateoptions = Twinkle.block.field_template_options;
 	templateoptions.disabletalk = !!(templateoptions.disabletalk || blockoptions.disabletalk);
@@ -941,6 +979,26 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 
 		Morebits.status.init( e.target );
 		Twinkle.block.callback.issue_template(templateoptions);
+	} else if (toUnblock) {
+		if (!unblockoptions.reason) return alert(wgULS('请提供解除封禁理由！', '請提供解除封禁理由！'));
+		unblockoptions.reason += Twinkle.getPref('blockSummaryAd');
+
+		Morebits.simpleWindow.setButtonsEnabled( false );
+		Morebits.status.init( e.target );
+		var statusElement = new Morebits.status(wgULS('执行解除封禁', '執行解除封禁'));
+		unblockoptions.action = 'unblock';
+		unblockoptions.user = Morebits.wiki.flow.relevantUserName();
+
+		api.getToken('block').then(function(token) {
+			statusElement.status(wgULS('处理中…', '處理中…'));
+			unblockoptions.token = token;
+			var mbApi = new Morebits.wiki.api( wgULS('执行封禁', '執行封禁'), unblockoptions, function(data) {
+				statusElement.info('完成');
+			});
+			mbApi.post();
+		}, function() {
+			statusElement.error(wgULS('未能抓取封禁令牌', '未能擷取封禁權杖'));
+		});
 	} else {
 		return alert(wgULS('请给Twinkle点事做！', '請給Twinkle點事做！'));
 	}
