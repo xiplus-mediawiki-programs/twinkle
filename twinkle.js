@@ -142,6 +142,12 @@ if ( mw.config.get( "skin" ) === "vector" ) {
 	Twinkle.defaultConfig.twinkle.portletName = "TW";
 	Twinkle.defaultConfig.twinkle.portletType = "menu";
 	Twinkle.defaultConfig.twinkle.portletNext = "p-search";
+} else if ( mw.config.get( "skin" ) === "timeless" ) {
+	Twinkle.defaultConfig.twinkle.portletArea = "mw-related-navigation";
+	Twinkle.defaultConfig.twinkle.portletId   = "p-twinkle";
+	Twinkle.defaultConfig.twinkle.portletName = "Twinkle";
+	Twinkle.defaultConfig.twinkle.portletType = "menu";
+	Twinkle.defaultConfig.twinkle.portletNext = "page-tools";
 } else {
 	Twinkle.defaultConfig.twinkle.portletArea =  null;
 	Twinkle.defaultConfig.twinkle.portletId   = "p-cactions";
@@ -253,7 +259,13 @@ Twinkle.addPortlet = function( navigation, id, text, type, nextnodeid )
 
 	//verify/normalize input
 	var skin = mw.config.get("skin");
-	type = ( skin === "vector" && type === "menu" && ( navigation === "left-navigation" || navigation === "right-navigation" )) ? "menu" : "";
+	if ( skin === "vector" && type === "menu" && ( navigation === "left-navigation" || navigation === "right-navigation" )) {
+		type = "menu";
+	} else if ( skin === "timeless" && type === "menu" && ( navigation === "mw-site-navigation" || navigation === "mw-related-navigation" )) {
+		type = "menu";
+	} else {
+		type = "";
+	}
 	var outerDivClass;
 	var innerDivClass;
 	switch ( skin )
@@ -272,6 +284,10 @@ Twinkle.addPortlet = function( navigation, id, text, type, nextnodeid )
 			outerDivClass = "portlet";
 			innerDivClass = "pBody";
 			break;
+		case "timeless":
+			outerDivClass = "sidebar-chunk";
+			innerDivClass = "sidebar-inner";
+			break;
 		default:
 			navigation = "column-one";
 			outerDivClass = "portlet";
@@ -289,7 +305,11 @@ Twinkle.addPortlet = function( navigation, id, text, type, nextnodeid )
 		root.appendChild( outerDiv );
 	}
 
-	var h5 = document.createElement( "h3" );
+	if (skin === "timeless") {
+		var h5 = document.createElement( "h2" );
+	} else {
+		var h5 = document.createElement( "h3" );
+	}
 	if ( type === "menu" ) {
 		var span = document.createElement( "span" );
 		span.appendChild( document.createTextNode( text ) );
@@ -317,6 +337,18 @@ Twinkle.addPortlet = function( navigation, id, text, type, nextnodeid )
 		innerDiv = document.createElement( "div" );
 		innerDiv.className = innerDivClass;
 		outerDiv.appendChild(innerDiv);
+		if ( skin === "timeless" ) {
+			navigation = document.createElement( "div" );
+			navigation.className = "mw-portlet";
+			innerDiv.appendChild(navigation);
+			navigationname = document.createElement( "h3" );
+			navigationname.innerText = text;
+			navigation.appendChild(navigationname);
+			portletbody = document.createElement( "div" );
+			portletbody.className = "mw-portlet-body";
+			navigation.appendChild(portletbody);
+			innerDiv = portletbody;
+		}
 	}
 
 	var ul = document.createElement( "ul" );
