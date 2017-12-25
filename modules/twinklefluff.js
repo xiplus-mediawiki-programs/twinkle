@@ -26,7 +26,7 @@ Twinkle.fluff = {
 			return;
 		}
 
-		var vandal = $("#mw-diff-ntitle2").find("a.mw-userlink").text();
+		var vandal = $("#mw-diff-ntitle2").find("a.mw-userlink>:first-child").text();
 
 		Twinkle.fluff.revert( Morebits.queryString.get( 'twinklerevert' ), vandal, true );
 	},
@@ -235,7 +235,7 @@ Twinkle.fluff = {
 				return;
 			}
 			if( Twinkle.getPref('showRollbackLinks').indexOf('diff') !== -1 ) {
-				var vandal = $("#mw-diff-ntitle2").find("a").first().text();
+				var vandal = $("#mw-diff-ntitle2").find("a>:first-child").text();
 
 				var revertNode = document.createElement('div');
 				revertNode.setAttribute( 'id', 'tw-revert' );
