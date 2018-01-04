@@ -1916,8 +1916,7 @@ Twinkle.warn.callbacks = {
 			text += '|1=' + article;
 		}
 
-		if (reason && !isCustom) {
-			// we assume that custom warnings lack a {{{2}}} parameter
+		if (reason) {
 			text += "|2=" + reason;
 		}
 		text += '|subst=subst:}}';
