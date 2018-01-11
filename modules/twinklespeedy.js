@@ -578,7 +578,14 @@ Twinkle.speedy.articleList = [
 	},
 	{
 		label: wgULS('A3: 复制自其他中文维基计划，或是与其他中文维基计划内容相同的文章。', 'A3: 複製自其他中文維基計劃，或是與其他中文維基計劃內容相同的文章。'),
-		value: 'a3'
+		value: 'a3',
+		subgroup: {
+			name: 'a3_pagename',
+			type: 'input',
+			label: wgULS('现有条目名：', '現有條目名：'),
+			tooltip: wgULS('请加上跨 wiki 字首。不自动加上连结，若需要请自行加上[[]]。', '請加上跨 wiki 字首。不自動加上連結，若需要請自行加上[[]]。'),
+			size: 60
+		}
 	},
 	{
 		label: wgULS('A5: 条目建立时之内容即与其他现有条目内容完全相同，且名称不适合做为其他条目之重定向。', 'A5: 條目建立時之內容即與其他現有條目內容完全相同，且名稱不適合做為其他條目之重定向。'),
@@ -594,7 +601,14 @@ Twinkle.speedy.articleList = [
 	{
 		label: wgULS('A6: 复制自其他维基百科语言版本，且完全没有翻译。', 'A6: 複製自其他維基百科語言版本，且完全沒有翻譯。'),
 		value: 'a6',
-		tooltip: wgULS('如果并不是复制于任何其他的维基百科语言版本，请换用{{notmandarin}}。带有{{inuse}}和{{translating}}模板的不适用。', '如果並不是複製於任何其他的維基百科語言版本，請換用{{notmandarin}}。帶有{{inuse}}和{{translating}}模板的不適用。')
+		tooltip: wgULS('如果并不是复制于任何其他的维基百科语言版本，请换用{{notmandarin}}。带有{{inuse}}和{{translating}}模板的不适用。', '如果並不是複製於任何其他的維基百科語言版本，請換用{{notmandarin}}。帶有{{inuse}}和{{translating}}模板的不適用。'),
+		subgroup: {
+			name: 'a6_pagename',
+			type: 'input',
+			label: wgULS('现有条目名：', '現有條目名：'),
+			tooltip: wgULS('请加上跨 wiki 字首。不自动加上连结，若需要请自行加上[[]]。', '請加上跨 wiki 字首。不自動加上連結，若需要請自行加上[[]]。'),
+			size: 60
+		}
 	}
 ];
 
@@ -1374,6 +1388,12 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 				}
 				break;
 
+			case 'a3':
+				if (form["csd.a3_pagename"] && form["csd.a3_pagename"].value) {
+					currentParams.pagename = form["csd.a3_pagename"].value;
+				}
+				break;
+
 			case 'a5':
 				if (form["csd.a5_pagename"]) {
 					var otherpage = form["csd.a5_pagename"].value;
@@ -1383,6 +1403,12 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 						return false;
 					}
 					currentParams.pagename = otherpage;
+				}
+				break;
+
+			case 'a6':
+				if (form["csd.a6_pagename"] && form["csd.a6_pagename"].value) {
+					currentParams.pagename = form["csd.a6_pagename"].value;
 				}
 				break;
 
