@@ -540,9 +540,9 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	var type = e.target.category.value;
 	var usertalk = e.target.notify.checked;
 	var reason = e.target.xfdreason.value;
-	var fwdcsdreason = e.target.fwdcsdreason.value;
-	var xfdcat, mergeinto, noinclude;
+	var fwdcsdreason, xfdcat, mergeinto, noinclude;
 	if( type === 'afd' ) {
+		fwdcsdreason = e.target.fwdcsdreason.value;
 		noinclude = e.target.noinclude.checked;
 		xfdcat = e.target.xfdcat.value;
 		mergeinto = e.target.mergeinto.value;
