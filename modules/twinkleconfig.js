@@ -737,6 +737,14 @@ Twinkle.config.sections = [
 			type: "boolean"
 		},
 
+		// TwinkleConfig.markDraftCopyvioWithCSD (boolean)
+		// If, when applying copyvio template to draft page, to mark the page with CSD
+		{
+			name: "markDraftCopyvioWithCSD",
+			label: wgULS("在草稿名字空间默认勾选“同时标记CSD G16”", "在草稿命名空間預設勾選「同時標記CSD G16」"),
+			type: "boolean"
+		},
+
 	]
 },
 

@@ -56,6 +56,21 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 			]
 		}
 	);
+	if (mw.config.get('wgNamespaceNumber') === 118) {
+		form.append( {
+				type: 'checkbox',
+				list: [
+					{
+						label: wgULS('同时标记CSD G16', '同時標記CSD G16'),
+						value: 'csd',
+						name: 'csd',
+						tooltip: wgULS('G16: 因为主页面侵权而创建的临时页面仍然侵权', 'G16: 因為主頁面侵權而建立的臨時頁面仍然侵權'),
+						checked: Twinkle.getPref('markDraftCopyvioWithCSD')
+					}
+				]
+			}
+		);
+	}
 	form.append( { type:'submit' } );
 
 	var result = form.render();
@@ -124,7 +139,7 @@ Twinkle.copyvio.callbacks = {
 	taggingArticle: function(pageobj) {
 		var params = pageobj.getCallbackParameters();
 		var tag = "{{subst:Copyvio/auto|url=" + params.source.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^\*])/gm, '* $1').replace(/^\* $/m, '') + "}}";
-		if ( /\/temp$/i.test( mw.config.get('wgPageName') ) ) {
+		if ( params.csd ) {
 			tag = "{{D|G16}}\n" + tag;
 		}
 
@@ -174,6 +189,10 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 
 	var source = e.target.source.value;
 	var usertalk = e.target.notify.checked;
+	var csd = false;
+	if (mw.config.get('wgNamespaceNumber') === 118) {
+		csd = e.target.csd.checked;
+	}
 
 	Morebits.simpleWindow.setButtonsEnabled( false );
 	Morebits.status.init( e.target );
@@ -185,7 +204,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 
 	var query, wikipedia_page, wikipedia_api, logpage, params;
 	logpage = 'Wikipedia:頁面存廢討論/疑似侵權';
-	params = { source: source, logpage: logpage, usertalk: usertalk};
+	params = { source: source, logpage: logpage, usertalk: usertalk, csd: csd};
 
 	Morebits.wiki.addCheckpoint();
 	// Updating data for the action completed event

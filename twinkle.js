@@ -125,6 +125,7 @@ Twinkle.defaultConfig.twinkle = {
 	copyvioWatchPage: "default",
 	copyvioWatchUser: "default",
 	markCopyvioPagesAsPatrolled: true,
+	markDraftCopyvioWithCSD: false,
 	 // Hidden preferences
 	revertMaxRevisions: 50,
 	batchdeleteChunks: 50,
