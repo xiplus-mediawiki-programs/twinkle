@@ -181,6 +181,11 @@ Twinkle.close.codes = wgULS({
 			action: 'noop',
 			adminonly: true
 		},
+		'twvoy': {
+			label: '转移至维基导游',
+			action: 'noop',
+			adminonly: true
+		},
 		'two': {
 			label: '转移至其他维基计划',
 			action: 'noop',
@@ -339,6 +344,11 @@ Twinkle.close.codes = wgULS({
 		},
 		'twt': {
 			label: '轉移至維基詞典',
+			action: 'noop',
+			adminonly: true
+		},
+		'twvoy': {
+			label: '转移至維基導遊',
 			action: 'noop',
 			adminonly: true
 		},
