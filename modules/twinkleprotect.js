@@ -1340,13 +1340,13 @@ Twinkle.protect.callbacks = {
 		var reg;
 
 		if ( params.category === 'unprotect' ) {
-			reg = /(==\s*请求解除保护\s*==\n)/;
+			reg = /(==\s*请求解除保护\s*==)/;
 		} else {
-			reg = /({{\/header}}\n)/;
+			reg = /({{\s*\/header\s*}})/;
 		}
 
 		var originalTextLength = text.length;
-		text = text.replace( reg, "$1" + newtag + "\n\n");
+		text = text.replace( reg, "$1\n" + newtag + "\n");
 		if (text.length === originalTextLength)
 		{
 			var linknode = document.createElement('a');
