@@ -320,7 +320,10 @@ Twinkle.fluff.revert = function revertPage( type, vandal, autoRevert, rev, page 
 
 	var pagename = page || mw.config.get('wgPageName');
 	var revid = rev || mw.config.get('wgCurRevisionId');
-	var summary = document.getElementsByName('revertsummary')[0].value;
+	var summary = "";
+	if (document.getElementsByName('revertsummary')[0] !== undefined) {
+		summary = document.getElementsByName('revertsummary')[0].value;
+	}
 
 	var statusElement = document.getElementById('mw-content-text');
 	if (Twinkle.fluff.useNotify) {
