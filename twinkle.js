@@ -133,6 +133,7 @@ Twinkle.defaultConfig.twinkle = {
 	batchProtectChunks: 50,
 	batchundeleteChunks: 50,
 	proddeleteChunks: 50,
+	revisionTags: "Twinkle",
 	configPage: "Wikipedia:Twinkle/参数设置"
 };
 

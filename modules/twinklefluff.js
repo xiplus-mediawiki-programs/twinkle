@@ -433,6 +433,7 @@ Twinkle.fluff.callbacks = {
 			var query = {
 				'action': 'edit',
 				'title': self.params.title,
+				'tags': Twinkle.getPref('revisionTags'),
 				'summary': summary,
 				'token': edittoken,
 				'undo': lastrevid,
@@ -646,7 +647,7 @@ Twinkle.fluff.callbacks = {
 		query = {
 			'action': 'edit',
 			'title': self.params.pagename,
-			'tags': 'Twinkle',
+			'tags': Twinkle.getPref('revisionTags'),
 			'summary': summary,
 			'token': edittoken,
 			'undo': lastrevid,

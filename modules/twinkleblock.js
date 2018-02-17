@@ -963,6 +963,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		Morebits.status.init( e.target );
 		var statusElement = new Morebits.status(wgULS('执行封禁', '執行封禁'));
 		blockoptions.action = 'block';
+		blockoptions.tags = Twinkle.getPref('revisionTags');
 		blockoptions.user = Morebits.wiki.flow.relevantUserName();
 
 		// boolean-flipped options

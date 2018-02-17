@@ -2034,7 +2034,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		var query = {
 			action: 'edit',
-			tags: 'Twinkle',
+			tags: Twinkle.getPref('revisionTags'),
 			title: ctx.pageName,
 			summary: ctx.editSummary,
 			token: canUseMwUserToken ? mw.user.tokens.get('editToken') : ctx.editToken,
@@ -2815,6 +2815,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		var query = {
 			action: 'protect',
+			tags: Twinkle.getPref('revisionTags'),
 			title: $(xml).find('page').attr('title'),
 			token: protectToken,
 			protections: protections.join('|'),

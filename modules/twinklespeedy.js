@@ -961,7 +961,7 @@ Twinkle.speedy.callbacks = {
 						reason: '试图[[Wikipedia:不要删除首页|像User:燃玉那样创造奇迹]]' + Twinkle.getPref('deletionSummaryAd'),
 						allowusertalk: true,
 						expiry: '31 hours',
-						tags: 'Twinkle',
+						tags: Twinkle.getPref('revisionTags'),
 						token: token,
 					}, function(data) {
 						statusElement.info(wgULS('请记得阅读[[Wikipedia:不要删除首页]]。', '請記得閱讀[[Wikipedia:不要刪除首頁]]。'));
