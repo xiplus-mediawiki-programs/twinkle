@@ -556,7 +556,7 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-ablock' : {
 		autoblock: true,
-		expiry: '31 hours',
+		expiry: '24 hours',
 		nocreate: true,
 		reasonParam: true
 	},
@@ -620,7 +620,7 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-vblock' : {
 		autoblock: true,
-		expiry: '31 hours',
+		expiry: '24 hours',
 		nocreate: true
 	},
 	'Bot block message' : {
@@ -637,9 +637,9 @@ Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets
 		settings.indefinite = settings.indefinite || settings.expiry === 'infinity' || settings.expiry === 'indefinite' || settings.expiry === 'never';
 
 		if (!Twinkle.block.isRegistered && settings.indefinite) {
-			settings.expiry = '31 hours';
+			settings.expiry = '24 hours';
 		} else {
-			settings.expiry = settings.expiry || '31 hours';
+			settings.expiry = settings.expiry || '24 hours';
 		}
 
 		Twinkle.block.blockPresetsInfo[preset] = settings;
