@@ -793,7 +793,7 @@ Twinkle.block.callback.change_expiry = function twinkleblockCallbackChangeExpiry
 Twinkle.block.seeAlsos = [];
 Twinkle.block.callback.toggle_see_alsos = function twinkleblockCallbackToggleSeeAlso(e) {
 	var reason = this.form.reason.value.replace(
-		new RegExp('( <!-- |；)(参见|參見)' + Twinkle.block.seeAlsos.join('、') + '( -->)?'), ''
+		new RegExp('(<!-- )(参见|參見)' + Twinkle.block.seeAlsos.join('、') + '( -->)?'), ''
 	);
 
 	Twinkle.block.seeAlsos = Twinkle.block.seeAlsos.filter(function(el) {
@@ -807,10 +807,8 @@ Twinkle.block.callback.toggle_see_alsos = function twinkleblockCallbackToggleSee
 
 	if (!Twinkle.block.seeAlsos.length) {
 		this.form.reason.value = reason;
-	} else if (reason.indexOf('{{') !== -1) {
-		this.form.reason.value = reason + ' <!-- ' + wgULS('参见', '參見') + seeAlsoMessage + ' -->';
 	} else {
-		this.form.reason.value = reason + '；' + wgULS('参见', '參見') + seeAlsoMessage;
+		this.form.reason.value = reason + '<!-- ' + wgULS('参见', '參見') + seeAlsoMessage + ' -->';
 	}
 };
 
