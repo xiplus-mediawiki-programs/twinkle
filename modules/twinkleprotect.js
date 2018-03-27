@@ -1187,6 +1187,8 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				case 'pp-create-offensive':
 				case 'pp-create-blp':
 				case 'pp-create-salt':
+				case 'pp-create-userpage':
+				case 'pp-create-repeat':
 					typename = '白纸保护';
 					break;
 				case 'unprotect':
@@ -1207,6 +1209,10 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				case 'pp-semi-template':  // removed for now
 					typereason = '高风险模板';
 					break;
+				case 'pp-userpage':
+				case 'pp-create-userpage':
+					typereason = '被永久封禁的用户页';
+					break;
 				case 'pp-usertalk':
 				case 'pp-semi-usertalk':
 					typereason = '已封禁用户的讨论页';
@@ -1225,6 +1231,9 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 					break;
 				case 'pp-move-indef':
 					typereason = '高风险页面';
+					break;
+				case 'pp-create-repeat':
+					typereason = '多次重复创建';
 					break;
 				default:
 					typereason = '';
