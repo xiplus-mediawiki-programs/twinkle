@@ -198,7 +198,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					label: wgULS('选择默认：', '選擇預設：'),
 					event: Twinkle.protect.callback.changePreset,
 					list: (mw.config.get('wgArticleId') ?
-						Twinkle.protect.protectionTypes :
+						Twinkle.protect.protectionTypesAdmin :
 						Twinkle.protect.protectionTypesCreate)
 				});
 
@@ -580,7 +580,7 @@ Twinkle.protect.doCustomExpiry = function twinkleprotectDoCustomExpiry(target) {
 	}
 };
 
-Twinkle.protect.protectionTypes = wgULS([
+Twinkle.protect.protectionTypesAdmin = wgULS([
 	{ label: '解除保护', value: 'unprotect' },
 	{
 		label: '全保护',
@@ -589,6 +589,7 @@ Twinkle.protect.protectionTypes = wgULS([
 			{ label: '争议、编辑战（全）', value: 'pp-dispute' },
 			{ label: '长期破坏（全）', value: 'pp-vandalism' },
 			{ label: '高风险模板（全）', value: 'pp-template' },
+			{ label: '已封禁用户的用户页（全）', value: 'pp-userpage' },
 			{ label: '已封禁用户的讨论页（全）', value: 'pp-usertalk' }
 		]
 	},
@@ -621,6 +622,7 @@ Twinkle.protect.protectionTypes = wgULS([
 			{ label: '爭議、編輯戰（全）', value: 'pp-dispute' },
 			{ label: '長期破壞（全）', value: 'pp-vandalism' },
 			{ label: '高風險模板（全）', value: 'pp-template' },
+			{ label: '已封禁用戶的用戶頁（全）', value: 'pp-userpage' },
 			{ label: '已封禁用戶的討論頁（全）', value: 'pp-usertalk' }
 		]
 	},
@@ -646,25 +648,34 @@ Twinkle.protect.protectionTypes = wgULS([
 	}
 ]);
 
-Twinkle.protect.protectionTypesAdmin = Twinkle.protect.protectionTypes;
-
-Twinkle.protect.protectionTypesCreate = wgULS([
-	{ label: '解除保护', value: 'unprotect' },
+Twinkle.protect.protectionTypesCreateOnly = wgULS([
 	{
 		label: '白纸保护',
 		list: [
-			{ label: '常规', value: 'pp-create' }
+			{ label: '常规（白纸）', value: 'pp-create' },
+			{ label: '多次重复创建（白纸）', value: 'pp-create-repeat' },
+			{ label: '已封禁用户的用户页（白纸）', value: 'pp-create-userpage' }
 		]
 	}
 ], [
-	{ label: '解除保護', value: 'unprotect' },
 	{
 		label: '白紙保護',
 		list: [
-			{ label: '常規', value: 'pp-create' }
+			{ label: '常規（白紙）', value: 'pp-create' },
+			{ label: '多次重複建立（白紙）', value: 'pp-create-repeat' },
+			{ label: '已封禁用戶的用戶頁（白紙）', value: 'pp-create-userpage' }
 		]
 	}
 ]);
+
+Twinkle.protect.protectionTypes = Twinkle.protect.protectionTypesAdmin.concat(
+	Twinkle.protect.protectionTypesCreateOnly);
+
+Twinkle.protect.protectionTypesCreate = wgULS([
+	{ label: '解除保护', value: 'unprotect' }
+], [
+	{ label: '解除保護', value: 'unprotect' }
+]).concat(Twinkle.protect.protectionTypesCreateOnly);
 
 // NOTICE: keep this synched with [[MediaWiki:Protect-dropdown]]
 Twinkle.protect.protectionPresetsInfo = wgULS({
@@ -685,8 +696,18 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-template': {
 		edit: 'sysop',
+		editexpiry: 'indefinite',
 		move: 'sysop',
+		moveexpiry: 'indefinite',
 		reason: '高风险模板'
+	},
+	'pp-userpage': {
+		edit: 'sysop',
+		editexpiry: 'indefinite',
+		move: 'sysop',
+		moveexpiry: 'indefinite',
+		reason: '被永久封禁的用户页',
+		template: 'noop'
 	},
 	'pp-usertalk': {
 		edit: 'sysop',
@@ -709,7 +730,9 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-semi-template': {  // removed for now
 		edit: 'autoconfirmed',
+		editexpiry: 'indefinite',
 		move: 'sysop',
+		moveexpiry: 'indefinite',
 		reason: '高风险模板',
 		template: 'pp-template'
 	},
@@ -736,6 +759,7 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-move-indef': {
 		move: 'sysop',
+		moveexpiry: 'indefinite',
 		reason: '高风险页面'
 	},
 	'unprotect': {
@@ -747,7 +771,16 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-create': {
 		create: 'autoconfirmed',
-		reason: '{{pp-create}}'
+		reason: null
+	},
+	'pp-create-repeat': {
+		create: 'autoconfirmed',
+		reason: '多次重复创建'
+	},
+	'pp-create-userpage': {
+		create: 'sysop',
+		createexpiry: 'indefinite',
+		reason: '被永久封禁的用户页'
 	}
 }, {
 	'pp-protected': {
@@ -767,8 +800,18 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-template': {
 		edit: 'sysop',
+		editexpiry: 'indefinite',
 		move: 'sysop',
+		moveexpiry: 'indefinite',
 		reason: '高風險模板'
+	},
+	'pp-userpage': {
+		edit: 'sysop',
+		editexpiry: 'indefinite',
+		move: 'sysop',
+		moveexpiry: 'indefinite',
+		reason: '被永久封禁的用戶頁',
+		template: 'noop'
 	},
 	'pp-usertalk': {
 		edit: 'sysop',
@@ -818,6 +861,7 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-move-indef': {
 		move: 'sysop',
+		moveexpiry: 'indefinite',
 		reason: '高風險頁面'
 	},
 	'unprotect': {
@@ -829,7 +873,16 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-create': {
 		create: 'autoconfirmed',
-		reason: '{{pp-create}}'
+		reason: null
+	},
+	'pp-create-repeat': {
+		create: 'autoconfirmed',
+		reason: '多次重複建立'
+	},
+	'pp-create-userpage': {
+		create: 'sysop',
+		createexpiry: 'indefinite',
+		reason: '被永久封禁的用戶頁'
 	}
 });
 
@@ -943,7 +996,7 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 				form.editlevel.value = item.edit;
 				Twinkle.protect.formevents.editlevel({ target: form.editlevel });
 
-				form.editexpiry.value = '1 week';
+				form.editexpiry.value = item.editexpiry || '1 week';
 			} else {
 				form.editmodify.checked = false;
 				Twinkle.protect.formevents.editmodify({ target: form.editmodify });
@@ -954,7 +1007,7 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 				Twinkle.protect.formevents.movemodify({ target: form.movemodify });
 				form.movelevel.value = item.move;
 				Twinkle.protect.formevents.movelevel({ target: form.movelevel });
-				form.moveexpiry.value = '1 month';
+				form.moveexpiry.value = item.moveexpiry || '1 week';
 			} else {
 				form.movemodify.checked = false;
 				Twinkle.protect.formevents.movemodify({ target: form.movemodify });
@@ -963,6 +1016,7 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 			if (item.create) {
 				form.createlevel.value = item.create;
 				Twinkle.protect.formevents.createlevel({ target: form.createlevel });
+				form.createexpiry.value = item.createexpiry || '1 week';
 			}
 		}
 
