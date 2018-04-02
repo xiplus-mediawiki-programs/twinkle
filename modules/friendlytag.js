@@ -71,7 +71,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 				type: 'div',
 				id: 'tagWorkArea',
 				className: 'morebits-scrollbox',
-				style: 'max-height: 28em'
+				style: 'max-height: 22em'
 			});
 
 			form.append( {
@@ -88,6 +88,14 @@ Twinkle.tag.callback = function friendlytagCallback() {
 					]
 				}
 			);
+
+			form.append({
+				type: 'textarea',
+				name: 'tagReason',
+				label: wgULS('维护标记理由（编辑摘要）：', '維護標記理由（編輯摘要）：'),
+				tooltip: wgULS('说明加入这些维护模板的原因，指出条目内容的哪些部分有问题，如果理由很长则应该发表在讨论页。',
+						'說明加入這些維護模板的原因，指出條目內容的哪些部分有問題，如果理由很長則應該發表在討論頁。'),
+			});
 
 			break;
 
@@ -1065,6 +1073,14 @@ Twinkle.tag.callbacks = {
 			} else {
 				tags = tags.concat( groupableTags );
 			}
+
+			var tagReason = params.tagReason.trim();
+			if (tagReason !== "") {
+				if (tagReason.search(/[.?!;，。？！；]$/) === -1) {
+					tagReason += "。";
+				}
+				summaryText = tagReason + summaryText;
+			}
 		} else {
 			// Redirect tagging: Check for pre-existing tags
 			for( i = 0; i < params.tags.length; i++ ) {
@@ -1187,6 +1203,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		case '条目':
 			params.tags = form.getChecked( 'articleTags' );
 			params.group = form.group.checked;
+			params.tagReason = form.tagReason.value;
 			params.tagParameters = {
 				notability: form["articleTags.notability"] ? form["articleTags.notability"].value : null
 			};
