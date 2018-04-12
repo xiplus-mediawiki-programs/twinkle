@@ -137,7 +137,7 @@ Morebits.sanitizeIPv6 = function ( address ) {
  *              - Attributes (within list): name, label, value, checked, disabled, event, subgroup
  *   radio     A radio button. Must use "list" parameter.
  *              - Attributes: name, list, event
- *              - Attributes (within list): name, label, value, checked, disabled, event, subgroup
+ *              - Attributes (within list): name, label, value, checked, disabled, hidden, event, subgroup
  *   input     A text box.
  *              - Attributes: name, label, value, size, disabled, readonly, hidden, maxlength, event
  *   dyninput  A set of text boxes with "Remove" buttons and an "Add" button.
@@ -323,6 +323,9 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 					continue;
 				}
 				cur_div = node.appendChild( document.createElement( 'div' ) );
+				if( current.hidden ) {
+					cur_div.setAttribute( 'hidden', '' );
+				}
 				subnode = cur_div.appendChild( document.createElement( 'input' ) );
 				subnode.values = current.value;
 				subnode.setAttribute( 'value', current.value );
