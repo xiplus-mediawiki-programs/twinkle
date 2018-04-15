@@ -20,7 +20,7 @@ Twinkle.arv = function twinklearv() {
 		return;
 	}
 
-	var title = Morebits.isIPAddress( username ) ? wgULS('报告IP给管理员', '報告IP給管理員') : wgULS('报告用户给管理员', '報告用戶給管理員');
+	var title = Morebits.isIPAddress( username ) ? wgULS('报告IP给管理员', '報告IP給管理員') : wgULS('报告用户给管理人员', '報告使用者給管理人員');
 
 	Twinkle.addPortletLink( function(){ Twinkle.arv.callback(username); }, wgULS("告状", "告狀"), "tw-arv", title );
 };
@@ -32,7 +32,7 @@ Twinkle.arv.callback = function ( uid ) {
 	}
 
 	var Window = new Morebits.simpleWindow( 600, 500 );
-	Window.setTitle( "Very Important Person" ); //Backronym
+	Window.setTitle( wgULS("报告用户给管理人员", "報告用戶給管理人員") );
 	Window.setScriptName( "Twinkle" );
 	Window.addFooterLink( wgULS("VIP指导", "VIP指導"), "WP:VIP" );
 	Window.addFooterLink( "UAA指引", "WP:U" );
@@ -58,12 +58,12 @@ Twinkle.arv.callback = function ( uid ) {
 		} );
 	categories.append( {
 			type: 'option',
-			label: wgULS('用户查核 - 主账户（WP:RFCU）', '用戶查核 - 主帳戶（WP:RFCU）'),
+			label: wgULS('用户查核协助请求 - 主账户（WP:RFCUHAM）', '用戶查核協助請求 - 主帳戶（WP:RFCUHAM）'),
 			value: 'sock'
 		} );
 	categories.append( {
 			type: 'option',
-			label: wgULS('用户查核 - 傀儡（WP:RFCU）', '用戶查核 - 傀儡（WP:RFCU）'),
+			label: wgULS('用户查核协助请求 - 傀儡（WP:RFCUHAM）', '用戶查核協助請求 - 傀儡（WP:RFCUHAM）'),
 			value: 'puppet'
 		} );
 	form.append( {
@@ -159,7 +159,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 						disabled: Morebits.isIPAddress( root.uid.value )
 					},
 					{
-						label: wgULS('显而易见的spambot或失窃账户', '顯而易見的spambot或失竊賬戶'),
+						label: wgULS('显而易见的spambot或失窃账户', '顯而易見的spambot或失竊帳戶'),
 						value: 'spambot'
 					},
 					{
@@ -275,7 +275,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				label: '傀儡',
 				sublabel: '傀儡：',
 				tooltip: wgULS('傀儡的用户名（不含User:前缀）', '傀儡的用戶名（不含User:前綴）'),
-				min: 2
+				min: 2,
+				max: 9
 			} );
 		work_area.append( {
 				type: 'textarea',
@@ -772,14 +773,14 @@ Twinkle.arv.processSock = function( params ) {
 	}
 
 	// prepare the SPI report
-	var text = "\n\n=== " + params.uid + " ===\n" +
-		"{{status2}}<!-- 请勿更改本行 -->\n" +
-		"{{checkuser|1=" + params.uid + "}}\n" +
-		params.sockpuppets.map( function(v) {
-				return "{{checkuser|1=" + v + "}}";
-			} ).join( "\n" ) + "\n" + params.evidence + "--~~~~";
+	var text = "\n\n{{subst:RFCUform\n" +
+		"| username1  = "+ params.uid + "\n" +
+		params.sockpuppets.map( function(v, i) {
+				return "| username" + (i+2) + "  = " + v;
+			} ).join( "\n" ) + "\n" +
+		"| reason = " + params.evidence + "}}--~~~~";
 
-	var reportpage = 'Wikipedia:用戶查核請求';
+	var reportpage = 'Wikipedia:元維基用戶查核協助請求';
 
 	Morebits.wiki.actionCompleted.redirect = reportpage;
 	Morebits.wiki.actionCompleted.notice = wgULS("报告完成", "報告完成");
