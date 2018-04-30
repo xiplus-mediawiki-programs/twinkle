@@ -198,7 +198,7 @@ Twinkle.config.sections = [
 },
 
 {
-	title: "图片删除",
+	title: wgULS("图片删除", "圖片刪除"),
 	preferences: [
 		// TwinkleConfig.notifyUserOnDeli (boolean)
 		// If the user should be notified after placing a file deletion tag

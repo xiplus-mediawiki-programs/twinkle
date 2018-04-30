@@ -293,8 +293,8 @@ Twinkle.warn.messages = wgULS({
 				summary: "层级1：针对特定用户的人身攻击"
 			},
 			"uw-agf1": {
-				label: "没有善意推定",
-				summary: "层级1：没有善意推定"
+				label: "没有假定善意",
+				summary: "层级1：没有假定善意"
 			},
 			"uw-own1": {
 				label: "主张条目所有权",
@@ -429,8 +429,8 @@ Twinkle.warn.messages = wgULS({
 				summary: "层级2：针对特定用户的人身攻击"
 			},
 			"uw-agf2": {
-				label: "没有善意推定",
-				summary: "层级2：没有善意推定"
+				label: "没有假定善意",
+				summary: "层级2：没有假定善意"
 			},
 			"uw-own2": {
 				label: "主张条目的所有权",
@@ -565,8 +565,8 @@ Twinkle.warn.messages = wgULS({
 				summary: "层级3：针对特定用户的人身攻击"
 			},
 			"uw-agf3": {
-				label: "没有善意推定",
-				summary: "层级3：没有善意推定"
+				label: "没有假定善意",
+				summary: "层级3：没有假定善意"
 			},
 			"uw-own3": {
 				label: "主张条目的所有权",
@@ -869,8 +869,8 @@ Twinkle.warn.messages = wgULS({
 			summary: "单层级通知：翻译条目未标注原作者"
 		},
 		"uw-uaa": {
-			label: "向更改用户名回报的用户名称并不违反方针",
-			summary: "单层级通知：向更改用户名回报的用户名称并不违反方针"
+			label: "向需要管理员注意的用户名报告的用户名称并不违反方针",
+			summary: "单层级通知：向需要管理员注意的用户名报告的用户名称并不违反方针"
 		},
 		"uw-warn": {
 			label: "警告破坏用户",
@@ -1088,8 +1088,8 @@ Twinkle.warn.messages = wgULS({
 				summary: "層級1：針對特定用戶的人身攻擊"
 			},
 			"uw-agf1": {
-				label: "沒有善意推定",
-				summary: "層級1：沒有善意推定"
+				label: "沒有假定善意",
+				summary: "層級1：沒有假定善意"
 			},
 			"uw-own1": {
 				label: "主張條目所有權",
@@ -1224,8 +1224,8 @@ Twinkle.warn.messages = wgULS({
 				summary: "層級2：針對特定用戶的人身攻擊"
 			},
 			"uw-agf2": {
-				label: "沒有善意推定",
-				summary: "層級2：沒有善意推定"
+				label: "沒有假定善意",
+				summary: "層級2：沒有假定善意"
 			},
 			"uw-own2": {
 				label: "主張條目的所有權",
@@ -1360,8 +1360,8 @@ Twinkle.warn.messages = wgULS({
 				summary: "層級3：針對特定用戶的人身攻擊"
 			},
 			"uw-agf3": {
-				label: "沒有善意推定",
-				summary: "層級3：沒有善意推定"
+				label: "沒有假定善意",
+				summary: "層級3：沒有假定善意"
 			},
 			"uw-own3": {
 				label: "主張條目的所有權",
@@ -1664,8 +1664,8 @@ Twinkle.warn.messages = wgULS({
 			summary: "單層級通知：翻譯條目未標註原作者"
 		},
 		"uw-uaa": {
-			label: "向更改用戶名回報的用戶名稱並不違反方針",
-			summary: "單層級通知：向更改用戶名回報的用戶名稱並不違反方針"
+			label: "向需要管理員注意的用戶名報告的用戶名稱並不違反方針",
+			summary: "單層級通知：向需要管理員注意的用戶名報告的用戶名稱並不違反方針"
 		},
 		"uw-warn": {
 			label: "警告破壞用戶",

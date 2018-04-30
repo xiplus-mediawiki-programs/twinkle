@@ -348,7 +348,7 @@ Twinkle.close.codes = wgULS({
 			adminonly: true
 		},
 		'twvoy': {
-			label: '转移至維基導遊',
+			label: '轉移至維基導遊',
 			action: 'noop',
 			adminonly: true
 		},
