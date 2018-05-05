@@ -15,7 +15,7 @@
  */
 
 Twinkle.unlink = function twinkleunlink() {
-	if( mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageName') === 'Wikipedia:沙盒' ) {
+	if( mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageName') === Twinkle.getPref("sandboxPage") ) {
 		return;
 	}
 	if( Morebits.userIsInGroup( 'sysop' ) ) {

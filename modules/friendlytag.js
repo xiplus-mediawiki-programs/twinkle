@@ -22,7 +22,7 @@ Twinkle.tag = function friendlytag() {
 		Twinkle.addPortletLink( Twinkle.tag.callback, wgULS("标记", "標記"), "friendly-tag", wgULS("标记重定向", "標記重定向") );
 	}
 	// article/draft tagging
-	else if( ( ( mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 118 ) && mw.config.get('wgCurRevisionId') ) || ( Morebits.pageNameNorm === 'Wikipedia:沙盒' ) ) {
+	else if( ( ( mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 118 ) && mw.config.get('wgCurRevisionId') ) || ( Morebits.pageNameNorm === Twinkle.getPref("sandboxPage") ) ) {
 		Twinkle.tag.mode = wgULS('条目', '條目');
 		Twinkle.addPortletLink( Twinkle.tag.callback, wgULS("标记", "標記"), "friendly-tag", wgULS("标记条目", "標記條目") );
 	}

@@ -134,7 +134,9 @@ Twinkle.defaultConfig.twinkle = {
 	batchundeleteChunks: 50,
 	proddeleteChunks: 50,
 	revisionTags: "Twinkle",
-	configPage: "Wikipedia:Twinkle/参数设置"
+	configPage: "Wikipedia:Twinkle/参数设置",
+	projectNamespaceName: mw.config.get("wgFormattedNamespaces")[4],
+	sandboxPage: "Wikipedia:沙盒",
 };
 
 // now some skin dependent config.

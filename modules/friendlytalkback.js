@@ -195,7 +195,7 @@ var callback_change_target = function( e ) {
 					type:"input",
 					name:"page",
 					label:wgULS("完整页面名", "完整頁面名"),
-					tooltip:wgULS("您留下消息的完整页面名，比如“Wikipedia talk:Twinkle”。", "您留下消息的完整頁面名，比如「Wikipedia talk:Twinkle」。"),
+					tooltip:wgULS("您留下消息的完整页面名，比如“"+Twinkle.getPref("projectNamespaceName")+" talk:Twinkle”。", "您留下消息的完整頁面名，比如「"+Twinkle.getPref("projectNamespaceName")+" talk:Twinkle」。"),
 					value: prev_page
 				});
 
