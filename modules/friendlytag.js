@@ -517,6 +517,7 @@ Twinkle.tag.article.tagCategories = wgULS({
 		],
 		"链接": [
 			"dead end",
+			"underlinked",
 			"orphan",
 			"overlinked"
 		],
@@ -616,6 +617,7 @@ Twinkle.tag.article.tagCategories = wgULS({
 		],
 		"連結": [
 			"dead end",
+			"underlinked",
 			"orphan",
 			"overlinked"
 		],
