@@ -214,6 +214,10 @@ Twinkle.warn.messages = wgULS({
 				label: "在条目中加入原创研究",
 				summary: "层级1：在条目中加入原创研究"
 			},
+			"uw-politicalbias1": {
+				label: "违反两岸用语方针",
+				summary: "层级1：违反两岸用语方针"
+			}
 		},
 		"增加商品或政治广告": {
 			"uw-spam1": {
@@ -350,6 +354,10 @@ Twinkle.warn.messages = wgULS({
 				label: "在条目中加入原创研究",
 				summary: "层级2：在条目中加入原创研究"
 			},
+			"uw-politicalbias2": {
+				label: "违反两岸用语方针",
+				summary: "层级2：违反两岸用语方针"
+			}
 		},
 		"增加商品或政治广告": {
 			"uw-spam2": {
@@ -486,6 +494,10 @@ Twinkle.warn.messages = wgULS({
 				label: "在条目中加入原创研究",
 				summary: "层级3：在条目中加入原创研究"
 			},
+			"uw-politicalbias3": {
+				label: "违反两岸用语方针",
+				summary: "层级3：违反两岸用语方针"
+			}
 		},
 		"增加商品或政治广告": {
 			"uw-spam3": {
@@ -617,6 +629,10 @@ Twinkle.warn.messages = wgULS({
 			"uw-image4": {
 				label: "在页面中加入不当图片",
 				summary: "层级4：在页面中加入不当图片"
+			},
+			"uw-politicalbias4": {
+				label: "违反两岸用语方针",
+				summary: "层级4：违反两岸用语方针"
 			}
 		},
 		"增加商品或政治广告": {
@@ -707,6 +723,10 @@ Twinkle.warn.messages = wgULS({
 			"uw-image4im": {
 				label: "加入不恰当的图片",
 				summary: "层级4im：加入不恰当的图片"
+			},
+			"uw-politicalbias4im": {
+				label: "违反两岸用语方针",
+				summary: "层级4im：违反两岸用语方针"
 			}
 		},
 		"增加商品或政治广告": {
@@ -1009,6 +1029,10 @@ Twinkle.warn.messages = wgULS({
 				label: "在條目中加入原創研究",
 				summary: "層級1：在條目中加入原創研究"
 			},
+			"uw-politicalbias1": {
+				label: "違反兩岸用語方針",
+				summary: "層級1：違反兩岸用語方針"
+			}
 		},
 		"增加商品或政治廣告": {
 			"uw-spam1": {
@@ -1145,6 +1169,10 @@ Twinkle.warn.messages = wgULS({
 				label: "在條目中加入原創研究",
 				summary: "層級2：在條目中加入原創研究"
 			},
+			"uw-politicalbias2": {
+				label: "違反兩岸用語方針",
+				summary: "層級2：違反兩岸用語方針"
+			}
 		},
 		"增加商品或政治廣告": {
 			"uw-spam2": {
@@ -1281,6 +1309,10 @@ Twinkle.warn.messages = wgULS({
 				label: "在條目中加入原創研究",
 				summary: "層級3：在條目中加入原創研究"
 			},
+			"uw-politicalbias3": {
+				label: "違反兩岸用語方針",
+				summary: "層級3：違反兩岸用語方針"
+			}
 		},
 		"增加商品或政治廣告": {
 			"uw-spam3": {
@@ -1412,6 +1444,10 @@ Twinkle.warn.messages = wgULS({
 			"uw-image4": {
 				label: "在頁面中加入不當圖片",
 				summary: "層級4：在頁面中加入不當圖片"
+			},
+			"uw-politicalbias4": {
+				label: "違反兩岸用語方針",
+				summary: "層級4：違反兩岸用語方針"
 			}
 		},
 		"增加商品或政治廣告": {
@@ -1502,6 +1538,10 @@ Twinkle.warn.messages = wgULS({
 			"uw-image4im": {
 				label: "加入不恰當的圖片",
 				summary: "層級4im：加入不恰當的圖片"
+			},
+			"uw-politicalbias4im": {
+				label: "違反兩岸用語方針",
+				summary: "層級4im：違反兩岸用語方針"
 			}
 		},
 		"增加商品或政治廣告": {
