@@ -671,6 +671,7 @@ Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets
 				Twinkle.block.blockPresetsInfo[newPreset].reason = reason;
 			}
 			if (blockGroup.custom && Twinkle.block.blockPresetsInfo[blockPreset.value] === undefined) {
+				Twinkle.block.blockPresetsInfo[newPreset].reasonParam = true;
 				Twinkle.block.blockPresetsInfo[blockPreset.value] = Twinkle.block.blockPresetsInfo[newPreset];
 			}
 			blockPreset.value = newPreset;
