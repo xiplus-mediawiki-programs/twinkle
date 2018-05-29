@@ -542,7 +542,7 @@ Twinkle.block.blockPresetsInfo = {
 		nocreate: true,
 		nonstandard: true,
 		reason: '{{blocked proxy}}',
-		sig: null
+		sig: '~~~~'
 	},
 	'checkuserblock' : {
 		expiry: 'infinity',
@@ -635,7 +635,8 @@ Twinkle.block.blockPresetsInfo = {
 		nocreate: true
 	},
 	'Bot block message' : {
-		expiry: 'infinity'
+		expiry: 'infinity',
+		sig: '~~~~'
 	}
 };
 
@@ -668,6 +669,9 @@ Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets
 				Twinkle.block.blockPresetsInfo[newPreset].forRegisteredOnly = false;
 			} else if (reason) {
 				Twinkle.block.blockPresetsInfo[newPreset].reason = reason;
+			}
+			if (blockGroup.custom && Twinkle.block.blockPresetsInfo[blockPreset.value] === undefined) {
+				Twinkle.block.blockPresetsInfo[blockPreset.value] = Twinkle.block.blockPresetsInfo[newPreset];
 			}
 			blockPreset.value = newPreset;
 		});
@@ -1123,7 +1127,7 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 	}
 	text += '|subst=subst:';
 
-	if (settings.sig === '~~~~' && !nosign) {
+	if ((settings.sig === '~~~~' || settings.sig === undefined) && !nosign) {
 		text += '}}--~~~~';
 	} else if (settings.sig && !nosign) {
 		text += '|sig=' + settings.sig;
