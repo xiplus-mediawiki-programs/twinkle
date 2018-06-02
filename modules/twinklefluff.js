@@ -441,7 +441,8 @@ Twinkle.fluff.callbacks = {
 				'basetimestamp': touched,
 				'starttimestamp': starttimestamp,
 				'watchlist': Twinkle.getPref('watchRevertedPages').indexOf( 'torev' ) !== -1 ? 'watch' : undefined,
-				'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf( 'torev' ) !== -1  ? true : undefined
+				'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf( 'torev' ) !== -1  ? true : undefined,
+				'bot': true
 			};
 
 			if (!Twinkle.fluff.useNotify) {
@@ -655,7 +656,8 @@ Twinkle.fluff.callbacks = {
 			'basetimestamp': touched,
 			'starttimestamp': starttimestamp,
 			'watchlist' :  Twinkle.getPref('watchRevertedPages').indexOf( self.params.type ) !== -1 ? 'watch' : undefined,
-			'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf( self.params.type ) !== -1 ? true : undefined
+			'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf( self.params.type ) !== -1 ? true : undefined,
+			'bot': true
 		};
 
 		if (!Twinkle.fluff.useNotify) {
