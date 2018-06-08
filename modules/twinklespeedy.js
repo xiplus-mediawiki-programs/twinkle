@@ -919,7 +919,7 @@ Twinkle.speedy.callbacks = {
 
 		var statusIndicator = new Morebits.status( wgULS('构造删除理由', '構造刪除理由') );
 		var api = new Morebits.wiki.api( wgULS('解析删除模板', '解析刪除模板'), query, function(apiObj) {
-				var reason = decodeURIComponent($(apiObj.getXML().querySelector('text').childNodes[0].nodeValue).find('#delete-reason').text()).replace(/\+/g, ' ');
+				var reason = decodeURIComponent($(apiObj.getXML().querySelector('text').childNodes[0].nodeValue).find('#delete-reason').text().replace(/\+/g, ' '));
 				if (!reason) {
 					statusIndicator.warn( wgULS('未能从删除模板生成删除理由', '未能從刪除模板生成刪除理由') );
 				} else {
