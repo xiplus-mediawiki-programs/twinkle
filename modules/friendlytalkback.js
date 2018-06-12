@@ -20,39 +20,39 @@ Twinkle.talkback = function() {
 		return;
 	}
 
-	Twinkle.addPortletLink( Twinkle.talkback.callback, "通告", "friendly-talkback", wgULS("回复通告", "回覆通告") );
+	Twinkle.addPortletLink( Twinkle.talkback.callback, "通告", "friendly-talkback", wgUVS("回复通告", "回覆通告") );
 };
 
 Twinkle.talkback.callback = function( ) {
-	if( Morebits.wiki.flow.relevantUserName() === mw.config.get("wgUserName") && !confirm(wgULS("您寂寞到了要自己回复自己的程度么？", "您寂寞到了要自己回覆自己的程度麼？")) ){
+	if( Morebits.wiki.flow.relevantUserName() === mw.config.get("wgUserName") && !confirm(wgUVS("您寂寞到了要自己回复自己的程度么？", "您寂寞到了要自己回覆自己的程度麼？")) ){
 		return;
 	}
 
 	var Window = new Morebits.simpleWindow( 600, 350 );
-	Window.setTitle(wgULS("回复通告", "回覆通告"));
+	Window.setTitle(wgUVS("回复通告", "回覆通告"));
 	Window.setScriptName("Twinkle");
-	Window.addFooterLink( wgULS("关于{{talkback}}", "關於{{talkback}}"), "Template:Talkback" );
-	Window.addFooterLink( wgULS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#talkback" );
+	Window.addFooterLink( wgUVS("关于{{talkback}}", "關於{{talkback}}"), "Template:Talkback" );
+	Window.addFooterLink( wgUVS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#talkback" );
 
 	var form = new Morebits.quickForm( callback_evaluate );
 
 	form.append({ type: "radio", name: "tbtarget",
 				list: [
 					{
-						label: wgULS("回复：我的对话页", "回覆：我的對話頁"),
+						label: wgUVS("回复：我的对话页", "回覆：我的對話頁"),
 						value: "mytalk",
 						checked: "true"
 					},
 					{
-						label: wgULS("回复：其他用户的对话页", "回覆：其他用戶的對話頁"),
+						label: wgUVS("回复：其他用户的对话页", "回覆：其他用戶的對話頁"),
 						value: "usertalk"
 					},
 					{
-						label: wgULS("其它页面", "其它頁面"),
+						label: wgUVS("其它页面", "其它頁面"),
 						value: "other"
 					},
 					{
-						label: wgULS("“有新邮件”", "「有新郵件」"),
+						label: wgUVS("“有新邮件”", "「有新郵件」"),
 						value: "mail"
 					}
 				],
@@ -101,7 +101,7 @@ Twinkle.talkback.callback.optoutStatus = function(apiobj) {
 	var $el = $(xml).find('el');
 
 	if ($el.length) {
-		Twinkle.talkback.optout = Morebits.wiki.flow.relevantUserName() + wgULS("不希望收到回复通告", "不希望收到回覆通告");
+		Twinkle.talkback.optout = Morebits.wiki.flow.relevantUserName() + wgUVS("不希望收到回复通告", "不希望收到回覆通告");
 		var url = $el.text();
 		if (url.indexOf("reason=") > -1) {
 			Twinkle.talkback.optout += "：" + decodeURIComponent(url.substring(url.indexOf("reason=") + 7)) + "。";
@@ -139,7 +139,7 @@ var callback_change_target = function( e ) {
 
 	var work_area = new Morebits.quickForm.element({
 			type: "field",
-			label: wgULS("回复通告信息", "回覆通告訊息"),
+			label: wgUVS("回复通告信息", "回覆通告訊息"),
 			name: "work_area"
 		});
 
@@ -156,8 +156,8 @@ var callback_change_target = function( e ) {
 			work_area.append({
 					type:"input",
 					name:"section",
-					label:wgULS("小节（可选）", "小節（可選）"),
-					tooltip:wgULS("您留下消息的小节标题。", "您留下消息的小節標題。"),
+					label:wgUVS("小节（可选）", "小節（可選）"),
+					tooltip:wgUVS("您留下消息的小节标题。", "您留下消息的小節標題。"),
 					value: prev_section
 				});
 			break;
@@ -172,15 +172,15 @@ var callback_change_target = function( e ) {
 					type:"input",
 					name:"page",
 					label:"用户",
-					tooltip:wgULS("您留下消息的用户名。", "您留下消息的用戶名。"),
+					tooltip:wgUVS("您留下消息的用户名。", "您留下消息的用戶名。"),
 					value: prev_page
 				});
 
 			work_area.append({
 					type:"input",
 					name:"section",
-					label:wgULS("小节（可选）", "小節（可選）"),
-					tooltip:wgULS("您留下消息的小节标题。", "您留下消息的小節標題。"),
+					label:wgUVS("小节（可选）", "小節（可選）"),
+					tooltip:wgUVS("您留下消息的小节标题。", "您留下消息的小節標題。"),
 					value: prev_section
 				});
 			break;
@@ -194,16 +194,16 @@ var callback_change_target = function( e ) {
 			work_area.append({
 					type:"input",
 					name:"page",
-					label:wgULS("完整页面名", "完整頁面名"),
-					tooltip:wgULS("您留下消息的完整页面名，比如“"+Twinkle.getPref("projectNamespaceName")+" talk:Twinkle”。", "您留下消息的完整頁面名，比如「"+Twinkle.getPref("projectNamespaceName")+" talk:Twinkle」。"),
+					label:wgUVS("完整页面名", "完整頁面名"),
+					tooltip:wgUVS("您留下消息的完整页面名，比如“"+Twinkle.getPref("projectNamespaceName")+" talk:Twinkle”。", "您留下消息的完整頁面名，比如「"+Twinkle.getPref("projectNamespaceName")+" talk:Twinkle」。"),
 					value: prev_page
 				});
 
 			work_area.append({
 					type:"input",
 					name:"section",
-					label:wgULS("小节（可选）", "小節（可選）"),
-					tooltip:wgULS("您留下消息的小节标题。", "您留下消息的小節標題。"),
+					label:wgUVS("小节（可选）", "小節（可選）"),
+					tooltip:wgUVS("您留下消息的小节标题。", "您留下消息的小節標題。"),
 					value: prev_section
 				});
 			break;
@@ -211,14 +211,14 @@ var callback_change_target = function( e ) {
 			work_area.append({
 					type:"input",
 					name:"section",
-					label:wgULS("电子邮件主题（可选）", "電子郵件主題（可選）"),
-					tooltip:wgULS("您发出的电子邮件的主题。", "您發出的電子郵件的主題。")
+					label:wgUVS("电子邮件主题（可选）", "電子郵件主題（可選）"),
+					tooltip:wgUVS("您发出的电子邮件的主题。", "您發出的電子郵件的主題。")
 				});
 			break;
 	}
 
 	if (value !== "notice") {
-		work_area.append({ type:"textarea", label:wgULS("附加信息（可选）：", "附加訊息（可選）："), name:"message", tooltip:wgULS("会在回复通告模板下出现的消息，您的签名会被加在最后。", "會在回覆通告模板下出現的訊息，您的簽名會被加在最後。") });
+		work_area.append({ type:"textarea", label:wgUVS("附加信息（可选）：", "附加訊息（可選）："), name:"message", tooltip:wgUVS("会在回复通告模板下出现的消息，您的签名会被加在最后。", "會在回覆通告模板下出現的訊息，您的簽名會被加在最後。") });
 	}
 
 	work_area = work_area.render();
@@ -245,12 +245,12 @@ var callback_evaluate = function( e ) {
 
 		if( tbtarget === "usertalk" ) {
 			if( !page ) {
-				alert(wgULS("您必须指定用户名。", "您必須指定用戶名。"));
+				alert(wgUVS("您必须指定用户名。", "您必須指定用戶名。"));
 				return;
 			}
 		} else {
 			if( !page ) {
-				alert(wgULS("您必须指定页面名。", "您必須指定頁面名。"));
+				alert(wgUVS("您必须指定页面名。", "您必須指定頁面名。"));
 				return;
 			}
 		}
@@ -265,7 +265,7 @@ var callback_evaluate = function( e ) {
 	Morebits.status.init( e.target );
 
 	Morebits.wiki.actionCompleted.redirect = fullUserTalkPageName;
-	Morebits.wiki.actionCompleted.notice = wgULS("回复通告完成，将在几秒内刷新", "回覆通告完成，將在幾秒內重新整理");
+	Morebits.wiki.actionCompleted.notice = wgUVS("回复通告完成，将在几秒内刷新", "回覆通告完成，將在幾秒內重新整理");
 
 	var tbPageName = (tbtarget === "mytalk") ? mw.config.get("wgUserName") : page;
 
@@ -284,7 +284,7 @@ var callback_evaluate = function( e ) {
 			text += "\n~~~~";
 		}
 
-		editSummary = wgULS("通知：有新邮件", "通知：有新郵件") + Twinkle.getPref("summaryAd");
+		editSummary = wgUVS("通知：有新邮件", "通知：有新郵件") + Twinkle.getPref("summaryAd");
 	} else {  // tbtarget one of mytalk, usertalk, other
 		// clean talkback heading: strip section header markers that were erroneously suggested in the documentation
 		title = Twinkle.getFriendlyPref("talkbackHeading").replace( /^\s*=+\s*(.*?)\s*=+$\s*/, "$1" );
@@ -304,7 +304,7 @@ var callback_evaluate = function( e ) {
 			text += "\n~~~~";
 		}
 
-		editSummary = wgULS("回复通告（[[", "回覆通告（[[");
+		editSummary = wgUVS("回复通告（[[", "回覆通告（[[");
 		if (tbtarget !== "other" && !/^\s*user talk:/i.test(tbPageName)) {
 			editSummary += "User talk:";
 		}
@@ -313,12 +313,12 @@ var callback_evaluate = function( e ) {
 	}
 
 	Morebits.wiki.flow.check(fullUserTalkPageName, function () {
-		var flowpage = new Morebits.wiki.flow(fullUserTalkPageName, wgULS("添加回复通告", "加入回覆通告"));
+		var flowpage = new Morebits.wiki.flow(fullUserTalkPageName, wgUVS("添加回复通告", "加入回覆通告"));
 		flowpage.setTopic(title);
 		flowpage.setContent(content);
 		flowpage.newTopic();
 	}, function () {
-		var talkpage = new Morebits.wiki.page(fullUserTalkPageName, wgULS("添加回复通告", "加入回覆通告"));
+		var talkpage = new Morebits.wiki.page(fullUserTalkPageName, wgUVS("添加回复通告", "加入回覆通告"));
 		talkpage.setEditSummary(editSummary);
 		talkpage.setAppendText( text );
 		talkpage.setCreateOption("recreate");

@@ -36,7 +36,7 @@ Twinkle.close = function twinkleclose() {
 	var delNode = document.createElement('strong');
 	var delLink = document.createElement('a');
 	delLink.appendChild( spanTag( 'Black', '[' ) );
-	delLink.appendChild( spanTag( 'Red', wgULS('关闭讨论', '關閉討論') ) );
+	delLink.appendChild( spanTag( 'Red', wgUVS('关闭讨论', '關閉討論') ) );
 	delLink.appendChild( spanTag( 'Black', ']' ) );
 	delNode.appendChild(delLink);
 
@@ -65,7 +65,7 @@ Twinkle.close = function twinkleclose() {
 };
 
 // Keep this synchronized with {{delh}}
-Twinkle.close.codes = wgULS({
+Twinkle.close.codes = wgUVS({
 	'请求无效': {
 		'ir': {
 			label: '请求无效',
@@ -401,15 +401,15 @@ Twinkle.close.codes = wgULS({
 
 Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 	var Window = new Morebits.simpleWindow( 400, 150 );
-	Window.setTitle( wgULS("关闭存废讨论", "關閉存廢討論") + " \u00B7 " + title );
+	Window.setTitle( wgUVS("关闭存废讨论", "關閉存廢討論") + " \u00B7 " + title );
 	Window.setScriptName( "Twinkle" );
-	Window.addFooterLink( wgULS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#close" );
+	Window.addFooterLink( wgUVS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#close" );
 
 	var form = new Morebits.quickForm( Twinkle.close.callback.evaluate );
 
 	form.append( {
 		type: 'select',
-		label: wgULS('处理结果：', '處理結果：'),
+		label: wgUVS('处理结果：', '處理結果：'),
 		name: 'sub_group',
 		event: Twinkle.close.callback.change_code
 	} );
@@ -417,22 +417,22 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 	form.append( {
 			type: 'input',
 			name: 'sdreason',
-			label: wgULS('速删理由：', '速刪理由：'),
-			tooltip: wgULS('用于删除日誌，使用{{delete}}的参数格式，例如 A1 或 A1|G1', '用於刪除日誌，使用{{delete}}的參數格式，例如 A1 或 A1|G1'),
+			label: wgUVS('速删理由：', '速刪理由：'),
+			tooltip: wgUVS('用于删除日誌，使用{{delete}}的参数格式，例如 A1 或 A1|G1', '用於刪除日誌，使用{{delete}}的參數格式，例如 A1 或 A1|G1'),
 			hidden: true
 	} );
 
 	form.append( {
 			type: 'input',
 			name: 'remark',
-			label: wgULS('补充说明：', '補充說明：')
+			label: wgUVS('补充说明：', '補充說明：')
 	} );
 
 	form.append( {
 		type: 'checkbox',
 		list: [
 			{
-				label: wgULS('只关闭讨论，不进行其他操作', '只關閉討論，不進行其他操作'),
+				label: wgUVS('只关闭讨论，不进行其他操作', '只關閉討論，不進行其他操作'),
 				value: 'noop',
 				name: 'noop',
 				checked: noop
@@ -534,7 +534,7 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 				Twinkle.close.callbacks.del(params);
 				break;
 			case 'keep':
-				var wikipedia_page = new Morebits.wiki.page( params.title, wgULS('移除存废讨论模板', '移除存廢討論模板') );
+				var wikipedia_page = new Morebits.wiki.page( params.title, wgUVS('移除存废讨论模板', '移除存廢討論模板') );
 				wikipedia_page.setCallbackParameters( params );
 				wikipedia_page.load( Twinkle.close.callbacks.keep );
 				break;
@@ -553,9 +553,9 @@ Twinkle.close.callbacks = {
 
 		if (params.code === 'sd') {
 			Twinkle.speedy.callbacks.parseWikitext(params.title, '{{delete|' + params.sdreason + '}}', function(reason) {
-				reason = prompt(wgULS('输入删除理由，或点击确定以接受自动生成的：', '輸入刪除理由，或點選確定以接受自動生成的：'), reason);
+				reason = prompt(wgUVS('输入删除理由，或点击确定以接受自动生成的：', '輸入刪除理由，或點選確定以接受自動生成的：'), reason);
 				if (reason === null) {
-					page.getStatusElement().warn(wgULS('没有执行删除', '沒有執行刪除'));
+					page.getStatusElement().warn(wgUVS('没有执行删除', '沒有執行刪除'));
 					Twinkle.close.callbacks.talkend( params );
 				} else {
 					page.setEditSummary( reason + Twinkle.getPref('deletionSummaryAd') );
@@ -566,7 +566,7 @@ Twinkle.close.callbacks = {
 				}
 			});
 		} else {
-			page.setEditSummary( wgULS('存废讨论通过：[[', '存廢討論通過：[[') + mw.config.get('wgPageName') + ']]' + Twinkle.getPref('deletionSummaryAd') );
+			page.setEditSummary( wgUVS('存废讨论通过：[[', '存廢討論通過：[[') + mw.config.get('wgPageName') + ']]' + Twinkle.getPref('deletionSummaryAd') );
 			page.deletePage(function() {
 				page.getStatusElement().info("完成");
 				Twinkle.close.callbacks.talkend( params );
@@ -579,7 +579,7 @@ Twinkle.close.callbacks = {
 		var statelem = pageobj.getStatusElement();
 
 		if (!pageobj.exists()) {
-			statelem.error( wgULS("页面不存在，可能已被删除", "頁面不存在，可能已被刪除") );
+			statelem.error( wgUVS("页面不存在，可能已被删除", "頁面不存在，可能已被刪除") );
 			return;
 		}
 
@@ -589,7 +589,7 @@ Twinkle.close.callbacks = {
 		var pagetitle = mw.Title.newFromText(params.title);
 		if (pagetitle.getNamespaceId() % 2 === 0) {
 			var talkpagetitle = new mw.Title(pagetitle.getMainText(), pagetitle.getNamespaceId() + 1);
-			var talkpage = new Morebits.wiki.page(talkpagetitle.toString(), wgULS('标记讨论页', '標記討論頁'));
+			var talkpage = new Morebits.wiki.page(talkpagetitle.toString(), wgUVS('标记讨论页', '標記討論頁'));
 			var vfdkept = '{{vfd-kept|' + mw.config.get('wgPageName').split('/').slice(2).join('/') + '|' + params.messageData.label + '}}\n';
 			talkpage.setPrependText(vfdkept);
 			talkpage.setEditSummary('[[' + mw.config.get('wgPageName') + ']]：' + params.messageData.label + Twinkle.getPref('summaryAd'));
@@ -604,11 +604,11 @@ Twinkle.close.callbacks = {
 			newtext = newtext.replace(/\{\{(substub|小小作品|cod|小小條目|小小条目)\|[^{}]*?\}\}\n*/gi, '');
 		}
 		if (newtext === text) {
-			statelem.warn(wgULS("未找到存废讨论模板，可能已被移除", "未找到存廢討論模板，可能已被移除"));
+			statelem.warn(wgUVS("未找到存废讨论模板，可能已被移除", "未找到存廢討論模板，可能已被移除"));
 			Twinkle.close.callbacks.talkend( params );
 			return;
 		}
-		var editsummary = wgULS('存废讨论关闭：[[', '存廢討論關閉：[[') + mw.config.get('wgPageName') + ']]';
+		var editsummary = wgUVS('存废讨论关闭：[[', '存廢討論關閉：[[') + mw.config.get('wgPageName') + ']]';
 
 		pageobj.setPageText(newtext);
 		pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
@@ -621,7 +621,7 @@ Twinkle.close.callbacks = {
 	},
 
 	talkend: function (params) {
-		var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('关闭讨论', '關閉討論'));
+		var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgUVS('关闭讨论', '關閉討論'));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.setPageSection(params.section);
 		wikipedia_page.load(Twinkle.close.callbacks.saveTalk);
@@ -632,7 +632,7 @@ Twinkle.close.callbacks = {
 		var params = pageobj.getCallbackParameters();
 
 		if (text.indexOf('{{delh') !== -1) {
-			statelem.error( wgULS("讨论已被关闭", "討論已被關閉") );
+			statelem.error( wgUVS("讨论已被关闭", "討論已被關閉") );
 			return;
 		}
 
