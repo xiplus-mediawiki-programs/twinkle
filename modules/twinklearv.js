@@ -20,50 +20,50 @@ Twinkle.arv = function twinklearv() {
 		return;
 	}
 
-	var title = Morebits.isIPAddress( username ) ? wgULS('报告IP给管理员', '報告IP給管理員') : wgULS('报告用户给管理人员', '報告使用者給管理人員');
+	var title = Morebits.isIPAddress( username ) ? wgUVS('报告IP给管理员', '報告IP給管理員') : wgUVS('报告用户给管理人员', '報告使用者給管理人員');
 
-	Twinkle.addPortletLink( function(){ Twinkle.arv.callback(username); }, wgULS("告状", "告狀"), "tw-arv", title );
+	Twinkle.addPortletLink( function(){ Twinkle.arv.callback(username); }, wgUVS("告状", "告狀"), "tw-arv", title );
 };
 
 Twinkle.arv.callback = function ( uid ) {
 	if ( uid === mw.config.get('wgUserName') ) {
-		alert( wgULS('你不想报告你自己，对吧？', '你不想報告你自己，對吧？') );
+		alert( wgUVS('你不想报告你自己，对吧？', '你不想報告你自己，對吧？') );
 		return;
 	}
 
 	var Window = new Morebits.simpleWindow( 600, 500 );
-	Window.setTitle( wgULS("报告用户给管理人员", "報告用戶給管理人員") );
+	Window.setTitle( wgUVS("报告用户给管理人员", "報告用戶給管理人員") );
 	Window.setScriptName( "Twinkle" );
-	Window.addFooterLink( wgULS("VIP指导", "VIP指導"), "WP:VIP" );
+	Window.addFooterLink( wgUVS("VIP指导", "VIP指導"), "WP:VIP" );
 	Window.addFooterLink( "UAA指引", "WP:U" );
-	Window.addFooterLink( wgULS("关于RFCU", "關於RFCU"), "WP:RFCU" );
-	Window.addFooterLink( wgULS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#arv" );
+	Window.addFooterLink( wgUVS("关于RFCU", "關於RFCU"), "WP:RFCU" );
+	Window.addFooterLink( wgUVS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#arv" );
 
 	var form = new Morebits.quickForm( Twinkle.arv.callback.evaluate );
 	var categories = form.append( {
 			type: 'select',
 			name: 'category',
-			label: wgULS('选择报告类型：', '選擇報告類型：'),
+			label: wgUVS('选择报告类型：', '選擇報告類型：'),
 			event: Twinkle.arv.callback.changeCategory
 		} );
 	categories.append( {
 			type: 'option',
-			label: wgULS('破坏（WP:VIP）', '破壞（WP:VIP）'),
+			label: wgUVS('破坏（WP:VIP）', '破壞（WP:VIP）'),
 			value: 'aiv'
 		} );
 	categories.append( {
 			type: 'option',
-			label: wgULS('用户名（WP:UAA）', '用戶名（WP:UAA）'),
+			label: wgUVS('用户名（WP:UAA）', '用戶名（WP:UAA）'),
 			value: 'username'
 		} );
 	categories.append( {
 			type: 'option',
-			label: wgULS('用户查核协助请求 - 主账户（WP:RFCUHAM）', '用戶查核協助請求 - 主帳戶（WP:RFCUHAM）'),
+			label: wgUVS('用户查核协助请求 - 主账户（WP:RFCUHAM）', '用戶查核協助請求 - 主帳戶（WP:RFCUHAM）'),
 			value: 'sock'
 		} );
 	categories.append( {
 			type: 'option',
-			label: wgULS('用户查核协助请求 - 傀儡（WP:RFCUHAM）', '用戶查核協助請求 - 傀儡（WP:RFCUHAM）'),
+			label: wgUVS('用户查核协助请求 - 傀儡（WP:RFCUHAM）', '用戶查核協助請求 - 傀儡（WP:RFCUHAM）'),
 			value: 'puppet'
 		} );
 	form.append( {
@@ -100,14 +100,14 @@ Twinkle.arv.callback.changeCategory = function (e) {
 	default:
 		work_area = new Morebits.quickForm.element( {
 				type: 'field',
-				label: wgULS('报告用户破坏', '報告用戶破壞'),
+				label: wgUVS('报告用户破坏', '報告用戶破壞'),
 				name: 'work_area'
 			} );
 		work_area.append( {
 				type: 'input',
 				name: 'page',
-				label: wgULS('相关页面：', '相關頁面：'),
-				tooltip: wgULS('如不希望让报告链接到页面，请留空', '如不希望讓報告連結到頁面，請留空'),
+				label: wgUVS('相关页面：', '相關頁面：'),
+				tooltip: wgUVS('如不希望让报告链接到页面，请留空', '如不希望讓報告連結到頁面，請留空'),
 				value: Morebits.queryString.exists( 'vanarticle' ) ? Morebits.queryString.get( 'vanarticle' ) : '',
 				event: function(e) {
 					var value = e.target.value;
@@ -123,8 +123,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 		work_area.append( {
 				type: 'input',
 				name: 'badid',
-				label: wgULS('受到破坏的修订版本：', '受到破壞的修訂版本：'),
-				tooltip: wgULS('留空以略过差异', '留空以略過差異'),
+				label: wgUVS('受到破坏的修订版本：', '受到破壞的修訂版本：'),
+				tooltip: wgUVS('留空以略过差异', '留空以略過差異'),
 				value: Morebits.queryString.exists( 'vanarticlerevid' ) ? Morebits.queryString.get( 'vanarticlerevid' ) : '',
 				disabled: !Morebits.queryString.exists( 'vanarticle' ),
 				event: function(e) {
@@ -136,8 +136,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 		work_area.append( {
 				type: 'input',
 				name: 'goodid',
-				label: wgULS('破坏前的修订版本：', '破壞前的修訂版本：'),
-				tooltip: wgULS('留空以略过差异的较早版本', '留空以略過差異的較早版本'),
+				label: wgUVS('破坏前的修订版本：', '破壞前的修訂版本：'),
+				tooltip: wgUVS('留空以略过差异的较早版本', '留空以略過差異的較早版本'),
 				value: Morebits.queryString.exists( 'vanarticlegoodrevid' ) ? Morebits.queryString.get( 'vanarticlegoodrevid' ) : '',
 				disabled: !Morebits.queryString.exists( 'vanarticle' ) || Morebits.queryString.exists( 'vanarticlerevid' )
 			} );
@@ -146,24 +146,24 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'arvtype',
 				list: [
 					{
-						label: wgULS('已发出最后（层级4或4im）警告', '已發出最後（層級4或4im）警告'),
+						label: wgUVS('已发出最后（层级4或4im）警告', '已發出最後（層級4或4im）警告'),
 						value: 'final'
 					},
 					{
-						label: wgULS('封禁过期后随即破坏', '封禁過期後隨即破壞'),
+						label: wgUVS('封禁过期后随即破坏', '封禁過期後隨即破壞'),
 						value: 'postblock'
 					},
 					{
-						label: wgULS('显而易见的纯破坏用户', '顯而易見的純破壞用戶'),
+						label: wgUVS('显而易见的纯破坏用户', '顯而易見的純破壞用戶'),
 						value: 'vandalonly',
 						disabled: Morebits.isIPAddress( root.uid.value )
 					},
 					{
-						label: wgULS('显而易见的spambot或失窃账户', '顯而易見的spambot或失竊帳戶'),
+						label: wgUVS('显而易见的spambot或失窃账户', '顯而易見的spambot或失竊帳戶'),
 						value: 'spambot'
 					},
 					{
-						label: wgULS('仅用来散发广告宣传的用户', '僅用來散發廣告宣傳的用戶'),
+						label: wgUVS('仅用来散发广告宣传的用户', '僅用來散發廣告宣傳的用戶'),
 						value: 'promoonly'
 					}
 				]
@@ -171,7 +171,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 		work_area.append( {
 				type: 'textarea',
 				name: 'reason',
-				label: wgULS('评论：', '評論：')
+				label: wgUVS('评论：', '評論：')
 			} );
 		work_area = work_area.render();
 		old_area.parentNode.replaceChild( work_area, old_area );
@@ -179,13 +179,13 @@ Twinkle.arv.callback.changeCategory = function (e) {
 	case 'username':
 		work_area = new Morebits.quickForm.element( {
 				type: 'field',
-				label: wgULS('报告不当用户名', '報告不當用戶名'),
+				label: wgUVS('报告不当用户名', '報告不當用戶名'),
 				name: 'work_area'
 			} );
 		work_area.append ( {
 				type: 'header',
-				label: wgULS('不当用户名类别', '不當用戶名類別'),
-				tooltip: wgULS('维基百科不允许使用带有误导性、宣传性、侮辱性或破坏性的用户名。此外，使用域名及邮箱地址的用户名亦被禁止。这些准则俱应应用至用户名及签名。在其他语言中不当的用户名或通过错拼、替代、暗示、拆字或任何间接方法达成的非妥当用户名同样视为违规。',
+				label: wgUVS('不当用户名类别', '不當用戶名類別'),
+				tooltip: wgUVS('维基百科不允许使用带有误导性、宣传性、侮辱性或破坏性的用户名。此外，使用域名及邮箱地址的用户名亦被禁止。这些准则俱应应用至用户名及签名。在其他语言中不当的用户名或通过错拼、替代、暗示、拆字或任何间接方法达成的非妥当用户名同样视为违规。',
 					'維基百科不允許使用帶有誤導性、宣傳性、侮辱性或破壞性的用戶名。此外，使用域名及電郵地址的用戶名亦被禁止。這些準則俱應應用至用戶名及簽名。在其他語言中不當的用戶名或通過錯拼、替代、暗示、拆字或任何間接方法達成的非妥當用戶名同樣視為違規。')
 			} );
 		work_area.append( {
@@ -193,37 +193,37 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'arvtype',
 				list: [
 					{
-						label: wgULS('误导性用户名', '誤導性用戶名'),
-						value: wgULS('误导性', '誤導性'),
-						tooltip: wgULS('误导性用户名隐含着与贡献者相关或误导他人的事情。例如︰不实观点、暗示账户拥有特定权限或暗示该账户并非由一人拥有而是由一个组群、一个计划或一个集体运作。',
+						label: wgUVS('误导性用户名', '誤導性用戶名'),
+						value: wgUVS('误导性', '誤導性'),
+						tooltip: wgUVS('误导性用户名隐含着与贡献者相关或误导他人的事情。例如︰不实观点、暗示账户拥有特定权限或暗示该账户并非由一人拥有而是由一个组群、一个计划或一个集体运作。',
 							'誤導性用戶名隱含著與貢獻者相關或誤導他人的事情。例如︰不實觀點、暗示帳戶擁有特定權限或暗示該帳戶並非由一人擁有而是由一個組群、一個計劃或一個集體運作。')
 					},
 					{
-						label: wgULS('宣传性用户名', '宣傳性用戶名'),
-						value: wgULS('宣传性', '宣傳性'),
-						tooltip: wgULS('宣传性用户名会于维基百科上起推销一个组织或一家公司的作用。', '宣傳性用戶名會於維基百科上起推銷一個組織或一間公司的作用。')
+						label: wgUVS('宣传性用户名', '宣傳性用戶名'),
+						value: wgUVS('宣传性', '宣傳性'),
+						tooltip: wgUVS('宣传性用户名会于维基百科上起推销一个组织或一家公司的作用。', '宣傳性用戶名會於維基百科上起推銷一個組織或一間公司的作用。')
 					},
 					{
-						label: wgULS('暗示并非由一人拥有', '暗示並非由一人擁有'),
+						label: wgUVS('暗示并非由一人拥有', '暗示並非由一人擁有'),
 						value: 'shared',
-						tooltip: wgULS('每个维基账户只可以代表个人（个别特例除外），所有与他人分享账户的行为，包括分享账户密码均被禁止。', '每個維基帳戶只可以代表個人（個別特例除外），所有與他人分享帳戶的行為，包括分享帳戶密碼均被禁止。')
+						tooltip: wgUVS('每个维基账户只可以代表个人（个别特例除外），所有与他人分享账户的行为，包括分享账户密码均被禁止。', '每個維基帳戶只可以代表個人（個別特例除外），所有與他人分享帳戶的行為，包括分享帳戶密碼均被禁止。')
 					},
 					{
-						label: wgULS('侮辱性用户名', '侮辱性用戶名'),
+						label: wgUVS('侮辱性用户名', '侮辱性用戶名'),
 						value: '侮辱性',
-						tooltip: wgULS('侮辱性用户名令到协调编辑变得困难，甚至无可能。', '侮辱性用戶名令到協調編輯變得困難，甚至無可能。')
+						tooltip: wgUVS('侮辱性用户名令到协调编辑变得困难，甚至无可能。', '侮辱性用戶名令到協調編輯變得困難，甚至無可能。')
 					},
 					{
-						label: wgULS('破坏性用户名', '破壞性用戶名'),
-						value: wgULS('破坏性', '破壞性'),
-						tooltip: wgULS('破坏性用户名包括人身攻击、伪冒他人或其他一切有着清晰可见的破坏维基百科意图的用户名。', '破壞性用戶名包括人身攻擊、偽冒他人或其他一切有著清晰可見的破壞維基百科意圖的用戶名。')
+						label: wgUVS('破坏性用户名', '破壞性用戶名'),
+						value: wgUVS('破坏性', '破壞性'),
+						tooltip: wgUVS('破坏性用户名包括人身攻击、伪冒他人或其他一切有着清晰可见的破坏维基百科意图的用户名。', '破壞性用戶名包括人身攻擊、偽冒他人或其他一切有著清晰可見的破壞維基百科意圖的用戶名。')
 					}
 				]
 			} );
 		work_area.append( {
 				type: 'textarea',
 				name: 'reason',
-				label: wgULS('评论：', '評論：')
+				label: wgUVS('评论：', '評論：')
 			} );
 		work_area = work_area.render();
 		old_area.parentNode.replaceChild( work_area, old_area );
@@ -232,30 +232,30 @@ Twinkle.arv.callback.changeCategory = function (e) {
 	case 'puppet':
 		work_area = new Morebits.quickForm.element( {
 				type: 'field',
-				label: wgULS('报告疑似主账户', '報告疑似主帳戶'),
+				label: wgUVS('报告疑似主账户', '報告疑似主帳戶'),
 				name: 'work_area'
 			} );
 		work_area.append(
 			{
 				type: 'input',
 				name: 'sockmaster',
-				label: wgULS('主账户', '主帳戶'),
-				tooltip: wgULS('主账户的用户名（不含User:前缀）', '主帳戶的用戶名（不含User:前綴）')
+				label: wgUVS('主账户', '主帳戶'),
+				tooltip: wgUVS('主账户的用户名（不含User:前缀）', '主帳戶的用戶名（不含User:前綴）')
 			}
 		);
 		work_area.append( {
 				type: 'textarea',
-				label: wgULS('证据：', '證據：'),
+				label: wgUVS('证据：', '證據：'),
 				name: 'evidence',
-				tooltip: wgULS('键入能够用来体现这些用户可能滥用多重账户的证据，这通常包括互助客栈发言、页面历史或其他有关的信息。请避免在此处提供非与傀儡或滥用多重账户相关的其他讨论。', '輸入能夠用來體現這些用戶可能濫用多重帳戶的證據，這通常包括互助客棧發言、頁面歷史或其他有關的資訊。請避免在此處提供非與傀儡或濫用多重帳戶相關的其他討論。')
+				tooltip: wgUVS('键入能够用来体现这些用户可能滥用多重账户的证据，这通常包括互助客栈发言、页面历史或其他有关的信息。请避免在此处提供非与傀儡或滥用多重账户相关的其他讨论。', '輸入能夠用來體現這些用戶可能濫用多重帳戶的證據，這通常包括互助客棧發言、頁面歷史或其他有關的資訊。請避免在此處提供非與傀儡或濫用多重帳戶相關的其他討論。')
 			} );
 		work_area.append( {
 				type: 'checkbox',
 				list: [
 					{
-						label: wgULS('通知相关用户', '通知相關用戶'),
+						label: wgUVS('通知相关用户', '通知相關用戶'),
 						name: 'notify',
-						tooltip: wgULS('通知用户不是必须的，在许多情况下（如长期破坏者）通知更可能适得其反。但是，对于涉及新用户的报告而言，通知他们能让报告显得更公平。请使用常识。', '通知用戶不是必須的，在許多情況下（如長期破壞者）通知更可能適得其反。但是，對於涉及新用戶的報告而言，通知他們能讓報告顯得更公平。請使用常識。')
+						tooltip: wgUVS('通知用户不是必须的，在许多情况下（如长期破坏者）通知更可能适得其反。但是，对于涉及新用户的报告而言，通知他们能让报告显得更公平。请使用常识。', '通知用戶不是必須的，在許多情況下（如長期破壞者）通知更可能適得其反。但是，對於涉及新用戶的報告而言，通知他們能讓報告顯得更公平。請使用常識。')
 					}
 				]
 			} );
@@ -265,7 +265,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 	case 'sock':
 		work_area = new Morebits.quickForm.element( {
 				type: 'field',
-				label: wgULS('报告疑似傀儡', '報告疑似傀儡'),
+				label: wgUVS('报告疑似傀儡', '報告疑似傀儡'),
 				name: 'work_area'
 			} );
 		work_area.append(
@@ -274,22 +274,22 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'sockpuppet',
 				label: '傀儡',
 				sublabel: '傀儡：',
-				tooltip: wgULS('傀儡的用户名（不含User:前缀）', '傀儡的用戶名（不含User:前綴）'),
+				tooltip: wgUVS('傀儡的用户名（不含User:前缀）', '傀儡的用戶名（不含User:前綴）'),
 				min: 2,
 				max: 9
 			} );
 		work_area.append( {
 				type: 'textarea',
-				label: wgULS('证据：', '證據：'),
+				label: wgUVS('证据：', '證據：'),
 				name: 'evidence',
-				tooltip: wgULS('键入能够用来体现这些用户可能滥用多重账户的证据，这通常包括互助客栈发言、页面历史或其他有关的信息。请避免在此处提供非与傀儡或滥用多重账户相关的其他讨论。', '輸入能夠用來體現這些用戶可能濫用多重帳戶的證據，這通常包括互助客棧發言、頁面歷史或其他有關的資訊。請避免在此處提供非與傀儡或濫用多重帳戶相關的其他討論。')
+				tooltip: wgUVS('键入能够用来体现这些用户可能滥用多重账户的证据，这通常包括互助客栈发言、页面历史或其他有关的信息。请避免在此处提供非与傀儡或滥用多重账户相关的其他讨论。', '輸入能夠用來體現這些用戶可能濫用多重帳戶的證據，這通常包括互助客棧發言、頁面歷史或其他有關的資訊。請避免在此處提供非與傀儡或濫用多重帳戶相關的其他討論。')
 			} );
 		work_area.append( {
 				type: 'checkbox',
 				list: [ {
-					label: wgULS('通知相关用户', '通知相關用戶'),
+					label: wgUVS('通知相关用户', '通知相關用戶'),
 					name: 'notify',
-					tooltip: wgULS('通知用户不是必须的，在许多情况下（如长期破坏者）通知更可能适得其反。但是，对于涉及新用户的报告而言，通知他们能让报告显得更公平。请使用常识。', '通知用戶不是必須的，在許多情況下（如長期破壞者）通知更可能適得其反。但是，對於涉及新用戶的報告而言，通知他們能讓報告顯得更公平。請使用常識。')
+					tooltip: wgUVS('通知用户不是必须的，在许多情况下（如长期破坏者）通知更可能适得其反。但是，对于涉及新用户的报告而言，通知他们能让报告显得更公平。请使用常识。', '通知用戶不是必須的，在許多情況下（如長期破壞者）通知更可能適得其反。但是，對於涉及新用戶的報告而言，通知他們能讓報告顯得更公平。請使用常識。')
 				} ]
 			} );
 		work_area = work_area.render();
@@ -503,7 +503,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 		default:
 			types = form.getChecked( 'arvtype' );
 			if( !types.length && comment === '' ) {
-				alert( wgULS('您必须指定理由', '您必須指定理由') );
+				alert( wgUVS('您必须指定理由', '您必須指定理由') );
 				return;
 			}
 
@@ -555,7 +555,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 			Morebits.wiki.actionCompleted.redirect = "Wikipedia:当前的破坏";
 			Morebits.wiki.actionCompleted.notice = "报告完成";
 
-			var aivPage = new Morebits.wiki.page( 'Wikipedia:当前的破坏', wgULS('处理VIP请求', '處理VIP請求') );
+			var aivPage = new Morebits.wiki.page( 'Wikipedia:当前的破坏', wgUVS('处理VIP请求', '處理VIP請求') );
 			aivPage.setFollowRedirect( true );
 
 			aivPage.load( function() {
@@ -563,13 +563,13 @@ Twinkle.arv.callback.evaluate = function(e) {
 
 				// check if user has already been reported
 				if (new RegExp( "===\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\s*" + RegExp.escape( uid, true ) + "\\s*\\}\\}\s*===" ).test(text)) {
-					aivPage.getStatusElement().error( wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的') );
-					Morebits.status.printUserText( reason, wgULS('您键入的评论已在下方提供，您可以将其加入到VIP已存在的小节中：', '您鍵入的評論已在下方提供，您可以將其加入到VIP已存在的小節中：') );
+					aivPage.getStatusElement().error( wgUVS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的') );
+					Morebits.status.printUserText( reason, wgUVS('您键入的评论已在下方提供，您可以将其加入到VIP已存在的小节中：', '您鍵入的評論已在下方提供，您可以將其加入到VIP已存在的小節中：') );
 					return;
 				}
 				aivPage.setPageSection( 0 );
-				aivPage.getStatusElement().status( wgULS('添加新报告…', '加入新報告…') );
-				aivPage.setEditSummary( wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]。' + Twinkle.getPref('summaryAd') );
+				aivPage.getStatusElement().status( wgUVS('添加新报告…', '加入新報告…') );
+				aivPage.setEditSummary( wgUVS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]。' + Twinkle.getPref('summaryAd') );
 				aivPage.setAppendText( '\n=== {{vandal|' + (/\=/.test( uid ) ? '1=' : '' ) + uid + '}} ===\n' + reason );
 				aivPage.append();
 			} );
@@ -585,7 +585,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 			}
 
 			if (types.indexOf('侮辱性') !== -1) {
-				if (!confirm(wgULS('警告：严重的侮辱性用户名和针对特定个人的侮辱性用户名不应在公开页面报告，而是应当私下联系监督员处理。是否继续？',
+				if (!confirm(wgUVS('警告：严重的侮辱性用户名和针对特定个人的侮辱性用户名不应在公开页面报告，而是应当私下联系监督员处理。是否继续？',
 					'警告：嚴重的侮辱性用戶名和針對特定個人的侮辱性用戶名不應在公開頁面報告，而是應當私下聯繫監督員處理。是否繼續？'))) {
 					return;
 				}
@@ -598,13 +598,13 @@ Twinkle.arv.callback.evaluate = function(e) {
 			}
 			reason = "*{{user-uaa|1=" + uid + "}} &ndash; ";
 			if ( types.length ) {
-				reason += types + wgULS("用户名", "用戶名");
+				reason += types + wgUVS("用户名", "用戶名");
 			}
 			if ( types.length && hasShared ) {
 				reason += "，";
 			}
 			if ( hasShared ) {
-				reason += wgULS("暗示该账户并非由一人拥有", "暗示該帳戶並非由一人擁有");
+				reason += wgUVS("暗示该账户并非由一人拥有", "暗示該帳戶並非由一人擁有");
 			}
 			reason += "。";
 			if ( comment !== '' ) {
@@ -617,9 +617,9 @@ Twinkle.arv.callback.evaluate = function(e) {
 			Morebits.status.init( form );
 
 			Morebits.wiki.actionCompleted.redirect = "Wikipedia:需要管理員注意的用戶名";
-			Morebits.wiki.actionCompleted.notice = wgULS("报告完成", "報告完成");
+			Morebits.wiki.actionCompleted.notice = wgUVS("报告完成", "報告完成");
 
-			var uaaPage = new Morebits.wiki.page( 'Wikipedia:需要管理員注意的用戶名', wgULS('处理UAA请求', '處理UAA請求') );
+			var uaaPage = new Morebits.wiki.page( 'Wikipedia:需要管理員注意的用戶名', wgUVS('处理UAA请求', '處理UAA請求') );
 			uaaPage.setFollowRedirect( true );
 
 			uaaPage.load( function() {
@@ -627,12 +627,12 @@ Twinkle.arv.callback.evaluate = function(e) {
 
 				// check if user has already been reported
 				if (new RegExp( "\\{\\{\\s*user-uaa\\s*\\|\\s*(1\\s*=\\s*)?" + RegExp.escape(uid, true) + "\\s*(\\||\\})" ).test(text)) {
-					uaaPage.getStatusElement().error( wgULS('用户已被列入。', '用戶已被列入。') );
-					Morebits.status.printUserText( reason, wgULS('您键入的评论已在下方提供，您可以将其手工加入UAA上该用户的报告中：', '您輸入的評論已在下方提供，您可以將其手工加入UAA上該用戶的報告中：') );
+					uaaPage.getStatusElement().error( wgUVS('用户已被列入。', '用戶已被列入。') );
+					Morebits.status.printUserText( reason, wgUVS('您键入的评论已在下方提供，您可以将其手工加入UAA上该用户的报告中：', '您輸入的評論已在下方提供，您可以將其手工加入UAA上該用戶的報告中：') );
 					return;
 				}
-				uaaPage.getStatusElement().status( wgULS('添加新报告…', '加入新報告…') );
-				uaaPage.setEditSummary( wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]。'+ Twinkle.getPref('summaryAd') );
+				uaaPage.getStatusElement().status( wgUVS('添加新报告…', '加入新報告…') );
+				uaaPage.setEditSummary( wgUVS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]。'+ Twinkle.getPref('summaryAd') );
 				uaaPage.setAppendText( "\n" + reason );
 				uaaPage.append();
 			} );
@@ -649,7 +649,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 
 			var puppetReport = form.category.value === "puppet";
 			if (puppetReport && !(form.sockmaster.value.trim())) {
-				if (!confirm(wgULS("您未对这个傀儡账户输入主账户，您是否希望报告这个账户为傀儡操作者？", "您未對這個傀儡帳戶輸入主帳戶，您是否希望報告這個帳戶為傀儡操作者？"))) {
+				if (!confirm(wgUVS("您未对这个傀儡账户输入主账户，您是否希望报告这个账户为傀儡操作者？", "您未對這個傀儡帳戶輸入主帳戶，您是否希望報告這個帳戶為傀儡操作者？"))) {
 					return;
 				}
 				puppetReport = false;
@@ -729,17 +729,17 @@ Twinkle.arv.processSock = function( params ) {
 	// notify all user accounts if requested
 	if (params.notify && params.sockpuppets.length>0) {
 
-		var notifyEditSummary = wgULS("通知用户查核请求。", "通知用戶查核請求。") + Twinkle.getPref('summaryAd');
+		var notifyEditSummary = wgUVS("通知用户查核请求。", "通知用戶查核請求。") + Twinkle.getPref('summaryAd');
 		var notifyText = "\n\n{{subst:socksuspectnotice}}";
 
 		var notify = function (username, taskname, callback) {
 			Morebits.wiki.flow.check('User talk:' + username, function () {
-				var flowpage = new Morebits.wiki.flow( 'User talk:' + username, '通知' + (taskname || wgULS('主账户', '主帳戶')) );
-				flowpage.setTopic(wgULS('用户查核通知', '用戶查核通知'));
+				var flowpage = new Morebits.wiki.flow( 'User talk:' + username, '通知' + (taskname || wgUVS('主账户', '主帳戶')) );
+				flowpage.setTopic(wgUVS('用户查核通知', '用戶查核通知'));
 				flowpage.setContent( notifyText );
 				flowpage.newTopic(callback);
 			}, function () {
-				var talkpage = new Morebits.wiki.page( 'User talk:' + username, '通知' + (taskname || wgULS('主账户', '主帳戶')) );
+				var talkpage = new Morebits.wiki.page( 'User talk:' + username, '通知' + (taskname || wgUVS('主账户', '主帳戶')) );
 				talkpage.setFollowRedirect( true );
 				talkpage.setEditSummary( notifyEditSummary );
 				talkpage.setAppendText( notifyText );
@@ -783,11 +783,11 @@ Twinkle.arv.processSock = function( params ) {
 	var reportpage = 'Wikipedia:元維基用戶查核協助請求';
 
 	Morebits.wiki.actionCompleted.redirect = reportpage;
-	Morebits.wiki.actionCompleted.notice = wgULS("报告完成", "報告完成");
+	Morebits.wiki.actionCompleted.notice = wgUVS("报告完成", "報告完成");
 
-	var spiPage = new Morebits.wiki.page( reportpage, wgULS('抓取讨论页面', '擷取討論頁面') );
+	var spiPage = new Morebits.wiki.page( reportpage, wgUVS('抓取讨论页面', '擷取討論頁面') );
 	spiPage.setFollowRedirect( true );
-	spiPage.setEditSummary( wgULS('报告', '報告') + '[[Special:Contributions/' + params.uid + '|' + params.uid + ']]。'+ Twinkle.getPref('summaryAd') );
+	spiPage.setEditSummary( wgUVS('报告', '報告') + '[[Special:Contributions/' + params.uid + '|' + params.uid + ']]。'+ Twinkle.getPref('summaryAd') );
 	spiPage.setAppendText( text );
 	spiPage.append();
 

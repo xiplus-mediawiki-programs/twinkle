@@ -19,12 +19,12 @@ Twinkle.tag = function friendlytag() {
 	// redirect tagging
 	if( Morebits.wiki.isPageRedirect() ) {
 		Twinkle.tag.mode = '重定向';
-		Twinkle.addPortletLink( Twinkle.tag.callback, wgULS("标记", "標記"), "friendly-tag", wgULS("标记重定向", "標記重定向") );
+		Twinkle.addPortletLink( Twinkle.tag.callback, wgUVS("标记", "標記"), "friendly-tag", wgUVS("标记重定向", "標記重定向") );
 	}
 	// article/draft tagging
 	else if( ( ( mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 118 ) && mw.config.get('wgCurRevisionId') ) || ( Morebits.pageNameNorm === Twinkle.getPref("sandboxPage") ) ) {
-		Twinkle.tag.mode = wgULS('条目', '條目');
-		Twinkle.addPortletLink( Twinkle.tag.callback, wgULS("标记", "標記"), "friendly-tag", wgULS("标记条目", "標記條目") );
+		Twinkle.tag.mode = wgUVS('条目', '條目');
+		Twinkle.addPortletLink( Twinkle.tag.callback, wgUVS("标记", "標記"), "friendly-tag", wgUVS("标记条目", "標記條目") );
 	}
 };
 
@@ -32,7 +32,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 	var Window = new Morebits.simpleWindow( 630, (Twinkle.tag.mode === "条目" || Twinkle.tag.mode === "條目") ? 500 : 400 );
 	Window.setScriptName( "Twinkle" );
 	// anyone got a good policy/guideline/info page/instructional page link??
-	Window.addFooterLink( wgULS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#tag" );
+	Window.addFooterLink( wgUVS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#tag" );
 
 	var form = new Morebits.quickForm( Twinkle.tag.callback.evaluate );
 
@@ -41,7 +41,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			type: 'checkbox',
 			list: [
 				{
-					label: wgULS('标记页面为已巡查', '標記頁面為已巡查'),
+					label: wgUVS('标记页面为已巡查', '標記頁面為已巡查'),
 					value: 'patrolPage',
 					name: 'patrolPage',
 					checked: Twinkle.getFriendlyPref('markTaggedPagesAsPatrolled')
@@ -53,16 +53,16 @@ Twinkle.tag.callback = function friendlytagCallback() {
 	switch( Twinkle.tag.mode ) {
 		case '條目':
 		case '条目':
-			Window.setTitle( wgULS("条目维护标记", "條目維護標記") );
+			Window.setTitle( wgUVS("条目维护标记", "條目維護標記") );
 
 			form.append({
 				type: 'select',
 				name: 'sortorder',
-				label: wgULS('查看列表：', '檢視列表：'),
-				tooltip: wgULS('您可以在Twinkle参数设置（WP:TWPREFS）中更改此项。', '您可以在Twinkle偏好設定（WP:TWPREFS）中更改此項。'),
+				label: wgUVS('查看列表：', '檢視列表：'),
+				tooltip: wgUVS('您可以在Twinkle参数设置（WP:TWPREFS）中更改此项。', '您可以在Twinkle偏好設定（WP:TWPREFS）中更改此項。'),
 				event: Twinkle.tag.updateSortOrder,
 				list: [
-					{ type: 'option', value: 'cat', label: wgULS('按类别', '按類別'), selected: Twinkle.getFriendlyPref('tagArticleSortOrder') === 'cat' },
+					{ type: 'option', value: 'cat', label: wgUVS('按类别', '按類別'), selected: Twinkle.getFriendlyPref('tagArticleSortOrder') === 'cat' },
 					{ type: 'option', value: 'alpha', label: '按字母', selected: Twinkle.getFriendlyPref('tagArticleSortOrder') === 'alpha' }
 				]
 			});
@@ -78,10 +78,10 @@ Twinkle.tag.callback = function friendlytagCallback() {
 					type: 'checkbox',
 					list: [
 						{
-							label: wgULS('如可能，合并入{{multiple issues}}', '如可能，合併入{{multiple issues}}'),
+							label: wgUVS('如可能，合并入{{multiple issues}}', '如可能，合併入{{multiple issues}}'),
 							value: 'group',
 							name: 'group',
-							tooltip: wgULS('如果添加{{multiple issues}}支持的三个以上的模板，所有支持的模板都会被合并入{{multiple issues}}模板中。',
+							tooltip: wgUVS('如果添加{{multiple issues}}支持的三个以上的模板，所有支持的模板都会被合并入{{multiple issues}}模板中。',
 									'如果添加{{multiple issues}}支持的三個以上的模板，所有支持的模板都會被合並入{{multiple issues}}模板中。'),
 							checked: Twinkle.getFriendlyPref('groupByDefault')
 						}
@@ -92,15 +92,15 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			form.append({
 				type: 'textarea',
 				name: 'tagReason',
-				label: wgULS('维护标记理由（编辑摘要）：', '維護標記理由（編輯摘要）：'),
-				tooltip: wgULS('说明加入这些维护模板的原因，指出条目内容的哪些部分有问题，如果理由很长则应该发表在讨论页。',
+				label: wgUVS('维护标记理由（编辑摘要）：', '維護標記理由（編輯摘要）：'),
+				tooltip: wgUVS('说明加入这些维护模板的原因，指出条目内容的哪些部分有问题，如果理由很长则应该发表在讨论页。',
 						'說明加入這些維護模板的原因，指出條目內容的哪些部分有問題，如果理由很長則應該發表在討論頁。'),
 			});
 
 			break;
 
 		case '重定向':
-			Window.setTitle( wgULS("重定向标记", "重定向標記") );
+			Window.setTitle( wgUVS("重定向标记", "重定向標記") );
 
 			form.append({ type: 'header', label:'常用模板' });
 			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.frequentList });
@@ -108,7 +108,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			form.append({ type: 'header', label:'偶用模板' });
 			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.lessFrequentList });
 
-			form.append({ type: 'header', label:wgULS('鲜用模板', '鮮用模板') });
+			form.append({ type: 'header', label:wgUVS('鲜用模板', '鮮用模板') });
 			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.rareList });
 			break;
 
@@ -167,17 +167,17 @@ Twinkle.tag.updateSortOrder = function(e) {
 					{
 						name: 'mergeTarget',
 						type: 'input',
-						label: wgULS('其他条目：', '其他條目：'),
-						tooltip: wgULS('如指定多个条目，请用管道符分隔：条目甲|条目乙', '如指定多個條目，請用管道符分隔：條目甲|條目乙')
+						label: wgUVS('其他条目：', '其他條目：'),
+						tooltip: wgUVS('如指定多个条目，请用管道符分隔：条目甲|条目乙', '如指定多個條目，請用管道符分隔：條目甲|條目乙')
 					},
 					{
 						name: 'mergeTagOther',
 						type: 'checkbox',
 						list: [
 							{
-								label: '用{{' + otherTagName + wgULS('}}标记其他条目', '}}標記其他條目'),
+								label: '用{{' + otherTagName + wgUVS('}}标记其他条目', '}}標記其他條目'),
 								checked: true,
-								tooltip: wgULS('仅在只输入了一个条目名时可用', '僅在只輸入了一個條目名時可用')
+								tooltip: wgUVS('仅在只输入了一个条目名时可用', '僅在只輸入了一個條目名時可用')
 							}
 						]
 					}
@@ -186,11 +186,11 @@ Twinkle.tag.updateSortOrder = function(e) {
 					checkbox.subgroup.push({
 						name: 'mergeReason',
 						type: 'textarea',
-						label: wgULS('合并理由（会被贴上' +
+						label: wgUVS('合并理由（会被贴上' +
 							(tag === "merge to" ? '其他' : '这') + '条目的讨论页）：',
 							'合併理由（會被貼上' +
 							(tag === "merge to" ? '其他' : '這') + '條目的討論頁）：'),
-						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。仅在只输入了一个条目名时可用。', '可選，但強烈推薦。如不需要請留空。僅在只輸入了一個條目名時可用。')
+						tooltip: wgUVS('可选，但强烈推荐。如不需要请留空。仅在只输入了一个条目名时可用。', '可選，但強烈推薦。如不需要請留空。僅在只輸入了一個條目名時可用。')
 					});
 				}
 				break;
@@ -199,13 +199,13 @@ Twinkle.tag.updateSortOrder = function(e) {
 					{
 						name: 'moveTarget',
 						type: 'input',
-						label: wgULS('新名称：', '新名稱：')
+						label: wgUVS('新名称：', '新名稱：')
 					},
 					{
 						name: 'moveReason',
 						type: 'textarea',
-						label: wgULS('移动理由（会被贴上这条目的讨论页）：', '移動理由（會被貼上這條目的討論頁）：'),
-						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。', '可選，但強烈推薦。如不需要請留空。')
+						label: wgUVS('移动理由（会被贴上这条目的讨论页）：', '移動理由（會被貼上這條目的討論頁）：'),
+						tooltip: wgUVS('可选，但强烈推荐。如不需要请留空。', '可選，但強烈推薦。如不需要請留空。')
 					}
 				];
 				break;
@@ -214,13 +214,13 @@ Twinkle.tag.updateSortOrder = function(e) {
 					name: 'notability',
 					type: 'select',
 					list: [
-						{ label: "{{notability}}："+ wgULS("通用的关注度指引", "通用的關注度指引"), value: "none" },
-						{ label: "{{notability|Biographies}}：" + wgULS("人物传记", "人物傳記"), value: "Biographies" },
-						{ label: "{{notability|Book}}：" + wgULS("书籍", "書籍"), value: "Book" },
-						{ label: "{{notability|Number}}：" + wgULS("数字", "數字"), value: "Number" },
-						{ label: "{{notability|Fiction}}：" + wgULS("虚构事物", "虛構事物"), value: "Fiction" },
-						{ label: "{{notability|Neologisms}}：" + wgULS("发明、研究", "發明、研究"), value: "Neologisms" },
-						{ label: "{{notability|Web}}：" + wgULS("网站、网络内容", "網站、網路內容"), value: "Web"}
+						{ label: "{{notability}}："+ wgUVS("通用的关注度指引", "通用的關注度指引"), value: "none" },
+						{ label: "{{notability|Biographies}}：" + wgUVS("人物传记", "人物傳記"), value: "Biographies" },
+						{ label: "{{notability|Book}}：" + wgUVS("书籍", "書籍"), value: "Book" },
+						{ label: "{{notability|Number}}：" + wgUVS("数字", "數字"), value: "Number" },
+						{ label: "{{notability|Fiction}}：" + wgUVS("虚构事物", "虛構事物"), value: "Fiction" },
+						{ label: "{{notability|Neologisms}}：" + wgUVS("发明、研究", "發明、研究"), value: "Neologisms" },
+						{ label: "{{notability|Web}}：" + wgUVS("网站、网络内容", "網站、網路內容"), value: "Web"}
 					]
 				};
 				break;
@@ -276,7 +276,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 
 	// append any custom tags
 	if (Twinkle.getFriendlyPref('customTagList').length) {
-		container.append({ type: 'header', label: wgULS('自定义模板', '自訂模板') });
+		container.append({ type: 'header', label: wgUVS('自定义模板', '自訂模板') });
 		container.append({ type: 'checkbox', name: 'articleTags', list: Twinkle.getFriendlyPref('customTagList') });
 	}
 
@@ -309,7 +309,7 @@ Twinkle.tag.article = {};
 // A list of all article tags, in alphabetical order
 // To ensure tags appear in the default "categorized" view, add them to the tagCategories hash below.
 
-Twinkle.tag.article.tags = wgULS({
+Twinkle.tag.article.tags = wgUVS({
 	"advert": "类似广告或宣传性内容",
 	"autobiography": "类似一篇自传，或内容主要由条目描述的当事人或组织撰写、编辑",
 	"blpdispute": "可能违反了维基百科关于生者传记的方针",
@@ -437,7 +437,7 @@ Twinkle.tag.article.tags = wgULS({
 // Tags should be in alphabetical order within the categories
 // Add new categories with discretion - the list is long enough as is!
 
-Twinkle.tag.article.tagCategories = wgULS({
+Twinkle.tag.article.tagCategories = wgUVS({
 	"清理和维护模板": {
 		"常规清理": [
 			"cleanup",
@@ -641,7 +641,7 @@ Twinkle.tag.article.tagCategories = wgULS({
 
 // Tags for REDIRECTS start here
 
-Twinkle.tag.frequentList = wgULS([
+Twinkle.tag.frequentList = wgUVS([
 	{
 		label: '{{合并重定向}}：保持页面题名至相应主条目，令页面内容在合并后仍能保存其编辑历史',
 		value: '合并重定向'
@@ -789,7 +789,7 @@ Twinkle.tag.frequentList = wgULS([
 	}
 ]);
 
-Twinkle.tag.lessFrequentList = wgULS([
+Twinkle.tag.lessFrequentList = wgUVS([
 	{
 		label: '{{角色重定向}}：电视剧、电影、书籍等作品的角色',
 		value: '角色重定向'
@@ -849,7 +849,7 @@ Twinkle.tag.lessFrequentList = wgULS([
 	}
 ]);
 
-Twinkle.tag.rareList = wgULS([
+Twinkle.tag.rareList = wgUVS([
 	{
 		label: '{{词组重定向}}：将词组/词组/成语指向切题的条目及恰当章节',
 		value: '词组重定向'
@@ -927,7 +927,7 @@ Twinkle.tag.multipleIssuesExceptions = [
 Twinkle.tag.callbacks = {
 	main: function( pageobj ) {
 		var params = pageobj.getCallbackParameters(),
-		    tagRe, tagText = '', summaryText = wgULS('添加', '加入'),
+		    tagRe, tagText = '', summaryText = wgUVS('添加', '加入'),
 		    tags = [], groupableTags = [], i, totalTags;
 
 		// Remove tags that become superfluous with this action
@@ -963,7 +963,7 @@ Twinkle.tag.callbacks = {
 									params.discussArticle = (tagName === "merge to" ? params.mergeTarget : mw.config.get('wgTitle'));
 									// nonDiscussArticle is the article which won't have the discussion
 									params.nonDiscussArticle = (tagName === "merge to" ? mw.config.get('wgTitle') : params.mergeTarget);
-									params.talkDiscussionTitle = wgULS('请求与' + params.nonDiscussArticle + '合并', '請求與' + params.nonDiscussArticle + '合併');
+									params.talkDiscussionTitle = wgUVS('请求与' + params.nonDiscussArticle + '合并', '請求與' + params.nonDiscussArticle + '合併');
 								}
 								currentTag += '|discuss=Talk:' + params.discussArticle + '#' + params.talkDiscussionTitle;
 							}
@@ -1004,7 +1004,7 @@ Twinkle.tag.callbacks = {
 				tagRe = new RegExp( '(\\{\\{' + params.tags[i] + '(\\||\\}\\})|\\|\\s*' + params.tags[i] + '\\s*=[a-z ]+\\d+)', 'im' );
 				if( !tagRe.exec( pageText ) ) {
 					if( params.tags[i] === 'notability' ) {
-						var wikipedia_page = new Morebits.wiki.page("Wikipedia:关注度/提报", wgULS("添加关注度记录项", "加入關注度記錄項"));
+						var wikipedia_page = new Morebits.wiki.page("Wikipedia:关注度/提报", wgUVS("添加关注度记录项", "加入關注度記錄項"));
 						wikipedia_page.setFollowRedirect(true);
 						wikipedia_page.setCallbackParameters(params);
 						wikipedia_page.load(Twinkle.tag.callbacks.notabilityList);
@@ -1015,7 +1015,7 @@ Twinkle.tag.callbacks = {
 						tags = tags.concat( params.tags[i] );
 					}
 				} else {
-					Morebits.status.warn( wgULS('信息', '資訊'), wgULS('在页面上找到{{' + params.tags[i] +
+					Morebits.status.warn( wgUVS('信息', '資訊'), wgUVS('在页面上找到{{' + params.tags[i] +
 						'}}…跳过', '在頁面上找到{{' + params.tags[i] +
 						'}}…跳過') );
 					// don't do anything else with merge tags
@@ -1035,7 +1035,7 @@ Twinkle.tag.callbacks = {
 			var miOldStyleTest = miOldStyleRegex.exec(pageText);
 
 			if( ( miTest || miOldStyleTest ) && groupableTags.length > 0 ) {
-				Morebits.status.info( wgULS('信息', '資訊'), wgULS('添加支持的标记入已存在的{{multiple issues}}', '添加支持的標記入已存在的{{multiple issues}}') );
+				Morebits.status.info( wgUVS('信息', '資訊'), wgUVS('添加支持的标记入已存在的{{multiple issues}}', '添加支持的標記入已存在的{{multiple issues}}') );
 
 				groupableTags.sort();
 				tagText = "";
@@ -1043,7 +1043,7 @@ Twinkle.tag.callbacks = {
 				totalTags = groupableTags.length;
 				$.each(groupableTags, addTag);
 
-				summaryText += wgULS('标记', '標記') + '（在{{[[T:multiple issues|multiple issues]]}}' + wgULS('内', '內') +'）';
+				summaryText += wgUVS('标记', '標記') + '（在{{[[T:multiple issues|multiple issues]]}}' + wgUVS('内', '內') +'）';
 				if( tags.length > 0 ) {
 					summaryText += '和';
 				}
@@ -1061,7 +1061,7 @@ Twinkle.tag.callbacks = {
 				}
 				tagText = "";
 			} else if( params.group && groupableTags.length >= 3 ) {
-				Morebits.status.info( wgULS('信息', '資訊'), wgULS('合并支持的模板入{{multiple issues}}', '合併支援的模板入{{multiple issues}}') );
+				Morebits.status.info( wgUVS('信息', '資訊'), wgUVS('合并支持的模板入{{multiple issues}}', '合併支援的模板入{{multiple issues}}') );
 
 				groupableTags.sort();
 				tagText += '{{multiple issues|\n';
@@ -1069,7 +1069,7 @@ Twinkle.tag.callbacks = {
 				totalTags = groupableTags.length;
 				$.each(groupableTags, addTag);
 
-				summaryText += wgULS('等标记', '等標記') + '（{{[[T:multiple issues|multiple issues]]}}）';
+				summaryText += wgUVS('等标记', '等標記') + '（{{[[T:multiple issues|multiple issues]]}}）';
 				if( tags.length > 0 ) {
 					summaryText += '及';
 				}
@@ -1092,7 +1092,7 @@ Twinkle.tag.callbacks = {
 				if( !tagRe.exec( pageText ) ) {
 					tags = tags.concat( params.tags[i] );
 				} else {
-					Morebits.status.warn( wgULS('信息', '資訊'), wgULS('在重定向上找到{{' + params.tags[i] +
+					Morebits.status.warn( wgUVS('信息', '資訊'), wgUVS('在重定向上找到{{' + params.tags[i] +
 						'}}…跳过', '在重定向上找到{{' + params.tags[i] +
 						'}}…跳過') );
 				}
@@ -1112,7 +1112,7 @@ Twinkle.tag.callbacks = {
 			pageText = pageText.replace(/^\s*(?:((?:\s*\{\{\s*(?:about|correct title|dablink|distinguish|for|other\s?(?:hurricaneuses|people|persons|places|uses(?:of)?)|redirect(?:-acronym)?|see\s?(?:also|wiktionary)|selfref|the)\d*\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\})+(?:\s*\n)?)\s*)?/i,
 				"$1" + tagText);
 		}
-		summaryText += ( tags.length > 0 ? wgULS('标记', '標記') : '' ) +
+		summaryText += ( tags.length > 0 ? wgUVS('标记', '標記') : '' ) +
 			'到' + Twinkle.tag.mode;
 
 		// avoid truncated summaries
@@ -1132,9 +1132,9 @@ Twinkle.tag.callbacks = {
 				var talkpageText = "\n\n== 请求与[[" + params.nonDiscussArticle + "]]合并 ==\n\n";
 				talkpageText += params.mergeReason.trim() + "--~~~~";
 
-				var talkpage = new Morebits.wiki.page("Talk:" + params.discussArticle, wgULS("将理由贴进讨论页", "將理由貼進討論頁"));
+				var talkpage = new Morebits.wiki.page("Talk:" + params.discussArticle, wgUVS("将理由贴进讨论页", "將理由貼進討論頁"));
 				talkpage.setAppendText(talkpageText);
-				talkpage.setEditSummary(wgULS('请求将[[' + params.nonDiscussArticle + ']]' +
+				talkpage.setEditSummary(wgUVS('请求将[[' + params.nonDiscussArticle + ']]' +
 					'与' + '[[' + params.discussArticle + ']]合并', '請求將[[' + params.nonDiscussArticle + ']]' +
 					'與' + '[[' + params.discussArticle + ']]合併') +
 					Twinkle.getPref('summaryAd'));
@@ -1156,7 +1156,7 @@ Twinkle.tag.callbacks = {
 					discussArticle: params.discussArticle,
 					talkDiscussionTitle: params.talkDiscussionTitle
 				};
-				var otherpage = new Morebits.wiki.page(params.mergeTarget, wgULS("标记其他页面（", "標記其他頁面（") +
+				var otherpage = new Morebits.wiki.page(params.mergeTarget, wgUVS("标记其他页面（", "標記其他頁面（") +
 					params.mergeTarget + "）");
 				otherpage.setCallbackParameters(newParams);
 				otherpage.load(Twinkle.tag.callbacks.main);
@@ -1170,9 +1170,9 @@ Twinkle.tag.callbacks = {
 				}
 				talkpageText += "}}";
 
-				var talkpage = new Morebits.wiki.page("Talk:" + params.discussArticle, wgULS("将理由贴进讨论页", "將理由貼進討論頁"));
+				var talkpage = new Morebits.wiki.page("Talk:" + params.discussArticle, wgUVS("将理由贴进讨论页", "將理由貼進討論頁"));
 				talkpage.setAppendText(talkpageText);
-				talkpage.setEditSummary(wgULS('请求移动' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : ""), '請求移動' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : "")) +
+				talkpage.setEditSummary(wgUVS('请求移动' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : ""), '請求移動' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : "")) +
 					Twinkle.getPref('summaryAd'));
 				talkpage.setCreateOption('recreate');
 				talkpage.append();
@@ -1229,16 +1229,16 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 
 	// form validation
 	if( !params.tags.length ) {
-		alert( wgULS('必须选择至少一个标记！', '必須選擇至少一個標記！') );
+		alert( wgUVS('必须选择至少一个标记！', '必須選擇至少一個標記！') );
 		return;
 	}
 	if( ((params.tags.indexOf("merge") !== -1) + (params.tags.indexOf("merge from") !== -1) +
 		(params.tags.indexOf("merge to") !== -1)) > 1 ) {
-		alert( wgULS('请在{{merge}}、{{merge from}}和{{merge to}}中选择一个。如果需要多次合并，请使用{{merge}}并用管道符分隔条目名（但在这种情形中Twinkle不能自动标记其他条目）。', '請在{{merge}}、{{merge from}}和{{merge to}}中選擇一個。如果需要多次合併，請使用{{merge}}並用管道符分隔條目名（但在這種情形中Twinkle不能自動標記其他條目）。') );
+		alert( wgUVS('请在{{merge}}、{{merge from}}和{{merge to}}中选择一个。如果需要多次合并，请使用{{merge}}并用管道符分隔条目名（但在这种情形中Twinkle不能自动标记其他条目）。', '請在{{merge}}、{{merge from}}和{{merge to}}中選擇一個。如果需要多次合併，請使用{{merge}}並用管道符分隔條目名（但在這種情形中Twinkle不能自動標記其他條目）。') );
 		return;
 	}
 	if( (params.mergeTagOther || params.mergeReason) && params.mergeTarget.indexOf('|') !== -1 ) {
-		alert( wgULS('目前还不支持在一次合并中标记多个条目，与开启关于多个条目的讨论。请不要勾选“标记其他条目”和/或清理“理由”框，并重试。', '目前還不支援在一次合併中標記多個條目，與開啟關於多個條目的討論。請不要勾選「標記其他條目」和/或清理「理由」框，並重試。') );
+		alert( wgUVS('目前还不支持在一次合并中标记多个条目，与开启关于多个条目的讨论。请不要勾选“标记其他条目”和/或清理“理由”框，并重试。', '目前還不支援在一次合併中標記多個條目，與開啟關於多個條目的討論。請不要勾選「標記其他條目」和/或清理「理由」框，並重試。') );
 		return;
 	}
 
@@ -1246,12 +1246,12 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	Morebits.status.init( form );
 
 	Morebits.wiki.actionCompleted.redirect = Morebits.pageNameNorm;
-	Morebits.wiki.actionCompleted.notice = wgULS("标记完成，在几秒内刷新页面", "標記完成，在幾秒內重新整理頁面");
+	Morebits.wiki.actionCompleted.notice = wgUVS("标记完成，在几秒内刷新页面", "標記完成，在幾秒內重新整理頁面");
 	if (Twinkle.tag.mode === '重定向') {
 		Morebits.wiki.actionCompleted.followRedirect = false;
 	}
 
-	var wikipedia_page = new Morebits.wiki.page(Morebits.pageNameNorm, wgULS("正在标记", "正在標記") + Twinkle.tag.mode);
+	var wikipedia_page = new Morebits.wiki.page(Morebits.pageNameNorm, wgUVS("正在标记", "正在標記") + Twinkle.tag.mode);
 	wikipedia_page.setCallbackParameters(params);
 	switch (Twinkle.tag.mode) {
 		case '條目':

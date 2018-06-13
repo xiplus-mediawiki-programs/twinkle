@@ -23,7 +23,7 @@
 
 Twinkle.config = {};
 
-Twinkle.config.commonEnums = wgULS({
+Twinkle.config.commonEnums = wgUVS({
 	watchlist: { yes: "添加到监视列表", no: "不添加到监视列表", "default": "遵守站点设置" },
 	talkPageMode: { window: "在窗口中，替换成其它用户对话页", tab: "在新标签页中", blank: "在全新的窗口中" }
 }, {
@@ -33,7 +33,7 @@ Twinkle.config.commonEnums = wgULS({
 
 Twinkle.config.commonSets = {
 	csdCriteria: {
-		db: wgULS("自定义理由", "自訂理由"),
+		db: wgUVS("自定义理由", "自訂理由"),
 		g1: "G1", g2: "G2", g3: "G3", g5: "G5", g10: "G10", g11: "G11", g12: "G12", g13: "G13", g14: "G14", g15: "G15", g16: "G16",
 		a1: "A1", a2: "A2", a3: "A3", a5: "A5", a6: "A6",
 		o1: "O1", o3: "O3", o4: "O4",
@@ -49,7 +49,7 @@ Twinkle.config.commonSets = {
 		"r2", "r3", "r5"
 	],
 	csdCriteriaNotification: {
-		db: wgULS("自定义理由", "自訂理由"),
+		db: wgUVS("自定义理由", "自訂理由"),
 		g1: "G1", g2: "G2", g3: "G3", g5: "G5", g10: "G10", g11: "G11", g12: "G12", g13: "G13", g14: "G14", g15: "G15", g16: "G16",
 		a1: "A1", a2: "A2", a3: "A3", a5: "A5", a6: "A6",
 		o1: "O1", o3: "O3", o4: "O4",
@@ -65,7 +65,7 @@ Twinkle.config.commonSets = {
 		"r2", "r3", "r5"
 	],
 	csdAndDICriteria: {
-		db: wgULS("自定义理由", "自訂理由"),
+		db: wgUVS("自定义理由", "自訂理由"),
 		g1: "G1", g2: "G2", g3: "G3", g5: "G5", g10: "G10", g11: "G11", g12: "G12", g13: "G13", g14: "G14", g15: "G15", g16: "G16",
 		a1: "A1", a2: "A2", a3: "A3", a5: "A5", a6: "A6",
 		o1: "O1", o3: "O3", o4: "O4",
@@ -81,7 +81,7 @@ Twinkle.config.commonSets = {
 		"r2", "r3", "r5"
 	],
 	namespacesNoSpecial: {
-		"0": wgULS("（条目）", "（條目）"),
+		"0": wgUVS("（条目）", "（條目）"),
 		"1": "Talk",
 		"2": "User",
 		"3": "User talk",
@@ -136,14 +136,14 @@ Twinkle.config.commonSets = {
 
 Twinkle.config.sections = [
 {
-	title: wgULS("常规", "常規"),
+	title: wgUVS("常规", "常規"),
 	preferences: [
 		// TwinkleConfig.summaryAd (string)
 		// Text to be appended to the edit summary of edits made using Twinkle
 		{
 			name: "summaryAd",
-			label: wgULS("编辑摘要后缀", "編輯摘要後綴"),
-			helptip: wgULS("应当由一个空格开头，并尽可能短。", "應當由一個空格開頭，並盡可能短。"),
+			label: wgUVS("编辑摘要后缀", "編輯摘要後綴"),
+			helptip: wgUVS("应当由一个空格开头，并尽可能短。", "應當由一個空格開頭，並盡可能短。"),
 			type: "string"
 		},
 
@@ -151,8 +151,8 @@ Twinkle.config.sections = [
 		// Text to be appended to the edit summary of deletions made using Twinkle
 		{
 			name: "deletionSummaryAd",
-			label: wgULS("删除摘要后缀", "刪除摘要後綴"),
-			helptip: wgULS("通常和编辑摘要后缀一样。", "通常和編輯摘要後綴一樣。"),
+			label: wgUVS("删除摘要后缀", "刪除摘要後綴"),
+			helptip: wgUVS("通常和编辑摘要后缀一样。", "通常和編輯摘要後綴一樣。"),
 			adminOnly: true,
 			type: "string"
 		},
@@ -161,8 +161,8 @@ Twinkle.config.sections = [
 		// Text to be appended to the edit summary of page protections made using Twinkle
 		{
 			name: "protectionSummaryAd",
-			label: wgULS("保护摘要后缀", "保護摘要後綴"),
-			helptip: wgULS("通常和编辑摘要后缀一样。", "通常和編輯摘要後綴一樣。"),
+			label: wgUVS("保护摘要后缀", "保護摘要後綴"),
+			helptip: wgUVS("通常和编辑摘要后缀一样。", "通常和編輯摘要後綴一樣。"),
 			adminOnly: true,
 			type: "string"
 		},
@@ -171,8 +171,8 @@ Twinkle.config.sections = [
 		// Text to be appended to the edit summary of block made using Twinkle
 		{
 			name: "blockSummaryAd",
-			label: wgULS("封禁摘要后缀", "封禁摘要後綴"),
-			helptip: wgULS("通常和编辑摘要后缀一样。", "通常和編輯摘要後綴一樣。"),
+			label: wgUVS("封禁摘要后缀", "封禁摘要後綴"),
+			helptip: wgUVS("通常和编辑摘要后缀一样。", "通常和編輯摘要後綴一樣。"),
 			adminOnly: true,
 			type: "string"
 		},
@@ -183,7 +183,7 @@ Twinkle.config.sections = [
 		// 'blank': force open in a new window, even if such a window exists
 		{
 			name: "userTalkPageMode",
-			label: wgULS("当要打开用户对话页时，", "當要開啟用戶對話頁時，"),
+			label: wgUVS("当要打开用户对话页时，", "當要開啟用戶對話頁時，"),
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.talkPageMode
 		},
@@ -191,20 +191,20 @@ Twinkle.config.sections = [
 		// TwinkleConfig.dialogLargeFont (boolean)
 		{
 			name: "dialogLargeFont",
-			label: wgULS("在Twinkle对话框中使用大号字体", "在Twinkle對話方塊中使用大號字型"),
+			label: wgUVS("在Twinkle对话框中使用大号字体", "在Twinkle對話方塊中使用大號字型"),
 			type: "boolean"
 		}
 	]
 },
 
 {
-	title: wgULS("图片删除", "圖片刪除"),
+	title: wgUVS("图片删除", "圖片刪除"),
 	preferences: [
 		// TwinkleConfig.notifyUserOnDeli (boolean)
 		// If the user should be notified after placing a file deletion tag
 		{
 			name: "notifyUserOnDeli",
-			label: wgULS("默认勾选“通知创建者”", "預設勾選「通知建立者」"),
+			label: wgUVS("默认勾选“通知创建者”", "預設勾選「通知建立者」"),
 			type: "boolean"
 		},
 
@@ -212,7 +212,7 @@ Twinkle.config.sections = [
 		// The watchlist setting of the page tagged for deletion. Either "yes", "no", or "default". Default is "default" (Duh).
 		{
 			name: "deliWatchPage",
-			label: wgULS("标记图片时添加到监视列表", "標記圖片時加入到監視清單"),
+			label: wgUVS("标记图片时添加到监视列表", "標記圖片時加入到監視清單"),
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		},
@@ -221,7 +221,7 @@ Twinkle.config.sections = [
 		// The watchlist setting of the user talk page if a notification is placed. Either "yes", "no", or "default". Default is "default" (Duh).
 		{
 			name: "deliWatchUser",
-			label: wgULS("标记图片时添加创建者对话页到监视列表", "標記圖片時加入建立者對話頁到監視清單"),
+			label: wgUVS("标记图片时添加创建者对话页到监视列表", "標記圖片時加入建立者對話頁到監視清單"),
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		}
@@ -235,17 +235,17 @@ Twinkle.config.sections = [
 		// What types of actions that should result in opening of talk page
 		{
 			name: "openTalkPage",
-			label: wgULS("在这些类型的回退后打开用户对话页", "在這些類別的回退後開啟用戶對話頁"),
+			label: wgUVS("在这些类型的回退后打开用户对话页", "在這些類別的回退後開啟用戶對話頁"),
 			type: "set",
-			setValues: wgULS({ agf: "善意回退", norm: "常规回退", vand: "破坏回退", torev: "“恢复此版本”" }, { agf: "善意回退", norm: "常規回退", vand: "破壞回退", torev: "「恢復此版本」" })
+			setValues: wgUVS({ agf: "善意回退", norm: "常规回退", vand: "破坏回退", torev: "“恢复此版本”" }, { agf: "善意回退", norm: "常規回退", vand: "破壞回退", torev: "「恢復此版本」" })
 		},
 
 		// TwinkleConfig.openTalkPageOnAutoRevert (bool)
 		// Defines if talk page should be opened when calling revert from contrib page, because from there, actions may be multiple, and opening talk page not suitable. If set to true, openTalkPage defines then if talk page will be opened.
 		{
 			name: "openTalkPageOnAutoRevert",
-			label: wgULS("在从用户贡献中发起回退时打开用户对话页", "在從用戶貢獻中發起回退時開啟用戶對話頁"),
-			helptip: wgULS("您经常会在破坏者的用户贡献中发起许多回退，总是打开用户对话页可能不太适当，所以这个选项默认关闭。当它打开时，依赖上一个设定。", "您經常會在破壞者的用戶貢獻中發起許多回退，總是開啟用戶對話頁可能不太適當，所以這個設定預設關閉。當它開啟時，依賴上一個設定。"),
+			label: wgUVS("在从用户贡献中发起回退时打开用户对话页", "在從用戶貢獻中發起回退時開啟用戶對話頁"),
+			helptip: wgUVS("您经常会在破坏者的用户贡献中发起许多回退，总是打开用户对话页可能不太适当，所以这个选项默认关闭。当它打开时，依赖上一个设定。", "您經常會在破壞者的用戶貢獻中發起許多回退，總是開啟用戶對話頁可能不太適當，所以這個設定預設關閉。當它開啟時，依賴上一個設定。"),
 			type: "boolean"
 		},
 
@@ -253,33 +253,33 @@ Twinkle.config.sections = [
 		// What types of actions that should result in marking edit as minor
 		{
 			name: "markRevertedPagesAsMinor",
-			label: wgULS("将这些类型的回退标记为小修改", "將這些類別的回退標記為小修改"),
+			label: wgUVS("将这些类型的回退标记为小修改", "將這些類別的回退標記為小修改"),
 			type: "set",
-			setValues: wgULS({ agf: "善意回退", norm: "常规回退", vand: "破坏回退", torev: "“恢复此版本”" }, { agf: "善意回退", norm: "常規回退", vand: "破壞回退", torev: "「恢復此版本」" })
+			setValues: wgUVS({ agf: "善意回退", norm: "常规回退", vand: "破坏回退", torev: "“恢复此版本”" }, { agf: "善意回退", norm: "常規回退", vand: "破壞回退", torev: "「恢復此版本」" })
 		},
 
 		// TwinkleConfig.watchRevertedPages (array)
 		// What types of actions that should result in forced addition to watchlist
 		{
 			name: "watchRevertedPages",
-			label: wgULS("把这些类型的回退加入监视列表", "把這些類別的回退加入監視清單"),
+			label: wgUVS("把这些类型的回退加入监视列表", "把這些類別的回退加入監視清單"),
 			type: "set",
-			setValues: wgULS({ agf: "善意回退", norm: "常规回退", vand: "破坏回退", torev: "“恢复此版本”" }, { agf: "善意回退", norm: "常規回退", vand: "破壞回退", torev: "「恢復此版本」" })
+			setValues: wgUVS({ agf: "善意回退", norm: "常规回退", vand: "破坏回退", torev: "“恢复此版本”" }, { agf: "善意回退", norm: "常規回退", vand: "破壞回退", torev: "「恢復此版本」" })
 		},
 
 		// TwinkleConfig.offerReasonOnNormalRevert (boolean)
 		// If to offer a prompt for extra summary reason for normal reverts, default to true
 		{
 			name: "offerReasonOnNormalRevert",
-			label: wgULS("常规回退时询问理由", "常規回退時詢問理由"),
-			helptip: wgULS("“常规”回退是中间的那个[回退]链接。", "「常規」回退是中間的那個[回退]連結。"),
+			label: wgUVS("常规回退时询问理由", "常規回退時詢問理由"),
+			helptip: wgUVS("“常规”回退是中间的那个[回退]链接。", "「常規」回退是中間的那個[回退]連結。"),
 			type: "boolean"
 		},
 
 		{
 			name: "confirmOnFluff",
-			label: wgULS("回退前要求确认", "回退前要求確認"),
-			helptip: wgULS("给那些手持手持设备的用户，或者意志不坚定的。", "給那些手持行動裝置的用戶，或者意志不堅定的。"),
+			label: wgUVS("回退前要求确认", "回退前要求確認"),
+			helptip: wgUVS("给那些手持手持设备的用户，或者意志不坚定的。", "給那些手持行動裝置的用戶，或者意志不堅定的。"),
 			type: "boolean"
 		},
 
@@ -288,56 +288,56 @@ Twinkle.config.sections = [
 		// Note from TTO: |contribs| seems to be equal to |others| + |mine|, i.e. redundant, so I left it out heres
 		{
 			name: "showRollbackLinks",
-			label: wgULS("在这些页面上显示回退链接", "在這些頁面上顯示回退連結"),
+			label: wgUVS("在这些页面上显示回退链接", "在這些頁面上顯示回退連結"),
 			type: "set",
-			setValues: wgULS({ diff: "差异", history: "历史记录", others: "其它用户的贡献", mine: "我的贡献" }, { diff: "差異", history: "歷史記錄", others: "其它用戶的貢獻", mine: "我的貢獻" })
+			setValues: wgUVS({ diff: "差异", history: "历史记录", others: "其它用户的贡献", mine: "我的贡献" }, { diff: "差異", history: "歷史記錄", others: "其它用戶的貢獻", mine: "我的貢獻" })
 		},
 
 		{
 			name: "rollbackInCurrentWindow",
-			label: wgULS("在当前窗口内执行回退", "在目前視窗內執行回退"),
-			helptip: wgULS("不要开新窗口或者改变当前窗口的状态，或者意志不坚定的。", "不要開新視窗或者改變目前視窗的狀態。"),
+			label: wgUVS("在当前窗口内执行回退", "在目前視窗內執行回退"),
+			helptip: wgUVS("不要开新窗口或者改变当前窗口的状态，或者意志不坚定的。", "不要開新視窗或者改變目前視窗的狀態。"),
 			type: "boolean"
 		},
 
 		{
 			name: "customRevertSummary",
-			label: wgULS("回退理由", "回退理由"),
-			helptip: wgULS("在检视差异时可选，仅善意回退、常规回退、恢復此版本", "在檢視差異時可選，僅善意回退、常規回退、恢復此版本"),
+			label: wgUVS("回退理由", "回退理由"),
+			helptip: wgUVS("在检视差异时可选，仅善意回退、常规回退、恢復此版本", "在檢視差異時可選，僅善意回退、常規回退、恢復此版本"),
 			type: "customList",
-			customListValueTitle: wgULS("理由", "理由"),
-			customListLabelTitle: wgULS("显示的文字", "顯示的文字")
+			customListValueTitle: wgUVS("理由", "理由"),
+			customListLabelTitle: wgUVS("显示的文字", "顯示的文字")
 		},
 	]
 },
 
 {
-	title: wgULS("共享IP标记", "共享IP標記"),
+	title: wgUVS("共享IP标记", "共享IP標記"),
 	inFriendlyConfig: true,
 	preferences: [
 		{
 			name: "markSharedIPAsMinor",
-			label: wgULS("将共享IP标记标记为小修改", "將共享IP標記標記為小修改"),
+			label: wgUVS("将共享IP标记标记为小修改", "將共享IP標記標記為小修改"),
 			type: "boolean"
 		}
 	]
 },
 
 {
-	title: wgULS("快速删除", "快速刪除"),
+	title: wgUVS("快速删除", "快速刪除"),
 	preferences: [
 		{
 			name: "speedySelectionStyle",
-			label: wgULS("什么时候执行标记或删除", "什麼時候執行標記或刪除"),
+			label: wgUVS("什么时候执行标记或删除", "什麼時候執行標記或刪除"),
 			type: "enum",
-			enumValues: wgULS({ "buttonClick": '当我点“提交”时', "radioClick": "当我点一个选项时" }, { "buttonClick": '當我點「提交」時', "radioClick": "當我點一個設定時" })
+			enumValues: wgUVS({ "buttonClick": '当我点“提交”时', "radioClick": "当我点一个选项时" }, { "buttonClick": '當我點「提交」時', "radioClick": "當我點一個設定時" })
 		},
 
 		// TwinkleConfig.watchSpeedyPages (array)
 		// Whether to add speedy tagged pages to watchlist
 		{
 			name: "watchSpeedyPages",
-			label: wgULS("将以下理由添加到监视列表", "將以下理由加入到監視清單"),
+			label: wgUVS("将以下理由添加到监视列表", "將以下理由加入到監視清單"),
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdCriteria,
 			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaDisplayOrder
@@ -347,7 +347,7 @@ Twinkle.config.sections = [
 		// If, when applying speedy template to page, to mark the page as patrolled (if the page was reached from NewPages)
 		{
 			name: "markSpeedyPagesAsPatrolled",
-			label: wgULS("标记时标记页面为已巡查（如可能）", "標記時標記頁面為已巡查（如可能）"),
+			label: wgUVS("标记时标记页面为已巡查（如可能）", "標記時標記頁面為已巡查（如可能）"),
 			type: "boolean"
 		},
 
@@ -355,8 +355,8 @@ Twinkle.config.sections = [
 		// What types of actions should result that the author of the page being notified of nomination
 		{
 			name: "notifyUserOnSpeedyDeletionNomination",
-			label: wgULS("仅在使用以下理由时通知页面创建者", "僅在使用以下理由時通知頁面建立者"),
-			helptip: wgULS("尽管您在对话框中选择通知，通知仍只会在使用这些理由时发出。", "盡管您在對話框中選擇通知，通知仍只會在使用這些理由時發出。"),
+			label: wgUVS("仅在使用以下理由时通知页面创建者", "僅在使用以下理由時通知頁面建立者"),
+			helptip: wgUVS("尽管您在对话框中选择通知，通知仍只会在使用这些理由时发出。", "盡管您在對話框中選擇通知，通知仍只會在使用這些理由時發出。"),
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdCriteriaNotification,
 			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaNotificationDisplayOrder
@@ -367,8 +367,8 @@ Twinkle.config.sections = [
 		// with a "firstarticle" notice if his talk page has not yet been created.
 		{
 			name: "welcomeUserOnSpeedyDeletionNotification",
-			label: wgULS("在使用以下理由时欢迎页面创建者", "在使用以下理由時歡迎頁面建立者"),
-			helptip: wgULS("欢迎模板仅在用户被通知时加入，使用的模板是{{firstarticle}}。", "歡迎模板僅在用戶被通知時加入，使用的模板是{{firstarticle}}。"),
+			label: wgUVS("在使用以下理由时欢迎页面创建者", "在使用以下理由時歡迎頁面建立者"),
+			helptip: wgUVS("欢迎模板仅在用户被通知时加入，使用的模板是{{firstarticle}}。", "歡迎模板僅在用戶被通知時加入，使用的模板是{{firstarticle}}。"),
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdCriteriaNotification,
 			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaNotificationDisplayOrder
@@ -377,7 +377,7 @@ Twinkle.config.sections = [
 		// TwinkleConfig.promptForSpeedyDeletionSummary (array of strings)
 		{
 			name: "promptForSpeedyDeletionSummary",
-			label: wgULS("使用以下理由删除时允许编辑删除理由", "使用以下理由刪除時允許編輯刪除理由"),
+			label: wgUVS("使用以下理由删除时允许编辑删除理由", "使用以下理由刪除時允許編輯刪除理由"),
 			adminOnly: true,
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdAndDICriteria,
@@ -388,7 +388,7 @@ Twinkle.config.sections = [
 		// What types of actions that should result user talk page to be opened when speedily deleting (admin only)
 		{
 			name: "openUserTalkPageOnSpeedyDelete",
-			label: wgULS("使用以下理由时打开用户对话页", "使用以下理由時開啟用戶對話頁"),
+			label: wgUVS("使用以下理由时打开用户对话页", "使用以下理由時開啟用戶對話頁"),
 			adminOnly: true,
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdAndDICriteria,
@@ -399,14 +399,14 @@ Twinkle.config.sections = [
 		// If talk page if exists should also be deleted (CSD G8) when spedying a page (admin only)
 		{
 			name: "deleteTalkPageOnDelete",
-			label: wgULS("默认勾选“删除讨论页”", "預設勾選「刪除討論頁」"),
+			label: wgUVS("默认勾选“删除讨论页”", "預設勾選「刪除討論頁」"),
 			adminOnly: true,
 			type: "boolean"
 		},
 
 		{
 			name: "deleteRedirectsOnDelete",
-			label: wgULS("默认勾选“删除重定向”", "預設勾選「刪除重定向」"),
+			label: wgUVS("默认勾选“删除重定向”", "預設勾選「刪除重定向」"),
 			adminOnly: true,
 			type: "boolean"
 		},
@@ -415,7 +415,7 @@ Twinkle.config.sections = [
 		// Make the CSD screen default to "tag" instead of "delete" (admin only)
 		{
 			name: "deleteSysopDefaultToTag",
-			label: wgULS("默认为标记而不是直接删除", "預設為標記而不是直接刪除"),
+			label: wgUVS("默认为标记而不是直接删除", "預設為標記而不是直接刪除"),
 			adminOnly: true,
 			type: "boolean"
 		},
@@ -424,7 +424,7 @@ Twinkle.config.sections = [
 		// Defines the width of the Twinkle SD window in pixels
 		{
 			name: "speedyWindowWidth",
-			label: wgULS("快速删除对话框宽度（像素）", "快速刪除對話方塊寬度（像素）"),
+			label: wgUVS("快速删除对话框宽度（像素）", "快速刪除對話方塊寬度（像素）"),
 			type: "integer"
 		},
 
@@ -432,26 +432,26 @@ Twinkle.config.sections = [
 		// Defines the width of the Twinkle SD window in pixels
 		{
 			name: "speedyWindowHeight",
-			label: wgULS("快速删除对话框高度（像素）", "快速刪除對話方塊高度（像素）"),
-			helptip: wgULS("如果您有一只很大的监视器，您可以将此调高。", "如果您有一只很大的監視器，您可以將此調高。"),
+			label: wgUVS("快速删除对话框高度（像素）", "快速刪除對話方塊高度（像素）"),
+			helptip: wgUVS("如果您有一只很大的监视器，您可以将此调高。", "如果您有一只很大的監視器，您可以將此調高。"),
 			type: "integer"
 		},
 
 		{
 			name: "logSpeedyNominations",
-			label: wgULS("在用户空间中记录所有快速删除提名", "在用戶空間中記錄所有快速刪除提名"),
-			helptip: wgULS("非管理员无法访问到已删除的贡献，用户空间日志提供了一个很好的方法来记录这些历史。", "非管理員無法訪問到已刪除的貢獻，用戶空間日誌提供了一個很好的方法來記錄這些歷史。"),
+			label: wgUVS("在用户空间中记录所有快速删除提名", "在用戶空間中記錄所有快速刪除提名"),
+			helptip: wgUVS("非管理员无法访问到已删除的贡献，用户空间日志提供了一个很好的方法来记录这些历史。", "非管理員無法訪問到已刪除的貢獻，用戶空間日誌提供了一個很好的方法來記錄這些歷史。"),
 			type: "boolean"
 		},
 		{
 			name: "speedyLogPageName",
-			label: wgULS("在此页保留日志", "在此頁保留日誌"),
-			helptip: wgULS("在此框中输入子页面名称，您将在User:<i>用户名</i>/<i>子页面</i>找到CSD日志。仅在打开日志时工作。", "在此框中輸入子頁面名稱，您將在User:<i>用戶名</i>/<i>子頁面</i>找到CSD日誌。僅在開啟日誌時工作。"),
+			label: wgUVS("在此页保留日志", "在此頁保留日誌"),
+			helptip: wgUVS("在此框中输入子页面名称，您将在User:<i>用户名</i>/<i>子页面</i>找到CSD日志。仅在打开日志时工作。", "在此框中輸入子頁面名稱，您將在User:<i>用戶名</i>/<i>子頁面</i>找到CSD日誌。僅在開啟日誌時工作。"),
 			type: "string"
 		},
 		{
 			name: "noLogOnSpeedyNomination",
-			label: wgULS("在使用以下理由时不做记录", "在使用以下理由時不做記錄"),
+			label: wgUVS("在使用以下理由时不做记录", "在使用以下理由時不做記錄"),
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdAndDICriteria,
 			setDisplayOrder: Twinkle.config.commonSets.csdAndDICriteriaDisplayOrder
@@ -459,96 +459,96 @@ Twinkle.config.sections = [
 
 		{
 			name: "enlargeG11Input",
-			label: wgULS("扩大CSD G11的按钮", "擴大CSD G11的按鈕"),
-			helptip: wgULS("扩为默认的两倍大。", "擴為預設的兩倍大。"),
+			label: wgUVS("扩大CSD G11的按钮", "擴大CSD G11的按鈕"),
+			helptip: wgUVS("扩为默认的两倍大。", "擴為預設的兩倍大。"),
 			type: "boolean"
 		}
 	]
 },
 
 {
-	title: wgULS("标记", "標記"),
+	title: wgUVS("标记", "標記"),
 	inFriendlyConfig: true,
 	preferences: [
 		{
 			name: "watchTaggedPages",
-			label: wgULS("标记时添加到监视列表", "標記時加入到監視清單"),
+			label: wgUVS("标记时添加到监视列表", "標記時加入到監視清單"),
 			type: "boolean"
 		},
 		{
 			name: "watchMergeDiscussions",
-			label: wgULS("添加合并讨论时监视讨论页", "加入合併討論時監視討論頁"),
+			label: wgUVS("添加合并讨论时监视讨论页", "加入合併討論時監視討論頁"),
 			type: "boolean"
 		},
 		{
 			name: "markTaggedPagesAsMinor",
-			label: wgULS("将标记标记为小修改", "將標記標記為小修改"),
+			label: wgUVS("将标记标记为小修改", "將標記標記為小修改"),
 			type: "boolean"
 		},
 		{
 			name: "markTaggedPagesAsPatrolled",
-			label: wgULS("默认勾选“标记页面为已巡查”框", "預設勾選「標記頁面為已巡查」框"),
+			label: wgUVS("默认勾选“标记页面为已巡查”框", "預設勾選「標記頁面為已巡查」框"),
 			type: "boolean"
 		},
 		{
 			name: "groupByDefault",
-			label: wgULS("默认勾选“合并到{{multiple issues}}”复选框", "預設勾選「合併到{{multiple issues}}」核取方塊"),
+			label: wgUVS("默认勾选“合并到{{multiple issues}}”复选框", "預設勾選「合併到{{multiple issues}}」核取方塊"),
 			type: "boolean"
 		},
 		{
 			name: "tagArticleSortOrder",
-			label: wgULS("条目标记的默认查看方式", "條目標記的預設檢視方式"),
+			label: wgUVS("条目标记的默认查看方式", "條目標記的預設檢視方式"),
 			type: "enum",
-			enumValues: { "cat": wgULS("按类别", "按類別"), "alpha": "按字母" }
+			enumValues: { "cat": wgUVS("按类别", "按類別"), "alpha": "按字母" }
 		},
 		{
 			name: "customTagList",
-			label: wgULS("自定义条目维护标记", "自訂條目維護標記"),
-			helptip: wgULS("这些会出现在列表的末尾。", "這些會出現在清單的末尾。"),
+			label: wgUVS("自定义条目维护标记", "自訂條目維護標記"),
+			helptip: wgUVS("这些会出现在列表的末尾。", "這些會出現在清單的末尾。"),
 			type: "customList",
-			customListValueTitle: wgULS("模板名（不含大括号）", "模板名（不含大括號）"),
-			customListLabelTitle: wgULS("显示的文字", "顯示的文字")
+			customListValueTitle: wgUVS("模板名（不含大括号）", "模板名（不含大括號）"),
+			customListLabelTitle: wgUVS("显示的文字", "顯示的文字")
 		}
 	]
 },
 
 {
-	title: wgULS("回复", "回覆"),
+	title: wgUVS("回复", "回覆"),
 	inFriendlyConfig: true,
 	preferences: [
 		{
 			name: "markTalkbackAsMinor",
-			label: wgULS("将回复标记为小修改", "將回覆標記為小修改"),
+			label: wgUVS("将回复标记为小修改", "將回覆標記為小修改"),
 			type: "boolean"
 		},
 		{
 			name: "insertTalkbackSignature",
-			label: wgULS("回复时添加签名", "回覆時加入簽名"),
-			helptip: wgULS("Flow页除外。", "Flow頁除外。"),
+			label: wgUVS("回复时添加签名", "回覆時加入簽名"),
+			helptip: wgUVS("Flow页除外。", "Flow頁除外。"),
 			type: "boolean"
 		},
 		{
 			name: "talkbackHeading",
-			label: wgULS("回复所用的小节标题", "回覆所用的小節標題"),
+			label: wgUVS("回复所用的小节标题", "回覆所用的小節標題"),
 			type: "string"
 		},
 		{
 			name: "mailHeading",
-			label: wgULS("“有新邮件”所用的小节标题", "「有新郵件」所用的小節標題"),
+			label: wgUVS("“有新邮件”所用的小节标题", "「有新郵件」所用的小節標題"),
 			type: "string"
 		}
 	]
 },
 
 {
-	title: wgULS("反链", "反連"),
+	title: wgUVS("反链", "反連"),
 	preferences: [
 		// TwinkleConfig.unlinkNamespaces (array)
 		// In what namespaces unlink should happen, default in 0 (article) and 100 (portal)
 		{
 			name: "unlinkNamespaces",
-			label: wgULS("取消以下命名空间中的反链", "取消以下名字空間中的反連"),
-			helptip: wgULS("请避免选择讨论页，因这样会导致Twinkle试图修改讨论存档。", "請避免選擇討論頁，因這樣會導致Twinkle試圖修改討論存檔。"),
+			label: wgUVS("取消以下命名空间中的反链", "取消以下名字空間中的反連"),
+			helptip: wgUVS("请避免选择讨论页，因这样会导致Twinkle试图修改讨论存档。", "請避免選擇討論頁，因這樣會導致Twinkle試圖修改討論存檔。"),
 			type: "set",
 			setValues: Twinkle.config.commonSets.namespacesNoSpecial
 		}
@@ -556,15 +556,15 @@ Twinkle.config.sections = [
 },
 
 {
-	title: wgULS("警告用户", "警告用戶"),
+	title: wgUVS("警告用户", "警告用戶"),
 	preferences: [
 		// TwinkleConfig.defaultWarningGroup (int)
 		// if true, watch the page which has been dispatched an warning or notice, if false, default applies
 		{
 			name: "defaultWarningGroup",
-			label: wgULS("默认警告级别", "預設警告級別"),
+			label: wgUVS("默认警告级别", "預設警告級別"),
 			type: "enum",
-			enumValues: wgULS({
+			enumValues: wgUVS({
 				"1": "层级1",
 				"2": "层级2",
 				"3": "层级3",
@@ -590,8 +590,8 @@ Twinkle.config.sections = [
 		// false: to not print the notice
 		{
 			name: "showSharedIPNotice",
-			label: wgULS("在IP对话页上显示附加信息", "在IP對話頁上顯示附加資訊"),
-			helptip: wgULS("使用的模板是{{SharedIPAdvice}}。", "使用的模板是{{SharedIPAdvice}}。"),
+			label: wgUVS("在IP对话页上显示附加信息", "在IP對話頁上顯示附加資訊"),
+			helptip: wgUVS("使用的模板是{{SharedIPAdvice}}。", "使用的模板是{{SharedIPAdvice}}。"),
 			type: "boolean"
 		},
 
@@ -599,51 +599,51 @@ Twinkle.config.sections = [
 		// if true, watch the page which has been dispatched an warning or notice, if false, default applies
 		{
 			name: "watchWarnings",
-			label: wgULS("警告时添加用户对话页到监视列表", "警告時加入用戶對話頁到監視清單"),
-			helptip: wgULS("注意：如果对方使用Flow，对应讨论串总会加到监视列表中。", "注意：如果對方使用Flow，對應討論串總會加到監視清單中。"),
+			label: wgUVS("警告时添加用户对话页到监视列表", "警告時加入用戶對話頁到監視清單"),
+			helptip: wgUVS("注意：如果对方使用Flow，对应讨论串总会加到监视列表中。", "注意：如果對方使用Flow，對應討論串總會加到監視清單中。"),
 			type: "boolean"
 		},
 
 		{
 			name: "customWarningList",
-			label: wgULS("自定义警告模板", "自訂警告模板"),
-			helptip: wgULS("您可以加入模板或用户子页面。自定义警告会出现在警告对话框中“自定义警告”一节。", "您可以加入模板或用戶子頁面。自訂警告會出現在警告對話框中「自訂警告」一節。"),
+			label: wgUVS("自定义警告模板", "自訂警告模板"),
+			helptip: wgUVS("您可以加入模板或用户子页面。自定义警告会出现在警告对话框中“自定义警告”一节。", "您可以加入模板或用戶子頁面。自訂警告會出現在警告對話框中「自訂警告」一節。"),
 			type: "customList",
-			customListValueTitle: wgULS("模板名（不含大括号）", "模板名（不含大括號）"),
-			customListLabelTitle: wgULS("显示的文字（和编辑摘要）", "顯示的文字（和編輯摘要）")
+			customListValueTitle: wgUVS("模板名（不含大括号）", "模板名（不含大括號）"),
+			customListLabelTitle: wgUVS("显示的文字（和编辑摘要）", "顯示的文字（和編輯摘要）")
 		},
 
 		{
 			name: "markXfdPagesAsPatrolled",
-			label: wgULS("在提交存废讨论时将页面标记为已巡查（如可能）", "在提交存廢討論時將頁面標記為已巡查（如可能）"),
+			label: wgUVS("在提交存废讨论时将页面标记为已巡查（如可能）", "在提交存廢討論時將頁面標記為已巡查（如可能）"),
 			type: "boolean"
 		}
 	]
 },
 
 {
-	title: wgULS("封禁", "封禁"),
+	title: wgUVS("封禁", "封禁"),
 	preferences: [
 		{
 			name: "customBlockReasonList",
-			label: wgULS("自定义封禁理由", "自訂封禁理由"),
-			helptip: wgULS("您可以加入常用的封禁理由。自订的封禁理由会出现在一般的封禁理由下方。", "您可以加入常用的封禁理由。自訂的封禁理由會出現在一般的封禁理由下方。"),
+			label: wgUVS("自定义封禁理由", "自訂封禁理由"),
+			helptip: wgUVS("您可以加入常用的封禁理由。自订的封禁理由会出现在一般的封禁理由下方。", "您可以加入常用的封禁理由。自訂的封禁理由會出現在一般的封禁理由下方。"),
 			type: "customList",
-			customListValueTitle: wgULS("使用封禁模板（预设为 uw-block1）", "使用封禁模板（預設為 uw-block1）"),
-			customListLabelTitle: wgULS("「由于…您已被封禁」及封禁日志理由", "「由於…您已被封禁」及封禁日誌理由")
+			customListValueTitle: wgUVS("使用封禁模板（预设为 uw-block1）", "使用封禁模板（預設為 uw-block1）"),
+			customListLabelTitle: wgUVS("「由于…您已被封禁」及封禁日志理由", "「由於…您已被封禁」及封禁日誌理由")
 		}
 	]
 },
 
 {
-	title: wgULS("存废讨论", "存廢討論"),
+	title: wgUVS("存废讨论", "存廢討論"),
 	preferences: [
 		// TwinkleConfig.xfdWatchPage (string)
 		// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't
 		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 		{
 			name: "xfdWatchPage",
-			label: wgULS("添加提名的页面到监视列表", "加入提名的頁面到監視清單"),
+			label: wgUVS("添加提名的页面到监视列表", "加入提名的頁面到監視清單"),
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		},
@@ -654,8 +654,8 @@ Twinkle.config.sections = [
 		// Either "yes" (add to watchlist), "no" (don't add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 		{
 			name: "xfdWatchDiscussion",
-			label: wgULS("添加存废讨论页到监视列表", "加入存廢討論頁到監視清單"),
-			helptip: wgULS("当日的页面。", "當日的頁面。"),
+			label: wgUVS("添加存废讨论页到监视列表", "加入存廢討論頁到監視清單"),
+			helptip: wgUVS("当日的页面。", "當日的頁面。"),
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		},
@@ -665,7 +665,7 @@ Twinkle.config.sections = [
 		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 		{
 			name: "xfdWatchUser",
-			label: wgULS("添加创建者对话页到监视列表（在通知时）", "加入建立者對話頁到監視清單（在通知時）"),
+			label: wgUVS("添加创建者对话页到监视列表（在通知时）", "加入建立者對話頁到監視清單（在通知時）"),
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		},
@@ -674,24 +674,24 @@ Twinkle.config.sections = [
 		// If, when applying xfd template to page, to mark the page as patrolled (if the page was reached from NewPages)
 		{
 			name: "markXfdPagesAsPatrolled",
-			label: wgULS("标记时标记页面为已巡查（如可能）", "標記時標記頁面為已巡查（如可能）"),
-			helptip: wgULS("基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。", "基於技術原因，頁面僅會在由Special:NewPages到達時被標記為已巡查。"),
+			label: wgUVS("标记时标记页面为已巡查（如可能）", "標記時標記頁面為已巡查（如可能）"),
+			helptip: wgUVS("基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。", "基於技術原因，頁面僅會在由Special:NewPages到達時被標記為已巡查。"),
 			type: "boolean"
 		},
 
 		{
 			name: "FwdCsdToXfd",
-			label: wgULS("提删类别增加转交自快速删除候选", "提刪類別增加轉交自快速刪除候選"),
-			helptip: wgULS("请确保您充分了解[[Wikipedia:快速删除方针]]才开启此功能。", "請確保您充分了解[[Wikipedia:快速刪除方針]]才開啟此功能。"),
+			label: wgUVS("提删类别增加转交自快速删除候选", "提刪類別增加轉交自快速刪除候選"),
+			helptip: wgUVS("请确保您充分了解[[Wikipedia:快速删除方针]]才开启此功能。", "請確保您充分了解[[Wikipedia:快速刪除方針]]才開啟此功能。"),
 			type: "boolean"
 		},
 
 		{
 			name: "XfdClose",
-			label: wgULS("在存废讨论显示关闭讨论按钮", "在存廢討論顯示關閉討論按鈕"),
-			helptip: wgULS("请确保您充分了解[[Wikipedia:关闭删除讨论指南]]才开启此功能。", "請確保您充分了解[[Wikipedia:關閉刪除討論指南]]才開啟此功能。"),
+			label: wgUVS("在存废讨论显示关闭讨论按钮", "在存廢討論顯示關閉討論按鈕"),
+			helptip: wgUVS("请确保您充分了解[[Wikipedia:关闭删除讨论指南]]才开启此功能。", "請確保您充分了解[[Wikipedia:關閉刪除討論指南]]才開啟此功能。"),
 			type: "enum",
-			enumValues: wgULS({
+			enumValues: wgUVS({
 				"hide": "不显示",
 				"nonadminonly": "只包含非管理员可使用选项",
 				"all": "显示所有选项"
@@ -706,14 +706,14 @@ Twinkle.config.sections = [
 },
 
 {
-	title: wgULS("侵犯版权", "侵犯版權"),
+	title: wgUVS("侵犯版权", "侵犯版權"),
 	preferences: [
 		// TwinkleConfig.copyvioWatchPage (string)
 		// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't
 		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 		{
 			name: "copyvioWatchPage",
-			label: wgULS("添加提报的页面到监视列表", "加入提報的頁面到監視清單"),
+			label: wgUVS("添加提报的页面到监视列表", "加入提報的頁面到監視清單"),
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		},
@@ -723,7 +723,7 @@ Twinkle.config.sections = [
 		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 		{
 			name: "copyvioWatchUser",
-			label: wgULS("添加创建者对话页到监视列表（在通知时）", "加入建立者對話頁到監視清單（在通知時）"),
+			label: wgUVS("添加创建者对话页到监视列表（在通知时）", "加入建立者對話頁到監視清單（在通知時）"),
 			type: "enum",
 			enumValues: Twinkle.config.commonEnums.watchlist
 		},
@@ -732,8 +732,8 @@ Twinkle.config.sections = [
 		// If, when applying copyvio template to page, to mark the page as patrolled (if the page was reached from NewPages)
 		{
 			name: "markCopyvioPagesAsPatrolled",
-			label: wgULS("标记时标记页面为已巡查（如可能）", "標記時標記頁面為已巡查（如可能）"),
-			helptip: wgULS("基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。", "基於技術原因，頁面僅會在由Special:NewPages到達時被標記為已巡查。"),
+			label: wgUVS("标记时标记页面为已巡查（如可能）", "標記時標記頁面為已巡查（如可能）"),
+			helptip: wgUVS("基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。", "基於技術原因，頁面僅會在由Special:NewPages到達時被標記為已巡查。"),
 			type: "boolean"
 		},
 
@@ -741,7 +741,7 @@ Twinkle.config.sections = [
 		// If, when applying copyvio template to draft page, to mark the page with CSD
 		{
 			name: "markDraftCopyvioWithCSD",
-			label: wgULS("在草稿名字空间默认勾选“同时标记CSD G16”", "在草稿命名空間預設勾選「同時標記CSD G16」"),
+			label: wgUVS("在草稿名字空间默认勾选“同时标记CSD G16”", "在草稿命名空間預設勾選「同時標記CSD G16」"),
 			type: "boolean"
 		},
 
@@ -749,7 +749,7 @@ Twinkle.config.sections = [
 },
 
 {
-	title: wgULS("隐藏", "隱藏"),
+	title: wgUVS("隐藏", "隱藏"),
 	hidden: true,
 	preferences: [
 		// twinkle.header.js: portlet setup
@@ -851,7 +851,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		// (settings in that file will still work, but they will be overwritten by twinkleoptions.js settings)
 		var contentnotice = document.createElement("p");
 		// I hate innerHTML, but this is one thing it *is* good for...
-		contentnotice.innerHTML = wgULS("<b>在这里修改您的参数设置之前，</b>确认您已移除了<a href=\"" + mw.util.getUrl("Special:MyPage/skin.js") + "\" title=\"Special:MyPage/skin.js\">用户JavaScript文件</a>中任何旧的<code>FriendlyConfig</code>设置。", "<b>在這裡修改您的偏好設定之前，</b>確認您已移除了<a href=\"" + mw.util.getUrl("Special:MyPage/skin.js") + "\" title=\"Special:MyPage/skin.js\">用戶JavaScript檔案</a>中任何舊的<code>FriendlyConfig</code>設定。");
+		contentnotice.innerHTML = wgUVS("<b>在这里修改您的参数设置之前，</b>确认您已移除了<a href=\"" + mw.util.getUrl("Special:MyPage/skin.js") + "\" title=\"Special:MyPage/skin.js\">用户JavaScript文件</a>中任何旧的<code>FriendlyConfig</code>设置。", "<b>在這裡修改您的偏好設定之前，</b>確認您已移除了<a href=\"" + mw.util.getUrl("Special:MyPage/skin.js") + "\" title=\"Special:MyPage/skin.js\">用戶JavaScript檔案</a>中任何舊的<code>FriendlyConfig</code>設定。");
 		contentdiv.appendChild(contentnotice);
 
 		// look and see if the user does in fact have any old settings in their skin JS file
@@ -867,7 +867,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		var toctitle = document.createElement("div");
 		toctitle.id = "toctitle";
 		var toch2 = document.createElement("h2");
-		toch2.textContent = wgULS("目录 ", "目錄 ");
+		toch2.textContent = wgUVS("目录 ", "目錄 ");
 		toctitle.appendChild(toch2);
 		// add TOC show/hide link
 		var toctoggle = document.createElement("span");
@@ -876,7 +876,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		var toctogglelink = document.createElement("a");
 		toctogglelink.className = "internal";
 		toctogglelink.setAttribute("href", "#tw-tocshowhide");
-		toctogglelink.textContent = wgULS("隐藏", "隱藏");
+		toctogglelink.textContent = wgUVS("隐藏", "隱藏");
 		toctoggle.appendChild(toctogglelink);
 		toctoggle.appendChild(document.createTextNode("]"));
 		toctitle.appendChild(toctoggle);
@@ -887,9 +887,9 @@ Twinkle.config.init = function twinkleconfigInit() {
 			var $tocul = $(tocul);
 			$tocul.toggle();
 			if ($tocul.find(":visible").length) {
-				toctogglelink.textContent = wgULS("隐藏", "隱藏");
+				toctogglelink.textContent = wgUVS("隐藏", "隱藏");
 			} else {
-				toctogglelink.textContent = wgULS("显示", "顯示");
+				toctogglelink.textContent = wgUVS("显示", "顯示");
 			}
 		}, false);
 		toctable.appendChild(tocul);
@@ -1098,7 +1098,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 							pref: pref,
 							inFriendlyConfig: section.inFriendlyConfig
 						});
-						button.appendChild(document.createTextNode(wgULS("编辑项目", "編輯項目")));
+						button.appendChild(document.createTextNode(wgUVS("编辑项目", "編輯項目")));
 						cell.appendChild(button);
 						break;
 
@@ -1132,7 +1132,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 						resetlink.style.cssFloat = "right";
 					}
 					resetlink.style.margin = "0 0.6em";
-					resetlink.appendChild(document.createTextNode(wgULS("复位", "復位")));
+					resetlink.appendChild(document.createTextNode(wgUVS("复位", "復位")));
 					cell.appendChild(resetlink);
 				}
 				row.appendChild(cell);
@@ -1150,7 +1150,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		var button = document.createElement("button");
 		button.setAttribute("id", "twinkle-config-submit");
 		button.setAttribute("type", "submit");
-		button.appendChild(document.createTextNode(wgULS("保存修改", "儲存修改")));
+		button.appendChild(document.createTextNode(wgUVS("保存修改", "儲存修改")));
 		footerbox.appendChild(button);
 		var footerspan = document.createElement("span");
 		footerspan.className = "plainlinks";
@@ -1160,7 +1160,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		footera.setAttribute("href", "#tw-reset-all");
 		footera.setAttribute("id", "twinkle-config-resetall");
 		footera.addEventListener("click", Twinkle.config.resetAllPrefs, false);
-		footera.appendChild(document.createTextNode(wgULS("恢复默认", "恢復預設")));
+		footera.appendChild(document.createTextNode(wgUVS("恢复默认", "恢復預設")));
 		footerspan.appendChild(footera);
 		footerbox.appendChild(footerspan);
 		contentform.appendChild(footerbox);
@@ -1193,25 +1193,25 @@ Twinkle.config.init = function twinkleconfigInit() {
 			box.style.borderWidth = "2px";
 
 			if (mw.config.get("wgArticleId") > 0) {  // page exists
-				box.appendChild(document.createTextNode(wgULS("这页包含您的Twinkle参数设置，您可使用", "這頁包含您的Twinkle偏好設定，您可使用")));
+				box.appendChild(document.createTextNode(wgUVS("这页包含您的Twinkle参数设置，您可使用", "這頁包含您的Twinkle偏好設定，您可使用")));
 			} else {  // page does not exist
-				box.appendChild(document.createTextNode(wgULS("您可配置您的Twinkle，通过使用", "您可配置您的Twinkle，通過使用")));
+				box.appendChild(document.createTextNode(wgUVS("您可配置您的Twinkle，通过使用", "您可配置您的Twinkle，通過使用")));
 			}
 			link = document.createElement("a");
 			link.setAttribute("href", mw.util.getUrl(Twinkle.getPref('configPage')) );
-			link.appendChild(document.createTextNode(wgULS("Twinkle参数设置面板", "Twinkle偏好設定面板")));
+			link.appendChild(document.createTextNode(wgUVS("Twinkle参数设置面板", "Twinkle偏好設定面板")));
 			box.appendChild(link);
-			box.appendChild(document.createTextNode(wgULS("，或直接编辑本页。", "，或直接編輯本頁。")));
+			box.appendChild(document.createTextNode(wgUVS("，或直接编辑本页。", "，或直接編輯本頁。")));
 			$(box).insertAfter($("#contentSub"));
 
 		} else if (["monobook", "vector", "cologneblue", "modern", "common"].indexOf(scriptPageName) !== -1) {
 			// place "Looking for Twinkle options?" notice
 			box.style.width = "60%";
 
-			box.appendChild(document.createTextNode(wgULS("如果您想配置您的Twinkle，请使用", "如果您想配置您的Twinkle，請使用")));
+			box.appendChild(document.createTextNode(wgUVS("如果您想配置您的Twinkle，请使用", "如果您想配置您的Twinkle，請使用")));
 			link = document.createElement("a");
 			link.setAttribute("href", mw.util.getUrl(Twinkle.getPref('configPage')) );
-			link.appendChild(document.createTextNode(wgULS("Twinkle参数设置面板", "Twinkle偏好設定面板")));
+			link.appendChild(document.createTextNode(wgUVS("Twinkle参数设置面板", "Twinkle偏好設定面板")));
 			box.appendChild(link);
 			box.appendChild(document.createTextNode("。"));
 			$(box).insertAfter($("#contentSub"));
@@ -1283,7 +1283,7 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 
 	var dialog = new Morebits.simpleWindow(720, 400);
 	dialog.setTitle(curpref.label);
-	dialog.setScriptName(wgULS("Twinkle参数设置", "Twinkle偏好設定"));
+	dialog.setScriptName(wgUVS("Twinkle参数设置", "Twinkle偏好設定"));
 
 	var dialogcontent = document.createElement("div");
 	var dlgtable = document.createElement("table");
@@ -1302,12 +1302,12 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 	// value column header
 	dlgth = document.createElement("th");
 	dlgth.style.width = "35%";
-	dlgth.textContent = (curpref.customListValueTitle ? curpref.customListValueTitle : wgULS("数值", "數值"));
+	dlgth.textContent = (curpref.customListValueTitle ? curpref.customListValueTitle : wgUVS("数值", "數值"));
 	dlgtr.appendChild(dlgth);
 	// label column header
 	dlgth = document.createElement("th");
 	dlgth.style.width = "60%";
-	dlgth.textContent = (curpref.customListLabelTitle ? curpref.customListLabelTitle : wgULS("标签", "標籤"));
+	dlgth.textContent = (curpref.customListLabelTitle ? curpref.customListLabelTitle : wgUVS("标签", "標籤"));
 	dlgtr.appendChild(dlgth);
 	dlgtbody.appendChild(dlgtr);
 
@@ -1349,14 +1349,14 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 		Twinkle.config.listDialog.save($prefbutton, dlgtbody);
 		dialog.close();
 	}, false);
-	button.textContent = wgULS("保存修改", "儲存變更");
+	button.textContent = wgUVS("保存修改", "儲存變更");
 	dialogcontent.appendChild(button);
 	button = document.createElement("button");
 	button.setAttribute("type", "submit");  // so Morebits.simpleWindow puts the button in the button pane
 	button.addEventListener("click", function(e) {
 		Twinkle.config.listDialog.reset($prefbutton, dlgtbody);
 	}, false);
-	button.textContent = wgULS("复位", "復位");
+	button.textContent = wgUVS("复位", "復位");
 	dialogcontent.appendChild(button);
 	button = document.createElement("button");
 	button.setAttribute("type", "submit");  // so Morebits.simpleWindow puts the button in the button pane
@@ -1492,10 +1492,10 @@ Twinkle.config.resetAllPrefs = function twinkleconfigResetAllPrefs() {
 Twinkle.config.save = function twinkleconfigSave(e) {
 	Morebits.status.init( document.getElementById("twinkle-config-content") );
 
-	Morebits.wiki.actionCompleted.notice = wgULS("保存", "儲存");
+	Morebits.wiki.actionCompleted.notice = wgUVS("保存", "儲存");
 
 	var userjs = mw.config.get("wgFormattedNamespaces")[mw.config.get("wgNamespaceIds").user] + ":" + mw.config.get("wgUserName") + "/twinkleoptions.js";
-	var wikipedia_page = new Morebits.wiki.page(userjs, wgULS("保存参数设置到 ", "儲存偏好設定到 ") + userjs);
+	var wikipedia_page = new Morebits.wiki.page(userjs, wgUVS("保存参数设置到 ", "儲存偏好設定到 ") + userjs);
 	wikipedia_page.setCallbackParameters(e.target);
 	wikipedia_page.load(Twinkle.config.writePrefs);
 
@@ -1654,7 +1654,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 					case "integer":  // read from the input box
 						userValue = parseInt(form[pref.name].value, 10);
 						if (isNaN(userValue)) {
-							Morebits.status.warn(wgULS("保存", "儲存"), wgULS("您为 " + pref.name + " 指定的值（" + pref.value + "）不合法，会继续保存操作，但此值将会跳过。", "您為 " + pref.name + " 指定的值（" + pref.value + "）不合法，會繼續儲存操作，但此值將會跳過。"));
+							Morebits.status.warn(wgUVS("保存", "儲存"), wgUVS("您为 " + pref.name + " 指定的值（" + pref.value + "）不合法，会继续保存操作，但此值将会跳过。", "您為 " + pref.name + " 指定的值（" + pref.value + "）不合法，會繼續儲存操作，但此值將會跳過。"));
 							userValue = null;
 						}
 						break;
@@ -1716,7 +1716,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 		});
 	}
 
-	var text = wgULS(
+	var text = wgUVS(
 		"// twinkleoptions.js：用户Twinkle参数设置文件\n" +
 		"//\n" +
 		"// 注：修改您的参数设置最简单的办法是使用\n" +
@@ -1745,10 +1745,10 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 	text +=
 		";\n" +
 		"\n" +
-		wgULS("// twinkleoptions.js到此为止\n", "// twinkleoptions.js到此為止\n");
+		wgUVS("// twinkleoptions.js到此为止\n", "// twinkleoptions.js到此為止\n");
 
 	pageobj.setPageText(text);
-	pageobj.setEditSummary(wgULS("保存Twinkle参数设置：来自[[" + Morebits.pageNameNorm + "]]的自动编辑。 ([[WP:TW|TW]])", "儲存Twinkle偏好設定：來自[[" + Morebits.pageNameNorm + "]]的自動編輯。 ([[WP:TW|TW]])"));
+	pageobj.setEditSummary(wgUVS("保存Twinkle参数设置：来自[[" + Morebits.pageNameNorm + "]]的自动编辑。 ([[WP:TW|TW]])", "儲存Twinkle偏好設定：來自[[" + Morebits.pageNameNorm + "]]的自動編輯。 ([[WP:TW|TW]])"));
 	pageobj.setCreateOption("recreate");
 	pageobj.save(Twinkle.config.saveSuccess);
 };
@@ -1760,7 +1760,7 @@ Twinkle.config.saveSuccess = function twinkleconfigSaveSuccess(pageobj) {
 	noticebox.className = "successbox";
 	noticebox.style.fontSize = "100%";
 	noticebox.style.marginTop = "2em";
-	noticebox.innerHTML = wgULS("<p><b>您的Twinkle参数设置已被保存。</b></p><p>要看到这些更改，您可能需要<a href=\"" + mw.util.getUrl("WP:BYPASS") + "\" title=\"WP:BYPASS\"><b>绕过浏览器缓存</b></a>。</p>", "<p><b>您的Twinkle偏好設定已被儲存。</b></p><p>要看到這些更改，您可能需要<a href=\"" + mw.util.getUrl("WP:BYPASS") + "\" title=\"WP:BYPASS\"><b>繞過瀏覽器快取</b></a>。</p>");
+	noticebox.innerHTML = wgUVS("<p><b>您的Twinkle参数设置已被保存。</b></p><p>要看到这些更改，您可能需要<a href=\"" + mw.util.getUrl("WP:BYPASS") + "\" title=\"WP:BYPASS\"><b>绕过浏览器缓存</b></a>。</p>", "<p><b>您的Twinkle偏好設定已被儲存。</b></p><p>要看到這些更改，您可能需要<a href=\"" + mw.util.getUrl("WP:BYPASS") + "\" title=\"WP:BYPASS\"><b>繞過瀏覽器快取</b></a>。</p>");
 	Morebits.status.root.appendChild(noticebox);
 	var noticeclear = document.createElement("br");
 	noticeclear.style.clear = "both";

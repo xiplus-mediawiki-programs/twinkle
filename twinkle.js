@@ -36,10 +36,6 @@ window.wgUXS = function (wg, hans, hant, cn, tw, hk, sg, zh, mo, my) {
     return ret[wg] || zh || hans || hant || cn || tw || hk || sg || mo || my; //保證每一語言有值
 };
 
-window.wgULS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
-    return wgUXS(mw.config.get('wgUserLanguage'), hans, hant, cn, tw, hk, sg, zh, mo, my);
-};
-
 window.wgUVS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
     return wgUXS(mw.config.get('wgUserVariant'), hans, hant, cn, tw, hk, sg, zh, mo, my);
 };
@@ -172,8 +168,8 @@ Twinkle.defaultConfig.friendly = {
 	 // Talkback
 	markTalkbackAsMinor: true,
 	insertTalkbackSignature: true,  // always sign talkback templates
-	talkbackHeading: wgULS("回复通告", "回覆通告"),
-	mailHeading: wgULS("您有新邮件！", "您有新郵件！"),
+	talkbackHeading: wgUVS("回复通告", "回覆通告"),
+	mailHeading: wgUVS("您有新邮件！", "您有新郵件！"),
 	 // Shared
 	markSharedIPAsMinor: true
 };
@@ -459,7 +455,7 @@ Twinkle.load = function () {
 	}
 
 	if (isOldIE) {
-		mw.notify(wgULS('警告：Twinkle不兼容旧版本IE浏览器，请更换浏览器之后再使用。', '警告：Twinkle與舊版本IE瀏覽器不相容，請更換瀏覽器之後再使用。'));
+		mw.notify(wgUVS('警告：Twinkle不兼容旧版本IE浏览器，请更换浏览器之后再使用。', '警告：Twinkle與舊版本IE瀏覽器不相容，請更換瀏覽器之後再使用。'));
 		return;
 	}
 
@@ -501,7 +497,7 @@ Twinkle.load = function () {
 		Twinkle.close();
 	}
 
-	Twinkle.addPortletLink( mw.util.wikiScript("index") + "?title=" + Twinkle.getPref('configPage'), wgULS('设置', '設定'), 'tw-config', wgULS('设置Twinkle参数', '設定Twinkle參數') );
+	Twinkle.addPortletLink( mw.util.wikiScript("index") + "?title=" + Twinkle.getPref('configPage'), wgUVS('设置', '設定'), 'tw-config', wgUVS('设置Twinkle参数', '設定Twinkle參數') );
 
 	// Run the initialization callbacks for any custom modules
 	$( Twinkle.initCallbacks ).each(function ( k, v ) { v(); });
