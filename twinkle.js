@@ -36,10 +36,6 @@ window.wgUXS = function (wg, hans, hant, cn, tw, hk, sg, zh, mo, my) {
     return ret[wg] || zh || hans || hant || cn || tw || hk || sg || mo || my; //保證每一語言有值
 };
 
-window.wgULS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
-    return wgUXS(mw.config.get('wgUserLanguage'), hans, hant, cn, tw, hk, sg, zh, mo, my);
-};
-
 window.wgUVS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
     return wgUXS(mw.config.get('wgUserVariant'), hans, hant, cn, tw, hk, sg, zh, mo, my);
 };
