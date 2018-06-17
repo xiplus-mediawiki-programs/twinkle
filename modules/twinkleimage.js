@@ -62,6 +62,11 @@ Twinkle.image.callback = function twinkleimageCallback() {
 					label: wgULS('没有版权（CSD F4）', '沒有版權（CSD F4）'),
 					value: 'no license',
 					tooltip: wgULS('本档案缺少版权信息', '本檔案缺少版權資訊')
+				},
+				{
+					label: wgULS('没有来源（CSD F3）且没有版权（CSD F4）', '沒有來源（CSD F3）且沒有版權（CSD F4）'),
+					value: 'no source no license',
+					tooltip: wgULS('本图像并未注明原始出处，其声称的版权信息无法予以查证，且缺少版权信息', '本圖像並未注明原始出處，其聲稱的版權資訊無法予以查證，且缺少版權資訊')
 				}
 			]
 		} );
@@ -96,6 +101,9 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 			break;
 		case 'no license':
 			csdcrit = "f4";
+			break;
+		case 'no source no license':
+			csdcrit = "f3 f4";
 			break;
 		default:
 			throw new Error( "Twinkle.image.callback.evaluate：未知条款" );
@@ -154,7 +162,16 @@ Twinkle.image.callbacks = {
 		tag += "}}\n";
 
 		pageobj.setPageText(tag + text);
-		pageobj.setEditSummary(wgULS("请求快速删除（[[WP:CSD#", "請求快速刪除（[[WP:CSD#") + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]]）：" + params.type + Twinkle.getPref('summaryAd'));
+
+		var editSummary = wgULS("请求快速删除（", "請求快速刪除（");
+		if (params.normalized === "f3 f4") {
+			editSummary += "[[WP:CSD#F3|CSD F3]]+[[WP:CSD#F4|CSD F4]]";
+		} else {
+			editSummary += "[[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]]"
+		}
+		editSummary += "）：" + params.type + Twinkle.getPref('summaryAd');
+		pageobj.setEditSummary(editSummary);
+
 		switch (Twinkle.getPref('deliWatchPage')) {
 			case 'yes':
 				pageobj.setWatchlist(true);
