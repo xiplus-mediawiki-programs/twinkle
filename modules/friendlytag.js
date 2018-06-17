@@ -21,6 +21,12 @@ Twinkle.tag = function friendlytag() {
 		Twinkle.tag.mode = '重定向';
 		Twinkle.addPortletLink( Twinkle.tag.callback, wgULS("标记", "標記"), "friendly-tag", wgULS("标记重定向", "標記重定向") );
 	}
+	// file tagging
+	else if( mw.config.get('wgNamespaceNumber') === 6 && !document.getElementById("mw-sharedupload") && document.getElementById("mw-imagepage-section-filehistory") ) {
+		Twinkle.tag.mode = wgULS('文件', '檔案');
+
+		Twinkle.addPortletLink( Twinkle.tag.callback, wgULS("标记", "標記"), "friendly-tag", wgULS("标记文件", "標記檔案") );
+	}
 	// article/draft tagging
 	else if( ( ( mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 118 ) && mw.config.get('wgCurRevisionId') ) || ( Morebits.pageNameNorm === Twinkle.getPref("sandboxPage") ) ) {
 		Twinkle.tag.mode = wgULS('条目', '條目');
@@ -110,6 +116,25 @@ Twinkle.tag.callback = function friendlytagCallback() {
 
 			form.append({ type: 'header', label:wgULS('鲜用模板', '鮮用模板') });
 			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.rareList });
+			break;
+
+		case '文件':
+		case '檔案':
+			Window.setTitle( wgULS('文件维护标记', '檔案維護標記') );
+
+			// TODO: perhaps add custom tags TO list of checkboxes
+
+			form.append({ type: 'header', label: wgULS('版权和来源问题标签', '版權和來源問題標籤') });
+			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.licenseList } );
+
+			form.append({ type: 'header', label: wgULS('维基共享资源相关标签', '維基共享資源相關標籤') });
+			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.commonsList } );
+
+			form.append({ type: 'header', label: wgULS('清理标签', '清理標籤') } );
+			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.cleanupList } );
+
+			form.append({ type: 'header', label: wgULS('档案取代标签', '檔案取代標籤') });
+			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.replacementList } );
 			break;
 
 		default:
@@ -909,6 +934,46 @@ Twinkle.tag.rareList = wgULS([
 	}
 ]);
 
+// maintenance tags for FILES start here
+
+Twinkle.tag.file = {};
+
+Twinkle.tag.file.licenseList = wgULS([
+	{ label: '{{Non-free reduce}}：非低分辨率的合理使用图像（或过长的音频剪辑等）', value: 'Non-free reduce' }
+], [
+	{ label: '{{Non-free reduce}}：非低解析度的合理使用圖像（或過長的音頻剪輯等）', value: 'Non-free reduce' }
+]);
+
+Twinkle.tag.file.commonsList = wgULS([
+	{ label: '{{Copy to Commons}}：自由版权文件应该被移动至维基共享资源', value: 'Copy to Commons' },
+	{ label: '{{Do not move to Commons}}：不要移动至维基共享资源', value: 'Do not move to Commons_reason' },
+	{ label: '{{Keep local}}：请求在本地保留维基共享资源的文件副本', value: 'Keep local' },
+	{ label: '{{Now Commons}}：文件已被复制到维基共享资源（CSD F7）', value: 'subst:ncd' }
+], [
+	{ label: '{{Copy to Commons}}：自由版權檔案應該被移動至維基共享資源', value: 'Copy to Commons' },
+	{ label: '{{Do not move to Commons}}：不要移動至維基共享資源', value: 'Do not move to Commons_reason' },
+	{ label: '{{Keep local}}：請求在本地保留維基共享資源的檔案副本', value: 'Keep local' },
+	{ label: '{{Now Commons}}：檔案已被複製到維基共享資源（CSD F7）', value: 'subst:ncd' }
+]);
+
+Twinkle.tag.file.cleanupList = wgULS([
+	{ label: '{{Imagewatermark}}：图像包含了水印', value: 'Imagewatermark' },
+	{ label: '{{Rename media}}：文件应该根据文件名称指引被重命名', value: 'Rename media' },
+	{ label: '{{Should be SVG}}：PNG、GIF、JPEG文件应该重制成矢量图形', value: 'Should be SVG', value: 'Should be SVG' }
+], [
+	{ label: '{{Imagewatermark}}：圖像包含了浮水印', value: 'Imagewatermark' },
+	{ label: '{{Rename media}}：檔案應該根據檔案名稱指引被重新命名', value: 'Rename media' },
+	{ label: '{{Should be SVG}}：PNG、GIF、JPEG檔案應該重製成向量圖形', value: 'Should be SVG', value: 'Should be SVG' }
+]);
+
+Twinkle.tag.file.replacementList = wgULS([
+	{ label: '{{Obsolete}}：有新版本可用的过时文件', value: 'Obsolete' },
+	{ label: '{{Vector version available}}：有矢量图形可用的非矢量图形文件', value: 'Vector version available' }
+], [
+	{ label: '{{Obsolete}}：有新版本可用的過時檔案', value: 'Obsolete' },
+	{ label: '{{Vector version available}}：有向量圖形可用的非向量圖形檔案', value: 'Vector version available' }
+]);
+
 
 // Contains those article tags that *do not* work inside {{multiple issues}}.
 Twinkle.tag.multipleIssuesExceptions = [
@@ -1192,6 +1257,115 @@ Twinkle.tag.callbacks = {
 		pageobj.setEditSummary("添加[[" + Morebits.pageNameNorm + "]]" + Twinkle.getPref('summaryAd'));
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
+	},
+
+	file: function friendlytagCallbacksFile(pageobj) {
+		var text = pageobj.getPageText();
+		var params = pageobj.getCallbackParameters();
+		var summary = wgULS('添加', '加入');
+
+
+
+		// Add maintenance tags
+		if (params.tags.length) {
+
+			var tagtext = "", currentTag;
+			$.each(params.tags, function(k, tag) {
+				// when other commons-related tags are placed, remove "move to Commons" tag
+				if (["Keep local", "subst:ncd", "Do not move to Commons_reason", "Do not move to Commons",
+					"Now Commons"].indexOf(tag) !== -1) {
+					text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, "");
+				}
+				if (tag === "Vector version available") {
+					text = text.replace(/\{\{((convert to |convertto|should be |shouldbe|to)?svg|badpng|vectorize)[^}]*\}\}/gi, "");
+				}
+
+				currentTag = "{{" + (tag === "Do not move to Commons_reason" ? "Do not move to Commons" : tag);
+
+				var input;
+				switch (tag) {
+					case "subst:ncd":
+						/* falls through */
+					case "Keep local":
+						input = prompt( "{{" + (tag === "subst:ncd" ? "Now Commons" : tag) +
+							"}} ─ " + wgULS("输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀。要跳过标记，请单击取消：", "輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首。要跳過標記，請點擊取消："), "" );
+						if (input === null) {
+							return true;  // continue
+						} else if (input !== "") {
+							currentTag += '|1=' + input;
+						}
+						if (tag === "Keep local") {
+							input = prompt( "{{Keep local}} ─ " + wgULS("输入请求在本地保留文件副本的原因（可选）：", "輸入請求在本地保留檔案副本的原因（可選）："), "" );
+							if (input !== null && input !== "") {
+								currentTag += "|reason=" + input;
+							}
+						}
+						break;
+					case "Rename media":
+						input = prompt( "{{Rename media}} ─ " + wgULS("输入图像的新名称（可选）：", "輸入圖像的新名稱（可選）："), "" );
+						if (input === null) {
+							return true;  // continue
+						} else if (input !== "") {
+							currentTag += "|1=" + input;
+						}
+						input = prompt( "{{Rename media}} ─ " + wgULS("输入重命名的原因（可选）：", "輸入重命名的原因（可選）："), "" );
+						if (input === null) {
+							return true;  // continue
+						} else if (input !== "") {
+							currentTag += "|2=" + input;
+						}
+						break;
+					case "Vector version available":
+						/* falls through */
+					case "Obsolete":
+						input = prompt( "{{" + tag + "}} ─ " + wgULS("输入替换此文件的文件名称（必填）。 要跳过标记，请单击取消：", "輸入替換此檔案的檔案名稱（必填）。 要跳過標記，請點擊取消："), "" );
+						if (input === null) {
+							return true;  // continue
+						} else if (input !== "") {
+							currentTag += "|1=" + input;
+						}
+						break;
+					case "Do not move to Commons_reason":
+						input = prompt( "{{Do not move to Commons}} ─ " + wgULS("输入不应该将该图像移动到维基共享资源的原因（必填）。 要跳过标记，请单击取消：", "輸入不應該將該圖像移動到維基共享資源的原因（必填）。 要跳過標記，請點擊取消："), "" );
+						if (input === null) {
+							return true;  // continue
+						} else if (input !== "") {
+							currentTag += "|reason=" + input;
+						}
+						break;
+					case "Copy to Commons":
+						currentTag += "|human=" + mw.config.get("wgUserName");
+						break;
+					default:
+						break;  // don't care
+				}
+
+				currentTag += "}}\n";
+
+				tagtext += currentTag;
+				summary += "{{" + tag + "}}, ";
+
+				return true;  // continue
+			});
+
+			if (!tagtext) {
+				pageobj.getStatusElement().warn(wgULS("用户取消操作，没什么要做的", "使用者取消操作，沒什麼要做的"));
+				return;
+			}
+
+			text = tagtext + text;
+		}
+
+		pageobj.setPageText(text);
+		pageobj.setEditSummary(summary.substring(0, summary.length - 2) + Twinkle.getPref('summaryAd'));
+		pageobj.setWatchlist(Twinkle.getFriendlyPref('watchTaggedPages'));
+		pageobj.setMinorEdit(Twinkle.getFriendlyPref('markTaggedPagesAsMinor'));
+		pageobj.setCreateOption('nocreate');
+		pageobj.save();
+
+		if( params.patrol ) {
+			pageobj.patrol();
+		}
 	}
 };
 
@@ -1221,6 +1395,11 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			break;
 		case '重定向':
 			params.tags = form.getChecked( 'redirectTags' );
+			break;
+		case '文件':
+		case '檔案':
+			params.svgSubcategory = form["imageTags.svgCategory"] ? form["imageTags.svgCategory"].value : null;
+			params.tags = form.getChecked( 'imageTags' );
 			break;
 		default:
 			alert("Twinkle.tag：未知模式 " + Twinkle.tag.mode);
@@ -1259,6 +1438,10 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			/* falls through */
 		case '重定向':
 			wikipedia_page.load(Twinkle.tag.callbacks.main);
+			return;
+		case '文件':
+		case '檔案':
+			wikipedia_page.load(Twinkle.tag.callbacks.file);
 			return;
 		default:
 			alert("Twinkle.tag：未知模式 " + Twinkle.tag.mode);
