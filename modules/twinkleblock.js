@@ -1123,10 +1123,10 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 
 		if (params.reason) text += '|reason=' + params.reason;
 		if (params.disabletalk) text += '|notalk=yes';
+		text += '|subst=subst:';
 	} else {
 		text += params.template;
 	}
-	text += '|subst=subst:';
 
 	if ((settings.sig === '~~~~' || settings.sig === undefined) && !nosign) {
 		text += '}}--~~~~';
