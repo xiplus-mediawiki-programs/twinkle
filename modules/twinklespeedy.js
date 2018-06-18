@@ -1339,7 +1339,11 @@ Twinkle.speedy.callbacks = {
 
 			appendText += "\n# [[:" + Morebits.pageNameNorm + "]]: ";
 			if (params.fromDI) {
-				appendText += "图版[[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]]（{{tl|" + params.templatename + "}}）";
+				if (params.normalized === "f3 f4") {
+					appendText += "图版[[WP:CSD#F3|CSD F3]]+[[WP:CSD#F4|CSD F4]]（{{tl|no source no license/auto}}）";
+				} else {
+					appendText += "图版[[WP:CSD#" + params.normalized.toUpperCase() + "|CSD " + params.normalized.toUpperCase() + "]]（{{tl|" + params.templatename + "}}）"
+				}
 			} else {
 				if (params.normalizeds.length > 1) {
 					appendText += "多个理由（";
