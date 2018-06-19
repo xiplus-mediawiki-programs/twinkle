@@ -778,7 +778,7 @@ Twinkle.arv.processSock = function( params ) {
 		params.sockpuppets.map( function(v, i) {
 				return "| username" + (i+2) + "  = " + v;
 			} ).join( "\n" ) + "\n" +
-		"| reason = " + params.evidence + "}}--~~~~";
+		"| reason = " + params.evidence + "}}";
 
 	var reportpage = 'Wikipedia:元維基用戶查核協助請求';
 
