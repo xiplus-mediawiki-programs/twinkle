@@ -67,6 +67,16 @@ Twinkle.image.callback = function twinkleimageCallback() {
 					label: wgULS('来源不明（CSD F3）且未知版权或版权无法被查证（CSD F4）', '來源不明（CSD F3）且未知版權或版權無法被查證（CSD F4）'),
 					value: 'no source no license',
 					tooltip: wgULS('本档案并未注明原始出处，且本档案缺少版权信息或声称的版权信息无法予以查证', '本檔案並未注明原始出處，且本檔案缺少版權資訊或聲稱的版權資訊無法予以查證')
+				},
+				{
+					label: wgULS('明显侵权之文件（CSD F8）', '明顯侵權之檔案（CSD F8）'),
+					value: 'no permission',
+					tooltip: wgULS('上传者宣称拥有，而在其他来源找到的文件。或从侵权的来源取得的文件。', '上傳者宣稱擁有，而在其他來源找到的檔案。或從侵權的來源取得的檔案。'),
+					subgroup: {
+						name: 'f8_source',
+						type: 'textarea',
+						label: wgULS('侵权来源：', '侵權來源：')
+					}
 				}
 			]
 		} );
@@ -105,6 +115,9 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		case 'no source no license':
 			csdcrit = "f3 f4";
 			break;
+		case 'no permission':
+			csdcrit = "f8";
+			break;
 		default:
 			throw new Error( "Twinkle.image.callback.evaluate：未知条款" );
 	}
@@ -118,6 +131,9 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		'normalized': csdcrit,
 		'lognomination': lognomination
 	};
+	if (csdcrit === "f8") {
+		params["f8_source"] = event.target["type.f8_source"].value;
+	}
 	Morebits.simpleWindow.setButtonsEnabled( false );
 	Morebits.status.init( event.target );
 
@@ -159,6 +175,9 @@ Twinkle.image.callbacks = {
 		wikipedia_page.load(Twinkle.image.callbacks.imageList);
 
 		var tag = "{{subst:" + params.templatename + "/auto";
+		if (params.normalized === "f8") {
+			tag += "|1=" + params.f8_source.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^\*])/gm, '* $1').replace(/^\* $/m, '');
+		}
 		tag += "}}\n";
 
 		pageobj.setPageText(tag + text);

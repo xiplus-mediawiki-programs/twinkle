@@ -228,6 +228,16 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 					event: function( event ) {
 						event.stopPropagation();
 					}
+				},
+				{
+					label: wgULS('在速刪通知附加詳細的理由', '在速刪通知附加詳細的理由'),
+					value: 'notify_defail',
+					name: 'notify_defail',
+					tooltip: wgULS("一个通知模板将会被加入创建者的对话页，如果您启用了该理据的通知。", "一個通知模板將會被加入建立者的對話頁，如果您啟用了該理據的通知。"),
+					checked: !Morebits.userIsInGroup( 'sysop' ) || Twinkle.getPref('deleteSysopDefaultToTag'),
+					event: function( event ) {
+						event.stopPropagation();
+					}
 				}
 			]
 		} );
@@ -360,7 +370,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			work_area.append( { type: 'header', label: wgULS('文件', '檔案') } );
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.fileList, mode) } );
 			if (!Twinkle.speedy.mode.isSysop(mode)) {
-				work_area.append( { type: 'div', label: wgULS('标记CSD F3、F4，请使用Twinkle的“图权”功能。', '標記CSD F3、F4，請使用Twinkle的「圖權」功能。') } );
+				work_area.append( { type: 'div', label: wgULS('标记CSD F3、F4、F8，请使用Twinkle的“图权”功能。', '標記CSD F3、F4、F8，請使用Twinkle的「圖權」功能。') } );
 			}
 			break;
 
@@ -562,6 +572,11 @@ Twinkle.speedy.fileList = [
 			tooltip: wgULS('如与本文件名相同则可留空，可不含“File:”前缀。', '如與本檔案名相同則可留空，可不含「File:」字首。')
 		},
 		hideWhenMultiple: true
+	},
+	{
+		label: wgULS('F8: 明显侵权之文件', 'F8: 明顯侵權之檔案'),
+		value: 'f8',
+		hideWhenUser: true
 	}
 ];
 
