@@ -53,20 +53,20 @@ Twinkle.image.callback = function twinkleimageCallback() {
 			name: 'type',
 			list: [
 				{
-					label: wgULS('没有来源（CSD F3）', '沒有來源（CSD F3）'),
+					label: wgULS('来源不明（CSD F3）', '來源不明（CSD F3）'),
 					value: 'no source',
 					checked: true,
-					tooltip: wgULS('本图像并未注明原始出处，其声称的版权信息无法予以查证', '本圖像並未注明原始出處，其聲稱的版權資訊無法予以查證')
+					tooltip: wgULS('本档案并未注明原始出处', '本檔案並未注明原始出處')
 				},
 				{
-					label: wgULS('没有版权（CSD F4）', '沒有版權（CSD F4）'),
+					label: wgULS('未知版权或版权无法被查证（CSD F4）', '未知版權或版權無法被查證（CSD F4）'),
 					value: 'no license',
-					tooltip: wgULS('本档案缺少版权信息', '本檔案缺少版權資訊')
+					tooltip: wgULS('本档案缺少版权信息，或声称的版权信息无法予以查证', '本檔案缺少版權資訊，或聲稱的版權資訊無法予以查證')
 				},
 				{
-					label: wgULS('没有来源（CSD F3）且没有版权（CSD F4）', '沒有來源（CSD F3）且沒有版權（CSD F4）'),
+					label: wgULS('来源不明（CSD F3）且未知版权或版权无法被查证（CSD F4）', '來源不明（CSD F3）且未知版權或版權無法被查證（CSD F4）'),
 					value: 'no source no license',
-					tooltip: wgULS('本图像并未注明原始出处，其声称的版权信息无法予以查证，且缺少版权信息', '本圖像並未注明原始出處，其聲稱的版權資訊無法予以查證，且缺少版權資訊')
+					tooltip: wgULS('本档案并未注明原始出处，且本档案缺少版权信息或声称的版权信息无法予以查证', '本檔案並未注明原始出處，且本檔案缺少版權資訊或聲稱的版權資訊無法予以查證')
 				}
 			]
 		} );

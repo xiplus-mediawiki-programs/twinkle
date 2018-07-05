@@ -528,12 +528,12 @@ Twinkle.speedy.fileList = [
 		}
 	},
 	{
-		label: wgULS('F3: 所有未知版权的档案和来源不明档案', 'F3: 所有未知版權的檔案和來源不明檔案'),
+		label: wgULS('F3: 来源不明的文件', 'F3: 來源不明的檔案'),
 		value: 'f3',
 		hideWhenUser: true
 	},
 	{
-		label: wgULS('F4: 没有提供版权状况、来源等资讯的档案', 'F4: 沒有提供版權狀況、來源等資訊的檔案'),
+		label: wgULS('F4: 未知版权或版权无法被查证的文件', 'F4: 未知版權或版權無法被查證的檔案'),
 		value: 'f4',
 		hideWhenUser: true
 	},
