@@ -379,6 +379,11 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.categoryList, mode) } );
 			break;
 
+		case 118:  // draft
+			work_area.append( { type: 'header', label: wgULS('草稿', '草稿') } );
+			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.draftList, mode) } );
+			break;
+
 		default:
 			break;
 	}
@@ -635,6 +640,14 @@ Twinkle.speedy.categoryList = [
 	}
 ];
 
+Twinkle.speedy.draftList = [
+	{
+		label: wgULS('O7: 废弃草稿。', 'O7: 廢棄草稿。'),
+		value: 'o7',
+		tooltip: wgULS('任何六个月内无编辑之草稿。', '任何六個月內無編輯之草稿。')
+	}
+];
+
 Twinkle.speedy.userList = [
 	{
 		label: wgULS('O1: 用户请求删除自己的用户页或其子页面。', 'O1: 用戶請求刪除自己的用戶頁或其子頁面。'),
@@ -802,7 +815,8 @@ Twinkle.speedy.normalizeHash = {
 	'f7': 'f7',
 	'o1': 'o1',
 	'o3': 'o3',
-	'o4': 'o4'
+	'o4': 'o4',
+	'o7': 'o7'
 };
 
 // keep this synched with [[MediaWiki:Deletereason-dropdown]]
