@@ -365,8 +365,10 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.userList, mode) } );
 
 		case 3:  // user talk
-			work_area.append( { type: 'header', label: wgULS('用户讨论页', '使用者討論') } );
-			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.usertalkList, mode) } );
+			if (mw.util.isIPAddress(mw.config.get('wgRelevantUserName'))) {
+				work_area.append( { type: 'header', label: wgULS('用户讨论页', '使用者討論') } );
+				work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.usertalkList, mode) } );
+			}
 			break;
 
 		case 6:  // file
