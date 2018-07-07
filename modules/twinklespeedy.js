@@ -361,9 +361,12 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			break;
 
 		case 2:  // user
-		case 3:  // user talk
-			work_area.append( { type: 'header', label: wgULS('用户页', '用戶頁') } );
+			work_area.append( { type: 'header', label: wgULS('用户页', '使用者頁面') } );
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.userList, mode) } );
+
+		case 3:  // user talk
+			work_area.append( { type: 'header', label: wgULS('用户讨论页', '使用者討論') } );
+			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.usertalkList, mode) } );
 			break;
 
 		case 6:  // file
@@ -653,7 +656,10 @@ Twinkle.speedy.userList = [
 		label: wgULS('O1: 用户请求删除自己的用户页或其子页面。', 'O1: 用戶請求刪除自己的用戶頁或其子頁面。'),
 		value: 'o1',
 		tooltip: wgULS('如果是从其他名字空间移动来的，须附有合理原因。', '如果是從其他名字空間移動來的，須附有合理原因。')
-	},
+	}
+];
+
+Twinkle.speedy.usertalkList = [
 	{
 		label: wgULS('O3: 匿名用户的用户讨论页，其中的内容不再有用。', 'O3: 匿名用戶的用戶討論頁，其中的內容不再有用。'),
 		value: 'o3',
