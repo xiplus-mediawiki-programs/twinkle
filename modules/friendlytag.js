@@ -1143,7 +1143,8 @@ Twinkle.tag.callbacks = {
 				tags = tags.concat( groupableTags );
 			}
 
-			var tagReason = params.tagReason.trim();
+			var tagReason = params.tagReason || "";
+			tagReason = tagReason.trim();
 			if (tagReason !== "") {
 				if (tagReason.search(/[.?!;，。？！；]$/) === -1) {
 					tagReason += "。";
