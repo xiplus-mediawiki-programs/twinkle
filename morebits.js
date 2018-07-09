@@ -2515,16 +2515,16 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			ctx.statusElement.error(wgULS("不能保存页面，因服务器试图让您完成一个全自动区分计算机和人类的图灵测试。",
 										"不能儲存頁面，因伺服器試圖讓您完成一個全自動區分電腦和人類的圖靈測試。"));
 		} else if ( $editNode.attr('code') === 'abusefilter-disallowed' ) {
-			ctx.statusElement.error(wgULS('编辑被防滥用过滤器规则“' + $editNode.attr('info').substring(17) + '”阻止。',
-										 '編輯被防濫用過濾器規則「' + $editNode.attr('info').substring(17) + '」阻止。'));
+			ctx.statusElement.error(wgULS('编辑被防滥用过滤器规则“' + $editNode.attr('info').substring(17) + '”阻止。如果您认为您的该次编辑是有意义的，请至 Wikipedia:防滥用过滤器/错误报告 提报。',
+										 '編輯被防濫用過濾器規則「' + $editNode.attr('info').substring(17) + '」阻止。如果您認為您的該次編輯是有意義的，請至 Wikipedia:防濫用過濾器/錯誤報告 提報。'));
 		} else if ( $editNode.attr('info').indexOf('Hit AbuseFilter:') === 0 ) {
 			var div = document.createElement('div');
 			div.className = "toccolours";
 			div.style.fontWeight = "normal";
 			div.style.color = "black";
 			div.innerHTML = $editNode.attr('warning');
-			ctx.statusElement.error(wgULS([ '防滥用过滤器给出了如下警告：', div, '如果您仍希望做出该编辑，请重新提交。此警告不会再次出现。' ],
-										[ '防濫用過濾器給出了如下警告：', div, '如果您仍希望做出該編輯，請重新提交。此警告不會再次出現。' ]));
+			ctx.statusElement.error(wgULS([ '防滥用过滤器给出了如下警告：', div, '如果您仍希望做出该编辑，请尝试重新提交，根据过滤器的设置您可能可以作出此编辑。' ],
+										[ '防濫用過濾器給出了如下警告：', div, '如果您仍希望做出該編輯，請嘗試重新提交，根據過濾器的設定您可能可以作出此編輯。' ]));
 			// XXX provide the user with a way to automatically retry the action if they so choose -
 			// I can't see how to do this without creating a UI dependency on Morebits.wiki.page though -- TTO
 		} else {
