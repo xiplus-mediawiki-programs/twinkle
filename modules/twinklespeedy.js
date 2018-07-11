@@ -228,16 +228,6 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 					event: function( event ) {
 						event.stopPropagation();
 					}
-				},
-				{
-					label: wgULS('在速刪通知附加詳細的理由', '在速刪通知附加詳細的理由'),
-					value: 'notify_defail',
-					name: 'notify_defail',
-					tooltip: wgULS("一个通知模板将会被加入创建者的对话页，如果您启用了该理据的通知。", "一個通知模板將會被加入建立者的對話頁，如果您啟用了該理據的通知。"),
-					checked: !Morebits.userIsInGroup( 'sysop' ) || Twinkle.getPref('deleteSysopDefaultToTag'),
-					event: function( event ) {
-						event.stopPropagation();
-					}
 				}
 			]
 		} );
