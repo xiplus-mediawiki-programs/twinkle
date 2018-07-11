@@ -537,6 +537,14 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
  *   To disable, set 'hardblock' and 'disabletalk', respectively
  */
 Twinkle.block.blockPresetsInfo = {
+	'anonblock' : {
+		expiry: '72 hours',
+		forAnonOnly: true,
+		nocreate: true,
+		nonstandard: true,
+		reason: '{{anonblock}}',
+		sig: '~~~~'
+	},
 	'blocked proxy' : {
 		expiry: '2 years',
 		nocreate: true,
@@ -736,6 +744,7 @@ Twinkle.block.blockGroups = [
 		list: [
 			{ label: '', value: 'uw-ublock', forRegisteredOnly: true },
 			//{ label: '', value: 'range block' },
+			{ label: '', value: 'anonblock', forAnonOnly: true },
 			{ label: '', value: 'schoolblock', forAnonOnly: true },
 			{ label: '', value: 'blocked proxy', forAnonOnly: true },
 			{ label: '', value: 'checkuserblock', forAnonOnly: true },
