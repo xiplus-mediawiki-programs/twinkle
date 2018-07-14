@@ -205,22 +205,22 @@ Twinkle.close.codes = wgULS({
 		},
 		'r': {
 			label: '重定向',
-			action: 'noop',
+			action: 'keep',
 			adminonly: true
 		},
 		'cr': {
 			label: '分类重定向',
-			action: 'noop',
+			action: 'keep',
 			adminonly: true
 		},
 		'm': {
 			label: '移动',
-			action: 'noop',
+			action: 'keep',
 			adminonly: true
 		},
 		'merge': {
 			label: '并入',
-			action: 'noop',
+			action: 'keep',
 			adminonly: true
 		},
 		'nc': {
@@ -371,22 +371,22 @@ Twinkle.close.codes = wgULS({
 		},
 		'r': {
 			label: '重定向',
-			action: 'noop',
+			action: 'keep',
 			adminonly: true
 		},
 		'cr': {
 			label: '分類重定向',
-			action: 'noop',
+			action: 'keep',
 			adminonly: true
 		},
 		'm': {
 			label: '移動',
-			action: 'noop',
+			action: 'keep',
 			adminonly: true
 		},
 		'merge': {
 			label: '併入',
-			action: 'noop',
+			action: 'keep',
 			adminonly: true
 		},
 		'nc': {
