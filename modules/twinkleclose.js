@@ -42,13 +42,11 @@ Twinkle.close = function twinkleclose() {
 
 	titles.each(function(key, current) {
 		var headlinehref = $(current).find('.mw-headline a').attr('href');
-		var title;
-		if (headlinehref.indexOf('redlink=1') === -1) {
-			title = headlinehref.slice(6);
+		var m = headlinehref.match(/\/wiki\/([^?]+)/, '$1');
+		if (m === null) {
+			return;
 		}
-		else {
-			title = headlinehref.slice(19, -22);
-		}
+		var title = m[1];
 		title = decodeURIComponent(title);
 		var pagenotexist = $(current).find('.mw-headline a').hasClass('new');
 		var section = current.getAttribute('data-section');
