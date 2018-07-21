@@ -1210,8 +1210,8 @@ Twinkle.speedy.callbacks = {
 				return;
 			}
 
-			var copyvio = /(?:\{\{\s*(copyvio|侵权|侵權|PD-CAGov)[^{}]*?\}\})/i.exec( text );
-			if ( copyvio ) {
+			var copyvio = /(?:\{\{\s*(copyvio|侵权|侵權)[^{}]*?\}\})/i.exec( text );
+			if ( copyvio && !confirm( wgULS("版权验证模板已被置于页面中，您是否仍想添加一个快速删除模板？", "版權驗證模板已被置於頁面中，您是否仍想加入一個快速刪除模板？") ) ) {
 				statelem.error( wgULS('页面中已有版权验证模板。', '頁面中已有版權驗證模板。') );
 				return;
 			}
