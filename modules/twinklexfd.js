@@ -147,15 +147,23 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 				event:Twinkle.xfd.callback.change_afd_category
 			} );
 
-		afd_category.append( { type:'option', label:wgULS('删除', '刪除'), value:'delete', selected:true } );
-		afd_category.append( { type:'option', label:wgULS('合并', '合併'), value:'merge' } );
-		afd_category.append( { type:'option', label:wgULS('移动到维基词典', '移動到維基詞典'), value:'vmd' } );
-		afd_category.append( { type:'option', label:wgULS('移动到维基文库', '移動到維基文庫'), value:'vms' } );
-		afd_category.append( { type:'option', label:wgULS('移动到维基教科书', '移動到維基教科書'), value:'vmb' } );
-		afd_category.append( { type:'option', label:wgULS('移动到维基语录', '移動到維基語錄'), value:'vmq' } );
-		afd_category.append( { type:'option', label:wgULS('移动到维基导游', '移動到維基導遊'), value:'vmvoy' } );
+		var afd_cat = 'delete';
+		if ( Twinkle.getPref('afdDefaultCategory') === 'same' ) {
+			if ( localStorage['Twinkle_afdCategory'] === undefined ) {
+				localStorage['Twinkle_afdCategory'] = 'delete';
+			} else {
+				afd_cat = localStorage['Twinkle_afdCategory'];
+			}
+		}
+		afd_category.append( { type:'option', label:wgULS('删除', '刪除'), value:'delete', selected:( afd_cat === 'delete' ) } );
+		afd_category.append( { type:'option', label:wgULS('合并', '合併'), value:'merge', selected:( afd_cat === 'merge' ) } );
+		afd_category.append( { type:'option', label:wgULS('移动到维基词典', '移動到維基詞典'), value:'vmd', selected:( afd_cat === 'vmd' ) } );
+		afd_category.append( { type:'option', label:wgULS('移动到维基文库', '移動到維基文庫'), value:'vms', selected:( afd_cat === 'vms' ) } );
+		afd_category.append( { type:'option', label:wgULS('移动到维基教科书', '移動到維基教科書'), value:'vmb', selected:( afd_cat === 'vmb' ) } );
+		afd_category.append( { type:'option', label:wgULS('移动到维基语录', '移動到維基語錄'), value:'vmq', selected:( afd_cat === 'vmq' ) } );
+		afd_category.append( { type:'option', label:wgULS('移动到维基导游', '移動到維基導遊'), value:'vmvoy', selected:( afd_cat === 'vmvoy' ) } );
 		if ( Twinkle.getPref('FwdCsdToXfd') ) {
-			afd_category.append( { type:'option', label:wgULS('转交自快速删除候选', '轉交自快速刪除候選'), value:'fwdcsd' } );
+			afd_category.append( { type:'option', label:wgULS('转交自快速删除候选', '轉交自快速刪除候選'), value:'fwdcsd', selected:( afd_cat === 'fwdcsd' ) } );
 		}
 
 
@@ -222,6 +230,9 @@ Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdC
 	} else {
 		e.target.form.mergeinto.parentElement.setAttribute('hidden', '');
 		e.target.form.fwdcsdreason.parentElement.setAttribute('hidden', '');
+	}
+	if ( Twinkle.getPref('afdDefaultCategory') === 'same' ) {
+		localStorage['Twinkle_afdCategory'] = e.target.value;
 	}
 };
 

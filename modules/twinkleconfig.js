@@ -687,6 +687,20 @@ Twinkle.config.sections = [
 		},
 
 		{
+			name: "afdDefaultCategory",
+			label: wgULS("默认提删类别", "預設提刪類別"),
+			helptip: wgULS("若选择“相同于上次选择”将使用localStorage来记忆。", "若選擇「相同於上次選擇」將使用localStorage來記憶。"),
+			type: "enum",
+			enumValues: wgULS({
+				"delete": "删除",
+				"same": "相同于上次选择"
+			}, {
+				"delete": "刪除",
+				"same": "相同於上次選擇"
+			})
+		},
+
+		{
 			name: "XfdClose",
 			label: wgULS("在存废讨论显示关闭讨论按钮", "在存廢討論顯示關閉討論按鈕"),
 			helptip: wgULS("请确保您充分了解[[Wikipedia:关闭删除讨论指南]]才开启此功能。", "請確保您充分了解[[Wikipedia:關閉刪除討論指南]]才開啟此功能。"),
