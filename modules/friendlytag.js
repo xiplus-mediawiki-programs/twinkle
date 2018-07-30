@@ -175,6 +175,14 @@ Twinkle.tag.updateSortOrder = function(e) {
 			checkbox.checked = true;
 		}
 		switch (tag) {
+			case "expert":
+				checkbox.subgroup = {
+					name: 'expert',
+					type: 'input',
+					label: wgULS('哪个领域的专家：', '哪個領域的專家：'),
+					tooltip: wgULS('可选，可参考 Category:需要专业人士关注的页面 使用现存的分类。', '選填，可參考 Category:需要专业人士关注的页面 使用現存的分類。')
+				};
+				break;
 			case "merge":
 			case "merge from":
 			case "merge to":
@@ -1012,6 +1020,11 @@ Twinkle.tag.callbacks = {
 
 				// prompt for other parameters, based on the tag
 				switch( tagName ) {
+					case 'expert':
+						if (params.tagParameters.expert) {
+							currentTag += '|subject=' + params.tagParameters.expert;
+						}
+						break;
 					case 'merge':
 					case 'merge to':
 					case 'merge from':
@@ -1384,7 +1397,8 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			params.group = form.group.checked;
 			params.tagReason = form.tagReason.value;
 			params.tagParameters = {
-				notability: form["articleTags.notability"] ? form["articleTags.notability"].value : null
+				notability: form["articleTags.notability"] ? form["articleTags.notability"].value : null,
+				expert: form["articleTags.expert"] ? form["articleTags.expert"].value : null,
 			};
 			// common to {{merge}}, {{merge from}}, {{merge to}}
 			params.mergeTarget = form["articleTags.mergeTarget"] ? form["articleTags.mergeTarget"].value : null;
