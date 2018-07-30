@@ -218,7 +218,6 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 
 	// Tagging file
 	wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS("添加侵权模板到页面", "加入侵權模板到頁面"));
-	wikipedia_page.setFollowRedirect(true);
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.copyvio.callbacks.tryTagging);
 
