@@ -701,6 +701,20 @@ Twinkle.config.sections = [
 		},
 
 		{
+			name: "afdFameDefaultReason",
+			label: wgULS("默认关注度提删理由", "預設關注度提刪理由"),
+			helptip: wgULS("用于批量提删。", "用於批量提刪。"),
+			type: "string"
+		},
+
+		{
+			name: "afdSubstubDefaultReason",
+			label: wgULS("默认小小作品提删理由", "預設小小作品提刪理由"),
+			helptip: wgULS("用于批量提删。", "用於批量提刪。"),
+			type: "string"
+		},
+
+		{
 			name: "XfdClose",
 			label: wgULS("在存废讨论显示关闭讨论按钮", "在存廢討論顯示關閉討論按鈕"),
 			helptip: wgULS("请确保您充分了解[[Wikipedia:关闭删除讨论指南]]才开启此功能。", "請確保您充分了解[[Wikipedia:關閉刪除討論指南]]才開啟此功能。"),
