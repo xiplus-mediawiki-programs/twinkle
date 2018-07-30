@@ -110,13 +110,24 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 	var oldreasontextbox = form.getElementsByTagName('textarea')[0];
 	var oldreason = (oldreasontextbox ? oldreasontextbox.value : '');
 
-	var appendReasonBox = function twinklexfdAppendReasonBox() {
+	var appendReasonBox = function twinklexfdAppendReasonBox(xfd_cat) {
+		switch (xfd_cat) {
+			case 'fwdcsd':
+				oldreason = decodeURIComponent($("#delete-reason").text()).replace(/\+/g, ' ');
+				break;
+			case 'fame':
+				oldreason = Twinkle.getPref('afdFameDefaultReason');
+				break;
+			case 'substub':
+				oldreason = Twinkle.getPref('afdSubstubDefaultReason');
+				break;
+		}
 		work_area.append( {
 			type: 'textarea',
 			name: 'xfdreason',
 			label: wgULS('提删理由：', '提刪理由：'),
 			value: oldreason,
-			tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您加入签名。', '您可以使用維基格式，Twinkle將自動為您加入簽名。')
+			tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您加入签名。如果您使用批量提删功能，存废讨论页只会使用第一次提交的理由，但您仍需在之后提供以用于删除通告模板的参数。', '您可以使用維基格式，Twinkle將自動為您加入簽名。如果您使用批量提刪功能，存廢討論頁只會使用第一次提交的理由，但您仍需在之後提供以用於刪除通告模板的參數。')
 		} );
 		// TODO possible future "preview" link here
 	};
@@ -165,6 +176,9 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		if ( Twinkle.getPref('FwdCsdToXfd') ) {
 			afd_category.append( { type:'option', label:wgULS('转交自快速删除候选', '轉交自快速刪除候選'), value:'fwdcsd', selected:( afd_cat === 'fwdcsd' ) } );
 		}
+		afd_category.append( { type:'option', label:wgULS('批量关注度提删', '批量關注度提刪'), value:'fame', selected:( afd_cat === 'fame' ) } );
+		afd_category.append( { type:'option', label:wgULS('批量小小作品提删', '批量小小作品提刪'), value:'substub', selected:( afd_cat === 'substub' ) } );
+		afd_category.append( { type:'option', label:wgULS('批量其他提删', '批量其他提刪'), value:'batch', selected:( afd_cat === 'batch' ) } );
 
 
 		work_area.append( {
@@ -173,7 +187,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 				label: wgULS('合并到：', '合併到：'),
 				hidden: true
 			} );
-		appendReasonBox();
+		appendReasonBox(afd_cat);
 		work_area.append( {
 			type: 'textarea',
 			name: 'fwdcsdreason',
@@ -191,7 +205,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 				label: wgULS('文件存废讨论', '檔案存廢討論'),
 				name: 'work_area'
 			} );
-		appendReasonBox();
+		appendReasonBox('ffd');
 		work_area = work_area.render();
 		old_area.parentNode.replaceChild( work_area, old_area );
 		break;
@@ -227,6 +241,14 @@ Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdC
 		e.target.form.fwdcsdreason.parentElement.removeAttribute('hidden');
 		e.target.form.mergeinto.previousElementSibling.innerHTML = '提交人：';
 		e.target.form.xfdreason.value = decodeURIComponent($("#delete-reason").text()).replace(/\+/g, ' ');
+	} else if( e.target.value === 'fame' ) {
+		e.target.form.mergeinto.parentElement.setAttribute('hidden', '');
+		e.target.form.fwdcsdreason.parentElement.setAttribute('hidden', '');
+		e.target.form.xfdreason.value = Twinkle.getPref('afdFameDefaultReason');
+	} else if( e.target.value === 'substub' ) {
+		e.target.form.mergeinto.parentElement.setAttribute('hidden', '');
+		e.target.form.fwdcsdreason.parentElement.setAttribute('hidden', '');
+		e.target.form.xfdreason.value = Twinkle.getPref('afdSubstubDefaultReason');
 	} else {
 		e.target.form.mergeinto.parentElement.setAttribute('hidden', '');
 		e.target.form.fwdcsdreason.parentElement.setAttribute('hidden', '');
@@ -381,7 +403,46 @@ Twinkle.xfd.callbacks = {
 					break;
 			}
 
-			pageobj.setAppendText("\n{{subst:DRItem|Type=" + type + "|DRarticles=" + Morebits.pageNameNorm + "|Reason=" + Morebits.string.formatReasonText(params.reason) + (params.fwdcsdreason.trim() !== "" ? "<br>\n轉交理由："+params.fwdcsdreason : "") + "|To=" + to + "}}~~~~");
+			var append = true;
+			switch ( type ) {
+				case 'fame':
+				case 'substub':
+				case 'batch':
+					var commentText = "<!-- Twinkle: User:" + mw.config.get('wgUserName') + " 的 " + type + " 提刪插入點，請勿變更或移除此行，除非不再於此頁提刪 -->";
+					var newText = "===[[" + Morebits.pageNameNorm + "]]===";
+					if ( type === "fame" ) {
+						newText += "\n{{Findsources|" + Morebits.pageNameNorm + "}}";
+					}
+					if ( text.indexOf(commentText) !== -1) {
+						text = text.replace(commentText, newText + "\n\n" + commentText);
+						pageobj.setPageText(text);
+						append = false;
+					} else {
+						var appendText = "\n{{safesubst:SafeAfdHead}}\n" +
+							({
+								"fame": "==30天后仍掛有{{tl|notability}}模板的條目==\n" +
+									'<span style="font-size:smaller;">(已掛[[template:notability|關注度模板]]30天)</span>',
+								"substub": "==到期篩選的小小作品==",
+								"batch": "==批量提刪=="
+							})[type] + "\n" +
+							newText + "\n\n" +
+							commentText + "\n" +
+							"----\n" +
+							"（請不要在橫線下参与讨论，以免出现错误。）\n" +
+							":{{删除}}理據：" + Morebits.string.formatReasonText(params.reason) + "\n" +
+							'提报以上' + ({
+								"fame": "<u>关注度不足</u>条目",
+								"substub": "<u>小小作品</u>",
+								"batch": "頁面"
+							})[type] + '的維基人及時間：<br id="no-new-title" />~~~~';
+						pageobj.setAppendText(appendText);
+					}
+					break;
+				default:
+					pageobj.setAppendText("\n{{subst:DRItem|Type=" + type + "|DRarticles=" + Morebits.pageNameNorm + "|Reason=" + Morebits.string.formatReasonText(params.reason) + (params.fwdcsdreason.trim() !== "" ? "<br>\n轉交理由："+params.fwdcsdreason : "") + "|To=" + to + "}}~~~~");
+					break;
+			}
+			
 			pageobj.setEditSummary(wgULS("添加[[", "加入[[") + Morebits.pageNameNorm + "]]" + Twinkle.getPref('summaryAd'));
 			switch (Twinkle.getPref('xfdWatchDiscussion')) {
 				case 'yes':
@@ -395,7 +456,11 @@ Twinkle.xfd.callbacks = {
 					break;
 			}
 			pageobj.setCreateOption('recreate');
-			pageobj.append();
+			if (append) {
+				pageobj.append();
+			} else {
+				pageobj.save();
+			}
 			Twinkle.xfd.currentRationale = null;  // any errors from now on do not need to print the rationale, as it is safely saved on-wiki
 		},
 		tryTagging: function (pageobj) {
