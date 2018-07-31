@@ -38,7 +38,7 @@ Twinkle.image.callback = function twinkleimageCallback() {
 					label: wgULS('通知上传者', '通知上傳者'),
 					value: 'notify',
 					name: 'notify',
-					tooltip: wgULS("如果您在标记同一用户的很多文件，请取消此复选框以避免使用户对话页过载。", "如果您在標記同一用戶的很多檔案，請取消此複選框以避免使用戶對話頁過載。"),
+					tooltip: wgULS("如果您在标记同一用户的很多文件，请取消此复选框以避免使用户对话页过载。CSD F6永远不会通知。", "如果您在標記同一用戶的很多檔案，請取消此複選框以避免使用戶對話頁過載。CSD F6永遠不會通知。"),
 					checked: Twinkle.getPref('notifyUserOnDeli')
 				}
 			]
@@ -67,6 +67,11 @@ Twinkle.image.callback = function twinkleimageCallback() {
 					label: wgULS('来源不明（CSD F3）且未知版权或版权无法被查证（CSD F4）', '來源不明（CSD F3）且未知版權或版權無法被查證（CSD F4）'),
 					value: 'no source no license',
 					tooltip: wgULS('本档案并未注明原始出处，且本档案缺少版权信息或声称的版权信息无法予以查证', '本檔案並未注明原始出處，且本檔案缺少版權資訊或聲稱的版權資訊無法予以查證')
+				},
+				{
+					label: wgULS('没有被条目使用的非自由版权文件（CSD F6）', '沒有被條目使用的非自由版權檔案（CSD F6）'),
+					value: 'orphaned fair use',
+					tooltip: wgULS('本文件为非自由版权且没有被条目使用', '本檔案為非自由版權且沒有被條目使用')
 				},
 				{
 					label: wgULS('明显侵权之文件（CSD F8）', '明顯侵權之檔案（CSD F8）'),
@@ -115,6 +120,10 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		case 'no source no license':
 			csdcrit = "f3 f4";
 			break;
+		case 'orphaned fair use':
+			csdcrit = "f6";
+			notify = false;
+			break;
 		case 'no permission':
 			csdcrit = "f8";
 			break;
@@ -155,9 +164,11 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 			Twinkle.speedy.callbacks.user.addToLog(params, null);
 		}
 		// No auto-notification, display what was going to be added.
-		var noteData = document.createElement( 'pre' );
-		noteData.appendChild( document.createTextNode( "{{subst:Uploadvionotice|" + Morebits.pageNameNorm + "}}--~~~~" ) );
-		Morebits.status.info( '提示', wgULS([ '这些内容应贴进上传者对话页：', document.createElement( 'br' ),  noteData ], [ '這些內容應貼進上傳者對話頁：', document.createElement( 'br' ),  noteData ]) );
+		if (type !== "orphaned fair use") {
+			var noteData = document.createElement( 'pre' );
+			noteData.appendChild( document.createTextNode( "{{subst:Uploadvionotice|" + Morebits.pageNameNorm + "}}--~~~~" ) );
+			Morebits.status.info( '提示', wgULS([ '这些内容应贴进上传者对话页：', document.createElement( 'br' ),  noteData ], [ '這些內容應貼進上傳者對話頁：', document.createElement( 'br' ),  noteData ]) );
+		}
 	}
 };
 
@@ -169,16 +180,25 @@ Twinkle.image.callbacks = {
 		// remove "move to Commons" tag - deletion-tagged files cannot be moved to Commons
 		text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, "");
 		// Adding discussion
-		var wikipedia_page = new Morebits.wiki.page("Wikipedia:檔案存廢討論/無版權訊息或檔案來源", wgULS("添加快速删除记录项", "加入快速刪除記錄項"));
-		wikipedia_page.setFollowRedirect(true);
-		wikipedia_page.setCallbackParameters(params);
-		wikipedia_page.load(Twinkle.image.callbacks.imageList);
-
-		var tag = "{{subst:" + params.templatename + "/auto";
-		if (params.normalized === "f8") {
-			tag += "|1=" + params.f8_source.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^\*])/gm, '* $1').replace(/^\* $/m, '');
+		if (params.type !== "orphaned fair use") {
+			var wikipedia_page = new Morebits.wiki.page("Wikipedia:檔案存廢討論/無版權訊息或檔案來源", wgULS("添加快速删除记录项", "加入快速刪除記錄項"));
+			wikipedia_page.setFollowRedirect(true);
+			wikipedia_page.setCallbackParameters(params);
+			wikipedia_page.load(Twinkle.image.callbacks.imageList);
 		}
-		tag += "}}\n";
+
+		var tag = "";
+		switch( params.type ) {
+			case 'orphaned fair use':
+				tag = "{{subst:orphaned fair use}}\n";
+				break;
+			case 'no permission':
+				tag = "{{subst:" + params.templatename + "/auto|1=" + params.f8_source.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^\*])/gm, '* $1').replace(/^\* $/m, '') + "}}\n";
+				break;
+			default:
+				tag = "{{subst:" + params.templatename + "/auto}}\n";
+				break;
+		}
 
 		pageobj.setPageText(tag + text);
 
