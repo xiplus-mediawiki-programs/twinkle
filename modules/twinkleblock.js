@@ -648,6 +648,7 @@ Twinkle.block.blockPresetsInfo = {
 	}
 };
 
+Twinkle.block.blockGroupsUpdated = false;
 Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets() {
 	// supply sensible defaults
 	$.each(Twinkle.block.blockPresetsInfo, function(preset, settings) {
@@ -664,27 +665,30 @@ Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets
 
 		Twinkle.block.blockPresetsInfo[preset] = settings;
 	});
-	$.each(Twinkle.block.blockGroups, function(_, blockGroup) {
-		if (blockGroup.custom) {
-			blockGroup.list = Twinkle.getPref( 'customBlockReasonList' );
-		}
-		$.each(blockGroup.list, function(_, blockPreset) {
-			var value = blockPreset.value, reason = blockPreset.label, newPreset = value + ':' + reason;
-			Twinkle.block.blockPresetsInfo[newPreset] = jQuery.extend(true, {}, Twinkle.block.blockPresetsInfo[value]);
-			Twinkle.block.blockPresetsInfo[newPreset].template = value;
-			if (blockGroup.meta) {
-				//Twinkle.block.blockPresetsInfo[newPreset].forAnonOnly = false;
-				Twinkle.block.blockPresetsInfo[newPreset].forRegisteredOnly = false;
-			} else if (reason) {
-				Twinkle.block.blockPresetsInfo[newPreset].reason = reason;
+	if (!Twinkle.block.blockGroupsUpdated) {
+		$.each(Twinkle.block.blockGroups, function(_, blockGroup) {
+			if (blockGroup.custom) {
+				blockGroup.list = Twinkle.getPref( 'customBlockReasonList' );
 			}
-			if (blockGroup.custom && Twinkle.block.blockPresetsInfo[blockPreset.value] === undefined) {
-				Twinkle.block.blockPresetsInfo[newPreset].reasonParam = true;
-				Twinkle.block.blockPresetsInfo[blockPreset.value] = Twinkle.block.blockPresetsInfo[newPreset];
-			}
-			blockPreset.value = newPreset;
+			$.each(blockGroup.list, function(_, blockPreset) {
+				var value = blockPreset.value, reason = blockPreset.label, newPreset = value + ':' + reason;
+				Twinkle.block.blockPresetsInfo[newPreset] = jQuery.extend(true, {}, Twinkle.block.blockPresetsInfo[value]);
+				Twinkle.block.blockPresetsInfo[newPreset].template = value;
+				if (blockGroup.meta) {
+					//Twinkle.block.blockPresetsInfo[newPreset].forAnonOnly = false;
+					Twinkle.block.blockPresetsInfo[newPreset].forRegisteredOnly = false;
+				} else if (reason) {
+					Twinkle.block.blockPresetsInfo[newPreset].reason = reason;
+				}
+				if (blockGroup.custom && Twinkle.block.blockPresetsInfo[blockPreset.value] === undefined) {
+					Twinkle.block.blockPresetsInfo[newPreset].reasonParam = true;
+					Twinkle.block.blockPresetsInfo[blockPreset.value] = Twinkle.block.blockPresetsInfo[newPreset];
+				}
+				blockPreset.value = newPreset;
+			});
 		});
-	});
+		Twinkle.block.blockGroupsUpdated = true;
+	}
 };
 
 // These are the groups of presets and defines the order in which they appear. For each list item:
