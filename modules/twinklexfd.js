@@ -173,6 +173,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		afd_category.append( { type:'option', label:wgULS('移动到维基教科书', '移動到維基教科書'), value:'vmb', selected:( afd_cat === 'vmb' ) } );
 		afd_category.append( { type:'option', label:wgULS('移动到维基语录', '移動到維基語錄'), value:'vmq', selected:( afd_cat === 'vmq' ) } );
 		afd_category.append( { type:'option', label:wgULS('移动到维基导游', '移動到維基導遊'), value:'vmvoy', selected:( afd_cat === 'vmvoy' ) } );
+		afd_category.append( { type:'option', label:wgULS('移动到维基学院', '移動到維基學院'), value:'vmv', selected:( afd_cat === 'vmv' ) } );
 		if ( Twinkle.getPref('FwdCsdToXfd') ) {
 			afd_category.append( { type:'option', label:wgULS('转交自快速删除候选', '轉交自快速刪除候選'), value:'fwdcsd', selected:( afd_cat === 'fwdcsd' ) } );
 		}
@@ -330,6 +331,9 @@ Twinkle.xfd.callbacks = {
 				case 'vmvoy':
 					tag += '|voy';
 					break;
+				case 'vmv':
+					tag += '|v';
+					break;
 				default:
 					break;
 			}
@@ -391,6 +395,7 @@ Twinkle.xfd.callbacks = {
 				case 'vmb':
 				case 'vmq':
 				case 'vmvoy':
+				case 'vmv':
 					type = 'vm';
 					to = params.xfdcat;
 					break;
@@ -796,6 +801,7 @@ Twinkle.xfd.aprilfool.todaysList = function(pageobj) {
 		case 'vmb':
 		case 'vmq':
 		case 'vmvoy':
+		case 'vmv':
 			type = 'vm';
 			to = params.xfdcat;
 			break;
