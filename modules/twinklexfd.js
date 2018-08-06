@@ -199,6 +199,10 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 
 		work_area = work_area.render();
 		old_area.parentNode.replaceChild( work_area, old_area );
+
+		var evt = document.createEvent( "Event" );
+		evt.initEvent( 'change', true, true );
+		form.xfdcat.dispatchEvent( evt );
 		break;
 	case 'ffd':
 		work_area = new Morebits.quickForm.element( {
