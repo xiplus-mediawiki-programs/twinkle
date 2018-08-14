@@ -906,7 +906,9 @@ Twinkle.speedy.callbacks = {
 			code = "{{delete";
 			params.utparams = {};
 			$.each(params.normalizeds, function(index, norm) {
-				code += "|" + norm.toUpperCase();
+				if (norm !== "db") {
+					code += "|" + norm.toUpperCase();
+				}
 				parameters = params.templateParams[index] || [];
 				for (var i in parameters) {
 					if (typeof parameters[i] === 'string') {
@@ -1253,7 +1255,9 @@ Twinkle.speedy.callbacks = {
 			if (params.normalizeds.length > 1) {
 				editsummary = '请求快速删除（';
 				$.each(params.normalizeds, function(index, norm) {
-					editsummary += '[[WP:CSD#' + norm.toUpperCase() + '|CSD ' + norm.toUpperCase() + ']]、';
+					if (norm !== "db") {
+						editsummary += '[[WP:CSD#' + norm.toUpperCase() + '|CSD ' + norm.toUpperCase() + ']]、';
+					}
 				});
 				editsummary = editsummary.substr(0, editsummary.length - 1); // remove trailing comma
 				editsummary += '）。';
