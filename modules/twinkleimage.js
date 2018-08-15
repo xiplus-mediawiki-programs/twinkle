@@ -200,6 +200,11 @@ Twinkle.image.callbacks = {
 				break;
 		}
 
+		var textNoSd = text.replace(/\{\{\s*(db(-\w*)?|d|delete|(?:hang|hold)[\- ]?on)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+		if (text !== textNoSd && confirm(wgULS("在页面上找到快速删除模板，要移除吗？", "在頁面上找到快速刪除模板，要移除嗎？"))) {
+			text = textNoSd;
+		}
+
 		pageobj.setPageText(tag + text);
 
 		var editSummary = wgULS("请求快速删除（", "請求快速刪除（");
