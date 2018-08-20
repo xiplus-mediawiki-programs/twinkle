@@ -1207,11 +1207,12 @@ Twinkle.speedy.callbacks = {
 			statelem.status( wgULS('检查页面已有标记…', '檢查頁面已有標記…') );
 
 			// check for existing deletion tags
-			var tag = /(?:\{\{\s*(db|d|delete|deletebecause|speedy|csd|速刪|速删|快删|快刪|db-.*?)(?:\s*\||\s*\}\}))/i.exec( text );
-			if ( tag ) {
-				statelem.error( [ Morebits.htmlNode( 'strong', tag[1] ) , wgULS(" 已被置于页面中。", " 已被置於頁面中。") ] );
+			var textNoSd = text.replace(/\{\{\s*(db(-\w*)?|d|delete|deletebecause|speedy|csd|速刪|速删|快删|快刪)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+			if ( text !== textNoSd && !confirm( wgULS("在页面上找到快速删除模板，要移除并添加新的吗？", "在頁面上找到快速刪除模板，要移除並添加新的嗎？") ) ) {
+				statelem.error( wgULS("快速删除模板已被置于页面中。", "快速刪除模板已被置於頁面中。") );
 				return;
 			}
+			text = textNoSd;
 
 			var copyvio = /(?:\{\{\s*(copyvio|侵权|侵權)[^{}]*?\}\})/i.exec( text );
 			if ( copyvio && !confirm( wgULS("版权验证模板已被置于页面中，您是否仍想添加一个快速删除模板？", "版權驗證模板已被置於頁面中，您是否仍想加入一個快速刪除模板？") ) ) {
