@@ -2079,6 +2079,8 @@ Twinkle.warn.callbacks = {
 			if ( messageData.suppressArticleInSummary !== true && params.article ) {
 				if ( params.sub_group === "uw-socksuspect" ) {  // this template requires a username
 					summary += "，[[User:" + params.article + "]]的";
+				} else if ( params.sub_group === "uw-bite" ) {  // this template requires a username
+					summary += "，" + wgULS("于", "於") + "[[User talk:" + params.article + "]]";
 				} else {
 					summary += wgULS("，于[[", "，於[[") + params.article + "]]";
 				}
