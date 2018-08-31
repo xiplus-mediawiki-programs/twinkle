@@ -293,8 +293,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"对其他用户和条目的态度": {
 			"uw-npa1": {
-				label: "针对特定用户的人身攻击",
-				summary: "层级1：针对特定用户的人身攻击"
+				label: "针对用户的人身攻击",
+				summary: "层级1：针对用户的人身攻击"
 			},
 			"uw-agf1": {
 				label: "没有假定善意",
@@ -433,8 +433,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"对其他用户和条目的态度": {
 			"uw-npa2": {
-				label: "针对特定用户的人身攻击",
-				summary: "层级2：针对特定用户的人身攻击"
+				label: "针对用户的人身攻击",
+				summary: "层级2：针对用户的人身攻击"
 			},
 			"uw-agf2": {
 				label: "没有假定善意",
@@ -573,8 +573,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"对其他用户和条目的态度": {
 			"uw-npa3": {
-				label: "针对特定用户的人身攻击",
-				summary: "层级3：针对特定用户的人身攻击"
+				label: "针对用户的人身攻击",
+				summary: "层级3：针对用户的人身攻击"
 			},
 			"uw-agf3": {
 				label: "没有假定善意",
@@ -683,8 +683,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"对其他用户和条目的态度": {
 			"uw-npa4": {
-				label: "针对特定用户的人身攻击",
-				summary: "层级4：针对特定用户的人身攻击"
+				label: "针对用户的人身攻击",
+				summary: "层级4：针对用户的人身攻击"
 			},
 			"uw-tempabuse4": {
 				label: "不当使用警告或封禁模板",
@@ -753,8 +753,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"对其他用户和条目的态度": {
 			"uw-npa4im": {
-				label: "针对特定用户的人身攻击",
-				summary: "层级4im：针对特定用户的人身攻击"
+				label: "针对用户的人身攻击",
+				summary: "层级4im：针对用户的人身攻击"
 			},
 			"uw-tempabuse4im": {
 				label: "不当使用警告或封禁模板",
@@ -1108,8 +1108,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"對其他用戶和條目的態度": {
 			"uw-npa1": {
-				label: "針對特定用戶的人身攻擊",
-				summary: "層級1：針對特定用戶的人身攻擊"
+				label: "針對用戶的人身攻擊",
+				summary: "層級1：針對用戶的人身攻擊"
 			},
 			"uw-agf1": {
 				label: "沒有假定善意",
@@ -1248,8 +1248,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"對其他用戶和條目的態度": {
 			"uw-npa2": {
-				label: "針對特定用戶的人身攻擊",
-				summary: "層級2：針對特定用戶的人身攻擊"
+				label: "針對用戶的人身攻擊",
+				summary: "層級2：針對用戶的人身攻擊"
 			},
 			"uw-agf2": {
 				label: "沒有假定善意",
@@ -1388,8 +1388,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"對其他用戶和條目的態度": {
 			"uw-npa3": {
-				label: "針對特定用戶的人身攻擊",
-				summary: "層級3：針對特定用戶的人身攻擊"
+				label: "針對用戶的人身攻擊",
+				summary: "層級3：針對用戶的人身攻擊"
 			},
 			"uw-agf3": {
 				label: "沒有假定善意",
@@ -1498,8 +1498,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"對其他用戶和條目的態度": {
 			"uw-npa4": {
-				label: "針對特定用戶的人身攻擊",
-				summary: "層級4：針對特定用戶的人身攻擊"
+				label: "針對用戶的人身攻擊",
+				summary: "層級4：針對用戶的人身攻擊"
 			},
 			"uw-tempabuse4": {
 				label: "不當使用警告或封禁模板",
@@ -1568,8 +1568,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"對其他用戶和條目的態度": {
 			"uw-npa4im": {
-				label: "針對特定用戶的人身攻擊",
-				summary: "層級4im：針對特定用戶的人身攻擊"
+				label: "針對用戶的人身攻擊",
+				summary: "層級4im：針對用戶的人身攻擊"
 			},
 			"uw-tempabuse4im": {
 				label: "不當使用警告或封禁模板",
