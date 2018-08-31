@@ -979,7 +979,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"uw-username": {
 			label: "使用不恰当的用户名",
-			summary: "单层级警告：使用不恰当的用户名"
+			summary: "单层级警告：使用不恰当的用户名",
+			suppressArticleInSummary: true
 		},
 		"uw-wrongsummary": {
 			label: "在编辑摘要制造不适当的内容",
@@ -1794,7 +1795,8 @@ Twinkle.warn.messages = wgULS({
 		},
 		"uw-username": {
 			label: "使用不恰當的用戶名",
-			summary: "單層級警告：使用不恰當的用戶名"
+			summary: "單層級警告：使用不恰當的用戶名",
+			suppressArticleInSummary: true
 		},
 		"uw-wrongsummary": {
 			label: "在編輯摘要製造不適當的內容",
