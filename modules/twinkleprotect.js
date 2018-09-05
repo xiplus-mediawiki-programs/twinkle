@@ -1159,7 +1159,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			break;
 
 		case 'request':
-			// file request at RPP
+			// file request at RFPP
 			var typename, typereason;
 			switch( form.category.value ) {
 				case 'pp-dispute':
@@ -1363,7 +1363,7 @@ Twinkle.protect.callbacks = {
 		var text = rppPage.getPageText();
 		var statusElement = rppPage.getStatusElement();
 
-		var rppRe = new RegExp( '===\\s*(\\[\\[)?\s*:?\s*' + RegExp.escape( Morebits.pageNameNorm, true ) + '\s*(\\]\\])?\\s*===', 'm' );
+		var rppRe = new RegExp( '===\\s*(\\[\\[)?\\s*:?\\s*' + RegExp.escape( Morebits.pageNameNorm, true ) + '\\s*(\\]\\])?\\s*===', 'm' );
 		var tag = rppRe.exec( text );
 
 		var rppLink = document.createElement('a');

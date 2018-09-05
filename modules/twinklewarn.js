@@ -2043,7 +2043,7 @@ Twinkle.warn.callbacks = {
 		text += Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
 			params.reason, params.main_group === 'custom') + "--~~~~";
 
-		if ( Twinkle.getPref('showSharedIPNotice') && Morebits.isIPAddress( mw.config.get('wgTitle') ) ) {
+		if ( Twinkle.getPref('showSharedIPNotice') && mw.util.isIPAddress( mw.config.get('wgTitle') ) ) {
 			Morebits.status.info( '信息', wgULS('添加共享IP说明', '加入共享IP說明') );
 			text +=  "\n{{subst:SharedIPAdvice}}";
 		}

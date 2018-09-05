@@ -1196,7 +1196,7 @@ Twinkle.tag.callbacks = {
 
 		// avoid truncated summaries
 		if (summaryText.length > (254 - Twinkle.getPref('summaryAd').length)) {
-			summaryText = summaryText.replace(/\[\[[^\|]+\|([^\]]+)\]\]/g, "$1");
+			summaryText = summaryText.replace(/\[\[[^|]+\|([^\]]+)\]\]/g, "$1");
 		}
 
 		pageobj.setPageText(pageText);

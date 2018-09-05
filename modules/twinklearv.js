@@ -20,7 +20,7 @@ Twinkle.arv = function twinklearv() {
 		return;
 	}
 
-	var title = Morebits.isIPAddress( username ) ? wgULS('报告IP给管理员', '報告IP給管理員') : wgULS('报告用户给管理人员', '報告使用者給管理人員');
+	var title = mw.util.isIPAddress( username ) ? wgULS('报告IP给管理员', '報告IP給管理員') : wgULS('报告用户给管理人员', '報告使用者給管理人員');
 
 	Twinkle.addPortletLink( function(){ Twinkle.arv.callback(username); }, wgULS("告状", "告狀"), "tw-arv", title );
 };
@@ -156,7 +156,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					{
 						label: wgULS('显而易见的纯破坏用户', '顯而易見的純破壞用戶'),
 						value: 'vandalonly',
-						disabled: Morebits.isIPAddress( root.uid.value )
+						disabled: mw.util.isIPAddress( root.uid.value )
 					},
 					{
 						label: wgULS('显而易见的spambot或失窃账户', '顯而易見的spambot或失竊帳戶'),
@@ -520,7 +520,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 						case 'promoonly':
 							return '仅用来散发广告宣传的用户';
 						default:
-							return '位置理由';
+							return '未知理由';
 					}
 				} ).join( '，' );
 
@@ -570,7 +570,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				aivPage.setPageSection( 0 );
 				aivPage.getStatusElement().status( wgULS('添加新报告…', '加入新報告…') );
 				aivPage.setEditSummary( wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]。' + Twinkle.getPref('summaryAd') );
-				aivPage.setAppendText( '\n=== {{vandal|' + (/\=/.test( uid ) ? '1=' : '' ) + uid + '}} ===\n' + reason );
+				aivPage.setAppendText( '\n=== {{vandal|' + (/=/.test( uid ) ? '1=' : '' ) + uid + '}} ===\n' + reason );
 				aivPage.append();
 			} );
 			break;
@@ -853,7 +853,7 @@ Twinkle.arv.processAN3 = function( params ) {
 			grouped_diffs[lastid].push(cur);
 		}
 
-		var difftext = $.map(grouped_diffs, function(sub, index){
+		var difftext = $.map(grouped_diffs, function(sub) {
 			var ret = "";
 			if(sub.length >= 2) {
 				var last = sub[0];

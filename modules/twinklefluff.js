@@ -402,7 +402,7 @@ Twinkle.fluff.revertToRevision = function revertToRevision( oldrev, page, summar
 };
 
 Twinkle.fluff.userIpLink = function( user ) {
-	return (Morebits.isIPAddress(user) ? "[[Special:Contributions/" : "[[User:" ) + user + "|" + user + "]]";
+	return (mw.util.isIPAddress(user) ? "[[Special:Contributions/" : "[[:User:" ) + user + "|" + user + "]]";
 };
 
 Twinkle.fluff.callbacks = {

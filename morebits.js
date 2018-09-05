@@ -1,5 +1,4 @@
-// <nowiki>
-// vim: set noet sts=0 sw=8:
+//<nowiki>
 /**
  * morebits.js
  * ===========
@@ -43,19 +42,7 @@ window.Morebits = Morebits;  // allow global access
  */
 
 Morebits.userIsInGroup = function ( group ) {
-	return $.inArray(group, mw.config.get( 'wgUserGroups' )) !== -1;
-};
-
-
-
-/**
- * **************** Morebits.isIPAddress() ****************
- * Helper function: Returns true if given string contains a valid IPv4 or
- * IPv6 address
- */
-
-Morebits.isIPAddress = function ( address ) {
-	return mw.util.isIPv4Address(address) || mw.util.isIPv6Address(address);
+	return mw.config.get( 'wgUserGroups' ).indexOf( group ) !== -1;
 };
 
 
@@ -72,7 +59,7 @@ Morebits.sanitizeIPv6 = function ( address ) {
 	if ( address === '' ) {
 		return null;
 	}
-	if ( mw.util.isIPv4Address( address ) || !mw.util.isIPv6Address( address ) ) {
+	if ( !mw.util.isIPv6Address( address ) ) {
 		return address; // nothing else to do for IPv4 addresses or invalid ones
 	}
 	// Remove any whitespaces, convert to upper case
@@ -771,8 +758,6 @@ Morebits.quickForm.getElementLabelObject = function QuickFormGetElementLabelObje
 	} else {
 		return element.parentNode.getElementsByTagName("label")[0];
 	}
-
-	return null;
 };
 
 Morebits.quickForm.getElementLabel = function QuickFormGetElementLabel(element) {
@@ -1003,8 +988,8 @@ if (!String.prototype.trim) {
 	};
 }
 
-// Helper functions to change case of a string
 Morebits.string = {
+	// Helper functions to change case of a string
 	toUpperCaseFirstChar: function(str) {
 		str = str.toString();
 		return str.substr( 0, 1 ).toUpperCase() + str.substr( 1 );
@@ -1381,7 +1366,7 @@ Morebits.wiki.actionCompleted.event = function() {
 	new Morebits.status( Morebits.wiki.actionCompleted.notice, Morebits.wiki.actionCompleted.postfix, 'info' );
 	if( Morebits.wiki.actionCompleted.redirect ) {
 		// if it isn't a URL, make it one. TODO: This breaks on the articles 'http://', 'ftp://', and similar ones.
-		if( !( (/^\w+\:\/\//).test( Morebits.wiki.actionCompleted.redirect ) ) ) {
+		if( !( (/^\w+:\/\//).test( Morebits.wiki.actionCompleted.redirect ) ) ) {
 			Morebits.wiki.actionCompleted.redirect = mw.util.getUrl( Morebits.wiki.actionCompleted.redirect );
 			if( Morebits.wiki.actionCompleted.followRedirect === false ) {
 				Morebits.wiki.actionCompleted.redirect += "?redirect=no";
@@ -1463,7 +1448,7 @@ Morebits.wiki.api.prototype = {
 		}, callerAjaxParameters );
 
 		return $.ajax( ajaxparams ).done(
-			function(xml, statusText, jqXHR) {
+			function(xml, statusText) {
 				this.statusText = statusText;
 				this.responseXML = xml;
 				this.errorCode = $(xml).find('error').attr('code');
@@ -1735,13 +1720,14 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	 * must be accessed via getter and setter functions.
 	 */
 	var ctx = {
-		 // backing fields for public properties
+		// backing fields for public properties
 		pageName: pageName,
 		pageExists: false,
 		editSummary: null,
 		callbackParameters: null,
 		statusElement: new Morebits.status(currentAction),
-		 // - edit
+
+		// - edit
 		pageText: null,
 		editMode: 'all',  // save() replaces entire contents of the page by default
 		appendText: null,   // can't reuse pageText for this because pageText is needed to follow a redirect
@@ -1755,21 +1741,26 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		followRedirect: false,
 		watchlistOption: 'nochange',
 		creator: null,
-		 // - revert
+
+		// - revert
 		revertOldID: null,
-		 // - move
+
+		// - move
 		moveDestination: null,
 		moveTalkPage: false,
 		moveSubpages: false,
 		moveSuppressRedirect: false,
-		 // - protect
+
+		// - protect
 		protectEdit: null,
 		protectMove: null,
 		protectCreate: null,
 		protectCascade: false,
-		 // - stabilize (FlaggedRevs)
+
+		// - stabilize (FlaggedRevs)
 		flaggedRevs: null,
-		 // internal status
+
+		// internal status
 		pageLoaded: false,
 		editToken: null,
 		loadTime: null,
@@ -1780,7 +1771,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		suppressProtectWarning: false,
 		conflictRetries: 0,
 		retries: 0,
-		 // callbacks
+
+		// callbacks
 		onLoadSuccess: null,
 		onLoadFailure: null,
 		onSaveSuccess: null,
@@ -1794,7 +1786,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		onProtectFailure: null,
 		onStabilizeSuccess: null,
 		onStabilizeFailure: null,
-		 // internal objects
+
+		// internal objects
 		loadQuery: null,
 		loadApi: null,
 		saveApi: null,
@@ -2551,9 +2544,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 				titles: ctx.pageName  // redirects are already resolved
 			};
 
-			var purgeApi = new Morebits.wiki.api(wgULS("检测到编辑冲突，更新服务器缓存", "檢測到編輯衝突，更新伺服器快取"),
-												purgeQuery, null, ctx.statusElement);
-			var result = purgeApi.post( { async: false } );  // just wait for it, result is for debugging
+			var purgeApi = new Morebits.wiki.api(wgULS("检测到编辑冲突，更新服务器缓存", "檢測到編輯衝突，更新伺服器快取"), purgeQuery, null, ctx.statusElement);
+			purgeApi.post( { async: false } );  // just wait for it, result is for debugging
 
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
 
@@ -3717,14 +3709,14 @@ Morebits.status.prototype = {
 			if (type === 'error') {
 				// hack to force the page not to reload when an error is output - see also Morebits.status() above
 				Morebits.wiki.numberOfActionsLeft = 1000;
+
 				// call error callback
 				if (Morebits.status.errorEvent) {
 					Morebits.status.errorEvent();
 				}
+
 				// also log error messages in the browser console
-				if (console && console.error) {
-					console.error(this.textRaw + ": " + status);
-				}
+				console.error(this.textRaw + ": " + status);
 			}
 		}
 		this.render();
@@ -3813,35 +3805,41 @@ Morebits.checkboxShiftClickSupport = function (jQuerySelector, jQueryContext) {
 	var lastCheckbox = null;
 
 	function clickHandler(event) {
-		var cb = this;
-		if (event.shiftKey && lastCheckbox!==null)
-		{
+		var thisCb = this;
+		if (event.shiftKey && lastCheckbox !== null) {
 			var cbs = $(jQuerySelector, jQueryContext); //can't cache them, obviously, if we want to support resorting
-			var index=-1, lastIndex=-1;
-			for (var i=0; i<cbs.length; i++)
-			{
-				if (cbs[i]==cb) { index=i; if (lastIndex>-1) break; }
-				if (cbs[i]==lastCheckbox) { lastIndex=i; if (index>-1) break; }
+			var index = -1, lastIndex = -1, i;
+			for (i = 0; i < cbs.length; i++) {
+				if (cbs[i] === thisCb) {
+					index = i;
+					if (lastIndex > -1)
+						break;
+				}
+				if (cbs[i] === lastCheckbox) {
+					lastIndex = i;
+					if (index > -1)
+						break;
+				}
 			}
-			if (index>-1 && lastIndex>-1)
-			{
+
+			if (index > -1 && lastIndex > -1) {
 				//inspired by wikibits
-				var endState = cb.checked;
+				var endState = thisCb.checked;
 				var start, finish;
-				if (index<lastIndex)
-				{
-					start = index+1;
+				if (index < lastIndex) {
+					start = index + 1;
 					finish = lastIndex;
-				}
-				else
-				{
+				} else {
 					start = lastIndex;
-					finish = index-1;
+					finish = index - 1;
 				}
-				for (var i=start; i<=finish; i++) cbs[i].checked = endState;
+
+				for (i = start; i <= finish; i++) {
+					cbs[i].checked = endState;
+				}
 			}
 		}
-		lastCheckbox = cb;
+		lastCheckbox = thisCb;
 		return true;
 	}
 
@@ -4058,20 +4056,20 @@ Morebits.simpleWindow = function SimpleWindow( width, height ) {
 			// the 20 pixels represents adjustment for the extra height of the jQuery dialog "chrome", compared
 			// to that of the old SimpleWindow
 			height: height + 20,
-			close: function(event, ui) {
+			close: function(event) {
 				// dialogs and their content can be destroyed once closed
 				$(event.target).dialog("destroy").remove();
 			},
-			resizeStart: function(event, ui) {
+			resizeStart: function() {
 				this.scrollbox = $(this).find(".morebits-scrollbox")[0];
 				if (this.scrollbox) {
 					this.scrollbox.style.maxHeight = "none";
 				}
 			},
-			resizeEnd: function(event, ui) {
+			resizeEnd: function() {
 				this.scrollbox = null;
 			},
-			resize: function(event, ui) {
+			resize: function() {
 				this.style.maxHeight = "";
 				if (this.scrollbox) {
 					this.scrollbox.style.width = "";
@@ -4109,7 +4107,7 @@ Morebits.simpleWindow.prototype = {
 	scriptName: null,
 
 	// Focuses the dialog. This might work, or on the contrary, it might not.
-	focus: function(event) {
+	focus: function() {
 		$(this.content).dialog("moveToTop");
 
 		return this;
@@ -4137,7 +4135,7 @@ Morebits.simpleWindow.prototype = {
 		var dialog = $(this.content).dialog("open");
 		if (window.setupTooltips && window.pg && window.pg.re && window.pg.re.diff) {  // tie in with NAVPOP
 			dialog.parent()[0].ranSetupTooltipsAlready = false;
-			setupTooltips(dialog.parent()[0]);
+			window.setupTooltips(dialog.parent()[0]);
 		}
 		this.setHeight( this.height );  // init height algorithm
 
@@ -4276,6 +4274,7 @@ Morebits.simpleWindow.setButtonsEnabled = function( enabled ) {
  */
 
 if ( typeof arguments === "undefined" ) {  // typeof is here for a reason...
+	/* global Morebits */
 	window.SimpleWindow = Morebits.simpleWindow;
 	window.QuickForm = Morebits.quickForm;
 	window.Wikipedia = Morebits.wiki;
@@ -4283,5 +4282,4 @@ if ( typeof arguments === "undefined" ) {  // typeof is here for a reason...
 	window.QueryString = Morebits.queryString;
 }
 
-
-// </nowiki>
+//</nowiki>
