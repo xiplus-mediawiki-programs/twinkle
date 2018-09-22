@@ -362,6 +362,11 @@ Twinkle.xfd.callbacks = {
 				text = textNoSd;
 			}
 
+			var textNoNotMandarin = text.replace(/\{\{\s*(NotMandarin|Notchinese|非中文|非現代漢語|非现代汉语|非現代標準漢語|非现代标准汉语)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+			if (text !== textNoNotMandarin && confirm(wgULS("在页面上找到非现代标准汉语模板，要移除吗？", "在頁面上找到非現代標準漢語模板，要移除嗎？"))) {
+				text = textNoNotMandarin;
+			}
+
 			// Mark the page as patrolled, if wanted
 			if (Twinkle.getPref('markXfdPagesAsPatrolled')) {
 				pageobj.patrol();
