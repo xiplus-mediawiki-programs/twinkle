@@ -570,6 +570,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				aivPage.setPageSection( 0 );
 				aivPage.getStatusElement().status( wgULS('添加新报告…', '加入新報告…') );
 				aivPage.setEditSummary( wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]。' + Twinkle.getPref('summaryAd') );
+				aivPage.setTags(Twinkle.getPref('revisionTags'));
 				aivPage.setAppendText( '\n=== {{vandal|' + (/=/.test( uid ) ? '1=' : '' ) + uid + '}} ===\n' + reason );
 				aivPage.append();
 			} );
@@ -633,6 +634,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				}
 				uaaPage.getStatusElement().status( wgULS('添加新报告…', '加入新報告…') );
 				uaaPage.setEditSummary( wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]。'+ Twinkle.getPref('summaryAd') );
+				uaaPage.setTags(Twinkle.getPref('revisionTags'));
 				uaaPage.setAppendText( "\n" + reason );
 				uaaPage.append();
 			} );
@@ -742,6 +744,7 @@ Twinkle.arv.processSock = function( params ) {
 				var talkpage = new Morebits.wiki.page( 'User talk:' + username, '通知' + (taskname || wgULS('主账户', '主帳戶')) );
 				talkpage.setFollowRedirect( true );
 				talkpage.setEditSummary( notifyEditSummary );
+				talkpage.setTags(Twinkle.getPref('revisionTags'));
 				talkpage.setAppendText( notifyText );
 				talkpage.append(callback);
 			});
@@ -791,6 +794,7 @@ Twinkle.arv.processSock = function( params ) {
 	var spiPage = new Morebits.wiki.page( reportpage, wgULS('抓取讨论页面', '擷取討論頁面') );
 	spiPage.setFollowRedirect( true );
 	spiPage.setEditSummary( wgULS('报告', '報告') + '[[Special:Contributions/' + params.uid + '|' + params.uid + ']]。'+ Twinkle.getPref('summaryAd') );
+	spiPage.setTags(Twinkle.getPref('revisionTags'));
 	spiPage.setAppendText( text );
 	spiPage.append();
 
@@ -895,6 +899,7 @@ Twinkle.arv.processAN3 = function( params ) {
 		var an3Page = new Morebits.wiki.page( reportpage, 'Retrieving discussion page' );
 		an3Page.setFollowRedirect( true );
 		an3Page.setEditSummary( 'Adding new report for [[Special:Contributions/' + params.uid + '|' + params.uid + ']].'+ Twinkle.getPref('summaryAd') );
+		an3Page.setTags(Twinkle.getPref('revisionTags'));
 		an3Page.setAppendText( text );
 		an3Page.append();
 
@@ -906,6 +911,7 @@ Twinkle.arv.processAN3 = function( params ) {
 		var talkPage = new Morebits.wiki.page( 'User talk:' + params.uid, 'Notifying edit warrior' );
 		talkPage.setFollowRedirect( true );
 		talkPage.setEditSummary( notifyEditSummary );
+		talkPage.setTags( Twinkle.getPref('revisionTags') );
 		talkPage.setAppendText( notifyText );
 		talkPage.append();
 		Morebits.wiki.removeCheckpoint();  // all page updates have been started

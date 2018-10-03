@@ -1069,6 +1069,7 @@ Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pa
 		}
 		pageobj.setPageText(pagetext);
 		pageobj.setEditSummary(wgULS("标记被永久封禁的用户页", "標記被永久封禁的用戶頁") + Twinkle.getPref('summaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.save(function(){
 			Morebits.status.info(wgULS("标记用户页", "標記用戶頁"), "完成");
 			pageobj.load(Twinkle.block.callback.protectuserpage);
@@ -1089,6 +1090,7 @@ Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUse
 			pageobj.setCreateProtection('sysop', 'indefinite');
 		}
 		pageobj.setEditSummary(wgULS("被永久封禁的用户页", "被永久封禁的用戶頁") + Twinkle.getPref('protectionSummaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.protect(function(){
 			Morebits.status.info(wgULS("保护用户页", "保護用戶頁"), ( pageobj.exists() ? wgULS("已全保护", "已全保護") : wgULS("已白纸保护", "已白紙保護") ));
 		});
@@ -1204,6 +1206,7 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain( pageobj ) {
 
 	pageobj.setPageText( text );
 	pageobj.setEditSummary( summary );
+	pageobj.setTags(Twinkle.getPref('revisionTags'));
 	pageobj.setWatchlist( Twinkle.getPref('watchWarnings') );
 	pageobj.save();
 };

@@ -119,6 +119,7 @@ Twinkle.copyvio.callbacks = {
 				var notifytext = "\n{{subst:CopyvioNotice|" + mw.config.get('wgPageName') +  "}}";
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary("通知：页面[[" + mw.config.get('wgPageName') + "]]疑似侵犯版权" + Twinkle.getPref('summaryAd'));
+				usertalkpage.setTags(Twinkle.getPref('revisionTags'));
 				usertalkpage.setCreateOption('recreate');
 				switch (Twinkle.getPref('copyvioWatchUser')) {
 					case 'yes':
@@ -150,6 +151,7 @@ Twinkle.copyvio.callbacks = {
 
 		pageobj.setPageText(tag);
 		pageobj.setEditSummary(wgULS("本页面疑似侵犯版权", "本頁面疑似侵犯版權") + Twinkle.getPref('summaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		switch (Twinkle.getPref('copyvioWatchPage')) {
 			case 'yes':
 				pageobj.setWatchlist(true);
@@ -183,6 +185,7 @@ Twinkle.copyvio.callbacks = {
 		output += "\n{{subst:CopyvioVFDRecord|" + mw.config.get('wgPageName') + "}}";
 		pageobj.setAppendText(output);
 		pageobj.setEditSummary(wgULS("添加[[", "加入[[") + mw.config.get('wgPageName') + "]]" + Twinkle.getPref('summaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
 	}

@@ -564,6 +564,7 @@ Twinkle.close.callbacks = {
 					Twinkle.close.callbacks.talkend( params );
 				} else {
 					page.setEditSummary( reason + Twinkle.getPref('deletionSummaryAd') );
+					page.setTags( Twinkle.getPref('revisionTags') );
 					page.deletePage(function() {
 						page.getStatusElement().info('完成');
 						Twinkle.close.callbacks.talkend( params );
@@ -572,6 +573,7 @@ Twinkle.close.callbacks = {
 			});
 		} else {
 			page.setEditSummary( wgULS('存废讨论通过：[[', '存廢討論通過：[[') + mw.config.get('wgPageName') + ']]' + Twinkle.getPref('deletionSummaryAd') );
+			page.setTags( Twinkle.getPref('revisionTags') );
 			page.deletePage(function() {
 				page.getStatusElement().info("完成");
 				Twinkle.close.callbacks.talkend( params );
@@ -598,6 +600,7 @@ Twinkle.close.callbacks = {
 			var vfdkept = '{{vfd-kept|' + mw.config.get('wgPageName').split('/').slice(2).join('/') + '|' + params.messageData.label + '}}\n';
 			talkpage.setPrependText(vfdkept);
 			talkpage.setEditSummary('[[' + mw.config.get('wgPageName') + ']]：' + params.messageData.label + Twinkle.getPref('summaryAd'));
+			talkpage.setTags(Twinkle.getPref('revisionTags'));
 			talkpage.setCreateOption('recreate');
 			talkpage.prepend();
 		}
@@ -617,6 +620,7 @@ Twinkle.close.callbacks = {
 
 		pageobj.setPageText(newtext);
 		pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(Twinkle.close.callbacks.keepComplete);
 	},
@@ -675,6 +679,7 @@ Twinkle.close.callbacks = {
 
 		pageobj.setPageText(text);
 		pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label + Twinkle.getPref('summaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(Twinkle.close.callbacks.disableLink);
 	},

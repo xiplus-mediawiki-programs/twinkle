@@ -215,6 +215,7 @@ Twinkle.image.callbacks = {
 		}
 		editSummary += "）：" + params.type + Twinkle.getPref('summaryAd');
 		pageobj.setEditSummary(editSummary);
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 
 		switch (Twinkle.getPref('deliWatchPage')) {
 			case 'yes':
@@ -249,6 +250,7 @@ Twinkle.image.callbacks = {
 				var notifytext = "\n{{subst:Uploadvionotice|" + Morebits.pageNameNorm + "}}--~~~~";
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary(wgULS("通知：文件[[", "通知：檔案[[") + Morebits.pageNameNorm + wgULS("]]快速删除提名", "]]快速刪除提名") + Twinkle.getPref('summaryAd'));
+				usertalkpage.setTags(Twinkle.getPref('revisionTags'));
 				usertalkpage.setCreateOption('recreate');
 				switch (Twinkle.getPref('deliWatchUser')) {
 					case 'yes':
@@ -278,6 +280,7 @@ Twinkle.image.callbacks = {
 
 		pageobj.setPageText(text + "\n* [[:" + Morebits.pageNameNorm + "]]--~~~~");
 		pageobj.setEditSummary(wgULS("添加[[", "加入[[") + Morebits.pageNameNorm + "]]。" + Twinkle.getPref('summaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setCreateOption('recreate');
 		pageobj.save();
 	}

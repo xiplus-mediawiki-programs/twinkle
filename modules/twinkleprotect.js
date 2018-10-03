@@ -1122,6 +1122,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 
 				if (form.protectReason.value) {
 					thispage.setEditSummary(form.protectReason.value + Twinkle.getPref('protectionSummaryAd'));
+					thispage.setTags(Twinkle.getPref('revisionTags'));
 				} else {
 					alert(wgULS("您必须输入保护理由，这将被记录在保护日志中。", "您必須輸入保護理由，這將被記錄在保護日誌中。"));
 					return;
@@ -1344,6 +1345,7 @@ Twinkle.protect.callbacks = {
 		var newVersion = Twinkle.protect.callbacks.getTaggedPage(params, text);
 
 		protectedPage.setEditSummary( newVersion.summary );
+		protectedPage.setTags(Twinkle.getPref('revisionTags'));
 		protectedPage.setPageText( newVersion.text );
 		protectedPage.setCreateOption( 'nocreate' );
 		protectedPage.suppressProtectWarning(); // no need to let admins know they are editing through protection
@@ -1420,6 +1422,7 @@ Twinkle.protect.callbacks = {
 		}
 		statusElement.status( wgULS('添加新提名…', '加入新提名…') );
 		rppPage.setEditSummary( '请求对[[' + Morebits.pageNameNorm + ']]' + params.typename + Twinkle.getPref('summaryAd') );
+		rppPage.setTags(Twinkle.getPref('revisionTags'));
 		rppPage.setPageText( text );
 		rppPage.setCreateOption( 'recreate' );
 		rppPage.save();

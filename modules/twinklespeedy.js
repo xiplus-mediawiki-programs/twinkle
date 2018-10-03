@@ -1007,6 +1007,7 @@ Twinkle.speedy.callbacks = {
 					return Morebits.status.error(wgULS("询问理由", "詢問理由"), wgULS("你不给我理由…我就…不管了…", "你不給我理由…我就…不管了…"));
 				}
 				thispage.setEditSummary( reason + Twinkle.getPref('deletionSummaryAd') );
+				thispage.setTags(Twinkle.getPref('revisionTags'));
 
 				thispage.deletePage(function() {
 					thispage.getStatusElement().info("完成");
@@ -1029,6 +1030,7 @@ Twinkle.speedy.callbacks = {
 					document.getElementById( 'ca-talk' ).className !== 'new') {
 				var talkpage = new Morebits.wiki.page( Morebits.wikipedia.namespaces[ mw.config.get('wgNamespaceNumber') + 1 ] + ':' + mw.config.get('wgTitle'), wgULS("删除讨论页", "刪除討論頁") );
 				talkpage.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 已删除页面“' + Morebits.pageNameNorm + "”的讨论页" + Twinkle.getPref('deletionSummaryAd'));
+				talkpage.setTags(Twinkle.getPref('revisionTags'));
 				talkpage.deletePage();
 				// this is ugly, but because of the architecture of wiki.api, it is needed
 				// (otherwise success/failure messages for the previous action would be suppressed)
@@ -1187,6 +1189,7 @@ Twinkle.speedy.callbacks = {
 				var title = $(value).attr('title');
 				var page = new Morebits.wiki.page(title, wgULS('删除重定向 "', '刪除重定向 "') + title + '"');
 				page.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 重定向到已删除页面“' + Morebits.pageNameNorm + "”" + Twinkle.getPref('deletionSummaryAd'));
+				page.setTags(Twinkle.getPref('revisionTags'));
 				page.deletePage(onsuccess);
 			});
 		}
@@ -1270,6 +1273,7 @@ Twinkle.speedy.callbacks = {
 
 			pageobj.setPageText(code + "\n" + text);
 			pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
+			pageobj.setTags(Twinkle.getPref('revisionTags'));
 			pageobj.setWatchlist(params.watch);
 			pageobj.setCreateOption('nocreate');
 			pageobj.save(Twinkle.speedy.callbacks.user.tagComplete);
@@ -1315,6 +1319,7 @@ Twinkle.speedy.callbacks = {
 
 							usertalkpage.setAppendText(notifytext);
 							usertalkpage.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
+							usertalkpage.setTags(Twinkle.getPref('revisionTags'));
 							usertalkpage.setCreateOption('recreate');
 							usertalkpage.setFollowRedirect(true);
 							usertalkpage.append();
@@ -1399,6 +1404,7 @@ Twinkle.speedy.callbacks = {
 
 			pageobj.setAppendText(appendText);
 			pageobj.setEditSummary("记录对[[" + Morebits.pageNameNorm + "]]的快速删除提名" + Twinkle.getPref('summaryAd'));
+			pageobj.setTags(Twinkle.getPref('revisionTags'));
 			pageobj.setCreateOption("recreate");
 			pageobj.append();
 		}

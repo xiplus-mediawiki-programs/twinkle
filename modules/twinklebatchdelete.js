@@ -249,6 +249,7 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 		wikipedia_page.setCallbackParameters(params);
 		if( delete_page ) {
 			wikipedia_page.setEditSummary(reason + Twinkle.getPref('deletionSummaryAd'));
+			wikipedia_page.setTags(Twinkle.getPref('revisionTags'));
 			wikipedia_page.suppressProtectWarning();
 			wikipedia_page.deletePage(Twinkle.batchdelete.callbacks.doExtras, pageDeleter.workerFailure);
 		} else {
@@ -337,6 +338,7 @@ Twinkle.batchdelete.callbacks = {
 		redirectDeleter.run(function(pageName) {
 			var wikipedia_page = new Morebits.wiki.page(pageName, wgULS("删除", "刪除") + pageName);
 			wikipedia_page.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 重定向到已删除页面“' + apiobj.params.page + '”' + Twinkle.getPref('deletionSummaryAd'));
+			wikipedia_page.setTags(Twinkle.getPref('revisionTags'));
 			wikipedia_page.deletePage(redirectDeleter.workerSuccess, redirectDeleter.workerFailure);
 		});
 	},
@@ -351,6 +353,7 @@ Twinkle.batchdelete.callbacks = {
 
 		var page = new Morebits.wiki.page(apiobj.params.talkPage, wgULS("删除条目" + apiobj.params.page + "的讨论页", "刪除條目" + apiobj.params.page + "的討論頁"));
 		page.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 已删除页面“' + apiobj.params.page + '”的讨论页' + Twinkle.getPref('deletionSummaryAd'));
+		page.setTags(Twinkle.getPref('revisionTags'));
 		page.deletePage();
 	},
 	unlinkBacklinksMain: function( apiobj ) {
@@ -398,6 +401,7 @@ Twinkle.batchdelete.callbacks = {
 			return;
 		}
 		pageobj.setEditSummary('取消到页面“' + params.page + '”的链接' + Twinkle.getPref('deletionSummaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setPageText(text);
 		pageobj.setCreateOption('nocreate');
 		pageobj.setMaxConflictRetries(10);
@@ -449,6 +453,7 @@ Twinkle.batchdelete.callbacks = {
 			return;
 		}
 		pageobj.setEditSummary('移除对文件' + image + "的使用（" + params.reason + "）" + Twinkle.getPref('deletionSummaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setPageText(text);
 		pageobj.setCreateOption('nocreate');
 		pageobj.setMaxConflictRetries(10);

@@ -1201,6 +1201,7 @@ Twinkle.tag.callbacks = {
 
 		pageobj.setPageText(pageText);
 		pageobj.setEditSummary(summaryText + Twinkle.getPref('summaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setWatchlist(Twinkle.getFriendlyPref('watchTaggedPages'));
 		pageobj.setMinorEdit(Twinkle.getFriendlyPref('markTaggedPagesAsMinor'));
 		pageobj.setCreateOption('nocreate');
@@ -1217,6 +1218,7 @@ Twinkle.tag.callbacks = {
 					'与' + '[[' + params.discussArticle + ']]合并', '請求將[[' + params.nonDiscussArticle + ']]' +
 					'與' + '[[' + params.discussArticle + ']]合併') +
 					Twinkle.getPref('summaryAd'));
+				talkpage.setTags(Twinkle.getPref('revisionTags'));
 				talkpage.setWatchlist(Twinkle.getFriendlyPref('watchMergeDiscussions'));
 				talkpage.setCreateOption('recreate');
 				talkpage.append();
@@ -1253,6 +1255,7 @@ Twinkle.tag.callbacks = {
 				talkpage.setAppendText(talkpageText);
 				talkpage.setEditSummary(wgULS('请求移动' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : ""), '請求移動' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : "")) +
 					Twinkle.getPref('summaryAd'));
+				talkpage.setTags(Twinkle.getPref('revisionTags'));
 				talkpage.setCreateOption('recreate');
 				talkpage.append();
 			}
@@ -1269,6 +1272,7 @@ Twinkle.tag.callbacks = {
 
 		pageobj.setAppendText("\n{{subst:Wikipedia:关注度/提报/item|title=" + Morebits.pageNameNorm + "}}");
 		pageobj.setEditSummary("添加[[" + Morebits.pageNameNorm + "]]" + Twinkle.getPref('summaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
 	},
@@ -1372,6 +1376,7 @@ Twinkle.tag.callbacks = {
 
 		pageobj.setPageText(text);
 		pageobj.setEditSummary(summary.substring(0, summary.length - 2) + Twinkle.getPref('summaryAd'));
+		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setWatchlist(Twinkle.getFriendlyPref('watchTaggedPages'));
 		pageobj.setMinorEdit(Twinkle.getFriendlyPref('markTaggedPagesAsMinor'));
 		pageobj.setCreateOption('nocreate');
