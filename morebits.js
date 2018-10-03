@@ -1589,6 +1589,9 @@ Morebits.wiki.api.setApiUserAgent = function( ua ) {
  * setEditSummary(summary)
  *    summary - string containing the text of the edit summary that will be used when save() is called
  *
+ * setTags(tags)
+ *    tags - string containing the text of the tags that will be applied when save() is called
+ *
  * setMinorEdit(minorEdit)
  *    minorEdit is a boolean value:
  *       true  - When save is called, the resulting edit will be marked as "minor".
@@ -1724,6 +1727,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		pageName: pageName,
 		pageExists: false,
 		editSummary: null,
+		tags: '',
 		callbackParameters: null,
 		statusElement: new Morebits.status(currentAction),
 
@@ -1832,6 +1836,10 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 	this.setEditSummary = function(summary) {
 		ctx.editSummary = summary;
+	};
+
+	this.setTags = function(tags) {
+		ctx.tags = tags;
 	};
 
 	this.setCreateOption = function(createOption) {
@@ -2030,7 +2038,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		var query = {
 			action: 'edit',
-			tags: Twinkle.getPref('revisionTags'),
+			tags: ctx.tags,
 			title: ctx.pageName,
 			summary: ctx.editSummary,
 			token: canUseMwUserToken ? mw.user.tokens.get('editToken') : ctx.editToken,
@@ -2640,6 +2648,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		var query = {
 			'action': 'move',
+			'tags': ctx.tags,
 			'from': $(xml).find('page').attr('title'),
 			'to': ctx.moveDestination,
 			'token': moveToken,
@@ -2701,6 +2710,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		var query = {
 			'action': 'delete',
+			'tags': ctx.tags,
 			'title': pageTitle,
 			'token': token,
 			'reason': ctx.editSummary
@@ -2810,7 +2820,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		var query = {
 			action: 'protect',
-			tags: Twinkle.getPref('revisionTags'),
+			tags: ctx.tags,
 			title: $(xml).find('page').attr('title'),
 			token: protectToken,
 			protections: protections.join('|'),
