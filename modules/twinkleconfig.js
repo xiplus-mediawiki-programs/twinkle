@@ -38,7 +38,7 @@ Twinkle.config.commonSets = {
 		a1: "A1", a2: "A2", a3: "A3", a5: "A5", a6: "A6",
 		o1: "O1", o3: "O3", o4: "O4",
 		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
-		r2: "R2", r3: "R3", r5: "R5"
+		r2: "R2", r3: "R3", r5: "R5", r6: "R6"
 	},
 	csdCriteriaDisplayOrder: [
 		"db",
@@ -46,7 +46,7 @@ Twinkle.config.commonSets = {
 		"a1", "a2", "a3", "a5", "a6",
 		"o1", "o3", "o4",
 		"f1", "f3", "f4", "f5", "f6", "f7",
-		"r2", "r3", "r5"
+		"r2", "r3", "r5", "r6"
 	],
 	csdCriteriaNotification: {
 		db: wgULS("自定义理由", "自訂理由"),
@@ -54,7 +54,7 @@ Twinkle.config.commonSets = {
 		a1: "A1", a2: "A2", a3: "A3", a5: "A5", a6: "A6",
 		o1: "O1", o3: "O3", o4: "O4",
 		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
-		r2: "R2", r3: "R3", r5: "R5"
+		r2: "R2", r3: "R3", r5: "R5", r6: "R6"
 	},
 	csdCriteriaNotificationDisplayOrder: [
 		"db",
@@ -62,7 +62,7 @@ Twinkle.config.commonSets = {
 		"a1", "a2", "a3", "a5", "a6",
 		"o1", "o3", "o4",
 		"f1", "f3", "f4", "f5", "f6", "f7",
-		"r2", "r3", "r5"
+		"r2", "r3", "r5", "r6"
 	],
 	csdAndDICriteria: {
 		db: wgULS("自定义理由", "自訂理由"),
@@ -70,7 +70,7 @@ Twinkle.config.commonSets = {
 		a1: "A1", a2: "A2", a3: "A3", a5: "A5", a6: "A6",
 		o1: "O1", o3: "O3", o4: "O4",
 		f1: "F1", f3: "F3", f4: "F4", f5: "F5", f6: "F6", f7: "F7",
-		r2: "R2", r3: "R3", r5: "R5"
+		r2: "R2", r3: "R3", r5: "R5", r6: "R6"
 	},
 	csdAndDICriteriaDisplayOrder: [
 		"db",
@@ -78,7 +78,7 @@ Twinkle.config.commonSets = {
 		"a1", "a2", "a3", "a5", "a6",
 		"o1", "o3", "o4",
 		"f1", "f3", "f4", "f5", "f6", "f7",
-		"r2", "r3", "r5"
+		"r2", "r3", "r5", "r6"
 	],
 	namespacesNoSpecial: {
 		"0": wgULS("（条目）", "（條目）"),
@@ -356,7 +356,7 @@ Twinkle.config.sections = [
 		{
 			name: "notifyUserOnSpeedyDeletionNomination",
 			label: wgULS("仅在使用以下理由时通知页面创建者", "僅在使用以下理由時通知頁面建立者"),
-			helptip: wgULS("尽管您在对话框中选择通知，通知仍只会在使用这些理由时发出。", "盡管您在對話框中選擇通知，通知仍只會在使用這些理由時發出。"),
+			helptip: wgULS("尽管您在对话框中选择通知，通知仍只会在使用这些理由时发出。", "儘管您在對話框中選擇通知，通知仍只會在使用這些理由時發出。"),
 			type: "set",
 			setValues: Twinkle.config.commonSets.csdCriteriaNotification,
 			setDisplayOrder: Twinkle.config.commonSets.csdCriteriaNotificationDisplayOrder

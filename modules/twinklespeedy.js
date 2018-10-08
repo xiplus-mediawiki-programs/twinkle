@@ -400,6 +400,9 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.redirectArticleList, mode) } );
 		}
 		work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.redirectList, mode) } );
+		if (namespace === 6) {
+			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.redirectFileList, mode) } );
+		}
 	}
 
 	var old_area = Morebits.quickForm.getElements(form, "work_area")[0];
@@ -782,6 +785,13 @@ Twinkle.speedy.redirectList = [
 	}
 ];
 
+Twinkle.speedy.redirectFileList = [
+	{
+		label: wgULS('R6: 移动文件而产生的重定向，且页面标题不匹配文件名称指引。', 'R6: 移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引。'),
+		value: 'r6'
+	}
+];
+
 Twinkle.speedy.normalizeHash = {
 	'reason': 'db',
 	'multiple': 'multiple',
@@ -806,6 +816,7 @@ Twinkle.speedy.normalizeHash = {
 	'r2': 'r2',
 	'r3': 'r3',
 	'r5': 'r5',
+	'r6': 'r6',
 	'f1': 'f1',
 	'f3': 'f3',
 	'f4': 'f4',
@@ -844,6 +855,7 @@ Twinkle.speedy.reasonHash = wgULS({
 	'r2': '跨名字空间重定向',
 	'r3': '标题错误的重定向',
 	'r5': '指向本身的重定向或循环的重定向',
+	'r6': '移动文件而产生的重定向，且页面标题不匹配文件名称指引',
 // Images and media
 	'f1': '重复的图片',
 	'f3': '[[:Category:未知版权的档案]]',
@@ -883,6 +895,7 @@ Twinkle.speedy.reasonHash = wgULS({
 	'r2': '跨名字空間重定向',
 	'r3': '標題錯誤的重定向',
 	'r5': '指向本身的重定向或循環的重定向',
+	'r6': '移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引',
 // Images and media
 	'f1': '重複的圖片',
 	'f3': '[[:Category:未知版權的檔案]]',
