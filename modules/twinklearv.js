@@ -732,7 +732,7 @@ Twinkle.arv.processSock = function( params ) {
 	if (params.notify) {
 
 		var notifyEditSummary = wgULS("通知用户查核请求。", "通知用戶查核請求。") + Twinkle.getPref('summaryAd');
-		var notifyText = "\n\n{{subst:socksuspectnotice}}";
+		var notifyText = "\n\n{{subst:socksuspectnotice|1=" + params.uid + "}}";
 
 		var notify = function (username, taskname, callback) {
 			Morebits.wiki.flow.check('User talk:' + username, function () {
