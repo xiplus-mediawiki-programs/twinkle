@@ -1743,7 +1743,8 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 		});
 	}
 
-	var text = wgULS(
+	var text = "// <nowiki>\n" +
+		wgULS(
 		"// twinkleoptions.js：用户Twinkle参数设置文件\n" +
 		"//\n" +
 		"// 注：修改您的参数设置最简单的办法是使用\n" +
@@ -1772,7 +1773,8 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 	text +=
 		";\n" +
 		"\n" +
-		wgULS("// twinkleoptions.js到此为止\n", "// twinkleoptions.js到此為止\n");
+		wgULS("// twinkleoptions.js到此为止\n", "// twinkleoptions.js到此為止\n") +
+		"// </nowiki>";
 
 	pageobj.setPageText(text);
 	pageobj.setEditSummary(wgULS("保存Twinkle参数设置：来自[[" + Morebits.pageNameNorm + "]]的自动编辑。", "儲存Twinkle偏好設定：來自[[" + Morebits.pageNameNorm + "]]的自動編輯。"));
