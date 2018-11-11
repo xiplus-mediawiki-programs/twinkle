@@ -1108,8 +1108,8 @@ Twinkle.tag.callbacks = {
 				}
 			}
 
-			var miTest = /\{\{(multiple ?issues|article ?issues|mi)[^}]+\{/im.exec(pageText);
-			var miOldStyleRegex = /\{\{(multiple ?issues|article ?issues|mi)\s*\|([^{]+)\}\}/im;
+			var miTest = /\{\{(multiple ?issues|article ?issues|mi|ai|issues|多個問題|多个问题|問題條目|问题条目|數個問題|数个问题)[^}]+\{/im.exec(pageText);
+			var miOldStyleRegex = /\{\{(multiple ?issues|article ?issues|mi|ai|issues|多個問題|多个问题|問題條目|问题条目|數個問題|数个问题)\s*\|([^{]+)\}\}/im;
 			var miOldStyleTest = miOldStyleRegex.exec(pageText);
 
 			if( ( miTest || miOldStyleTest ) && groupableTags.length > 0 ) {
