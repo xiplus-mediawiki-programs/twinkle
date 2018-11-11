@@ -1303,10 +1303,17 @@ Twinkle.speedy.callbacks = {
 					// disallow warning yourself
 					if (initialContrib === mw.config.get('wgUserName')) {
 						Morebits.status.warn(wgULS("您（" + initialContrib + "）创建了该页，跳过通知", "您（" + initialContrib + "）建立了該頁，跳過通知"));
+						initialContrib = null;
 
 					// don't notify users when their user talk page is nominated
 					} else if (initialContrib === mw.config.get('wgTitle') && mw.config.get('wgNamespaceNumber') === 3) {
 						Morebits.status.warn(wgULS("通知页面创建者：用户创建了自己的对话页", "通知頁面建立者：用戶建立了自己的對話頁"));
+						initialContrib = null;
+
+					// quick hack to prevent excessive unwanted notifications. Should actually be configurable on recipient page...
+					} else if (initialContrib === "A2093064-bot" && params.normalizeds[0] === "g15") {
+						Morebits.status.warn(wgULS("通知页面创建者：由机器人建立，跳过通知", "通知頁面建立者：由機器人建立，跳過通知"));
+						initialContrib = null;
 
 					} else {
 						var talkPageName = 'User talk:' + initialContrib;
