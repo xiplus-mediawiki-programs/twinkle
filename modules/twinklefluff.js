@@ -65,7 +65,7 @@ Twinkle.fluff = {
 					revVandNode.appendChild(revVandLink);
 
 					list.each(function(key, current) {
-						var href = $(current).children("a:eq(1)").attr("href");
+						var href = $(current).find("a.mw-changeslist-diff").attr("href");
 						var tmpNode = revNode.cloneNode( true );
 						var tmpNode2 = revVandNode.cloneNode( true );
 						current.appendChild( document.createTextNode(' ') );
