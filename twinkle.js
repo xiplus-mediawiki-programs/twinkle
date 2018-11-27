@@ -415,7 +415,7 @@ $.ajax({
 	url: scriptpathbefore + "User:" + encodeURIComponent( mw.config.get("wgUserName")) + "/twinkleoptions.js" + scriptpathafter,
 	dataType: "text"
 })
-	.fail(function () {	mw.util.jsMessage( "未能加载twinkleoptions.js" ); })
+	.fail(function () {	mw.notify( "未能加载twinkleoptions.js" ); })
 	.done(function ( optionsText ) {
 
 		// Quick pass if user has no options
@@ -450,7 +450,7 @@ $.ajax({
 			}
 		}
 		catch ( e ) {
-			mw.util.jsMessage("未能解析twinkleoptions.js");
+			mw.notify("未能解析twinkleoptions.js");
 		}
 	})
 	.always(function () {
