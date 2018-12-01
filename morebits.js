@@ -419,6 +419,9 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 		if( data.value ) {
 			subnode.setAttribute( 'value', data.value );
 		}
+		if( data.placeholder ) {
+			subnode.setAttribute( 'placeholder', data.placeholder );
+		}
 		subnode.setAttribute( 'name', data.name );
 		subnode.setAttribute( 'id', id );
 		subnode.setAttribute( 'type', 'text' );
@@ -624,6 +627,9 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 		}
 		if( data.value ) {
 			subnode.value = data.value;
+		}
+		if( data.placeholder ) {
+			subnode.placeholder = data.placeholder;
 		}
 		break;
 	default:
