@@ -654,7 +654,7 @@ Twinkle.close.callbacks = {
 		var split = bar[0].split('\n');
 
 		text = split[0] + '\n{{delh|' + params.code + '}}\n' + split.slice(1).join('\n');
-		text += '\n----\n: ' + params.messageData.label;
+		text += '\n<hr>\n: ' + params.messageData.label;
 		if (params.remark) {
 			text += '：' + params.remark;
 		}
