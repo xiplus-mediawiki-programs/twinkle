@@ -136,7 +136,9 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 			name: 'article',
 			label: wgULS('页面链接', '頁面連結'),
 			value:( Morebits.queryString.exists( 'vanarticle' ) ? Morebits.queryString.get( 'vanarticle' ) : '' ),
-			tooltip: wgULS('给模板中加入一页面链接，可留空。', '給模板中加入一頁面連結，可留空。')
+			size: 50,
+			tooltip: wgULS('给模板中加入一页面链接，可留空。', '給模板中加入一頁面連結，可留空。'),
+			placeholder: wgULS('仅限一个，勿使用网址、[[ ]]，可使用Special:Diff', '僅限一個，勿使用網址、[[ ]]，可使用Special:Diff')
 		} );
 
 	var more = form.append( { type: 'field', name: 'reasonGroup', label: wgULS('警告信息', '警告訊息') } );
