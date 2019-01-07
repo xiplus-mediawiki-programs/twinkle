@@ -180,6 +180,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 					name: 'expand',
 					type: 'input',
 					label: wgULS('需要增加的内容：', '需要增加的內容：'),
+					tooltip: wgULS('可选，显示为“需要扩展关于……的内容”', '選填，顯示為「需要擴充關於……的內容」。')
 				};
 				break;
 			case "expert":
