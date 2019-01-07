@@ -175,6 +175,13 @@ Twinkle.tag.updateSortOrder = function(e) {
 			checkbox.checked = true;
 		}
 		switch (tag) {
+			case "expand":
+				checkbox.subgroup = {
+					name: 'expand',
+					type: 'input',
+					label: wgULS('需要增加的内容：', '需要增加的內容：'),
+				};
+				break;
 			case "expert":
 				checkbox.subgroup = {
 					name: 'expert',
@@ -1020,6 +1027,11 @@ Twinkle.tag.callbacks = {
 
 				// prompt for other parameters, based on the tag
 				switch( tagName ) {
+					case 'expand':
+						if (params.tagParameters.expand) {
+							currentTag += '|content=' + params.tagParameters.expand;
+						}
+						break;
 					case 'expert':
 						if (params.tagParameters.expert) {
 							currentTag += '|subject=' + params.tagParameters.expert;
@@ -1403,6 +1415,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			params.tagReason = form.tagReason.value;
 			params.tagParameters = {
 				notability: form["articleTags.notability"] ? form["articleTags.notability"].value : null,
+				expand: form["articleTags.expand"] ? form["articleTags.expand"].value : null,
 				expert: form["articleTags.expert"] ? form["articleTags.expert"].value : null,
 			};
 			// common to {{merge}}, {{merge from}}, {{merge to}}
