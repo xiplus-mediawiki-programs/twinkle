@@ -234,20 +234,6 @@ Twinkle.tag.updateSortOrder = function(e) {
 					});
 				}
 				break;
-			case "requested move":
-				checkbox.subgroup = [
-					{
-						name: 'moveTarget',
-						type: 'input',
-						label: wgULS('新名称：', '新名稱：')
-					},
-					{
-						name: 'moveReason',
-						type: 'textarea',
-						label: wgULS('移动理由（会被贴上这条目的讨论页）：', '移動理由（會被貼上這條目的討論頁）：'),
-						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。', '可選，但強烈推薦。如不需要請留空。')
-					}
-				];
 			case "missing information":
 				checkbox.subgroup = {
 					name: 'missingInformation',
@@ -270,6 +256,21 @@ Twinkle.tag.updateSortOrder = function(e) {
 						{ label: "{{notability|Web}}：" + wgULS("网站、网络内容", "網站、網路內容"), value: "Web"}
 					]
 				};
+				break;
+			case "requested move":
+				checkbox.subgroup = [
+					{
+						name: 'moveTarget',
+						type: 'input',
+						label: wgULS('新名称：', '新名稱：')
+					},
+					{
+						name: 'moveReason',
+						type: 'textarea',
+						label: wgULS('移动理由（会被贴上这条目的讨论页）：', '移動理由（會被貼上這條目的討論頁）：'),
+						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。', '可選，但強烈推薦。如不需要請留空。')
+					}
+				];
 				break;
 			default:
 				break;
@@ -368,11 +369,10 @@ Twinkle.tag.article.tags = wgULS({
 	"cleanup": "可能需要进行清理，以符合维基百科的质量标准",
 	"cleanup-jargon": "包含过多行话或专业术语，可能需要简化或提出进一步解释",
 	"coi": "主要贡献者与本条目所宣扬的内容可能存在利益冲突",
-	"copypaste": "内容可能是从某个来源处拷贝后贴上",
 	"contradict": "内容自相矛盾",
 	"copyedit": "需要编修，以确保文法、用词、语气、格式、标点等使用恰当",
+	"copypaste": "内容可能是从某个来源处拷贝后贴上",
 	"dead end": "需要加上内部链接以构筑百科全书的链接网络",
-	"underlinked": "需要更多内部链接以构筑百科全书的链接网络",
 	"disputed": "内容疑欠准确，有待查证",
 	"expand language": "可以根据其他语言版本扩充",
 	"expert": "需要精通或熟悉本主题的专业人士参与及协助编辑",
@@ -413,6 +413,7 @@ Twinkle.tag.article.tags = wgULS({
 	"substub": "过于短小",
 	"trivia": "应避免有陈列杂项、琐碎资料的部分",
 	"uncategorized": "缺少页面分类",
+	"underlinked": "需要更多内部链接以构筑百科全书的链接网络",
 	"unencyclopedic": "可能不适合写入百科全书",
 	"unreferenced": "没有列出任何参考或来源",
 	"update": "当前条目或章节需要更新",
@@ -430,11 +431,10 @@ Twinkle.tag.article.tags = wgULS({
 	"cleanup": "可能需要進行清理，以符合維基百科的質量標準",
 	"cleanup-jargon": "包含過多行話或專業術語，可能需要簡化或提出進一步解釋",
 	"coi": "主要貢獻者與本條目所宣揚的內容可能存在利益衝突",
-	"copypaste": "內容可能是從某個來源處拷貝後貼上",
 	"contradict": "內容自相矛盾",
 	"copyedit": "需要編修，以確保文法、用詞、語氣、格式、標點等使用恰當",
+	"copypaste": "內容可能是從某個來源處拷貝後貼上",
 	"dead end": "需要加上內部連結以構築百科全書的連結網絡",
-	"underlinked": "需要更多內部連結以構築百科全書的連結網絡",
 	"disputed": "內容疑欠準確，有待查證",
 	"expand language": "可以根據其他語言版本擴充",
 	"expert": "需要精通或熟悉本主題的專業人士參與及協助編輯",
@@ -475,6 +475,7 @@ Twinkle.tag.article.tags = wgULS({
 	"substub": "過於短小",
 	"trivia": "應避免有陳列雜項、瑣碎資料的部分",
 	"uncategorized": "缺少頁面分類",
+	"underlinked": "需要更多內部連結以構築百科全書的連結網絡",
 	"unencyclopedic": "可能不適合寫入百科全書",
 	"unreferenced": "沒有列出任何參考或來源",
 	"update": "當前條目或章節需要更新",
@@ -1436,10 +1437,10 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			params.group = form.group.checked;
 			params.tagReason = form.tagReason.value;
 			params.tagParameters = {
-				notability: form["articleTags.notability"] ? form["articleTags.notability"].value : null,
 				expandLanguage: form["articleTags.expandLanguage"] ? form["articleTags.expandLanguage"].value : null,
 				expert: form["articleTags.expert"] ? form["articleTags.expert"].value : null,
 				missingInformation: form["articleTags.missingInformation"] ? form["articleTags.missingInformation"].value : null,
+				notability: form["articleTags.notability"] ? form["articleTags.notability"].value : null,
 			};
 			// common to {{merge}}, {{merge from}}, {{merge to}}
 			params.mergeTarget = form["articleTags.mergeTarget"] ? form["articleTags.mergeTarget"].value : null;
