@@ -175,12 +175,11 @@ Twinkle.tag.updateSortOrder = function(e) {
 			checkbox.checked = true;
 		}
 		switch (tag) {
-			case "expand":
+			case "expand language":
 				checkbox.subgroup = {
-					name: 'expand',
+					name: 'expandLanguage',
 					type: 'input',
-					label: wgULS('需要增加的内容：', '需要增加的內容：'),
-					tooltip: wgULS('可选，显示为“需要扩展关于……的内容”', '選填，顯示為「需要擴充關於……的內容」。')
+					label: wgULS('外语版本语言代码（必填）：', '外語版本語言代碼（必填）：'),
 				};
 				break;
 			case "expert":
@@ -249,6 +248,13 @@ Twinkle.tag.updateSortOrder = function(e) {
 						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。', '可選，但強烈推薦。如不需要請留空。')
 					}
 				];
+			case "missing information":
+				checkbox.subgroup = {
+					name: 'missingInformation',
+					type: 'input',
+					label: wgULS('缺少的内容（必填）：', '缺少的內容（必填）：'),
+					tooltip: wgULS('必填，显示为“缺少有关……的资讯。”', '必填，顯示為「缺少有關……的資訊。」。')
+				};
 				break;
 			case "notability":
 				checkbox.subgroup = {
@@ -368,7 +374,7 @@ Twinkle.tag.article.tags = wgULS({
 	"dead end": "需要加上内部链接以构筑百科全书的链接网络",
 	"underlinked": "需要更多内部链接以构筑百科全书的链接网络",
 	"disputed": "内容疑欠准确，有待查证",
-	"expand": "需要扩充",
+	"expand language": "可以根据其他语言版本扩充",
 	"expert": "需要精通或熟悉本主题的专业人士参与及协助编辑",
 	"external links": "使用外部链接的方式可能不符合维基百科的方针或指引",
 	"fansite": "类似爱好者网页",
@@ -383,6 +389,7 @@ Twinkle.tag.article.tags = wgULS({
 	"merge": "建议此页面与页面合并",
 	"merge from": "建议将页面并入本页面",
 	"merge to": "建议将此页面并入页面",
+	"missing information": "缺少必要的信息",
 	"newsrelease": "阅读起来像是新闻稿及包含过度的宣传性语调",
 	"no footnotes": "因为没有内文引用而来源仍然不明",
 	"non-free": "可能过多或不当地使用了受版权保护的文字、图像或/及多媒体文件",
@@ -429,7 +436,7 @@ Twinkle.tag.article.tags = wgULS({
 	"dead end": "需要加上內部連結以構築百科全書的連結網絡",
 	"underlinked": "需要更多內部連結以構築百科全書的連結網絡",
 	"disputed": "內容疑欠準確，有待查證",
-	"expand": "需要擴充",
+	"expand language": "可以根據其他語言版本擴充",
 	"expert": "需要精通或熟悉本主題的專業人士參與及協助編輯",
 	"external links": "使用外部連結的方式可能不符合維基百科的方針或指引",
 	"fansite": "類似愛好者網頁",
@@ -444,6 +451,7 @@ Twinkle.tag.article.tags = wgULS({
 	"merge": "建議此頁面與頁面合併",
 	"merge from": "建議將頁面併入本頁面",
 	"merge to": "建議將此頁面併入頁面",
+	"missing information": "缺少必要的信息",
 	"newsrelease": "閱讀起來像是新聞稿及包含過度的宣傳性語調",
 	"no footnotes": "因為沒有內文引用而來源仍然不明",
 	"non-free": "可能過多或不當地使用了受版權保護的文字、圖像或/及多媒體檔案",
@@ -516,7 +524,8 @@ Twinkle.tag.article.tagCategories = wgULS({
 			"review"
 		],
 		"内容": [
-			"expand",
+			"missing information", // has subcategories and special-cased code
+			"expand language", // has subcategories and special-cased code
 			"substub",
 			"unencyclopedic"
 		],
@@ -616,7 +625,8 @@ Twinkle.tag.article.tagCategories = wgULS({
 			"review"
 		],
 		"內容": [
-			"expand",
+			"missing information", // has subcategories and special-cased code
+			"expand language", // has subcategories and special-cased code
 			"substub",
 			"unencyclopedic"
 		],
@@ -1028,9 +1038,12 @@ Twinkle.tag.callbacks = {
 
 				// prompt for other parameters, based on the tag
 				switch( tagName ) {
-					case 'expand':
-						if (params.tagParameters.expand) {
-							currentTag += '|content=' + params.tagParameters.expand;
+					case 'expand language':
+						if (params.tagParameters.expandLanguage) {
+							currentTag += '|1=' + params.tagParameters.expandLanguage;
+						} else {
+							Morebits.status.warn( wgULS('信息', '資訊'), wgULS('{{expand language}}已略过，因为你没有输入必填的参数。', '{{expand language}}已略過，因為你沒有輸入必填的參數。') );
+							return;
 						}
 						break;
 					case 'expert':
@@ -1058,6 +1071,14 @@ Twinkle.tag.callbacks = {
 								}
 								currentTag += '|discuss=Talk:' + params.discussArticle + '#' + params.talkDiscussionTitle;
 							}
+						}
+						break;
+					case 'missing information':
+						if (params.tagParameters.missingInformation) {
+							currentTag += '|1=' + params.tagParameters.missingInformation;
+						} else {
+							Morebits.status.warn( wgULS('信息', '資訊'), wgULS('{{missing information}}已略过，因为你没有输入必填的参数。', '{{missing information}}已略過，因為你沒有輸入必填的參數。') );
+							return;
 						}
 						break;
 					case 'requested move':
@@ -1416,8 +1437,9 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			params.tagReason = form.tagReason.value;
 			params.tagParameters = {
 				notability: form["articleTags.notability"] ? form["articleTags.notability"].value : null,
-				expand: form["articleTags.expand"] ? form["articleTags.expand"].value : null,
+				expandLanguage: form["articleTags.expandLanguage"] ? form["articleTags.expandLanguage"].value : null,
 				expert: form["articleTags.expert"] ? form["articleTags.expert"].value : null,
+				missingInformation: form["articleTags.missingInformation"] ? form["articleTags.missingInformation"].value : null,
 			};
 			// common to {{merge}}, {{merge from}}, {{merge to}}
 			params.mergeTarget = form["articleTags.mergeTarget"] ? form["articleTags.mergeTarget"].value : null;
