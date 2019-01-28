@@ -554,7 +554,7 @@ Twinkle.close.callbacks = {
 	del: function (params) {
 		Morebits.wiki.addCheckpoint();
 
-		var page = new Morebits.wiki.page( params.title, "删除页面" );
+		var page = new Morebits.wiki.page( params.title, wgULS("删除页面", "刪除頁面") );
 
 		if (params.code === 'sd') {
 			Twinkle.speedy.callbacks.parseWikitext(params.title, '{{delete|' + params.sdreason + '}}', function(reason) {
