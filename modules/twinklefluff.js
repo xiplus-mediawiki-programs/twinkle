@@ -606,7 +606,7 @@ Twinkle.fluff.callbacks = {
 		}
 
 		if (Twinkle.getPref('confirmOnFluff') && !userHasAlreadyConfirmedAction && !confirm(wgULS("回退页面：您确定吗？", "回退頁面：您確定嗎？"))) {
-			self.statelem.error( '用户取消操作。' );
+			self.statelem.error( wgULS('用户取消操作。', '用戶取消操作。') );
 			return;
 		}
 
