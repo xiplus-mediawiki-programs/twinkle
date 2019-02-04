@@ -986,11 +986,11 @@ Twinkle.tag.file.commonsList = wgULS([
 Twinkle.tag.file.cleanupList = wgULS([
 	{ label: '{{Imagewatermark}}：图像包含了水印', value: 'Imagewatermark' },
 	{ label: '{{Rename media}}：文件应该根据文件名称指引被重命名', value: 'Rename media' },
-	{ label: '{{Should be SVG}}：PNG、GIF、JPEG文件应该重制成矢量图形', value: 'Should be SVG', value: 'Should be SVG' }
+	{ label: '{{Should be SVG}}：PNG、GIF、JPEG文件应该重制成矢量图形', value: 'Should be SVG' }
 ], [
 	{ label: '{{Imagewatermark}}：圖像包含了浮水印', value: 'Imagewatermark' },
 	{ label: '{{Rename media}}：檔案應該根據檔案名稱指引被重新命名', value: 'Rename media' },
-	{ label: '{{Should be SVG}}：PNG、GIF、JPEG檔案應該重製成向量圖形', value: 'Should be SVG', value: 'Should be SVG' }
+	{ label: '{{Should be SVG}}：PNG、GIF、JPEG檔案應該重製成向量圖形', value: 'Should be SVG' }
 ]);
 
 Twinkle.tag.file.replacementList = wgULS([
@@ -1019,8 +1019,8 @@ Twinkle.tag.multipleIssuesExceptions = [
 Twinkle.tag.callbacks = {
 	main: function( pageobj ) {
 		var params = pageobj.getCallbackParameters(),
-		    tagRe, tagText = '', summaryText = wgULS('添加', '加入'),
-		    tags = [], groupableTags = [], i, totalTags;
+			tagRe, tagText = '', summaryText = wgULS('添加', '加入'),
+			tags = [], groupableTags = [], i, totalTags;
 
 		// Remove tags that become superfluous with this action
 		var pageText = pageobj.getPageText().replace(/\{\{\s*([Nn]ew unreviewed article|[Uu]nreviewed|[Uu]serspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/g, "");
@@ -1280,13 +1280,13 @@ Twinkle.tag.callbacks = {
 			// special functions for requested move tags
 			if (params.moveReason) {
 				// post the rationale on the talk page (only operates in main namespace)
-				var talkpageText = "\n\n{{subst:RM|"+params.moveReason.trim();
+				var talkpageText = "\n\n{{subst:RM|"+params.moveReason.trim(); // eslint-disable-line no-redeclare
 				if (params.moveTarget) {
 					talkpageText += "|" + params.moveTarget;
 				}
 				talkpageText += "}}";
 
-				var talkpage = new Morebits.wiki.page("Talk:" + params.discussArticle, wgULS("将理由贴进讨论页", "將理由貼進討論頁"));
+				var talkpage = new Morebits.wiki.page("Talk:" + params.discussArticle, wgULS("将理由贴进讨论页", "將理由貼進討論頁")); // eslint-disable-line no-redeclare
 				talkpage.setAppendText(talkpageText);
 				talkpage.setEditSummary(wgULS('请求移动' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : ""), '請求移動' + (params.moveTarget ? "至[[" + params.moveTarget + "]]" : "")) +
 					Twinkle.getPref('summaryAd'));
@@ -1302,8 +1302,8 @@ Twinkle.tag.callbacks = {
 	},
 
 	notabilityList: function(pageobj) {
-		var text = pageobj.getPageText();
-		var params = pageobj.getCallbackParameters();
+		// var text = pageobj.getPageText();
+		// var params = pageobj.getCallbackParameters();
 
 		pageobj.setAppendText("\n{{subst:Wikipedia:关注度/提报/item|title=" + Morebits.pageNameNorm + "}}");
 		pageobj.setEditSummary("添加[[" + Morebits.pageNameNorm + "]]" + Twinkle.getPref('summaryAd'));

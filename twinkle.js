@@ -38,11 +38,11 @@ window.wgUXS = function (wg, hans, hant, cn, tw, hk, sg, zh, mo, my) {
 };
 
 window.wgULS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
-    return wgUXS(mw.config.get('wgUserLanguage'), hans, hant, cn, tw, hk, sg, zh, mo, my);
+    return wgUXS(mw.config.get('wgUserLanguage'), hans, hant, cn, tw, hk, sg, zh, mo, my); // eslint-disable-line no-undef
 };
 
 window.wgUVS = function (hans, hant, cn, tw, hk, sg, zh, mo, my) {
-    return wgUXS(mw.config.get('wgUserVariant'), hans, hant, cn, tw, hk, sg, zh, mo, my);
+    return wgUXS(mw.config.get('wgUserVariant'), hans, hant, cn, tw, hk, sg, zh, mo, my); // eslint-disable-line no-undef
 };
 
 var Twinkle = {};
@@ -325,10 +325,11 @@ Twinkle.addPortlet = function( navigation, id, text, type, nextnodeid )
 		root.appendChild( outerDiv );
 	}
 
+	var h5;
 	if (skin === "timeless") {
-		var h5 = document.createElement( "h2" );
+		h5 = document.createElement( "h2" );
 	} else {
-		var h5 = document.createElement( "h3" );
+		h5 = document.createElement( "h3" );
 	}
 	if ( type === "menu" ) {
 		var span = document.createElement( "span" );
@@ -361,10 +362,10 @@ Twinkle.addPortlet = function( navigation, id, text, type, nextnodeid )
 			navigation = document.createElement( "div" );
 			navigation.className = "mw-portlet";
 			innerDiv.appendChild(navigation);
-			navigationname = document.createElement( "h3" );
+			var navigationname = document.createElement( "h3" );
 			navigationname.innerText = text;
 			navigation.appendChild(navigationname);
-			portletbody = document.createElement( "div" );
+			var portletbody = document.createElement( "div" );
 			portletbody.className = "mw-portlet-body";
 			navigation.appendChild(portletbody);
 			innerDiv = portletbody;

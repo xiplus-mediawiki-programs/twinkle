@@ -109,15 +109,15 @@ Twinkle.fluff = {
 			revAgfLink.appendChild( spanTag( 'Black', ']' ) );
 			revAgfNode.appendChild(revAgfLink);
 
-			var revNode = document.createElement('strong');
-			var revLink = document.createElement('a');
+			var revNode = document.createElement('strong'); // eslint-disable-line no-redeclare
+			var revLink = document.createElement('a'); // eslint-disable-line no-redeclare
 			revLink.appendChild( spanTag( 'Black', '[' ) );
 			revLink.appendChild( spanTag( 'SteelBlue', '回退' ) );
 			revLink.appendChild( spanTag( 'Black', ']' ) );
 			revNode.appendChild(revLink);
 
-			var revVandNode = document.createElement('strong');
-			var revVandLink = document.createElement('a');
+			var revVandNode = document.createElement('strong'); // eslint-disable-line no-redeclare
+			var revVandLink = document.createElement('a'); // eslint-disable-line no-redeclare
 			revVandLink.appendChild( spanTag( 'Black', '[' ) );
 			revVandLink.appendChild( spanTag( 'Red', wgULS('破坏', '破壞') ) );
 			revVandLink.appendChild( spanTag( 'Black', ']' ) );
@@ -191,7 +191,7 @@ Twinkle.fluff = {
 
 			revertToRevision.appendChild( document.createTextNode(' || ') );
 
-			revertsummary = new Morebits.quickForm.element({ type: 'select', name: 'revertsummary' })
+			var revertsummary = new Morebits.quickForm.element({ type: 'select', name: 'revertsummary' })
 			revertsummary.append({
 					type: 'option',
 					label: wgULS('选择回退理由', '選擇回退理由'),
@@ -205,7 +205,7 @@ Twinkle.fluff = {
 					});
 			});
 
-			var revertSummary = revertToRevision.appendChild( revertsummary.render().childNodes[0] );
+			// var revertSummary = revertToRevision.appendChild( revertsummary.render().childNodes[0] );
 
 			otitle.insertBefore( revertToRevision, otitle.firstChild );
 
@@ -235,7 +235,7 @@ Twinkle.fluff = {
 				return;
 			}
 			if( Twinkle.getPref('showRollbackLinks').indexOf('diff') !== -1 ) {
-				var vandal = $("#mw-diff-ntitle2").find("a.mw-userlink").find("bdi").text();
+				var vandal = $("#mw-diff-ntitle2").find("a.mw-userlink").find("bdi").text(); // eslint-disable-line no-redeclare
 
 				var revertNode = document.createElement('div');
 				revertNode.setAttribute( 'id', 'tw-revert' );
@@ -248,7 +248,7 @@ Twinkle.fluff = {
 				var vandLink = document.createElement('a');
 				var normLink = document.createElement('a');
 
-				var revid = mw.config.get('wgCurRevisionId');
+				var revid = mw.config.get('wgCurRevisionId'); // eslint-disable-line no-redeclare
 				var page = mw.config.get('wgPageName');
 				if (Twinkle.fluff.isRTRC) {
 					revid = parseInt($('#mw-diff-ntitle1 a:first').attr('href').match(/oldid=(\d*)/)[1]);
@@ -381,7 +381,7 @@ Twinkle.fluff.revertToRevision = function revertToRevision( oldrev, page, summar
 			});
 		}
 	}
-	var summary = document.getElementsByName('revertsummary')[0].value;
+	summary = document.getElementsByName('revertsummary')[0].value;
 	Morebits.status.init( statusElement );
 
 	var title = page || mw.config.get('wgPageName');

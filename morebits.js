@@ -2523,7 +2523,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 										"不能儲存頁面，因伺服器試圖讓您完成一個全自動區分電腦和人類的圖靈測試。"));
 		} else if ( $editNode.attr('code') === 'abusefilter-disallowed' ) {
 			ctx.statusElement.error(wgULS('编辑被防滥用过滤器规则“' + $editNode.attr('info').substring(17) + '”阻止。如果您认为您的该次编辑是有意义的，请至 Wikipedia:防滥用过滤器/错误报告 提报。',
-										 '編輯被防濫用過濾器規則「' + $editNode.attr('info').substring(17) + '」阻止。如果您認為您的該次編輯是有意義的，請至 Wikipedia:防濫用過濾器/錯誤報告 提報。'));
+				'編輯被防濫用過濾器規則「' + $editNode.attr('info').substring(17) + '」阻止。如果您認為您的該次編輯是有意義的，請至 Wikipedia:防濫用過濾器/錯誤報告 提報。'));
 		} else if ( $editNode.attr('info').indexOf('Hit AbuseFilter:') === 0 ) {
 			var div = document.createElement('div');
 			div.className = "toccolours";
@@ -3080,16 +3080,16 @@ Morebits.wiki.flow = function(pageName, currentAction) {
         //headerLoaded
 
         if (!onSuccess) {
-        	ctx.statusElement.error("内部错误：未给viewHeader()提供onSuccess回调函数！");
+			ctx.statusElement.error("内部错误：未给viewHeader()提供onSuccess回调函数！");
 			ctx.onViewHeaderFailure(this);
 			return;
         }
 
         var query = {
-        	action: 'flow',
-        	submodule: 'view-header',
-        	page: ctx.pageName,
-        	vhformat: 'wikitext',
+			action: 'flow',
+			submodule: 'view-header',
+			page: ctx.pageName,
+			vhformat: 'wikitext',
         };
 
         ctx.viewHeaderApi = new Morebits.wiki.api(wgULS('抓取Flow描述…', '擷取Flow描述…'), query, fnViewHeaderSuccess, ctx.statusElement, ctx.onViewHeaderFailure);
@@ -3164,11 +3164,11 @@ Morebits.wiki.flow = function(pageName, currentAction) {
     };
 
     var fnViewHeaderSuccess = function() {
-    	var xml = ctx.viewHeaderApi.getXML();
+		var xml = ctx.viewHeaderApi.getXML();
 		ctx.header = $(xml).find('content').attr('content');
-    	ctx.headerLastRevision = $(xml).find('revision').attr('revisionId');
-    	ctx.headerLoaded = true;
-    	ctx.onViewHeaderSuccess(this);
+		ctx.headerLastRevision = $(xml).find('revision').attr('revisionId');
+		ctx.headerLoaded = true;
+		ctx.onViewHeaderSuccess(this);
     };
 
     var fnEditHeaderSuccess = function() {
@@ -3732,7 +3732,7 @@ Morebits.status.prototype = {
 				}
 
 				// also log error messages in the browser console
-				console.error(this.textRaw + ": " + status);
+				console.error(this.textRaw + ": " + status); // eslint-disable-line no-console
 			}
 		}
 		this.render();

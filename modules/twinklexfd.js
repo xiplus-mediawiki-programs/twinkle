@@ -359,7 +359,7 @@ Twinkle.xfd.callbacks = {
 			}
 
 			// Then, test if there are speedy deletion-related templates on the article.
-			var textNoSd = text.replace(/\{\{\s*(db(-\w*)?|d|delete|(?:hang|hold)[\- ]?on)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+			var textNoSd = text.replace(/\{\{\s*(db(-\w*)?|d|delete|(?:hang|hold)[- ]?on)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
 			if (text !== textNoSd && confirm(wgULS("在页面上找到快速删除模板，要移除吗？", "在頁面上找到快速刪除模板，要移除嗎？"))) {
 				text = textNoSd;
 			}
@@ -584,7 +584,7 @@ Twinkle.xfd.callbacks = {
 			pageobj.save();
 		},
 		todaysList: function(pageobj) {
-			var text = pageobj.getPageText();
+			// var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
 
 			pageobj.setAppendText("\n{{subst:IfdItem|Filename=" + mw.config.get('wgTitle') + "|Uploader=" + params.uploader + "|Reason=" + Morebits.string.formatReasonText(params.reason) + "}}--~~~~");
@@ -656,7 +656,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		return;
 	}
 
-	var query, wikipedia_page, wikipedia_api, logpage, params;
+	var wikipedia_page, logpage, params;
 	var dateString;
 	var date = new Date();
 	function twodigits(num) {
@@ -806,7 +806,7 @@ Twinkle.xfd.aprilfool.evaluate = function(e) {
 };
 
 Twinkle.xfd.aprilfool.todaysList = function(pageobj) {
-	var text = pageobj.getPageText();
+	// var text = pageobj.getPageText();
 	var params = pageobj.getCallbackParameters();
 	var type = '';
 	var to = '';

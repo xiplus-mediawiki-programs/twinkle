@@ -298,7 +298,7 @@ var callback_evaluate = function( e ) {
 			text += "\n~~~~";
 		}
 
-		var editSummary = wgULS("回复通告（[[", "回覆通告（[[");
+		editSummary = wgULS("回复通告（[[", "回覆通告（[[");
 		if (tbtarget !== "other" && !/^\s*user talk:/i.test(tbPageName)) {
 			editSummary += "User talk:";
 		}

@@ -2,7 +2,7 @@
 // vim: set noet sts=0 sw=8:
 
 
-(function($){
+(function($){ // eslint-disable-line no-unused-vars
 
 
 /*
@@ -193,14 +193,14 @@ Twinkle.image.callbacks = {
 				tag = "{{subst:orphaned fair use}}\n";
 				break;
 			case 'no permission':
-				tag = "{{subst:" + params.templatename + "/auto|1=" + params.f8_source.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^\*])/gm, '* $1').replace(/^\* $/m, '') + "}}\n";
+				tag = "{{subst:" + params.templatename + "/auto|1=" + params.f8_source.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^*])/gm, '* $1').replace(/^\* $/m, '') + "}}\n";
 				break;
 			default:
 				tag = "{{subst:" + params.templatename + "/auto}}\n";
 				break;
 		}
 
-		var textNoSd = text.replace(/\{\{\s*(db(-\w*)?|d|delete|(?:hang|hold)[\- ]?on)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
+		var textNoSd = text.replace(/\{\{\s*(db(-\w*)?|d|delete|(?:hang|hold)[- ]?on)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, "");
 		if (text !== textNoSd && confirm(wgULS("在页面上找到快速删除模板，要移除吗？", "在頁面上找到快速刪除模板，要移除嗎？"))) {
 			text = textNoSd;
 		}
@@ -276,7 +276,7 @@ Twinkle.image.callbacks = {
 	},
 	imageList: function(pageobj) {
 		var text = pageobj.getPageText();
-		var params = pageobj.getCallbackParameters();
+		// var params = pageobj.getCallbackParameters();
 
 		pageobj.setPageText(text + "\n* [[:" + Morebits.pageNameNorm + "]]--~~~~");
 		pageobj.setEditSummary(wgULS("添加[[", "加入[[") + Morebits.pageNameNorm + "]]。" + Twinkle.getPref('summaryAd'));

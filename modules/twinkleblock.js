@@ -97,7 +97,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 
 	Twinkle.block.fetchUserInfo(function() {
 		if (Twinkle.block.isRegistered) {
-			$form = $(result);
+			var $form = $(result);
 			Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=tag]').parent(), true);
 			Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=protect]').parent(), true);
 		}
@@ -553,7 +553,6 @@ Twinkle.block.blockPresetsInfo = {
 		sig: '~~~~'
 	},
 	'checkuserblock' : {
-		expiry: 'infinity',
 		expiry: '1 week',
 		forAnonOnly: true,
 		nocreate: true,
@@ -815,7 +814,7 @@ Twinkle.block.callback.change_expiry = function twinkleblockCallbackChangeExpiry
 };
 
 Twinkle.block.seeAlsos = [];
-Twinkle.block.callback.toggle_see_alsos = function twinkleblockCallbackToggleSeeAlso(e) {
+Twinkle.block.callback.toggle_see_alsos = function twinkleblockCallbackToggleSeeAlso() {
 	var reason = this.form.reason.value.replace(
 		new RegExp('(<!-- )(参见|參見)' + Twinkle.block.seeAlsos.join('、') + '( -->)?'), ''
 	);
@@ -999,7 +998,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		api.getToken('block').then(function(token) {
 			statusElement.status(wgULS('处理中…', '處理中…'));
 			blockoptions.token = token;
-			var mbApi = new Morebits.wiki.api( wgULS('执行封禁', '執行封禁'), blockoptions, function(data) {
+			var mbApi = new Morebits.wiki.api( wgULS('执行封禁', '執行封禁'), blockoptions, function() {
 				statusElement.info('完成');
 			});
 			mbApi.post();
@@ -1027,14 +1026,14 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 
 		Morebits.simpleWindow.setButtonsEnabled( false );
 		Morebits.status.init( e.target );
-		var statusElement = new Morebits.status(wgULS('执行解除封禁', '執行解除封禁'));
+		var statusElement = new Morebits.status(wgULS('执行解除封禁', '執行解除封禁')); // eslint-disable-line no-redeclare
 		unblockoptions.action = 'unblock';
 		unblockoptions.user = Morebits.wiki.flow.relevantUserName();
 
 		api.getToken('block').then(function(token) {
 			statusElement.status(wgULS('处理中…', '處理中…'));
 			unblockoptions.token = token;
-			var mbApi = new Morebits.wiki.api( wgULS('执行封禁', '執行封禁'), unblockoptions, function(data) {
+			var mbApi = new Morebits.wiki.api( wgULS('执行封禁', '執行封禁'), unblockoptions, function() {
 				statusElement.info('完成');
 			});
 			mbApi.post();
@@ -1049,7 +1048,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 
 Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pageobj) {
 	var params = pageobj.getCallbackParameters();
-	var statelem = pageobj.getStatusElement();
+	// var statelem = pageobj.getStatusElement();
 	if (params.istag) {
 		var pagetext = "";
 		switch (params.tag) {
@@ -1081,7 +1080,7 @@ Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pa
 
 Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUserpage(pageobj) {
 	var params = pageobj.getCallbackParameters();
-	var statelem = pageobj.getStatusElement();
+	// var statelem = pageobj.getStatusElement();
 	if (params.isprotect) {
 		if (pageobj.exists()) {
 			pageobj.setEditProtection('sysop', 'indefinite');

@@ -1952,7 +1952,7 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 };
 
 Twinkle.warn.callbacks = {
-	getWarningWikitext: function(templateName, article, reason, isCustom) {
+	getWarningWikitext: function(templateName, article, reason, isCustom) { // eslint-disable-line no-unused-vars
 		var text = "{{subst:" + templateName;
 
 		if (article) {
@@ -2101,8 +2101,6 @@ Twinkle.warn.callbacks = {
 	main_flow: function (flowobj) {
 		var params = flowobj.getCallbackParameters();
 		var messageData = params.messageData;
-
-		var date = new Date();
 
 		var topic;
 		if (messageData.heading) {

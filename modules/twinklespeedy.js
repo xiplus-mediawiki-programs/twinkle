@@ -353,6 +353,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 		case 2:  // user
 			work_area.append( { type: 'header', label: wgULS('用户页', '使用者頁面') } );
 			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.userList, mode) } );
+			break;
 
 		case 3:  // user talk
 			if (mw.util.isIPAddress(mw.config.get('wgRelevantUserName'))) {
@@ -954,7 +955,6 @@ Twinkle.speedy.callbacks = {
 	},
 
 	parseWikitext: function(title, wikitext, callback) {
-		console.log(wikitext);
 		var query = {
 			action: "parse",
 			prop: "text",
@@ -1010,7 +1010,7 @@ Twinkle.speedy.callbacks = {
 						expiry: '31 hours',
 						tags: Twinkle.getPref('revisionTags'),
 						token: token,
-					}, function(data) {
+					}, function() {
 						statusElement.info(wgULS('请记得阅读[[Wikipedia:不要删除首页]]。', '請記得閱讀[[Wikipedia:不要刪除首頁]]。'));
 					});
 					mbApi.post();
@@ -1561,7 +1561,7 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 };
 
 // function for processing talk page notification template parameters
-Twinkle.speedy.getUserTalkParameters = function twinklespeedyGetUserTalkParameters(normalized, parameters) {
+Twinkle.speedy.getUserTalkParameters = function twinklespeedyGetUserTalkParameters(normalized, parameters) { // eslint-disable-line no-unused-vars
 	var utparams = [];
 	switch (normalized) {
 		default:
