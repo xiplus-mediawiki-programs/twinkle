@@ -230,6 +230,11 @@ Twinkle.close.codes = wgULS({
 			action: 'keep',
 			adminonly: true
 		},
+		'mergeapproved': {
+			label: '允许并入',
+			action: 'keep',
+			adminonly: true
+		},
 		'nc': {
 			label: '无共识',
 			action: 'keep',
@@ -393,6 +398,11 @@ Twinkle.close.codes = wgULS({
 		},
 		'merge': {
 			label: '併入',
+			action: 'keep',
+			adminonly: true
+		},
+		'mergeapproved': {
+			label: '允許併入',
 			action: 'keep',
 			adminonly: true
 		},
