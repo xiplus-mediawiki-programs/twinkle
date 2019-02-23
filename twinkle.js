@@ -100,8 +100,8 @@ Twinkle.defaultConfig.twinkle = {
 	markSpeedyPagesAsPatrolled: true,
 
 	// these next two should probably be identical by default
-	notifyUserOnSpeedyDeletionNomination: [ "db", "g1", "g2", "g3", "g5", "g11", "g12", "g13", "g16", "a1", "a2", "a5", "a6", "f6", "r2", "r3" ],
-	welcomeUserOnSpeedyDeletionNotification: [ "db", "g1", "g2", "g3", "g5", "g11", "g12", "g13", "g16", "a1", "a2", "a5", "a6", "f6", "r2", "r3" ],
+	notifyUserOnSpeedyDeletionNomination: [ "db", "g1", "g2", "g3", "g5", "g11", "g12", "g13", "g16", "a1", "a2", "a5", "a6", "f6", "r2", "r3", "r7" ],
+	welcomeUserOnSpeedyDeletionNotification: [ "db", "g1", "g2", "g3", "g5", "g11", "g12", "g13", "g16", "a1", "a2", "a5", "a6", "f6", "r2", "r3", "r7" ],
 	promptForSpeedyDeletionSummary: [],
 	openUserTalkPageOnSpeedyDelete: [  ],
 	deleteTalkPageOnDelete: true,
