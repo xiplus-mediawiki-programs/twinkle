@@ -1009,7 +1009,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 						cell.style.paddingRight = "0.5em";
 						label = document.createElement("label");
 						label.setAttribute("for", pref.name);
-						label.appendChild(document.createTextNode(pref.label + ":"));
+						label.appendChild(document.createTextNode(pref.label + "："));
 						cell.appendChild(label);
 						row.appendChild(cell);
 
@@ -1038,7 +1038,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 						cell.style.paddingRight = "0.5em";
 						label = document.createElement("label");
 						label.setAttribute("for", pref.name);
-						label.appendChild(document.createTextNode(pref.label + ":"));
+						label.appendChild(document.createTextNode(pref.label + "："));
 						cell.appendChild(label);
 						row.appendChild(cell);
 
@@ -1064,7 +1064,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 						// add label first of all
 						cell.setAttribute("colspan", "2");
 						label = document.createElement("label");  // not really necessary to use a label element here, but we do it for consistency of styling
-						label.appendChild(document.createTextNode(pref.label + ":"));
+						label.appendChild(document.createTextNode(pref.label + "："));
 						cell.appendChild(label);
 
 						var checkdiv = document.createElement("div");
@@ -1108,7 +1108,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 						cell.style.paddingRight = "0.5em";
 						label = document.createElement("label");
 						label.setAttribute("for", pref.name);
-						label.appendChild(document.createTextNode(pref.label + ":"));
+						label.appendChild(document.createTextNode(pref.label + "："));
 						cell.appendChild(label);
 						row.appendChild(cell);
 
