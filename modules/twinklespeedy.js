@@ -272,19 +272,6 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 	dialog.display();
 
 	Twinkle.speedy.callback.modeChanged(result);
-
-	// if sysop, check if CSD is already on the page and fill in custom rationale
-	if (Morebits.userIsSysop && $('#delete-reason').length) {
-		var customOption = $('input[name=csd][value=reason]')[0];
-
-		if (Twinkle.getPref('speedySelectionStyle') !== 'radioClick') {
-			// force listeners to re-init
-			customOption.click();
-			customOption.parentNode.appendChild(customOption.subgroup);
-		}
-
-		customOption.subgroup.querySelector('input').value = decodeURIComponent($('#delete-reason').text()).replace(/\+/g, ' ');
-	}
 };
 
 Twinkle.speedy.callback.getMode = function twinklespeedyCallbackGetMode(form) {
@@ -411,6 +398,19 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 
 	var old_area = Morebits.quickForm.getElements(form, 'work_area')[0];
 	form.replaceChild(work_area.render(), old_area);
+
+	// if sysop, check if CSD is already on the page and fill in custom rationale
+	if (isSysopMode && Twinkle.speedy.hasCSD) {
+		var customOption = $('input[name=csd][value=reason]')[0];
+		if (customOption) {
+			if (Twinkle.getPref('speedySelectionStyle') !== 'radioClick') {
+				// force listeners to re-init
+				customOption.click();
+				customOption.parentNode.appendChild(customOption.subgroup);
+			}
+			customOption.subgroup.querySelector('input').value = decodeURIComponent($('#delete-reason').text()).replace(/\+/g, ' ');
+		}
+	}
 };
 
 Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mode) {
