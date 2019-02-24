@@ -186,7 +186,7 @@ Twinkle.warn.messages = wgULS({
 			},
 			"uw-delete1": {
 				label: "不恰当地移除页面内容、模板或资料",
-				summary: "层级1：不恰当地页面条目内容、模板或资料"
+				summary: "层级1：不恰当地移除页面内容、模板或资料"
 			},
 			"uw-redirect1": {
 				label: "创建破坏性的重定向",
@@ -1002,7 +1002,7 @@ Twinkle.warn.messages = wgULS({
 			},
 			"uw-delete1": {
 				label: "不恰當地移除頁面內容、模板或資料",
-				summary: "層級1：不恰當地頁面條目內容、模板或資料"
+				summary: "層級1：不恰當地移除頁面內容、模板或資料"
 			},
 			"uw-redirect1": {
 				label: "建立破壞性的重定向",
