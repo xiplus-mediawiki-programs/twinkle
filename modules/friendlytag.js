@@ -893,7 +893,21 @@ Twinkle.tag.lessFrequentList = wgULS([
 	},
 	{
 		label: '{{條目請求重定向}}：需要獨立條目的頁面',
-		value: '條目請求重定向'
+		value: '條目請求重定向',
+		subgroup: [
+			{
+				name: 'reqArticleLang',
+				type: 'input',
+				label: wgULS('外语语言代码：', '外語語言代碼：'),
+				tooltip: wgULS('使用ISO 639代码', '使用ISO 639代碼')
+			},
+			{
+				name: 'reqArticleTitle',
+				type: 'input',
+				label: wgULS('外语页面名称：', '外語頁面名稱：'),
+				size: 60
+			}
+		]
 	},
 	{
 		label: '{{快捷方式重定向}}：維基百科快捷方式',
@@ -1039,6 +1053,7 @@ Twinkle.tag.callbacks = {
 
 				// prompt for other parameters, based on the tag
 				switch( tagName ) {
+					// article
 					case 'expand language':
 						if (params.tagParameters.expandLanguage) {
 							currentTag += '|1=' + params.tagParameters.expandLanguage;
@@ -1090,6 +1105,16 @@ Twinkle.tag.callbacks = {
 							currentTag += '|' + params.moveTarget;
 						}
 						break;
+
+					// redirect
+					case '条目请求重定向':
+					case '條目請求重定向':
+						if (params.tagParameters.reqArticleLang && params.tagParameters.reqArticleTitle) {
+							currentTag += '|1=' + params.tagParameters.reqArticleLang;
+							currentTag += '|2=' + params.tagParameters.reqArticleTitle;
+						}
+						break;
+
 					default:
 						break;
 				}
@@ -1451,6 +1476,10 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			params.moveReason = form["articleTags.moveReason"] ? form["articleTags.moveReason"].value : null;
 			break;
 		case '重定向':
+			params.tagParameters = {
+				reqArticleLang: form["redirectTags.reqArticleLang"] ? form["redirectTags.reqArticleLang"].value : null,
+				reqArticleTitle: form["redirectTags.reqArticleTitle"] ? form["redirectTags.reqArticleTitle"].value : null,
+			};
 			params.tags = form.getChecked( 'redirectTags' );
 			break;
 		case '文件':
