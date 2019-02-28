@@ -325,7 +325,15 @@ Twinkle.tag.updateSortOrder = function(e) {
 	// append any custom tags
 	if (Twinkle.getFriendlyPref('customTagList').length) {
 		container.append({ type: 'header', label: wgULS('自定义模板', '自訂模板') });
-		container.append({ type: 'checkbox', name: 'articleTags', list: Twinkle.getFriendlyPref('customTagList') });
+		var customcheckboxes = [];
+		$.each(Twinkle.getFriendlyPref('customTagList'), function(_, item) {
+			customcheckboxes.push(makeCheckbox(item.value, item.label));
+		});
+		container.append({
+			type: "checkbox",
+			name: "articleTags",
+			list: customcheckboxes
+		});
 	}
 
 	var $workarea = $(e.target.form).find("div#tagWorkArea");
