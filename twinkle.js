@@ -513,6 +513,7 @@ Twinkle.load = function () {
 	// Maintenance
 	Twinkle.protect();
 	Twinkle.tag();
+	Twinkle.stub();
 	// Misc. ones last
 	Twinkle.diff();
 	Twinkle.unlink();
