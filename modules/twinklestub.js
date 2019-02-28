@@ -16,6 +16,10 @@
  */
 
 Twinkle.stub = function friendlytag() {
+	if (!Twinkle.getFriendlyPref('enableStub')) {
+		return;
+	}
+
 	// redirect tagging
 	if (Morebits.wiki.isPageRedirect()) {
 		Twinkle.stub.mode = '重定向';
@@ -76,12 +80,13 @@ Twinkle.stub.checkedTags = [];
 
 Twinkle.stub.updateSortOrder = function(e) {
 	var sortorder = e.target.value;
-	var $workarea = $(e.target.form).find("div#tagWorkArea");
 
 	Twinkle.stub.checkedTags = e.target.form.getChecked("articleTags");
 	if (!Twinkle.stub.checkedTags) {
 		Twinkle.stub.checkedTags = [];
 	}
+
+	var container = new Morebits.quickForm.element({ type: "fragment" });
 
 	// function to generate a checkbox, with appropriate subgroup if needed
 	var makeCheckbox = function(tag, description) {
@@ -95,11 +100,6 @@ Twinkle.stub.updateSortOrder = function(e) {
 
 	// categorical sort order
 	if (sortorder === "cat") {
-		var div = new Morebits.quickForm.element({
-			type: "div",
-			id: "tagWorkArea"
-		});
-
 		// function to iterate through the tags and create a checkbox for each one
 		var doCategoryCheckboxes = function(subdiv, array) {
 			var checkboxes = [];
@@ -117,8 +117,8 @@ Twinkle.stub.updateSortOrder = function(e) {
 		var i = 0;
 		// go through each category and sub-category and append lists of checkboxes
 		$.each(Twinkle.stub.article.tagCategories, function(title, content) {
-			div.append({ type: "header", id: "tagHeader" + i, label: title });
-			var subdiv = div.append({ type: "div", id: "tagSubdiv" + i++ });
+			container.append({ type: "header", id: "tagHeader" + i, label: title });
+			var subdiv = container.append({ type: "div", id: "tagSubdiv" + i++ });
 			if ($.isArray(content)) {
 				doCategoryCheckboxes(subdiv, content);
 			} else {
@@ -128,12 +128,6 @@ Twinkle.stub.updateSortOrder = function(e) {
 				});
 			}
 		});
-
-		var rendered = div.render();
-		$workarea.replaceWith(rendered);
-		var $rendered = $(rendered);
-		$rendered.find("h5").css({ 'font-size': '110%', 'margin-top': '1em' });
-		$rendered.find("div").filter(":has(span.quickformDescription)").css({ 'margin-top': '0.4em' });
 	}
 	// alphabetical sort order
 	else {
@@ -141,13 +135,46 @@ Twinkle.stub.updateSortOrder = function(e) {
 		$.each(Twinkle.stub.article.tags, function(tag, description) {
 			checkboxes.push(makeCheckbox(tag, description));
 		});
-		var tags = new Morebits.quickForm.element({
+		container.append({
 			type: "checkbox",
 			name: "articleTags",
 			list: checkboxes
 		});
-		$workarea.empty().append(tags.render());
 	}
+
+	// append any custom tags
+	if (Twinkle.getFriendlyPref('customStubList').length) {
+		container.append({ type: 'header', label: wgULS('自定义模板', '自訂模板') });
+		var customcheckboxes = [];
+		$.each(Twinkle.getFriendlyPref('customStubList'), function(_, item) {
+			customcheckboxes.push(makeCheckbox(item.value, item.label));
+		});
+		container.append({
+			type: "checkbox",
+			name: "articleTags",
+			list: customcheckboxes
+		});
+	}
+
+	var $workarea = $(e.target.form).find("div#tagWorkArea");
+	var rendered = container.render();
+	$workarea.empty().append(rendered);
+
+	// style adjustments
+	$workarea.find("h5").css({ 'font-size': '110%' });
+	$workarea.find("h5:not(:first-child)").css({ 'margin-top': '1em' });
+	$workarea.find("div").filter(":has(span.quickformDescription)").css({ 'margin-top': '0.4em' });
+
+	// add a link to each template's description page
+	$.each(Morebits.quickForm.getElements(e.target.form, "articleTags"), function(index, checkbox) {
+		var $checkbox = $(checkbox);
+		var link = Morebits.htmlNode("a", ">");
+		link.setAttribute("class", "tag-template-link");
+		link.setAttribute("href", mw.util.getUrl("Template:" +
+			Morebits.string.toUpperCaseFirstChar(checkbox.values)));
+		link.setAttribute("target", "_blank");
+		$checkbox.parent().append(["\u00A0", link]);
+	});
 };
 
 
@@ -394,10 +421,6 @@ Twinkle.stub.callbacks = {
 		pageobj.setMinorEdit(Twinkle.getFriendlyPref('markStubbedPagesAsMinor'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save();
-
-		if (Twinkle.getFriendlyPref('markStubbedPagesAsPatrolled')) {
-			pageobj.patrol();
-		}
 	}
 };
 

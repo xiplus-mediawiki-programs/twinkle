@@ -513,6 +513,42 @@ Twinkle.config.sections = [
 },
 
 {
+	title: "小作品",
+	inFriendlyConfig: true,
+	preferences: [
+		{
+			name: "enableStub",
+			label: wgULS("激活这个功能", "啟用這個功能"),
+			type: "boolean"
+		},
+		{
+			name: "watchStubbedPages",
+			label: wgULS("标记时添加到监视列表", "標記時加入到監視清單"),
+			type: "boolean"
+		},
+		{
+			name: "markStubbedPagesAsMinor",
+			label: wgULS("将小作品标记为小修改", "將小作品標記為小修改"),
+			type: "boolean"
+		},
+		{
+			name: "stubArticleSortOrder",
+			label: wgULS("条目小作品的默认查看方式", "條目小作品的預設檢視方式"),
+			type: "enum",
+			enumValues: { "cat": wgULS("按类别", "按類別"), "alpha": "按字母" }
+		},
+		{
+			name: "customStubList",
+			label: wgULS("自定义条目小作品标记", "自訂條目小作品標記"),
+			helptip: wgULS("这些会出现在列表的末尾。", "這些會出現在清單的末尾。"),
+			type: "customList",
+			customListValueTitle: wgULS("模板名（不含大括号）", "模板名（不含大括號）"),
+			customListLabelTitle: wgULS("显示的文字", "顯示的文字")
+		},
+	]
+},
+
+{
 	title: wgULS("回复", "回覆"),
 	inFriendlyConfig: true,
 	preferences: [

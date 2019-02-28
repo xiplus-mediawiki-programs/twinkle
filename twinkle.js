@@ -182,7 +182,14 @@ Twinkle.defaultConfig.friendly = {
 	markTaggedPagesAsMinor: false,
 	markTaggedPagesAsPatrolled: true,
 	tagArticleSortOrder: "cat",
+
+	// Stub
+	enableStub: true,
 	customTagList: [],
+	watchStubbedPages: false,
+	markStubbedPagesAsMinor: false,
+	stubArticleSortOrder: "cat",
+	customStubList: [],
 
 	// Talkback
 	markTalkbackAsMinor: true,
