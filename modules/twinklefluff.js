@@ -205,7 +205,7 @@ Twinkle.fluff = {
 					});
 			});
 
-			// var revertSummary = revertToRevision.appendChild( revertsummary.render().childNodes[0] );
+			revertToRevision.appendChild( revertsummary.render().childNodes[0] );
 
 			otitle.insertBefore( revertToRevision, otitle.firstChild );
 
