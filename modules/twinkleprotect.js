@@ -706,7 +706,8 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 		editexpiry: 'indefinite',
 		move: 'sysop',
 		moveexpiry: 'indefinite',
-		reason: '高风险模板'
+		reason: '高风险模板',
+		template: 'noop'
 	},
 	'pp-userpage': {
 		edit: 'sysop',
@@ -741,7 +742,7 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 		move: 'sysop',
 		moveexpiry: 'indefinite',
 		reason: '高风险模板',
-		template: 'pp-template'
+		template: 'noop'
 	},
 	'pp-semi-sock': {
 		edit: 'autoconfirmed',
@@ -810,7 +811,8 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 		editexpiry: 'indefinite',
 		move: 'sysop',
 		moveexpiry: 'indefinite',
-		reason: '高風險模板'
+		reason: '高風險模板',
+		template: 'noop'
 	},
 	'pp-userpage': {
 		edit: 'sysop',
@@ -843,7 +845,7 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 		edit: 'autoconfirmed',
 		move: 'sysop',
 		reason: '高風險模板',
-		template: 'pp-template'
+		template: 'noop'
 	},
 	'pp-semi-sock': {
 		edit: 'autoconfirmed',
