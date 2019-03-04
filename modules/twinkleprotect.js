@@ -460,7 +460,14 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							label: wgULS('用<noinclude>包裹保护模板', '用<noinclude>包裹保護模板'),
 							tooltip: wgULS('将保护模板包裹在&lt;noinclude&gt;中', '將保護模板包裹在&lt;noinclude&gt;中'),
 							checked: (mw.config.get('wgNamespaceNumber') === 10)
-						}
+						},
+						{
+							name: 'showexpiry',
+							label: wgULS('在模板显示到期时间', '在模板顯示到期時間'),
+							tooltip: wgULS('将给模板加上|expiry参数', '將給模板加上|expiry參數'),
+							checked: true,
+							hidden: (e.target.values == 'tag')
+						},
 					]
 				} );
 			break;
@@ -563,7 +570,7 @@ Twinkle.protect.formevents = {
 		e.target.form.createexpiry.disabled = (e.target.value === 'all');
 	},
 	tagtype: function twinkleprotectFormTagtypeEvent(e) {
-		e.target.form.small.disabled = e.target.form.noinclude.disabled = (e.target.value === 'none') || (e.target.value === 'noop');
+		e.target.form.small.disabled = e.target.form.noinclude.disabled = e.target.form.showexpiry.disabled = (e.target.value === 'none') || (e.target.value === 'noop');
 	}
 };
 
@@ -1078,6 +1085,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 		tagparams = {
 			tag: form.tagtype.value,
 			reason: ((form.tagtype.value === 'pp-protected' || form.tagtype.value === 'pp-semi-protected' || form.tagtype.value === 'pp-move') && form.protectReason) ? form.protectReason.value : null,
+			showexpiry: (actiontype === 'protect') ? form.showexpiry.checked : null,
 			expiry: (actiontype === 'protect') ?
 				(form.editmodify.checked ? form.editexpiry.value :
 					(form.movemodify.checked ? form.moveexpiry.value : null)
@@ -1313,7 +1321,7 @@ Twinkle.protect.callbacks = {
 			if( params.reason ) {
 				tag += '|reason=' + params.reason;
 			}
-			if( ['indefinite', 'infinite', 'never', null].indexOf(params.expiry) === -1 ) {
+			if( params.showexpiry && ['indefinite', 'infinite', 'never', null].indexOf(params.expiry) === -1 ) {
 				tag += '|expiry={{subst:#time:c|' + (/^\s*\d+\s*$/.exec(params.expiry) ? params.expiry : '+' + params.expiry) + '}}';
 			}
 			if( params.small ) {
