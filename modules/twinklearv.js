@@ -786,7 +786,7 @@ Twinkle.arv.processSock = function( params ) {
 			} ).join( "\n" ) + "\n" +
 		"| reason = " + params.evidence + "}}";
 
-	var reportpage = 'Wikipedia:元維基用戶查核協助請求';
+	var reportpage = 'Wikipedia:元維基用戶查核請求';
 
 	Morebits.wiki.actionCompleted.redirect = reportpage;
 	Morebits.wiki.actionCompleted.notice = wgULS("报告完成", "報告完成");
