@@ -2471,7 +2471,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 			// only notify user for redirects, not normalization
 			if ( $(xml).find('redirects').length > 0 ) {
-				Morebits.status.info("Info", wgULS("从 ", "從 ") + ctx.pageName + " 重定向到 " + resolvedName );
+				Morebits.status.info(wgULS("信息", "資訊"), wgULS("从 ", "從 ") + ctx.pageName + " 重定向到 " + resolvedName );
 			}
 			ctx.pageName = resolvedName;  // always update in case of normalization
 		}
@@ -3740,7 +3740,7 @@ Morebits.status.prototype = {
 	generate: function() {
 		this.node = document.createElement( 'div' );
 		this.node.appendChild( document.createElement('span') ).appendChild( this.text );
-		this.node.appendChild( document.createElement('span') ).appendChild( document.createTextNode( ': ' ) );
+		this.node.appendChild( document.createElement('span') ).appendChild( document.createTextNode( '：' ) );
 		this.target = this.node.appendChild( document.createElement( 'span' ) );
 		this.target.appendChild(  document.createTextNode( '' ) ); // dummy node
 	},
