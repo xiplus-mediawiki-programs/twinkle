@@ -548,6 +548,7 @@ Twinkle.block.blockPresetsInfo = {
 	'blocked proxy' : {
 		expiry: '2 years',
 		nocreate: true,
+		hardblock: true,
 		nonstandard: true,
 		reason: '{{blocked proxy}}',
 		sig: '~~~~'
@@ -556,6 +557,7 @@ Twinkle.block.blockPresetsInfo = {
 		expiry: '1 week',
 		forAnonOnly: true,
 		nocreate: true,
+		hardblock: true,
 		nonstandard: true,
 		reason: '{{checkuserblock}}',
 		sig: '~~~~'
