@@ -693,6 +693,9 @@ Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets
 					Twinkle.block.blockPresetsInfo[newPreset].reasonParam = true;
 					Twinkle.block.blockPresetsInfo[blockPreset.value] = Twinkle.block.blockPresetsInfo[newPreset];
 				}
+				if (blockGroup.custom && Twinkle.block.blockPresetsInfo[blockPreset.value].expiry === undefined) {
+					Twinkle.block.blockPresetsInfo[blockPreset.value].expiry = '24 hours';
+				}
 				blockPreset.value = newPreset;
 			});
 		});
