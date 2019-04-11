@@ -231,6 +231,15 @@ Twinkle.config.sections = [
 {
 	title: "回退",  // twinklefluff module
 	preferences: [
+		// TwinkleConfig.autoMenuAfterRollback (bool)
+		// Option to automatically open the warning menu if the user talk page is opened post-reversion
+		{
+			name: "autoMenuAfterRollback",
+			label: wgULS("在Twinkle回退后自动打开用户对话页上的Twinkle警告菜单", "在Twinkle回退後自動開啟使用者對話頁上的Twinkle警告選單"),
+			helptip: wgULS("仅在选取下方对应框时才运行", "僅在選取下方對應框時才執行"),
+			type: "boolean"
+		},
+
 		// TwinkleConfig.openTalkPage (array)
 		// What types of actions that should result in opening of talk page
 		{

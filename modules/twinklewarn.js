@@ -18,6 +18,9 @@
 Twinkle.warn = function twinklewarn() {
 	if ( Morebits.wiki.flow.relevantUserName() ) {
 		Twinkle.addPortletLink( Twinkle.warn.callback, "警告", "tw-warn", wgULS("警告或提醒用户", "警告或提醒用戶") );
+		if (Twinkle.getPref('autoMenuAfterRollback') && mw.config.get('wgNamespaceNumber') === 3 && mw.util.getParamValue('vanarticle') && !mw.util.getParamValue('friendlywelcome')) {
+			Twinkle.warn.callback();
+		}
 	}
 
 	// Modify URL of talk page on rollback success pages. This is only used
