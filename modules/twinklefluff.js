@@ -41,10 +41,10 @@ Twinkle.fluff = {
 
 		if( mw.config.get('wgNamespaceNumber') === -1 && mw.config.get('wgCanonicalSpecialPageName') === "Contributions" ) {
 			//Get the username these contributions are for
-			var logLink = $('#contentSub').find('a[title^="Special:日志"]').last();
+			var logLink = $('#contentSub').find('a[title^="Special:日志/block"]').last();
 			if (logLink.length>0) //#215 -- there is no log link on Special:Contributions with no user
 			{
-				var username = decodeURIComponent(/wiki\/Special:%E6%97%A5%E5%BF%97\/(.+)$/.exec(logLink.attr("href").replace(/_/g, "%20"))[1]);
+				var username = decodeURIComponent(/title=Special:%E6%97%A5%E5%BF%97\/block&page=User%3A(.+)$/.exec(logLink.attr("href").replace(/_/g, "%20"))[1]);
 				if( Twinkle.getPref('showRollbackLinks').indexOf('contribs') !== -1 ||
 					( mw.config.get('wgUserName') !== username && Twinkle.getPref('showRollbackLinks').indexOf('others') !== -1 ) ||
 					( mw.config.get('wgUserName') === username && Twinkle.getPref('showRollbackLinks').indexOf('mine') !== -1 ) ) {
