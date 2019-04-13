@@ -33,8 +33,6 @@ Twinkle.warn = function twinklewarn() {
 		}
 	}
 
-	console.log(mw.config.get('wgCanonicalSpecialPageName'));
-	console.log(mw.config.get('wgAbuseFilterVariables') );
 	if ( mw.config.get('wgCanonicalSpecialPageName') === 'AbuseLog' && mw.config.get('wgAbuseFilterVariables') !== null ) {
 		var afTalkLink = $(".mw-usertoollinks-talk").first();
 		if ( afTalkLink.length ) {
