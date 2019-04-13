@@ -28,10 +28,21 @@ Twinkle.warn = function twinklewarn() {
 	if( mw.config.get('wgAction') === 'rollback' ) {
 		var $vandalTalkLink = $("#mw-rollback-success").find(".mw-usertoollinks a").first();
 		if ( $vandalTalkLink.length ) {
-			Twinkle.warn.makeVandalTalkLink($vandalTalkLink);
+			Twinkle.warn.makeVandalTalkLink($vandalTalkLink, Morebits.pageNameNorm);
 			$vandalTalkLink.css("font-weight", "bold");
 		}
 	}
+
+	console.log(mw.config.get('wgCanonicalSpecialPageName'));
+	console.log(mw.config.get('wgAbuseFilterVariables') );
+	if ( mw.config.get('wgCanonicalSpecialPageName') === 'AbuseLog' && mw.config.get('wgAbuseFilterVariables') !== null ) {
+		var afTalkLink = $(".mw-usertoollinks-talk").first();
+		if ( afTalkLink.length ) {
+			Twinkle.warn.makeVandalTalkLink(afTalkLink, mw.config.get('wgAbuseFilterVariables')['page_prefixedtitle']);
+			afTalkLink.css("font-weight", "bold");
+		}
+	}
+
 	// Override the mw.notify function to allow us to inject a link into the
 	// rollback success popup. Only users with the 'rollback' right need this,
 	// but we have no nice way of knowing who has that right (what with global
@@ -83,10 +94,10 @@ Twinkle.warn = function twinklewarn() {
 	// mw.notify([ $("<p>Reverted edits by foo; changed</p>")[0] ], { title: mw.msg('actioncomplete') } );
 };
 
-Twinkle.warn.makeVandalTalkLink = function($vandalTalkLink) {
+Twinkle.warn.makeVandalTalkLink = function($vandalTalkLink, pagename) {
 	$vandalTalkLink.wrapInner($("<span/>").attr("title", wgULS("如果合适，您可以用Twinkle在该用户对话页上做出警告。", "如果合適，您可以用Twinkle在該用戶對話頁上做出警告。")));
 
-	var extraParam = "vanarticle=" + mw.util.rawurlencode(Morebits.pageNameNorm);
+	var extraParam = "vanarticle=" + mw.util.rawurlencode(pagename);
 	var href = $vandalTalkLink.attr("href");
 	if (href.indexOf("?") === -1) {
 		$vandalTalkLink.attr("href", href + "?" + extraParam);

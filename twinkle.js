@@ -472,7 +472,7 @@ $.ajax({
 Twinkle.load = function () {
 	// Don't activate on special pages other than those on the whitelist so that
 	// they load faster, especially the watchlist.
-	var specialPageWhitelist = [ 'Contributions', 'DeletedContributions', 'Prefixindex' ];
+	var specialPageWhitelist = [ 'Contributions', 'DeletedContributions', 'Prefixindex', 'AbuseLog' ];
 	var isSpecialPage = ( mw.config.get('wgNamespaceNumber') === -1 &&
 		specialPageWhitelist.indexOf( mw.config.get('wgCanonicalSpecialPageName') ) === -1 );
 
