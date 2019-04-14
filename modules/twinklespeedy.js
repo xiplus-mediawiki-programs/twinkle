@@ -1136,7 +1136,8 @@ Twinkle.speedy.callbacks = {
 		main: function(pageobj) {
 			var statelem = pageobj.getStatusElement();
 
-			if (!pageobj.exists()) {
+			// defaults to /doc for lua modules, which may not exist
+			if (!pageobj.exists() && mw.config.get('wgPageContentModel') !== 'Scribunto') {
 				statelem.error( wgULS("页面不存在，可能已被删除", "頁面不存在，可能已被刪除") );
 				return;
 			}
@@ -1212,7 +1213,7 @@ Twinkle.speedy.callbacks = {
 			pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
 			pageobj.setTags(Twinkle.getPref('revisionTags'));
 			pageobj.setWatchlist(params.watch);
-			pageobj.setCreateOption('nocreate');
+			pageobj.setCreateOption('recreate'); // Module /doc might not exist
 			pageobj.save(Twinkle.speedy.callbacks.user.tagComplete);
 		},
 
@@ -1632,7 +1633,9 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 	Morebits.wiki.actionCompleted.notice = wgULS("标记完成", "標記完成");
 
-	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS("标记页面", "標記頁面"));
+	// Modules can't be tagged, follow standard at TfD and place on /doc subpage
+	var isScribunto = mw.config.get('wgPageContentModel') === 'Scribunto';
+	var wikipedia_page = isScribunto ? new Morebits.wiki.page(mw.config.get('wgPageName')+'/doc', wgULS("标记模块文档页", "標記模組文件頁")) : new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS("标记页面", "標記頁面"));
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.speedy.callbacks.user.main);
 };

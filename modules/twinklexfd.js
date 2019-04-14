@@ -147,8 +147,9 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 							label: '使用<noinclude>包裹模板',
 							value: 'noinclude',
 							name: 'noinclude',
-							checked: mw.config.get('wgNamespaceNumber') === 10, // Template namespace
-							tooltip: wgULS('使其不会在被包含时出现。', '使其不會在被包含時出現。')
+							checked: mw.config.get('wgNamespaceNumber') === 10 && mw.config.get('wgPageContentModel') !== 'Scribunto', // Template namespace
+							tooltip: wgULS('使其不会在被包含时出现。', '使其不會在被包含時出現。'),
+							disabled: mw.config.get('wgPageContentModel') === 'Scribunto',
 						}
 					]
 		} );
@@ -483,7 +484,8 @@ Twinkle.xfd.callbacks = {
 		},
 		tryTagging: function (pageobj) {
 			var statelem = pageobj.getStatusElement();
-			if (!pageobj.exists()) {
+			// defaults to /doc for lua modules, which may not exist
+			if (!pageobj.exists() && mw.config.get('wgPageContentModel') !== 'Scribunto') {
 				statelem.error(wgULS("页面不存在，可能已被删除", "頁面不存在，可能已被刪除"));
 				return;
 			}
@@ -674,8 +676,9 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		Morebits.wiki.actionCompleted.redirect = logpage;
 		Morebits.wiki.actionCompleted.notice = wgULS("提名完成，重定向到讨论页", "提名完成，重定向到討論頁");
 
-		// Tagging file
-		wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS("添加存废讨论模板到页面", "加入存廢討論模板到頁面"));
+		// Tagging page
+		var isScribunto = mw.config.get('wgPageContentModel') === 'Scribunto';
+		wikipedia_page = isScribunto ? new Morebits.wiki.page(mw.config.get('wgPageName')+'/doc', wgULS("添加存废讨论模板到模块文档页", "加入存廢討論模板到模組文件頁")) : new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS("添加存废讨论模板到页面", "加入存廢討論模板到頁面"));
 		wikipedia_page.setFollowRedirect(false);
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.xfd.callbacks.afd.tryTagging);

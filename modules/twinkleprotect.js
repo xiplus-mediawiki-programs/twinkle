@@ -72,7 +72,7 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 					label: wgULS('用保护模板标记此页', '用保護模板標記此頁'),
 					value: 'tag',
 					tooltip: wgULS('可以用此为页面加上合适的保护模板。', '可以用此為頁面加上合適的保護模板。'),
-					disabled: mw.config.get('wgArticleId') === 0
+					disabled: mw.config.get('wgArticleId') === 0 || mw.config.get('wgPageContentModel') === 'Scribunto',
 				}
 			]
 		} );
@@ -432,7 +432,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					name: 'protectReason',
 					label: wgULS('理由（保护日志）：', '理由（保護日誌）：')
 				});
-			if (!mw.config.get('wgArticleId')) {  // tagging isn't relevant for non-existing pages
+			if (!mw.config.get('wgArticleId') || mw.config.get('wgPageContentModel') === 'Scribunto') {  // tagging isn't relevant for non-existing or module pages
 				break;
 			}
 			/* falls through */
@@ -1036,8 +1036,8 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 			reasonField.value = '';
 		}
 
-		// sort out tagging options
-		if (mw.config.get('wgArticleId')) {
+		// sort out tagging options, disabled if nonexistent or lua
+		if (mw.config.get('wgArticleId') && mw.config.get('wgPageContentModel') !== 'Scribunto') {
 			if( form.category.value === 'unprotect' ) {
 				form.tagtype.value = 'none';
 			} else {
@@ -1079,11 +1079,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 	}
 
 	var tagparams;
-	if( !mw.config.get('wgArticleId') ) {
-		tagparams = {
-			tag: 'noop'
-		};
-	} else if( actiontype === 'tag' || (actiontype === 'protect' && mw.config.get('wgArticleId')) ) {
+	if( actiontype === 'tag' || (actiontype === 'protect' && mw.config.get('wgArticleId') && mw.config.get('wgPageContentModel') !== 'Scribunto') ) {
 		tagparams = {
 			tag: form.tagtype.value,
 			reason: ((form.tagtype.value === 'pp-protected' || form.tagtype.value === 'pp-semi-protected' || form.tagtype.value === 'pp-move') && form.protectReason) ? form.protectReason.value : null,
