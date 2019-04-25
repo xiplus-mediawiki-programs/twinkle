@@ -397,13 +397,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 
 	if (mw.config.get('wgIsRedirect') || Morebits.userIsInGroup('sysop')) {
 		work_area.append( { type: 'header', label: '重定向' } );
-		if (namespace === 0 || namespace === 118) {
-			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.redirectArticleList, mode) } );
-		}
 		work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.redirectList, mode) } );
-		if (namespace === 6) {
-			work_area.append( { type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.redirectFileList, mode) } );
-		}
 	}
 
 	var old_area = Morebits.quickForm.getElements(form, "work_area")[0];
@@ -470,6 +464,12 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 		}
 
 		if (mw.config.get('wgIsRedirect') && criterion.hideWhenRedirect) {
+			return null;
+		}
+
+		if (criterion.showInNamespaces && criterion.showInNamespaces.indexOf(mw.config.get('wgNamespaceNumber')) < 0) {
+			return null;
+		} else if (criterion.hideInNamespaces && criterion.hideInNamespaces.indexOf(mw.config.get('wgNamespaceNumber')) > -1) {
 			return null;
 		}
 
@@ -668,12 +668,14 @@ Twinkle.speedy.generalList = [
 	{
 		label: wgULS('G1: 没有实际内容的页面', 'G1: 沒有實際內容的頁面'),
 		value: 'g1',
-		tooltip: wgULS('如“adfasddd”。参见Wikipedia:胡言乱语。但注意：图片也算是内容。', '如「adfasddd」。參見Wikipedia:胡言亂語。但注意：圖片也算是內容。')
+		tooltip: wgULS('如“adfasddd”。参见Wikipedia:胡言乱语。但注意：图片也算是内容。', '如「adfasddd」。參見Wikipedia:胡言亂語。但注意：圖片也算是內容。'),
+		hideInNamespaces: [ 2, 3 ], // user, user talk
 	},
 	{
 		label: wgULS('G2: 测试页面', 'G2: 測試頁面'),
 		value: 'g2',
-		tooltip: wgULS('例如：“这是一个测试。”', '例如：「這是一個測試。」')
+		tooltip: wgULS('例如：“这是一个测试。”', '例如：「這是一個測試。」'),
+		hideInNamespaces: [ 2, 3 ], // user, user talk
 	},
 	{
 		label: wgULS('G3: 纯粹破坏，包括但不限于明显的恶作剧、错误信息、人身攻击等', 'G3: 純粹破壞，包括但不限於明顯的惡作劇、錯誤資訊、人身攻擊等'),
@@ -726,12 +728,14 @@ Twinkle.speedy.generalList = [
 		label: wgULS('G13: 明显、拙劣的机器翻译', 'G13: 明顯、拙劣的機器翻譯'),
 		value: 'g13',
 		tooltip: wgULS('不适用于所有的讨论名字空间、草稿名字空间和用户名字空间。', '不適用於所有的討論命名空間、草稿命名空間和使用者命名空間。'),
+		hideInNamespaces: [ 1, 2, 3, 5, 7, 9, 11, 13, 15, 101, 118, 119, 829 ], // all talk, user, draft
 	},
 	{
 		label: wgULS('G14: 超过两周没有进行任何翻译的非现代标准汉语页面', 'G14: 超過兩周沒有進行任何翻譯的非現代標準漢語頁面'),
 		value: 'g14',
 		tooltip: wgULS('包括所有未翻译的外语、汉语方言以及文言文。', '包括所有未翻譯的外語、漢語方言以及文言文。'),
-		hideWhenUser: true
+		hideWhenUser: true,
+		showInNamespaces: [ 0, 4, 12 ], // main, wikipedia, help
 	},
 	{
 		label: wgULS('G15: 孤立页面，比如没有主页面的讨论页、指向空页面的重定向等', 'G15: 孤立頁面，比如沒有主頁面的討論頁、指向空頁面的重定向等'),
@@ -741,19 +745,18 @@ Twinkle.speedy.generalList = [
 	{
 		label: wgULS('G16: 因为主页面侵权而创建的临时页面仍然侵权', 'G16: 因為主頁面侵權而建立的臨時頁面仍然侵權'),
 		value: 'g16',
-		hideWhenUser: true
-	}
-];
-
-Twinkle.speedy.redirectArticleList = [
-	{
-		label: wgULS('R2: 跨名字空间重定向。', 'R2: 跨命名空間的重新導向。'),
-		value: 'r2',
-		tooltip: wgULS('由条目的名字空间重定向至非条目名字空间，或者从草稿名字空间指向非草稿名字空间的重定向。', '由條目的命名空間重新導向至非條目命名空間，或者從草稿命名空間指向非草稿命名空間的重新導向。')
+		hideWhenUser: true,
+		showInNamespaces: [ 118 ], // draft
 	}
 ];
 
 Twinkle.speedy.redirectList = [
+	{
+		label: wgULS('R2: 跨名字空间重定向。', 'R2: 跨命名空間的重新導向。'),
+		value: 'r2',
+		tooltip: wgULS('由条目的名字空间重定向至非条目名字空间，或者从草稿名字空间指向非草稿名字空间的重定向。', '由條目的命名空間重新導向至非條目命名空間，或者從草稿命名空間指向非草稿命名空間的重新導向。'),
+		showInNamespaces: [ 0, 118 ], // main, draft
+	},
 	{
 		label: wgULS('R3: 格式错误，或明显笔误的重定向。', 'R3: 格式錯誤，或明顯筆誤的重新導向。'),
 		value: 'r3',
@@ -786,16 +789,14 @@ Twinkle.speedy.redirectList = [
 		tooltip: '如A→B→C→……→A。'
 	},
 	{
+		label: wgULS('R6: 移动文件而产生的重定向，且页面标题不匹配文件名称指引。', 'R6: 移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引。'),
+		value: 'r6',
+		showInNamespaces: [ 6 ], // file
+	},
+	{
 		label: wgULS('R7: 明显与导向目标所涵盖的主题无关或比导向目标所涵盖的主题更广泛的重定向。', 'R7: 明顯與導向目標所涵蓋的主題無關或比導向目標所涵蓋的主題更廣泛的重新導向。'),
 		value: 'r7',
 		tooltip: wgULS('挂有{{关注度重定向}}或{{合并重定向}}模板的页面不适用，请改为提出存废讨论。如有用户对标题用字存在未解决的争议，则应交由存废讨论处理。', '掛有{{關注度重定向}}或{{合併重定向}}模板的頁面不適用，請改為提出存廢討論。如有使用者對標題用字存在未解決的爭議，則應交由存廢討論處理。')
-	}
-];
-
-Twinkle.speedy.redirectFileList = [
-	{
-		label: wgULS('R6: 移动文件而产生的重定向，且页面标题不匹配文件名称指引。', 'R6: 移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引。'),
-		value: 'r6'
 	}
 ];
 
