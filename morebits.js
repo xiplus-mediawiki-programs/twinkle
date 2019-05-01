@@ -1654,9 +1654,8 @@ Morebits.wiki.api.setApiUserAgent = function(ua) {
  *    onSuccess - callback function which is called when the load has succeeded
  *    onFailure - callback function which is called when the load fails (optional)
  *
- * save(onSuccess, onFailure): Saves the text for the page. Must be preceded by calling load().
- *    onSuccess - callback function which is called when the save has succeeded (optional)
- *    onFailure - callback function which is called when the save fails (optional)
+ * save([onSuccess], [onFailure]):  Saves the text set via setPageText() for the page.
+ * Must be preceded by calling load().
  *    Warning: Calling save() can result in additional calls to the previous load() callbacks to
  *             recover from edit conflicts!
  *             In this case, callers must make the same edit to the new pageText and reinvoke save().
@@ -1779,6 +1778,10 @@ Morebits.wiki.api.setApiUserAgent = function(ua) {
  *
  * deletePage(onSuccess, onFailure): Deletes a page (for admins only)
  *
+ * undeletePage(onSuccess, [onFailure]): Undeletes a page (for admins only)
+ *
+ * protect(onSuccess, [onFailure]): Protects a page
+ *
  */
 
 /**
@@ -1885,6 +1888,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		onMoveFailure: null,
 		onDeleteSuccess: null,
 		onDeleteFailure: null,
+		onUndeleteSuccess: null,
+		onUndeleteFailure: null,
 		onProtectSuccess: null,
 		onProtectFailure: null,
 		onStabilizeSuccess: null,
@@ -1899,6 +1904,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		moveProcessApi: null,
 		deleteApi: null,
 		deleteProcessApi: null,
+		undeleteApi: null,
+		undeleteProcessApi: null,
 		protectApi: null,
 		protectProcessApi: null,
 		stabilizeApi: null,
@@ -2355,6 +2362,49 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		}
 	};
 
+	/**
+	 * Undeletes a page (for admins only)
+	 * @param {Function} onSuccess - callback function to run on success
+	 * @param {Function} [onFailure] - callback function to run on failure (optional)
+	 */
+	this.undeletePage = function(onSuccess, onFailure) {
+		ctx.onUndeleteSuccess = onSuccess;
+		ctx.onUndeleteFailure = onFailure || emptyFunction;
+
+		// if a non-admin tries to do this, don't bother
+		if (!Morebits.userIsInGroup('sysop')) {
+			ctx.statusElement.error(wgULS('不能取消删除页面：只有管理员可进行该操作', '不能取消刪除頁面：只有管理員可進行該操作'));
+			ctx.onUndeleteFailure(this);
+			return;
+		}
+		if (!ctx.editSummary) {
+			ctx.statusElement.error('内部错误：取消删除前未提供理由（使用setEditSummary函数）！', '內部錯誤：取消刪除前未提供理由（使用setEditSummary函式）！');
+			ctx.onUndeleteFailure(this);
+			return;
+		}
+
+		if (fnCanUseMwUserToken('undelete')) {
+			fnProcessUndelete.call(this, this);
+		} else {
+			var query = {
+				action: 'query',
+				prop: 'info',
+				inprop: 'protection',
+				intoken: 'undelete',
+				titles: ctx.pageName
+			};
+
+			ctx.undeleteApi = new Morebits.wiki.api(wgULS('抓取取消删除令牌…', '擷取取消刪除權杖…'), query, fnProcessUndelete, ctx.statusElement, ctx.onUndeleteFailure);
+			ctx.undeleteApi.setParent(this);
+			ctx.undeleteApi.post();
+		}
+	};
+
+	/**
+	 * Protects a page (for admins only)
+	 * @param {Function} onSuccess - callback function to run on success
+	 * @param {Function} [onFailure] - callback function to run on failure (optional)
+	 */
 	this.protect = function(onSuccess, onFailure) {
 		ctx.onProtectSuccess = onSuccess;
 		ctx.onProtectFailure = onFailure || emptyFunction;
@@ -2912,7 +2962,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.watch = 'true';
 		}
 
-		ctx.undeleteProcessApi = new Morebits.wiki.api(wgULS('取消删除...', '取消刪除...'), query, ctx.onUndeleteSuccess, ctx.statusElement, fnProcessUndeleteError);
+		ctx.undeleteProcessApi = new Morebits.wiki.api(wgULS('取消删除…', '取消刪除…'), query, ctx.onUndeleteSuccess, ctx.statusElement, fnProcessUndeleteError);
 		ctx.undeleteProcessApi.setParent(this);
 		ctx.undeleteProcessApi.post();
 	};
