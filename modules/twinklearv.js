@@ -168,6 +168,19 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					}
 				]
 			} );
+		if (!mw.util.isIPAddress( Morebits.wiki.flow.relevantUserName() )) {
+			work_area.append( {
+				type: 'checkbox',
+				list: [
+					{
+						label: wgULS('在页面上及编辑摘要隐藏用户名', '在頁面上及編輯摘要隱藏用戶名'),
+						tooltip: wgULS('若用户名不当请勾选此项，注意：请考虑私下联系管理员处理。', '若用戶名不當請勾選此項，注意：請考慮私下聯絡管理員處理。'),
+						name: 'hidename',
+						value: 'hidename',
+					},
+				]
+			} );
+		}
 		work_area.append( {
 				type: 'textarea',
 				name: 'reason',
@@ -507,6 +520,14 @@ Twinkle.arv.callback.evaluate = function(e) {
 				return;
 			}
 
+			var header = '\n=== {{vandal|' + (/=/.test( uid ) ? '1=' : '' ) + uid;
+			var summary = wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]。';
+			if (form.hidename.checked) {
+				header += '|hidename=1';
+				summary = wgULS('报告一名用户。', '報告一名用戶。');
+			}
+			header += '}} ===\n';
+
 			types = types.map( function(v) {
 					switch(v) {
 						case 'final':
@@ -569,9 +590,9 @@ Twinkle.arv.callback.evaluate = function(e) {
 				}
 				aivPage.setPageSection( 0 );
 				aivPage.getStatusElement().status( wgULS('添加新报告…', '加入新報告…') );
-				aivPage.setEditSummary( wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]。' + Twinkle.getPref('summaryAd') );
+				aivPage.setEditSummary( summary + Twinkle.getPref('summaryAd') );
 				aivPage.setTags(Twinkle.getPref('revisionTags'));
-				aivPage.setAppendText( '\n=== {{vandal|' + (/=/.test( uid ) ? '1=' : '' ) + uid + '}} ===\n' + reason );
+				aivPage.setAppendText( header + reason );
 				aivPage.append();
 			} );
 			break;
@@ -775,7 +796,7 @@ Twinkle.arv.processSock = function( params ) {
 				notify(socks[i], socks[i], onSuccess);
 			}
 		}
-		
+
 	}
 
 	// prepare the SPI report
