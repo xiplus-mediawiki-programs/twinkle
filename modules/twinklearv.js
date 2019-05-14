@@ -522,7 +522,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 
 			var header = '\n=== {{vandal|' + (/=/.test( uid ) ? '1=' : '' ) + uid;
 			var summary = wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]。';
-			if (form.hidename.checked) {
+			if (form.hidename && form.hidename.checked) {
 				header += '|hidename=1';
 				summary = wgULS('报告一名用户。', '報告一名用戶。');
 			}
