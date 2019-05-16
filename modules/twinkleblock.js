@@ -1141,6 +1141,9 @@ Twinkle.block.formatBlockTime =  function twinkleblockFormatBlockTime(time) {
 	if ((m = time.match(/^\s*(\d+)\s*days?\s*$/)) !== null) {
 		return m[1] + '天';
 	}
+	if ((m = time.match(/^\s*(\d+)\s*weeks?\s*$/)) !== null) {
+		return m[1] + '週';
+	}
 	if ((m = time.match(/^\s*(\d+)\s*months?\s*$/)) !== null) {
 		return m[1] + '月';
 	}
