@@ -428,7 +428,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 					{ label: '{{Sockpuppeteer|blocked}}：傀儡主帳號', value: 'spm' }
 				]
 			} );
-		
+
 		field_tag_options.append( {
 			type: 'input',
 			name: 'username',
@@ -1127,6 +1127,29 @@ Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTempla
 
 };
 
+Twinkle.block.formatBlockTime =  function twinkleblockFormatBlockTime(time) {
+	var m;
+	if ((m = time.match(/^\s*(\d+)\s*seconds?\s*$/)) !== null) {
+		return m[1] + '秒';
+	}
+	if ((m = time.match(/^\s*(\d+)\s*min(ute)?s?\s*$/)) !== null) {
+		return m[1] + '分';
+	}
+	if ((m = time.match(/^\s*(\d+)\s*hours?\s*$/)) !== null) {
+		return m[1] + '小時';
+	}
+	if ((m = time.match(/^\s*(\d+)\s*days?\s*$/)) !== null) {
+		return m[1] + '天';
+	}
+	if ((m = time.match(/^\s*(\d+)\s*months?\s*$/)) !== null) {
+		return m[1] + '月';
+	}
+	if ((m = time.match(/^\s*(\d+)\s*years?\s*$/)) !== null) {
+		return m[1] + '年';
+	}
+	return time;
+}
+
 Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 	var text = '{{', settings = Twinkle.block.blockPresetsInfo[params.template];
 
@@ -1138,7 +1161,7 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 			if (params.indefinite) {
 				text += '|indef=yes';
 			} else if(!params.blank_duration) {
-				text += '|time=' + params.expiry;
+				text += '|time=' + Twinkle.block.formatBlockTime(params.expiry);
 			}
 		}
 
