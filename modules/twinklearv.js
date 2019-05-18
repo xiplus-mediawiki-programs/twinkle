@@ -234,6 +234,18 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				]
 			} );
 		work_area.append( {
+			type: 'checkbox',
+			list: [
+				{
+					label: wgULS('在页面上隐藏用户名（需监督的用户名请勿于站内报告，勾选此项并不构成能在站内报告的理由）', '在頁面上隱藏用戶名（需監督的用戶名請勿於站內報告，勾選此項並不構成能在站內報告的理由）'),
+					tooltip: wgULS('若用户名不当请勾选此项，注意：请考虑私下联系管理员处理。', '若用戶名不當請勾選此項，注意：請考慮私下聯絡管理員處理。'),
+					name: 'hidename',
+					value: 'hidename',
+				},
+			],
+			style: 'font-weight: bold;',
+		} );
+		work_area.append( {
 				type: 'textarea',
 				name: 'reason',
 				label: wgULS('评论：', '評論：')
@@ -618,7 +630,11 @@ Twinkle.arv.callback.evaluate = function(e) {
 			} else {
 				types = [ types.slice( 0, -1 ).join( '、' ), types.slice( -1 ) ].join( '和' );
 			}
-			reason = "*{{user-uaa|1=" + uid + "}} &ndash; ";
+			reason = "*{{user-uaa|1=" + uid;
+			if (form.hidename.checked) {
+				reason += '|hidename=1';
+			}
+			reason += "}} &ndash; ";
 			if ( types.length ) {
 				reason += types + wgULS("用户名", "用戶名");
 			}
