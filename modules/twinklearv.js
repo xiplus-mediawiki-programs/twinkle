@@ -34,10 +34,11 @@ Twinkle.arv.callback = function ( uid ) {
 	var Window = new Morebits.simpleWindow( 600, 500 );
 	Window.setTitle( wgULS("报告用户给管理人员", "報告用戶給管理人員") );
 	Window.setScriptName( "Twinkle" );
-	Window.addFooterLink( wgULS("VIP指导", "VIP指導"), "WP:VIP" );
-	Window.addFooterLink( "UAA指引", "WP:U" );
-	Window.addFooterLink( wgULS("关于RFCU", "關於RFCU"), "WP:RFCU" );
-	Window.addFooterLink( wgULS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#arv" );
+	Window.addFooterLink( "VIP", "WP:VIP" );
+	Window.addFooterLink( "UAA", "WP:UAA" );
+	Window.addFooterLink( wgULS("用户名方针", "使用者名稱方針"), "WP:U" );
+	Window.addFooterLink( "SRCU", "WP:SRCU" );
+	Window.addFooterLink( wgULS("Twinkle帮助", "Twinkle說明"), "H:TW#告狀" );
 
 	var form = new Morebits.quickForm( Twinkle.arv.callback.evaluate );
 	var categories = form.append( {
