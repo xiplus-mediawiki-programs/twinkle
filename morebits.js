@@ -1458,7 +1458,9 @@ Morebits.wiki.actionCompleted = function(self) {
 
 // Change per action wanted
 Morebits.wiki.actionCompleted.event = function() {
-	new Morebits.status(Morebits.wiki.actionCompleted.notice, Morebits.wiki.actionCompleted.postfix, 'info');
+	if (Morebits.wiki.actionCompleted.notice) {
+		Morebits.status.actionCompleted(Morebits.wiki.actionCompleted.notice);
+	}
 	if (Morebits.wiki.actionCompleted.redirect) {
 		// if it isn't a URL, make it one. TODO: This breaks on the articles 'http://', 'ftp://', and similar ones.
 		if (!(/^\w+:\/\//).test(Morebits.wiki.actionCompleted.redirect)) {
@@ -1475,8 +1477,7 @@ Morebits.wiki.actionCompleted.event = function() {
 
 Morebits.wiki.actionCompleted.timeOut = typeof window.wpActionCompletedTimeOut === 'undefined' ? 5000 : window.wpActionCompletedTimeOut ;
 Morebits.wiki.actionCompleted.redirect = null;
-Morebits.wiki.actionCompleted.notice = wgULS('动作', '動作');
-Morebits.wiki.actionCompleted.postfix = '已完成';
+Morebits.wiki.actionCompleted.notice = null;
 
 Morebits.wiki.addCheckpoint = function() {
 	++Morebits.wiki.nbrOfCheckpointsLeft;
@@ -4103,8 +4104,26 @@ Morebits.status.error = function(text, status) {
 	return new Morebits.status(text, status, 'error');
 };
 
-// display the user's rationale, comments, etc. back to them after a failure,
-// so they don't use it
+/**
+ * For the action complete message at the end, create a status line without
+ * a colon separator.
+ * @param {String} text
+ */
+Morebits.status.actionCompleted = function(text) {
+	var node = document.createElement('div');
+	node.appendChild(document.createElement('span')).appendChild(document.createTextNode(text));
+	node.className = 'tw_status_info';
+	if (Morebits.status.root) {
+		Morebits.status.root.appendChild(node);
+	}
+};
+
+/**
+ * Display the user's rationale, comments, etc. back to them after a failure,
+ * so that they may re-use it
+ * @param {string} comments
+ * @param {string} message
+ */
 Morebits.status.printUserText = function(comments, message) {
 	var p = document.createElement('p');
 	p.textContent = message;

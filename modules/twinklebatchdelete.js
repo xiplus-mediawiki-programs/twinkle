@@ -193,8 +193,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 };
 
 Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvaluate(event) {
-	Morebits.wiki.actionCompleted.notice = wgULS('状态', '狀態');
-	Morebits.wiki.actionCompleted.postfix = wgULS('批量删除已完成', '批量刪除已完成');
+	Morebits.wiki.actionCompleted.notice = wgULS('批量删除已完成', '批量刪除已完成');
 
 	var numProtected = $(Morebits.quickForm.getElements(event.target, 'pages')).filter(function(index, element) {
 		return element.checked && element.nextElementSibling.style.color === 'red';
