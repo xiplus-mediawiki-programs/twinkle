@@ -10,7 +10,8 @@
  *** twinklewarn.js: Warn module
  ****************************************
  * Mode of invocation:     Tab ("Warn")
- * Active on:              User talk pages
+ * Active on:              Any page with relevant user name (userspace, contribs,
+ *                         etc.), as well as diffs and the rollback success page
  * Config directives in:   TwinkleConfig
  */
 
@@ -18,7 +19,8 @@
 Twinkle.warn = function twinklewarn() {
 	if ( Morebits.wiki.flow.relevantUserName() ) {
 		Twinkle.addPortletLink( Twinkle.warn.callback, "警告", "tw-warn", wgULS("警告或提醒用户", "警告或提醒用戶") );
-		if (Twinkle.getPref('autoMenuAfterRollback') && mw.config.get('wgNamespaceNumber') === 3 && mw.util.getParamValue('vanarticle') && !mw.util.getParamValue('friendlywelcome')) {
+		if (Twinkle.getPref('autoMenuAfterRollback') && mw.config.get('wgNamespaceNumber') === 3 &&
+			mw.util.getParamValue('vanarticle') && !mw.util.getParamValue('friendlywelcome') && !mw.util.getParamValue('noautowarn')) {
 			Twinkle.warn.callback();
 		}
 	}
@@ -39,6 +41,25 @@ Twinkle.warn = function twinklewarn() {
 			Twinkle.warn.makeVandalTalkLink(afTalkLink, mw.config.get('wgAbuseFilterVariables')['page_prefixedtitle']);
 			afTalkLink.css("font-weight", "bold");
 		}
+	} else if (mw.config.get('wgDiffNewId') || mw.config.get('wgDiffOldId')) {
+		// Autofill user talk links on diffs with vanarticle for easy
+		// warning, but don't autowarn
+		var warnFromTalk = function(talkLink) {
+			if (talkLink.length) {
+				talkLink.css('font-weight', 'bold');
+
+				var extraParams = 'vanarticle=' + mw.util.rawurlencode(Morebits.pageNameNorm) + '&' + 'noautowarn=true';
+				var href = talkLink.attr('href');
+				if (href.indexOf('?') === -1) {
+					talkLink.attr('href', href + '?' + extraParams);
+				} else {
+					talkLink.attr('href', href + '&' + extraParams);
+				}
+			}
+		};
+
+		warnFromTalk($('#mw-diff-otitle2 .mw-usertoollinks a').first());
+		warnFromTalk($('#mw-diff-ntitle2 .mw-usertoollinks a').first());
 	}
 
 	// Override the mw.notify function to allow us to inject a link into the
