@@ -1,8 +1,7 @@
-//<nowiki>
-// vim: set noet sts=0 sw=8:
+// <nowiki>
 
 
-(function($){
+(function($) {
 
 
 /*
@@ -17,80 +16,80 @@
 // Note: a lot of code in this module is re-used/called by batchprotect.
 
 Twinkle.protect = function twinkleprotect() {
-	if ( mw.config.get('wgNamespaceNumber') < 0 ) {
+	if (mw.config.get('wgNamespaceNumber') < 0) {
 		return;
 	}
 
 	// 如果是Flow讨论版而且是“Topic:”开头的帖子则不显示
-	if ( mw.config.get('wgPageContentModel') === 'flow-board' && mw.config.get('wgPageName').indexOf('Topic:') === 0 ) {
+	if (mw.config.get('wgPageContentModel') === 'flow-board' && mw.config.get('wgPageName').indexOf('Topic:') === 0) {
 		return;
 	}
 
-	Twinkle.addPortletLink(Twinkle.protect.callback, wgULS("保护", "保護"), "tw-rpp",
-		Morebits.userIsInGroup('sysop') ? wgULS("保护页面", "保護頁面") : wgULS("请求保护页面", "請求保護頁面") );
+	Twinkle.addPortletLink(Twinkle.protect.callback, wgULS('保护', '保護'), 'tw-rpp',
+		Morebits.userIsInGroup('sysop') ? wgULS('保护页面', '保護頁面') : wgULS('请求保护页面', '請求保護頁面'));
 };
 
 Twinkle.protect.callback = function twinkleprotectCallback() {
-	var Window = new Morebits.simpleWindow( 620, 530 );
-	Window.setTitle( Morebits.userIsInGroup( 'sysop' ) ? wgULS("施行或请求保护页面", "施行或請求保護頁面") : wgULS("请求保护页面", "請求保護頁面") );
-	Window.setScriptName( "Twinkle" );
-	Window.addFooterLink( wgULS("保护模板", "保護模板"), "Template:Protection templates" );
-	Window.addFooterLink( wgULS("保护方针", "保護方針"), "WP:PROT" );
-	Window.addFooterLink( wgULS("Twinkle帮助", "Twinkle說明"), "WP:TW/DOC#protect" );
+	var Window = new Morebits.simpleWindow(620, 530);
+	Window.setTitle(Morebits.userIsInGroup('sysop') ? wgULS('施行或请求保护页面', '施行或請求保護頁面') : wgULS('请求保护页面', '請求保護頁面'));
+	Window.setScriptName('Twinkle');
+	Window.addFooterLink(wgULS('保护模板', '保護模板'), 'Template:Protection templates');
+	Window.addFooterLink(wgULS('保护方针', '保護方針'), 'WP:PROT');
+	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#protect');
 
-	var form = new Morebits.quickForm( Twinkle.protect.callback.evaluate );
-	var actionfield = form.append( {
-			type: 'field',
-			label: wgULS('操作类型', '操作類別')
-		} );
-	if( Morebits.userIsInGroup( 'sysop' ) ) {
-		actionfield.append( {
-				type: 'radio',
-				name: 'actiontype',
-				event: Twinkle.protect.callback.changeAction,
-				list: [
-					{
-						label: wgULS('保护页面', '保護頁面'),
-						value: 'protect',
-						checked: true
-					}
-				]
-			} );
-	}
-	actionfield.append( {
+	var form = new Morebits.quickForm(Twinkle.protect.callback.evaluate);
+	var actionfield = form.append({
+		type: 'field',
+		label: wgULS('操作类型', '操作類別')
+	});
+	if (Morebits.userIsInGroup('sysop')) {
+		actionfield.append({
 			type: 'radio',
 			name: 'actiontype',
 			event: Twinkle.protect.callback.changeAction,
 			list: [
 				{
-					label: wgULS('请求保护页面', '請求保護頁面'),
-					value: 'request',
-					tooltip: wgULS('如果您想在WP:RFPP请求保护此页', '如果您想在WP:RFPP請求保護此頁') + (Morebits.userIsInGroup('sysop') ? '而不是自行完成。' : '。'),
-					checked: !Morebits.userIsInGroup('sysop')
-				},
-				{
-					label: wgULS('用保护模板标记此页', '用保護模板標記此頁'),
-					value: 'tag',
-					tooltip: wgULS('可以用此为页面加上合适的保护模板。', '可以用此為頁面加上合適的保護模板。'),
-					disabled: mw.config.get('wgArticleId') === 0 || mw.config.get('wgPageContentModel') === 'Scribunto',
+					label: wgULS('保护页面', '保護頁面'),
+					value: 'protect',
+					checked: true
 				}
 			]
-		} );
+		});
+	}
+	actionfield.append({
+		type: 'radio',
+		name: 'actiontype',
+		event: Twinkle.protect.callback.changeAction,
+		list: [
+			{
+				label: wgULS('请求保护页面', '請求保護頁面'),
+				value: 'request',
+				tooltip: wgULS('如果您想在WP:RFPP请求保护此页', '如果您想在WP:RFPP請求保護此頁') + (Morebits.userIsInGroup('sysop') ? '而不是自行完成。' : '。'),
+				checked: !Morebits.userIsInGroup('sysop')
+			},
+			{
+				label: wgULS('用保护模板标记此页', '用保護模板標記此頁'),
+				value: 'tag',
+				tooltip: wgULS('可以用此为页面加上合适的保护模板。', '可以用此為頁面加上合適的保護模板。'),
+				disabled: mw.config.get('wgArticleId') === 0 || mw.config.get('wgPageContentModel') === 'Scribunto'
+			}
+		]
+	});
 
 	form.append({ type: 'field', label: wgULS('默认', '預設'), name: 'field_preset' });
 	form.append({ type: 'field', label: '1', name: 'field1' });
 	form.append({ type: 'field', label: '2', name: 'field2' });
 
-	form.append( { type:'submit' } );
+	form.append({ type: 'submit' });
 
 	var result = form.render();
-	Window.setContent( result );
+	Window.setContent(result);
 	Window.display();
 
 	// We must init the controls
-	var evt = document.createEvent( "Event" );
-	evt.initEvent( 'change', true, true );
-	result.actiontype[0].dispatchEvent( evt );
+	var evt = document.createEvent('Event');
+	evt.initEvent('change', true, true);
+	result.actiontype[0].dispatchEvent(evt);
 
 	Morebits.wiki.actionCompleted.postfix = false;  // avoid Action: completed notice
 
@@ -118,13 +117,13 @@ Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLev
 		titles: mw.config.get('wgPageName')
 	});
 
-	$.when.apply($, [protectDeferred]).done(function(protectData){
+	$.when.apply($, [protectDeferred]).done(function(protectData) {
 		var pageid = protectData.query.pageids[0];
 		var page = protectData.query.pages[pageid];
 		var current = {};
 
-		$.each(page.protection, function( index, protection ) {
-			if (protection.type !== "aft") {
+		$.each(page.protection, function(index, protection) {
+			if (protection.type !== 'aft') {
 				current[protection.type] = {
 					level: protection.level,
 					expiry: protection.expiry,
@@ -144,13 +143,14 @@ Twinkle.protect.callback.showLogAndCurrentProtectInfo = function twinkleprotectC
 	var currentlyProtected = !$.isEmptyObject(Twinkle.protect.currentProtectionLevels);
 
 	if (Twinkle.protect.hasProtectLog || Twinkle.protect.hasStableLog) {
-		var $linkMarkup = $("<span>");
+		var $linkMarkup = $('<span>');
 
-		if (Twinkle.protect.hasProtectLog)
+		if (Twinkle.protect.hasProtectLog) {
 			$linkMarkup.append(
-				$( '<a target="_blank" href="' + mw.util.getUrl('Special:Log', {action: 'view', page: mw.config.get('wgPageName'), type: 'protect'}) + '">'+wgULS('保护日志', '保護日誌')+'</a>' ),
-				Twinkle.protect.hasStableLog ? $("<span> &bull; </span>") : null
+				$('<a target="_blank" href="' + mw.util.getUrl('Special:Log', {action: 'view', page: mw.config.get('wgPageName'), type: 'protect'}) + '">' + wgULS('保护日志', '保護日誌') + '</a>'),
+				Twinkle.protect.hasStableLog ? $('<span> &bull; </span>') : null
 			);
+		}
 
 		Morebits.status.init($('div[name="hasprotectlog"] span')[0]);
 		Morebits.status.warn(
@@ -165,22 +165,22 @@ Twinkle.protect.callback.showLogAndCurrentProtectInfo = function twinkleprotectC
 	if (currentlyProtected) {
 		$.each(Twinkle.protect.currentProtectionLevels, function(type, settings) {
 			var label = Morebits.string.toUpperCaseFirstChar(type);
-			protectionNode.push($("<b>" + label + ": " + settings.level + "</b>")[0]);
+			protectionNode.push($('<b>' + label + ': ' + settings.level + '</b>')[0]);
 			if (settings.expiry === 'infinity') {
-				protectionNode.push(wgULS("（无限期）", "（無限期）"));
+				protectionNode.push(wgULS('（无限期）', '（無限期）'));
 			} else {
-				protectionNode.push(wgULS("（过期：", "（過期：") + new Date(settings.expiry).toUTCString() + ") ");
+				protectionNode.push(wgULS('（过期：', '（過期：') + new Date(settings.expiry).toUTCString() + ') ');
 			}
 			if (settings.cascade) {
-				protectionNode.push(wgULS("（连锁）", "（連鎖）"));
+				protectionNode.push(wgULS('（连锁）', '（連鎖）'));
 			}
 		});
 		statusLevel = 'warn';
 	} else {
-		protectionNode.push($("<b>"+wgULS("无保护", "無保護")+"</b>")[0]);
+		protectionNode.push($('<b>' + wgULS('无保护', '無保護') + '</b>')[0]);
 	}
 
-	Morebits.status[statusLevel](wgULS("当前保护等级", "當前保護等級"), protectionNode);
+	Morebits.status[statusLevel](wgULS('当前保护等级', '當前保護等級'), protectionNode);
 };
 
 Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAction(e) {
@@ -193,14 +193,14 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 		case 'protect':
 			field_preset = new Morebits.quickForm.element({ type: 'field', label: wgULS('默认', '預設'), name: 'field_preset' });
 			field_preset.append({
-					type: 'select',
-					name: 'category',
-					label: wgULS('选择默认：', '選擇預設：'),
-					event: Twinkle.protect.callback.changePreset,
-					list: (mw.config.get('wgArticleId') ?
-						Twinkle.protect.protectionTypesAdmin :
-						Twinkle.protect.protectionTypesCreate)
-				});
+				type: 'select',
+				name: 'category',
+				label: wgULS('选择默认：', '選擇預設：'),
+				event: Twinkle.protect.callback.changePreset,
+				list: mw.config.get('wgArticleId') ?
+					Twinkle.protect.protectionTypesAdmin :
+					Twinkle.protect.protectionTypesCreate
+			});
 
 			field2 = new Morebits.quickForm.element({ type: 'field', label: wgULS('保护选项', '保護設定'), name: 'field2' });
 			field2.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
@@ -208,230 +208,230 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			// for existing pages
 			if (mw.config.get('wgArticleId')) {
 				field2.append({
-						type: 'checkbox',
-						name: 'editmodify',
-						event: Twinkle.protect.formevents.editmodify,
-						list: [
-							{
-								label: wgULS('修改编辑权限', '修改編輯權限'),
-								value: 'editmodify',
-								tooltip: wgULS('如果此项关闭，编辑权限将不会修改。', '如果此項關閉，編輯權限將不會修改。'),
-								checked: true
-							}
-						]
-					});
+					type: 'checkbox',
+					name: 'editmodify',
+					event: Twinkle.protect.formevents.editmodify,
+					list: [
+						{
+							label: wgULS('修改编辑权限', '修改編輯權限'),
+							value: 'editmodify',
+							tooltip: wgULS('如果此项关闭，编辑权限将不会修改。', '如果此項關閉，編輯權限將不會修改。'),
+							checked: true
+						}
+					]
+				});
 				var editlevel = field2.append({
-						type: 'select',
-						name: 'editlevel',
-						label: wgULS('编辑权限：', '編輯權限：'),
-						event: Twinkle.protect.formevents.editlevel
-					});
+					type: 'select',
+					name: 'editlevel',
+					label: wgULS('编辑权限：', '編輯權限：'),
+					event: Twinkle.protect.formevents.editlevel
+				});
 				editlevel.append({
-						type: 'option',
-						label: wgULS('（站点默认）', '（站點預設）'),
-						value: 'all'
-					});
+					type: 'option',
+					label: wgULS('（站点默认）', '（站點預設）'),
+					value: 'all'
+				});
 				editlevel.append({
-						type: 'option',
-						label: wgULS('仅允许自动确认用户', '僅允許自動確認用戶'),
-						value: 'autoconfirmed'
-					});
+					type: 'option',
+					label: wgULS('仅允许自动确认用户', '僅允許自動確認用戶'),
+					value: 'autoconfirmed'
+				});
 				editlevel.append({
-						type: 'option',
-						label: wgULS('仅管理员', '僅管理員'),
-						value: 'sysop',
-						selected: true
-					});
+					type: 'option',
+					label: wgULS('仅管理员', '僅管理員'),
+					value: 'sysop',
+					selected: true
+				});
 				field2.append({
-						type: 'select',
-						name: 'editexpiry',
-						label: '终止时间：',
-						event: function(e) {
-							if (e.target.value === 'custom') {
-								Twinkle.protect.doCustomExpiry(e.target);
-							}
-							$('input[name=small]', $(e.target).closest('form'))[0].checked = (e.target.selectedIndex >= 8); // 1 month
-						},
-						// default expiry selection is conditionally set in Twinkle.protect.callback.changePreset
-						list: wgULS([
-							{ label: '1小时', value: '1 hour' },
-							{ label: '2小时', value: '2 hours' },
-							{ label: '3小时', value: '3 hours' },
-							{ label: '6小时', value: '6 hours' },
-							{ label: '1日', value: '1 day' },
-							{ label: '3日', value: '3 days' },
-							{ label: '1周', value: '1 week' },
-							{ label: '2周', value: '2 weeks' },
-							{ label: '1月', value: '1 month' },
-							{ label: '3月', value: '3 months' },
-							{ label: '6月', value: '6 months' },
-							{ label: '1年', value: '1 year' },
-							{ label: '无限期', value: 'indefinite' },
-							{ label: '自定义…', value: 'custom' }
-						], [
-							{ label: '1小時', value: '1 hour' },
-							{ label: '2小時', value: '2 hours' },
-							{ label: '3小時', value: '3 hours' },
-							{ label: '6小時', value: '6 hours' },
-							{ label: '1日', value: '1 day' },
-							{ label: '3日', value: '3 days' },
-							{ label: '1周', value: '1 week' },
-							{ label: '2周', value: '2 weeks' },
-							{ label: '1月', value: '1 month' },
-							{ label: '3月', value: '3 months' },
-							{ label: '6月', value: '6 months' },
-							{ label: '1年', value: '1 year' },
-							{ label: '無限期', value: 'indefinite' },
-							{ label: '自訂…', value: 'custom' }
-						])
-					});
+					type: 'select',
+					name: 'editexpiry',
+					label: '终止时间：',
+					event: function(e) {
+						if (e.target.value === 'custom') {
+							Twinkle.protect.doCustomExpiry(e.target);
+						}
+						$('input[name=small]', $(e.target).closest('form'))[0].checked = e.target.selectedIndex >= 8; // 1 month
+					},
+					// default expiry selection is conditionally set in Twinkle.protect.callback.changePreset
+					list: wgULS([
+						{ label: '1小时', value: '1 hour' },
+						{ label: '2小时', value: '2 hours' },
+						{ label: '3小时', value: '3 hours' },
+						{ label: '6小时', value: '6 hours' },
+						{ label: '1日', value: '1 day' },
+						{ label: '3日', value: '3 days' },
+						{ label: '1周', value: '1 week' },
+						{ label: '2周', value: '2 weeks' },
+						{ label: '1月', value: '1 month' },
+						{ label: '3月', value: '3 months' },
+						{ label: '6月', value: '6 months' },
+						{ label: '1年', value: '1 year' },
+						{ label: '无限期', value: 'indefinite' },
+						{ label: '自定义…', value: 'custom' }
+					], [
+						{ label: '1小時', value: '1 hour' },
+						{ label: '2小時', value: '2 hours' },
+						{ label: '3小時', value: '3 hours' },
+						{ label: '6小時', value: '6 hours' },
+						{ label: '1日', value: '1 day' },
+						{ label: '3日', value: '3 days' },
+						{ label: '1周', value: '1 week' },
+						{ label: '2周', value: '2 weeks' },
+						{ label: '1月', value: '1 month' },
+						{ label: '3月', value: '3 months' },
+						{ label: '6月', value: '6 months' },
+						{ label: '1年', value: '1 year' },
+						{ label: '無限期', value: 'indefinite' },
+						{ label: '自訂…', value: 'custom' }
+					])
+				});
 				field2.append({
-						type: 'checkbox',
-						name: 'movemodify',
-						event: Twinkle.protect.formevents.movemodify,
-						list: [
-							{
-								label: wgULS('修改移动权限', '修改移動權限'),
-								value: 'movemodify',
-								tooltip: wgULS('如果此项被关闭，移动权限将不被修改。', '如果此項被關閉，移動權限將不被修改。'),
-								checked: true
-							}
-						]
-					});
+					type: 'checkbox',
+					name: 'movemodify',
+					event: Twinkle.protect.formevents.movemodify,
+					list: [
+						{
+							label: wgULS('修改移动权限', '修改移動權限'),
+							value: 'movemodify',
+							tooltip: wgULS('如果此项被关闭，移动权限将不被修改。', '如果此項被關閉，移動權限將不被修改。'),
+							checked: true
+						}
+					]
+				});
 				var movelevel = field2.append({
-						type: 'select',
-						name: 'movelevel',
-						label: wgULS('移动权限：', '移動權限：'),
-						event: Twinkle.protect.formevents.movelevel
-					});
+					type: 'select',
+					name: 'movelevel',
+					label: wgULS('移动权限：', '移動權限：'),
+					event: Twinkle.protect.formevents.movelevel
+				});
 				movelevel.append({
-						type: 'option',
-						label: wgULS('（站点默认）', '（站點預設）'),
-						value: 'all'
-					});
+					type: 'option',
+					label: wgULS('（站点默认）', '（站點預設）'),
+					value: 'all'
+				});
 				movelevel.append({
-						type: 'option',
-						label: wgULS('仅允许自动确认用户', '僅允許自動確認用戶'),
-						value: 'autoconfirmed'
-					});
+					type: 'option',
+					label: wgULS('仅允许自动确认用户', '僅允許自動確認用戶'),
+					value: 'autoconfirmed'
+				});
 				movelevel.append({
-						type: 'option',
-						label: wgULS('仅管理员', '僅管理員'),
-						value: 'sysop',
-						selected: true
-					});
+					type: 'option',
+					label: wgULS('仅管理员', '僅管理員'),
+					value: 'sysop',
+					selected: true
+				});
 				field2.append({
-						type: 'select',
-						name: 'moveexpiry',
-						label: wgULS('终止时间：', '終止時間：'),
-						event: function(e) {
-							if (e.target.value === 'custom') {
-								Twinkle.protect.doCustomExpiry(e.target);
-							}
-						},
-						// default expiry selection is conditionally set in Twinkle.protect.callback.changePreset
-						list: wgULS([
-							{ label: '1小时', value: '1 hour' },
-							{ label: '2小时', value: '2 hours' },
-							{ label: '3小时', value: '3 hours' },
-							{ label: '6小时', value: '6 hours' },
-							{ label: '1日', value: '1 day' },
-							{ label: '3日', value: '3 days' },
-							{ label: '1周', value: '1 week' },
-							{ label: '2周', value: '2 weeks' },
-							{ label: '1月', value: '1 month' },
-							{ label: '3月', value: '3 months' },
-							{ label: '6月', value: '6 months' },
-							{ label: '1年', value: '1 year' },
-							{ label: '无限期', value: 'indefinite' },
-							{ label: '自定义…', value: 'custom' }
-						], [
-							{ label: '1小時', value: '1 hour' },
-							{ label: '2小時', value: '2 hours' },
-							{ label: '3小時', value: '3 hours' },
-							{ label: '6小時', value: '6 hours' },
-							{ label: '1日', value: '1 day' },
-							{ label: '3日', value: '3 days' },
-							{ label: '1周', value: '1 week' },
-							{ label: '2周', value: '2 weeks' },
-							{ label: '1月', value: '1 month' },
-							{ label: '3月', value: '3 months' },
-							{ label: '6月', value: '6 months' },
-							{ label: '1年', value: '1 year' },
-							{ label: '無限期', value: 'indefinite' },
-							{ label: '自訂…', value: 'custom' }
-						])
-					});
+					type: 'select',
+					name: 'moveexpiry',
+					label: wgULS('终止时间：', '終止時間：'),
+					event: function(e) {
+						if (e.target.value === 'custom') {
+							Twinkle.protect.doCustomExpiry(e.target);
+						}
+					},
+					// default expiry selection is conditionally set in Twinkle.protect.callback.changePreset
+					list: wgULS([
+						{ label: '1小时', value: '1 hour' },
+						{ label: '2小时', value: '2 hours' },
+						{ label: '3小时', value: '3 hours' },
+						{ label: '6小时', value: '6 hours' },
+						{ label: '1日', value: '1 day' },
+						{ label: '3日', value: '3 days' },
+						{ label: '1周', value: '1 week' },
+						{ label: '2周', value: '2 weeks' },
+						{ label: '1月', value: '1 month' },
+						{ label: '3月', value: '3 months' },
+						{ label: '6月', value: '6 months' },
+						{ label: '1年', value: '1 year' },
+						{ label: '无限期', value: 'indefinite' },
+						{ label: '自定义…', value: 'custom' }
+					], [
+						{ label: '1小時', value: '1 hour' },
+						{ label: '2小時', value: '2 hours' },
+						{ label: '3小時', value: '3 hours' },
+						{ label: '6小時', value: '6 hours' },
+						{ label: '1日', value: '1 day' },
+						{ label: '3日', value: '3 days' },
+						{ label: '1周', value: '1 week' },
+						{ label: '2周', value: '2 weeks' },
+						{ label: '1月', value: '1 month' },
+						{ label: '3月', value: '3 months' },
+						{ label: '6月', value: '6 months' },
+						{ label: '1年', value: '1 year' },
+						{ label: '無限期', value: 'indefinite' },
+						{ label: '自訂…', value: 'custom' }
+					])
+				});
 			} else {  // for non-existing pages
 				var createlevel = field2.append({
-						type: 'select',
-						name: 'createlevel',
-						label: wgULS('创建权限：', '建立權限：'),
-						event: Twinkle.protect.formevents.createlevel
-					});
+					type: 'select',
+					name: 'createlevel',
+					label: wgULS('创建权限：', '建立權限：'),
+					event: Twinkle.protect.formevents.createlevel
+				});
 				createlevel.append({
-						type: 'option',
-						label: '全部',
-						value: 'all'
-					});
+					type: 'option',
+					label: '全部',
+					value: 'all'
+				});
 				createlevel.append({
-						type: 'option',
-						label: wgULS('仅允许自动确认用户', '僅允許自動確認用戶'),
-						value: 'autoconfirmed'
-					});
+					type: 'option',
+					label: wgULS('仅允许自动确认用户', '僅允許自動確認用戶'),
+					value: 'autoconfirmed'
+				});
 				createlevel.append({
-						type: 'option',
-						label: wgULS('仅管理员', '僅管理員'),
-						value: 'sysop',
-						selected: true
-					});
+					type: 'option',
+					label: wgULS('仅管理员', '僅管理員'),
+					value: 'sysop',
+					selected: true
+				});
 				field2.append({
-						type: 'select',
-						name: 'createexpiry',
-						label: wgULS('终止时间：', '終止時間：'),
-						event: function(e) {
-							if (e.target.value === 'custom') {
-								Twinkle.protect.doCustomExpiry(e.target);
-							}
-						},
-						list: wgULS([
-							{ label: '1小时', value: '1 hour' },
-							{ label: '2小时', value: '2 hours' },
-							{ label: '3小时', value: '3 hours' },
-							{ label: '6小时', value: '6 hours' },
-							{ label: '1日', value: '1 day' },
-							{ label: '3日', value: '3 days' },
-							{ label: '1周', value: '1 week' },
-							{ label: '2周', value: '2 weeks' },
-							{ label: '1月', value: '1 month' },
-							{ label: '3月', value: '3 months' },
-							{ label: '6月', value: '6 months' },
-							{ label: '1年', selected: true, value: '1 year' },
-							{ label: '无限期', value: 'indefinite' },
-							{ label: '自定义…', value: 'custom' }
-						], [
-							{ label: '1小時', value: '1 hour' },
-							{ label: '2小時', value: '2 hours' },
-							{ label: '3小時', value: '3 hours' },
-							{ label: '6小時', value: '6 hours' },
-							{ label: '1日', value: '1 day' },
-							{ label: '3日', value: '3 days' },
-							{ label: '1周', value: '1 week' },
-							{ label: '2周', value: '2 weeks' },
-							{ label: '1月', value: '1 month' },
-							{ label: '3月', value: '3 months' },
-							{ label: '6月', value: '6 months' },
-							{ label: '1年', selected: true, value: '1 year' },
-							{ label: '無限期', value: 'indefinite' },
-							{ label: '自訂…', value: 'custom' }
-						])
-					});
+					type: 'select',
+					name: 'createexpiry',
+					label: wgULS('终止时间：', '終止時間：'),
+					event: function(e) {
+						if (e.target.value === 'custom') {
+							Twinkle.protect.doCustomExpiry(e.target);
+						}
+					},
+					list: wgULS([
+						{ label: '1小时', value: '1 hour' },
+						{ label: '2小时', value: '2 hours' },
+						{ label: '3小时', value: '3 hours' },
+						{ label: '6小时', value: '6 hours' },
+						{ label: '1日', value: '1 day' },
+						{ label: '3日', value: '3 days' },
+						{ label: '1周', value: '1 week' },
+						{ label: '2周', value: '2 weeks' },
+						{ label: '1月', value: '1 month' },
+						{ label: '3月', value: '3 months' },
+						{ label: '6月', value: '6 months' },
+						{ label: '1年', selected: true, value: '1 year' },
+						{ label: '无限期', value: 'indefinite' },
+						{ label: '自定义…', value: 'custom' }
+					], [
+						{ label: '1小時', value: '1 hour' },
+						{ label: '2小時', value: '2 hours' },
+						{ label: '3小時', value: '3 hours' },
+						{ label: '6小時', value: '6 hours' },
+						{ label: '1日', value: '1 day' },
+						{ label: '3日', value: '3 days' },
+						{ label: '1周', value: '1 week' },
+						{ label: '2周', value: '2 weeks' },
+						{ label: '1月', value: '1 month' },
+						{ label: '3月', value: '3 months' },
+						{ label: '6月', value: '6 months' },
+						{ label: '1年', selected: true, value: '1 year' },
+						{ label: '無限期', value: 'indefinite' },
+						{ label: '自訂…', value: 'custom' }
+					])
+				});
 			}
 			field2.append({
-					type: 'textarea',
-					name: 'protectReason',
-					label: wgULS('理由（保护日志）：', '理由（保護日誌）：')
-				});
+				type: 'textarea',
+				name: 'protectReason',
+				label: wgULS('理由（保护日志）：', '理由（保護日誌）：')
+			});
 			if (!mw.config.get('wgArticleId') || mw.config.get('wgPageContentModel') === 'Scribunto') {  // tagging isn't relevant for non-existing or module pages
 				break;
 			}
@@ -440,69 +440,69 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			field1 = new Morebits.quickForm.element({ type: 'field', label: wgULS('标记选项', '標記設定'), name: 'field1' });
 			field1.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
 			field1.append({ type: 'div', name: 'hasprotectlog', label: ' ' });
-			field1.append( {
-					type: 'select',
-					name: 'tagtype',
-					label: wgULS('选择保护模板：', '選擇保護模板：'),
-					list: Twinkle.protect.protectionTags,
-					event: Twinkle.protect.formevents.tagtype
-				} );
-			field1.append( {
-					type: 'checkbox',
-					list: [
-						{
-							name: 'small',
-							label: wgULS('使用图标（small=yes）', '使用圖示（small=yes）'),
-							tooltip: wgULS('将给模板加上|small=yes参数，显示成右上角的一把挂锁。', '將給模板加上|small=yes參數，顯示成右上角的一把掛鎖。')
-						},
-						{
-							name: 'noinclude',
-							label: wgULS('用<noinclude>包裹保护模板', '用<noinclude>包裹保護模板'),
-							tooltip: wgULS('将保护模板包裹在&lt;noinclude&gt;中', '將保護模板包裹在&lt;noinclude&gt;中'),
-							checked: (mw.config.get('wgNamespaceNumber') === 10)
-						},
-						{
-							name: 'showexpiry',
-							label: wgULS('在模板显示到期时间', '在模板顯示到期時間'),
-							tooltip: wgULS('将给模板加上|expiry参数', '將給模板加上|expiry參數'),
-							checked: true,
-							hidden: (e.target.values == 'tag')
-						},
-					]
-				} );
+			field1.append({
+				type: 'select',
+				name: 'tagtype',
+				label: wgULS('选择保护模板：', '選擇保護模板：'),
+				list: Twinkle.protect.protectionTags,
+				event: Twinkle.protect.formevents.tagtype
+			});
+			field1.append({
+				type: 'checkbox',
+				list: [
+					{
+						name: 'small',
+						label: wgULS('使用图标（small=yes）', '使用圖示（small=yes）'),
+						tooltip: wgULS('将给模板加上|small=yes参数，显示成右上角的一把挂锁。', '將給模板加上|small=yes參數，顯示成右上角的一把掛鎖。')
+					},
+					{
+						name: 'noinclude',
+						label: wgULS('用<noinclude>包裹保护模板', '用<noinclude>包裹保護模板'),
+						tooltip: wgULS('将保护模板包裹在&lt;noinclude&gt;中', '將保護模板包裹在&lt;noinclude&gt;中'),
+						checked: mw.config.get('wgNamespaceNumber') === 10
+					},
+					{
+						name: 'showexpiry',
+						label: wgULS('在模板显示到期时间', '在模板顯示到期時間'),
+						tooltip: wgULS('将给模板加上|expiry参数', '將給模板加上|expiry參數'),
+						checked: true,
+						hidden: e.target.values === 'tag'
+					}
+				]
+			});
 			break;
 
 		case 'request':
 			field_preset = new Morebits.quickForm.element({ type: 'field', label: wgULS('保护类型', '保護類別'), name: 'field_preset' });
 			field_preset.append({
-					type: 'select',
-					name: 'category',
-					label: wgULS('类型和理由：', '類別和理由：'),
-					event: Twinkle.protect.callback.changePreset,
-					list: (mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypes : Twinkle.protect.protectionTypesCreate)
-				});
+				type: 'select',
+				name: 'category',
+				label: wgULS('类型和理由：', '類別和理由：'),
+				event: Twinkle.protect.callback.changePreset,
+				list: mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypes : Twinkle.protect.protectionTypesCreate
+			});
 
 			field1 = new Morebits.quickForm.element({ type: 'field', label: wgULS('选项', '設定'), name: 'field1' });
 			field1.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
 			field1.append({ type: 'div', name: 'hasprotectlog', label: ' ' });
-			field1.append( {
-					type: 'select',
-					name: 'expiry',
-					label: wgULS('时长：', '時長：'),
-					list: [
-						{ label: wgULS('临时', '臨時'), value: 'temporary' },
-						{ label: '永久', value: 'indefinite' },
-						{ label: '', selected: true, value: '' }
-					]
-				} );
 			field1.append({
-					type: 'textarea',
-					name: 'reason',
-					label: '理由：'
-				});
+				type: 'select',
+				name: 'expiry',
+				label: wgULS('时长：', '時長：'),
+				list: [
+					{ label: wgULS('临时', '臨時'), value: 'temporary' },
+					{ label: '永久', value: 'indefinite' },
+					{ label: '', selected: true, value: '' }
+				]
+			});
+			field1.append({
+				type: 'textarea',
+				name: 'reason',
+				label: '理由：'
+			});
 			break;
 		default:
-			alert(wgULS("这玩意儿被逆襲的天邪鬼吃掉了！", "這玩意兒被逆襲的天邪鬼吃掉了！"));
+			alert(wgULS('这玩意儿被逆襲的天邪鬼吃掉了！', '這玩意兒被逆襲的天邪鬼吃掉了！'));
 			break;
 	}
 
@@ -529,9 +529,9 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 
 	if (e.target.values === 'protect') {
 		// fake a change event on the preset dropdown
-		var evt = document.createEvent( "Event" );
-		evt.initEvent( 'change', true, true );
-		e.target.form.category.dispatchEvent( evt );
+		var evt = document.createEvent('Event');
+		evt.initEvent('change', true, true);
+		e.target.form.category.dispatchEvent(evt);
 
 		// reduce vertical height of dialog
 		$(e.target.form).find('fieldset[name="field2"] select').parent().css({ display: 'inline-block', marginRight: '0.5em' });
@@ -545,10 +545,10 @@ Twinkle.protect.formevents = {
 	editmodify: function twinkleprotectFormEditmodifyEvent(e) {
 		e.target.form.editlevel.disabled = !e.target.checked;
 		e.target.form.editexpiry.disabled = !e.target.checked || (e.target.form.editlevel.value === 'all');
-		e.target.form.editlevel.style.color = e.target.form.editexpiry.style.color = (e.target.checked ? "" : "transparent");
+		e.target.form.editlevel.style.color = e.target.form.editexpiry.style.color = e.target.checked ? '' : 'transparent';
 	},
 	editlevel: function twinkleprotectFormEditlevelEvent(e) {
-		e.target.form.editexpiry.disabled = (e.target.value === 'all');
+		e.target.form.editexpiry.disabled = e.target.value === 'all';
 	},
 	movemodify: function twinkleprotectFormMovemodifyEvent(e) {
 		// sync move settings with edit settings if applicable
@@ -561,13 +561,13 @@ Twinkle.protect.formevents = {
 		}
 		e.target.form.movelevel.disabled = !e.target.checked;
 		e.target.form.moveexpiry.disabled = !e.target.checked || (e.target.form.movelevel.value === 'all');
-		e.target.form.movelevel.style.color = e.target.form.moveexpiry.style.color = (e.target.checked ? "" : "transparent");
+		e.target.form.movelevel.style.color = e.target.form.moveexpiry.style.color = e.target.checked ? '' : 'transparent';
 	},
 	movelevel: function twinkleprotectFormMovelevelEvent(e) {
-		e.target.form.moveexpiry.disabled = (e.target.value === 'all');
+		e.target.form.moveexpiry.disabled = e.target.value === 'all';
 	},
 	createlevel: function twinkleprotectFormCreatelevelEvent(e) {
-		e.target.form.createexpiry.disabled = (e.target.value === 'all');
+		e.target.form.createexpiry.disabled = e.target.value === 'all';
 	},
 	tagtype: function twinkleprotectFormTagtypeEvent(e) {
 		e.target.form.small.disabled = e.target.form.noinclude.disabled = e.target.form.showexpiry.disabled = (e.target.value === 'none') || (e.target.value === 'noop');
@@ -986,9 +986,8 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 
 	var actiontypes = form.actiontype;
 	var actiontype;
-	for( var i = 0; i < actiontypes.length; i++ )
-	{
-		if( !actiontypes[i].checked ) {
+	for (var i = 0; i < actiontypes.length; i++) {
+		if (!actiontypes[i].checked) {
 			continue;
 		}
 		actiontype = actiontypes[i].values;
@@ -1029,7 +1028,7 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 			}
 		}
 
-		var reasonField = (actiontype === "protect" ? form.protectReason : form.reason);
+		var reasonField = actiontype === 'protect' ? form.protectReason : form.reason;
 		if (item.reason) {
 			reasonField.value = item.reason;
 		} else {
@@ -1038,23 +1037,23 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 
 		// sort out tagging options, disabled if nonexistent or lua
 		if (mw.config.get('wgArticleId') && mw.config.get('wgPageContentModel') !== 'Scribunto') {
-			if( form.category.value === 'unprotect' ) {
+			if (form.category.value === 'unprotect') {
 				form.tagtype.value = 'none';
 			} else {
-				form.tagtype.value = (item.template ? item.template : form.category.value);
+				form.tagtype.value = item.template ? item.template : form.category.value;
 			}
 			Twinkle.protect.formevents.tagtype({ target: form.tagtype });
 
-			if( /template/.test( form.category.value ) ) {
+			if (/template/.test(form.category.value)) {
 				form.noinclude.checked = true;
-				form.editexpiry.value = form.moveexpiry.value = "indefinite";
-			} else if( mw.config.get('wgNamespaceNumber') !== 10 ) {
+				form.editexpiry.value = form.moveexpiry.value = 'indefinite';
+			} else if (mw.config.get('wgNamespaceNumber') !== 10) {
 				form.noinclude.checked = false;
 			}
 		}
 
 	} else {  // RPP request
-		if( form.category.value === 'unprotect' ) {
+		if (form.category.value === 'unprotect') {
 			form.expiry.value = '';
 			form.expiry.disabled = true;
 		} else {
@@ -1069,9 +1068,8 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 
 	var actiontypes = form.actiontype;
 	var actiontype;
-	for( var i = 0; i < actiontypes.length; i++ )
-	{
-		if( !actiontypes[i].checked ) {
+	for (var i = 0; i < actiontypes.length; i++) {
+		if (!actiontypes[i].checked) {
 			continue;
 		}
 		actiontype = actiontypes[i].values;
@@ -1079,15 +1077,15 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 	}
 
 	var tagparams;
-	if( actiontype === 'tag' || (actiontype === 'protect' && mw.config.get('wgArticleId') && mw.config.get('wgPageContentModel') !== 'Scribunto') ) {
+	if (actiontype === 'tag' || (actiontype === 'protect' && mw.config.get('wgArticleId') && mw.config.get('wgPageContentModel') !== 'Scribunto')) {
 		tagparams = {
 			tag: form.tagtype.value,
-			reason: ((form.tagtype.value === 'pp-protected' || form.tagtype.value === 'pp-semi-protected' || form.tagtype.value === 'pp-move') && form.protectReason) ? form.protectReason.value : null,
-			showexpiry: (actiontype === 'protect') ? form.showexpiry.checked : null,
-			expiry: (actiontype === 'protect') ?
-				(form.editmodify.checked ? form.editexpiry.value :
-					(form.movemodify.checked ? form.moveexpiry.value : null)
-				) : null,
+			reason: (form.tagtype.value === 'pp-protected' || form.tagtype.value === 'pp-semi-protected' || form.tagtype.value === 'pp-move') && form.protectReason ? form.protectReason.value : null,
+			showexpiry: actiontype === 'protect' ? form.showexpiry.checked : null,
+			expiry: actiontype === 'protect' ?
+				form.editmodify.checked ? form.editexpiry.value :
+					form.movemodify.checked ? form.moveexpiry.value : null
+				: null,
 			small: form.small.checked,
 			noinclude: form.noinclude.checked
 		};
@@ -1098,14 +1096,14 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			// protect the page
 
 			Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
-			Morebits.wiki.actionCompleted.notice = wgULS("保护完成", "保護完成");
+			Morebits.wiki.actionCompleted.notice = wgULS('保护完成', '保護完成');
 
 			var statusInited = false;
 			var thispage;
 
 			var allDone = function twinkleprotectCallbackAllDone() {
 				if (thispage) {
-					thispage.getStatusElement().info("完成");
+					thispage.getStatusElement().info('完成');
 				}
 				if (tagparams) {
 					Twinkle.protect.callbacks.taggingPageInitial(tagparams);
@@ -1113,7 +1111,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			};
 
 			var protectIt = function twinkleprotectCallbackProtectIt(next) {
-				thispage = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS("保护页面", "保護頁面"));
+				thispage = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('保护页面', '保護頁面'));
 				if (mw.config.get('wgArticleId')) {
 					if (form.editmodify.checked) {
 						thispage.setEditProtection(form.editlevel.value, form.editexpiry.value);
@@ -1130,13 +1128,13 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 					thispage.setEditSummary(form.protectReason.value + Twinkle.getPref('protectionSummaryAd'));
 					thispage.setTags(Twinkle.getPref('revisionTags'));
 				} else {
-					alert(wgULS("您必须输入保护理由，这将被记录在保护日志中。", "您必須輸入保護理由，這將被記錄在保護日誌中。"));
+					alert(wgULS('您必须输入保护理由，这将被记录在保护日志中。', '您必須輸入保護理由，這將被記錄在保護日誌中。'));
 					return;
 				}
 
 				if (!statusInited) {
-					Morebits.simpleWindow.setButtonsEnabled( false );
-					Morebits.status.init( form );
+					Morebits.simpleWindow.setButtonsEnabled(false);
+					Morebits.status.init(form);
 					statusInited = true;
 				}
 
@@ -1147,7 +1145,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				!mw.config.get('wgArticleId')) {
 				protectIt(allDone);
 			} else {
-				alert(wgULS("请告诉Twinkle要做什么！\n如果您只是想标记该页，请选择上面的“用保护模板标记此页”选项。", "請告訴Twinkle要做什麼！\n如果您只是想標記該頁，請選擇上面的「用保護模板標記此頁」選項。"));
+				alert(wgULS('请告诉Twinkle要做什么！\n如果您只是想标记该页，请选择上面的“用保护模板标记此页”选项。', '請告訴Twinkle要做什麼！\n如果您只是想標記該頁，請選擇上面的「用保護模板標記此頁」選項。'));
 			}
 
 			break;
@@ -1155,12 +1153,12 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 		case 'tag':
 			// apply a protection template
 
-			Morebits.simpleWindow.setButtonsEnabled( false );
-			Morebits.status.init( form );
+			Morebits.simpleWindow.setButtonsEnabled(false);
+			Morebits.status.init(form);
 
 			Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 			Morebits.wiki.actionCompleted.followRedirect = false;
-			Morebits.wiki.actionCompleted.notice = wgULS("标记完成", "標記完成");
+			Morebits.wiki.actionCompleted.notice = wgULS('标记完成', '標記完成');
 
 			Twinkle.protect.callbacks.taggingPageInitial(tagparams);
 			break;
@@ -1168,7 +1166,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 		case 'request':
 			// file request at RFPP
 			var typename, typereason;
-			switch( form.category.value ) {
+			switch (form.category.value) {
 				case 'pp-dispute':
 				case 'pp-vandalism':
 				case 'pp-template':
@@ -1248,13 +1246,13 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			}
 
 			var reason = typereason;
-			if( form.reason.value !== '') {
-				if ( typereason !== '' ) {
-					reason += "：";
+			if (form.reason.value !== '') {
+				if (typereason !== '') {
+					reason += '：';
 				}
 				reason += form.reason.value;
 			}
-			if( reason !== '' && reason.charAt( reason.length - 1 ) !== '。' ) {
+			if (reason !== '' && reason.charAt(reason.length - 1) !== '。') {
 				reason += '。';
 			}
 
@@ -1265,99 +1263,99 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				expiry: form.expiry.value
 			};
 
-			Morebits.simpleWindow.setButtonsEnabled( false );
-			Morebits.status.init( form );
+			Morebits.simpleWindow.setButtonsEnabled(false);
+			Morebits.status.init(form);
 
 			var rppName = 'Wikipedia:请求保护页面';
 
 			// Updating data for the action completed event
 			Morebits.wiki.actionCompleted.redirect = rppName;
-			Morebits.wiki.actionCompleted.notice = wgULS("提名完成，重定向到讨论页", "提名完成，重定向到討論頁");
+			Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重定向到討論頁');
 
-			var rppPage = new Morebits.wiki.page( rppName, wgULS('请求保护页面', '請求保護頁面'));
-			rppPage.setFollowRedirect( true );
-			rppPage.setCallbackParameters( rppparams );
-			rppPage.load( Twinkle.protect.callbacks.fileRequest );
+			var rppPage = new Morebits.wiki.page(rppName, wgULS('请求保护页面', '請求保護頁面'));
+			rppPage.setFollowRedirect(true);
+			rppPage.setCallbackParameters(rppparams);
+			rppPage.load(Twinkle.protect.callbacks.fileRequest);
 			break;
 		default:
-			alert("twinkleprotect: 未知操作类型");
+			alert('twinkleprotect: 未知操作类型');
 			break;
 	}
 };
 
 Twinkle.protect.callbacks = {
-	taggingPageInitial: function( tagparams ) {
+	taggingPageInitial: function(tagparams) {
 		if (tagparams.tag === 'noop') {
-			Morebits.status.info(wgULS("应用保护模板", "應用保護模板"), wgULS("没什么要做的", "沒什麼要做的"));
+			Morebits.status.info(wgULS('应用保护模板', '應用保護模板'), wgULS('没什么要做的', '沒什麼要做的'));
 			return;
 		}
 
 		var pageName = mw.config.get('wgPageName');
 		Morebits.wiki.flow.check(pageName, function () {
 			var flowpage = new Morebits.wiki.flow(pageName, wgULS('标记Flow页描述', '標記Flow頁描述'));
-			flowpage.setCallbackParameters( tagparams );
-			flowpage.viewHeader( Twinkle.protect.callbacks.taggingFlowPage );
+			flowpage.setCallbackParameters(tagparams);
+			flowpage.viewHeader(Twinkle.protect.callbacks.taggingFlowPage);
 		}, function () {
 			var protectedPage = new Morebits.wiki.page(pageName, wgULS('标记页面', '標記頁面'));
-			protectedPage.setCallbackParameters( tagparams );
-			protectedPage.load( Twinkle.protect.callbacks.taggingPage );
+			protectedPage.setCallbackParameters(tagparams);
+			protectedPage.load(Twinkle.protect.callbacks.taggingPage);
 		});
 	},
-	getTaggedPage: function( params, text ) {
+	getTaggedPage: function(params, text) {
 		var tag, summary;
 
 		var oldtag_re = /\s*(?:<noinclude>)?\s*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
 		var re_result = oldtag_re.exec(text);
 		if (re_result) {
-			if (confirm(wgULS("在页面上找到{{" + re_result[1] + "}}\n点击确定以移除，或点击取消以取消。", "在頁面上找到{{" + re_result[1] + "}}\n點選確定以移除，或點選取消以取消。"))) {
-				text = text.replace( oldtag_re, '' );
+			if (confirm(wgULS('在页面上找到{{' + re_result[1] + '}}\n点击确定以移除，或点击取消以取消。', '在頁面上找到{{' + re_result[1] + '}}\n點選確定以移除，或點選取消以取消。'))) {
+				text = text.replace(oldtag_re, '');
 			}
 		}
 
-		if ( params.tag !== 'none' ) {
+		if (params.tag !== 'none') {
 			tag = params.tag;
-			if( params.reason ) {
+			if (params.reason) {
 				tag += '|reason=' + params.reason;
 			}
-			if( params.showexpiry && ['indefinite', 'infinite', 'never', null].indexOf(params.expiry) === -1 ) {
+			if (params.showexpiry && ['indefinite', 'infinite', 'never', null].indexOf(params.expiry) === -1) {
 				tag += '|expiry={{subst:#time:c|' + (/^\s*\d+\s*$/.exec(params.expiry) ? params.expiry : '+' + params.expiry) + '}}';
 			}
-			if( params.small ) {
+			if (params.small) {
 				tag += '|small=yes';
 			}
 		}
 
-		if( params.tag === 'none' ) {
+		if (params.tag === 'none') {
 			summary = wgULS('移除保护模板', '移除保護模板') + Twinkle.getPref('summaryAd');
 		} else {
-			if( params.noinclude ) {
-				text = "<noinclude>{{" + tag + "}}</noinclude>" + text;
-			} else if( Morebits.wiki.isPageRedirect() ) {
-				text = text + "\n{{" + tag + "}}";
+			if (params.noinclude) {
+				text = '<noinclude>{{' + tag + '}}</noinclude>' + text;
+			} else if (Morebits.wiki.isPageRedirect()) {
+				text = text + '\n{{' + tag + '}}';
 			} else {
-				text = "{{" + tag + "}}\n" + text;
+				text = '{{' + tag + '}}\n' + text;
 			}
-			summary = wgULS("添加{{" + params.tag + "}}", "加入{{" + params.tag + "}}") + Twinkle.getPref('summaryAd');
+			summary = wgULS('添加{{' + params.tag + '}}', '加入{{' + params.tag + '}}') + Twinkle.getPref('summaryAd');
 		}
 
 		return {
 			text: text,
-			summary: summary,
+			summary: summary
 		};
 	},
-	taggingPage: function( protectedPage ) {
+	taggingPage: function(protectedPage) {
 		var params = protectedPage.getCallbackParameters();
 		var text = protectedPage.getPageText();
 		var newVersion = Twinkle.protect.callbacks.getTaggedPage(params, text);
 
-		protectedPage.setEditSummary( newVersion.summary );
+		protectedPage.setEditSummary(newVersion.summary);
 		protectedPage.setTags(Twinkle.getPref('revisionTags'));
-		protectedPage.setPageText( newVersion.text );
-		protectedPage.setCreateOption( 'nocreate' );
+		protectedPage.setPageText(newVersion.text);
+		protectedPage.setCreateOption('nocreate');
 		protectedPage.suppressProtectWarning(); // no need to let admins know they are editing through protection
 		protectedPage.save();
 	},
-	taggingFlowPage: function( flowpage ) {
+	taggingFlowPage: function(flowpage) {
 		var params = flowpage.getCallbackParameters();
 		var text = flowpage.getHeader();
 		var newVersion = Twinkle.protect.callbacks.getTaggedPage(params, text);
@@ -1365,76 +1363,75 @@ Twinkle.protect.callbacks = {
 		flowpage.editHeader();
 	},
 
-	fileRequest: function( rppPage ) {
+	fileRequest: function(rppPage) {
 
 		var params = rppPage.getCallbackParameters();
 		var text = rppPage.getPageText();
 		var statusElement = rppPage.getStatusElement();
 
-		var rppRe = new RegExp( '===\\s*(\\[\\[)?\\s*:?\\s*' + RegExp.escape( Morebits.pageNameNorm, true ) + '\\s*(\\]\\])?\\s*===', 'm' );
-		var tag = rppRe.exec( text );
+		var rppRe = new RegExp('===\\s*(\\[\\[)?\\s*:?\\s*' + RegExp.escape(Morebits.pageNameNorm, true) + '\\s*(\\]\\])?\\s*===', 'm');
+		var tag = rppRe.exec(text);
 
 		var rppLink = document.createElement('a');
-		rppLink.setAttribute('href', mw.util.getUrl(rppPage.getPageName()) );
+		rppLink.setAttribute('href', mw.util.getUrl(rppPage.getPageName()));
 		rppLink.appendChild(document.createTextNode(rppPage.getPageName()));
 
-		if ( tag ) {
-			statusElement.error( wgULS([ '已有对此条目的保护提名，在 ', rppLink, '，取消操作。' ], [ '已有對此條目的保護提名，在 ', rppLink, '，取消操作。' ]) );
+		if (tag) {
+			statusElement.error(wgULS([ '已有对此条目的保护提名，在 ', rppLink, '，取消操作。' ], [ '已有對此條目的保護提名，在 ', rppLink, '，取消操作。' ]));
 			return;
 		}
 
-		var newtag = '=== [[:' + mw.config.get('wgPageName') +  ']] ===' + "\n";
-		if( ( new RegExp( '^' + RegExp.escape( newtag ).replace( /\s+/g, '\\s*' ), 'm' ) ).test( text ) ) {
-			statusElement.error( wgULS([ '已有对此条目的保护提名，在 ', rppLink, '，取消操作。' ], [ '已有對此條目的保護提名，在 ', rppLink, '，取消操作。' ]) );
+		var newtag = '=== [[:' + mw.config.get('wgPageName') + ']] ===' + '\n';
+		if ((new RegExp('^' + RegExp.escape(newtag).replace(/\s+/g, '\\s*'), 'm')).test(text)) {
+			statusElement.error(wgULS([ '已有对此条目的保护提名，在 ', rppLink, '，取消操作。' ], [ '已有對此條目的保護提名，在 ', rppLink, '，取消操作。' ]));
 			return;
 		}
 
 		var words;
-		switch( params.expiry ) {
-		case 'temporary':
-			words = "临时";
-			break;
-		case 'indefinite':
-			words = "永久";
-			break;
-		default:
-			words = "";
-			break;
+		switch (params.expiry) {
+			case 'temporary':
+				words = '临时';
+				break;
+			case 'indefinite':
+				words = '永久';
+				break;
+			default:
+				words = '';
+				break;
 		}
 
 		words += params.typename;
 
-		newtag += "请求" + Morebits.string.toUpperCaseFirstChar(words) + ( params.reason !== '' ? "：" +
-			Morebits.string.formatReasonText(params.reason) : "。" ) + "--~~~~";
+		newtag += '请求' + Morebits.string.toUpperCaseFirstChar(words) + (params.reason !== '' ? '：' +
+			Morebits.string.formatReasonText(params.reason) : '。') + '--~~~~';
 		newtag += '\n:: <small>当前保护状态：{{protection status|' + mw.config.get('wgPageName') + '}}</small>';
 
 		var reg;
 
-		if ( params.category === 'unprotect' ) {
+		if (params.category === 'unprotect') {
 			reg = /(==\s*请求解除保护\s*==)/;
 		} else {
 			reg = /({{\s*\/header\s*}})/;
 		}
 
 		var originalTextLength = text.length;
-		text = text.replace( reg, "$1\n" + newtag + "\n");
-		if (text.length === originalTextLength)
-		{
+		text = text.replace(reg, '$1\n' + newtag + '\n');
+		if (text.length === originalTextLength) {
 			var linknode = document.createElement('a');
-			linknode.setAttribute("href", mw.util.getUrl("Wikipedia:Twinkle/修复RFPP") );
+			linknode.setAttribute('href', mw.util.getUrl('Wikipedia:Twinkle/修复RFPP'));
 			linknode.appendChild(document.createTextNode('如何修复RFPP'));
-			statusElement.error( wgULS([ '无法在WP:RFPP上找到相关位点标记，要修复此问题，请参见', linknode, '。' ], [ '無法在WP:RFPP上找到相關位點標記，要修複此問題，請參見', linknode, '。' ]) );
+			statusElement.error(wgULS([ '无法在WP:RFPP上找到相关位点标记，要修复此问题，请参见', linknode, '。' ], [ '無法在WP:RFPP上找到相關位點標記，要修複此問題，請參見', linknode, '。' ]));
 			return;
 		}
-		statusElement.status( wgULS('添加新提名…', '加入新提名…') );
-		rppPage.setEditSummary( '请求对[[' + Morebits.pageNameNorm + ']]' + params.typename + Twinkle.getPref('summaryAd') );
+		statusElement.status(wgULS('添加新提名…', '加入新提名…'));
+		rppPage.setEditSummary('请求对[[' + Morebits.pageNameNorm + ']]' + params.typename + Twinkle.getPref('summaryAd'));
 		rppPage.setTags(Twinkle.getPref('revisionTags'));
-		rppPage.setPageText( text );
-		rppPage.setCreateOption( 'recreate' );
+		rppPage.setPageText(text);
+		rppPage.setCreateOption('recreate');
 		rppPage.save();
 	}
 };
 })(jQuery);
 
 
-//</nowiki>
+// </nowiki>

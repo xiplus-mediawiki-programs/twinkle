@@ -83,11 +83,7 @@ Twinkle是维基人用于快速执行常见维护工作（如提交删除候选�
 格式指引
 --------
 
-虽然旧的代码有许多不同且不一致的格式，但我们已经决定要在代码中使用更为一致的格式。
-
-[jQuery Core Style Guideline][jq_style]是我们在此之后使用的格式指引。
-
-无需多言，例外也是存在的。这主要和括号旁的空白有关：旧Twinkle代码看起来像`if ( condition ) {`，但新代码一般会用`if (condition) {`。惯例是跟随周围代码的样式。
+While old legacy code previously had many different and incoherent styles, it has been decided to utilize a more coherent style throughout the code, both for consistency and to cut down on potential errors.  [eslint][eslint.org] can be used to check your code before submission and even repair many common issues.  To install via `npm`, just run `npm install` from the main Twinkle directory in your terminal.  You can then freely check your code by running `npm run lint`, and if you run `npm run lint -- --fix` then `eslint` will clean up some (but not all!) style differences.  More information on specific style rules can be seen in [issue #500][fivehundred] and in `.eslintrc.json`, but the best advice is to just follow the style of surrounding code!
 
 [Wikipedia:Twinkle]: https://zh.wikipedia.org/wiki/Wikipedia:Twinkle
 [AzaToth]: https://en.wikipedia.org/wiki/User:AzaToth
@@ -100,4 +96,5 @@ Twinkle是维基人用于快速执行常见维护工作（如提交删除候选�
 [Git::Repository]: http://search.cpan.org/perldoc?Git%3A%3ARepository
 [MediaWiki::Bot]: http://search.cpan.org/perldoc?MediaWiki%3A%3ABot
 [App::cpanminus]: http://search.cpan.org/perldoc?App%3A%3Acpanminus
-[jq_style]: http://contribute.jquery.org/style-guide/js/
+[eslint.org]: https://eslint.org/
+[fivehundred]: https://github.com/azatoth/twinkle/issues/500
