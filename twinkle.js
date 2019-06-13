@@ -203,6 +203,11 @@ Twinkle.defaultConfig.friendly = {
 };
 
 Twinkle.getPref = function twinkleGetPref( name ) {
+	// Temporarily disable summaryAd
+	if ( $.inArray(name, ['summaryAd', 'deletionSummaryAd', 'protectionSummaryAd', 'blockSummaryAd']) !== -1 ) {
+		return '';
+	}
+
 	var result;
 	if ( typeof Twinkle.prefs === "object" && typeof Twinkle.prefs.twinkle === "object" ) {
 		// look in Twinkle.prefs (twinkleoptions.js)

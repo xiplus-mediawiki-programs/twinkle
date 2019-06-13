@@ -140,7 +140,7 @@ Twinkle.config.sections = [
 	preferences: [
 		// TwinkleConfig.summaryAd (string)
 		// Text to be appended to the edit summary of edits made using Twinkle
-		{
+		/*{
 			name: "summaryAd",
 			label: wgULS("编辑摘要后缀", "編輯摘要後綴"),
 			helptip: wgULS("应当由一个空格开头，并尽可能短。", "應當由一個空格開頭，並盡可能短。"),
@@ -175,7 +175,7 @@ Twinkle.config.sections = [
 			helptip: wgULS("通常和编辑摘要后缀一样。", "通常和編輯摘要後綴一樣。"),
 			adminOnly: true,
 			type: "string"
-		},
+		},*/
 
 		// TwinkleConfig.userTalkPageMode may take arguments:
 		// 'window': open a new window, remember the opened window
