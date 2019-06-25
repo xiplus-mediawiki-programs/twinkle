@@ -701,11 +701,6 @@ Twinkle.fluff.formatSummary = function(builtInString, userName, userString) {
 	// append user's custom reason with requisite punctuation
 	if (userString) {
 		result += '：' + Morebits.string.toUpperCaseFirstChar(userString);
-		if (userString.search(/[。？！]$/) === -1) {
-			result += '。';
-		}
-	} else {
-		result += '。';
 	}
 	result += Twinkle.getPref('summaryAd');
 
