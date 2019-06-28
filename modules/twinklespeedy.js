@@ -1199,7 +1199,7 @@ Twinkle.speedy.callbacks = {
 			// Generate edit summary for edit
 			var editsummary;
 			if (params.normalizeds.length > 1) {
-				editsummary = '请求快速删除（';
+				editsummary = wgULS('请求快速删除（', '請求快速刪除（');
 				$.each(params.normalizeds, function(index, norm) {
 					if (norm !== 'db') {
 						editsummary += '[[WP:CSD#' + norm.toUpperCase() + '|CSD ' + norm.toUpperCase() + ']]、';
