@@ -761,7 +761,7 @@ Twinkle.config.sections = [
 			{
 				name: 'XfdClose',
 				label: wgULS('在存废讨论显示关闭讨论按钮', '在存廢討論顯示關閉討論按鈕'),
-				helptip: wgULS('请确保您充分了解[[Wikipedia:关闭删除讨论指南]]才开启此功能。', '請確保您充分了解[[Wikipedia:關閉刪除討論指南]]才開啟此功能。'),
+				helptip: wgULS('请确保您充分了解[[Wikipedia:关闭存废讨论指引]]才开启此功能。', '請確保您充分了解[[Wikipedia:關閉存廢討論指引]]才開啟此功能。'),
 				type: 'enum',
 				enumValues: wgULS({
 					'hide': '不显示',
