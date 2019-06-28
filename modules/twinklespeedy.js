@@ -1351,7 +1351,7 @@ Twinkle.speedy.callbacks = {
 			appendText += ' ~~~~~\n';
 
 			pageobj.setAppendText(appendText);
-			pageobj.setEditSummary('记录对[[' + Morebits.pageNameNorm + ']]的快速删除提名' + Twinkle.getPref('summaryAd'));
+			pageobj.setEditSummary(wgULS('记录对[[', '記錄對[[') + Morebits.pageNameNorm + wgULS(']]的快速删除提名', ']]的快速刪除提名') + Twinkle.getPref('summaryAd'));
 			pageobj.setTags(Twinkle.getPref('revisionTags'));
 			pageobj.setCreateOption('recreate');
 			pageobj.append();
