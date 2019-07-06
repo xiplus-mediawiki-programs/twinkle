@@ -1304,7 +1304,7 @@ Twinkle.protect.callbacks = {
 	getTaggedPage: function(params, text) {
 		var tag, summary;
 
-		var oldtag_re = /\s*(?:<noinclude>)?\s*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
+		var oldtag_re = /(?:<noinclude>)?[ \t]*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
 		var re_result = oldtag_re.exec(text);
 		if (re_result) {
 			if (confirm(wgULS('在页面上找到{{' + re_result[1] + '}}\n点击确定以移除，或点击取消以取消。', '在頁面上找到{{' + re_result[1] + '}}\n點選確定以移除，或點選取消以取消。'))) {
