@@ -1333,7 +1333,40 @@ Twinkle.protect.callbacks = {
 			} else if (Morebits.wiki.isPageRedirect()) {
 				text = text + '\n{{' + tag + '}}';
 			} else {
-				text = '{{' + tag + '}}\n' + text;
+				var firstSection, otherSection;
+				var index = text.indexOf('\n==');
+				if (index === -1) {
+					firstSection = text;
+					otherSection = '';
+				} else {
+					firstSection = text.substr(0, index);
+					otherSection = text.substr(index);
+				}
+
+				var dabTemplates = new RegExp('((?:^|\\n)[ \\t]*{{\\s*(?:'
+					+ '(?:主条目消歧义|主條目消歧義|消歧义链接|消歧義鏈接|消歧義連結|消连|消連|消歧义连结|[Dd]isambLink|[Nn]oteref|[Dd]ablink)'
+					+ '|(?:[Rr]ellink|[Hh]atnote)'
+					+ '|(?:[Aa]bout|[Oo]theruses4|关于|關於)'
+					+ '|(?:[Ff]or)'
+					+ '|(?:[Ff]or2)'
+					+ '|(?:[Oo]ther[ _]uses|[Oo]theruse|条目消歧义|條目消歧義|他用|[Oo]theruses)'
+					+ '|(?:[Rr]edirect|重定向至此|[Rr]edirects[ _]here|[Rr]edirect[ _]to)'
+					+ '|(?:[Rr]edirect2|主條目消歧義2|主条目消歧义2|[Rr]edir|重定向至此2)'
+					+ '|(?:[Rr]edirect-multi)'
+					+ '|(?:[Rr]edirect3)'
+					+ '|(?:[Rr]edirect-synonym)'
+					+ '|(?:[Dd]istinguish|不是|[Nn]ot|提示|混淆|分別|分别|區別|区别|[Nn]OT|本条目的主题不是|本條目的主題不是|本条目主题不是|本條目主題不是|条目主题不是|條目主題不是)'
+					+ '|(?:[Dd]istinguish2|[Ss]elfDistinguish|[Ss]elfdistinguish|[Nn]ot2|不是2)'
+					+ '|(?:[Ss]elfref)'
+					+ '|(?:[Oo]ther[ _]places)'
+					+ '|(?:[Cc]ontrast|對比|对比)'
+					+ ')\\|.*}}[ \\t]*\\n)');
+
+				if (firstSection.match(dabTemplates)) {
+					text = firstSection.replace(dabTemplates, '$1{{' + tag + '}}\n') + otherSection;
+				} else {
+					text = '{{' + tag + '}}\n' + text;
+				}
 			}
 			summary = wgULS('添加{{' + params.tag + '}}', '加入{{' + params.tag + '}}') + Twinkle.getPref('summaryAd');
 		}
