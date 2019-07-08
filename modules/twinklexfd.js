@@ -447,7 +447,6 @@ Twinkle.xfd.callbacks = {
 							newText + '\n\n' +
 							commentText + '\n' +
 							'----\n' +
-							'（請不要在橫線下参与讨论，以免出现错误。）\n' +
 							':{{删除}}理據：' + Morebits.string.formatReasonText(params.reason) + '\n' +
 							'提报以上' + {
 							'fame': '<u>关注度不足</u>条目',
