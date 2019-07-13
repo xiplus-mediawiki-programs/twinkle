@@ -1343,7 +1343,7 @@ Twinkle.protect.callbacks = {
 					otherSection = text.substr(index);
 				}
 
-				var dabTemplates = new RegExp('((?:^|\\n)[ \\t]*{{\\s*(?:'
+				var dabTemplates = new RegExp('([\\s\\S]*(?:^|\\n)[ \\t]*{{\\s*(?:'
 					+ '(?:主条目消歧义|主條目消歧義|消歧义链接|消歧義鏈接|消歧義連結|消连|消連|消歧义连结|[Dd]isambLink|[Nn]oteref|[Dd]ablink)'
 					+ '|(?:[Rr]ellink|[Hh]atnote)'
 					+ '|(?:[Aa]bout|[Oo]theruses4|关于|關於)'
