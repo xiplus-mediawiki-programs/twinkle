@@ -286,7 +286,7 @@ Twinkle.warn.messages = wgULS({
 		'翻译品质': {
 			'uw-roughtranslation1': {
 				label: '您翻译的质量有待改善',
-				summary: '您翻译的质量有待改善'
+				summary: '层级1：您翻译的质量有待改善'
 			}
 		},
 		'非能接受且违反方针或指引的单方面行为或操作': {
@@ -1102,7 +1102,7 @@ Twinkle.warn.messages = wgULS({
 		'翻譯品質': {
 			'uw-roughtranslation1': {
 				label: '您翻譯的質量有待改善',
-				summary: '您翻譯的質量有待改善'
+				summary: '層級1：您翻譯的質量有待改善'
 			}
 		},
 		'非能接受且違反方針或指引的單方面行為或操作': {
