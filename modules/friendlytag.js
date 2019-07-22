@@ -1031,7 +1031,16 @@ Twinkle.tag.multipleIssuesExceptions = [
 	'notmandarin',
 	'substub',
 	'requested move',
-	'uncategorized'
+	'uncategorized',
+	'Chinesetitle',
+	'NotChineseTitle',
+	'Notchinesetitle',
+	'中文标题',
+	'中文標題',
+	'非中文名称',
+	'非中文名稱',
+	'非中文标题',
+	'非中文標題'
 ];
 
 
