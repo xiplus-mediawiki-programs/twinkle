@@ -1318,7 +1318,7 @@ Twinkle.protect.callbacks = {
 				tag += '|reason=' + params.reason;
 			}
 			if (params.showexpiry && ['indefinite', 'infinite', 'never', null].indexOf(params.expiry) === -1) {
-				tag += '|expiry={{subst:#time:c|' + (/^\s*\d+\s*$/.exec(params.expiry) ? params.expiry : '+' + params.expiry) + '}}';
+				tag += '|expiry={{subst:#time:c|' + params.expiry + '}}';
 			}
 			if (params.small) {
 				tag += '|small=yes';
