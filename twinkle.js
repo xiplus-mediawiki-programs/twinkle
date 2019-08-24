@@ -129,7 +129,7 @@ Twinkle.defaultConfig.twinkle = {
 	configPage: 'Wikipedia:Twinkle/参数设置',
 	projectNamespaceName: mw.config.get('wgFormattedNamespaces')[4],
 	sandboxPage: 'Wikipedia:沙盒',
-	metaApi: 'https://meta.wikipedia.org/w/api.php'
+	metaApi: 'https://meta.wikimedia.org/w/api.php'
 };
 
 // now some skin dependent config.
