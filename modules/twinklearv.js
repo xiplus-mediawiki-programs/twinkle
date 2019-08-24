@@ -816,7 +816,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 			var statusIndicator = new Morebits.status('報告到 Steward requests/Global', wgULS('抓取页面…', '擷取頁面…'));
 
 			var metaapi = new mw.ForeignApi(Twinkle.getPref('metaApi'));
-			metaapi.edit('User:A2093064/Steward requests/Global', function(revision) {
+			metaapi.edit('Steward requests/Global', function(revision) {
 				var text = revision.content;
 				if (new RegExp('{{\\s*(Luxotool|LockHide)\\s*\\|\\s*(1=)?\\s*' + RegExp.escape(uid, true) + '\\s*(\\||}})').test(text)) {
 					statusIndicator.error(wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的'));
