@@ -39,6 +39,11 @@ Twinkle.arv.callback = function (uid) {
 	Window.addFooterLink('UAA', 'WP:UAA');
 	Window.addFooterLink(wgULS('用户名方针', '使用者名稱方針'), 'WP:U');
 	Window.addFooterLink('SRCU', 'WP:SRCU');
+	if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())) {
+		Window.addFooterLink(wgULS('全域封禁', '全域封鎖'), 'm:Global blocks/zh');
+	} else {
+		Window.addFooterLink(wgULS('全域锁定', '全域鎖定'), 'm:Global locks/zh');
+	}
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'H:TW#告狀');
 
 	var form = new Morebits.quickForm(Twinkle.arv.callback.evaluate);
