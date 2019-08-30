@@ -343,6 +343,12 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'work_area'
 			});
 			work_area.append({
+				type: 'div',
+				label: mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())
+					? $.parseHTML('<span style="font-style: normal; font-weight: bold;">' + wgULS('注意：在提交前请确保您已经明确了解', '注意：在提交前請確保您已經明確了解') + '<a href="https://meta.wikimedia.org/wiki/Global_blocks/zh#指引" target="_blank">' + wgULS('可进行全域封禁的准则', '可進行全域封鎖的準則') + '</a>。</span>')
+					: $.parseHTML('<span style="font-style: normal; font-weight: bold;">' + wgULS('注意：在提交前请确保您已经明确了解', '注意：在提交前請確保您已經明確了解') + '<a href="https://meta.wikimedia.org/wiki/Global_locks/zh#申请全域鎖定的原因" target="_blank">' + wgULS('可进行全域锁定的准则', '可進行全域鎖定的準則') + '</a>。</span>')
+			});
+			work_area.append({
 				type: 'checkbox',
 				name: 'globaltype',
 				list: [
