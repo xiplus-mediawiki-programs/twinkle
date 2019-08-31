@@ -15,10 +15,14 @@
 
 
 Twinkle.warn = function twinklewarn() {
+
 	if (Morebits.wiki.flow.relevantUserName()) {
 		Twinkle.addPortletLink(Twinkle.warn.callback, '警告', 'tw-warn', wgULS('警告或提醒用户', '警告或提醒用戶'));
-		if (Twinkle.getPref('autoMenuAfterRollback') && mw.config.get('wgNamespaceNumber') === 3 &&
-			mw.util.getParamValue('vanarticle') && !mw.util.getParamValue('friendlywelcome') && !mw.util.getParamValue('noautowarn')) {
+		if (Twinkle.getPref('autoMenuAfterRollback') &&
+			mw.config.get('wgNamespaceNumber') === 3 &&
+			mw.util.getParamValue('vanarticle') &&
+			!mw.util.getParamValue('friendlywelcome') &&
+			!mw.util.getParamValue('noautowarn')) {
 			Twinkle.warn.callback();
 		}
 	}
@@ -123,7 +127,7 @@ Twinkle.warn.makeVandalTalkLink = function($vandalTalkLink, pagename) {
 
 Twinkle.warn.callback = function twinklewarnCallback() {
 	if (Morebits.wiki.flow.relevantUserName() === mw.config.get('wgUserName') &&
-			!confirm(wgULS('您将要警告自己！您确定要继续吗？', '您將要警告自己！您確定要繼續嗎？'))) {
+		!confirm(wgULS('您将要警告自己！您确定要继续吗？', '您將要警告自己！您確定要繼續嗎？'))) {
 		return;
 	}
 
@@ -1844,9 +1848,6 @@ Twinkle.warn.prev_article = null;
 Twinkle.warn.prev_reason = null;
 
 Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCategory(e) {
-	if (!Twinkle.getPref('oldSelect')) {
-		$('select[name=sub_group]').chosen('destroy');
-	}
 
 	var value = e.target.value;
 	var sub_group = e.target.root.sub_group;
@@ -1928,31 +1929,36 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 	// hide the big red notice
 	$('#tw-warn-red-notice').remove();
 
-	// Build select menu with jquery.chosen
+	// Use select2 to make the select menu searchable
 	if (!Twinkle.getPref('oldSelect')) {
 		$('select[name=sub_group]')
-			.chosen({width: '100%', search_contains: true})
+			.select2({
+				width: '100%',
+				matcher: Morebits.select2.matcher,
+				templateResult: Morebits.select2.highlightSearchMatches,
+				language: {
+					searching: Morebits.select2.queryInterceptor
+				}
+			})
 			.change(Twinkle.warn.callback.change_subcategory);
 
+		$('.select2-selection').keydown(Morebits.select2.autoStart);
+
 		mw.util.addCSS(
-			// Force chosen select menu to display over the dialog while overflowing
-			// based on https://github.com/harvesthq/chosen/issues/1390#issuecomment-21397245
-			'.ui-dialog.morebits-dialog .morebits-dialog-content { overflow:visible !important; }' +
-			'.ui-dialog.morebits-dialog { overflow: inherit !important; }' +
+			// prevent dropdown from appearing behind the dialog, just in case
+			'.select2-container { z-index: 10000; }' +
 
-			// Increase height to match that of native select
-			'.morebits-dialog .chosen-drop .chosen-results { max-height: 300px; }' +
-			'.morebits-dialog .chosen-drop { max-height: 338px; }' +
+			// Increase height
+			'.select2-container .select2-dropdown .select2-results > .select2-results__options { max-height: 350px; }' +
 
-			// Remove padding
-			'.morebits-dialog .chosen-drop .chosen-results li { padding-top: 0px; padding-bottom: 0px; }'
+			// Reduce padding
+			'.select2-results .select2-results__option { padding-top: 1px; padding-bottom: 1px; }' +
+			'.select2-results .select2-results__group { padding-top: 1px; padding-bottom: 1px; } ' +
+
+			// Adjust font size
+			'.select2-container .select2-dropdown .select2-results { font-size: 13px; }' +
+			'.select2-container .selection .select2-selection__rendered { font-size: 13px; }'
 		);
-		// (Hopefully) temporary fixes for visual issues caused by the above CSS, see #665 and #667
-		$('.ui-resizable-handle').remove();
-		// Jump to extend the dialog to include any previewing content
-		// without scrolling and prevent resizing
-		mw.util.addCSS('.ui-dialog.morebits-dialog .morebits-dialog-content { max-height: max-content !important; }');
-
 	}
 };
 
