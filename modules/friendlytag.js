@@ -72,7 +72,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 
 			form.append({
 				type: 'input',
-				label: '快速篩選：',
+				label: wgULS('快速筛选：', '快速篩選：'),
 				name: 'quickfilter',
 				size: '30px',
 				event: function twinkletagquickfilter() {
