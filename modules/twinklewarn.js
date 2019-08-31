@@ -986,8 +986,8 @@ Twinkle.warn.messages = wgULS({
 			summary: '单层级警告：长期的破坏'
 		},
 		'uw-multipleIPs': {
-			label: '使用多个IP地址',
-			summary: '单层级警告：使用多个IP地址'
+			label: '使用多个IP地址进行破坏',
+			summary: '单层级警告：使用多个IP地址进行破坏'
 		},
 		'uw-npov-tvd': {
 			label: '在剧集条目中加入奸角等非中立描述',
@@ -1802,8 +1802,8 @@ Twinkle.warn.messages = wgULS({
 			summary: '單層級警告：長期的破壞'
 		},
 		'uw-multipleIPs': {
-			label: '使用多個IP地址',
-			summary: '單層級警告：使用多個IP地址'
+			label: '使用多個IP地址進行破壞',
+			summary: '單層級警告：使用多個IP地址進行破壞'
 		},
 		'uw-npov-tvd': {
 			label: '在劇集條目中加入奸角等非中立描述',
