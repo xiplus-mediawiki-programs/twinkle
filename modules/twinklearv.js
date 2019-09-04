@@ -829,7 +829,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 			var metaapi = new mw.ForeignApi(Twinkle.getPref('metaApi'));
 			metaapi.edit('Steward requests/Global', function(revision) {
 				var text = revision.content;
-				if (new RegExp('{{\\s*(Luxotool|LockHide)\\s*\\|\\s*(1=)?\\s*' + RegExp.escape(uid, true) + '\\s*(\\||}})').test(text)) {
+				if (new RegExp('{{\\s*([Ll]uxotool|[Ll]ock[Hh]ide|[Ll][Hh])\\s*\\|\\s*(1=)?\\s*' + RegExp.escape(uid, true) + '\\s*(\\||}})').test(text)) {
 					statusIndicator.error(wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的'));
 					Morebits.status.printUserText(reason, wgULS('您键入的评论已在下方提供，您可以将其加入到SRG已存在的小节中：', '您鍵入的評論已在下方提供，您可以將其加入到SRG已存在的小節中：'));
 					return $.Deferred().reject('dup');
