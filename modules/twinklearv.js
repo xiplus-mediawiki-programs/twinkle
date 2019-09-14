@@ -835,9 +835,9 @@ Twinkle.arv.callback.evaluate = function(e) {
 					return $.Deferred().reject('dup');
 				}
 				if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())) {
-					text = text.replace(/\n+(== Requests for global \(un\)lock and \(un\)hiding == *\n)/, '\n\n' + header + reason + '\n$1');
+					text = text.replace(/\n+(== Requests for global \(un\)lock and \(un\)hiding == *\n)/, '\n\n' + header + reason + '\n\n$1');
 				} else {
-					text = text.replace(/\n+(== See also == *\n)/, '\n\n' + header + reason + '\n$1');
+					text = text.replace(/\n+(== See also == *\n)/, '\n\n' + header + reason + '\n\n$1');
 				}
 				return {
 					text: text,
