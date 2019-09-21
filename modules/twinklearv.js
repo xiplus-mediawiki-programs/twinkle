@@ -734,7 +734,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 					return;
 				}
 				uaaPage.getStatusElement().status(wgULS('添加新报告…', '加入新報告…'));
-				uaaPage.setEditSummary(wgULS('新提报', '新提報') + '。' + Twinkle.getPref('summaryAd'));
+				uaaPage.setEditSummary(wgULS('新提报', '新提報') + Twinkle.getPref('summaryAd'));
 				uaaPage.setTags(Twinkle.getPref('revisionTags'));
 				uaaPage.setAppendText('\n' + reason);
 				uaaPage.append();
