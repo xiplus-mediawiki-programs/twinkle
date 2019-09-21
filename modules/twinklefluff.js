@@ -668,23 +668,9 @@ Twinkle.fluff.callbacks = {
 		// TODO Most of this is copy-pasted from Morebits.wiki.page#fnSaveSuccess. Unify it
 		var xml = apiobj.getXML();
 		var $edit = $(xml).find('edit');
-		var blacklist = $edit.attr('spamblacklist');
-		if (blacklist) {
-			var code = document.createElement('code');
-			code.style.fontFamily = 'monospace';
-			code.appendChild(document.createTextNode(blacklist));
-			apiobj.statelem.error(wgULS(['不能回退，因URL', code, '在垃圾黑名单中。'], ['不能回退，因URL', code, '在垃圾黑名單中。']));
-		} else if ($(xml).find('captcha').length > 0) {
+
+		if ($(xml).find('captcha').length > 0) {
 			apiobj.statelem.error(wgULS('不能回退，因维基服务器要求您输入验证码。', '不能回退，因維基伺服器要求您輸入驗證碼。'));
-		} else if ($edit.attr('code') === 'abusefilter-disallowed') {
-			apiobj.statelem.error(wgULS('此编辑被滥用过滤器“' + $edit.attr('info').substring(17) + '”禁止。', '此編輯被濫用過濾器「' + $edit.attr('info').substring(17) + '」禁止。'));
-		} else if ($edit.attr('info') && $edit.attr('info').indexOf('Hit AbuseFilter:') === 0) {
-			var div = document.createElement('div');
-			div.className = 'toccolours';
-			div.style.fontWeight = 'normal';
-			div.style.color = 'black';
-			div.innerHTML = $edit.attr('warning');
-			apiobj.statelem.error(wgULS([ '编辑过滤器返回了以下警告：', div, '如果您仍希望回退，请重新整理本页（F5或Ctrl+R）然后重试，此警告将不会再次出现。' ], [ '編輯過濾器返回了以下警告：', div, '如果您仍希望回退，請重新整理本頁（F5或Ctrl+R）然後重試，此警告將不會再次出現。' ]));
 		} else if ($edit.attr('nochange') === '') {
 			apiobj.statelem.warn(wgULS('要回退到的版本与当前版本相同，没什么要做的', '要回退到的版本與當前版本相同，沒什麼要做的'));
 		} else {
