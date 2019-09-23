@@ -1841,6 +1841,10 @@ Twinkle.warn.prev_article = null;
 Twinkle.warn.prev_reason = null;
 
 Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCategory(e) {
+	if (!Twinkle.getPref('oldSelect')) {
+		$('select[name=sub_group]').chosen('destroy');
+	}
+
 	var value = e.target.value;
 	var sub_group = e.target.root.sub_group;
 	sub_group.main_group = value;
@@ -1913,6 +1917,33 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 
 	// hide the big red notice
 	$('#tw-warn-red-notice').remove();
+
+	// Build select menu with jquery.chosen
+	if (!Twinkle.getPref('oldSelect')) {
+		$('select[name=sub_group]')
+			.chosen({width: '100%', search_contains: true})
+			.change(Twinkle.warn.callback.change_subcategory);
+
+		mw.util.addCSS(
+			// Force chosen select menu to display over the dialog while overflowing
+			// based on https://github.com/harvesthq/chosen/issues/1390#issuecomment-21397245
+			'.ui-dialog.morebits-dialog .morebits-dialog-content { overflow:visible !important; }' +
+			'.ui-dialog.morebits-dialog { overflow: inherit !important; }' +
+
+			// Increase height to match that of native select
+			'.morebits-dialog .chosen-drop .chosen-results { max-height: 300px; }' +
+			'.morebits-dialog .chosen-drop { max-height: 338px; }' +
+
+			// Remove padding
+			'.morebits-dialog .chosen-drop .chosen-results li { padding-top: 0px; padding-bottom: 0px; }'
+		);
+		// (Hopefully) temporary fixes for visual issues caused by the above CSS, see #665 and #667
+		$('.ui-resizable-handle').remove();
+		// Jump to extend the dialog to include any previewing content
+		// without scrolling and prevent resizing
+		mw.util.addCSS('.ui-dialog.morebits-dialog .morebits-dialog-content { max-height: max-content !important; }');
+
+	}
 };
 
 Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSubcategory(e) {

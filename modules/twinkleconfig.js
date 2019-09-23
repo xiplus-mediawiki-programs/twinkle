@@ -648,6 +648,14 @@ Twinkle.config.sections = [
 				type: 'boolean'
 			},
 
+			// TwinkleConfig.oldSelect (boolean)
+			// if true, use the native select menu rather the jquery chosen-based one
+			{
+				name: 'oldSelect',
+				label: wgULS('使用不可搜索的经典菜单', '使用不可搜尋的經典選單'),
+				type: 'boolean'
+			},
+
 			{
 				name: 'customWarningList',
 				label: wgULS('自定义警告模板', '自訂警告模板'),
