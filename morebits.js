@@ -3077,7 +3077,7 @@ Morebits.wiki.flow = function(pageName, currentAction) {
 		var query = {
 			action: 'flow',
 			page: ctx.pageName,
-			token: mw.user.tokens.get('editToken'),
+			token: mw.user.tokens.get('csrfToken'),
 			submodule: 'new-topic',
 			nttopic: ctx.topic,
 			ntcontent: ctx.content,
@@ -3122,7 +3122,7 @@ Morebits.wiki.flow = function(pageName, currentAction) {
 		var query = {
 			action: 'flow',
 			page: ctx.pageName,
-			token: mw.user.tokens.get('editToken'),
+			token: mw.user.tokens.get('csrfToken'),
 			submodule: 'edit-header',
 			ehprev_revision: ctx.headerLastRevision,
 			ehcontent: ctx.header,
