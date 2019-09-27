@@ -478,11 +478,6 @@ Twinkle.load = function () {
 		return;
 	}
 
-	// Prevent clickjacking
-	if (window.top !== window.self) {
-		return;
-	}
-
 	// Set custom Api-User-Agent header, for server-side logging purposes
 	Morebits.wiki.api.setApiUserAgent('Twinkle~zh~/2.0 (' + mw.config.get('wgDBname') + ')');
 
