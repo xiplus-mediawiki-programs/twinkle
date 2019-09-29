@@ -1054,12 +1054,13 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		Morebits.status.init(e.target);
 		var unblockStatusElement = new Morebits.status(wgULS('执行解除封禁', '執行解除封禁')); // eslint-disable-line no-redeclare
 		unblockoptions.action = 'unblock';
+		unblockoptions.tags = Twinkle.getPref('revisionTags');
 		unblockoptions.user = Morebits.wiki.flow.relevantUserName();
 
 		api.getToken('block').then(function(token) {
 			unblockStatusElement.status(wgULS('处理中…', '處理中…'));
 			unblockoptions.token = token;
-			var mbApi = new Morebits.wiki.api(wgULS('执行封禁', '執行封禁'), unblockoptions, function() {
+			var mbApi = new Morebits.wiki.api(wgULS('执行解除封禁', '執行解除封禁'), unblockoptions, function() {
 				unblockStatusElement.info('完成');
 			});
 			mbApi.post();
