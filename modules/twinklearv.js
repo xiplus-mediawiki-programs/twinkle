@@ -39,11 +39,6 @@ Twinkle.arv.callback = function (uid) {
 	Window.addFooterLink('UAA', 'WP:UAA');
 	Window.addFooterLink(wgULS('用户名方针', '使用者名稱方針'), 'WP:U');
 	Window.addFooterLink('SRCU', 'WP:SRCU');
-	if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())) {
-		Window.addFooterLink(wgULS('全域封禁', '全域封鎖'), 'm:Global blocks/zh');
-	} else {
-		Window.addFooterLink(wgULS('全域锁定', '全域鎖定'), 'm:Global locks/zh');
-	}
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'H:TW#告狀');
 
 	var form = new Morebits.quickForm(Twinkle.arv.callback.evaluate);
@@ -344,45 +339,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			});
 			work_area.append({
 				type: 'div',
-				label: mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())
-					? $.parseHTML('<span style="font-style: normal; font-weight: bold;">' + wgULS('注意：在提交前请确保您已经明确了解', '注意：在提交前請確保您已經明確了解') + '<a href="https://meta.wikimedia.org/wiki/Global_blocks/zh#指引" target="_blank">' + wgULS('可进行全域封禁的准则', '可進行全域封鎖的準則') + '</a>。</span>')
-					: $.parseHTML('<span style="font-style: normal; font-weight: bold;">' + wgULS('注意：在提交前请确保您已经明确了解', '注意：在提交前請確保您已經明確了解') + '<a href="https://meta.wikimedia.org/wiki/Global_locks/zh#申请全域鎖定的原因" target="_blank">' + wgULS('可进行全域锁定的准则', '可進行全域鎖定的準則') + '</a>。</span>')
-			});
-			work_area.append({
-				type: 'checkbox',
-				name: 'globaltype',
-				list: [
-					{
-						label: 'Long-term abuse',
-						value: 'Long-term abuse'
-					},
-					{
-						label: 'Cross-wiki abuse',
-						value: 'Cross-wiki abuse'
-					},
-					{
-						label: 'Abusive username',
-						value: 'Abusive username'
-					}
-				]
-			});
-			if (!mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())) {
-				work_area.append({
-					type: 'checkbox',
-					list: [
-						{
-							label: wgULS('在页面上及编辑摘要隐藏用户名', '在頁面上及編輯摘要隱藏用戶名'),
-							tooltip: wgULS('若用户名不当请勾选此项。', '若用戶名不當請勾選此項。'),
-							name: 'hidename',
-							value: 'hidename'
-						}
-					]
-				});
-			}
-			work_area.append({
-				type: 'textarea',
-				name: 'reason',
-				label: wgULS('评论：', '評論：')
+				label: $.parseHTML('<span>此功能已移除，請改用<a href="https://meta.wikimedia.org/wiki/User:Xiplus/TwinkleGlobal.js">m:User:Xiplus/TwinkleGlobal.js</a>。</span>')
 			});
 			work_area = work_area.render();
 			old_area.parentNode.replaceChild(work_area, old_area);
@@ -773,86 +730,6 @@ Twinkle.arv.callback.evaluate = function(e) {
 			break;
 
 		case 'global':
-			types = form.getChecked('globaltype');
-			if (!types.length && comment === '') {
-				alert(wgULS('您必须指定理由', '您必須指定理由'));
-				return;
-			}
-
-			if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())) {
-				header = '=== Global block for [[Special:Contributions/' + uid + '|' + uid + ']] ===\n';
-				header += '{{Status}}\n';
-				header += '* {{Luxotool|' + uid + '}}\n';
-				summary = 'Report [[Special:Contributions/' + uid + '|' + uid + ']]';
-			} else {
-				if (form.hidename && form.hidename.checked) {
-					header = '=== Global lock ===\n';
-					summary = 'Report an account';
-				} else {
-					header = '=== Global lock for [[User:' + uid + '|' + uid + ']] ===\n';
-					summary = 'Report [[Special:Contributions/' + uid + '|' + uid + ']]';
-				}
-				header += '{{Status}}\n';
-				header += '*{{LockHide|' + uid;
-				if (form.hidename && form.hidename.checked) {
-					header += '|hidename=1';
-				}
-				header += '}}\n';
-			}
-
-			types = types.map(function(v) {
-				switch (v) {
-					default:
-						return v;
-				}
-			}).join('. ');
-
-			reason += ':';
-			if (types) {
-				reason += types;
-			}
-			if (comment !== '') {
-				comment = comment.replace(/\r?\n/g, '\n:');  // indent newlines
-				reason += (types ? '. ' : '') + comment;
-			}
-			reason = reason.trim();
-			if (reason.search(/[.?!;]$/) === -1) {
-				reason += '.';
-			}
-			reason += ' --~~~~';
-
-			Morebits.simpleWindow.setButtonsEnabled(false);
-			Morebits.status.init(form);
-
-			var statusIndicator = new Morebits.status('報告到 Steward requests/Global', wgULS('抓取页面…', '擷取頁面…'));
-
-			var metaapi = new mw.ForeignApi(Twinkle.getPref('metaApi'));
-			metaapi.edit('Steward requests/Global', function(revision) {
-				var text = revision.content;
-				if (new RegExp('{{\\s*([Ll]uxotool|[Ll]ock[Hh]ide|[Ll][Hh])\\s*\\|\\s*(1=)?\\s*' + RegExp.escape(uid, true) + '\\s*(\\||}})').test(text)) {
-					statusIndicator.error(wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的'));
-					Morebits.status.printUserText(reason, wgULS('您键入的评论已在下方提供，您可以将其加入到SRG已存在的小节中：', '您鍵入的評論已在下方提供，您可以將其加入到SRG已存在的小節中：'));
-					return $.Deferred().reject('dup');
-				}
-				if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())) {
-					text = text.replace(/\n+(== Requests for global \(un\)lock and \(un\)hiding == *\n)/, '\n\n' + header + reason + '\n\n$1');
-				} else {
-					text = text.replace(/\n+(== See also == *\n)/, '\n\n' + header + reason + '\n\n$1');
-				}
-				return {
-					text: text,
-					summary: summary,
-					assert: 'user'
-				};
-			}).then(function() {
-				statusIndicator.info('完成');
-			}, function(e) {
-				if (e === 'dup') {
-					// pass
-				} else {
-					statusIndicator.error(e);
-				}
-			});
 			break;
 
 		case 'an3':
