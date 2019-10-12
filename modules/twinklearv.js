@@ -110,7 +110,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'page',
 				label: wgULS('相关页面：', '相關頁面：'),
 				tooltip: wgULS('如不希望让报告链接到页面，请留空', '如不希望讓報告連結到頁面，請留空'),
-				value: Morebits.queryString.exists('vanarticle') ? Morebits.queryString.get('vanarticle') : '',
+				value: mw.util.getParamValue('vanarticle') || '',
 				event: function(e) {
 					var value = e.target.value;
 					var root = e.target.form;
@@ -127,8 +127,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'badid',
 				label: wgULS('受到破坏的修订版本：', '受到破壞的修訂版本：'),
 				tooltip: wgULS('留空以略过差异', '留空以略過差異'),
-				value: Morebits.queryString.exists('vanarticlerevid') ? Morebits.queryString.get('vanarticlerevid') : '',
-				disabled: !Morebits.queryString.exists('vanarticle'),
+				value: mw.util.getParamValue('vanarticlerevid') || '',
+				disabled: !mw.util.getParamValue('vanarticle'),
 				event: function(e) {
 					var value = e.target.value;
 					var root = e.target.form;
@@ -140,8 +140,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'goodid',
 				label: wgULS('破坏前的修订版本：', '破壞前的修訂版本：'),
 				tooltip: wgULS('留空以略过差异的较早版本', '留空以略過差異的較早版本'),
-				value: Morebits.queryString.exists('vanarticlegoodrevid') ? Morebits.queryString.get('vanarticlegoodrevid') : '',
-				disabled: !Morebits.queryString.exists('vanarticle') || Morebits.queryString.exists('vanarticlerevid')
+				value: mw.util.getParamValue('vanarticlegoodrevid') || '',
+				disabled: !mw.util.getParamValue('vanarticle') || mw.util.getParamValue('vanarticlerevid')
 			});
 			work_area.append({
 				type: 'checkbox',

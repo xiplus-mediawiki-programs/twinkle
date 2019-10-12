@@ -16,17 +16,10 @@ Twinkle.diff = function twinklediff() {
 	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageContentModel') === 'flow-board' || !mw.config.get('wgArticleId')) {
 		return;
 	}
-
-	var query = {
-		'title': mw.config.get('wgPageName'),
-		'diff': 'cur',
-		'oldid': 'prev'
-	};
-
-	Twinkle.addPortletLink(mw.util.wikiScript('index') + '?' + $.param(query), wgULS('最后', '最後'), 'tw-lastdiff', wgULS('显示最后修改', '顯示最後變更'));
+	Twinkle.addPortletLink(mw.util.getUrl(mw.config.get('wgPageName'), {diff: 'cur', oldid: 'prev'}), wgULS('最后', '最後'), 'tw-lastdiff', wgULS('显示最后修改', '顯示最後變更'));
 
 	// Show additional tabs only on diff pages
-	if (Morebits.queryString.exists('diff')) {
+	if (mw.util.getParamValue('diff')) {
 		Twinkle.addPortletLink(function() {
 			Twinkle.diff.evaluate(false);
 		}, '自上', 'tw-since', wgULS('显示与上一修订版本间的差异', '顯示與上一修訂版本間的差異'));
@@ -35,12 +28,7 @@ Twinkle.diff = function twinklediff() {
 		}, '自我', 'tw-sincemine', wgULS('显示与我做出的修订版本的差异', '顯示與我做出的修訂版本的差異'));
 
 		var oldid = /oldid=(.+)/.exec($('#mw-diff-ntitle1').find('strong a').first().attr('href'))[1];
-		query = {
-			'title': mw.config.get('wgPageName'),
-			'diff': 'cur',
-			'oldid': oldid
-		};
-		Twinkle.addPortletLink(mw.util.wikiScript('index') + '?' + $.param(query), wgULS('当前', '目前'), 'tw-curdiff', wgULS('显示与当前版本间的差异', '顯示與目前版本間的差異'));
+		Twinkle.addPortletLink(mw.util.getUrl(mw.config.get('wgPageName'), {diff: 'cur', oldid: oldid}), wgULS('当前', '目前'), 'tw-curdiff', wgULS('显示与当前版本间的差异', '顯示與目前版本間的差異'));
 	}
 };
 
@@ -81,12 +69,10 @@ Twinkle.diff.callbacks = {
 			self.statelem.error(wgULS('未找到合适的早期版本，或 ' + self.params.user + ' 是唯一贡献者。取消。', '未找到合適的早期版本，或 ' + self.params.user + ' 是唯一貢獻者。取消。'));
 			return;
 		}
-		var query = {
-			'title': mw.config.get('wgPageName'),
-			'oldid': revid,
-			'diff': mw.config.get('wgCurRevisionId')
-		};
-		window.location = mw.util.wikiScript('index') + '?' + Morebits.queryString.create(query);
+		window.location = mw.util.getUrl(mw.config.get('wgPageName'), {
+			diff: mw.config.get('wgCurRevisionId'),
+			oldid: revid
+		});
 	}
 };
 })(jQuery);

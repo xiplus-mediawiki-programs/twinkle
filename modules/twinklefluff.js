@@ -33,7 +33,7 @@ Twinkle.fluff = function twinklefluff() {
 			'WhitePhosphorus-bot'
 		];
 
-		if (Morebits.queryString.exists('twinklerevert')) {
+		if (mw.util.getParamValue('twinklerevert')) {
 			// Return if the user can't edit the page in question
 			if (!mw.config.get('wgIsProbablyEditable')) {
 				alert(wgULS('无法编辑页面，它可能被保护了。', '無法編輯頁面，它可能被保護了。'));
@@ -85,7 +85,7 @@ Twinkle.fluff.auto = function twinklefluffauto() {
 
 	var vandal = $('#mw-diff-ntitle2').find('a.mw-userlink').text();
 
-	Twinkle.fluff.revert(Morebits.queryString.get('twinklerevert'), vandal, true);
+	Twinkle.fluff.revert(mw.util.getParamValue('twinklerevert'), vandal, true);
 };
 
 Twinkle.fluff.addLinks = {
@@ -129,8 +129,8 @@ Twinkle.fluff.addLinks = {
 							Twinkle.fluff.revert('vand', username, false, revid, page);
 						});
 					} else {
-						tmpNode.firstChild.setAttribute('href', href + '&' + Morebits.queryString.create({ 'twinklerevert': 'norm' }));
-						tmpNode2.firstChild.setAttribute('href', href + '&' + Morebits.queryString.create({ 'twinklerevert': 'vand' }));
+						tmpNode.firstChild.setAttribute('href', href + '&twinklerevert=norm');
+						tmpNode2.firstChild.setAttribute('href', href + '&twinklerevert=vand');
 					}
 				});
 			}
@@ -602,16 +602,16 @@ Twinkle.fluff.callbacks = {
 
 			switch (Twinkle.getPref('userTalkPageMode')) {
 				case 'tab':
-					window.open(mw.util.wikiScript('index') + '?' + Morebits.queryString.create(query), '_blank');
+					window.open(mw.util.getUrl('', query), '_blank');
 					break;
 				case 'blank':
-					window.open(mw.util.wikiScript('index') + '?' + Morebits.queryString.create(query), '_blank',
+					window.open(mw.util.getUrl('', query), '_blank',
 						'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800');
 					break;
 				case 'window':
 				/* falls through */
 				default:
-					window.open(mw.util.wikiScript('index') + '?' + Morebits.queryString.create(query),
+					window.open(mw.util.getUrl('', query),
 						window.name === 'twinklewarnwindow' ? '_blank' : 'twinklewarnwindow',
 						'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800');
 					break;

@@ -1546,12 +1546,21 @@ Morebits.wiki.api.prototype = {
 
 		++Morebits.wiki.numberOfActionsLeft;
 
+		var queryString = $.map(this.query, function(val, i) {
+			if (Array.isArray(val)) {
+				return encodeURIComponent(i) + '=' + val.map(encodeURIComponent).join('|');
+			} else if (val !== undefined) {
+				return encodeURIComponent(i) + '=' + encodeURIComponent(val);
+			}
+		}).join('&').replace(/^(.*?)(\btoken=[^&]*)&(.*)/, '$1$3&$2');
+		// token should always be the last item in the query string (bug TW-B-0013)
+
 		var ajaxparams = $.extend({}, {
 			context: this,
 			type: 'POST',
 			url: mw.util.wikiScript('api'),
-			data: Morebits.queryString.create(this.query),
-			dataType: this.query.format,
+			data: queryString,
+			dataType: 'xml',
 			headers: {
 				'Api-User-Agent': morebitsWikiApiUserAgent
 			}
@@ -3888,132 +3897,6 @@ Morebits.wikitext.page.prototype = {
 	}
 };
 
-
-
-/**
- * **************** Morebits.queryString ****************
- * Maps the querystring to an object
- *
- * Functions:
- *
- * Morebits.queryString.exists(key)
- *     returns true if the particular key is set
- * Morebits.queryString.get(key)
- *     returns the value associated to the key
- * Morebits.queryString.equals(key, value)
- *     returns true if the value associated with given key equals given value
- * Morebits.queryString.toString()
- *     returns the query string as a string
- * Morebits.queryString.create( hash )
- *     creates an querystring and encodes strings via encodeURIComponent and joins arrays with |
- *
- * In static context, the value of location.search.substring(1), else the value given to the constructor is going to be used. The mapped hash is saved in the object.
- *
- * Example:
- *
- * var value = Morebits.queryString.get('key');
- * var obj = new Morebits.queryString('foo=bar&baz=quux');
- * value = obj.get('foo');
- */
-Morebits.queryString = function QueryString(qString) {
-	this.string = qString;
-	this.params = {};
-
-	if (!qString.length) {
-		return;
-	}
-
-	qString.replace(/\+/, ' ');
-	var args = qString.split('&');
-
-	for (var i = 0; i < args.length; ++i) {
-		var pair = args[i].split('=');
-		var key = decodeURIComponent(pair[0]), value = key;
-
-		if (pair.length === 2) {
-			value = decodeURIComponent(pair[1]);
-		}
-
-		this.params[key] = value;
-	}
-};
-
-Morebits.queryString.staticstr = null;
-
-Morebits.queryString.staticInit = function() {
-	if (!Morebits.queryString.staticstr) {
-		Morebits.queryString.staticstr = new Morebits.queryString(location.search.substring(1));
-	}
-};
-
-Morebits.queryString.get = function(key) {
-	Morebits.queryString.staticInit();
-	return Morebits.queryString.staticstr.get(key);
-};
-
-Morebits.queryString.prototype.get = function(key) {
-	return this.params[key] ? this.params[key] : null;
-};
-
-Morebits.queryString.exists = function(key) {
-	Morebits.queryString.staticInit();
-	return Morebits.queryString.staticstr.exists(key);
-};
-
-Morebits.queryString.prototype.exists = function(key) {
-	return !!this.params[key];
-};
-
-Morebits.queryString.equals = function(key, value) {
-	Morebits.queryString.staticInit();
-	return Morebits.queryString.staticstr.equals(key, value);
-};
-
-Morebits.queryString.prototype.equals = function(key, value) {
-	return this.params[key] === value;
-};
-
-Morebits.queryString.toString = function() {
-	Morebits.queryString.staticInit();
-	return Morebits.queryString.staticstr.toString();
-};
-
-Morebits.queryString.prototype.toString = function() {
-	return this.string ? this.string : null;
-};
-
-Morebits.queryString.create = function(arr) {
-	var resarr = [];
-	var editToken;  // KLUGE: this should always be the last item in the query string (bug TW-B-0013)
-	for (var i in arr) {
-		if (arr[i] === undefined) {
-			continue;
-		}
-		var res;
-		if ($.isArray(arr[i])) {
-			var v = [];
-			for (var j = 0; j < arr[i].length; ++j) {
-				v[j] = encodeURIComponent(arr[i][j]);
-			}
-			res = v.join('|');
-		} else {
-			res = encodeURIComponent(arr[i]);
-		}
-		if (i === 'token') {
-			editToken = res;
-		} else {
-			resarr.push(encodeURIComponent(i) + '=' + res);
-		}
-	}
-	if (editToken !== undefined) {
-		resarr.push('token=' + editToken);
-	}
-	return resarr.join('&');
-};
-Morebits.queryString.prototype.create = Morebits.queryString.create;
-
-
-
 /**
  * **************** Morebits.status ****************
  */
@@ -4733,7 +4616,6 @@ if (typeof arguments === 'undefined') {  // typeof is here for a reason...
 	window.QuickForm = Morebits.quickForm;
 	window.Wikipedia = Morebits.wiki;
 	window.Status = Morebits.status;
-	window.QueryString = Morebits.queryString;
 }
 
 // </nowiki>
