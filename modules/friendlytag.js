@@ -439,6 +439,7 @@ Twinkle.tag.article.tags = wgULS({
 	'contradict': '内容自相矛盾',
 	'copyedit': '需要编修，以确保文法、用词、语气、格式、标点等使用恰当',
 	'copypaste': '内容可能是从某个来源处拷贝后贴上',
+	'current': '记述新闻动态',
 	'dead end': '需要加上内部链接以构筑百科全书的链接网络',
 	'disputed': '内容疑欠准确，有待查证',
 	'expand language': '可以根据其他语言版本扩充',
@@ -501,6 +502,7 @@ Twinkle.tag.article.tags = wgULS({
 	'contradict': '內容自相矛盾',
 	'copyedit': '需要編修，以確保文法、用詞、語氣、格式、標點等使用恰當',
 	'copypaste': '內容可能是從某個來源處拷貝後貼上',
+	'current': '記述新聞動態',
 	'dead end': '需要加上內部連結以構築百科全書的連結網絡',
 	'disputed': '內容疑欠準確，有待查證',
 	'expand language': '可以根據其他語言版本擴充',
@@ -603,6 +605,7 @@ Twinkle.tag.article.tagCategories = wgULS({
 			'trivia'
 		],
 		'时间性': [
+			'current',
 			'update'
 		],
 		'中立、偏见和事实准确性': [
@@ -704,6 +707,7 @@ Twinkle.tag.article.tagCategories = wgULS({
 			'trivia'
 		],
 		'時間性': [
+			'current',
 			'update'
 		],
 		'中立、偏見和事實準確性': [
@@ -1086,6 +1090,7 @@ Twinkle.tag.file.replacementList = wgULS([
 // Contains those article tags that *do not* work inside {{multiple issues}}.
 Twinkle.tag.multipleIssuesExceptions = [
 	'catimprove',
+	'current', // Works but not intended for use in MI
 	'merge',
 	'merge from',
 	'merge to',
