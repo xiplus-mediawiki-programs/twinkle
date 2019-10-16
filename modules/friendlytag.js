@@ -70,48 +70,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 				]
 			});
 
-			form.append({
-				type: 'input',
-				label: wgULS('快速筛选：', '快速篩選：'),
-				name: 'quickfilter',
-				size: '30px',
-				event: function twinkletagquickfilter() {
-					var $form = $('#tagWorkArea');
-					// flush the DOM of all existing underline spans
-					$form.find('.search-hit').each(function(i, e) {
-						var label_element = e.parentElement;
-						// This would convert <label>Hello <span class=search-hit>wo</span>rld</label>
-						// to <label>Hello world</label>
-						label_element.innerHTML = label_element.textContent;
-					});
-					// allCheckboxDivs and allHeaders are defined globally, rather than in
-					// this function, to avoid having to recompute them on every keydown.
-					if (this.value) {
-						allCheckboxDivs.hide();
-						allHeaders.hide();
-						var searchString = this.value;
-						var searchRegex = new RegExp(mw.util.escapeRegExp(searchString), 'i');
-
-						$form.find('label').each(function() {
-							var label_text = this.textContent;
-							var searchHit = searchRegex.exec(label_text);
-							if (searchHit) {
-								var range = document.createRange();
-								var textnode = this.childNodes[0];
-								range.selectNodeContents(textnode);
-								range.setStart(textnode, searchHit.index);
-								range.setEnd(textnode, searchHit.index + searchString.length);
-								var underline_span = $('<span>').addClass('search-hit').css('text-decoration', 'underline')[0];
-								range.surroundContents(underline_span);
-								this.parentElement.style.display = 'block'; // un-hide
-							}
-						});
-					} else {
-						allCheckboxDivs.show();
-						allHeaders.show();
-					}
-				}
-			});
+			Twinkle.tag.quickFilter(form);
 
 			form.append({
 				type: 'div',
@@ -148,6 +107,8 @@ Twinkle.tag.callback = function friendlytagCallback() {
 		case '重定向':
 			Window.setTitle(wgULS('重定向标记', '重定向標記'));
 
+			Twinkle.tag.quickFilter(form);
+
 			form.append({ type: 'header', label: '常用模板' });
 			form.append({ type: 'checkbox', name: 'redirectTags', list: Twinkle.tag.frequentList });
 
@@ -161,6 +122,8 @@ Twinkle.tag.callback = function friendlytagCallback() {
 		case '文件':
 		case '檔案':
 			Window.setTitle(wgULS('文件维护标记', '檔案維護標記'));
+
+			Twinkle.tag.quickFilter(form);
 
 			// TODO: perhaps add custom tags TO list of checkboxes
 
@@ -188,16 +151,19 @@ Twinkle.tag.callback = function friendlytagCallback() {
 	Window.setContent(result);
 	Window.display();
 
-	if (Twinkle.tag.mode === '条目' || Twinkle.tag.mode === '條目') {
-		result.quickfilter.autocomplete = 'off'; // disable browser suggestions for this field
-		result.quickfilter.addEventListener('keypress', function(e) {
-			if (e.keyCode === 13) { // prevent enter key from submitting
-				e.preventDefault();
-				return false;
-			}
-		});
-		result.quickfilter.focus();  // place cursor in the Quick filter field as soon as window is opened
+	// for quick filter:
+	$allCheckboxDivs = $(result).find('[name$=Tags]').parent();
+	$allHeaders = $(result).find('h5');
+	result.quickfilter.focus();  // place cursor in the quick filter field as soon as window is opened
+	result.quickfilter.autocomplete = 'off'; // disable browser suggestions
+	result.quickfilter.addEventListener('keypress', function(e) {
+		if (e.keyCode === 13) { // prevent enter key from accidentally submitting the form
+			e.preventDefault();
+			return false;
+		}
+	});
 
+	if (Twinkle.tag.mode === '条目' || Twinkle.tag.mode === '條目') {
 		// fake a change event on the sort dropdown, to initialize the tag list
 		var evt = document.createEvent('Event');
 		evt.initEvent('change', true, true);
@@ -207,16 +173,59 @@ Twinkle.tag.callback = function friendlytagCallback() {
 
 Twinkle.tag.checkedTags = [];
 
-// Used in Quick Filter event function
-var allCheckboxDivs, allHeaders;
+// $allCheckboxDivs and $allHeaders are defined globally, rather than in
+// the event function, to avoid having to recompute them on every keydown.
+var $allCheckboxDivs, $allHeaders;
+
+Twinkle.tag.quickFilter = function(form) {
+
+	form.append({
+		type: 'input',
+		label: wgULS('快速筛选：', '快速篩選：'),
+		name: 'quickfilter',
+		size: '30px',
+		event: function twinkletagquickfilter() {
+			// flush the DOM of all existing underline spans
+			$allCheckboxDivs.find('.search-hit').each(function(i, e) {
+				var label_element = e.parentElement;
+				// This would convert <label>Hello <span class=search-hit>wo</span>rld</label>
+				// to <label>Hello world</label>
+				label_element.innerHTML = label_element.textContent;
+			});
+
+			if (this.value) {
+				$allCheckboxDivs.hide();
+				$allHeaders.hide();
+				var searchString = this.value;
+				var searchRegex = new RegExp(mw.util.escapeRegExp(searchString), 'i');
+
+				$allCheckboxDivs.find('label').each(function () {
+					var label_text = this.textContent;
+					var searchHit = searchRegex.exec(label_text);
+					if (searchHit) {
+						var range = document.createRange();
+						var textnode = this.childNodes[0];
+						range.selectNodeContents(textnode);
+						range.setStart(textnode, searchHit.index);
+						range.setEnd(textnode, searchHit.index + searchString.length);
+						var underline_span = $('<span>').addClass('search-hit').css('text-decoration', 'underline')[0];
+						range.surroundContents(underline_span);
+						this.parentElement.style.display = 'block'; // show
+					}
+				});
+			} else {
+				$allCheckboxDivs.show();
+				$allHeaders.show();
+			}
+		}
+	});
+
+};
 
 Twinkle.tag.updateSortOrder = function(e) {
+	var form = e.target.form;
 	var sortorder = e.target.value;
-
-	Twinkle.tag.checkedTags = e.target.form.getChecked('articleTags');
-	if (!Twinkle.tag.checkedTags) {
-		Twinkle.tag.checkedTags = [];
-	}
+	Twinkle.tag.checkedTags = form.getChecked('articleTags') || [];
 
 	var container = new Morebits.quickForm.element({ type: 'fragment' });
 
@@ -388,16 +397,15 @@ Twinkle.tag.updateSortOrder = function(e) {
 		});
 	}
 
-	var $workarea = $(e.target.form).find('div#tagWorkArea');
+	var $workarea = $(form).find('#tagWorkArea');
 	var rendered = container.render();
 	$workarea.empty().append(rendered);
 
-	// Used in quick filter event function
-	allCheckboxDivs = $workarea.find('[name=articleTags], [name=alreadyPresentArticleTags]').parent();
-	allHeaders = $workarea.find('h5, .quickformDescription');
-
-	// clear search, because the search results are not preserved over mode change
-	e.target.form.quickfilter.value = '';
+	// for quick filter:
+	$allCheckboxDivs = $workarea.find('[name$=Tags]').parent();
+	$allHeaders = $workarea.find('h5, .quickformDescription');
+	form.quickfilter.value = ''; // clear search, because the search results are not preserved over mode change
+	form.quickfilter.focus();
 
 	// style adjustments
 	$workarea.find('h5').css({ 'font-size': '110%' });
