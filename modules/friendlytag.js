@@ -189,6 +189,15 @@ Twinkle.tag.callback = function friendlytagCallback() {
 	Window.display();
 
 	if (Twinkle.tag.mode === '条目' || Twinkle.tag.mode === '條目') {
+		result.quickfilter.autocomplete = 'off'; // disable browser suggestions for this field
+		result.quickfilter.addEventListener('keypress', function(e) {
+			if (e.keyCode === 13) { // prevent enter key from submitting
+				e.preventDefault();
+				return false;
+			}
+		});
+		result.quickfilter.focus();  // place cursor in the Quick filter field as soon as window is opened
+
 		// fake a change event on the sort dropdown, to initialize the tag list
 		var evt = document.createEvent('Event');
 		evt.initEvent('change', true, true);
