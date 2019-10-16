@@ -68,12 +68,6 @@ Twinkle.arv.callback = function (uid) {
 		label: wgULS('用户查核协助请求 - 傀儡（WP:RFCUHAM）', '用戶查核協助請求 - 傀儡（WP:RFCUHAM）'),
 		value: 'puppet'
 	});
-	categories.append({
-		type: 'option',
-		label: mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())
-			? wgULS('全域封禁（m:SRG）', '全域封鎖（m:SRG）') : wgULS('全域锁定（m:SRG）', '全域鎖定（m:SRG）'),
-		value: 'global'
-	});
 	form.append({
 		type: 'field',
 		label: 'Work area',
@@ -325,21 +319,6 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					name: 'notify',
 					tooltip: wgULS('通知用户不是必须的，在许多情况下（如长期破坏者）通知更可能适得其反。但是，对于涉及新用户的报告而言，通知他们能让报告显得更公平。请使用常识。', '通知用戶不是必須的，在許多情況下（如長期破壞者）通知更可能適得其反。但是，對於涉及新用戶的報告而言，通知他們能讓報告顯得更公平。請使用常識。')
 				} ]
-			});
-			work_area = work_area.render();
-			old_area.parentNode.replaceChild(work_area, old_area);
-			break;
-
-		case 'global':
-			work_area = new Morebits.quickForm.element({
-				type: 'field',
-				label: mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())
-					? wgULS('提报全域封禁', '提報全域封鎖') : wgULS('提报全域锁定', '提報全域鎖定'),
-				name: 'work_area'
-			});
-			work_area.append({
-				type: 'div',
-				label: $.parseHTML('<span>此功能已移除，請改用<a href="https://meta.wikimedia.org/wiki/User:Xiplus/TwinkleGlobal.js">m:User:Xiplus/TwinkleGlobal.js</a>。</span>')
 			});
 			work_area = work_area.render();
 			old_area.parentNode.replaceChild(work_area, old_area);
@@ -727,9 +706,6 @@ Twinkle.arv.callback.evaluate = function(e) {
 			Morebits.simpleWindow.setButtonsEnabled(false);
 			Morebits.status.init(form);
 			Twinkle.arv.processSock(sockParameters);
-			break;
-
-		case 'global':
 			break;
 
 		case 'an3':
