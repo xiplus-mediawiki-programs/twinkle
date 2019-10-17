@@ -888,6 +888,53 @@ HTMLFormElement.prototype.getChecked = function(name, type) {
 	return return_array;
 };
 
+/**
+ * getUnchecked:
+ *   Does the same as getChecked above, but with unchecked elements.
+ */
+
+HTMLFormElement.prototype.getUnchecked = function(name, type) {
+	var elements = this.elements[name];
+	if (!elements) {
+		// if the element doesn't exists, return null.
+		return null;
+	}
+	var return_array = [];
+	var i;
+	if (elements instanceof HTMLSelectElement) {
+		var options = elements.options;
+		for (i = 0; i < options.length; ++i) {
+			if (!options[i].selected) {
+				if (options[i].values) {
+					return_array.push(options[i].values);
+				} else {
+					return_array.push(options[i].value);
+				}
+
+			}
+		}
+	} else if (elements instanceof HTMLInputElement) {
+		if (type && elements.type !== type) {
+			return [];
+		} else if (!elements.checked) {
+			return [ elements.value ];
+		}
+	} else {
+		for (i = 0; i < elements.length; ++i) {
+			if (!elements[i].checked) {
+				if (type && elements[i].type !== type) {
+					continue;
+				}
+				if (elements[i].values) {
+					return_array.push(elements[i].values);
+				} else {
+					return_array.push(elements[i].value);
+				}
+			}
+		}
+	}
+	return return_array;
+};
 
 
 /**
