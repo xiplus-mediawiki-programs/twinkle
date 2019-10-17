@@ -1285,6 +1285,7 @@ Twinkle.tag.callbacks = {
 
 			pageobj.setPageText(pageText);
 			pageobj.setEditSummary(summaryText + Twinkle.getPref('summaryAd'));
+			pageobj.setTags(Twinkle.getPref('revisionTags'));
 			pageobj.setWatchlist(Twinkle.getFriendlyPref('watchTaggedPages'));
 			pageobj.setMinorEdit(Twinkle.getFriendlyPref('markTaggedPagesAsMinor'));
 			pageobj.setCreateOption('nocreate');
