@@ -1158,6 +1158,15 @@ Morebits.array = {
 Morebits.pageNameNorm = mw.config.get('wgPageName').replace(/_/g, ' ');
 
 
+/**
+ * *************** Morebits.pageNameRegex *****************
+ * For a page name 'Foo bar', returns the string '[Ff]oo bar'
+ * @param {string} pageName - page name without namespace
+ */
+Morebits.pageNameRegex = function(pageName) {
+	return '[' + pageName[0].toUpperCase() + pageName[0].toLowerCase() + ']' + pageName.slice(1);
+};
+
 
 /**
  * **************** Morebits.unbinder ****************
