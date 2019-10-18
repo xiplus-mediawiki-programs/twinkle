@@ -703,9 +703,9 @@ Twinkle.speedy.generalList = [
 		hideWhenUser: true
 	},
 	{
-		label: wgULS('G10: 原作者清空页面或提出删除，且贡献者只有一人', 'G10: 原作者清空頁面或提出刪除，且貢獻者只有一人'),
+		label: wgULS('G10: 原作者清空页面或提出删除，且实际贡献者只有一人', 'G10: 原作者清空頁面或提出刪除，且實際貢獻者只有一人'),
 		value: 'g10',
-		tooltip: wgULS('对页面内容无实际修改的除外；提请须出于善意，及附有合理原因。', '對頁面內容無實際修改的除外；提請須出於善意，及附有合理原因。'),
+		tooltip: wgULS('提请须出于善意，及附有合理原因。', '提請須出於善意，及附有合理原因。'),
 		subgroup: {
 			name: 'g10_rationale',
 			type: 'input',
