@@ -3328,7 +3328,7 @@ Morebits.wiki.flow.relevantUserName = function () {
 	} else if (mw.config.get('wgPageContentModel') === 'flow-board') {
 		var title = $('a', '#contentSub').attr('title');
 		if (title && title.indexOf('User talk:') === 0) {
-			return title.substr(10);
+			return title.replace(/^User talk:([^/]+).*$/, '$1');
 		}
 		return null;
 
