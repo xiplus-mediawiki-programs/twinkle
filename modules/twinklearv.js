@@ -14,7 +14,7 @@
  */
 
 Twinkle.arv = function twinklearv() {
-	var username = Morebits.wiki.flow.relevantUserName();
+	var username = Morebits.wiki.flow.relevantUserName(true);
 	if (!username) {
 		return;
 	}
@@ -170,7 +170,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					}
 				]
 			});
-			if (!mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())) {
+			if (!mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName(true))) {
 				work_area.append({
 					type: 'checkbox',
 					list: [
