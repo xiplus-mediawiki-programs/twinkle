@@ -69,6 +69,14 @@ Morebits.userIsInGroup = function (group) {
 };
 
 
+/**
+ * **************** Morebits.isIPRange() ****************
+ */
+
+Morebits.isIPRange = function (address) {
+	return mw.util.isIPAddress(address, true) && !mw.util.isIPAddress(address);
+};
+
 
 /**
  * **************** Morebits.sanitizeIPv6() ****************
@@ -3320,7 +3328,7 @@ Morebits.wiki.flow.check = function(title, callbackOnFlow, callbackOnNonFlow, on
 	checkApi.post();
 }; // end Morebits.wiki.flow
 
-Morebits.wiki.flow.relevantUserName = function () {
+Morebits.wiki.flow.relevantUserName = function (allowBlock) {
 	// 处理Flow页面的问题
 	var name = mw.config.get('wgRelevantUserName');
 	if (name) {
@@ -3332,6 +3340,11 @@ Morebits.wiki.flow.relevantUserName = function () {
 		}
 		return null;
 
+	} else if (mw.config.get('wgCanonicalSpecialPageName') === 'Contributions') {
+		if ($('#contentSub').find('a[title^="Special:日志/block"]').length && allowBlock) {
+			var link = $('#contentSub').find('a[title^="Special:日志/block"]')[0].href;
+			return mw.util.getParamValue('page', link).replace('User:', '');
+		}
 	}
 	return null;
 
