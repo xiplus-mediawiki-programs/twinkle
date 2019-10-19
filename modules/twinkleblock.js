@@ -16,20 +16,20 @@ var api = new mw.Api(), relevantUserName;
 
 Twinkle.block = function twinkleblock() {
 	// should show on Contributions pages, anywhere there's a relevant user
-	if (Morebits.userIsInGroup('sysop') && Morebits.wiki.flow.relevantUserName()) {
+	if (Morebits.userIsInGroup('sysop') && Morebits.wiki.flow.relevantUserName(true)) {
 		Twinkle.addPortletLink(Twinkle.block.callback, '封禁', 'tw-block', wgULS('封禁相关用户', '封禁相關用戶'));
 	}
 };
 
 Twinkle.block.callback = function twinkleblockCallback() {
-	if (Morebits.wiki.flow.relevantUserName() === mw.config.get('wgUserName') &&
+	if (Morebits.wiki.flow.relevantUserName(true) === mw.config.get('wgUserName') &&
 			!confirm(wgULS('您即将封禁自己！确认要继续吗？', '您即將封禁自己！確認要繼續嗎？'))) {
 		return;
 	}
 
 	var Window = new Morebits.simpleWindow(650, 530);
 	// need to be verbose about who we're blocking
-	Window.setTitle('封禁或向' + Morebits.wiki.flow.relevantUserName() + wgULS('发出封禁模板', '發出封禁模板'));
+	Window.setTitle('封禁或向' + Morebits.wiki.flow.relevantUserName(true) + wgULS('发出封禁模板', '發出封禁模板'));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink('封禁模板', 'Wikipedia:模板消息/用戶討論名字空間#.E5.B0.81.E7.A6.81');
 	Window.addFooterLink(wgULS('封禁方针', '封禁方針'), 'WP:BLOCK');
@@ -112,18 +112,23 @@ Twinkle.block.callback = function twinkleblockCallback() {
 };
 
 Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
-	var userName = Morebits.wiki.flow.relevantUserName();
+	var userName = Morebits.wiki.flow.relevantUserName(true);
 
-	api.get({
+	var query = {
 		format: 'json',
 		action: 'query',
 		list: 'blocks|users|logevents',
 		letype: 'block',
 		lelimit: 1,
-		bkusers: userName,
 		ususers: userName,
 		letitle: 'User:' + userName
-	})
+	};
+	if (Morebits.isIPRange(userName)) {
+		query.bkip = userName;
+	} else {
+		query.bkusers = userName;
+	}
+	api.get(query)
 		.then(function(data) {
 			var blockinfo = data.query.blocks[0],
 				userinfo = data.query.users[0];
@@ -484,7 +489,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	}
 
 	if (Twinkle.block.hasBlockLog) {
-		var $blockloglink = $('<a target="_blank" href="' + mw.util.getUrl('Special:Log', {action: 'view', page: Morebits.wiki.flow.relevantUserName(), type: 'block'}) + '">' + wgULS('封禁日志', '封禁日誌') + '</a>)');
+		var $blockloglink = $('<a target="_blank" href="' + mw.util.getUrl('Special:Log', {action: 'view', page: Morebits.wiki.flow.relevantUserName(true), type: 'block'}) + '">' + wgULS('封禁日志', '封禁日誌') + '</a>)');
 
 		Morebits.status.init($('div[name="hasblocklog"] span').last()[0]);
 		Morebits.status.warn(wgULS('此用户曾在过去被封禁', '此用戶曾在過去被封禁'), $blockloglink[0]);
@@ -1007,7 +1012,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		var statusElement = new Morebits.status(wgULS('执行封禁', '執行封禁'));
 		blockoptions.action = 'block';
 		blockoptions.tags = Twinkle.getPref('revisionTags');
-		blockoptions.user = Morebits.wiki.flow.relevantUserName();
+		blockoptions.user = Morebits.wiki.flow.relevantUserName(true);
 
 		// boolean-flipped options
 		blockoptions.anononly = blockoptions.hardblock ? undefined : true;
@@ -1032,14 +1037,18 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	}
 	if (toWarn) {
 		Morebits.simpleWindow.setButtonsEnabled(false);
-
 		Morebits.status.init(e.target);
-		Twinkle.block.callback.issue_template(templateoptions);
+
+		if (Morebits.isIPRange(Morebits.wiki.flow.relevantUserName(true))) {
+			new Morebits.status(wgULS('信息', '資訊'), wgULS('由于封禁目标为IP段，加入封禁模板已略过', '由於封禁目標為IP段，加入封禁模板已略過'), 'warn');
+		} else {
+			Twinkle.block.callback.issue_template(templateoptions);
+		}
 	}
 	if (toTag || toProtect) {
 		Morebits.simpleWindow.setButtonsEnabled(false);
 		Morebits.status.init(e.target);
-		var userPage = 'User:' + Morebits.wiki.flow.relevantUserName();
+		var userPage = 'User:' + Morebits.wiki.flow.relevantUserName(true);
 		var wikipedia_page = new Morebits.wiki.page(userPage, wgULS('标记或保护用户页', '標記或保護用戶頁'));
 		wikipedia_page.setCallbackParameters(tagprotectoptions);
 		wikipedia_page.load(Twinkle.block.callback.taguserpage);
@@ -1055,7 +1064,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		var unblockStatusElement = new Morebits.status(wgULS('执行解除封禁', '執行解除封禁')); // eslint-disable-line no-redeclare
 		unblockoptions.action = 'unblock';
 		unblockoptions.tags = Twinkle.getPref('revisionTags');
-		unblockoptions.user = Morebits.wiki.flow.relevantUserName();
+		unblockoptions.user = Morebits.wiki.flow.relevantUserName(true);
 
 		api.getToken('block').then(function(token) {
 			unblockStatusElement.status(wgULS('处理中…', '處理中…'));
@@ -1126,7 +1135,7 @@ Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUse
 };
 
 Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTemplate(formData) {
-	var userTalkPage = 'User_talk:' + Morebits.wiki.flow.relevantUserName();
+	var userTalkPage = 'User_talk:' + Morebits.wiki.flow.relevantUserName(true);
 
 	var params = $.extend(formData, {
 		messageData: Twinkle.block.blockPresetsInfo[formData.template],
