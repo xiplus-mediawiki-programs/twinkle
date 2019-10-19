@@ -477,7 +477,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 	} else { // alphabetical sort order
 		if (Twinkle.tag.alreadyPresentTags.length > 0) {
 			makeCheckboxesForAlreadyPresentTags();
-			container.append({ type: 'header', id: 'tagHeader1', label: 'Available tags' });
+			container.append({ type: 'header', id: 'tagHeader1', label: wgULS('可用的维护标记', '可用的維護標記') });
 		}
 		var checkboxes = [];
 		$.each(Twinkle.tag.article.tags, function(tag, description) {
