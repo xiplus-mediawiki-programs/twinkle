@@ -1567,6 +1567,12 @@ Twinkle.tag.callbacks = {
 			if (Twinkle.tag.canRemove || !tagRe.exec(pageText)) {
 				// condition Twinkle.tag.article.tags[tag] to ensure that its not a custom tag
 				// Custom tags are assumed non-groupable, since we don't know whether MI template supports them
+				if (tag === 'Notability') {
+					var wikipedia_page = new Morebits.wiki.page('Wikipedia:关注度/提报', wgULS('添加关注度记录项', '加入關注度記錄項'));
+					wikipedia_page.setFollowRedirect(true);
+					wikipedia_page.setCallbackParameters(params);
+					wikipedia_page.load(Twinkle.tag.callbacks.notabilityList);
+				}
 				if (Twinkle.tag.article.tags[tag] && Twinkle.tag.multipleIssuesExceptions.indexOf(tag) === -1) {
 					groupableTags.push(tag);
 				} else {
