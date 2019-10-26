@@ -236,8 +236,7 @@ Twinkle.close.codes = wgULS({
 		},
 		'nc': {
 			label: '无共识',
-			action: 'keep',
-			adminonly: true
+			action: 'keep'
 		}
 	}
 }, {
@@ -407,8 +406,7 @@ Twinkle.close.codes = wgULS({
 		},
 		'nc': {
 			label: '無共識',
-			action: 'keep',
-			adminonly: true
+			action: 'keep'
 		}
 	}
 });
