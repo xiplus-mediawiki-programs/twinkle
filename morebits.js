@@ -2681,7 +2681,10 @@ Morebits.wiki.page = function(pageName, currentAction) {
 				}
 			// check for blacklist hits
 			} else if (errorCode === 'spamblacklist') {
-				ctx.statusElement.error(ctx.saveApi.getErrorText());
+				// .find('matches') returns an array in case multiple items are blacklisted, we only return the first
+				var spam = $(ctx.saveApi.getXML()).find('spamblacklist').find('matches').children()[0].textContent;
+				ctx.statusElement.error(wgULS('不能保存页面，因URL ' + spam + ' 在垃圾黑名单中。',
+					'不能儲存頁面，因URL ' + spam + ' 在垃圾黑名單中。'));
 			} else {
 				ctx.statusElement.error(wgULS('不能保存修改：', '不能儲存修改：') + ctx.saveApi.getErrorText());
 			}
