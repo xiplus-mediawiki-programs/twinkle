@@ -246,6 +246,17 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 			}
 		]
 	});
+	tagOptions.append({
+		type: 'checkbox',
+		list: [
+			{
+				label: wgULS('清空页面', '清空頁面'),
+				value: 'blank',
+				name: 'blank',
+				tooltip: wgULS('在标记模板前，先清空页面，适用于严重破坏或负面生者传记等。', '在標記模板前，先清空頁面，適用於嚴重破壞或負面生者傳記等。')
+			}
+		]
+	});
 
 	form.append({
 		type: 'div',
@@ -1213,7 +1224,7 @@ Twinkle.speedy.callbacks = {
 				editsummary = wgULS('请求快速删除', '請求快速刪除') + '（[[WP:CSD#' + params.normalizeds[0].toUpperCase() + '|CSD ' + params.normalizeds[0].toUpperCase() + ']]）';
 			}
 
-			pageobj.setPageText(code + '\n' + text);
+			pageobj.setPageText(code + (params.blank ? '' : '\n' + text));
 			pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
 			pageobj.setTags(Twinkle.getPref('revisionTags'));
 			pageobj.setWatchlist(params.watch);
@@ -1617,6 +1628,8 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 		});
 	}
 
+	var blank = form.blank.checked;
+
 	var params = {
 		values: values,
 		normalizeds: normalizeds,
@@ -1624,7 +1637,8 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 		usertalk: notifyuser,
 		welcomeuser: welcomeuser,
 		lognomination: csdlog,
-		templateParams: Twinkle.speedy.getParameters(form, values)
+		templateParams: Twinkle.speedy.getParameters(form, values),
+		blank: blank
 	};
 	if (!params.templateParams) {
 		return;
