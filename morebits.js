@@ -2579,6 +2579,24 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		return true; // all OK
 	};
 
+	// helper function to get a new token on encountering token errors
+	// in save, deletePage, and undeletePage
+	// Being a synchronous ajax call, this blocks the event loop,
+	// and hence should be used sparingly.
+	var fnGetToken = function() {
+		var token;
+		var tokenApi = new Morebits.wiki.api(wgULS('获取令牌', '取得權杖'), {
+			action: 'query',
+			meta: 'tokens'
+		}, function(apiobj) {
+			token = $(apiobj.responseXML).find('tokens').attr('csrftoken');
+		}, null, function() {
+			this.getStatusElement().error(wgULS('获取令牌失败', '取得權杖失敗'));
+		});
+		tokenApi.post({async: false});
+		return token;
+	};
+
 	// callback from saveApi.post()
 	var fnSaveSuccess = function() {
 		ctx.editMode = 'all';  // cancel append/prepend/revert modes
@@ -2639,16 +2657,12 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			}
 
 		// check for loss of edit token
-		// it's impractical to request a new token here, so invoke edit conflict logic when this happens
-		} else if (errorCode === 'notoken' && ctx.conflictRetries++ < ctx.maxConflictRetries) {
+		} else if ((errorCode === 'badtoken' || errorCode === 'notoken') && ctx.retries++ < ctx.maxRetries) {
 
 			ctx.statusElement.info(wgULS('编辑令牌不可用，重试', '編輯權杖不可用，重試'));
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
-			if (fnCanUseMwUserToken('edit')) {
-				this.load(fnAutoSave, ctx.onSaveFailure); // try the append or prepend again
-			} else {
-				ctx.loadApi.post(); // reload the page and reapply the edit
-			}
+			ctx.saveApi.query.token = fnGetToken.call(this);
+			ctx.saveApi.post();
 
 		// check for network or server error
 		} else if (errorCode === 'undefined' && ctx.retries++ < ctx.maxRetries) {
@@ -2828,15 +2842,11 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			ctx.statusElement.info(wgULS('数据库查询错误，重试', '資料庫查詢錯誤，重試'));
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
 			ctx.deleteProcessApi.post(); // give it another go!
-
-		} else if (errorCode === 'badtoken') {
-			// this is pathetic, but given the current state of Morebits.wiki.page it would
-			// be a dog's breakfast to try and fix this
-			ctx.statusElement.error(wgULS('无效令牌，请刷新页面并重试。', '無效權杖，請重新整理頁面並重試。'));
-			if (ctx.onDeleteFailure) {
-				ctx.onDeleteFailure.call(this, this, ctx.deleteProcessApi);
-			}
-
+		} else if ((errorCode === 'badtoken' || errorCode === 'notoken') && ctx.retries++ < ctx.maxRetries) {
+			ctx.statusElement.info(wgULS('无效令牌，重试', '無效權杖，重試'));
+			--Morebits.wiki.numberOfActionsLeft;
+			ctx.deleteProcessApi.query.token = fnGetToken.call(this);
+			ctx.deleteProcessApi.post();
 		} else if (errorCode === 'missingtitle') {
 
 			ctx.statusElement.error(wgULS('不能删除页面，因其已不存在', '不能刪除頁面，因其已不存在'));
@@ -2850,6 +2860,89 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			ctx.statusElement.error(wgULS('不能删除页面：', '不能刪除頁面：') + ctx.deleteProcessApi.getErrorText());
 			if (ctx.onDeleteFailure) {
 				ctx.onDeleteFailure.call(this, ctx.deleteProcessApi);  // invoke callback
+			}
+		}
+	};
+
+	var fnProcessUndelete = function() {
+		var pageTitle, token;
+
+		// The whole handling of tokens in Morebits is outdated (#615)
+		// but has generally worked since intoken has been deprecated
+		// but remains.  intoken does not, however, take undelete, so
+		// fnCanUseMwUserToken('undelete') is no good.  Everything
+		// except watching and patrolling should eventually use csrf,
+		// but until then (#615) the stupid hack below should work for
+		// undeletion.
+		if (fnCanUseMwUserToken('undelete')) {
+			token = mw.user.tokens.get('csrfToken');
+			pageTitle = ctx.pageName;
+		} else {
+			var xml = ctx.undeleteApi.getXML();
+
+			if ($(xml).find('page').attr('missing') !== '') {
+				ctx.statusElement.error(wgULS('不能取消删除页面，因为它已存在', '不能取消刪除頁面，因為它已存在'));
+				ctx.onUndeleteFailure(this);
+				return;
+			}
+
+			// extract protection info
+			var editprot = $(xml).find('pr[type="create"]');
+			if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !ctx.suppressProtectWarning &&
+				!confirm(wgULS('您即将取消删除全保护页面“' + ctx.pageName + '”', '您即將取消刪除全保護頁面「' + ctx.pageName + '」') +
+				(editprot.attr('expiry') === 'infinity' ? '（永久）' : '（到期 ' + editprot.attr('expiry') + '）') +
+				wgULS('。\n\n点击确定以取消删除，或点击取消以取消。', '。\n\n點選確定以取消刪除，或點選取消以取消。'))) {
+				ctx.statusElement.error(wgULS('对全保护页面的取消删除已取消。', '對全保護頁面的取消刪除已取消。'));
+				ctx.onUndeleteFailure(this);
+				return;
+			}
+
+			// KLUDGE:
+			token = mw.user.tokens.get('csrfToken');
+			pageTitle = ctx.pageName;
+		}
+
+		var query = {
+			'action': 'undelete',
+			'title': pageTitle,
+			'token': token,
+			'reason': ctx.editSummary
+		};
+		if (ctx.watchlistOption === 'watch') {
+			query.watch = 'true';
+		}
+
+		ctx.undeleteProcessApi = new Morebits.wiki.api(wgULS('取消删除...', '取消刪除...'), query, ctx.onUndeleteSuccess, ctx.statusElement, fnProcessUndeleteError);
+		ctx.undeleteProcessApi.setParent(this);
+		ctx.undeleteProcessApi.post();
+	};
+
+	// callback from undeleteProcessApi.post()
+	var fnProcessUndeleteError = function() {
+
+		var errorCode = ctx.undeleteProcessApi.getErrorCode();
+
+		// check for "Database query error"
+		if (errorCode === 'internal_api_error_DBQueryError' && ctx.retries++ < ctx.maxRetries) {
+			ctx.statusElement.info(wgULS('数据库查询错误，重试', '資料庫查詢錯誤，重試'));
+			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
+			ctx.undeleteProcessApi.post(); // give it another go!
+		} else if ((errorCode === 'badtoken' || errorCode === 'notoken') && ctx.retries++ < ctx.maxRetries) {
+			ctx.statusElement.error(wgULS('无效令牌，重试。', '無效權杖，重試。'));
+			--Morebits.wiki.numberOfActionsLeft;
+			ctx.undeleteProcessApi.query.token = fnGetToken.call(this);
+			ctx.undeleteProcessApi.post();
+
+		} else if (errorCode === 'cantundelete') {
+			ctx.statusElement.error(wgULS('不能取消删除页面，因没有版本供取消删除或已被取消删除', '不能取消刪除頁面，因沒有版本供取消刪除或已被取消刪除'));
+			if (ctx.onUndeleteFailure) {
+				ctx.onUndeleteFailure.call(this, ctx.undeleteProcessApi);  // invoke callback
+			}
+		// hard error, give up
+		} else {
+			ctx.statusElement.error(wgULS('不能取消删除页面：', '不能取消刪除頁面：') + ctx.undeleteProcessApi.getErrorText());
+			if (ctx.onUndeleteFailure) {
+				ctx.onUndeleteFailure.call(this, ctx.undeleteProcessApi);  // invoke callback
 			}
 		}
 	};
