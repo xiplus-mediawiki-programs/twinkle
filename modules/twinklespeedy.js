@@ -1208,9 +1208,9 @@ Twinkle.speedy.callbacks = {
 				editsummary = editsummary.substr(0, editsummary.length - 1); // remove trailing comma
 				editsummary += '）。';
 			} else if (params.normalizeds[0] === 'db') {
-				editsummary = '请求[[WP:CSD|快速删除]]：' + params.templateParams[0]['1'];
+				editsummary = wgULS('请求[[WP:CSD|快速删除]]：', '請求[[WP:CSD|快速刪除]]：') + params.templateParams[0]['1'];
 			} else {
-				editsummary = '请求快速删除（[[WP:CSD#' + params.normalizeds[0].toUpperCase() + '|CSD ' + params.normalizeds[0].toUpperCase() + ']]）';
+				editsummary = wgULS('请求快速删除', '請求快速刪除') + '（[[WP:CSD#' + params.normalizeds[0].toUpperCase() + '|CSD ' + params.normalizeds[0].toUpperCase() + ']]）';
 			}
 
 			pageobj.setPageText(code + '\n' + text);
