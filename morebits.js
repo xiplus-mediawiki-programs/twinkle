@@ -1863,6 +1863,9 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		protectCreate: null,
 		protectCascade: false,
 
+		// - creation lookup
+		lookupNonRedirectCreator: false,
+
 		// - stabilize (FlaggedRevs)
 		flaggedRevs: null,
 
@@ -1996,6 +1999,22 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		return ctx.revertUser;
 	};
 
+	// lookup-creation setter function
+	/**
+	 * @param {boolean} flag - if set true, the author and timestamp of the first non-redirect
+	 * version of the page is retrieved.
+	 *
+	 * Warning:
+	 * 1. If there are no revisions among the first 50 that are non-redirects, or if there are
+	 *    less 50 revisions and all are redirects, the original creation is retrived.
+	 * 2. Revisions that the user is not privileged to access (revdeled/suppressed) will be treated
+	 *    as non-redirects.
+	 */
+	this.setLookupNonRedirectCreator = function(flag) {
+		ctx.lookupNonRedirectCreator = flag;
+	};
+
+	// Move-related setter functions
 	this.setMoveDestination = function(destination) {
 		ctx.moveDestination = destination;
 	};
@@ -2240,7 +2259,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			'prop': 'revisions',
 			'titles': ctx.pageName,
 			'rvlimit': 1,
-			'rvprop': 'user',
+			'rvprop': 'user|timestamp|content',
+			'rvsection': 0,
 			'rvdir': 'newer'
 		};
 
@@ -2766,12 +2786,60 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			return; // abort
 		}
 
-		ctx.creator = $(xml).find('rev').attr('user');
+		if (!ctx.lookupNonRedirectCreator || !/^\s*#redirect/i.test($(xml).find('rev').text())) {
+
+			ctx.creator = $(xml).find('rev').attr('user');
+			if (!ctx.creator) {
+				ctx.statusElement.error(wgULS('不能获取页面创建者的名字', '無法取得頁面建立者的名字'));
+				return;
+			}
+			ctx.timestamp = $(xml).find('rev').attr('timestamp');
+			if (!ctx.timestamp) {
+				ctx.statusElement.error(wgULS('无法获取页面创建时间', '無法取得頁面建立者的名字'));
+				return;
+			}
+			ctx.onLookupCreationSuccess(this);
+
+		} else {
+			ctx.lookupCreationApi.query.rvlimit = 50; // modify previous query to fetch more revisions
+			ctx.lookupCreationApi.query.titles = ctx.pageName; // update pageName if redirect resolution took place in earlier query
+
+			ctx.lookupCreationApi = new Morebits.wiki.api(wgULS('获取页面创建信息', '取得頁面建立資訊'), ctx.lookupCreationApi.query, fnLookupNonRedirectCreator, ctx.statusElement);
+			ctx.lookupCreationApi.setParent(this);
+			ctx.lookupCreationApi.post();
+		}
+
+	};
+
+	var fnLookupNonRedirectCreator = function() {
+		var xml = ctx.lookupCreationApi.getXML();
+
+		$(xml).find('rev').each(function(_, rev) {
+			if (!/^\s*#redirect/i.test(rev.textContent)) { // inaccessible revisions also check out
+				ctx.creator = rev.getAttribute('user');
+				ctx.timestamp = rev.getAttribute('timestamp');
+				return false; // break
+			}
+		});
+
 		if (!ctx.creator) {
-			ctx.statusElement.error(wgULS('不能获取页面创建者的名字', '無法取得頁面建立者的名字'));
+			// fallback to give first revision author if no non-redirect version in the first 50
+			ctx.creator = $(xml).find('rev')[0].getAttribute('user');
+			if (!ctx.creator) {
+				ctx.statusElement.error(wgULS('不能获取页面创建者的名字', '無法取得頁面建立者的名字'));
+			}
 			return;
 		}
-		ctx.onLookupCreatorSuccess(this);
+		if (!ctx.timestamp) {
+			ctx.timestamp = $(xml).find('rev')[0].getAttribute('timestamp');
+			if (!ctx.timestamp) {
+				ctx.statusElement.error(wgULS('无法获取页面创建时间', '無法取得頁面建立者的名字'));
+			}
+			return;
+		}
+
+		ctx.onLookupCreationSuccess(this);
+
 	};
 
 	var fnProcessMove = function() {
