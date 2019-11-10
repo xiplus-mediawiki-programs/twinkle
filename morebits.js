@@ -2267,7 +2267,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			ctx.statusElement.error('内部错误：未给lookupCreation()提供onSuccess回调函数！');
 			return;
 		}
-		ctx.onlookupCreationSuccess = onSuccess;
+		ctx.onLookupCreationSuccess = onSuccess;
 
 		var query = {
 			'action': 'query',
@@ -2812,7 +2812,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 			ctx.creator = $(xml).find('rev').attr('user');
 			if (!ctx.creator) {
-				ctx.statusElement.error(wgULS('不能获取页面创建者的名字', '無法取得頁面建立者的名字'));
+				ctx.statusElement.error(wgULS('无法获取页面创建者的名字', '無法取得頁面建立者的名字'));
 				return;
 			}
 			ctx.timestamp = $(xml).find('rev').attr('timestamp');
@@ -2837,7 +2837,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		var xml = ctx.lookupCreationApi.getXML();
 
 		$(xml).find('rev').each(function(_, rev) {
-			if (!/^\s*#redirect/i.test(rev.textContent)) { // inaccessible revisions also check out
+			if (!/^\s*#(redirect|重定向|重新導向)/i.test(rev.textContent)) { // inaccessible revisions also check out
 				ctx.creator = rev.getAttribute('user');
 				ctx.timestamp = rev.getAttribute('timestamp');
 				return false; // break
