@@ -521,10 +521,14 @@ Twinkle.tag.updateSortOrder = function(e) {
 	$workarea.find('h5:not(:first-child)').css({ 'margin-top': '1em' });
 	$workarea.find('div').filter(':has(span.quickformDescription)').css({ 'margin-top': '0.4em' });
 
-	Morebits.quickForm.getElements(form, 'articleTags').forEach(generateLinks);
 	var alreadyPresentTags = Morebits.quickForm.getElements(form, 'alreadyPresentArticleTags');
 	if (alreadyPresentTags) {
 		alreadyPresentTags.forEach(generateLinks);
+	}
+	// in the unlikely case that *every* tag is already on the page
+	var notPresentTags = Morebits.quickForm.getElements(form, 'articleTags');
+	if (notPresentTags) {
+		notPresentTags.forEach(generateLinks);
 	}
 
 	// tally tags added/removed, update statusNode text
@@ -1929,7 +1933,8 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	switch (Twinkle.tag.mode) {
 		case '條目':
 		case '条目':
-			params.tags = form.getChecked('articleTags');
+			// Don't return null if there aren't any available tags
+			params.tags = form.getChecked('articleTags') || [];
 			params.tagsToRemove = form.getUnchecked('alreadyPresentArticleTags') || [];
 			params.tagsToRemain = form.getChecked('alreadyPresentArticleTags') || [];
 
@@ -1954,12 +1959,14 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 				reqArticleLang: form['redirectTags.reqArticleLang'] ? form['redirectTags.reqArticleLang'].value : null,
 				reqArticleTitle: form['redirectTags.reqArticleTitle'] ? form['redirectTags.reqArticleTitle'].value : null
 			};
-			params.tags = form.getChecked('redirectTags');
+			// Don't return null if there aren't any available tags
+			params.tags = form.getChecked('redirectTags') || [];
 			break;
 		case '文件':
 		case '檔案':
 			params.svgSubcategory = form['imageTags.svgCategory'] ? form['imageTags.svgCategory'].value : null;
-			params.tags = form.getChecked('imageTags');
+			// Don't return null if there aren't any available tags
+			params.tags = form.getChecked('imageTags') || [];
 			break;
 		default:
 			alert('Twinkle.tag：未知模式 ' + Twinkle.tag.mode);
