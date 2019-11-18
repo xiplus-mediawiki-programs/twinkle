@@ -98,8 +98,6 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 	result.category.dispatchEvent(evt);
 };
 
-Twinkle.xfd.previousNotify = true;
-
 Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory(e) {
 	var value = e.target.value;
 	var form = e.target.form;
@@ -228,15 +226,9 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 			break;
 	}
 
-	// No creator notification for CFDS
-	if (value === 'cfds') {
-		Twinkle.xfd.previousNotify = form.notify.checked;
-		form.notify.checked = false;
-		form.notify.disabled = true;
-	} else {
-		form.notify.checked = Twinkle.xfd.previousNotify;
-		form.notify.disabled = false;
-	}
+	// Return to checked state when switching
+	form.notify.checked = true;
+	form.notify.disabled = false;
 };
 
 Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdCategory(e) {
