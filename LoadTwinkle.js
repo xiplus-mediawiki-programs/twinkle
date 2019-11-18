@@ -41,7 +41,7 @@ var load = function (p) {
 };
 
 var message = function (text) {
-	console.log('[A64Twinkle]', text);
+	console.log('[A64Twinkle]', text); // eslint-disable-line no-console
 //    $('#simpleSearch input[type="search"]').attr('placeHolder', text);
 };
 
