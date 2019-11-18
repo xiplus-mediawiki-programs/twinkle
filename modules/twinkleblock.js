@@ -577,15 +577,14 @@ Twinkle.block.blockPresetsInfo = {
 		reason: '{{checkuserblock-account}}',
 		sig: '~~~~'
 	},
-	// Placeholder for when we add support for rangeblocks
-	/* 'range block' : {
-		expiry: '6 months',
+	'range block': {
+		expiry: '1 week',
 		forAnonOnly: true,
 		nocreate: true,
 		nonstandard: true,
 		reason: '{{range block}}',
-		sig: null
-	}, */
+		sig: '~~~~'
+	},
 	'schoolblock': {
 		forAnonOnly: true,
 		nocreate: true,
@@ -765,8 +764,8 @@ Twinkle.block.blockGroups = [
 		label: '其他模板',
 		list: [
 			{ label: '', value: 'uw-ublock', forRegisteredOnly: true },
-			// { label: '', value: 'range block' },
 			{ label: '', value: 'anonblock', forAnonOnly: true },
+			{ label: '', value: 'range block', forAnonOnly: true },
 			{ label: '', value: 'schoolblock', forAnonOnly: true },
 			{ label: '', value: 'blocked proxy', forAnonOnly: true },
 			{ label: '', value: 'checkuserblock', forAnonOnly: true },
