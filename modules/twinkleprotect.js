@@ -659,6 +659,7 @@ Twinkle.protect.protectionTypesCreateOnly = wgULS([
 		list: [
 			{ label: '常规（白纸）', value: 'pp-create' },
 			{ label: '多次重复创建（白纸）', value: 'pp-create-repeat' },
+			{ label: '长期破坏（白纸）', value: 'pp-create-vandalism' },
 			{ label: '已封禁用户的用户页（白纸）', value: 'pp-create-userpage' }
 		]
 	}
@@ -668,6 +669,7 @@ Twinkle.protect.protectionTypesCreateOnly = wgULS([
 		list: [
 			{ label: '常規（白紙）', value: 'pp-create' },
 			{ label: '多次重複建立（白紙）', value: 'pp-create-repeat' },
+			{ label: '長期破壞（白紙）', value: 'pp-create-vandalism' },
 			{ label: '已封禁用戶的用戶頁（白紙）', value: 'pp-create-userpage' }
 		]
 	}
@@ -783,6 +785,10 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 		create: 'autoconfirmed',
 		reason: '多次重复创建'
 	},
+	'pp-create-vandalism': {
+		create: 'autoconfirmed',
+		reason: '被IP用户或新用户破坏'
+	},
 	'pp-create-userpage': {
 		create: 'sysop',
 		createexpiry: 'indefinite',
@@ -885,6 +891,10 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	'pp-create-repeat': {
 		create: 'autoconfirmed',
 		reason: '多次重複建立'
+	},
+	'pp-create-vandalism': {
+		create: 'autoconfirmed',
+		reason: '被IP用戶或新用戶破壞'
 	},
 	'pp-create-userpage': {
 		create: 'sysop',
@@ -1192,6 +1202,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				case 'pp-create-salt':
 				case 'pp-create-userpage':
 				case 'pp-create-repeat':
+				case 'pp-create-vandalism':
 					typename = '白纸保护';
 					break;
 				case 'unprotect':
@@ -1206,6 +1217,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 					break;
 				case 'pp-vandalism':
 				case 'pp-semi-vandalism':
+				case 'pp-create-vandalism':
 					typereason = '长期破坏';
 					break;
 				case 'pp-template':
