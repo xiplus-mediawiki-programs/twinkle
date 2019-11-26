@@ -565,7 +565,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 			if (form.page.value !== '') {
 
 				// add a leading : on linked page namespace to prevent transclusion
-				reason = '* {{pagelinks|' + form.page.value + '}}';
+				reason = '* {{pagelinks|' + (form.page.value.indexOf('=') > -1 ? '1=' : '') + form.page.value + '}}';
 
 				if (form.badid.value !== '') {
 					reason += '（{{diff|' + form.page.value + '|' + form.badid.value + '|' + form.goodid.value + '|diff}}）';
