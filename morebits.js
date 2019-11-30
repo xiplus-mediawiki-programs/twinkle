@@ -21,7 +21,7 @@
  *   - To create a gadget based on morebits.js, use this syntax in MediaWiki:Gadgets-definition:
  *       * GadgetName[ResourceLoader|dependencies=mediawiki.user,mediawiki.util,jquery.ui,jquery.tipsy]|morebits.js|morebits.css|GadgetName.js
  *
- * Most of the stuff here doesn't work on IE < 9.  It is your script's responsibility to enforce this.
+ * All the stuff here works on all browsers for which MediaWiki provides JavaScript support.
  *
  * This library is maintained by the maintainers of Twinkle.
  * For queries, suggestions, help, etc., head to [[Wikipedia talk:Twinkle]] on English Wikipedia [http://en.wikipedia.org].

@@ -457,18 +457,8 @@ Twinkle.load = function () {
 	var isSpecialPage = mw.config.get('wgNamespaceNumber') === -1 &&
 		specialPageWhitelist.indexOf(mw.config.get('wgCanonicalSpecialPageName')) === -1 ;
 
-	// Also, Twinkle is incompatible with Internet Explorer versions 8 or lower,
-	// so don't load there either.
-	var isOldIE = $.client.profile().name === 'msie' &&
-		$.client.profile().versionNumber < 9 ;
-
 	// Prevent users that are not autoconfirmed from loading Twinkle as well.
 	if (isSpecialPage || !Twinkle.userAuthorized) {
-		return;
-	}
-
-	if (isOldIE) {
-		mw.notify(wgULS('警告：Twinkle不兼容旧版本IE浏览器，请更换浏览器之后再使用。', '警告：Twinkle與舊版本IE瀏覽器不相容，請更換瀏覽器之後再使用。'));
 		return;
 	}
 
