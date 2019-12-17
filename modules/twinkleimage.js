@@ -140,7 +140,7 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		'lognomination': lognomination
 	};
 	if (csdcrit === 'f8') {
-		params['f8_source'] = event.target['type.f8_source'].value;
+		params.f8_source = event.target['type.f8_source'].value;
 	}
 	Morebits.simpleWindow.setButtonsEnabled(false);
 	Morebits.status.init(event.target);

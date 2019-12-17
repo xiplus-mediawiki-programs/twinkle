@@ -161,10 +161,10 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 
 			var afd_cat = 'delete';
 			if (Twinkle.getPref('afdDefaultCategory') === 'same') {
-				if (localStorage['Twinkle_afdCategory'] === undefined) {
-					localStorage['Twinkle_afdCategory'] = 'delete';
+				if (localStorage.Twinkle_afdCategory === undefined) {
+					localStorage.Twinkle_afdCategory = 'delete';
 				} else {
-					afd_cat = localStorage['Twinkle_afdCategory'];
+					afd_cat = localStorage.Twinkle_afdCategory;
 				}
 			}
 			afd_category.append({ type: 'option', label: wgULS('删除', '刪除'), value: 'delete', selected: afd_cat === 'delete' });
@@ -254,7 +254,7 @@ Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdC
 		e.target.form.fwdcsdreason.parentElement.setAttribute('hidden', '');
 	}
 	if (Twinkle.getPref('afdDefaultCategory') === 'same') {
-		localStorage['Twinkle_afdCategory'] = e.target.value;
+		localStorage.Twinkle_afdCategory = e.target.value;
 	}
 };
 

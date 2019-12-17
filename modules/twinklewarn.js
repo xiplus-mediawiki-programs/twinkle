@@ -37,7 +37,7 @@ Twinkle.warn = function twinklewarn() {
 	if (mw.config.get('wgCanonicalSpecialPageName') === 'AbuseLog' && mw.config.get('wgAbuseFilterVariables') !== null) {
 		var afTalkLink = $('.mw-usertoollinks-talk').first();
 		if (afTalkLink.length) {
-			Twinkle.warn.makeVandalTalkLink(afTalkLink, mw.config.get('wgAbuseFilterVariables')['page_prefixedtitle']);
+			Twinkle.warn.makeVandalTalkLink(afTalkLink, mw.config.get('wgAbuseFilterVariables').page_prefixedtitle);
 			afTalkLink.css('font-weight', 'bold');
 		}
 	} else if (mw.config.get('wgDiffNewId') || mw.config.get('wgDiffOldId')) {
