@@ -56,7 +56,8 @@ Twinkle.arv.callback = function (uid) {
 	categories.append({
 		type: 'option',
 		label: wgULS('用户名（WP:UAA）', '用戶名（WP:UAA）'),
-		value: 'username'
+		value: 'username',
+		disabled: mw.util.isIPAddress(uid)
 	});
 	categories.append({
 		type: 'option',
@@ -166,7 +167,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					},
 					{
 						label: wgULS('仅用来散发广告宣传的用户', '僅用來散發廣告宣傳的用戶'),
-						value: 'promoonly'
+						value: 'promoonly',
+						disabled: mw.util.isIPAddress(root.uid.value)
 					}
 				]
 			});
