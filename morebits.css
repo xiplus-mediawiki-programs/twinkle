@@ -306,15 +306,3 @@ body .ui-dialog.morebits-dialog .morebits-dialog-footerlinks a {
 .ui-icon-inline {
 	display: inline-block;
 }
-
-/**
- * Temporary fix bullets in vector menu
- * https://github.com/azatoth/twinkle/pull/721
- * https://github.com/azatoth/twinkle/issues/713
- */
- .vectorMenu#p-twinkle ul {
-	list-style: none none;
-	padding: 0;
-	margin: 0;
-	text-align: left;
-}
