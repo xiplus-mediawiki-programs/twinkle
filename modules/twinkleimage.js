@@ -9,8 +9,7 @@
  *** twinkleimage.js: Image CSD module
  ****************************************
  * Mode of invocation:     Tab ("DI")
- * Active on:              File pages with a corresponding file which is local (not on Commons)
- * Config directives in:   TwinkleConfig
+ * Active on:              Local nonredirect file pages (not on Commons)
  */
 
 Twinkle.image = function twinkleimage() {

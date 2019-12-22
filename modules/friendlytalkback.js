@@ -265,7 +265,7 @@ var callback_evaluate = function(e) {
 	var text;
 	var title, content, editSummary;
 	if (tbtarget === 'mail') {
-		title = Twinkle.getFriendlyPref('mailHeading');
+		title = Twinkle.getPref('mailHeading');
 		content = "{{you've got mail|subject=" + section + '|ts=~~~~~}}';
 
 		text = '\n\n==' + title + '==\n' + content;
@@ -273,14 +273,14 @@ var callback_evaluate = function(e) {
 		if (message) {
 			content += '\n' + message.trim();
 			text += '\n' + message.trim() + '--~~~~';
-		} else if (Twinkle.getFriendlyPref('insertTalkbackSignature')) {
+		} else if (Twinkle.getPref('insertTalkbackSignature')) {
 			text += '\n~~~~';
 		}
 
 		editSummary = wgULS('通知：有新邮件', '通知：有新郵件') + Twinkle.getPref('summaryAd');
 	} else {  // tbtarget one of mytalk, usertalk, other
 		// clean talkback heading: strip section header markers that were erroneously suggested in the documentation
-		title = Twinkle.getFriendlyPref('talkbackHeading').replace(/^\s*=+\s*(.*?)\s*=+$\s*/, '$1');
+		title = Twinkle.getPref('talkbackHeading').replace(/^\s*=+\s*(.*?)\s*=+$\s*/, '$1');
 		content = '{{talkback|' + tbPageName;
 
 		if (section) {
@@ -293,7 +293,7 @@ var callback_evaluate = function(e) {
 		if (message) {
 			content += '\n' + message.trim();
 			text += '\n' + message.trim() + '--~~~~';
-		} else if (Twinkle.getFriendlyPref('insertTalkbackSignature')) {
+		} else if (Twinkle.getPref('insertTalkbackSignature')) {
 			text += '\n~~~~';
 		}
 
@@ -316,7 +316,7 @@ var callback_evaluate = function(e) {
 		talkpage.setTags(Twinkle.getPref('revisionTags'));
 		talkpage.setAppendText(text);
 		talkpage.setCreateOption('recreate');
-		talkpage.setMinorEdit(Twinkle.getFriendlyPref('markTalkbackAsMinor'));
+		talkpage.setMinorEdit(Twinkle.getPref('markTalkbackAsMinor'));
 		talkpage.setFollowRedirect(true);
 		talkpage.append();
 	});

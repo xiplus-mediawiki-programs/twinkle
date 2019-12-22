@@ -15,7 +15,7 @@
  */
 
 Twinkle.stub = function friendlytag() {
-	if (!Twinkle.getFriendlyPref('enableStub')) {
+	if (!Twinkle.getPref('enableStub')) {
 		return;
 	}
 
@@ -51,8 +51,8 @@ Twinkle.stub.callback = function friendlytagCallback() {
 				tooltip: wgULS('您可以在Twinkle参数设置（WP:TWPREFS）中更改此项。', '您可以在Twinkle偏好設定（WP:TWPREFS）中更改此項。'),
 				event: Twinkle.stub.updateSortOrder,
 				list: [
-					{ type: 'option', value: 'cat', label: wgULS('按类别', '按類別'), selected: Twinkle.getFriendlyPref('stubArticleSortOrder') === 'cat' },
-					{ type: 'option', value: 'alpha', label: '按字母', selected: Twinkle.getFriendlyPref('stubArticleSortOrder') === 'alpha' }
+					{ type: 'option', value: 'cat', label: wgULS('按类别', '按類別'), selected: Twinkle.getPref('stubArticleSortOrder') === 'cat' },
+					{ type: 'option', value: 'alpha', label: '按字母', selected: Twinkle.getPref('stubArticleSortOrder') === 'alpha' }
 				]
 			});
 
@@ -144,10 +144,10 @@ Twinkle.stub.updateSortOrder = function(e) {
 	}
 
 	// append any custom tags
-	if (Twinkle.getFriendlyPref('customStubList').length) {
+	if (Twinkle.getPref('customStubList').length) {
 		container.append({ type: 'header', label: wgULS('自定义模板', '自訂模板') });
 		var customcheckboxes = [];
-		$.each(Twinkle.getFriendlyPref('customStubList'), function(_, item) {
+		$.each(Twinkle.getPref('customStubList'), function(_, item) {
 			customcheckboxes.push(makeCheckbox(item.value, item.label));
 		});
 		container.append({
@@ -418,8 +418,8 @@ Twinkle.stub.callbacks = {
 
 		pageobj.setPageText(pageText);
 		pageobj.setEditSummary(summaryText);
-		pageobj.setWatchlist(Twinkle.getFriendlyPref('watchStubbedPages'));
-		pageobj.setMinorEdit(Twinkle.getFriendlyPref('markStubbedPagesAsMinor'));
+		pageobj.setWatchlist(Twinkle.getPref('watchStubbedPages'));
+		pageobj.setMinorEdit(Twinkle.getPref('markStubbedPagesAsMinor'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save();
 	}
