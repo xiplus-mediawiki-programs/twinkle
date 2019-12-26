@@ -117,7 +117,7 @@ Twinkle.copyvio.callbacks = {
 				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, wgULS('通知页面创建者（' + initialContrib + '）', '通知頁面建立者（' + initialContrib + '）'));
 				var notifytext = '\n{{subst:CopyvioNotice|' + mw.config.get('wgPageName') + '}}';
 				usertalkpage.setAppendText(notifytext);
-				usertalkpage.setEditSummary('通知：页面[[' + mw.config.get('wgPageName') + ']]疑似侵犯版权' + Twinkle.getPref('summaryAd'));
+				usertalkpage.setEditSummary(wgULS('通知：页面[[', '通知：頁面[[') + mw.config.get('wgPageName') + wgULS(']]疑似侵犯版权', ']]疑似侵犯版權') + Twinkle.getPref('summaryAd'));
 				usertalkpage.setTags(Twinkle.getPref('revisionTags'));
 				usertalkpage.setCreateOption('recreate');
 				switch (Twinkle.getPref('copyvioWatchUser')) {
