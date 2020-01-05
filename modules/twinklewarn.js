@@ -152,8 +152,12 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	main_group.append({ type: 'option', label: wgULS('层级3', '層級3'), value: 'level3', selected: defaultGroup === 3 });
 	main_group.append({ type: 'option', label: wgULS('层级4', '層級4'), value: 'level4', selected: defaultGroup === 4 });
 	main_group.append({ type: 'option', label: wgULS('层级4im', '層級4im'), value: 'level4im', selected: defaultGroup === 5 });
-	main_group.append({ type: 'option', label: wgULS('单层级通知', '單層級通知'), value: 'singlenotice', selected: defaultGroup === 6 });
-	main_group.append({ type: 'option', label: wgULS('单层级警告', '單層級警告'), value: 'singlewarn', selected: defaultGroup === 7 });
+	if (Twinkle.getPref('combinedSingletMenus')) {
+		main_group.append({ type: 'option', label: wgULS('单层级讯息', '單層級訊息'), value: 'singlecombined', selected: defaultGroup === 6 || defaultGroup === 7 });
+	} else {
+		main_group.append({ type: 'option', label: wgULS('单层级通知', '單層級通知'), value: 'singlenotice', selected: defaultGroup === 6 });
+		main_group.append({ type: 'option', label: wgULS('单层级警告', '單層級警告'), value: 'singlewarn', selected: defaultGroup === 7 });
+	}
 	if (Twinkle.getPref('customWarningList').length) {
 		main_group.append({ type: 'option', label: wgULS('自定义警告', '自訂警告'), value: 'custom', selected: defaultGroup === 9 });
 	}
@@ -1894,6 +1898,13 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 	if (value === 'singlenotice' || value === 'singlewarn') {
 		// no categories, just create the options right away
 		createEntries(Twinkle.warn.messages[value], sub_group, true);
+	} else if (value === 'singlecombined') {
+		var unSortedSinglets = $.extend({}, Twinkle.warn.messages.singlenotice, Twinkle.warn.messages.singlewarn);
+		var sortedSingletMessages = {};
+		Object.keys(unSortedSinglets).sort().forEach(function(key) {
+			sortedSingletMessages[key] = unSortedSinglets[key];
+		});
+		createEntries(sortedSingletMessages, sub_group, true);
 	} else if (value === 'custom') {
 		createEntries(Twinkle.getPref('customWarningList'), sub_group, true);
 	} else {
@@ -1958,7 +1969,7 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 		'uw-username': 'Username violates policy because... '
 	};
 
-	if (main_group === 'singlenotice' || main_group === 'singlewarn') {
+	if (['singlenotice', 'singlewarn', 'singlecombined'].indexOf(main_group) !== -1) {
 		if (notLinkedArticle[value]) {
 			if (Twinkle.warn.prev_article === null) {
 				Twinkle.warn.prev_article = e.target.form.article.value;
