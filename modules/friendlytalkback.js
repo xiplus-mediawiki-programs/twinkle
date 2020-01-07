@@ -79,7 +79,7 @@ Twinkle.talkback.callback = function() {
 	var query = {
 		action: 'query',
 		prop: 'extlinks',
-		titles: mw.config.get('wgPageName'),
+		titles: 'User talk:' + mw.config.get('wgRelevantUserName'),
 		elquery: 'userjs.invalid/noTalkback',
 		ellimit: '1'
 	};
@@ -97,7 +97,7 @@ Twinkle.talkback.callback.optoutStatus = function(apiobj) {
 		Twinkle.talkback.optout = Morebits.wiki.flow.relevantUserName() + wgULS('不希望收到回复通告', '不希望收到回覆通告');
 		var url = $el.text();
 		if (url.indexOf('reason=') > -1) {
-			Twinkle.talkback.optout += '：' + decodeURIComponent(url.substring(url.indexOf('reason=') + 7)) + '。';
+			Twinkle.talkback.optout += '：' + decodeURIComponent(url.substring(url.indexOf('reason=') + 7));
 		} else {
 			Twinkle.talkback.optout += '。';
 		}
