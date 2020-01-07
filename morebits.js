@@ -1999,6 +1999,9 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		return ctx.callbackParameters;
 	};
 
+	/**
+	 * @returns {string} the user who created the page following lookupCreation()
+	 */
 	this.getCreator = function() {
 		return ctx.creator;
 	};
@@ -2268,6 +2271,13 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			ctx.onSaveFailure = onFailure || emptyFunction;
 			this.load(fnAutoSave, ctx.onSaveFailure);
 		}
+	};
+
+	/**
+	 * @returns {string} ISO 8601 timestamp at which the page was last loaded
+	 */
+	this.getLoadTime = function() {
+		return ctx.loadTime;
 	};
 
 	/**
@@ -2618,6 +2628,9 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			return;
 		}
 		ctx.loadTime = $(xml).find('page').attr('starttimestamp');
+		// XXX: starttimestamp is present because of intoken=edit parameter in the API call.
+		// When replacing that with meta=tokens (#615), add the curtimestamp parameter to the API call
+		// and change 'starttimestamp' here to 'curtimestamp'
 		if (!ctx.loadTime) {
 			ctx.statusElement.error(wgULS('未能抓取起始时间戳。', '未能擷取起始時間戳'));
 			ctx.onLoadFailure(this);

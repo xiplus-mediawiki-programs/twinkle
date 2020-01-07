@@ -1232,7 +1232,7 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 	var text = pageobj.getPageText(),
 		params = pageobj.getCallbackParameters(),
 		messageData = params.messageData,
-		date = new Date();
+		date = new Date(pageobj.getLoadTime());
 
 	var dateHeaderRegex = new RegExp('^==+\\s*' + date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月' +
 		'\\s*==+', 'mg');

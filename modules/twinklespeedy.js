@@ -1327,7 +1327,7 @@ Twinkle.speedy.callbacks = {
 			}
 
 			// create monthly header
-			var date = new Date();
+			var date = new Date(pageobj.getLoadTime());
 			var headerRe = new RegExp('^==+\\s*' + date.getUTCFullYear() + '\\s*年\\s*' + (date.getUTCMonth() + 1) + '\\s*月\\s*==+', 'm');
 			if (!headerRe.exec(text)) {
 				appendText += '\n\n=== ' + date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月 ===';
