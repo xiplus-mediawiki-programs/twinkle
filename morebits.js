@@ -3792,8 +3792,14 @@ Morebits.wikitext.page.prototype = {
 	removeLink: function(link_target) {
 		var first_char = link_target.substr(0, 1);
 		var link_re_string = '[' + first_char.toUpperCase() + first_char.toLowerCase() + ']' + RegExp.escape(link_target.substr(1), true);
-		var link_simple_re = new RegExp('\\[\\[:?(' + link_re_string + ')\\]\\]', 'g');
-		var link_named_re = new RegExp('\\[\\[:?' + link_re_string + '\\|(.+?)\\]\\]', 'g');
+
+		// Files and Categories become links with a leading colon, e.g. [[:File:Test.png]]
+		// Otherwise, allow for an optional leading colon, e.g. [[:User:Test]]
+		var special_ns_re = /^(?:File|F|Image|图像|圖像|文件|档案|檔案|Category|CAT|分类|分類):/i;
+		var colon = special_ns_re.test(link_target) ? ':' : ':?';
+
+		var link_simple_re = new RegExp('\\[\\[' + colon + '(' + link_re_string + ')\\]\\]', 'g');
+		var link_named_re = new RegExp('\\[\\[' + colon + link_re_string + '\\|(.+?)\\]\\]', 'g');
 		this.text = this.text.replace(link_simple_re, '$1').replace(link_named_re, '$1');
 	},
 	commentOutImage: function(image, reason) {
