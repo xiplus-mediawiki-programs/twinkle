@@ -4239,7 +4239,8 @@ Morebits.checkboxShiftClickSupport = function (jQuerySelector, jQueryContext) {
 
 
 /** **************** Morebits.batchOperation ****************
- * Iterates over a group of pages and executes a worker function for each.
+ * Iterates over a group of pages (or arbitrary objects) and executes a worker function
+ * for each.
  *
  * Constructor: Morebits.batchOperation(currentAction)
  *
@@ -4248,11 +4249,11 @@ Morebits.checkboxShiftClickSupport = function (jQuerySelector, jQueryContext) {
  *
  * setOption(optionName, optionValue): Sets a known option:
  *    - chunkSize (integer): the size of chunks to break the array into (default 50).
- *                           Setting this to a small value (<5) can cause problems.
+ *          Setting this to a small value (<5) can cause problems.
  *    - preserveIndividualStatusLines (boolean): keep each page's status element visible
- *                                               when worker is complete?  See note below
+ *          when worker is complete?  See note below
  *
- * run(worker): Runs the given callback for each page in the list.
+ * run(worker, postFinish): Runs the callback `worker` for each page in the list.
  *    The callback must call workerSuccess when succeeding, or workerFailure
  *    when failing.  If using Morebits.wiki.api or Morebits.wiki.page, this is easily
  *    done by passing these two functions as parameters to the methods on those
@@ -4261,6 +4262,7 @@ Morebits.checkboxShiftClickSupport = function (jQuerySelector, jQueryContext) {
  *    If you omit to call these methods, the batch operation will stall after the first
  *    chunk!  Also ensure that either workerSuccess or workerFailure is called no more
  *    than once.
+ *    The second callback `postFinish` is executed when the entire batch has been processed.
  *
  * If using preserveIndividualStatusLines, you should try to ensure that the
  * workerSuccess callback has access to the page title.  This is no problem for
@@ -4296,6 +4298,11 @@ Morebits.batchOperation = function(currentAction) {
 		return ctx.statusElement;
 	};
 
+	/**
+	 * Sets the list of pages to work on
+	 * @param {Array} pageList  Array of objects over which you wish to execute the worker function
+	 * This is usually the list of page names (strings).
+	 */
 	this.setPageList = function(pageList) {
 		ctx.pageList = pageList;
 	};
@@ -4320,8 +4327,11 @@ Morebits.batchOperation = function(currentAction) {
 
 		var total = ctx.pageList.length;
 		if (!total) {
-			ctx.statusElement.info(wgULS('没什么要做的', '沒什麼要做的'));
+			ctx.statusElement.info(wgULS('没有指定页面', '沒有指定頁面'));
 			ctx.running = false;
+			if (ctx.postFinish) {
+				ctx.postFinish();
+			}
 			return;
 		}
 
@@ -4334,35 +4344,50 @@ Morebits.batchOperation = function(currentAction) {
 		fnStartNewChunk();
 	};
 
-	this.workerSuccess = function(apiobj) {
-		// update or remove status line
-		if (apiobj && apiobj.getStatusElement) {
-			var statelem = apiobj.getStatusElement();
+	/**
+	 * To be called by worker before it terminates succesfully
+	 * @param {(Morebits.wiki.page|Morebits.wiki.api|string)} arg
+	 * This should be the `Morebits.wiki.page` or `Morebits.wiki.api` object used by worker
+	 * (for the adjustment of status lines emitted by them).
+	 * If no Morebits.wiki.* object is used (eg. you're using mw.Api() or something else), and
+	 * `preserveIndividualStatusLines` option is on, give the page name (string) as argument.
+	 */
+	this.workerSuccess = function(arg) {
+
+		var createPageLink = function(pageName) {
+			var link = document.createElement('a');
+			link.setAttribute('href', mw.util.getUrl(pageName));
+			link.appendChild(document.createTextNode(pageName));
+			return link;
+		};
+
+		if (arg instanceof Morebits.wiki.api || arg instanceof Morebits.wiki.page) {
+			// update or remove status line
+			var statelem = arg.getStatusElement();
 			if (ctx.options.preserveIndividualStatusLines) {
-				if (apiobj.getPageName || apiobj.pageName || (apiobj.query && apiobj.query.title)) {
+				if (arg.getPageName || arg.pageName || (arg.query && arg.query.title)) {
 					// we know the page title - display a relevant message
-					var pageName = apiobj.getPageName ? apiobj.getPageName() :
-						apiobj.pageName || apiobj.query.title;
-					var link = document.createElement('a');
-					link.setAttribute('href', mw.util.getUrl(pageName));
-					link.appendChild(document.createTextNode(pageName));
-					statelem.info(['完成（', link, '）']);
+					var pageName = arg.getPageName ? arg.getPageName() : arg.pageName || arg.query.title;
+					statelem.info(['完成（', createPageLink(pageName), '）']);
 				} else {
 					// we don't know the page title - just display a generic message
 					statelem.info('完成');
 				}
 			} else {
-				// remove the status line from display
+				// remove the status line automatically produced by Morebits.wiki.*
 				statelem.unlink();
 			}
+
+		} else if (typeof arg === 'string' && ctx.options.preserveIndividualStatusLines) {
+			new Morebits.status(arg, ['done (', createPageLink(arg), ')']);
 		}
 
 		ctx.countFinishedSuccess++;
-		fnDoneOne(apiobj);
+		fnDoneOne();
 	};
 
-	this.workerFailure = function(apiobj) {
-		fnDoneOne(apiobj);
+	this.workerFailure = function() {
+		fnDoneOne();
 	};
 
 	// private functions
