@@ -106,7 +106,7 @@ Twinkle.talkback.callback.optoutStatus = function(apiobj) {
 	}
 
 	var $status = $('#twinkle-talkback-optout-message');
-	if ($status.length) {
+	if ($status.length && Twinkle.talkback.optout) {
 		$status.text(Twinkle.talkback.optout);
 	}
 };
