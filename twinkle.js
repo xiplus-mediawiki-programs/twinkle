@@ -199,14 +199,14 @@ Twinkle.getPref = function twinkleGetPref(name) {
 		return Twinkle.prefs.friendly[name];
 	}
 
-	if (typeof Twinkle.prefs === 'object' && Twinkle.prefs[name]) {
+	if (typeof Twinkle.prefs === 'object' && Twinkle.prefs[name] !== undefined) {
 		return Twinkle.prefs[name];
 	}
 	// Old preferences format, used before twinkleoptions.js was a thing
-	if (typeof window.TwinkleConfig === 'object' && window.TwinkleConfig[name]) {
+	if (typeof window.TwinkleConfig === 'object' && window.TwinkleConfig[name] !== undefined) {
 		return window.TwinkleConfig[name];
 	}
-	if (typeof window.FriendlyConfig === 'object' && window.FriendlyConfig[name]) {
+	if (typeof window.FriendlyConfig === 'object' && window.FriendlyConfig[name] !== undefined) {
 		return window.FriendlyConfig[name];
 	}
 	return Twinkle.defaultConfig[name];
