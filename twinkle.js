@@ -190,6 +190,14 @@ Twinkle.getPref = function twinkleGetPref(name) {
 		return '';
 	}
 
+	// Old preferences format
+	if (typeof Twinkle.prefs === 'object' && typeof Twinkle.prefs.twinkle === 'object' && Twinkle.prefs.twinkle[name]) {
+		return Twinkle.prefs.twinkle[name];
+	}
+	if (typeof Twinkle.prefs === 'object' && typeof Twinkle.prefs.friendly === 'object' && Twinkle.prefs.friendly[name]) {
+		return Twinkle.prefs.friendly[name];
+	}
+
 	if (typeof Twinkle.prefs === 'object' && Twinkle.prefs[name]) {
 		return Twinkle.prefs[name];
 	}
