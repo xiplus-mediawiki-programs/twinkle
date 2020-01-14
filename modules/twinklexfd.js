@@ -657,16 +657,11 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	}
 
 	var wikipedia_page, logpage, params;
-	var dateString;
-	var date = new Date();
-	function twodigits(num) {
-		return num < 10 ? '0' + num : num;
-	}
+	var date = new Morebits.date(); // XXX: avoid use of client clock, still used by TfD, FfD and CfD
 	switch (type) {
 
 		case 'afd': // AFD
-			dateString = date.getUTCFullYear() + '/' + twodigits(date.getUTCMonth() + 1) + '/' + twodigits(date.getUTCDate());
-			logpage = 'Wikipedia:頁面存廢討論/記錄/' + dateString;
+			logpage = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD');
 			params = { usertalk: usertalk, xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, fwdcsdreason: fwdcsdreason, logpage: logpage };
 
 			Morebits.wiki.addCheckpoint();
@@ -685,8 +680,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 			break;
 
 		case 'ffd': // FFD
-			dateString = date.getUTCFullYear() + '/' + twodigits(date.getUTCMonth() + 1) + '/' + twodigits(date.getUTCDate());
-			logpage = 'Wikipedia:檔案存廢討論/記錄/' + dateString;
+			logpage = 'Wikipedia:檔案存廢討論/記錄/' + date.format('YYYY/MM/DD');
 			params = { usertalk: usertalk, reason: reason, logpage: logpage };
 
 			Morebits.wiki.addCheckpoint();
@@ -789,7 +783,7 @@ Twinkle.xfd.aprilfool.evaluate = function(e) {
 	var wikipedia_page, logpage, params;
 	var date = new Date();
 
-	logpage = 'Wikipedia:頁面存廢和諧討論/記錄/' + date.getUTCFullYear() + '/04/01';
+	logpage = 'Wikipedia:頁面存廢和諧討論/記錄/' + date.format('YYYY') + '/04/01';
 	params = { xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, logpage: logpage };
 
 	Morebits.wiki.addCheckpoint();

@@ -349,8 +349,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					var $diffs = $(root).find('[name=diffs]');
 					$diffs.find('.entry').remove();
 
-					var date = new Date();
-					date.setHours(-36); // all since 36 hours
+					var date = new Morebits.date().subtract(48, 'hours'); // all since 48 hours
 
 					var api = new mw.Api();
 					api.get({

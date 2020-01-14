@@ -1478,11 +1478,9 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 	var text = pageobj.getPageText(),
 		params = pageobj.getCallbackParameters(),
 		messageData = params.messageData,
-		date = new Date(pageobj.getLoadTime());
+		date = new Morebits.date(pageobj.getLoadTime());
 
-	var dateHeaderRegex = new RegExp('^==+\\s*' + date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月' +
-		'\\s*==+', 'mg');
-	var dateHeaderRegexLast, dateHeaderRegexResult;
+	var dateHeaderRegex = date.monthHeaderRegex(), dateHeaderRegexLast, dateHeaderRegexResult;
 	while ((dateHeaderRegexLast = dateHeaderRegex.exec(text)) !== null) {
 		dateHeaderRegexResult = dateHeaderRegexLast;
 	}
@@ -1498,11 +1496,11 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 	params.indefinite = (/indef|infinity|never|\*|max/).test(params.expiry);
 
 	if (Twinkle.getPref('blankTalkpageOnIndefBlock') && params.template !== 'uw-lblock' && params.indefinite) {
-		Morebits.status.info('信息', wgULS('根据参数设置清空讨论页并为日期创建新2级标题', '根據偏好設定清空討論頁並為日期創建新2級標題'));
-		text = '== ' + date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月 ' + ' ==\n';
+		Morebits.status.info(wgULS('信息', '資訊'), wgULS('根据参数设置清空讨论页并为日期创建新2级标题', '根據偏好設定清空討論頁並為日期創建新2級標題'));
+		text = date.monthHeader() + '\n';
 	} else if (!dateHeaderRegexResult || dateHeaderRegexResult.index !== lastHeaderIndex) {
-		Morebits.status.info('信息', wgULS('未找到当月标题，将创建新的', '未找到當月標題，將建立新的'));
-		text += '== ' + date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月 ' + ' ==\n';
+		Morebits.status.info(wgULS('信息', '資訊'), wgULS('未找到当月标题，将创建新的', '未找到當月標題，將建立新的'));
+		text += date.monthHeader() + '\n';
 	}
 
 	params.expiry = typeof params.template_expiry !== 'undefined' ? params.template_expiry : params.expiry;

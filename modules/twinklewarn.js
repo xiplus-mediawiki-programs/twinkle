@@ -179,10 +179,9 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		};
 		new Morebits.wiki.api(wgULS('获取版本时间戳', '取得版本時間戳'), query, function(apiobj) {
 			var vantimestamp = $(apiobj.getResponse()).find('revisions rev').attr('timestamp');
-			var revDate = new Date(vantimestamp);
-			if (vantimestamp && !isNaN(revDate)) {
-				revDate.setUTCHours(revDate.getUTCHours() + 24);
-				if (revDate.getTime() < new Date().getTime()) {
+			var revDate = new Morebits.date(vantimestamp);
+			if (vantimestamp && revDate.isValid()) {
+				if (revDate.add(24, 'hours').isBefore(new Date())) {
 					$('#twinkle-warn-olddiff-message').text(wgULS('注意：这笔编辑是在24小时前做出的，现在警告可能已过时。', '注意：這筆編輯是在24小時前做出的，現在警告可能已過時。'));
 				}
 			}
@@ -2073,46 +2072,42 @@ Twinkle.warn.callbacks = {
 
 		var history_re = /<!-- Template:(uw-.*?) -->.*?(\d{4})年(\d{1,2})月(\d{1,2})日 \([日一二三四五六]\) (\d{1,2}):(\d{1,2}) \(UTC\)/g;
 		var history = {};
-		var latest = { date: new Date(0), type: '' };
+		var latest = { date: new Morebits.date(0), type: '' };
 		var current;
 
 		while ((current = history_re.exec(text)) !== null) {
-			var current_date = new Date(current[2] + '-' + current[3] + '-' + current[4] + ' ' + current[5] + ':' + current[6] + ' UTC');
-			if (!(current[1] in history) || history[current[1]].getTime() < current_date.getTime()) {
-				history[current[1]] = current_date;
+			var template = current[1];
+			var current_date = new Morebits.date(current[2] + '-' + current[3] + '-' + current[4] + ' ' + current[5] + ':' + current[6] + ' UTC');
+			if (!(template in history) || history[template].isBefore(current_date)) {
+				history[template] = current_date;
 			}
 			if (current_date.getTime() >= latest.date.getTime()) {
 				latest.date = current_date;
-				latest.type = current[1];
+				latest.type = template;
 			}
 		}
 
-		var date = new Date(pageobj.getLoadTime());
+		var now = new Morebits.date(pageobj.getLoadTime());
 
 		if (params.sub_group in history) {
-			var temp_time = new Date(history[params.sub_group]);
-			temp_time.setUTCHours(temp_time.getUTCHours() + 24);
-
-			if (temp_time.getTime() > date.getTime()) {
+			if (new Morebits.date(history[params.sub_group]).add(1, 'day').isAfter(now)) {
 				if (!confirm(wgULS('近24小时内一个同样的 ' + params.sub_group + ' 模板已被发出。\n是否继续？', '近24小時內一個同樣的 ' + params.sub_group + ' 模板已被發出。\n是否繼續？'))) {
-					statelem.info('用户取消');
+					statelem.error('用户取消');
 					return;
 				}
 			}
 		}
 
-		latest.date.setUTCMinutes(latest.date.getUTCMinutes() + 1); // after long debate, one minute is max
+		latest.date.add(1, 'minute'); // after long debate, one minute is max
 
-		if (latest.date.getTime() > date.getTime()) {
+		if (latest.date.isAfter(now)) {
 			if (!confirm(wgULS('近1分钟内 ' + latest.type + ' 模板已被发出。\n是否继续？', '近1分鍾內 ' + latest.type + ' 模板已被發出。\n是否繼續？'))) {
-				statelem.info('用户取消');
+				statelem.error('用户取消');
 				return;
 			}
 		}
 
-		var dateHeaderRegex = new RegExp('^==+\\s*' + date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月' +
-			'\\s*==+', 'mg');
-		var dateHeaderRegexLast, dateHeaderRegexResult;
+		var dateHeaderRegex = now.monthHeaderRegex(), dateHeaderRegexLast, dateHeaderRegexResult;
 		while ((dateHeaderRegexLast = dateHeaderRegex.exec(text)) !== null) {
 			dateHeaderRegexResult = dateHeaderRegexLast;
 		}
@@ -2128,14 +2123,14 @@ Twinkle.warn.callbacks = {
 		if (messageData.heading) {
 			text += '== ' + messageData.heading + ' ==\n';
 		} else if (!dateHeaderRegexResult || dateHeaderRegexResult.index !== lastHeaderIndex) {
-			Morebits.status.info('信息', wgULS('未找到当月标题，将创建新的', '未找到當月標題，將建立新的'));
-			text += '== ' + date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月 ' + ' ==\n';
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('未找到当月标题，将创建新的', '未找到當月標題，將建立新的'));
+			text += now.monthHeader() + '\n';
 		}
 		text += Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
 			params.reason, params.main_group === 'custom') + '--~~~~';
 
 		if (Twinkle.getPref('showSharedIPNotice') && mw.util.isIPAddress(mw.config.get('wgTitle'))) {
-			Morebits.status.info('信息', wgULS('添加共享IP说明', '加入共享IP說明'));
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加共享IP说明', '加入共享IP說明'));
 			text += '\n{{subst:SharedIPAdvice}}';
 		}
 
