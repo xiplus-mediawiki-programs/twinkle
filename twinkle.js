@@ -129,7 +129,7 @@ Twinkle.defaultConfig = {
 	revisionTags: 'Twinkle',
 	configPage: 'Wikipedia:Twinkle/参数设置',
 	projectNamespaceName: mw.config.get('wgFormattedNamespaces')[4],
-	sandboxPage: 'Wikipedia:沙盒'
+	sandboxPage: 'Wikipedia:沙盒',
 
 	// Formerly defaultConfig.friendly:
 
