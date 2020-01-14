@@ -2865,15 +2865,15 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			ctx.creator = $(xml).find('rev')[0].getAttribute('user');
 			if (!ctx.creator) {
 				ctx.statusElement.error(wgULS('不能获取页面创建者的名字', '無法取得頁面建立者的名字'));
+				return;
 			}
-			return;
 		}
 		if (!ctx.timestamp) {
 			ctx.timestamp = $(xml).find('rev')[0].getAttribute('timestamp');
 			if (!ctx.timestamp) {
 				ctx.statusElement.error(wgULS('无法获取页面创建时间', '無法取得頁面建立者的名字'));
+				return;
 			}
-			return;
 		}
 
 		ctx.onLookupCreationSuccess(this);
