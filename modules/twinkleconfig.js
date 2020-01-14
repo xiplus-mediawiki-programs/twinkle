@@ -627,8 +627,8 @@ Twinkle.config.sections = [
 			// if true, show one menu with both single-issue notices and warnings instead of two separately
 			{
 				name: 'combinedSingletMenus',
-				label: 'Replace the two separate single-issue menus into one combined menu',
-				helptip: 'Selecting either single-issue notices or single-issue warnings as your default will make this your default if enabled.',
+				label: wgULS('将两个单层级菜单合并成一个', '將兩個單層級選單合併成一個'),
+				helptip: wgULS('当激活此选项时，无论默认警告级别选择单层级通知或单层级警告皆属于此项。', '當啟用此選項時，無論預設警告級別選擇單層級通知或單層級警告皆屬於此項。'),
 				type: 'boolean'
 			},
 
