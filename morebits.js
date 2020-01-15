@@ -1492,13 +1492,15 @@ Morebits.wiki.removeCheckpoint = function() {
 /**
  * **************** Morebits.wiki.api ****************
  * An easy way to talk to the MediaWiki API.
- *
- * Constructor parameters:
- *    currentAction: the current action (required)
- *    query: the query (required)
- *    onSuccess: the function to call when request gotten
- *    statusElement: a Morebits.status object to use for status messages (optional)
- *    onError: the function to call if an error occurs (optional)
+ */
+
+/**
+ * @constructor
+ * @param {string} currentAction - The current action (required)
+ * @param {Object} query - The query (required)
+ * @param {Function} [onSuccess] - The function to call when request gotten
+ * @param {Object} [statusElement] - A Morebits.status object to use for status messages (optional)
+ * @param {Function} [onError] - The function to call if an error occurs (optional)
  */
 Morebits.wiki.api = function(currentAction, query, onSuccess, statusElement, onError) {
 	this.currentAction = currentAction;
@@ -1535,8 +1537,11 @@ Morebits.wiki.api.prototype = {
 	errorCode: null, // short text error code, if any, as documented in the MediaWiki API
 	errorText: null, // full error description, if any
 
-	// post(): carries out the request
-	// do not specify a parameter unless you really really want to give jQuery some extra parameters
+	/**
+	 * Carries out the request.
+	 * @param {Object} callerAjaxParameters Do not specify a parameter unless you really
+	 * really want to give jQuery some extra parameters
+	 */
 	post: function(callerAjaxParameters) {
 
 		++Morebits.wiki.numberOfActionsLeft;
@@ -1584,7 +1589,7 @@ Morebits.wiki.api.prototype = {
 				Morebits.wiki.actionCompleted();
 			}
 		).fail(
-			// only network and server errors reach here – complaints from the API itself are caught in success()
+			// only network and server errors reach here - complaints from the API itself are caught in success()
 			function(jqXHR, statusText, errorThrown) {
 				this.statusText = statusText;
 				this.errorThrown = errorThrown; // frequently undefined
@@ -1637,7 +1642,10 @@ Morebits.wiki.api.prototype = {
 // See https://lists.wikimedia.org/pipermail/mediawiki-api-announce/2014-November/000075.html
 var morebitsWikiApiUserAgent = 'morebits.js~zh/2.0 ([[w:zh:WT:TW]])';
 
-// Sets the custom user agent header
+/**
+ * Sets the custom user agent header
+ * @param {string} ua   User agent
+ */
 Morebits.wiki.api.setApiUserAgent = function(ua) {
 	morebitsWikiApiUserAgent = (ua ? ua + ' ' : '') + 'morebits.js~zh/2.0 ([[w:zh:WT:TW]])';
 };
@@ -4275,9 +4283,13 @@ Morebits.checkboxShiftClickSupport = function (jQuerySelector, jQueryContext) {
  * |pageName| property on the Morebits.wiki.api object.
  *
  * There are sample batchOperation implementations using Morebits.wiki.page in
- * twinklebatchdelete.js, and using Morebits.wiki.api in twinklebatchundelete.js.
+ * twinklebatchdelete.js, twinklebatchundelete.js, and twinklebatchprotect.js.
  */
 
+/**
+ * @constructor
+ * @param {string} [currentAction]
+ */
 Morebits.batchOperation = function(currentAction) {
 	var ctx = {
 		// backing fields for public properties
@@ -4289,7 +4301,8 @@ Morebits.batchOperation = function(currentAction) {
 
 		// internal counters, etc.
 		statusElement: new Morebits.status(currentAction || wgULS('执行批量操作', '執行批量操作')),
-		worker: null,
+		worker: null, // function that executes for each item in pageList
+		postFinish: null, // function that executes when the whole batch has been processed
 		countStarted: 0,
 		countFinished: 0,
 		countFinishedSuccess: 0,
@@ -4312,11 +4325,26 @@ Morebits.batchOperation = function(currentAction) {
 		ctx.pageList = pageList;
 	};
 
+	/**
+	 * Sets a known option:
+	 * - chunkSize (integer):
+	 *        The size of chunks to break the array into (default 50).
+	 *        Setting this to a small value (<5) can cause problems.
+	 * - preserveIndividualStatusLines (boolean):
+	 *        Keep each page's status element visible when worker is complete?
+	 */
 	this.setOption = function(optionName, optionValue) {
 		ctx.options[optionName] = optionValue;
 	};
 
-	this.run = function(worker) {
+	/**
+	 * Runs the first callback for each page in the list.
+	 * The callback must call workerSuccess when succeeding, or workerFailure when failing.
+	 * Runs the second callback when the whole batch has been processed (optional)
+	 * @param {Function} worker
+	 * @param {Function} [postFinish]
+	 */
+	this.run = function(worker, postFinish) {
 		if (ctx.running) {
 			ctx.statusElement.error(wgULS('批量操作已在运行', '批量操作已在執行'));
 			return;
@@ -4324,6 +4352,7 @@ Morebits.batchOperation = function(currentAction) {
 		ctx.running = true;
 
 		ctx.worker = worker;
+		ctx.postFinish = postFinish;
 		ctx.countStarted = 0;
 		ctx.countFinished = 0;
 		ctx.countFinishedSuccess = 0;
@@ -4384,7 +4413,7 @@ Morebits.batchOperation = function(currentAction) {
 			}
 
 		} else if (typeof arg === 'string' && ctx.options.preserveIndividualStatusLines) {
-			new Morebits.status(arg, ['done (', createPageLink(arg), ')']);
+			new Morebits.status(arg, ['完成（', createPageLink(arg), '）']);
 		}
 
 		ctx.countFinishedSuccess++;
@@ -4424,6 +4453,9 @@ Morebits.batchOperation = function(currentAction) {
 				ctx.statusElement.warn(statusString);
 			} else {
 				ctx.statusElement.info(statusString);
+			}
+			if (ctx.postFinish) {
+				ctx.postFinish();
 			}
 			Morebits.wiki.removeCheckpoint();
 			ctx.running = false;
