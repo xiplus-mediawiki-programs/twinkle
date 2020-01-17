@@ -375,7 +375,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			work_area.append({ type: 'header', label: wgULS('文件', '檔案') });
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.fileList, mode) });
 			if (!Twinkle.speedy.mode.isSysop(mode)) {
-				work_area.append({ type: 'div', label: wgULS('标记CSD F3、F4、F6、F8，请使用Twinkle的“图权”功能。', '標記CSD F3、F4、F6、F8，請使用Twinkle的「圖權」功能。') });
+				work_area.append({ type: 'div', label: wgULS('标记CSD F3、F4、F6、F8、F9、F10，请使用Twinkle的“图权”功能。', '標記CSD F3、F4、F6、F8、F9、F10，請使用Twinkle的「圖權」功能。') });
 			}
 			break;
 
@@ -592,6 +592,16 @@ Twinkle.speedy.fileList = [
 	{
 		label: wgULS('F8: 明显侵权之文件', 'F8: 明顯侵權之檔案'),
 		value: 'f8',
+		hideWhenUser: true
+	},
+	{
+		label: wgULS('F9: 没有填写任何合理使用依据的非自由著作权文件', 'F9: 沒有填寫任何合理使用依據的非自由著作權檔案'),
+		value: 'f9',
+		hideWhenUser: true
+	},
+	{
+		label: wgULS('F10: 可被替代的非自由著作权文件', 'F10: 可被替代的非自由著作權檔案'),
+		value: 'f10',
 		hideWhenUser: true
 	}
 ];
