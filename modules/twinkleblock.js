@@ -496,7 +496,11 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 
 	if (Twinkle.block.currentBlockInfo) {
 		Morebits.status.init($('div[name="currentblock"] span').last()[0]);
-		Morebits.status.warn(relevantUserName + wgULS('已被封禁', '已被封禁'), wgULS('提交请求来用给定的选项重新封禁', '提交請求來用給定的設定重新封禁'));
+		if (Twinkle.block.currentBlockInfo.partial === '') { // Partial block
+			Morebits.status.warn(relevantUserName + wgULS('已被部分封禁', '已被部分封鎖'), wgULS('提交请求来用给定的选项转为全站封禁', '提交請求來用給定的設定轉為全站封鎖'));
+		} else if (Twinkle.block.currentBlockInfo.partial === undefined) { // Sitewide block
+			Morebits.status.warn(relevantUserName + wgULS('已被封禁', '已被封鎖'), wgULS('提交请求来用给定的选项重新封禁', '提交請求來用給定的設定重新封鎖'));
+		}
 		Twinkle.block.callback.update_form(e, Twinkle.block.currentBlockInfo);
 	} else if ($form.find('[name=actiontype][value=template]').is(':checked')) {
 		// make sure all the fields are correct based on defaults
