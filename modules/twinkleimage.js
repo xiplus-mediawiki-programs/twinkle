@@ -80,6 +80,35 @@ Twinkle.image.callback = function twinkleimageCallback() {
 					type: 'textarea',
 					label: wgULS('侵权来源：', '侵權來源：')
 				}
+			},
+			{
+				label: wgULS('没有填写任何合理使用依据的非自由著作权文件（CSD F9）', '沒有填寫任何合理使用依據的非自由著作權檔案（CSD F9）'),
+				value: 'no fair use rationale',
+				tooltip: wgULS('本文件为非自由版权且没有被条目使用', '本檔案為非自由版權且沒有被條目使用')
+			},
+			{
+				label: wgULS('可被替代的非自由著作权文件（CSD F10）', ' 可被替代的非自由著作權檔案（CSD F10）'),
+				value: 'replaceable fair use',
+				tooltip: wgULS('本文件为非自由版权且没有被条目使用', '本檔案為非自由版權且沒有被條目使用'),
+				subgroup: {
+					name: 'f10_type',
+					type: 'select',
+					label: wgULS('适用类别：', '適用類別：'),
+					style: 'width: 85%;',
+					list: wgULS([
+						{ label: '请选择', value: '' },
+						{ label: '有其他自由著作权文件展示相同的事物', value: '1' },
+						{ label: '文件描述的是在世或假定在世人物、仍然存在的建筑、室外雕塑或仍然在售的商品，且预计自行拍摄的照片不受他人著作权保护', value: '2' },
+						{ label: '文件为可自行绘制的地图或图表', value: '3' },
+						{ label: '文件来自商业图片机构（如Getty）', value: '4' }
+					], [
+						{ label: '請選擇', value: '' },
+						{ label: '有其他自由著作權檔案展示相同的事物', value: '1' },
+						{ label: '檔案描述的是在世或假定在世人物、仍然存在的建築、室外雕塑或仍然在售的商品，且預計自行拍攝的相片不受他人著作權保護', value: '2' },
+						{ label: '檔案為可自行繪製的地圖或圖表', value: '3' },
+						{ label: '檔案來自商業圖片機構（如Getty）', value: '4' }
+					])
+				}
 			}
 		]
 	});
@@ -125,6 +154,12 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		case 'no permission':
 			csdcrit = 'f8';
 			break;
+		case 'no fair use rationale':
+			csdcrit = 'f9';
+			break;
+		case 'replaceable fair use':
+			csdcrit = 'f10';
+			break;
 		default:
 			throw new Error('Twinkle.image.callback.evaluate：未知条款');
 	}
@@ -140,6 +175,14 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 	};
 	if (csdcrit === 'f8') {
 		params.f8_source = event.target['type.f8_source'].value;
+	}
+	if (csdcrit === 'f10') {
+		var f10_type = event.target['type.f10_type'].value;
+		if (!f10_type) {
+			alert(wgULS('CSD F10：请选择适用类别。', 'CSD F10：請選擇適用類別。'));
+			return false;
+		}
+		params.f10_type = f10_type;
 	}
 	Morebits.simpleWindow.setButtonsEnabled(false);
 	Morebits.status.init(event.target);
@@ -193,6 +236,9 @@ Twinkle.image.callbacks = {
 			case 'no permission':
 				tag = '{{subst:' + params.templatename + '/auto|1=' + params.f8_source.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^*])/gm, '* $1').replace(/^\* $/m, '') + '}}\n';
 				break;
+			case 'replaceable fair use':
+				tag = '{{subst:' + params.templatename + '/auto|1=' + params.f10_type + '}}\n';
+				break;
 			default:
 				tag = '{{subst:' + params.templatename + '/auto}}\n';
 				break;
@@ -211,7 +257,7 @@ Twinkle.image.callbacks = {
 		} else {
 			editSummary += '[[WP:CSD#' + params.normalized.toUpperCase() + '|CSD ' + params.normalized.toUpperCase() + ']]';
 		}
-		editSummary += '）：' + params.type + Twinkle.getPref('summaryAd');
+		editSummary += '）' + Twinkle.getPref('summaryAd');
 		pageobj.setEditSummary(editSummary);
 		pageobj.setTags(Twinkle.getPref('revisionTags'));
 
