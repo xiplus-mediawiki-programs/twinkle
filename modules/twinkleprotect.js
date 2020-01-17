@@ -1466,7 +1466,7 @@ Twinkle.protect.callbacks = {
 			return;
 		}
 		statusElement.status(wgULS('添加新提名…', '加入新提名…'));
-		rppPage.setEditSummary('请求对[[' + Morebits.pageNameNorm + ']]' + params.typename + Twinkle.getPref('summaryAd'));
+		rppPage.setEditSummary('/* ' + Morebits.pageNameNorm + ' */ 请求对[[' + Morebits.pageNameNorm + ']]' + params.typename + Twinkle.getPref('summaryAd'));
 		rppPage.setTags(Twinkle.getPref('revisionTags'));
 		rppPage.setPageText(text);
 		rppPage.setCreateOption('recreate');
