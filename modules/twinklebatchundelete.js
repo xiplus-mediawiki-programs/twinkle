@@ -151,6 +151,7 @@ Twinkle.batchundelete.callback.evaluate = function(event) {
 		var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('反删除页面', '反刪除頁面') + pageName);
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.setEditSummary(reason + Twinkle.getPref('deletionSummaryAd'));
+		wikipedia_page.setTags(Twinkle.getPref('revisionTags'));
 		wikipedia_page.suppressProtectWarning();
 		wikipedia_page.setMaxRetries(3); // temporary increase from 2 to make batchundelete more likely to succeed [[phab:T222402]] #613
 		wikipedia_page.undeletePage(Twinkle.batchundelete.callbacks.doExtras, pageUndeleter.workerFailure);
@@ -198,6 +199,7 @@ Twinkle.batchundelete.callbacks = {
 
 		var page = new Morebits.wiki.page(apiobj.params.talkPage, wgULS('正在反删除', '正在反刪除') + apiobj.params.page + wgULS('的讨论页', '的討論頁'));
 		page.setEditSummary(wgULS('反删除“', '反刪除「 ') + apiobj.params.page + wgULS('”的[[Wikipedia:讨论页|讨论页]]', '」的[[Wikipedia:讨论页|討論頁]]') + Twinkle.getPref('deletionSummaryAd'));
+		page.setTags(Twinkle.getPref('revisionTags'));
 		page.undeletePage();
 	}
 };
