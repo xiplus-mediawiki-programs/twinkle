@@ -16,34 +16,79 @@
  Twinklefluff revert and antivandalism utility
  */
 
-Twinkle.fluff = {
-	spanTag: function(color, content) {
-		var span = document.createElement('span');
-		span.style.color = color;
-		span.appendChild(document.createTextNode(content));
-		return span;
-	},
+Twinkle.fluff = function twinklefluff() {
+	if (Twinkle.userAuthorized) {
+		// A list of usernames, usually only bots, that vandalism revert is jumped over; that is,
+		// if vandalism revert was chosen on such username, then its target is on the revision before.
+		// This is for handling quick bots that makes edits seconds after the original edit is made.
+		// This only affects vandalism rollback; for good faith rollback, it will stop, indicating a bot
+		// has no faith, and for normal rollback, it will rollback that edit.
+		Twinkle.fluff.whiteList = [
+			'Antigng-bot',
+			'Jimmy-bot',
+			'Jimmy-abot',
+			'Liangent-bot',
+			'Liangent-adminbot',
+			'Cewbot',
+			'WhitePhosphorus-bot'
+		];
 
-	buildLink: function(color, text) {
-		var link = document.createElement('a');
-		link.appendChild(Twinkle.fluff.spanTag('Black', '['));
-		link.appendChild(Twinkle.fluff.spanTag(color, text));
-		link.appendChild(Twinkle.fluff.spanTag('Black', ']'));
-		return link;
-	},
-
-	auto: function() {
-		if (mw.config.get('wgRevisionId') !== mw.config.get('wgCurRevisionId')) {
-			// not latest revision
-			alert(wgULS('无法回退，页面在此期间已被修改。', '無法回退，頁面在此期間已被修改。'));
-			return;
+		if (Morebits.queryString.exists('twinklerevert')) {
+			// Return if the user can't edit the page in question
+			if (!mw.config.get('wgIsProbablyEditable')) {
+				alert(wgULS('无法编辑页面，它可能被保护了。', '無法編輯頁面，它可能被保護了。'));
+			} else {
+				Twinkle.fluff.auto();
+			}
+		} else if (mw.config.get('wgCanonicalSpecialPageName') === 'Contributions') {
+			Twinkle.fluff.addLinks.contributions();
+		} else if (mw.config.get('wgIsProbablyEditable')) {
+			// Only proceed if the user can actually edit the page
+			// in question (ignored for contributions, see #632).
+			// wgIsProbablyEditable should take care of
+			// namespace/contentModel restrictions as well as
+			// explicit protections; it won't take care of
+			// cascading or TitleBlacklist restrictions
+			if (mw.config.get('wgDiffNewId') || mw.config.get('wgDiffOldId')) { // wgDiffOldId included for clarity in if else loop [[phab:T214985]]
+				mw.hook('wikipage.diff').add(function () { // Reload alongside the revision slider
+					Twinkle.fluff.addLinks.diff();
+				});
+			} else if (mw.config.get('wgAction') === 'view' && mw.config.get('wgCurRevisionId') !== mw.config.get('wgRevisionId')) {
+				Twinkle.fluff.addLinks.oldid();
+			}
 		}
+	}
+};
 
-		var vandal = $('#mw-diff-ntitle2').find('a.mw-userlink').find('bdi').text();
 
-		Twinkle.fluff.revert(Morebits.queryString.get('twinklerevert'), vandal, true);
-	},
+Twinkle.fluff.spanTag = function twinklefluffspanTag(color, content) {
+	var span = document.createElement('span');
+	span.style.color = color;
+	span.appendChild(document.createTextNode(content));
+	return span;
+};
 
+Twinkle.fluff.buildLink = function twinklefluffbuildLink(color, text) {
+	var link = document.createElement('a');
+	link.appendChild(Twinkle.fluff.spanTag('Black', '['));
+	link.appendChild(Twinkle.fluff.spanTag(color, text));
+	link.appendChild(Twinkle.fluff.spanTag('Black', ']'));
+	return link;
+};
+
+Twinkle.fluff.auto = function twinklefluffauto() {
+	if (mw.config.get('wgRevisionId') !== mw.config.get('wgCurRevisionId')) {
+		// not latest revision
+		alert(wgULS('无法回退，页面在此期间已被修改。', '無法回退，頁面在此期間已被修改。'));
+		return;
+	}
+
+	var vandal = $('#mw-diff-ntitle2').find('a.mw-userlink').text();
+
+	Twinkle.fluff.revert(Morebits.queryString.get('twinklerevert'), vandal, true);
+};
+
+Twinkle.fluff.addLinks = {
 	contributions: function() {
 		// $('sp-contributions-footer-anon-range') relies on the fmbox
 		// id in [[MediaWiki:Sp-contributions-footer-anon-range]] and
@@ -254,16 +299,6 @@ Twinkle.fluff = {
 	}
 };
 
-Twinkle.fluff.disableLinks = function (links) {
-	for (var i = 0; i < links.length; i++) {
-		var link = $(links[i]);
-		link.off('click')
-			.attr('href', '#')
-			.css('color', 'grey')
-			.css('cursor', 'default');
-		$('span', link).css('color', 'grey');
-	}
-};
 
 Twinkle.fluff.revert = function revertPage(type, vandal, autoRevert, rev, page) {
 	if (mw.util.isIPv6Address(vandal)) {
@@ -652,55 +687,6 @@ Twinkle.fluff.formatSummary = function(builtInString, userName, userString) {
 	}
 
 	return result;
-};
-
-Twinkle.fluff.init = function twinklefluffinit() {
-	if (Twinkle.userAuthorized) {
-		// A list of usernames, usually only bots, that vandalism revert is jumped over; that is,
-		// if vandalism revert was chosen on such username, then its target is on the revision before.
-		// This is for handling quick bots that makes edits seconds after the original edit is made.
-		// This only affects vandalism rollback; for good faith rollback, it will stop, indicating a bot
-		// has no faith, and for normal rollback, it will rollback that edit.
-		Twinkle.fluff.whiteList = [
-			'Antigng-bot',
-			'Jimmy-bot',
-			'Jimmy-abot',
-			'Liangent-bot',
-			'Liangent-adminbot',
-			'Cewbot',
-			'WhitePhosphorus-bot'
-		];
-
-		Twinkle.fluff.useNotify = false;
-		if (Morebits.queryString.exists('twinklerevert')) {
-			// Return if the user can't edit the page in question
-			if (!mw.config.get('wgIsProbablyEditable')) {
-				alert(wgULS('无法编辑页面，它可能被保护了。', '無法編輯頁面，它可能被保護了。'));
-			} else {
-				Twinkle.fluff.auto();
-			}
-		} else if (mw.config.get('wgCanonicalSpecialPageName') === 'Contributions') {
-			Twinkle.fluff.useNotify = Twinkle.getPref('rollbackInCurrentWindow');
-			Twinkle.fluff.notifyId = 0;
-			Twinkle.fluff.contributions();
-		} else if (mw.config.get('wgAction') === 'history') {
-			Twinkle.fluff.history();
-		} else if (mw.config.get('wgIsProbablyEditable')) {
-			// Only proceed if the user can actually edit the page
-			// in question (ignored for contributions, see #632).
-			// wgIsProbablyEditable should take care of
-			// namespace/contentModel restrictions as well as
-			// explicit protections; it won't take care of
-			// cascading or TitleBlacklist restrictions
-			if (mw.config.get('wgDiffNewId') || mw.config.get('wgDiffOldId')) { // wgDiffOldId included for clarity in if else loop [[phab:T214985]]
-				mw.hook('wikipage.diff').add(function () { // Reload alongside the revision slider
-					Twinkle.fluff.diff();
-				});
-			} else if (mw.config.get('wgAction') === 'view' && mw.config.get('wgCurRevisionId') !== mw.config.get('wgRevisionId')) {
-				Twinkle.fluff.oldid();
-			}
-		}
-	}
 };
 })(jQuery);
 
