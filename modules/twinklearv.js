@@ -430,7 +430,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 
 					var t = new mw.Title(value);
 					var ns = t.getNamespaceId();
-					var talk_page = (new mw.Title(t.getMain(), ns % 2 ? ns : ns + 1)).getPrefixedText();
+					var talk_page = new mw.Title(t.getMain(), ns % 2 ? ns : ns + 1).getPrefixedText();
 
 					api.get({
 						action: 'query',

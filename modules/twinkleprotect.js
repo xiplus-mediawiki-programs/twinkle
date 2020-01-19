@@ -1424,7 +1424,7 @@ Twinkle.protect.callbacks = {
 		}
 
 		var newtag = '=== [[:' + mw.config.get('wgPageName') + ']] ===' + '\n';
-		if ((new RegExp('^' + RegExp.escape(newtag).replace(/\s+/g, '\\s*'), 'm')).test(text)) {
+		if (new RegExp('^' + RegExp.escape(newtag).replace(/\s+/g, '\\s*'), 'm').test(text)) {
 			statusElement.error(wgULS([ '已有对此条目的保护提名，在 ', rppLink, '，取消操作。' ], [ '已有對此條目的保護提名，在 ', rppLink, '，取消操作。' ]));
 			return;
 		}

@@ -29,7 +29,7 @@
  */
 
 
-(function (window, document, $, undefined) { // Wrap entire file with anonymous function
+(function (window, document, $) { // Wrap entire file with anonymous function
 
 // MediaWiki:Gadget-site-lib.js
 window.wgUXS = function (wg, hans, hant, cn, tw, hk, sg, zh, mo, my) {
