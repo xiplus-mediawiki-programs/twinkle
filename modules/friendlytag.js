@@ -1334,13 +1334,13 @@ Twinkle.tag.callbacks = {
 				// special functions for requested move tags
 				if (params.moveReason) {
 					// post the rationale on the talk page (only operates in main namespace)
-					var moveTalkpageText = '\n\n{{subst:RM|' + params.moveReason.trim(); // eslint-disable-line no-redeclare
+					var moveTalkpageText = '\n\n{{subst:RM|' + params.moveReason.trim();
 					if (params.moveTarget) {
 						moveTalkpageText += '|' + params.moveTarget;
 					}
 					moveTalkpageText += '}}';
 
-					var moveTalkpage = new Morebits.wiki.page('Talk:' + params.discussArticle, wgULS('将理由贴进讨论页', '將理由貼進討論頁')); // eslint-disable-line no-redeclare
+					var moveTalkpage = new Morebits.wiki.page('Talk:' + params.discussArticle, wgULS('将理由贴进讨论页', '將理由貼進討論頁'));
 					moveTalkpage.setAppendText(moveTalkpageText);
 					moveTalkpage.setEditSummary(wgULS('请求移动' + (params.moveTarget ? '至[[' + params.moveTarget + ']]' : ''), '請求移動' + (params.moveTarget ? '至[[' + params.moveTarget + ']]' : '')) +
 						Twinkle.getPref('summaryAd'));

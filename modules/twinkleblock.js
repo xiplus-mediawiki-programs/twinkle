@@ -1063,7 +1063,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 
 		Morebits.simpleWindow.setButtonsEnabled(false);
 		Morebits.status.init(e.target);
-		var unblockStatusElement = new Morebits.status(wgULS('执行解除封禁', '執行解除封鎖')); // eslint-disable-line no-redeclare
+		var unblockStatusElement = new Morebits.status(wgULS('执行解除封禁', '執行解除封鎖'));
 		unblockoptions.action = 'unblock';
 		unblockoptions.tags = Twinkle.getPref('revisionTags');
 		unblockoptions.user = Morebits.wiki.flow.relevantUserName(true);
