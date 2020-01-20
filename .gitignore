@@ -1,4 +1,5 @@
 .mediawiki-bot-*
+.vscode/
 twinkle.js
 /.settings
 /.project
