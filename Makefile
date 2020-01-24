@@ -19,7 +19,7 @@ modules = modules/friendlyshared.js \
 		  modules/twinklewarn.js \
 		  modules/twinklexfd.js
 
-deploy: twinkle.js morebits.js morebits.css $(modules)
+deploy: twinkle.js twinkle.css twinkle-pagestyles.css morebits.js morebits.css select2.min.js select2.min.css $(modules)
 	./sync.pl ${ARGS} --deploy $^
 
 test: twinkle.js morebits.js morebits.css $(modules)

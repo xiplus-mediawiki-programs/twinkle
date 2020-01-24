@@ -130,3 +130,37 @@ if( $opt->mode eq "pull" ) {
         }
     }
 }
+
+
+## The lines below do not represent Perl code, and are not examined by the
+## compiler.  Rather, they are used by %deploys to map filenames from the
+## Twinkle git repo to their corresponding location in the MediaWiki Gadget
+## psuedonamespace.
+__DATA__
+twinkle.js MediaWiki:Gadget-Twinkle.js
+  twinkle.css MediaWiki:Gadget-Twinkle.css
+  twinkle-pagestyles.css MediaWiki:Gadget-Twinkle-pagestyles.css
+  morebits.js MediaWiki:Gadget-morebits.js
+  morebits.css MediaWiki:Gadget-morebits.css
+  select2.min.js MediaWiki:Gadget-select2.min.js
+  select2.min.css MediaWiki:Gadget-select2.min.css
+  modules/twinklearv.js MediaWiki:Gadget-twinklearv.js
+  modules/twinklebatchdelete.js MediaWiki:Gadget-twinklebatchdelete.js
+  modules/twinklebatchprotect.js MediaWiki:Gadget-twinklebatchprotect.js
+  modules/twinklebatchundelete.js MediaWiki:Gadget-twinklebatchundelete.js
+  modules/twinkleblock.js MediaWiki:Gadget-twinkleblock.js
+  modules/twinkleconfig.js MediaWiki:Gadget-twinkleconfig.js
+  modules/twinkledeprod.js MediaWiki:Gadget-twinkledeprod.js
+  modules/twinklediff.js MediaWiki:Gadget-twinklediff.js
+  modules/twinklefluff.js MediaWiki:Gadget-twinklefluff.js
+  modules/twinkleimage.js MediaWiki:Gadget-twinkleimage.js
+  modules/twinkleprod.js MediaWiki:Gadget-twinkleprod.js
+  modules/twinkleprotect.js MediaWiki:Gadget-twinkleprotect.js
+  modules/twinklespeedy.js MediaWiki:Gadget-twinklespeedy.js
+  modules/twinkleunlink.js MediaWiki:Gadget-twinkleunlink.js
+  modules/twinklewarn.js MediaWiki:Gadget-twinklewarn.js
+  modules/twinklexfd.js MediaWiki:Gadget-twinklexfd.js
+  modules/friendlyshared.js MediaWiki:Gadget-friendlyshared.js
+  modules/friendlytag.js MediaWiki:Gadget-friendlytag.js
+  modules/friendlytalkback.js MediaWiki:Gadget-friendlytalkback.js
+  modules/friendlywelcome.js MediaWiki:Gadget-friendlywelcome.js
