@@ -4,6 +4,8 @@
 (function($) {
 
 var api = new mw.Api(), relevantUserName;
+var menuFormattedNamespaces = mw.config.get('wgFormattedNamespaces');
+menuFormattedNamespaces[0] = wgULS('（条目）', '（條目）');
 
 /*
  ****************************************
@@ -16,7 +18,7 @@ var api = new mw.Api(), relevantUserName;
 Twinkle.block = function twinkleblock() {
 	// should show on Contributions or Block pages, anywhere there's a relevant user
 	if (Morebits.userIsInGroup('sysop') && Morebits.wiki.flow.relevantUserName(true)) {
-		Twinkle.addPortletLink(Twinkle.block.callback, wgULS('封禁', '封鎖'), 'tw-block', wgULS('全站封禁相关用户', '全站封禁相關用戶'));
+		Twinkle.addPortletLink(Twinkle.block.callback, wgULS('封禁', '封鎖'), 'tw-block', wgULS('封禁相关用户', '封禁相關用戶'));
 	}
 };
 
@@ -51,13 +53,19 @@ Twinkle.block.callback = function twinkleblockCallback() {
 			{
 				label: wgULS('封禁用户', '封鎖用戶'),
 				value: 'block',
-				tooltip: wgULS('用选择的选项全站封禁相关用户。', '用選擇的選項全站封鎖相關用戶。'),
+				tooltip: wgULS('用选择的选项全站封禁相关用户，如果未勾选部分封禁则为全站封禁。', '用選擇的選項全站封鎖相關用戶，如果未勾選部分封鎖則為全站封鎖。'),
 				checked: true
+			},
+			{
+				label: wgULS('部分封禁', '部分封鎖'),
+				value: 'partial',
+				tooltip: wgULS('激活部分封禁及部分封禁模板。', '啟用部分封鎖及部分封鎖模板。'),
+				checked: Twinkle.getPref('defaultToPartialBlocks')
 			},
 			{
 				label: wgULS('添加封禁模板到用户对话页', '加入封鎖模板到用戶對話頁'),
 				value: 'template',
-				tooltip: wgULS('如果执行封禁的管理员忘记发出封禁模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。', '如果執行封鎖的管理員忘記發出封鎖模板，或你封鎖了用戶而沒有給其發出模板，則你可以用此來發出合適的模板。'),
+				tooltip: wgULS('如果执行封禁的管理员忘记发出封禁模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。勾选部分封禁以使用部分封禁模板。', '如果執行封鎖的管理員忘記發出封鎖模板，或你封鎖了用戶而沒有給其發出模板，則你可以用此來發出合適的模板。勾選部分封鎖以使用部分封鎖模板。'),
 				checked: true
 			},
 			{
@@ -156,39 +164,51 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 Twinkle.block.callback.saveFieldset = function twinkleblockCallbacksaveFieldset(fieldset) {
 	Twinkle.block[$(fieldset).prop('name')] = {};
 	$(fieldset).serializeArray().forEach(function(el) {
+		// namespaces and pages for partial blocks are overwritten
+		// here, but we're handling them elsewhere so that's fine
 		Twinkle.block[$(fieldset).prop('name')][el.name] = el.value;
 	});
 };
 
 Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction(e) {
 	var field_preset, field_template_options, field_block_options, field_tag_options, field_unblock_options, $form = $(e.target.form);
+	// Make ifs shorter
+	var blockBox = $form.find('[name=actiontype][value=block]').is(':checked');
+	var templateBox = $form.find('[name=actiontype][value=template]').is(':checked');
+	var tag = $form.find('[name=actiontype][value=tag]');
+	var protect = $form.find('[name=actiontype][value=protect]');
+	var partial = $form.find('[name=actiontype][value=partial]');
+	var unblock = $form.find('[name=actiontype][value=unblock]');
+	var partialBox = partial.is(':checked');
+	var blockGroup = partialBox ? Twinkle.block.blockGroupsPartial : Twinkle.block.blockGroups;
 
 	if (e.target.value === 'unblock') {
 		if (!Twinkle.block.currentBlockInfo) {
-			$form.find('[name=actiontype][value=unblock]').prop('checked', false);
+			unblock.prop('checked', false);
 			return alert(wgULS('用户没有被封禁', '用戶沒有被封鎖'));
 		}
-		$form.find('[name=actiontype][value=block]').prop('checked', false);
-		$form.find('[name=actiontype][value=template]').prop('checked', false);
-		$form.find('[name=actiontype][value=tag]').prop('checked', false);
-		$form.find('[name=actiontype][value=protect]').prop('checked', false);
+		blockBox.prop('checked', false);
+		templateBox.prop('checked', false);
+		tag.prop('checked', false);
+		protect.prop('checked', false);
 	} else {
-		$form.find('[name=actiontype][value=unblock]').prop('checked', false);
+		unblock.prop('checked', false);
 	}
+	partial.prop('disabled', !blockBox && !templateBox);
 
 	Twinkle.block.callback.saveFieldset($('[name=field_block_options]'));
 	Twinkle.block.callback.saveFieldset($('[name=field_template_options]'));
 	Twinkle.block.callback.saveFieldset($('[name=field_tag_options]'));
 	Twinkle.block.callback.saveFieldset($('[name=field_unblock_options]'));
 
-	if ($form.find('[name=actiontype][value=block]').is(':checked')) {
+	if (blockBox) {
 		field_preset = new Morebits.quickForm.element({ type: 'field', label: wgULS('预设', '預設'), name: 'field_preset' });
 		field_preset.append({
 			type: 'select',
 			name: 'preset',
 			label: wgULS('选择预设：', '選擇預設：'),
 			event: Twinkle.block.callback.change_preset,
-			list: Twinkle.block.callback.filtered_block_groups()
+			list: Twinkle.block.callback.filtered_block_groups(blockGroup)
 		});
 
 		field_block_options = new Morebits.quickForm.element({ type: 'field', label: wgULS('封禁选项', '封鎖設定'), name: 'field_block_options' });
@@ -227,6 +247,32 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			tooltip: wgULS('您可以使用相对时间，如“1 minute”或“19 days”；或绝对时间，“yyyymmddhhmm”（如“200602011405”是2006年2月1日14:05 UTC。）', '您可以使用相對時間，如「1 minute」或「19 days」；或絕對時間，「yyyymmddhhmm」（如「200602011405」是2006年2月1日14:05 UTC。）'),
 			value: Twinkle.block.field_block_options.expiry || Twinkle.block.field_template_options.template_expiry
 		});
+
+		if (partialBox) { // Partial block
+			field_block_options.append({
+				type: 'select',
+				multiple: true,
+				name: 'pagerestrictions',
+				label: wgULS('页面封禁', '頁面封鎖'),
+				value: '',
+				tooltip: wgULS('最多10页面。', '最多10頁面。')
+			});
+			var ns = field_block_options.append({
+				type: 'select',
+				multiple: true,
+				name: 'namespacerestrictions',
+				label: wgULS('名字空间封禁', '命名空間封鎖'),
+				value: '',
+				tooltip: wgULS('指定封禁的名字空间。', '指定封鎖的命名空間。')
+			});
+			$.each(menuFormattedNamespaces, function(number, name) {
+				// Ignore -1: Special; -2: Media; and 2300-2303: Gadget (talk) and Gadget definition (talk)
+				if (number >= 0 && number < 830) {
+					ns.append({ type: 'option', label: name, value: number });
+				}
+			});
+		}
+
 		var blockoptions = [
 			{
 				checked: Twinkle.block.field_block_options.nocreate,
@@ -244,7 +290,8 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				checked: Twinkle.block.field_block_options.disabletalk,
 				label: wgULS('不能编辑自己的讨论页', '不能編輯自己的討論頁'),
 				name: 'disabletalk',
-				value: '1'
+				value: '1',
+				tooltip: partialBox ? wgULS('如果使用部分封禁，不应选择此项，除非您也想要禁止编辑用户讨论页。', '如果使用部分封鎖，不應選擇此項，除非您也想要禁止編輯使用者討論頁。') : ''
 			}
 		];
 
@@ -347,14 +394,14 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		}
 	}
 
-	if ($form.find('[name=actiontype][value=template]').is(':checked')) {
+	if (templateBox) {
 		field_template_options = new Morebits.quickForm.element({ type: 'field', label: wgULS('模板选项', '模板設定'), name: 'field_template_options' });
 		field_template_options.append({
 			type: 'select',
 			name: 'template',
 			label: wgULS('选择对话页模板：', '選擇對話頁模板：'),
 			event: Twinkle.block.callback.change_template,
-			list: Twinkle.block.callback.filtered_block_groups(true),
+			list: Twinkle.block.callback.filtered_block_groups(blockGroup, true),
 			value: Twinkle.block.field_template_options.template
 		});
 		field_template_options.append({
@@ -365,7 +412,18 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			value: '',
 			tooltip: wgULS('可以随通知链接条目，比如扰乱的主目标。没有条目需要链接则请留空。', '可以隨通知連結條目，比如擾亂的主目標。沒有條目需要連結則請留空。')
 		});
-		if (!$form.find('[name=actiontype][value=block]').is(':checked')) {
+
+		// Only visible if partial and not blocking
+		field_template_options.append({
+			type: 'input',
+			name: 'area',
+			display: 'none',
+			label: wgULS('封禁区域', '封鎖區域'),
+			value: '',
+			tooltip: wgULS('阻止用户编辑的页面或名字空间的可选说明。', '阻止使用者編輯的頁面或命名空間的可選說明。')
+		});
+
+		if (!blockBox) {
 			field_template_options.append({
 				type: 'input',
 				name: 'template_expiry',
@@ -384,7 +442,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			value: Twinkle.block.field_template_options.block_reason
 		});
 
-		if ($form.find('[name=actiontype][value=block]').is(':checked')) {
+		if (blockBox) {
 			field_template_options.append({
 				type: 'checkbox',
 				name: 'blank_duration',
@@ -397,17 +455,29 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				]
 			});
 		} else {
-			/* field_template_options.append( {
+			field_template_options.append({
 				type: 'checkbox',
-				name: 'notalk',
 				list: [
 					{
 						label: wgULS('不能编辑自己的讨论页', '不能編輯自己的討論頁'),
+						name: 'notalk',
 						checked: Twinkle.block.field_template_options.notalk,
 						tooltip: wgULS('用此在保护模板中指明该用户编辑对话页的权限已被移除', '用此在保護模板中指明該用戶編輯對話頁的權限已被移除')
-					}
+					}/* ,
+					{
+						label: wgULS('不能发送电子邮件', '不能傳送電子郵件'),
+						name: 'noemail_template',
+						checked: Twinkle.block.field_template_options.noemail_template,
+						tooltip: wgULS('用此在保护模板中指明该用户发送电子邮件的权限已被移除', '用此在保護模板中指明該使用者傳送電子郵件的權限已被移除')
+					},
+					{
+						label: wgULS('不能创建账号', '不能建立帳號'),
+						name: 'nocreate_template',
+						checked: Twinkle.block.field_template_options.nocreate_template,
+						tooltip: wgULS('用此在保护模板中指明该用户创建账号的权限已被移除', '用此在保護模板中指明該使用者建立帳號的權限已被移除')
+					} */
 				]
-			} ); */
+			});
 		}
 
 		var $previewlink = $('<a id="twinkleblock-preivew-link">' + wgULS('预览', '預覽') + '</a>');
@@ -464,8 +534,49 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	if (field_block_options) {
 		oldfield = $form.find('fieldset[name="field_block_options"]')[0];
 		oldfield.parentNode.replaceChild(field_block_options.render(), oldfield);
+
+
+		$form.find('[name=pagerestrictions]').select2({
+			width: '100%',
+			tags: true,
+			placeholder: wgULS('输入要阻止用户编辑的页面', '輸入要阻止使用者編輯的頁面'),
+			maximumSelectionLength: 10, // Software limitation [[phab:T202776]]
+			language: {
+				noResults: function() {
+					return wgULS('没有输入页面', '沒有輸入頁面');
+				}
+			}
+		});
+
+
+		$form.find('[name=namespacerestrictions]').select2({
+			width: '100%',
+			language: {
+				searching: Morebits.select2.queryInterceptor
+			},
+			templateResult: Morebits.select2.highlightSearchMatches,
+			placeholder: wgULS('选择要阻止用户编辑的名字空间', '選擇要阻止使用者編輯的命名空間')
+		});
+
+		// Reduce padding
+		mw.util.addCSS(
+			// prevent dropdown from appearing behind the dialog, just in case
+			'.select2-container { z-index: 10000; }' +
+			// Reduce padding
+			'.select2-results .select2-results__option { padding-top: 1px; padding-bottom: 1px; }' +
+			// Adjust font size
+			'.select2-container .select2-dropdown .select2-results { font-size: 13px; }' +
+			'.select2-container .selection .select2-selection__rendered { font-size: 13px; }' +
+			// Remove black border
+			'.select2-container--default.select2-container--focus .select2-selection--multiple { border: 1px solid #aaa; }' +
+			// Make the tiny cross larger
+			'.select2-selection__choice__remove { font-size: 130%; }'
+		);
 	} else {
 		$form.find('fieldset[name="field_block_options"]').hide();
+		// Clear select2 options
+		$form.find('[name=pagerestrictions]').val(null).trigger('change');
+		$form.find('[name=namespacerestrictions]').val(null).trigger('change');
 	}
 	if (field_tag_options) {
 		oldfield = $form.find('fieldset[name="field_tag_options"]')[0];
@@ -496,15 +607,20 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 
 	if (Twinkle.block.currentBlockInfo) {
 		Morebits.status.init($('div[name="currentblock"] span').last()[0]);
-		if (Twinkle.block.currentBlockInfo.partial === '') { // Partial block
-			Morebits.status.warn(relevantUserName + wgULS('已被部分封禁', '已被部分封鎖'), wgULS('提交请求来用给定的选项转为全站封禁', '提交請求來用給定的設定轉為全站封鎖'));
-		} else if (Twinkle.block.currentBlockInfo.partial === undefined) { // Sitewide block
-			Morebits.status.warn(relevantUserName + wgULS('已被封禁', '已被封鎖'), wgULS('提交请求来用给定的选项重新封禁', '提交請求來用給定的設定重新封鎖'));
+		// list=blocks without bkprops (as we do in fetchUerInfo)
+		// returns partial: '' if the user is partially blocked
+		var statusStr = relevantUserName + (Twinkle.block.currentBlockInfo.partial === '' ? wgULS('已被部分封禁', '已被部分封鎖') : wgULS('已被全站封禁', '已被全站封鎖'));
+		var infoStr = wgULS('提交请求来用给定的选项重新封禁', '提交請求來用給定的設定重新封鎖');
+		if (Twinkle.block.currentBlockInfo.partial === undefined && partialBox) {
+			infoStr += wgULS('并转为部分封禁', '並轉為部分封鎖');
+		} else if (Twinkle.block.currentBlockInfo.partial === '' && !partialBox) {
+			infoStr += wgULS('并转为全站封禁', '並轉為全站封鎖');
 		}
+		Morebits.status.warn(statusStr, infoStr);
 		Twinkle.block.callback.update_form(e, Twinkle.block.currentBlockInfo);
-	} else if ($form.find('[name=actiontype][value=template]').is(':checked')) {
+	} else if (templateBox) {
 		// make sure all the fields are correct based on defaults
-		if ($form.find('[name=actiontype][value=block]').is(':checked')) {
+		if (blockBox) {
 			Twinkle.block.callback.change_preset(e);
 		} else {
 			Twinkle.block.callback.change_template(e);
@@ -662,6 +778,14 @@ Twinkle.block.blockPresetsInfo = {
 	'Bot block message': {
 		expiry: 'infinity',
 		sig: '~~~~'
+	},
+	'uw-pblock': {
+		autoblock: true,
+		expiry: '24 hours',
+		nocreate: false,
+		pageParam: false,
+		reasonParam: true,
+		summary: '您已被禁止編輯維基百科的部分區域'
 	}
 };
 
@@ -683,7 +807,7 @@ Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets
 		Twinkle.block.blockPresetsInfo[preset] = settings;
 	});
 	if (!Twinkle.block.blockGroupsUpdated) {
-		$.each(Twinkle.block.blockGroups, function(_, blockGroup) {
+		$.each(Twinkle.block.blockGroups.concat(Twinkle.block.blockGroupsPartial), function(_, blockGroup) {
 			if (blockGroup.custom) {
 				blockGroup.list = Twinkle.getPref('customBlockReasonList');
 			}
@@ -777,11 +901,18 @@ Twinkle.block.blockGroups = [
 	}
 ];
 
-Twinkle.block.callback.filtered_block_groups = function twinkleblockCallbackFilteredBlockGroups(show_template) {
-	return $.map(Twinkle.block.blockGroups, function(blockGroup) {
-		if (!show_template && blockGroup.meta) {
-			return;
-		}
+Twinkle.block.blockGroupsPartial = [
+	{
+		label: wgULS('部分封禁原因', '部分封鎖原因'),
+		list: [
+			{ label: wgULS('部分封禁', '部分封鎖'), value: 'uw-pblock', selected: true }
+		]
+	}
+];
+
+
+Twinkle.block.callback.filtered_block_groups = function twinkleblockCallbackFilteredBlockGroups(group, show_template) {
+	return $.map(group, function(blockGroup) {
 		var list = $.map(blockGroup.list, function(blockPreset) {
 			// only show uw-talkrevoked if reblocking
 			if (!Twinkle.block.currentBlockInfo && blockPreset.value === 'uw-talkrevoked') {
@@ -904,7 +1035,6 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 
 Twinkle.block.callback.change_template = function twinkleblockcallbackChangeTemplate(e) {
 	var form = e.target.form, value = form.template.value, settings = Twinkle.block.blockPresetsInfo[value];
-
 	if (!$(form).find('[name=actiontype][value=block]').is(':checked')) {
 		if (settings.indefinite || settings.nonstandard) {
 			if (Twinkle.block.prev_template_expiry === null) {
@@ -922,17 +1052,21 @@ Twinkle.block.callback.change_template = function twinkleblockcallbackChangeTemp
 		if (Twinkle.block.prev_template_expiry) {
 			form.expiry.value = Twinkle.block.prev_template_expiry;
 		}
-		// Morebits.quickForm.setElementVisibility(form.notalk.parentNode, !settings.nonstandard);
+		Morebits.quickForm.setElementVisibility(form.notalk.parentNode, !settings.nonstandard);
+		Morebits.quickForm.setElementVisibility(form.noemail_template.parentNode, $(form).find('[name=actiontype][value=partial]').is(':checked') && !$(form).find('[name=actiontype][value=block]').is(':checked'));
+		Morebits.quickForm.setElementVisibility(form.nocreate_template.parentNode, $(form).find('[name=actiontype][value=partial]').is(':checked') && !$(form).find('[name=actiontype][value=block]').is(':checked'));
 	} else {
 		Morebits.quickForm.setElementVisibility(
 			form.blank_duration.parentNode,
 			!settings.indefinite && !settings.nonstandard
 		);
 	}
-
 	Morebits.quickForm.setElementVisibility(form.article.parentNode, !!settings.pageParam);
 	Morebits.quickForm.setElementVisibility(form.block_reason.parentNode, !!settings.reasonParam);
 	form.block_reason.value = settings.reason || '';
+
+	// Partial block
+	Morebits.quickForm.setElementVisibility(form.area.parentNode, $(form).find('[name=actiontype][value=partial]').is(':checked') && !$(form).find('[name=actiontype][value=block]').is(':checked'));
 
 	form.root.previewer.closePreview();
 };
@@ -960,7 +1094,13 @@ Twinkle.block.callback.preview = function twinkleblockcallbackPreview(form) {
 		hardblock: Twinkle.block.isRegistered ? form.autoblock.checked : form.hardblock.checked,
 		indefinite: (/indef|infinity|never|\*|max/).test(form.template_expiry ? form.template_expiry.value : form.expiry.value),
 		reason: form.block_reason.value,
-		template: form.template.value.split(':', 1)[0]
+		template: form.template.value.split(':', 1)[0],
+		partial: $(form).find('[name=actiontype][value=partial]').is(':checked'),
+		pagerestrictions: $(form.pagerestrictions).val() || [],
+		namespacerestrictions: $(form.namespacerestrictions).val() || [],
+		noemail: form.noemail.checked || (form.noemail_template ? form.noemail_template.checked : false),
+		nocreate: form.nocreate.checked || (form.nocreate_template ? form.nocreate_template.checked : false),
+		area: form.area.value
 	};
 
 	var templateText = Twinkle.block.callback.getBlockNoticeWikitext(params);
@@ -972,6 +1112,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	var $form = $(e.target),
 		toBlock = $form.find('[name=actiontype][value=block]').is(':checked'),
 		toWarn = $form.find('[name=actiontype][value=template]').is(':checked'),
+		toPartial = $form.find('[name=actiontype][value=partial]').is(':checked'),
 		toTag = $form.find('[name=actiontype][value=tag]').is(':checked'),
 		toProtect = $form.find('[name=actiontype][value=protect]').is(':checked'),
 		toUnblock = $form.find('[name=actiontype][value=unblock]').is(':checked'),
@@ -996,11 +1137,33 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	// remove extraneous
 	delete blockoptions.expiry_preset;
 
+	// Partial API requires this to be gone, not false or 0
+	if (toPartial) {
+		blockoptions.partial = templateoptions.partial = true;
+	}
+	templateoptions.pagerestrictions = $form.find('[name=pagerestrictions]').val() || [];
+	templateoptions.namespacerestrictions = $form.find('[name=namespacerestrictions]').val() || [];
+	// Format for API here rather than in saveFieldset
+	blockoptions.pagerestrictions = templateoptions.pagerestrictions.join('|');
+	blockoptions.namespacerestrictions = templateoptions.namespacerestrictions.join('|');
+
 	// use block settings as warn options where not supplied
 	templateoptions.summary = templateoptions.summary || blockoptions.reason;
 	templateoptions.expiry = templateoptions.template_expiry || blockoptions.expiry;
 
 	if (toBlock) {
+		if (blockoptions.partial) {
+			if (blockoptions.disabletalk && blockoptions.namespacerestrictions.indexOf('3') === -1) {
+				return alert(wgULS('部分封禁无法阻止编辑自己的讨论页，除非也封禁了User talk名字空间！', '部分封鎖無法阻止編輯自己的討論頁，除非也封鎖了User talk命名空間！'));
+			}
+			if (!blockoptions.namespacerestrictions && !blockoptions.pagerestrictions) {
+				if (!blockoptions.noemail && !blockoptions.nocreate) { // Blank entries technically allowed [[phab:T208645]]
+					return alert(wgULS('没有选择页面或名字空间，也没有停用电子邮件或禁止创建账户；请选择至少一个选项以应用部分封禁！', '沒有選擇頁面或命名空間，也沒有停用電子郵件或禁止建立帳戶；請選擇至少一個選項以應用部分封鎖！'));
+				} else if (!confirm(wgULS('您将要进行封禁，但没有阻止任何页面或名字空间的编辑，确定要继续？', '您將要進行封鎖，但沒有阻止任何頁面或命名空間的編輯，確定要繼續？'))) {
+					return;
+				}
+			}
+		}
 		if (!blockoptions.expiry) {
 			return alert(wgULS('请提供过期时间！', '請提供過期時間！'));
 		}
@@ -1142,7 +1305,9 @@ Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTempla
 	var params = $.extend(formData, {
 		messageData: Twinkle.block.blockPresetsInfo[formData.template],
 		reason: Twinkle.block.field_template_options.block_reason,
-		disabletalk: Twinkle.block.field_template_options.notalk
+		disabletalk: Twinkle.block.field_template_options.notalk,
+		noemail: Twinkle.block.field_template_options.noemail_template,
+		nocreate: Twinkle.block.field_template_options.nocreate_template
 	});
 	params.template = params.template.split(':', 1)[0];
 
@@ -1190,7 +1355,6 @@ Twinkle.block.formatBlockTime = function twinkleblockFormatBlockTime(time) {
 
 Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 	var text = '{{', settings = Twinkle.block.blockPresetsInfo[params.template];
-
 	if (!settings.nonstandard) {
 		text += 'subst:' + params.template;
 		if (params.article && settings.pageParam) {
@@ -1216,6 +1380,44 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 			text += '|notalk=yes';
 		}
 		text += '|subst=subst:';
+
+		// Currently, all partial block templates are "standard"
+		// Building the template, however, takes a fair bit of logic
+		if (params.partial) {
+			if (params.pagerestrictions.length || params.namespacerestrictions.length) {
+				var makeSentence = function (array) {
+					if (array.length < 3) {
+						return array.join('和');
+					}
+					var last = array.pop();
+					return array.join('、') + '和' + last;
+
+				};
+				text += '|area=某些';
+				if (params.pagerestrictions.length) {
+					text += '頁面（' + makeSentence(params.pagerestrictions.map(function(p) {
+						return '[[:' + p + ']]';
+					}));
+					text += params.namespacerestrictions.length ? '）和某些' : '）';
+				}
+				if (params.namespacerestrictions.length) {
+					// 1 => Talk, 2 => User, etc.
+					var namespaceNames = params.namespacerestrictions.map(function(id) {
+						return menuFormattedNamespaces[id];
+					});
+					text += wgULS('[[Wikipedia:名字空间|名字空间]]（', '[[Wikipedia:名字空间|命名空間]]（') + makeSentence(namespaceNames) + '）';
+				}
+			} else if (params.area) {
+				text += '|area=' + params.area;
+			} else {
+				if (params.noemail) {
+					text += '|email=yes';
+				}
+				if (params.nocreate) {
+					text += '|accountcreate=yes';
+				}
+			}
+		}
 	} else {
 		text += params.template;
 	}

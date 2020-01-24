@@ -53,6 +53,7 @@ Twinkle.defaultConfig = {
 	dialogLargeFont: false,
 
 	// Block
+	defaultToPartialBlocks: false,
 	blankTalkpageOnIndefBlock: false,
 	customBlockReasonList: [],
 

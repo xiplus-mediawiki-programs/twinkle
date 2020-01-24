@@ -195,6 +195,20 @@ Twinkle.config.sections = [
 	},
 
 	{
+		title: wgULS('封禁用户', '封鎖使用者'),
+		adminOnly: true,
+		preferences: [
+			// TwinkleConfig.defaultToPartialBlocks (boolean)
+			// Whether to default partial blocks on or off
+			{
+				name: 'defaultToPartialBlocks',
+				label: wgULS('打开封禁菜单时默认选择部分封禁', '打開封鎖選單時預設選擇部分封鎖'),
+				type: 'boolean'
+			}
+		]
+	},
+
+	{
 		title: wgULS('图片删除', '圖片刪除'),
 		preferences: [
 		// TwinkleConfig.notifyUserOnDeli (boolean)
