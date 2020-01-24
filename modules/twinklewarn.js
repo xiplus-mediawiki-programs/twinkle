@@ -46,9 +46,14 @@ Twinkle.warn = function twinklewarn() {
 	} else if (mw.config.get('wgDiffNewId') || mw.config.get('wgDiffOldId')) {
 		// Autofill user talk links on diffs with vanarticle for easy
 		// warning, but don't autowarn
-		var warnFromTalk = function(talkLink) {
+		var warnFromTalk = function(xtitle) {
+			var talkLink = $('#mw-diff-' + xtitle + '2 .mw-usertoollinks a').first();
 			if (talkLink.length) {
 				var extraParams = 'vanarticle=' + mw.util.rawurlencode(Morebits.pageNameNorm) + '&' + 'noautowarn=true';
+				// diffIDs for vanarticlerevid
+				extraParams += '&vanarticlerevid=';
+				extraParams += xtitle === 'otitle' ? mw.config.get('wgDiffOldId') : mw.config.get('wgDiffNewId');
+
 				var href = talkLink.attr('href');
 				if (href.indexOf('?') === -1) {
 					talkLink.attr('href', href + '?' + extraParams);
@@ -58,8 +63,8 @@ Twinkle.warn = function twinklewarn() {
 			}
 		};
 
-		warnFromTalk($('#mw-diff-otitle2 .mw-usertoollinks a').first());
-		warnFromTalk($('#mw-diff-ntitle2 .mw-usertoollinks a').first());
+		warnFromTalk('otitle'); // Older diff
+		warnFromTalk('ntitle'); // Newer diff
 	}
 
 	// Override the mw.notify function to allow us to inject a link into the
@@ -177,6 +182,34 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		tooltip: wgULS('给模板中加入一页面链接，可留空。', '給模板中加入一頁面連結，可留空。'),
 		placeholder: wgULS('仅限一个，勿使用网址、[[ ]]，可使用Special:Diff', '僅限一個，勿使用網址、[[ ]]，可使用Special:Diff')
 	});
+
+	form.append({
+		type: 'div',
+		label: '',
+		style: 'color: red',
+		id: 'twinkle-warn-olddiff-message'
+	});
+
+	// Confirm edit wasn't too old for a warning
+	var vanrevid = mw.util.getParamValue('vanarticlerevid');
+	if (vanrevid) {
+		var query = {
+			action: 'query',
+			prop: 'revisions',
+			rvprop: 'timestamp',
+			revids: vanrevid
+		};
+		new Morebits.wiki.api(wgULS('获取版本时间戳', '取得版本時間戳'), query, function(apiobj) {
+			var vantimestamp = $(apiobj.getResponse()).find('revisions rev').attr('timestamp');
+			var revDate = new Date(vantimestamp);
+			if (vantimestamp && !isNaN(revDate)) {
+				revDate.setUTCHours(revDate.getUTCHours() + 24);
+				if (revDate.getTime() < new Date().getTime()) {
+					$('#twinkle-warn-olddiff-message').text(wgULS('注意：这笔编辑是在24小时前做出的，现在警告可能已过时。', '注意：這筆編輯是在24小時前做出的，現在警告可能已過時。'));
+				}
+			}
+		}).post();
+	}
 
 	var more = form.append({ type: 'field', name: 'reasonGroup', label: wgULS('警告信息', '警告訊息') });
 	more.append({ type: 'textarea', label: wgULS('可选信息：', '可選訊息：'), name: 'reason', tooltip: wgULS('理由或是附加信息', '理由或是附加訊息') });
@@ -2065,11 +2098,11 @@ Twinkle.warn.callbacks = {
 		var current;
 
 		while ((current = history_re.exec(text)) !== null) {
-			var current_date = new Date(current[2] + '-' + current[3] + '-' + current[4] + ' ' + current[5] + ':' + current[6] + ' UTC');
-			if (!(current[1] in history) || history[current[1]] < current_date) {
+			var current_date = new Date(current[2] + current[3] + ' UTC');
+			if (!(current[1] in history) || history[current[1]].getTime() < current_date.getTime()) {
 				history[current[1]] = current_date;
 			}
-			if (current_date >= latest.date) {
+			if (current_date.getTime() >= latest.date.getTime()) {
 				latest.date = current_date;
 				latest.type = current[1];
 			}
@@ -2081,7 +2114,7 @@ Twinkle.warn.callbacks = {
 			var temp_time = new Date(history[params.sub_group]);
 			temp_time.setUTCHours(temp_time.getUTCHours() + 24);
 
-			if (temp_time > date) {
+			if (temp_time.getTime() > date.getTime()) {
 				if (!confirm(wgULS('近24小时内一个同样的 ' + params.sub_group + ' 模板已被发出。\n是否继续？', '近24小時內一個同樣的 ' + params.sub_group + ' 模板已被發出。\n是否繼續？'))) {
 					pageobj.statelem.info('用户取消');
 					return;
@@ -2091,7 +2124,7 @@ Twinkle.warn.callbacks = {
 
 		latest.date.setUTCMinutes(latest.date.getUTCMinutes() + 1); // after long debate, one minute is max
 
-		if (latest.date > date) {
+		if (latest.date.getTime() > date.getTime()) {
 			if (!confirm(wgULS('近1分钟内一个同样的 ' + latest.type + ' 模板已被发出。\n是否继续？', '近1分鍾內一個同樣的 ' + latest.type + ' 模板已被發出。\n是否繼續？'))) {
 				pageobj.statelem.info('用户取消');
 				return;
