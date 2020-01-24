@@ -504,6 +504,11 @@ Twinkle.load = function () {
 		mw.util.addCSS('.morebits-dialog-content, .morebits-dialog-footerlinks { font-size: 100% !important; } ' +
 			'.morebits-dialog input, .morebits-dialog select, .morebits-dialog-content button { font-size: inherit !important; }');
 	}
+
+	// Hide the lingering space if the TW menu is empty
+	if (mw.config.get('skin') === 'vector' && Twinkle.getPref('portletType') === 'menu' && $('#p-twinkle').length === 0) {
+		$('#p-cactions').css('margin-right', 'initial');
+	}
 };
 
 /** Twinkle-specific utility functions shared by multiple modules */
