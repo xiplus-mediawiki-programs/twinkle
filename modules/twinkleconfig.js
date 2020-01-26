@@ -666,12 +666,6 @@ Twinkle.config.sections = [
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
 				customListLabelTitle: wgULS('显示的文字（和编辑摘要）', '顯示的文字（和編輯摘要）')
-			},
-
-			{
-				name: 'markXfdPagesAsPatrolled',
-				label: wgULS('在提交存废讨论时将页面标记为已巡查（如可能）', '在提交存廢討論時將頁面標記為已巡查（如可能）'),
-				type: 'boolean'
 			}
 		]
 	},
