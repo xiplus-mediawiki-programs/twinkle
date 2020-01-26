@@ -47,6 +47,7 @@ var message = function (text) {
 
 tests.push({ name: 'morebits.js', test: true });
 tests.push({ name: 'twinkle.js', test: true });
+tests.push({ name: 'select2.min.js', test: true });
 tests.push({ name: 'modules/twinklearv.js', test: true });
 tests.push({ name: 'modules/twinklewarn.js', test: true });
 tests.push({ name: 'modules/friendlyshared.js', test: true });
@@ -70,6 +71,7 @@ tests.push({ name: 'modules/twinklexfd.js', test: true });
 
 mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.notify', 'mediawiki.Title', 'jquery.ui', 'jquery.tipsy', 'jquery.chosen']).done(function () {
 	mw.loader.load('https://zh.wikipedia.org/w/index.php?title=User:Xiplus/Twinkle/morebits.css&action=raw&ctype=text/css', 'text/css');
+	mw.loader.load('https://zh.wikipedia.org/w/index.php?title=User:Xiplus/Twinkle/select2.min.css&action=raw&ctype=text/css', 'text/css');
 
 	var i = 0;
 	// var finished = 0;
