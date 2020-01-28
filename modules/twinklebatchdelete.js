@@ -730,7 +730,7 @@ Twinkle.batchdelete.callbacks = {
 			params.unlinker.workerFailure(pageobj);
 			return;
 		}
-		pageobj.setEditSummary(wgULS('移除已被删除文件', '移除已被刪除檔案') + image + wgULS('使用，因为：', '使用因，因為：') + params.reason + Twinkle.getPref('deletionSummaryAd'));
+		pageobj.setEditSummary(wgULS('移除已被删除文件', '移除已被刪除檔案') + image + wgULS('使用，因为：', '使用，因為：') + params.reason + Twinkle.getPref('deletionSummaryAd'));
 		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setPageText(text);
 		pageobj.setCreateOption('nocreate');
