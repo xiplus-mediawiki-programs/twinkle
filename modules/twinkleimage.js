@@ -222,7 +222,7 @@ Twinkle.image.callbacks = {
 		text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, '');
 		// Adding discussion
 		if (params.type !== 'orphaned fair use') {
-			var wikipedia_page = new Morebits.wiki.page('Wikipedia:檔案存廢討論/無版權訊息或檔案來源', wgULS('添加快速删除记录项', '加入快速刪除記錄項'));
+			var wikipedia_page = new Morebits.wiki.page('Wikipedia:檔案存廢討論/快速刪除提報', wgULS('添加快速删除记录项', '加入快速刪除記錄項'));
 			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.image.callbacks.imageList);
