@@ -538,19 +538,56 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 
 		$form.find('[name=pagerestrictions]').select2({
 			width: '100%',
-			tags: true,
 			placeholder: wgULS('输入要阻止用户编辑的页面', '輸入要阻止使用者編輯的頁面'),
-			maximumSelectionLength: 10, // Software limitation [[phab:T202776]]
 			language: {
-				noResults: function() {
-					return wgULS('没有输入页面', '沒有輸入頁面');
+				errorLoading: function() {
+					return wgULS('搜索词汇不完整或无效', '搜尋詞彙不完整或無效');
 				}
+			},
+			maximumSelectionLength: 10, // Software limitation [[phab:T202776]]
+			minimumInputLength: 1, // prevent ajax call when empty
+			ajax: {
+				url: mw.util.wikiScript('api'),
+				dataType: 'json',
+				delay: 100,
+				data: function(params) {
+					var title = mw.Title.newFromText(params.term);
+					if (!title) {
+						return;
+					}
+					return {
+						'action': 'query',
+						'format': 'json',
+						'list': 'allpages',
+						'apfrom': title.title,
+						'apnamespace': title.namespace,
+						'aplimit': '10'
+					};
+				},
+				processResults: function(data) {
+					return {
+						results: data.query.allpages.map(function(page) {
+							var title = mw.Title.newFromText(page.title, page.ns).toText();
+							return {
+								id: title,
+								text: title
+							};
+						})
+					};
+				}
+			},
+			templateSelection: function(choice) {
+				return $('<a>').text(choice.text).attr({
+					href: mw.util.getUrl(choice.text),
+					target: '_blank'
+				});
 			}
 		});
 
 
 		$form.find('[name=namespacerestrictions]').select2({
 			width: '100%',
+			matcher: Morebits.select2.matchers.wordBeginning,
 			language: {
 				searching: Morebits.select2.queryInterceptor
 			},
@@ -558,7 +595,6 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			placeholder: wgULS('选择要阻止用户编辑的名字空间', '選擇要阻止使用者編輯的命名空間')
 		});
 
-		// Reduce padding
 		mw.util.addCSS(
 			// prevent dropdown from appearing behind the dialog, just in case
 			'.select2-container { z-index: 10000; }' +
