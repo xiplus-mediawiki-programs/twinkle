@@ -949,6 +949,10 @@ Twinkle.block.blockGroupsPartial = [
 
 Twinkle.block.callback.filtered_block_groups = function twinkleblockCallbackFilteredBlockGroups(group, show_template) {
 	return $.map(group, function(blockGroup) {
+		if (!show_template && blockGroup.meta) {
+			return;
+		}
+
 		var list = $.map(blockGroup.list, function(blockPreset) {
 			// only show uw-talkrevoked if reblocking
 			if (!Twinkle.block.currentBlockInfo && blockPreset.value === 'uw-talkrevoked') {
