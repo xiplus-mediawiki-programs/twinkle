@@ -1385,7 +1385,7 @@ Twinkle.block.formatBlockTime = function twinkleblockFormatBlockTime(time) {
 		return m[1] + '週';
 	}
 	if ((m = time.match(/^\s*(\d+)\s*months?\s*$/)) !== null) {
-		return m[1] + '月';
+		return m[1] + '個月';
 	}
 	if ((m = time.match(/^\s*(\d+)\s*years?\s*$/)) !== null) {
 		return m[1] + '年';
