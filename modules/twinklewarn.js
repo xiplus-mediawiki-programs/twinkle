@@ -2089,6 +2089,7 @@ Twinkle.warn.callbacks = {
 	},
 	main: function(pageobj) {
 		var text = pageobj.getPageText();
+		var statelem = pageobj.getStatusElement();
 		var params = pageobj.getCallbackParameters();
 		var messageData = params.messageData;
 
@@ -2098,7 +2099,7 @@ Twinkle.warn.callbacks = {
 		var current;
 
 		while ((current = history_re.exec(text)) !== null) {
-			var current_date = new Date(current[2] + current[3] + ' UTC');
+			var current_date = new Date(current[2] + '-' + current[3] + '-' + current[4] + ' ' + current[5] + ':' + current[6] + ' UTC');
 			if (!(current[1] in history) || history[current[1]].getTime() < current_date.getTime()) {
 				history[current[1]] = current_date;
 			}
@@ -2116,7 +2117,7 @@ Twinkle.warn.callbacks = {
 
 			if (temp_time.getTime() > date.getTime()) {
 				if (!confirm(wgULS('近24小时内一个同样的 ' + params.sub_group + ' 模板已被发出。\n是否继续？', '近24小時內一個同樣的 ' + params.sub_group + ' 模板已被發出。\n是否繼續？'))) {
-					pageobj.statelem.info('用户取消');
+					statelem.info('用户取消');
 					return;
 				}
 			}
@@ -2125,8 +2126,8 @@ Twinkle.warn.callbacks = {
 		latest.date.setUTCMinutes(latest.date.getUTCMinutes() + 1); // after long debate, one minute is max
 
 		if (latest.date.getTime() > date.getTime()) {
-			if (!confirm(wgULS('近1分钟内一个同样的 ' + latest.type + ' 模板已被发出。\n是否继续？', '近1分鍾內一個同樣的 ' + latest.type + ' 模板已被發出。\n是否繼續？'))) {
-				pageobj.statelem.info('用户取消');
+			if (!confirm(wgULS('近1分钟内 ' + latest.type + ' 模板已被发出。\n是否继续？', '近1分鍾內 ' + latest.type + ' 模板已被發出。\n是否繼續？'))) {
+				statelem.info('用户取消');
 				return;
 			}
 		}
