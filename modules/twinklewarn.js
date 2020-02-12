@@ -10,7 +10,7 @@
  ****************************************
  * Mode of invocation:     Tab ("Warn")
  * Active on:              Any page with relevant user name (userspace, contribs,
- *                         etc.), as well as diffs and the rollback success page
+ *                         etc.), as well as the rollback success page
  */
 
 
@@ -43,28 +43,6 @@ Twinkle.warn = function twinklewarn() {
 			Twinkle.warn.makeVandalTalkLink(afTalkLink, mw.config.get('wgAbuseFilterVariables').page_prefixedtitle);
 			afTalkLink.css('font-weight', 'bold');
 		}
-	} else if (mw.config.get('wgDiffNewId') || mw.config.get('wgDiffOldId')) {
-		// Autofill user talk links on diffs with vanarticle for easy
-		// warning, but don't autowarn
-		var warnFromTalk = function(xtitle) {
-			var talkLink = $('#mw-diff-' + xtitle + '2 .mw-usertoollinks a').first();
-			if (talkLink.length) {
-				var extraParams = 'vanarticle=' + mw.util.rawurlencode(Morebits.pageNameNorm) + '&' + 'noautowarn=true';
-				// diffIDs for vanarticlerevid
-				extraParams += '&vanarticlerevid=';
-				extraParams += xtitle === 'otitle' ? mw.config.get('wgDiffOldId') : mw.config.get('wgDiffNewId');
-
-				var href = talkLink.attr('href');
-				if (href.indexOf('?') === -1) {
-					talkLink.attr('href', href + '?' + extraParams);
-				} else {
-					talkLink.attr('href', href + '&' + extraParams);
-				}
-			}
-		};
-
-		warnFromTalk('otitle'); // Older diff
-		warnFromTalk('ntitle'); // Newer diff
 	}
 
 	// Override the mw.notify function to allow us to inject a link into the

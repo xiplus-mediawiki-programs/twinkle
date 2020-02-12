@@ -76,6 +76,24 @@ Twinkle.fluff.buildLink = function twinklefluffbuildLink(color, text) {
 	return link;
 };
 
+// Build [restore this revision] links
+Twinkle.fluff.restoreThisRevision = function (element, revType) {
+	var revertToRevision = document.createElement('div');
+	revertToRevision.setAttribute('id', 'tw-revert-to-' + (revType === 'wgDiffNewId' ? 'n' : 'o') + 'revision');
+	revertToRevision.style.fontWeight = 'bold';
+
+	var revertToRevisionLink = Twinkle.fluff.buildLink('SaddleBrown', wgULS('恢复此版本', '恢復此版本'));
+	revertToRevisionLink.href = '#';
+	$(revertToRevisionLink).click(function() {
+		Twinkle.fluff.revertToRevision(mw.config.get(revType).toString());
+	});
+	revertToRevision.appendChild(revertToRevisionLink);
+
+	var title = document.getElementById(element).parentNode;
+	title.insertBefore(revertToRevision, title.firstChild);
+};
+
+
 Twinkle.fluff.auto = function twinklefluffauto() {
 	if (mw.config.get('wgRevisionId') !== mw.config.get('wgCurRevisionId')) {
 		// not latest revision
@@ -190,58 +208,39 @@ Twinkle.fluff.addLinks = {
 	},
 
 	diff: function() {
-		// Add a [restore this revision] link to the older revision
-		// Don't show if there's a single revision or weird diff (cur on latest)
+		// Autofill user talk links on diffs with vanarticle for easy warning, but don't autowarn
+		var warnFromTalk = function(xtitle) {
+			var talkLink = $('#mw-diff-' + xtitle + '2 .mw-usertoollinks a').first();
+			if (talkLink.length) {
+				var extraParams = 'vanarticle=' + mw.util.rawurlencode(Morebits.pageNameNorm) + '&' + 'noautowarn=true';
+				// diffIDs for vanarticlerevid
+				extraParams += '&vanarticlerevid=';
+				extraParams += xtitle === 'otitle' ? mw.config.get('wgDiffOldId') : mw.config.get('wgDiffNewId');
+
+				var href = talkLink.attr('href');
+				if (href.indexOf('?') === -1) {
+					talkLink.attr('href', href + '?' + extraParams);
+				} else {
+					talkLink.attr('href', href + '&' + extraParams);
+				}
+			}
+		};
+
+		// Older revision
+		warnFromTalk('otitle'); // Add quick-warn link to user talk link
+		// Don't load if there's a single revision or weird diff (cur on latest)
 		if (mw.config.get('wgDiffOldId') && (mw.config.get('wgDiffOldId') !== mw.config.get('wgDiffNewId'))) {
-			var revertToRevision = document.createElement('div');
-			revertToRevision.setAttribute('id', 'tw-revert-to-orevision');
-			revertToRevision.style.fontWeight = 'bold';
-
-			var revertToRevisionLink = Twinkle.fluff.buildLink('SaddleBrown', wgULS('恢复此版本', '恢復此版本'));
-			revertToRevisionLink.href = '#';
-			$(revertToRevisionLink).click(function() {
-				Twinkle.fluff.revertToRevision(mw.config.get('wgDiffOldId').toString());
-			});
-			revertToRevision.appendChild(revertToRevisionLink);
-
-			revertToRevision.appendChild(document.createTextNode(' || '));
-
-			var revertsummary = new Morebits.quickForm.element({ type: 'select', name: 'revertsummary' });
-			revertsummary.append({
-				type: 'option',
-				label: wgULS('选择回退理由', '選擇回退理由'),
-				value: ''
-			});
-			$(Twinkle.getPref('customRevertSummary')).each(function(_, e) {
-				revertsummary.append({
-					type: 'option',
-					label: e.label,
-					value: e.value
-				});
-			});
-			revertToRevision.appendChild(revertsummary.render().childNodes[0]);
-
-			var otitle = document.getElementById('mw-diff-otitle1').parentNode;
-			otitle.insertBefore(revertToRevision, otitle.firstChild);
+			// Add a [restore this revision] link to the older revision
+			Twinkle.fluff.restoreThisRevision('mw-diff-otitle1', 'wgDiffOldId');
 		}
 
+		// Newer revision
+		warnFromTalk('ntitle'); // Add quick-warn link to user talk link
 		// Add either restore or rollback links to the newer revision
 		// Don't show if there's a single revision or weird diff (prev on first)
-		var ntitle = document.getElementById('mw-diff-ntitle1').parentNode;
 		if (document.getElementById('differences-nextlink')) {
-			// Not latest revision
-			var revertToRevisionN = document.createElement('div');
-			revertToRevisionN.setAttribute('id', 'tw-revert-to-nrevision');
-			revertToRevisionN.style.fontWeight = 'bold';
-
-			var revertToRevisionNLink = Twinkle.fluff.buildLink('SaddleBrown', wgULS('恢复此版本', '恢復此版本'));
-			revertToRevisionNLink.href = '#';
-			$(revertToRevisionNLink).click(function() {
-				Twinkle.fluff.revertToRevision(mw.config.get('wgDiffNewId').toString());
-			});
-			revertToRevisionN.appendChild(revertToRevisionNLink);
-
-			ntitle.insertBefore(revertToRevisionN, ntitle.firstChild);
+			// Not latest revision, add [restore this revision] link to newer revision
+			Twinkle.fluff.restoreThisRevision('mw-diff-ntitle1', 'wgDiffNewId');
 		} else if (Twinkle.getPref('showRollbackLinks').indexOf('diff') !== -1 && mw.config.get('wgDiffOldId') && (mw.config.get('wgDiffOldId') !== mw.config.get('wgDiffNewId') || document.getElementById('differences-prevlink'))) {
 			var vandal = $('#mw-diff-ntitle2').find('a').first().text();
 
@@ -279,23 +278,13 @@ Twinkle.fluff.addLinks = {
 			revertNode.appendChild(document.createTextNode(' || '));
 			revertNode.appendChild(vandNode);
 
+			var ntitle = document.getElementById('mw-diff-ntitle1').parentNode;
 			ntitle.insertBefore(revertNode, ntitle.firstChild);
 		}
 	},
 
 	oldid: function() { // Add a [restore this revision] link on old revisions
-		var revertToRevision = document.createElement('div');
-		revertToRevision.setAttribute('id', 'tw-revert-to-orevision');
-		revertToRevision.style.fontWeight = 'bold';
-
-		var revertToRevisionLink = Twinkle.fluff.buildLink('SaddleBrown', wgULS('恢复此版本', '恢復此版本'));
-		revertToRevisionLink.href = '#';
-		$(revertToRevisionLink).click(function() {
-			Twinkle.fluff.revertToRevision(mw.config.get('wgRevisionId').toString());
-		});
-		revertToRevision.appendChild(revertToRevisionLink);
-		var otitle = document.getElementById('mw-revision-info').parentNode;
-		otitle.insertBefore(revertToRevision, otitle.firstChild);
+		Twinkle.fluff.restoreThisRevision('mw-revision-info', 'wgRevisionId');
 	}
 };
 
