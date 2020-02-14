@@ -1112,7 +1112,21 @@ Twinkle.tag.lessFrequentList = wgULS([
 	},
 	{
 		label: '{{条目请求重定向}}：需要独立条目的页面',
-		value: '条目请求重定向'
+		value: '条目请求重定向',
+		subgroup: [
+			{
+				name: 'reqArticleLang',
+				type: 'input',
+				label: '外语语言代码：',
+				tooltip: '使用ISO 639代码，可参见 Template:ISO_639_name'
+			},
+			{
+				name: 'reqArticleTitle',
+				type: 'input',
+				label: '外语页面名称：',
+				size: 60
+			}
+		]
 	},
 	{
 		label: '{{快捷方式重定向}}：维基百科快捷方式',
@@ -1146,13 +1160,13 @@ Twinkle.tag.lessFrequentList = wgULS([
 			{
 				name: 'reqArticleLang',
 				type: 'input',
-				label: wgULS('外语语言代码：', '外語語言代碼：'),
-				tooltip: wgULS('使用ISO 639代码', '使用ISO 639代碼')
+				label: '外語語言代碼：',
+				tooltip: '使用ISO 639代碼，可參見 Template:ISO_639_name'
 			},
 			{
 				name: 'reqArticleTitle',
 				type: 'input',
-				label: wgULS('外语页面名称：', '外語頁面名稱：'),
+				label: '外語頁面名稱：',
 				size: 60
 			}
 		]
@@ -1756,6 +1770,10 @@ Twinkle.tag.callbacks = {
 				if (params.tagParameters.altLangFrom) {
 					tagText += '|1=' + params.tagParameters.altLangFrom;
 				}
+			} else if (tagName === '条目请求重定向' || tagName === '條目請求重定向') {
+				if (params.tagParameters.reqArticleLang && params.tagParameters.reqArticleTitle) {
+					tagText += '|1=' + params.tagParameters.reqArticleLang;
+					tagText += '|2=' + params.tagParameters.reqArticleTitle;
 				}
 			}
 			tagText += '}}';
