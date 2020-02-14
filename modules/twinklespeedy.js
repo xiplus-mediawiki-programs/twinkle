@@ -746,7 +746,7 @@ Twinkle.speedy.generalList = [
 		tooltip: wgULS('注意是未列明来源且语调负面，必须2项均符合。', '注意是未列明來源且語調負面，必須2項均符合。')
 	},
 	{
-		label: wgULS('G13: 明显、拙劣的机器翻译', 'G13: 明顯、拙劣的機器翻譯'),
+		label: wgULS('G13: 翻译拙劣', 'G13: 翻譯拙劣'),
 		value: 'g13',
 		tooltip: wgULS('不适用于所有的讨论名字空间、草稿名字空间和用户名字空间。', '不適用於所有的討論命名空間、草稿命名空間和使用者命名空間。'),
 		hideInNamespaces: [ 1, 2, 3, 5, 7, 9, 11, 13, 15, 101, 118, 119, 829 ] // all talk, user, draft
