@@ -992,7 +992,15 @@ Twinkle.tag.frequentList = wgULS([
 	},
 	{
 		label: '{{非中文重定向}}：非中文标题',
-		value: '非中文重定向'
+		value: '非中文重定向',
+		subgroup: [
+			{
+				name: 'altLangFrom',
+				type: 'input',
+				label: '本重定向的语言（可选）',
+				tooltip: '输入重定向名称所使用语言的ISO 639代码，例如en代表英语，代码可参见 Template:ISO_639_name'
+			}
+		]
 	},
 	{
 		label: '{{日文重定向}}：日语名称',
@@ -1065,7 +1073,15 @@ Twinkle.tag.frequentList = wgULS([
 	},
 	{
 		label: '{{非中文重定向}}：非中文標題',
-		value: '非中文重定向'
+		value: '非中文重定向',
+		subgroup: [
+			{
+				name: 'altLangFrom',
+				type: 'input',
+				label: '本重新導向的語言（可選）',
+				tooltip: '輸入重新導向名稱所使用語言的ISO 639代碼，例如en代表英語，代碼可參見 Template:ISO_639_name'
+			}
+		]
 	},
 	{
 		label: '{{日文重定向}}：日語名稱',
@@ -1736,12 +1752,10 @@ Twinkle.tag.callbacks = {
 
 		var addTag = function redirectAddTag(tagIndex, tagName) {
 			tagText += '\n{{' + tagName;
-			if (tagName === 'R from alternative language') {
-				if (params.altLangFrom) {
-					tagText += '|from=' + params.altLangFrom;
+			if (tagName === '非中文重定向') {
+				if (params.tagParameters.altLangFrom) {
+					tagText += '|1=' + params.tagParameters.altLangFrom;
 				}
-				if (params.altLangTo) {
-					tagText += '|to=' + params.altLangTo;
 				}
 			}
 			tagText += '}}';
@@ -1955,6 +1969,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			break;
 		case '重定向':
 			params.tagParameters = {
+				altLangFrom: form['redirectTags.altLangFrom'] ? form['redirectTags.altLangFrom'].value : null,
 				reqArticleLang: form['redirectTags.reqArticleLang'] ? form['redirectTags.reqArticleLang'].value : null,
 				reqArticleTitle: form['redirectTags.reqArticleTitle'] ? form['redirectTags.reqArticleTitle'].value : null
 			};
