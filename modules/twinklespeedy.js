@@ -1315,6 +1315,7 @@ Twinkle.speedy.callbacks = {
 		addToLog: function(params, initialContrib) {
 			var wikipedia_page = new Morebits.wiki.page('User:' + mw.config.get('wgUserName') + '/' + Twinkle.getPref('speedyLogPageName'), wgULS('添加项目到用户日志', '加入項目到用戶日誌'));
 			params.logInitialContrib = initialContrib;
+			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.speedy.callbacks.user.saveLog);
 		},
