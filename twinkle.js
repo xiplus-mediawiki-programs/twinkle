@@ -22,11 +22,13 @@
 
 (function (window, document, $) { // Wrap with anonymous function
 
+// Check if account is experienced enough to use Twinkle
+if (!Morebits.userIsInGroup('autoconfirmed') && !Morebits.userIsInGroup('confirmed')) {
+	return;
+}
+
 var Twinkle = {};
 window.Twinkle = Twinkle;  // allow global access
-
-// Check if account is experienced enough to use Twinkle
-Twinkle.userAuthorized = Morebits.userIsInGroup('autoconfirmed') || Morebits.userIsInGroup('confirmed');
 
 // for use by custom modules (normally empty)
 Twinkle.initCallbacks = [];
@@ -327,9 +329,6 @@ Twinkle.addPortlet = function(navigation, id, text, type, nextnodeid) {
 
 		$(a).click(function(e) {
 			e.preventDefault();
-			if (!Twinkle.userAuthorized) {
-				alert('抱歉，您需达自动确认后方可使用Twinkle。');
-			}
 		});
 
 		h5.appendChild(a);
@@ -439,11 +438,8 @@ Twinkle.load = function () {
 	if (Morebits.userIsInGroup('sysop')) {
 		specialPageWhitelist = specialPageWhitelist.concat([ 'DeletedContributions', 'Prefixindex' ]);
 	}
-	var isSpecialPage = mw.config.get('wgNamespaceNumber') === -1 &&
-		specialPageWhitelist.indexOf(mw.config.get('wgCanonicalSpecialPageName')) === -1 ;
-
-	// Prevent users that are not autoconfirmed from loading Twinkle as well.
-	if (isSpecialPage || !Twinkle.userAuthorized) {
+	if (mw.config.get('wgNamespaceNumber') === -1 &&
+		specialPageWhitelist.indexOf(mw.config.get('wgCanonicalSpecialPageName')) === -1) {
 		return;
 	}
 
