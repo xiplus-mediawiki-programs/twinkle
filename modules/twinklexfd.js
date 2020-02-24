@@ -640,6 +640,11 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		mergeinto = e.target.mergeinto.value;
 	}
 
+	if (xfdcat === 'merge' && mergeinto.trim() === '') {
+		alert(wgULS('请提供合并目标！', '請提供合併目標！'));
+		return;
+	}
+
 	Morebits.simpleWindow.setButtonsEnabled(false);
 	Morebits.status.init(e.target);
 
