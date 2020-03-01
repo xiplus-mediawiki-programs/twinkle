@@ -449,11 +449,12 @@ Twinkle.config.sections = [
 				type: 'boolean'
 			},
 
-			// TwinkleConfig.deleteSysopDefaultToTag (boolean)
-			// Make the CSD screen default to "tag" instead of "delete" (admin only)
+			// TwinkleConfig.deleteSysopDefaultToDelete (boolean)
+			// Make the CSD screen default to "delete" instead of "tag" (admin only)
 			{
-				name: 'deleteSysopDefaultToTag',
-				label: wgULS('默认为标记而不是直接删除', '預設為標記而不是直接刪除'),
+				name: 'deleteSysopDefaultToDelete',
+				label: wgULS('默认为直接删除而不是标记', '預設為直接刪除而不是標記'),
+				helptip: wgULS('如果已放置快速删除标记，则永远默认为删除模式。', '如果已放置快速刪除標記，則永遠預設為刪除模式。'),
 				adminOnly: true,
 				type: 'boolean'
 			},

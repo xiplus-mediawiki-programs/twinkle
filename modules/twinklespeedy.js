@@ -37,6 +37,8 @@ Twinkle.speedy.callback = function twinklespeedyCallback() {
 
 // Used by unlink feature
 Twinkle.speedy.dialog = null;
+// Used throughout
+Twinkle.speedy.hasCSD = !!$('#delete-reason').length;
 
 // The speedy criteria list can be in one of several modes
 Twinkle.speedy.mode = {
@@ -96,7 +98,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 					value: 'tag_only',
 					name: 'tag_only',
 					tooltip: wgULS('如果您只想标记此页面而不是将其删除', '如果您只想標記此頁面而不是將其刪除'),
-					checked: Twinkle.getPref('deleteSysopDefaultToTag'),
+					checked: !(Twinkle.speedy.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete')),
 					event: function(event) {
 						var cForm = event.target.form;
 						var cChecked = event.target.checked;
@@ -221,8 +223,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				value: 'notify',
 				name: 'notify',
 				tooltip: wgULS('一个通知模板将会被加入创建者的对话页，如果您启用了该理据的通知。', '一個通知模板將會被加入建立者的對話頁，如果您啟用了該理據的通知。'),
-				checked: !Morebits.userIsSysop || Twinkle.getPref('deleteSysopDefaultToTag'),
-				disabled: Morebits.userIsSysop && !Twinkle.getPref('deleteSysopDefaultToTag'),
+				checked: !Morebits.userIsSysop || !(Twinkle.speedy.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete')),
 				event: function(event) {
 					event.stopPropagation();
 				}
@@ -237,7 +238,6 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				value: 'multiple',
 				name: 'multiple',
 				tooltip: wgULS('您可选择应用于该页的多个理由。', '您可選擇應用於該頁的多個理由。'),
-				disabled: Morebits.userIsSysop && !Twinkle.getPref('deleteSysopDefaultToTag'),
 				event: function(event) {
 					Twinkle.speedy.callback.modeChanged(event.target.form);
 					event.stopPropagation();
@@ -264,7 +264,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 	});
 
 	if (Twinkle.getPref('speedySelectionStyle') !== 'radioClick') {
-		form.append({ type: 'submit' });
+		form.append({ type: 'submit' }); // Renamed in modeChanged
 	}
 
 	var result = form.render();
@@ -314,13 +314,16 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 
 	// first figure out what mode we're in
 	var mode = Twinkle.speedy.callback.getMode(form);
+	var isSysopMode = Twinkle.speedy.mode.isSysop(mode);
 
 	if (Twinkle.speedy.mode.isSysop(mode)) {
 		$('[name=delete_options]').show();
 		$('[name=tag_options]').hide();
+		$('.morebits-dialog-buttons button').text(wgULS('删除页面', '刪除頁面')); // Submit button
 	} else {
 		$('[name=delete_options]').hide();
 		$('[name=tag_options]').show();
+		$('.morebits-dialog-buttons button').text(wgULS('标记页面', '標記頁面')); // Submit button
 	}
 
 	var work_area = new Morebits.quickForm.element({
@@ -338,7 +341,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 		work_area.append({
 			type: 'button',
 			name: 'submit-multiple',
-			label: '提交',
+			label: isSysopMode ? wgULS('删除页面', '刪除頁面') : wgULS('标记页面', '標記頁面'),
 			event: function(event) {
 				Twinkle.speedy.callback[evaluateType](event);
 				event.stopPropagation();
@@ -412,7 +415,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 
 Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mode) {
 	// mode switches
-	var isSysop = Twinkle.speedy.mode.isSysop(mode);
+	var isSysopMode = Twinkle.speedy.mode.isSysop(mode);
 	var multiple = Twinkle.speedy.mode.isMultiple(mode);
 	var hasSubmitButton = Twinkle.speedy.mode.hasSubmitButton(mode);
 
@@ -453,7 +456,7 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 			}
 		}
 
-		if (isSysop) {
+		if (isSysopMode) {
 			if (criterion.hideWhenSysop) {
 				return null;
 			}
@@ -484,7 +487,7 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 				criterion.subgroup.push({
 					type: 'button',
 					name: 'submit',
-					label: '提交',
+					label: isSysopMode ? wgULS('删除页面', '刪除頁面') : wgULS('标记页面', '標記頁面'),
 					event: submitSubgroupHandler
 				});
 			} else {
@@ -493,7 +496,7 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 					{
 						type: 'button',
 						name: 'submit',  // ends up being called "csd.submit" so this is OK
-						label: '提交',
+						label: isSysopMode ? wgULS('删除页面', '刪除頁面') : wgULS('标记页面', '標記頁面'),
 						event: submitSubgroupHandler
 					}
 				];
@@ -502,7 +505,7 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 			criterion.event = openSubgroupHandler;
 		}
 
-		if (isSysop) {
+		if (isSysopMode) {
 			var originalEvent = criterion.event;
 			criterion.event = function(e) {
 				if (multiple) {
