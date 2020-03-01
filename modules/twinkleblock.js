@@ -28,6 +28,10 @@ Twinkle.block.callback = function twinkleblockCallback() {
 		return;
 	}
 
+	Twinkle.block.currentBlockInfo = undefined;
+	Twinkle.block.field_block_options = {};
+	Twinkle.block.field_template_options = {};
+
 	var Window = new Morebits.simpleWindow(650, 530);
 	// need to be verbose about who we're blocking
 	Window.setTitle(wgULS('封禁或向', '封鎖或向') + Morebits.wiki.flow.relevantUserName(true) + wgULS('发出封禁模板', '發出封鎖模板'));
@@ -35,10 +39,6 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	Window.addFooterLink('封禁模板', 'Wikipedia:模板消息/用戶討論名字空間#.E5.B0.81.E7.A6.81');
 	Window.addFooterLink(wgULS('封禁方针', '封鎖方針'), 'WP:BLOCK');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#block');
-
-	Twinkle.block.currentBlockInfo = undefined;
-	Twinkle.block.field_block_options = {};
-	Twinkle.block.field_template_options = {};
 
 	var form = new Morebits.quickForm(Twinkle.block.callback.evaluate);
 	var actionfield = form.append({
