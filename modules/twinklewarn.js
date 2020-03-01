@@ -134,7 +134,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	});
 
 	var defaultGroup = parseInt(Twinkle.getPref('defaultWarningGroup'), 10);
-	main_group.append({ type: 'option', label: wgULS('层级1', '層級1'), value: 'level1', selected: defaultGroup === 1 || defaultGroup < 1 || (Morebits.userIsInGroup('sysop') ? defaultGroup > 8 : defaultGroup > 7) });
+	main_group.append({ type: 'option', label: wgULS('层级1', '層級1'), value: 'level1', selected: defaultGroup === 1 || defaultGroup < 1 || (Morebits.userIsSysop ? defaultGroup > 8 : defaultGroup > 7) });
 	main_group.append({ type: 'option', label: wgULS('层级2', '層級2'), value: 'level2', selected: defaultGroup === 2 });
 	main_group.append({ type: 'option', label: wgULS('层级3', '層級3'), value: 'level3', selected: defaultGroup === 3 });
 	main_group.append({ type: 'option', label: wgULS('层级4', '層級4'), value: 'level4', selected: defaultGroup === 4 });

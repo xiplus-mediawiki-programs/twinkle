@@ -27,12 +27,12 @@ Twinkle.speedy = function twinklespeedy() {
 		return;
 	}
 
-	Twinkle.addPortletLink(Twinkle.speedy.callback, wgULS('速删', '速刪'), 'tw-csd', Morebits.userIsInGroup('sysop') ? wgULS('快速删除', '快速刪除') : wgULS('请求快速删除', '請求快速刪除'));
+	Twinkle.addPortletLink(Twinkle.speedy.callback, wgULS('速删', '速刪'), 'tw-csd', Morebits.userIsSysop ? wgULS('快速删除', '快速刪除') : wgULS('请求快速删除', '請求快速刪除'));
 };
 
 // This function is run when the CSD tab/header link is clicked
 Twinkle.speedy.callback = function twinklespeedyCallback() {
-	Twinkle.speedy.initDialog(Morebits.userIsInGroup('sysop') ? Twinkle.speedy.callback.evaluateSysop : Twinkle.speedy.callback.evaluateUser, true);
+	Twinkle.speedy.initDialog(Morebits.userIsSysop ? Twinkle.speedy.callback.evaluateSysop : Twinkle.speedy.callback.evaluateUser, true);
 };
 
 // Used by unlink feature
@@ -87,7 +87,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 	dialog.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#speedy');
 
 	var form = new Morebits.quickForm(callbackfunc, Twinkle.getPref('speedySelectionStyle') === 'radioClick' ? 'change' : null);
-	if (Morebits.userIsInGroup('sysop')) {
+	if (Morebits.userIsSysop) {
 		form.append({
 			type: 'checkbox',
 			list: [
@@ -206,7 +206,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 		name: 'tag_options'
 	});
 
-	if (Morebits.userIsInGroup('sysop')) {
+	if (Morebits.userIsSysop) {
 		tagOptions.append({
 			type: 'header',
 			label: wgULS('标记相关选项', '標記相關選項')
@@ -221,8 +221,8 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				value: 'notify',
 				name: 'notify',
 				tooltip: wgULS('一个通知模板将会被加入创建者的对话页，如果您启用了该理据的通知。', '一個通知模板將會被加入建立者的對話頁，如果您啟用了該理據的通知。'),
-				checked: !Morebits.userIsInGroup('sysop') || Twinkle.getPref('deleteSysopDefaultToTag'),
-				disabled: Morebits.userIsInGroup('sysop') && !Twinkle.getPref('deleteSysopDefaultToTag'),
+				checked: !Morebits.userIsSysop || Twinkle.getPref('deleteSysopDefaultToTag'),
+				disabled: Morebits.userIsSysop && !Twinkle.getPref('deleteSysopDefaultToTag'),
 				event: function(event) {
 					event.stopPropagation();
 				}
@@ -237,7 +237,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				value: 'multiple',
 				name: 'multiple',
 				tooltip: wgULS('您可选择应用于该页的多个理由。', '您可選擇應用於該頁的多個理由。'),
-				disabled: Morebits.userIsInGroup('sysop') && !Twinkle.getPref('deleteSysopDefaultToTag'),
+				disabled: Morebits.userIsSysop && !Twinkle.getPref('deleteSysopDefaultToTag'),
 				event: function(event) {
 					Twinkle.speedy.callback.modeChanged(event.target.form);
 					event.stopPropagation();
@@ -274,7 +274,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 	Twinkle.speedy.callback.modeChanged(result);
 
 	// if sysop, check if CSD is already on the page and fill in custom rationale
-	if (Morebits.userIsInGroup('sysop') && $('#delete-reason').length) {
+	if (Morebits.userIsSysop && $('#delete-reason').length) {
 		var customOption = $('input[name=csd][value=reason]')[0];
 
 		if (Twinkle.getPref('speedySelectionStyle') !== 'radioClick') {
@@ -404,7 +404,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 		work_area.append({ type: 'div', label: wgULS('标记CSD G16，请使用Twinkle的“侵权”功能。', '標記CSD G16，請使用Twinkle的「侵權」功能。') });
 	}
 
-	if (mw.config.get('wgIsRedirect') || Morebits.userIsInGroup('sysop')) {
+	if (mw.config.get('wgIsRedirect') || Morebits.userIsSysop) {
 		work_area.append({ type: 'header', label: '重定向' });
 		work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.redirectList, mode) });
 	}
@@ -528,7 +528,7 @@ Twinkle.speedy.generateCsdList = function twinklespeedyGenerateCsdList(list, mod
 
 Twinkle.speedy.customRationale = [
 	{
-		label: wgULS('自定义理由' + (Morebits.userIsInGroup('sysop') ? '（自定义删除理由）' : ''), '自訂理由' + (Morebits.userIsInGroup('sysop') ? '（自訂刪除理由）' : '')),
+		label: wgULS('自定义理由' + (Morebits.userIsSysop ? '（自定义删除理由）' : ''), '自訂理由' + (Morebits.userIsSysop ? '（自訂刪除理由）' : '')),
 		value: 'reason',
 		tooltip: wgULS('该页至少应该符合一条快速删除的标准，并且您必须在理由中提到。这不是万能的删除理由。', '該頁至少應該符合一條快速刪除的標準，並且您必須在理由中提到。這不是萬能的刪除理由。'),
 		subgroup: {
@@ -1332,7 +1332,7 @@ Twinkle.speedy.callbacks = {
 					'这是该用户使用[[WP:TW|Twinkle]]的速删模块做出的[[WP:CSD|快速删除]]提名列表。\n\n' +
 					'如果您不再想保留此日志，请在[[' + Twinkle.getPref('configPage') + '|参数设置]]中关掉，并' +
 					'使用[[WP:CSD#O1|CSD O1]]提交快速删除。\n';
-				if (Morebits.userIsInGroup('sysop')) {
+				if (Morebits.userIsSysop) {
 					appendText += '\n此日志并不记录用Twinkle直接执行的删除。\n';
 				}
 			}

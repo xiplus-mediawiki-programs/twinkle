@@ -17,7 +17,7 @@ menuFormattedNamespaces[0] = wgULS('（条目）', '（條目）');
 
 Twinkle.block = function twinkleblock() {
 	// should show on Contributions or Block pages, anywhere there's a relevant user
-	if (Morebits.userIsInGroup('sysop') && Morebits.wiki.flow.relevantUserName(true)) {
+	if (Morebits.userIsSysop && Morebits.wiki.flow.relevantUserName(true)) {
 		Twinkle.addPortletLink(Twinkle.block.callback, wgULS('封禁', '封鎖'), 'tw-block', wgULS('封禁相关用户', '封禁相關用戶'));
 	}
 };

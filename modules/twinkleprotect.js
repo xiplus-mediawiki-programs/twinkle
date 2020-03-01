@@ -25,12 +25,12 @@ Twinkle.protect = function twinkleprotect() {
 	}
 
 	Twinkle.addPortletLink(Twinkle.protect.callback, wgULS('保护', '保護'), 'tw-rpp',
-		Morebits.userIsInGroup('sysop') ? wgULS('保护页面', '保護頁面') : wgULS('请求保护页面', '請求保護頁面'));
+		Morebits.userIsSysop ? wgULS('保护页面', '保護頁面') : wgULS('请求保护页面', '請求保護頁面'));
 };
 
 Twinkle.protect.callback = function twinkleprotectCallback() {
 	var Window = new Morebits.simpleWindow(620, 530);
-	Window.setTitle(Morebits.userIsInGroup('sysop') ? wgULS('施行或请求保护页面', '施行或請求保護頁面') : wgULS('请求保护页面', '請求保護頁面'));
+	Window.setTitle(Morebits.userIsSysop ? wgULS('施行或请求保护页面', '施行或請求保護頁面') : wgULS('请求保护页面', '請求保護頁面'));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(wgULS('保护模板', '保護模板'), 'Template:Protection templates');
 	Window.addFooterLink(wgULS('保护方针', '保護方針'), 'WP:PROT');
@@ -41,7 +41,7 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 		type: 'field',
 		label: wgULS('操作类型', '操作類別')
 	});
-	if (Morebits.userIsInGroup('sysop')) {
+	if (Morebits.userIsSysop) {
 		actionfield.append({
 			type: 'radio',
 			name: 'actiontype',
@@ -63,8 +63,8 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 			{
 				label: wgULS('请求保护页面', '請求保護頁面'),
 				value: 'request',
-				tooltip: wgULS('如果您想在WP:RFPP请求保护此页', '如果您想在WP:RFPP請求保護此頁') + (Morebits.userIsInGroup('sysop') ? '而不是自行完成。' : '。'),
-				checked: !Morebits.userIsInGroup('sysop')
+				tooltip: wgULS('如果您想在WP:RFPP请求保护此页', '如果您想在WP:RFPP請求保護此頁') + (Morebits.userIsSysop ? '而不是自行完成。' : '。'),
+				checked: !Morebits.userIsSysop
 			},
 			{
 				label: wgULS('用保护模板标记此页', '用保護模板標記此頁'),

@@ -16,7 +16,7 @@ Twinkle.unlink = function twinkleunlink() {
 	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageName') === Twinkle.getPref('sandboxPage')) {
 		return;
 	}
-	if (Morebits.userIsInGroup('sysop')) {
+	if (Morebits.userIsSysop) {
 		Twinkle.addPortletLink(Twinkle.unlink.callback, wgULS('链入', '連入'), 'tw-unlink', wgULS('取消到本页的链接', '取消到本頁的連結'));
 	}
 };
@@ -77,8 +77,8 @@ Twinkle.unlink.callback = function(presetReason) {
 			'list': [ 'backlinks', 'imageusage' ],
 			'bltitle': Morebits.pageNameNorm,
 			'iutitle': Morebits.pageNameNorm,
-			'bllimit': Morebits.userIsInGroup('sysop') ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
-			'iulimit': Morebits.userIsInGroup('sysop') ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
+			'bllimit': Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
+			'iulimit': Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
 			'blnamespace': Twinkle.getPref('unlinkNamespaces'),
 			'iunamespace': Twinkle.getPref('unlinkNamespaces'),
 			'rawcontinue': true
@@ -89,7 +89,7 @@ Twinkle.unlink.callback = function(presetReason) {
 			'list': 'backlinks',
 			'bltitle': Morebits.pageNameNorm,
 			'blfilterredir': 'nonredirects',
-			'bllimit': Morebits.userIsInGroup('sysop') ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
+			'bllimit': Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
 			'blnamespace': Twinkle.getPref('unlinkNamespaces'),
 			'rawcontinue': true
 		};

@@ -111,11 +111,11 @@ Twinkle.defaultConfig = {
 	xfdWatchPage: 'default',
 	xfdWatchUser: 'default',
 	markXfdPagesAsPatrolled: true,
-	FwdCsdToXfd: Morebits.userIsInGroup('sysop'),
+	FwdCsdToXfd: Morebits.userIsSysop,
 	afdDefaultCategory: 'delete',
 	afdFameDefaultReason: '沒有足夠的可靠資料來源能夠讓這個條目符合[[Wikipedia:關注度]]中的標準',
 	afdSubstubDefaultReason: '過期小小作品',
-	XfdClose: Morebits.userIsInGroup('sysop') ? 'all' : 'hide',
+	XfdClose: Morebits.userIsSysop ? 'all' : 'hide',
 
 	// Copyvio
 	copyvioWatchPage: 'default',
@@ -435,7 +435,7 @@ Twinkle.load = function () {
 	// Don't activate on special pages other than those on the whitelist so that
 	// they load faster, especially the watchlist.
 	var specialPageWhitelist = [ 'Block', 'Contributions', 'AbuseLog' ]; // wgRelevantUserName defined for non-sysops on Special:Block
-	if (Morebits.userIsInGroup('sysop')) {
+	if (Morebits.userIsSysop) {
 		specialPageWhitelist = specialPageWhitelist.concat([ 'DeletedContributions', 'Prefixindex' ]);
 	}
 	if (mw.config.get('wgNamespaceNumber') === -1 &&
@@ -455,7 +455,7 @@ Twinkle.load = function () {
 	// User/user talk-related
 	Twinkle.arv();
 	Twinkle.warn();
-	if (Morebits.userIsInGroup('sysop')) {
+	if (Morebits.userIsSysop) {
 		Twinkle.block();
 	}
 	// Twinkle.shared();
@@ -474,7 +474,7 @@ Twinkle.load = function () {
 	Twinkle.unlink();
 	Twinkle.config.init();
 	Twinkle.fluff();
-	if (Morebits.userIsInGroup('sysop')) {
+	if (Morebits.userIsSysop) {
 		Twinkle.batchdelete();
 		Twinkle.batchundelete();
 	}

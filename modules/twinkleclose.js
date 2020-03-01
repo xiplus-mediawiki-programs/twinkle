@@ -665,7 +665,7 @@ Twinkle.close.callbacks = {
 		} else {
 			text += '。';
 		}
-		if (!Morebits.userIsInGroup('sysop')) {
+		if (!Morebits.userIsSysop) {
 			text += '{{subst:NAC}}';
 		}
 		text += '--~~~~\n{{delf}}';
