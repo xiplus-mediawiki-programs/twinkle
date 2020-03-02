@@ -598,11 +598,12 @@ Twinkle.arv.callback.evaluate = function(e) {
 
 			aivPage.load(function() {
 				var text = aivPage.getPageText();
+				var $aivLink = '<a target="_blank" href="/wiki/WP:VIP">WP:VIP</a>';
 
 				// check if user has already been reported
 				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + RegExp.escape(uid, true) + '\\s*\\}\\}\\s*===').test(text)) {
 					aivPage.getStatusElement().error(wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的'));
-					Morebits.status.printUserText(reason, wgULS('您键入的评论已在下方提供，您可以将其加入到VIP已存在的小节中：', '您鍵入的評論已在下方提供，您可以將其加入到VIP已存在的小節中：'));
+					Morebits.status.printUserText(reason, wgULS('您键入的评论已在下方提供，您可以将其加入到' + $aivLink + '已存在的小节中：', '您鍵入的評論已在下方提供，您可以將其加入到' + $aivLink + '已存在的小節中：'));
 					return;
 				}
 				aivPage.setPageSection(0);
@@ -671,7 +672,8 @@ Twinkle.arv.callback.evaluate = function(e) {
 				// check if user has already been reported
 				if (new RegExp('\\{\\{\\s*user-uaa\\s*\\|\\s*(1\\s*=\\s*)?' + RegExp.escape(uid, true) + '\\s*(\\||\\})').test(text)) {
 					uaaPage.getStatusElement().error(wgULS('用户已被列入。', '用戶已被列入。'));
-					Morebits.status.printUserText(reason, wgULS('您键入的评论已在下方提供，您可以将其手工加入UAA上该用户的报告中：', '您輸入的評論已在下方提供，您可以將其手工加入UAA上該用戶的報告中：'));
+					var $uaaLink = '<a target="_blank" href="/wiki/WP:UAA">WP:UAA</a>';
+					Morebits.status.printUserText(reason, wgULS('您键入的评论已在下方提供，您可以将其手工加入' + $uaaLink + '上该用户的报告中：', '您輸入的評論已在下方提供，您可以將其手工加入' + $uaaLink + '上該用戶的報告中：'));
 					return;
 				}
 				uaaPage.getStatusElement().status(wgULS('添加新报告…', '加入新報告…'));
