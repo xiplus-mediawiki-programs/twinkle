@@ -382,13 +382,13 @@ Twinkle.tag.updateSortOrder = function(e) {
 					name: 'notability',
 					type: 'select',
 					list: [
-						{ label: '{{notability}}：' + wgULS('通用的关注度指引', '通用的關注度指引'), value: 'none' },
-						{ label: '{{notability|Biographies}}：' + wgULS('人物传记', '人物傳記'), value: 'Biographies' },
-						{ label: '{{notability|Book}}：' + wgULS('书籍', '書籍'), value: 'Book' },
-						{ label: '{{notability|Number}}：' + wgULS('数字', '數字'), value: 'Number' },
-						{ label: '{{notability|Fiction}}：' + wgULS('虚构事物', '虛構事物'), value: 'Fiction' },
-						{ label: '{{notability|Neologisms}}：' + wgULS('发明、研究', '發明、研究'), value: 'Neologisms' },
-						{ label: '{{notability|Web}}：' + wgULS('网站、网络内容', '網站、網路內容'), value: 'Web'}
+						{ label: '{{Notability}}：' + wgULS('通用的关注度指引', '通用的關注度指引'), value: 'none' },
+						{ label: '{{Notability|Biographies}}：' + wgULS('人物传记', '人物傳記'), value: 'Biographies' },
+						{ label: '{{Notability|Book}}：' + wgULS('书籍', '書籍'), value: 'Book' },
+						{ label: '{{Notability|Number}}：' + wgULS('数字', '數字'), value: 'Number' },
+						{ label: '{{Notability|Fiction}}：' + wgULS('虚构事物', '虛構事物'), value: 'Fiction' },
+						{ label: '{{Notability|Neologisms}}：' + wgULS('发明、研究', '發明、研究'), value: 'Neologisms' },
+						{ label: '{{Notability|Web}}：' + wgULS('网站、网络内容', '網站、網路內容'), value: 'Web'}
 					]
 				};
 				break;
@@ -1538,6 +1538,11 @@ Twinkle.tag.callbacks = {
 						} else {
 							Morebits.status.warn(wgULS('信息', '資訊'), wgULS('{{Missing information}}已略过，因为你没有输入必填的参数。', '{{Missing information}}已略過，因為你沒有輸入必填的參數。'));
 							return;
+						}
+						break;
+					case 'Notability':
+						if (params.tagParameters.notability !== 'none') {
+							currentTag += '|3=' + params.tagParameters.notability;
 						}
 						break;
 					case 'Requested move':
