@@ -1605,7 +1605,7 @@ Twinkle.tag.callbacks = {
 			if (Twinkle.tag.canRemove || !tagRe.exec(pageText)) {
 				// condition Twinkle.tag.article.tags[tag] to ensure that its not a custom tag
 				// Custom tags are assumed non-groupable, since we don't know whether MI template supports them
-				if (tag === 'Notability') {
+				if (tag === 'Notability' && (mw.config.get('wgNamespaceNumber') === 0 || confirm(wgULS('该页面不是条目，您仍要提报到关注度提报吗？', '該頁面不是條目，您仍要提報到關注度提報嗎？')))) {
 					var wikipedia_page = new Morebits.wiki.page('Wikipedia:关注度/提报', wgULS('添加关注度记录项', '加入關注度記錄項'));
 					wikipedia_page.setFollowRedirect(true);
 					wikipedia_page.setCallbackParameters(params);
