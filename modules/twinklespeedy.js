@@ -1259,7 +1259,18 @@ Twinkle.speedy.callbacks = {
 			pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
 			pageobj.setTags(Twinkle.getPref('revisionTags'));
 			pageobj.setWatchlist(params.watch);
-			pageobj.setCreateOption('recreate'); // Module /doc might not exist
+			if (params.scribunto) {
+				pageobj.setCreateOption('recreate'); // Module /doc might not exist
+				if (params.watch) {
+					// Watch module in addition to /doc subpage
+					var watch_query = {
+						action: 'watch',
+						titles: mw.config.get('wgPageName'),
+						token: mw.user.tokens.get('watchToken')
+					};
+					new Morebits.wiki.api('Adding Module to watchlist', watch_query).post();
+				}
+			}
 			pageobj.save(Twinkle.speedy.callbacks.user.tagComplete);
 		},
 
@@ -1707,8 +1718,8 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 	Morebits.wiki.actionCompleted.notice = wgULS('标记完成', '標記完成');
 
 	// Modules can't be tagged, follow standard at TfD and place on /doc subpage
-	var isScribunto = mw.config.get('wgPageContentModel') === 'Scribunto';
-	var wikipedia_page = isScribunto ? new Morebits.wiki.page(mw.config.get('wgPageName') + '/doc', wgULS('标记模块文档页', '標記模組文件頁')) : new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('标记页面', '標記頁面'));
+	params.scribunto = mw.config.get('wgPageContentModel') === 'Scribunto';
+	var wikipedia_page = params.scribunto ? new Morebits.wiki.page(mw.config.get('wgPageName') + '/doc', wgULS('标记模块文档页', '標記模組文件頁')) : new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('标记页面', '標記頁面'));
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.speedy.callbacks.user.main);
 };
