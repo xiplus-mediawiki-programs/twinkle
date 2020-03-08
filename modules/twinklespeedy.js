@@ -400,9 +400,6 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 	}
 	work_area.append({ type: 'header', label: wgULS('常规', '常規') });
 	work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(generalCriteria, mode) });
-	if (!Twinkle.speedy.mode.isSysop(mode)) {
-		work_area.append({ type: 'div', label: wgULS('标记CSD G16，请使用Twinkle的“侵权”功能。', '標記CSD G16，請使用Twinkle的「侵權」功能。') });
-	}
 
 	if (mw.config.get('wgIsRedirect') || Morebits.userIsSysop) {
 		work_area.append({ type: 'header', label: '重定向' });
@@ -764,10 +761,20 @@ Twinkle.speedy.generalList = [
 		tooltip: wgULS('包括以下几种类型：1. 没有对应文件的文件页面；2. 没有对应母页面的子页面，用户页子页面除外；3. 指向不存在页面的重定向；4. 没有对应内容页面的讨论页，讨论页存档和用户讨论页除外；5. 不存在注册用户的用户页及用户页子页面，localhost对应IP用户的用户页和随用户更名产生的用户页重定向除外。请在删除时注意有无将内容移至他处的必要。不包括在主页面挂有{{CSD Placeholder}}模板的讨论页。', '包括以下幾種類型：1. 沒有對應檔案的檔案頁面；2. 沒有對應母頁面的子頁面，使用者頁面子頁面除外；3. 指向不存在頁面的重新導向；4. 沒有對應內容頁面的討論頁，討論頁存檔和使用者討論頁除外；5. 不存在註冊使用者的使用者頁面及使用者頁面子頁面，localhost對應IP使用者的使用者頁面和隨使用者更名產生的使用者頁面重新導向除外。請在刪除時注意有無將內容移至他處的必要。不包括在主頁面掛有{{CSD Placeholder}}模板的討論頁。')
 	},
 	{
-		label: wgULS('G16: 因为主页面侵权而创建的临时页面仍然侵权', 'G16: 因為主頁面侵權而建立的臨時頁面仍然侵權'),
+		label: wgULS('G16: 页面与介绍相同事物的原页面同样侵权', 'G16: 頁面與介紹相同事物的原頁面同樣侵權'),
 		value: 'g16',
-		hideWhenUser: true,
-		showInNamespaces: [ 118 ] // draft
+		tooltip: wgULS('此条所适用的页面包括但不限于草稿页面、主名字空间（条目空间）页面、用户空间页面等介绍相同事物，且在原页面被提报侵权后创建的页面。提报时需同时附上已提报侵犯著作权页面的名称，除非一眼能看出已提报侵犯著作权页面。', '此條所適用的頁面包括但不限於草稿頁面、主命名空間（條目空間）頁面、使用者空間頁面等介紹相同事物，且在原頁面被提報侵權後建立的頁面。提報時需同時附上已提報侵犯著作權頁面的名稱，除非一眼能看出已提報侵犯著作權頁面。'),
+		subgroup: [
+			{
+				name: 'g16_pagename',
+				type: 'input',
+				label: wgULS('当前已提报侵犯著作权页面的名称：', '目前已提報侵犯著作權頁面的名稱：')
+			},
+			{
+				type: 'div',
+				label: wgULS('若另一页面已依侵权审核删除，请使用CSD G5。标记首次侵权的页面，请使用Twinkle的“侵权”功能。', '若另一頁面已依侵權審核刪除，請使用CSD G5。標記首次侵權的頁面，請使用Twinkle的「侵權」功能。')
+			}
+		]
 	}
 ];
 
@@ -1444,6 +1451,18 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 			case 'g10':
 				if (form['csd.g10_rationale'] && form['csd.g10_rationale'].value) {
 					currentParams.rationale = form['csd.g10_rationale'].value;
+				}
+				break;
+
+			case 'g16':
+				if (form['csd.g16_pagename']) {
+					var pagename = form['csd.g16_pagename'].value;
+					if (!pagename || !pagename.trim()) {
+						alert(wgULS('CSD G16：请提供页面名称。', 'CSD G16：請提供頁面名稱。'));
+						parameters = null;
+						return false;
+					}
+					currentParams.pagename = pagename;
 				}
 				break;
 
