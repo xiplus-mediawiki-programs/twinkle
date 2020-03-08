@@ -827,14 +827,6 @@ Twinkle.config.sections = [
 				label: wgULS('标记时标记页面为已巡查（如可能）', '標記時標記頁面為已巡查（如可能）'),
 				helptip: wgULS('基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。', '基於技術原因，頁面僅會在由Special:NewPages到達時被標記為已巡查。'),
 				type: 'boolean'
-			},
-
-			// TwinkleConfig.markDraftCopyvioWithCSD (boolean)
-			// If, when applying copyvio template to draft page, to mark the page with CSD
-			{
-				name: 'markDraftCopyvioWithCSD',
-				label: wgULS('在草稿名字空间默认勾选“同时标记CSD G16”', '在草稿命名空間預設勾選「同時標記CSD G16」'),
-				type: 'boolean'
 			}
 
 		]

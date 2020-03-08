@@ -55,21 +55,6 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 		]
 	}
 	);
-	if (mw.config.get('wgNamespaceNumber') === 118) {
-		form.append({
-			type: 'checkbox',
-			list: [
-				{
-					label: wgULS('同时标记CSD G16', '同時標記CSD G16'),
-					value: 'csd',
-					name: 'csd',
-					tooltip: wgULS('G16: 因为主页面侵权而创建的临时页面仍然侵权', 'G16: 因為主頁面侵權而建立的臨時頁面仍然侵權'),
-					checked: Twinkle.getPref('markDraftCopyvioWithCSD')
-				}
-			]
-		}
-		);
-	}
 	form.append({ type: 'submit' });
 
 	var result = form.render();
@@ -144,9 +129,6 @@ Twinkle.copyvio.callbacks = {
 		if (oldcsd && confirm(wgULS('在页面上找到快速删除模板，要保留吗？\n\n当页面同时侵犯版权又符合快速删除标准时，应该优先走快速删除程序。\n点击“确认”以保留快速删除模板，若您认为快速删除理由不合，点击“取消”以移除快速删除模板。', '在頁面上找到快速刪除模板，要保留嗎？\n\n當頁面同時侵犯版權又符合快速刪除標準時，應該優先走快速刪除程序。\n點擊「確認」以保留快速刪除模板，若您認為快速刪除理由不合，點擊「取消」以移除快速刪除模板。'))) {
 			tag = oldcsd[0] + '\n' + tag;
 		}
-		if (params.csd) {
-			tag = '{{D|G16}}\n' + tag;
-		}
 
 		pageobj.setPageText(tag);
 		pageobj.setEditSummary(wgULS('本页面疑似侵犯版权', '本頁面疑似侵犯版權') + Twinkle.getPref('summaryAd'));
@@ -196,10 +178,6 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 
 	var source = e.target.source.value;
 	var usertalk = e.target.notify.checked;
-	var csd = false;
-	if (mw.config.get('wgNamespaceNumber') === 118) {
-		csd = e.target.csd.checked;
-	}
 
 	Morebits.simpleWindow.setButtonsEnabled(false);
 	Morebits.status.init(e.target);
@@ -211,7 +189,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 
 	var query, wikipedia_page, wikipedia_api, logpage, params; // eslint-disable-line no-unused-vars
 	logpage = 'Wikipedia:頁面存廢討論/疑似侵權';
-	params = { source: source, logpage: logpage, usertalk: usertalk, csd: csd};
+	params = { source: source, logpage: logpage, usertalk: usertalk };
 
 	Morebits.wiki.addCheckpoint();
 	// Updating data for the action completed event
