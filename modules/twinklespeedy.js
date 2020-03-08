@@ -704,13 +704,24 @@ Twinkle.speedy.generalList = [
 		label: wgULS('G5: 曾经根据页面存废讨论、侵权审核或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同', 'G5: 曾經根據頁面存廢討論、侵權審核或檔案存廢討論結果刪除後又重新建立的內容，而有關內容與已刪除版本相同或非常相似，無論標題是否相同'),
 		value: 'g5',
 		tooltip: wgULS('该内容之前必须是经存废讨论删除，如之前属于快速删除，请以相同理由重新提送快速删除。该内容如与被删除的版本明显不同，而提删者认为需要删除，请交到存废讨论，如果提删者对此不肯定，请先联络上次执行删除的管理人员。不适用于根据存废复核结果被恢复的内容。在某些情况下，重新创建的条目有机会发展。那么不应提交快速删除，而应该提交存废复核或存废讨论重新评核。', '該內容之前必須是經存廢討論刪除，如之前屬於快速刪除，請以相同理由重新提送快速刪除。該內容如與被刪除的版本明顯不同，而提刪者認為需要刪除，請交到存廢討論，如果提刪者對此不肯定，請先聯絡上次執行刪除的管理人員。不適用於根據存廢覆核結果被恢復的內容。在某些情況下，重新建立的條目有機會發展。那麼不應提交快速刪除，而應該提交存廢覆核或存廢討論重新評核。'),
-		subgroup: {
-			name: 'g5_1',
-			type: 'input',
-			label: wgULS('删除讨论位置：', '刪除討論位置：'),
-			tooltip: wgULS('必须以“Wikipedia:”开头', '必須以「Wikipedia:」開頭'),
-			size: 60
-		},
+		subgroup: [
+			{
+				type: 'checkbox',
+				list: [
+					{
+						name: 'g5_copyvio',
+						value: 'g5_copyvio',
+						label: wgULS('前次以侵权审核删除。若页面名称不同，请在“删除讨论位置”提供页面名称。勾选此项将自动张贴疑似侵权模板。', '前次以侵權審核刪除。若頁面名稱不同，請在「刪除討論位置」提供頁面名稱。勾選此項將自動張貼疑似侵權模板。')
+					}
+				]
+			},
+			{
+				name: 'g5_1',
+				type: 'input',
+				label: wgULS('删除讨论位置：', '刪除討論位置：'),
+				size: 60
+			}
+		],
 		hideSubgroupWhenMultiple: true
 	},
 	{
@@ -1223,6 +1234,10 @@ Twinkle.speedy.callbacks = {
 				text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, '');
 			}
 
+			if (params.copyvio) {
+				code += '\n{{subst:Copyvio/auto|url=* 請管理員檢查已刪歷史內容及侵權來源：[[Special:Undelete/' + params.copyvio + ']]|OldRevision=' + mw.config.get('wgRevisionId') + '}}';
+			}
+
 			// Generate edit summary for edit
 			var editsummary;
 			if (params.normalizeds.length > 1) {
@@ -1435,7 +1450,8 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 				if (form['csd.g5_1']) {
 					var deldisc = form['csd.g5_1'].value;
 					if (deldisc) {
-						if (deldisc.substring(0, 9) !== 'Wikipedia' &&
+						if ((!form.g5_copyvio || !form.g5_copyvio.checked) &&
+							deldisc.substring(0, 9) !== 'Wikipedia' &&
 							deldisc.substring(0, 3) !== 'WP:' &&
 							deldisc.substring(0, 5) !== '维基百科:' &&
 							deldisc.substring(0, 5) !== '維基百科:') {
@@ -1659,6 +1675,16 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 
 	var blank = form.blank.checked;
 
+	var copyvio = false;
+	if (form.g5_copyvio && form.g5_copyvio.checked) {
+		if (form['csd.g5_1'] && form['csd.g5_1'].value) {
+			copyvio = form['csd.g5_1'].value;
+		} else {
+			copyvio = mw.config.get('wgPageName');
+		}
+		blank = true;
+	}
+
 	var params = {
 		values: values,
 		normalizeds: normalizeds,
@@ -1667,7 +1693,8 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 		welcomeuser: welcomeuser,
 		lognomination: csdlog,
 		templateParams: Twinkle.speedy.getParameters(form, values),
-		blank: blank
+		blank: blank,
+		copyvio: copyvio
 	};
 	if (!params.templateParams) {
 		return;
