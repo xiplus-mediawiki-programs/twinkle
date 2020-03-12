@@ -983,19 +983,26 @@ Twinkle.speedy.callbacks = {
 				} else if (!reason || !reason.replace(/^\s*/, '').replace(/\s*$/, '')) {
 					return Morebits.status.error(wgULS('询问理由', '詢問理由'), wgULS('你不给我理由…我就…不管了…', '你不給我理由…我就…不管了…'));
 				}
-				thispage.setEditSummary(reason + Twinkle.getPref('deletionSummaryAd'));
-				thispage.setTags(Twinkle.getPref('revisionTags'));
 
-				thispage.deletePage(function() {
-					thispage.getStatusElement().info('完成');
-					Twinkle.speedy.callbacks.sysop.deleteTalk(params);
-				});
+				var deleteMain = function() {
+					thispage.setEditSummary(reason + Twinkle.getPref('deletionSummaryAd'));
+					thispage.setTags(Twinkle.getPref('revisionTags'));
+					thispage.deletePage(function() {
+						thispage.getStatusElement().info('完成');
+						Twinkle.speedy.callbacks.sysop.deleteTalk(params);
+					});
+				};
 
 				// look up initial contributor. If prompting user for deletion reason, just display a link.
 				// Otherwise open the talk page directly
 				if (params.openUserTalk) {
 					thispage.setCallbackParameters(params);
-					thispage.lookupCreator(Twinkle.speedy.callbacks.sysop.openUserTalkPage);
+					thispage.lookupCreation(function() {
+						Twinkle.speedy.callbacks.sysop.openUserTalkPage(thispage);
+						deleteMain();
+					});
+				} else {
+					deleteMain();
 				}
 			}
 		},
