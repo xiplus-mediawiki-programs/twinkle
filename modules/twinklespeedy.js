@@ -1268,7 +1268,7 @@ Twinkle.speedy.callbacks = {
 						titles: mw.config.get('wgPageName'),
 						token: mw.user.tokens.get('watchToken')
 					};
-					new Morebits.wiki.api('Adding Module to watchlist', watch_query).post();
+					new Morebits.wiki.api(wgULS('将模块加入到监视清单', '將模組加入到監視清單'), watch_query).post();
 				}
 			}
 			pageobj.save(Twinkle.speedy.callbacks.user.tagComplete);
