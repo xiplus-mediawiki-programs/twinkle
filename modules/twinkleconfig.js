@@ -191,6 +191,24 @@ Twinkle.config.sections = [
 				name: 'dialogLargeFont',
 				label: wgULS('在Twinkle对话框中使用大号字体', '在Twinkle對話方塊中使用大號字型'),
 				type: 'boolean'
+			},
+
+			// Twinkle.config.disabledModules (array)
+			{
+				name: 'disabledModules',
+				label: wgULS('关闭指定的Twinkle模块', '關閉指定的Twinkle模組'),
+				helptip: wgULS('您在此选择的功能将无法使用，取消选择以重新激活功能。', '您在此選擇的功能將無法使用，取消選擇以重新啟用功能。'),
+				type: 'set',
+				setValues: { arv: wgULS('告状', '告狀'), warn: '警告', talkback: '通告', speedy: wgULS('速删', '速刪'), copyvio: wgULS('侵权', '侵權'), xfd: wgULS('提删', '提刪'), image: wgULS('图权', '圖權'), protect: wgULS('保护', '保護'), tag: wgULS('标记', '標記'), stub: '小作品', diff: wgULS('差异', '差異'), unlink: wgULS('链入', '連入'), 'fluff': '回退' }
+			},
+
+			// Twinkle.config.disabledSysopModules (array)
+			{
+				name: 'disabledSysopModules',
+				label: wgULS('关闭指定的Twinkle管理员模块', '關閉指定的Twinkle管理員模組'),
+				helptip: wgULS('您在此选择的功能将无法使用，取消选择以重新激活功能。', '您在此選擇的功能將無法使用，取消選擇以重新啟用功能。'),
+				type: 'set',
+				setValues: { block: wgULS('封禁', '封鎖'), batchdelete: wgULS('批删', '批刪'), batchundelete: wgULS('批复', '批復') }
 			}
 		]
 	},
