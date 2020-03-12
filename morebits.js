@@ -2462,7 +2462,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.redirects = '';  // follow all redirects
 		}
 
-		ctx.lookupCreationApi = new Morebits.wiki.api(wgULS('抓取页面创建者信息', '擷取頁面建立者資訊'), query, fnlookupCreationSuccess, ctx.statusElement);
+		ctx.lookupCreationApi = new Morebits.wiki.api(wgULS('抓取页面创建者信息', '擷取頁面建立者資訊'), query, fnLookupCreationSuccess, ctx.statusElement);
 		ctx.lookupCreationApi.setParent(this);
 		ctx.lookupCreationApi.post();
 	};
