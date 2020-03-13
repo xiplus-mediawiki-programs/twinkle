@@ -1112,7 +1112,7 @@ Twinkle.speedy.callbacks = {
 				// provide a link to the user talk page
 				var $link, $bigtext;
 				$link = $('<a/>', {
-					'href': mw.util.wikiScript('index') + '?' + Morebits.queryString.create(query),
+					'href': mw.util.wikiScript('index') + '?' + $.param(query),
 					'text': wgULS('点此打开User talk:', '點此開啟User talk:') + user,
 					'target': '_blank',
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
@@ -1128,15 +1128,15 @@ Twinkle.speedy.callbacks = {
 
 				switch (Twinkle.getPref('userTalkPageMode')) {
 					case 'tab':
-						window.open(mw.util.wikiScript('index') + '?' + Morebits.queryString.create(query), '_blank');
+						window.open(mw.util.wikiScript('index') + '?' + $.param(query), '_blank');
 						break;
 					case 'blank':
-						window.open(mw.util.wikiScript('index') + '?' + Morebits.queryString.create(query), '_blank', 'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800');
+						window.open(mw.util.wikiScript('index') + '?' + $.param(query), '_blank', 'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800');
 						break;
 					case 'window':
 					/* falls through */
 					default:
-						window.open(mw.util.wikiScript('index') + '?' + Morebits.queryString.create(query),
+						window.open(mw.util.wikiScript('index') + '?' + $.param(query),
 							window.name === 'twinklewarnwindow' ? '_blank' : 'twinklewarnwindow',
 							'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800');
 						break;
