@@ -1289,7 +1289,6 @@ Twinkle.tag.callbacks = {
 
 		// Remove tags that become superfluous with this action
 		var pageText = pageobj.getPageText().replace(/\{\{\s*([Nn]ew unreviewed article|[Uu]nreviewed|[Uu]serspace draft)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/g, '');
-		var summaryText;
 		var params = pageobj.getCallbackParameters();
 
 		/**
@@ -1297,23 +1296,47 @@ Twinkle.tag.callbacks = {
 		 * Called from removeTags()
 		 */
 		var postRemoval = function() {
-
 			if (params.tagsToRemove.length) {
-				// Finish summary text
-				summaryText += wgULS('标记', '標記');
-
 				// Remove empty {{multiple issues}} if found
 				pageText = pageText.replace(/\{\{(multiple ?issues|article ?issues|mi|ai|issues|多個問題|多个问题|問題條目|问题条目|數個問題|数个问题)\s*\|\s*\}\}\n?/im, '');
 				// Remove single-element {{multiple issues}} if found
 				pageText = pageText.replace(/\{\{(?:multiple ?issues|article ?issues|mi|ai|issues|多個問題|多个问题|問題條目|问题条目|數個問題|数个问题)\s*\|\s*(\{\{[^}]+\}\})\s*\}\}/im, '$1');
 			}
 
+			// Build edit summary
+			var makeSentence = function(array) {
+				if (array.length < 3) {
+					return array.join('和');
+				}
+				var last = array.pop();
+				return array.join('、') + '和' + last;
+			};
+			var makeTemplateLink = function(tag) {
+				var text = '{{[[';
+				// if it is a custom tag with a parameter
+				if (tag.indexOf('|') !== -1) {
+					tag = tag.slice(0, tag.indexOf('|'));
+				}
+				text += tag.indexOf(':') !== -1 ? tag : 'Template:' + tag + '|' + tag;
+				return text + ']]}}';
+			};
+
+			var summaryText;
+			var addedTags = params.tags.map(makeTemplateLink);
+			var removedTags = params.tagsToRemove.map(makeTemplateLink);
+			if (addedTags.length) {
+				summaryText = wgULS('添加', '加入') + makeSentence(addedTags);
+				summaryText += removedTags.length ? '並移除' + makeSentence(removedTags) : '';
+			} else {
+				summaryText = '移除' + makeSentence(removedTags);
+			}
+			summaryText += wgULS('标记', '標記');
 			if (params.reason) {
 				summaryText += '：' + params.reason;
 			}
 
 			// avoid truncated summaries
-			if (summaryText.length > (254 - Twinkle.getPref('summaryAd').length)) {
+			if (summaryText.length > (499 - Twinkle.getPref('summaryAd').length)) {
 				summaryText = summaryText.replace(/\[\[[^|]+\|([^\]]+)\]\]/g, '$1');
 			}
 
@@ -1393,28 +1416,18 @@ Twinkle.tag.callbacks = {
 		var removeTags = function removeTags() {
 
 			if (params.tagsToRemove.length === 0) {
-				// finish summary text from adding of tags, in this case where there are
-				// no tags to be removed
-				summaryText += wgULS('标记到条目', '標記到條目');
-
 				postRemoval();
 				return;
 			}
 
 			Morebits.status.info(wgULS('信息', '資訊'), wgULS('移除取消选择的已存在标记', '移除取消選擇的已存在標記'));
 
-			if (params.tags.length > 0) {
-				summaryText += (tags.length ? wgULS('标记', '標記') : '') + '並移除';
-			} else {
-				summaryText = wgULS('已從条目移除', '已從條目移除');
-			}
-
 			var getRedirectsFor = [];
 
 			// Remove the tags from the page text, if found in its proper name,
 			// otherwise moves it to `getRedirectsFor` array earmarking it for
 			// later removal
-			params.tagsToRemove.forEach(function removeTag(tag, tagIndex) {
+			params.tagsToRemove.forEach(function removeTag(tag) {
 				var tag_re = new RegExp('\\{\\{' + Morebits.pageNameRegex(tag) + '\\s*(\\|[^}]+)?\\}\\}\\n?');
 
 				if (tag_re.test(pageText)) {
@@ -1422,16 +1435,6 @@ Twinkle.tag.callbacks = {
 				} else {
 					getRedirectsFor.push('Template:' + tag);
 				}
-
-				// Producing summary text for current tag removal
-				if (tagIndex > 0) {
-					if (tagIndex === (params.tagsToRemove.length - 1)) {
-						summaryText += '和';
-					} else if (tagIndex < (params.tagsToRemove.length - 1)) {
-						summaryText += '、';
-					}
-				}
-				summaryText += '{{[[Template:' + tag + '|' + tag + ']]}}';
 			});
 
 			if (!getRedirectsFor.length) {
@@ -1481,9 +1484,8 @@ Twinkle.tag.callbacks = {
 			return;
 		}
 
+		var tagRe, tagText = '', tags = [], groupableTags = [], groupableExistingTags = [];
 		// Executes first: addition of selected tags
-		summaryText = wgULS('添加', '加入');
-		var tagRe, tagText = '', tags = [], groupableTags = [], groupableExistingTags = [], totalTags;
 
 		/**
 		 * Updates `tagText` with the syntax of `tagName` template with its parameters
@@ -1561,23 +1563,6 @@ Twinkle.tag.callbacks = {
 				currentTag += '|time={{subst:#time:c}}}}\n';
 				tagText += currentTag;
 			}
-
-			if (tagIndex > 0) {
-				if (tagIndex === (totalTags - 1)) {
-					summaryText += '和';
-				} else if (tagIndex < (totalTags - 1)) {
-					summaryText += '、';
-				}
-			}
-
-			summaryText += '{{[[';
-			// if it is a custom tag with a parameter
-			if (tagName.indexOf('|') !== -1) {
-				tagName = tagName.slice(0, tagName.indexOf('|'));
-			}
-			summaryText += tagName.indexOf(':') !== -1 ? tagName : 'Template:' + tagName + '|' + tagName;
-			summaryText += ']]}}';
-
 		};
 
 		/**
@@ -1586,7 +1571,6 @@ Twinkle.tag.callbacks = {
 		 * {{multiple issues}} is not being added to the page at all
 		 */
 		var addUngroupedTags = function() {
-			totalTags = tags.length;
 			$.each(tags, addTag);
 
 			// Smartly insert the new tags after any hatnotes or
@@ -1645,14 +1629,7 @@ Twinkle.tag.callbacks = {
 			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加支持的标记入已存在的{{multiple issues}}', '添加支持的標記入已存在的{{multiple issues}}'));
 
 			tagText = '';
-
-			totalTags = groupableTags.length;
 			$.each(groupableTags, addTag);
-
-			summaryText += wgULS('标记', '標記') + '（在{{[[T:multiple issues|multiple issues]]}}' + wgULS('内', '內') + '）';
-			if (tags.length > 0) {
-				summaryText += '及';
-			}
 
 			var miRegex = new RegExp('(\\{\\{\\s*' + miTest[1] + '\\s*(?:\\|(?:\\{\\{[^{}]*\\}\\}|[^{}])*)?)\\}\\}\\s*', 'im');
 			pageText = pageText.replace(miRegex, '$1' + tagText + '}}\n');
@@ -1661,7 +1638,7 @@ Twinkle.tag.callbacks = {
 			addUngroupedTags();
 
 		} else if (params.group && !miTest && (groupableExistingTags.length + groupableTags.length) >= 2) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加支持的标记入已存在的{{multiple issues}}', '添加支持的標記入已存在的{{multiple issues}}'));
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加支持的标记入{{multiple issues}}', '添加支持的標記入{{multiple issues}}'));
 
 			tagText += '{{Multiple issues|\n';
 
@@ -1669,16 +1646,7 @@ Twinkle.tag.callbacks = {
 			 * Adds newly added tags to MI
 			 */
 			var addNewTagsToMI = function() {
-				totalTags = groupableTags.length;
 				$.each(groupableTags, addTag);
-				if (groupableTags.length) {
-					summaryText += wgULS('等标记', '等標記') + '（{{[[T:multiple issues|multiple issues]]}}）';
-				} else {
-					summaryText += ' {{[[Template:multiple issues|multiple issues]]}}';
-				}
-				if (tags.length > 0) {
-					summaryText += '及';
-				}
 				tagText += '}}\n';
 
 				addUngroupedTags();
@@ -1739,7 +1707,6 @@ Twinkle.tag.callbacks = {
 			tags = tags.concat(groupableTags);
 			addUngroupedTags();
 		}
-
 	},
 
 	notabilityList: function(pageobj) {
@@ -1820,7 +1787,7 @@ Twinkle.tag.callbacks = {
 		summaryText += (tags.length > 0 ? wgULS('标记', '標記') : '') + '到重定向';
 
 		// avoid truncated summaries
-		if (summaryText.length > (254 - Twinkle.getPref('summaryAd').length)) {
+		if (summaryText.length > (499 - Twinkle.getPref('summaryAd').length)) {
 			summaryText = summaryText.replace(/\[\[[^|]+\|([^\]]+)\]\]/g, '$1');
 		}
 
