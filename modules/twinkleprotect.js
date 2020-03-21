@@ -1316,12 +1316,14 @@ Twinkle.protect.callbacks = {
 		var oldtag_re = /(?:<noinclude>)?[ \t]*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
 		var re_result = oldtag_re.exec(text);
 		if (re_result) {
-			if (confirm(wgULS('在页面上找到{{' + re_result[1] + '}}\n点击确定以移除，或点击取消以取消。', '在頁面上找到{{' + re_result[1] + '}}\n點選確定以移除，或點選取消以取消。'))) {
+			if (params.tag === 'none' || confirm(wgULS('在页面上找到{{' + re_result[1] + '}}\n点击确定以移除，或点击取消以取消。', '在頁面上找到{{' + re_result[1] + '}}\n點選確定以移除，或點選取消以取消。'))) {
 				text = text.replace(oldtag_re, '');
 			}
 		}
 
-		if (params.tag !== 'none') {
+		if (params.tag === 'none') {
+			summary = wgULS('移除保护模板', '移除保護模板') + Twinkle.getPref('summaryAd');
+		} else {
 			tag = params.tag;
 			if (params.reason) {
 				tag += '|reason=' + params.reason;
@@ -1332,11 +1334,7 @@ Twinkle.protect.callbacks = {
 			if (params.small) {
 				tag += '|small=yes';
 			}
-		}
 
-		if (params.tag === 'none') {
-			summary = wgULS('移除保护模板', '移除保護模板') + Twinkle.getPref('summaryAd');
-		} else {
 			if (params.noinclude) {
 				text = '<noinclude>{{' + tag + '}}</noinclude>' + text;
 			} else if (/^\s*#(redirect|重定向|重新導向)/i.test(text)) { // redirect page
