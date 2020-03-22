@@ -150,7 +150,6 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 						name: 'talkpage',
 						tooltip: wgULS('删除时附带删除此页面的讨论页。', '刪除時附帶刪除此頁面的討論頁。'),
 						checked: Twinkle.getPref('deleteTalkPageOnDelete'),
-						disabled: Twinkle.getPref('deleteSysopDefaultToTag'),
 						event: function(event) {
 							event.stopPropagation();
 						}
@@ -167,7 +166,6 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 					name: 'redirects',
 					tooltip: wgULS('删除到此页的重定向。', '刪除到此頁的重定向。'),
 					checked: Twinkle.getPref('deleteRedirectsOnDelete'),
-					disabled: Twinkle.getPref('deleteSysopDefaultToTag'),
 					event: function(event) {
 						event.stopPropagation();
 					}
