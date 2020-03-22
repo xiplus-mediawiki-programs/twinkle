@@ -855,7 +855,7 @@ Twinkle.config.sections = [
 		title: wgULS('隐藏', '隱藏'),
 		hidden: true,
 		preferences: [
-		// twinkle.header.js: portlet setup
+			// twinkle.js: portlet setup
 			{
 				name: 'portletArea',
 				type: 'string'
@@ -881,45 +881,35 @@ Twinkle.config.sections = [
 				name: 'revertMaxRevisions',
 				type: 'integer'
 			},
-			// twinklebatchdelete.js: How many pages should be processed at a time
-			{
-				name: 'batchdeleteChunks',
-				type: 'integer'
-			},
-			// twinklebatchdelete.js: How many pages left in the process of being completed should allow a new batch to be initialized
-			{
-				name: 'batchDeleteMinCutOff',
-				type: 'integer'
-			},
 			// twinklebatchdelete.js: How many pages should be processed maximum
 			{
 				name: 'batchMax',
-				type: 'integer'
+				type: 'integer',
+				adminOnly: true
+			},
+			// twinklebatchdelete.js: How many pages should be processed at a time
+			{
+				name: 'batchdeleteChunks',
+				type: 'integer',
+				adminOnly: true
 			},
 			// twinklebatchprotect.js: How many pages should be processed at a time
 			{
 				name: 'batchProtectChunks',
-				type: 'integer'
-			},
-			// twinklebatchprotect.js: How many pages left in the process of being completed should allow a new batch to be initialized
-			{
-				name: 'batchProtectMinCutOff',
-				type: 'integer'
+				type: 'integer',
+				adminOnly: true
 			},
 			// twinklebatchundelete.js: How many pages should be processed at a time
 			{
 				name: 'batchundeleteChunks',
-				type: 'integer'
-			},
-			// twinklebatchundelete.js: How many pages left in the process of being completed should allow a new batch to be initialized
-			{
-				name: 'batchUndeleteMinCutOff',
-				type: 'integer'
+				type: 'integer',
+				adminOnly: true
 			},
 			// twinkledeprod.js: How many pages should be processed at a time
 			{
 				name: 'proddeleteChunks',
-				type: 'integer'
+				type: 'integer',
+				adminOnly: true
 			}
 		]
 	}
@@ -1575,8 +1565,6 @@ Twinkle.config.resetAllPrefs = function twinkleconfigResetAllPrefs() {
 Twinkle.config.save = function twinkleconfigSave(e) {
 	Morebits.status.init(document.getElementById('twinkle-config-content'));
 
-	Morebits.wiki.actionCompleted.notice = wgULS('保存', '儲存');
-
 	var userjs = mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user] + ':' + mw.config.get('wgUserName') + '/twinkleoptions.js';
 	var wikipedia_page = new Morebits.wiki.page(userjs, wgULS('保存参数设置到 ', '儲存偏好設定到 ') + userjs);
 	wikipedia_page.setCallbackParameters(e.target);
@@ -1588,14 +1576,9 @@ Twinkle.config.save = function twinkleconfigSave(e) {
 Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 	var form = pageobj.getCallbackParameters();
 
-	// this is the object which gets serialized into JSON
+	// this is the object which gets serialized into JSON; only
+	// preferences that this script knows about are kept
 	var newConfig = {optionsVersion: 2};
-
-	// keeping track of all preferences that we encounter
-	// any others that are set in the user's current config are kept
-	// this way, preferences that this script doesn't know about are not lost
-	// (it does mean obsolete prefs will never go away, but... ah well...)
-	var foundPrefs = ['optionsVersion'];
 
 	// a comparison function is needed later on
 	// it is just enough for our purposes (i.e. comparing strings, numbers, booleans,
@@ -1633,52 +1616,57 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 			var userValue;  // = undefined
 
 			// only read form values for those prefs that have them
-			if (!section.hidden && (!pref.adminOnly || Morebits.userIsSysop)) {
-				switch (pref.type) {
+			if (!pref.adminOnly || Morebits.userIsSysop) {
+				if (!section.hidden) {
+					switch (pref.type) {
+						case 'boolean':  // read from the checkbox
+							userValue = form[pref.name].checked;
+							break;
 
-					case 'boolean':  // read from the checkbox
-						userValue = form[pref.name].checked;
-						break;
+						case 'string':  // read from the input box or combo box
+						case 'enum':
+							userValue = form[pref.name].value;
+							break;
 
-					case 'string':  // read from the input box or combo box
-					case 'enum':
-						userValue = form[pref.name].value;
-						break;
+						case 'integer':  // read from the input box
+							userValue = parseInt(form[pref.name].value, 10);
+							if (isNaN(userValue)) {
+								Morebits.status.warn(wgULS('保存', '儲存'), wgULS('您为 ' + pref.name + ' 指定的值（' + pref.value + '）不合法，会继续保存操作，但此值将会跳过。', '您為 ' + pref.name + ' 指定的值（' + pref.value + '）不合法，會繼續儲存操作，但此值將會跳過。'));
+								userValue = null;
+							}
+							break;
 
-					case 'integer':  // read from the input box
-						userValue = parseInt(form[pref.name].value, 10);
-						if (isNaN(userValue)) {
-							Morebits.status.warn(wgULS('保存', '儲存'), wgULS('您为 ' + pref.name + ' 指定的值（' + pref.value + '）不合法，会继续保存操作，但此值将会跳过。', '您為 ' + pref.name + ' 指定的值（' + pref.value + '）不合法，會繼續儲存操作，但此值將會跳過。'));
-							userValue = null;
-						}
-						break;
-
-					case 'set':  // read from the set of check boxes
-						userValue = [];
-						if (pref.setDisplayOrder) {
+						case 'set':  // read from the set of check boxes
+							userValue = [];
+							if (pref.setDisplayOrder) {
 							// read only those keys specified in the display order
-							$.each(pref.setDisplayOrder, function(itemkey, item) {
-								if (form[pref.name + '_' + item].checked) {
-									userValue.push(item);
-								}
-							});
-						} else {
+								$.each(pref.setDisplayOrder, function(itemkey, item) {
+									if (form[pref.name + '_' + item].checked) {
+										userValue.push(item);
+									}
+								});
+							} else {
 							// read all the keys in the list of values
-							$.each(pref.setValues, function(itemkey) {
-								if (form[pref.name + '_' + itemkey].checked) {
-									userValue.push(itemkey);
-								}
-							});
-						}
-						break;
+								$.each(pref.setValues, function(itemkey) {
+									if (form[pref.name + '_' + itemkey].checked) {
+										userValue.push(itemkey);
+									}
+								});
+							}
+							break;
 
-					case 'customList':  // read from the jQuery data stored on the button object
-						userValue = $(form[pref.name]).data('value');
-						break;
+						case 'customList':  // read from the jQuery data stored on the button object
+							userValue = $(form[pref.name]).data('value');
+							break;
 
-					default:
-						alert('twinkleconfig: 未知数据类型，属性 ' + pref.name);
-						break;
+						default:
+							alert('twinkleconfig: 未知数据类型，属性 ' + pref.name);
+							break;
+					}
+				} else if (Twinkle.prefs[pref.name]) {
+					// Retain the hidden preferences that may have customised by the user from twinkleoptions.js
+					// undefined if not set
+					userValue = Twinkle.prefs[pref.name];
 				}
 			}
 
@@ -1686,27 +1674,13 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 			if (userValue !== undefined && !compare(userValue, Twinkle.defaultConfig[pref.name])) {
 				newConfig[pref.name] = userValue;
 			}
-			foundPrefs.push(pref.name);
 		});
 	});
 
-	// Retain the hidden preferences that may have customised by the user from twinkleoptions.js
-	if (Twinkle.prefs) {
-		$.each(Twinkle.prefs, function(tkey, tvalue) {
-			// Remove old foramt preferences
-			if (['twinkle', 'friendly'].indexOf(tkey) !== -1) {
-				return;
-			}
-
-			if (foundPrefs.indexOf(tkey) === -1) {
-				newConfig[tkey] = tvalue;
-			}
-		});
-	}
-
-	var text = '// <nowiki>\n' +
-		wgULS(
-			'// twinkleoptions.js：用户Twinkle参数设置文件\n' +
+	var text =
+		'// <nowiki>\n' +
+	wgULS(
+		'// twinkleoptions.js：用户Twinkle参数设置文件\n' +
 		'//\n' +
 		'// 注：修改您的参数设置最简单的办法是使用\n' +
 		'// Twinkle参数设置面板，在[[' + Morebits.pageNameNorm + ']]。\n' +
@@ -1718,7 +1692,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 		'\n' +
 		'window.Twinkle.prefs = ',
 
-			'// twinkleoptions.js：使用者Twinkle參數設定檔案\n' +
+		'// twinkleoptions.js：使用者Twinkle參數設定檔案\n' +
 		'//\n' +
 		'// 註：修改您的參數設定最簡單的辦法是使用\n' +
 		'// Twinkle參數設定面板，在[[' + Morebits.pageNameNorm + ']]。\n' +
@@ -1729,7 +1703,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 		'// 修改此檔案時，請記得使用合法的JavaScript。\n' +
 		'\n' +
 		'window.Twinkle.prefs = '
-		);
+	);
 	text += JSON.stringify(newConfig, null, 2);
 	text +=
 		';\n' +
