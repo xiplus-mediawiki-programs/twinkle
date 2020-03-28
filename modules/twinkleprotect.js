@@ -425,6 +425,16 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				});
 			}
 			field2.append({
+				type: 'checkbox',
+				list: [
+					{
+						name: 'close',
+						label: wgULS('标记请求保护页面中的请求（测试功能，请复查编辑！）', '標記請求保護頁面中的請求（測試功能，請複查編輯！）'),
+						checked: true
+					}
+				]
+			});
+			field2.append({
 				type: 'textarea',
 				name: 'protectReason',
 				label: wgULS('理由（保护日志）：', '理由（保護日誌）：')
@@ -1098,6 +1108,31 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 		};
 	}
 
+	var closeparams = {};
+	if (form.close && form.close.checked) {
+		if (form.category.value === 'unprotect') {
+			closeparams.type = 'unprotect';
+		} else if (mw.config.get('wgArticleId')) {
+			if (form.editmodify.checked) {
+				if (form.editlevel.value === 'sysop') {
+					closeparams.type = 'full';
+					closeparams.expiry = form.editexpiry.value;
+				} else if (form.editlevel.value === 'autoconfirmed') {
+					closeparams.type = 'semi';
+					closeparams.expiry = form.editexpiry.value;
+				}
+			} else if (form.movemodify.checked && form.movelevel.value === 'sysop') {
+				closeparams.type = 'move';
+				closeparams.expiry = form.moveexpiry.value;
+			}
+		} else {
+			if (form.createlevel.value !== 'all') {
+				closeparams.type = 'salt';
+				closeparams.expiry = form.createexpiry.value;
+			}
+		}
+	}
+
 	switch (actiontype) {
 		case 'protect':
 			// protect the page
@@ -1114,6 +1149,12 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				}
 				if (tagparams) {
 					Twinkle.protect.callbacks.taggingPageInitial(tagparams);
+				}
+				if (closeparams && closeparams.type) {
+					var rppPage = new Morebits.wiki.page('Wikipedia:请求保护页面', wgULS('关闭请求', '關閉請求'));
+					rppPage.setFollowRedirect(true);
+					rppPage.setCallbackParameters(closeparams);
+					rppPage.load(Twinkle.protect.callbacks.closeRequest);
 				}
 			};
 
@@ -1468,6 +1509,99 @@ Twinkle.protect.callbacks = {
 		rppPage.setTags(Twinkle.getPref('revisionTags'));
 		rppPage.setPageText(text);
 		rppPage.setCreateOption('recreate');
+		rppPage.save();
+	},
+
+	closeRequest: function(rppPage) {
+		var params = rppPage.getCallbackParameters();
+		var text = rppPage.getPageText();
+		var statusElement = rppPage.getStatusElement();
+
+		var sections = text.split(/(?=\n==\s*请求解除保护\s*==\s*\n)/);
+
+		if (sections.length !== 2) {
+			var linknode2 = document.createElement('a');
+			linknode2.setAttribute('href', mw.util.getUrl('Wikipedia:Twinkle/修复RFPP'));
+			linknode2.appendChild(document.createTextNode('如何修复RFPP'));
+			statusElement.error(wgULS([ '无法在WP:RFPP上找到相关位点标记，要修复此问题，请参见', linknode2, '。' ], [ '無法在WP:RFPP上找到相關位點標記，要修複此問題，請參見', linknode2, '。' ]));
+			return;
+		}
+
+		var sectionText, expiryText = '';
+		if (params.type === 'unprotect') {
+			sectionText = sections[1];
+		} else {
+			sectionText = sections[0];
+			expiryText = Morebits.string.formatTime(params.expiry);
+		}
+
+		var requestList = sectionText.split(/(?=\n===.+===\s*\n)/);
+
+		var found = false;
+		var rppRe = new RegExp('===\\s*(\\[\\[)?\\s*:?\\s*' + RegExp.escape(Morebits.pageNameNorm, true) + '\\s*(\\]\\])?\\s*===', 'm');
+		for (var i = 1; i < requestList.length; i++) {
+			if (rppRe.exec(requestList[i])) {
+				requestList[i] = requestList[i].trimRight();
+				if (params.type === 'unprotect') {
+					requestList[i] += '\n: {{RFPP|isun}}。--~~~~\n';
+				} else {
+					requestList[i] += '\n: {{RFPP|' + params.type + '|'
+						+ (Morebits.string.isInfinity(params.expiry) ? 'indefinite' : expiryText)
+						+ '}}。--~~~~\n';
+				}
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			statusElement.warn(wgULS('没有找到相关的请求', '沒有找到相關的請求'));
+			return;
+		}
+
+		if (params.type === 'unprotect') {
+			text = sections[0] + requestList.join('');
+		} else {
+			text = requestList.join('') + sections[1];
+		}
+
+		var summary = '';
+
+		if (params.type === 'unprotect') {
+			sectionText = sections[1];
+		} else {
+			sectionText = sections[0];
+		}
+		switch (params.type) {
+			case 'semi':
+				summary = wgULS('半保护', '半保護');
+				break;
+			case 'full':
+				summary = wgULS('全保护', '全保護');
+				break;
+			case 'move':
+				summary = wgULS('移动保护', '移動保護');
+				break;
+			case 'salt':
+				summary = wgULS('白纸保护', '白紙保護');
+				break;
+			case 'unprotect':
+				summary = wgULS('解除保护', '解除保護');
+				break;
+			default:
+				statusElement.warn(wgULS('未知保护类型', '未知保護類型'));
+				return;
+		}
+
+		if (Morebits.string.isInfinity(params.expiry)) {
+			summary = expiryText + summary;
+		} else {
+			summary += expiryText;
+		}
+
+		rppPage.setEditSummary('/* ' + Morebits.pageNameNorm + ' */ ' + summary + Twinkle.getPref('summaryAd'));
+		rppPage.setTags(Twinkle.getPref('revisionTags'));
+		rppPage.setPageText(text);
 		rppPage.save();
 	}
 };
