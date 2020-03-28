@@ -314,7 +314,7 @@ Twinkle.fluff.addLinks = {
 
 	recentchanges: function() {
 		if (Twinkle.getPref('showRollbackLinks').indexOf('recentchanges') !== -1) {
-			var list = $('.mw-changeslist .mw-changeslist-last');
+			var list = $('.mw-changeslist .mw-changeslist-last.mw-changeslist-src-mw-edit');
 
 			var revNode = document.createElement('strong');
 			var revLink = Twinkle.fluff.buildLink('SteelBlue', '回退');
