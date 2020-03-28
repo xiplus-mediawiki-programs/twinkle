@@ -1135,6 +1135,50 @@ Morebits.string = {
 	 */
 	safeReplace: function morebitsStringSafeReplace(string, pattern, replacement) {
 		return string.replace(pattern, replacement.replace(/\$/g, '$$$$'));
+	},
+
+	/**
+	 * Determine input string is represents as infinity
+	 * @param {string} time The string to determine
+ 	 * @returns {boolean}
+	 * @see https://gerrit.wikimedia.org/g/mediawiki/core/+/7c4a3f8aae57066236b83ec21dc0ef2f5f2c4ead/includes/GlobalFunctions.php#2878
+	 */
+	isInfinity: function morebitsStringIsInfinity(time) {
+		var infinityValues = ['infinite', 'indefinite', 'infinity', 'never'];
+		return infinityValues.indexOf(time) !== -1;
+	},
+
+	/**
+	 * @param {*} time The string to foramt
+	 * @returns {string}
+	 */
+	formatTime: function morebitsStringFormatTime(time) {
+		var m;
+		if ((m = time.match(/^\s*(\d+)\s*seconds?\s*$/)) !== null) {
+			return m[1] + '秒';
+		}
+		if ((m = time.match(/^\s*(\d+)\s*min(ute)?s?\s*$/)) !== null) {
+			return m[1] + '分';
+		}
+		if ((m = time.match(/^\s*(\d+)\s*hours?\s*$/)) !== null) {
+			return m[1] + '小時';
+		}
+		if ((m = time.match(/^\s*(\d+)\s*days?\s*$/)) !== null) {
+			return m[1] + '天';
+		}
+		if ((m = time.match(/^\s*(\d+)\s*weeks?\s*$/)) !== null) {
+			return m[1] + '週';
+		}
+		if ((m = time.match(/^\s*(\d+)\s*months?\s*$/)) !== null) {
+			return m[1] + '個月';
+		}
+		if ((m = time.match(/^\s*(\d+)\s*years?\s*$/)) !== null) {
+			return m[1] + '年';
+		}
+		if (Morebits.string.isInfinity(time.trim())) {
+			return '無限期';
+		}
+		return time;
 	}
 };
 
