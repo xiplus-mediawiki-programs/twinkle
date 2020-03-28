@@ -1517,7 +1517,7 @@ Twinkle.protect.callbacks = {
 		var text = rppPage.getPageText();
 		var statusElement = rppPage.getStatusElement();
 
-		var sections = text.split(/(?=\n==\s*请求解除保护\s*==\s*\n)/);
+		var sections = text.split(/(?=\n==\s*请求解除保护\s*==)/);
 
 		if (sections.length !== 2) {
 			var linknode2 = document.createElement('a');
