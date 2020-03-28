@@ -41,6 +41,8 @@ Twinkle.fluff = function twinklefluff() {
 		}
 	} else if (mw.config.get('wgCanonicalSpecialPageName') === 'Contributions') {
 		Twinkle.fluff.addLinks.contributions();
+	} else if (mw.config.get('wgAction') === 'history') {
+		Twinkle.fluff.addLinks.history();
 	} else if (mw.config.get('wgIsProbablyEditable')) {
 		// Only proceed if the user can actually edit the page
 		// in question (ignored for contributions, see #632).
@@ -304,6 +306,16 @@ Twinkle.fluff.addLinks = {
 	}
 };
 
+Twinkle.fluff.disableLinks = function (links) {
+	for (var i = 0; i < links.length; i++) {
+		var link = $(links[i]);
+		link.off('click')
+			.attr('href', '#')
+			.css('color', 'grey')
+			.css('cursor', 'default');
+		$('span', link).css('color', 'grey');
+	}
+};
 
 Twinkle.fluff.revert = function revertPage(type, vandal, autoRevert, rev, page) {
 	if (mw.util.isIPv6Address(vandal)) {
