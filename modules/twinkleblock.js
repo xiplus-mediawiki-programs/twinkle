@@ -646,11 +646,16 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		// list=blocks without bkprops (as we do in fetchUerInfo)
 		// returns partial: '' if the user is partially blocked
 		var statusStr = relevantUserName + (Twinkle.block.currentBlockInfo.partial === '' ? wgULS('已被部分封禁', '已被部分封鎖') : wgULS('已被全站封禁', '已被全站封鎖'));
-		var infoStr = wgULS('提交请求来用给定的选项重新封禁', '提交請求來用給定的設定重新封鎖');
+		if (Twinkle.block.currentBlockInfo.expiry === 'infinity') {
+			statusStr += '（' + wgULS('无限期', '無限期') + '）';
+		} else if (new Morebits.date(Twinkle.block.currentBlockInfo.expiry).isValid()) {
+			statusStr += '（' + wgULS('终止于', '終止於') + new Morebits.date(Twinkle.block.currentBlockInfo.expiry).calendar('utc') + '）';
+		}
+		var infoStr = wgULS('提交请求以变更封禁', '提交請求以變更封鎖');
 		if (Twinkle.block.currentBlockInfo.partial === undefined && partialBox) {
-			infoStr += wgULS('并转为部分封禁', '並轉為部分封鎖');
+			infoStr += wgULS('为部分封禁', '為部分封鎖');
 		} else if (Twinkle.block.currentBlockInfo.partial === '' && !partialBox) {
-			infoStr += wgULS('并转为全站封禁', '並轉為全站封鎖');
+			infoStr += wgULS('为全站封禁', '為全站封鎖');
 		}
 		Morebits.status.warn(statusStr, infoStr);
 		Twinkle.block.callback.update_form(e, Twinkle.block.currentBlockInfo);
