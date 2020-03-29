@@ -7,7 +7,6 @@
 	},
 	"globals": {
 		"mw": true,
-		"moment": true,
 		"wgULS": true
 	},
 	"ignorePatterns": "select2*",
