@@ -1250,12 +1250,8 @@ Twinkle.config.init = function twinkleconfigInit() {
 			mw.config.get('wgPageName').slice(-3) === '.js') {
 
 		var box = document.createElement('div');
+		// Styled in twinkle.css
 		box.setAttribute('id', 'twinkle-config-headerbox');
-		box.style.border = '1px #f60 solid';
-		box.style.background = '#fed';
-		box.style.padding = '0.6em';
-		box.style.margin = '0.5em auto';
-		box.style.textAlign = 'center';
 
 		var link,
 			scriptPageName = mw.config.get('wgPageName').slice(mw.config.get('wgPageName').lastIndexOf('/') + 1,
@@ -1263,9 +1259,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 
 		if (scriptPageName === 'twinkleoptions') {
 			// place "why not try the preference panel" notice
-			box.style.fontWeight = 'bold';
-			box.style.width = '80%';
-			box.style.borderWidth = '2px';
+			box.setAttribute('class', 'config-twopt-box');
 
 			if (mw.config.get('wgArticleId') > 0) {  // page exists
 				box.appendChild(document.createTextNode(wgULS('这页包含您的Twinkle参数设置，您可使用', '這頁包含您的Twinkle偏好設定，您可使用')));
@@ -1281,7 +1275,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 
 		} else if (['monobook', 'vector', 'cologneblue', 'modern', 'timeless', 'minerva', 'common'].indexOf(scriptPageName) !== -1) {
 			// place "Looking for Twinkle options?" notice
-			box.style.width = '60%';
+			box.setAttribute('class', 'config-userskin-box');
 
 			box.appendChild(document.createTextNode(wgULS('如果您想配置您的Twinkle，请使用', '如果您想配置您的Twinkle，請使用')));
 			link = document.createElement('a');
