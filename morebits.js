@@ -1161,22 +1161,22 @@ Morebits.string = {
 			return m[1] + '分';
 		}
 		if ((m = time.match(/^\s*(\d+)\s*hours?\s*$/)) !== null) {
-			return m[1] + '小時';
+			return m[1] + wgULS('小时', '小時');
 		}
 		if ((m = time.match(/^\s*(\d+)\s*days?\s*$/)) !== null) {
 			return m[1] + '天';
 		}
 		if ((m = time.match(/^\s*(\d+)\s*weeks?\s*$/)) !== null) {
-			return m[1] + '週';
+			return m[1] + wgULS('周', '週');
 		}
 		if ((m = time.match(/^\s*(\d+)\s*months?\s*$/)) !== null) {
-			return m[1] + '個月';
+			return m[1] + wgULS('个月', '個月');
 		}
 		if ((m = time.match(/^\s*(\d+)\s*years?\s*$/)) !== null) {
 			return m[1] + '年';
 		}
 		if (Morebits.string.isInfinity(time.trim())) {
-			return '無限期';
+			return wgULS('无限期', '無限期');
 		}
 		return time;
 	}
