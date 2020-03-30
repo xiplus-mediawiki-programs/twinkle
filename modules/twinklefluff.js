@@ -515,7 +515,7 @@ Twinkle.fluff.callbacks = {
 			if (lastuser === self.params.user) {
 				switch (self.params.type) {
 					case 'vand':
-						Morebits.status.info('信息', wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，因我们假定破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，因我們假定破壞，繼續回退操作。' ]));
+						Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，因我们假定破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，因我們假定破壞，繼續回退操作。' ]));
 						break;
 					case 'agf':
 						Morebits.status.warn('警告', wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，因我们假定善意，取消回退操作，因为问题可能已被修复。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，因我們假定善意，取消回退操作，因為問題可能已被修復。' ]));
@@ -527,7 +527,7 @@ Twinkle.fluff.callbacks = {
 			} else if (self.params.type === 'vand' &&
 					Twinkle.fluff.whiteList.indexOf(top.getAttribute('user')) !== -1 && revs.length > 1 &&
 					revs[1].getAttribute('pageId') === self.params.revid) {
-				Morebits.status.info('信息', wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', lastuser), '，一个可信的机器人做出，之前的版本被认为是破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', lastuser), '，一個可信的機器人做出，之前的版本被認為是破壞，繼續回退操作。' ]));
+				Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', lastuser), '，一个可信的机器人做出，之前的版本被认为是破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', lastuser), '，一個可信的機器人做出，之前的版本被認為是破壞，繼續回退操作。' ]));
 				index = 2;
 			} else {
 				Morebits.status.error('错误', wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', lastuser), ' 做出，所以这个修订版本可能已经被回退了，取消回退操作。'], [ '最新修訂版本由 ', Morebits.htmlNode('strong', lastuser), ' 做出，所以這個修訂版本可能已經被回退了，取消回退操作。']));
@@ -539,7 +539,7 @@ Twinkle.fluff.callbacks = {
 		if (Twinkle.fluff.whiteList.indexOf(self.params.user) !== -1) {
 			switch (self.params.type) {
 				case 'vand':
-					Morebits.status.info('信息', wgULS([ '将对 ', Morebits.htmlNode('strong', self.params.user), ' 执行破坏回退，这是一个可信的机器人，我们假定您要回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', self.params.user), ' 執行破壞回退，這是一個可信的機器人，我們假定您要回退前一個修訂版本。' ]));
+					Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '将对 ', Morebits.htmlNode('strong', self.params.user), ' 执行破坏回退，这是一个可信的机器人，我们假定您要回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', self.params.user), ' 執行破壞回退，這是一個可信的機器人，我們假定您要回退前一個修訂版本。' ]));
 					index = 2;
 					self.params.user = revs[1].getAttribute('user');
 					break;
@@ -551,7 +551,7 @@ Twinkle.fluff.callbacks = {
 				default:
 					var cont = confirm(wgULS('选择了常规回退，但最新修改是由一个可信的机器人（' + self.params.user + '）做出的。您是否想回退前一个修订版本？', '選擇了常規回退，但最新修改是由一個可信的機器人（' + self.params.user + '）做出的。您是否想回退前一個修訂版本？'));
 					if (cont) {
-						Morebits.status.info('信息', wgULS([ '将对 ', Morebits.htmlNode('strong', self.params.user), ' 执行常规回退，这是一个可信的机器人，基于确认，我们将回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', self.params.user), ' 執行常規回退，這是一個可信的機器人，基於確認，我們將回退前一個修訂版本。' ]));
+						Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '将对 ', Morebits.htmlNode('strong', self.params.user), ' 执行常规回退，这是一个可信的机器人，基于确认，我们将回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', self.params.user), ' 執行常規回退，這是一個可信的機器人，基於確認，我們將回退前一個修訂版本。' ]));
 						index = 2;
 						self.params.user = revs[1].getAttribute('user');
 					} else {
@@ -644,7 +644,7 @@ Twinkle.fluff.callbacks = {
 		if ((!self.params.autoRevert || Twinkle.getPref('openTalkPageOnAutoRevert')) &&
 				Twinkle.getPref('openTalkPage').indexOf(self.params.type) !== -1 &&
 				mw.config.get('wgUserName') !== self.params.user) {
-			Morebits.status.info('信息', wgULS([ '打开用户 ', Morebits.htmlNode('strong', self.params.user), ' 的对话页' ], [ '開啟用戶 ', Morebits.htmlNode('strong', self.params.user), ' 的對話頁' ]));
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '打开用户 ', Morebits.htmlNode('strong', self.params.user), ' 的对话页' ], [ '開啟用戶 ', Morebits.htmlNode('strong', self.params.user), ' 的對話頁' ]));
 
 			query = {
 				'title': 'User talk:' + self.params.user,
