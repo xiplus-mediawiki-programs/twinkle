@@ -1443,17 +1443,17 @@ Morebits.date = function() {
 };
 
 Morebits.date.localeData = {
-	months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-	monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-	days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-	daysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+	months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+	monthsShort: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+	days: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+	daysShort: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
 	relativeTimes: {
-		thisDay: '[Today at] h:mm A',
-		prevDay: '[Yesterday at] h:mm A',
-		nextDay: '[Tomorrow at] h:mm A',
-		thisWeek: 'dddd [at] h:mm A',
-		pastWeek: '[Last] dddd [at] h:mm A',
-		other: 'DD/MM/YYYY'
+		thisDay: '[今天]A hh:mm',
+		prevDay: '[昨天]A hh:mm',
+		nextDay: '[明天]A hh:mm',
+		thisWeek: 'ddddA hh:mm',
+		pastWeek: '[上]ddddA hh:mm',
+		other: 'YYYY/MM/DD'
 	}
 };
 
@@ -1564,7 +1564,7 @@ $.extend(Morebits.date.prototype, {
 		};
 		var h24 = udate.getHours(), m = udate.getMinutes(), s = udate.getSeconds();
 		var D = udate.getDate(), M = udate.getMonth() + 1, Y = udate.getFullYear();
-		var h12 = h24 % 12 || 12, amOrPm = h24 >= 12 ? 'PM' : 'AM';
+		var h12 = h24 % 12 || 12, amOrPm = h24 >= 12 ? '下午' : '上午';
 		var replacementMap = {
 			'HH': pad(h24), 'H': h24, 'hh': pad(h12), 'h': h12, 'A': amOrPm,
 			'mm': pad(m), 'm': m,
@@ -1623,8 +1623,8 @@ $.extend(Morebits.date.prototype, {
 	 * === Jan 2018 ===
 	 */
 	monthHeaderRegex: function() {
-		return new RegExp('^==+\\s*(?:' + this.getUTCMonthName() + '|' + this.getUTCMonthNameAbbrev() +
-			')\\s+' + this.getUTCFullYear() + '\\s*==+', 'mg');
+		return new RegExp('^==+\\s*' + this.getUTCFullYear() + '年(?:' + this.getUTCMonthName() + '|' +
+			this.getUTCMonthNameAbbrev() + ')\\s*==+', 'mg');
 	},
 
 	/**
@@ -1635,7 +1635,7 @@ $.extend(Morebits.date.prototype, {
 	monthHeader: function(level) {
 		level = level || 2;
 		var header = Array(level + 1).join('='); // String.prototype.repeat not supported in IE 11
-		return header + ' ' + this.getUTCMonthName() + ' ' + this.getUTCFullYear() + ' ' + header;
+		return header + ' ' + this.getUTCFullYear() + '年' + this.getUTCMonthName() + ' ' + header;
 	}
 
 });
