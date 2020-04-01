@@ -24,7 +24,7 @@ Twinkle.xfd = function twinklexfd() {
 	}
 	Twinkle.addPortletLink(Twinkle.xfd.callback, wgULS('提删', '提刪'), 'tw-xfd', wgULS('提交删除讨论', '提交刪除討論'));
 
-	var date = new Date();
+	var date = new Morebits.date();
 	if (date.getUTCMonth() === 3 && date.getUTCDate() === 1) {
 		Twinkle.addPortletLink(Twinkle.xfd.aprilfool, wgULS('愚人节提删', '愚人節提刪'), 'tw-xfd-april-fool', wgULS('愚人节提删', '愚人節提刪'));
 	}
@@ -781,7 +781,7 @@ Twinkle.xfd.aprilfool.evaluate = function(e) {
 	Morebits.status.onError(Twinkle.xfd.printRationale);
 
 	var wikipedia_page, logpage, params;
-	var date = new Date();
+	var date = new Morebits.date();
 
 	logpage = 'Wikipedia:頁面存廢和諧討論/記錄/' + date.format('YYYY') + '/04/01';
 	params = { xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, logpage: logpage };
