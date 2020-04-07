@@ -102,13 +102,7 @@ Twinkle.fluff.restoreThisRevision = function (element, revType) {
 
 
 Twinkle.fluff.auto = function twinklefluffauto() {
-	var revisionId = mw.config.get('wgRevisionId');
-	if (revisionId === 0) {
-		// Cannot use mw.config.get('wgRevisionId') due to phab:T231744
-		// Get revisionId from links on the right
-		revisionId = parseInt(mw.util.getParamValue('oldid', $('#mw-diff-ntitle1 a:first').attr('href')), 10);
-	}
-	if (revisionId !== mw.config.get('wgCurRevisionId')) {
+	if (mw.config.get('wgRevisionId') !== mw.config.get('wgCurRevisionId')) {
 		// not latest revision
 		alert(wgULS('无法回退，页面在此期间已被修改。', '無法回退，頁面在此期間已被修改。'));
 		return;
@@ -160,8 +154,8 @@ Twinkle.fluff.addLinks = {
 							Twinkle.fluff.revert('vand', username, false, revid, page);
 						});
 					} else {
-						tmpNode.firstChild.setAttribute('href', href + '&twinklerevert=norm');
-						tmpNode2.firstChild.setAttribute('href', href + '&twinklerevert=vand');
+						tmpNode.firstChild.setAttribute('href', href + '&twinklerevert=norm&diffonly=0');
+						tmpNode2.firstChild.setAttribute('href', href + '&twinklerevert=vand&diffonly=0');
 					}
 				});
 			}
@@ -339,8 +333,8 @@ Twinkle.fluff.addLinks = {
 				var tmpNode2 = revVandNode.cloneNode(true);
 				current.appendChild(tmpNode2);
 
-				tmpNode.firstChild.setAttribute('href', href + '&twinklerevert=norm');
-				tmpNode2.firstChild.setAttribute('href', href + '&twinklerevert=vand');
+				tmpNode.firstChild.setAttribute('href', href + '&twinklerevert=norm&diffonly=0');
+				tmpNode2.firstChild.setAttribute('href', href + '&twinklerevert=vand&diffonly=0');
 			});
 		}
 	}
