@@ -173,13 +173,15 @@ Twinkle.block.callback.saveFieldset = function twinkleblockCallbacksaveFieldset(
 Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction(e) {
 	var field_preset, field_template_options, field_block_options, field_tag_options, field_unblock_options, $form = $(e.target.form);
 	// Make ifs shorter
-	var blockBox = $form.find('[name=actiontype][value=block]').is(':checked');
-	var templateBox = $form.find('[name=actiontype][value=template]').is(':checked');
+	var block = $form.find('[name=actiontype][value=block]');
+	var blockBox = block.is(':checked');
+	var template = $form.find('[name=actiontype][value=template]');
+	var templateBox = template.is(':checked');
 	var tag = $form.find('[name=actiontype][value=tag]');
 	var protect = $form.find('[name=actiontype][value=protect]');
 	var partial = $form.find('[name=actiontype][value=partial]');
-	var unblock = $form.find('[name=actiontype][value=unblock]');
 	var partialBox = partial.is(':checked');
+	var unblock = $form.find('[name=actiontype][value=unblock]');
 	var blockGroup = partialBox ? Twinkle.block.blockGroupsPartial : Twinkle.block.blockGroups;
 
 	if (e.target.value === 'unblock') {
@@ -187,10 +189,13 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			unblock.prop('checked', false);
 			return alert(wgULS('用户没有被封禁', '用戶沒有被封鎖'));
 		}
-		blockBox.prop('checked', false);
-		templateBox.prop('checked', false);
+		block.prop('checked', false);
+		blockBox = false;
+		template.prop('checked', false);
+		templateBox = false;
 		tag.prop('checked', false);
 		protect.prop('checked', false);
+		partial.prop('checked', false);
 	} else {
 		unblock.prop('checked', false);
 	}
