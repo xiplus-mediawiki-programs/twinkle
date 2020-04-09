@@ -329,7 +329,7 @@ Twinkle.config.sections = [
 				name: 'showRollbackLinks',
 				label: wgULS('在这些页面上显示回退链接', '在這些頁面上顯示回退連結'),
 				type: 'set',
-				setValues: wgULS({ diff: '差异', history: '历史记录', others: '其它用户的贡献', mine: '我的贡献', recentchanges: '最近更改' }, { diff: '差異', history: '歷史記錄', others: '其它用戶的貢獻', mine: '我的貢獻', recentchanges: '近期變更' })
+				setValues: wgULS({ diff: '差异', history: '历史记录', others: '其它用户的贡献', mine: '我的贡献', recentchanges: '最近更改', recentchangeslinked: '相关更改' }, { diff: '差異', history: '歷史記錄', others: '其它用戶的貢獻', mine: '我的貢獻', recentchanges: '近期變更', recentchangeslinked: '相關變更' })
 			},
 
 			{
