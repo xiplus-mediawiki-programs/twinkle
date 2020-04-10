@@ -133,7 +133,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 			query.gapprefix = mw.util.getParamValue('prefix');
 		} else {
 			var pathSplit = decodeURIComponent(location.pathname).split('/');
-			if (pathSplit.length < 3 || pathSplit[2] !== 'Special:PrefixIndex') {
+			if (pathSplit.length < 3 || pathSplit[2] !== 'Special:前缀索引') {
 				return;
 			}
 			var titleSplit = pathSplit[3].split(':');
