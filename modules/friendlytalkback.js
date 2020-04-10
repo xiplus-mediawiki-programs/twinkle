@@ -33,29 +33,37 @@ Twinkle.talkback.callback = function() {
 	Window.addFooterLink(wgULS('关于{{talkback}}', '關於{{talkback}}'), 'Template:Talkback');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#talkback');
 
-	var form = new Morebits.quickForm(callback_evaluate);
+	var form = new Morebits.quickForm(Twinkle.talkback.evaluate);
 
 	form.append({ type: 'radio', name: 'tbtarget',
 		list: [
 			{
-				label: wgULS('回复：我的对话页', '回覆：我的對話頁'),
+				label: wgULS('回复：我的讨论页', '回覆：我的討論頁'),
 				value: 'mytalk',
 				checked: 'true'
 			},
 			{
-				label: wgULS('回复：其他用户的对话页', '回覆：其他用戶的對話頁'),
+				label: wgULS('回复：其他用户的讨论页', '回覆：其他使用者的討論頁'),
 				value: 'usertalk'
 			},
 			{
-				label: wgULS('其它页面', '其它頁面'),
+				label: wgULS('回复：其它页面', '回覆：其它頁面'),
 				value: 'other'
+			},
+			{
+				label: wgULS('邀请讨论', '邀請討論'),
+				value: 'see'
+			},
+			{
+				label: '通告板通知',
+				value: 'notice'
 			},
 			{
 				label: wgULS('“有新邮件”', '「有新郵件」'),
 				value: 'mail'
 			}
 		],
-		event: callback_change_target
+		event: Twinkle.talkback.changeTarget
 	});
 
 	form.append({
@@ -64,11 +72,21 @@ Twinkle.talkback.callback = function() {
 		name: 'work_area'
 	});
 
+	var previewlink = document.createElement('a');
+	$(previewlink).click(function() {
+		Twinkle.talkback.preview(result);  // |result| is defined below
+	});
+	previewlink.style.cursor = 'pointer';
+	previewlink.textContent = wgULS('预览', '預覽');
+	form.append({ type: 'div', id: 'talkbackpreview', label: [ previewlink ] });
+	form.append({ type: 'div', id: 'friendlytalkback-previewbox', style: 'display: none' });
+
 	form.append({ type: 'submit' });
 
 	var result = form.render();
 	Window.setContent(result);
 	Window.display();
+	result.previewer = new Morebits.wiki.preview($(result).find('div#friendlytalkback-previewbox').last()[0]);
 
 	// We must init the
 	var evt = document.createEvent('Event');
@@ -79,11 +97,11 @@ Twinkle.talkback.callback = function() {
 	var query = {
 		action: 'query',
 		prop: 'extlinks',
-		titles: 'User talk:' + mw.config.get('wgRelevantUserName'),
+		titles: 'User talk:' + Morebits.wiki.flow.relevantUserName(),
 		elquery: 'userjs.invalid/noTalkback',
 		ellimit: '1'
 	};
-	var wpapi = new Morebits.wiki.api('抓取opt-out信息', query, Twinkle.talkback.callback.optoutStatus);
+	var wpapi = new Morebits.wiki.api(wgULS('抓取退出通告信息', '抓取退出通告資訊'), query, Twinkle.talkback.callback.optoutStatus);
 	wpapi.post();
 };
 
@@ -104,7 +122,7 @@ var prev_page = '';
 var prev_section = '';
 var prev_message = '';
 
-var callback_change_target = function(e) {
+Twinkle.talkback.changeTarget = function(e) {
 	var value = e.target.values;
 	var root = e.target.form;
 	var old_area = Morebits.quickForm.getElements(root, 'work_area')[0];
@@ -121,9 +139,11 @@ var callback_change_target = function(e) {
 
 	var work_area = new Morebits.quickForm.element({
 		type: 'field',
-		label: wgULS('回复通告信息', '回覆通告訊息'),
+		label: wgULS('回复通告信息', '回覆通告資訊'),
 		name: 'work_area'
 	});
+
+	root.previewer.closePreview();
 
 	switch (value) {
 		case 'mytalk':
@@ -138,11 +158,12 @@ var callback_change_target = function(e) {
 			work_area.append({
 				type: 'input',
 				name: 'section',
-				label: wgULS('小节（可选）', '小節（可選）'),
-				tooltip: wgULS('您留下消息的小节标题。', '您留下消息的小節標題。'),
+				label: wgULS('章节（可选）', '章節（可選）'),
+				tooltip: wgULS('您留言的章节标题，留空则不会产生章节链接。', '您留言的章節標題，留空則不會產生章節連結。'),
 				value: prev_section
 			});
 			break;
+
 		case 'usertalk':
 			work_area.append({
 				type: 'div',
@@ -153,19 +174,46 @@ var callback_change_target = function(e) {
 			work_area.append({
 				type: 'input',
 				name: 'page',
-				label: '用户',
-				tooltip: wgULS('您留下消息的用户名。', '您留下消息的用戶名。'),
-				value: prev_page
+				label: wgULS('用户（必填）', '使用者（必填）'),
+				tooltip: wgULS('您留言页面的用户名，必填。', '您留言頁面的使用者名稱，必填。'),
+				value: prev_page,
+				required: true
 			});
 
 			work_area.append({
 				type: 'input',
 				name: 'section',
-				label: wgULS('小节（可选）', '小節（可選）'),
-				tooltip: wgULS('您留下消息的小节标题。', '您留下消息的小節標題。'),
+				label: wgULS('章节（可选）', '章節（可選）'),
+				tooltip: wgULS('您留言的章节标题，留空则不会产生章节链接。', '您留言的章節標題，留空則不會產生章節連結。'),
 				value: prev_section
 			});
 			break;
+
+		case 'notice':
+			var noticeboard = work_area.append({
+				type: 'select',
+				name: 'noticeboard',
+				label: '通告板：'
+			});
+
+			$.each(Twinkle.talkback.noticeboards, function(value, data) {
+				noticeboard.append({
+					type: 'option',
+					label: data.label,
+					value: value,
+					selected: !!data.defaultSelected
+				});
+			});
+
+			work_area.append({
+				type: 'input',
+				name: 'section',
+				label: wgULS('章节（可选）', '章節（可選）'),
+				tooltip: wgULS('章节标题，留空则不会产生章节链接。', '章節標題，留空則不會產生章節連結。'),
+				value: prev_section
+			});
+			break;
+
 		case 'other':
 			work_area.append({
 				type: 'div',
@@ -177,24 +225,44 @@ var callback_change_target = function(e) {
 				type: 'input',
 				name: 'page',
 				label: wgULS('完整页面名', '完整頁面名'),
-				tooltip: wgULS('您留下消息的完整页面名，比如“' + Twinkle.getPref('projectNamespaceName') + ' talk:Twinkle”。', '您留下消息的完整頁面名，比如「' + Twinkle.getPref('projectNamespaceName') + ' talk:Twinkle」。'),
-				value: prev_page
+				tooltip: wgULS('您留下消息的完整页面名，比如“Wikipedia talk:Twinkle”。', '您留下消息的完整頁面名，比如「Wikipedia talk:Twinkle」。'),
+				value: prev_page,
+				required: true
 			});
 
 			work_area.append({
 				type: 'input',
 				name: 'section',
-				label: wgULS('小节（可选）', '小節（可選）'),
-				tooltip: wgULS('您留下消息的小节标题。', '您留下消息的小節標題。'),
+				label: wgULS('章节（可选）', '章節（可選）'),
+				tooltip: wgULS('您留言的章节标题，留空则不会产生章节链接。', '您留言的章節標題，留空則不會產生章節連結。'),
 				value: prev_section
 			});
 			break;
+
 		case 'mail':
 			work_area.append({
 				type: 'input',
 				name: 'section',
 				label: wgULS('电子邮件主题（可选）', '電子郵件主題（可選）'),
 				tooltip: wgULS('您发出的电子邮件的主题。', '您發出的電子郵件的主題。')
+			});
+			break;
+
+		case 'see':
+			work_area.append({
+				type: 'input',
+				name: 'page',
+				label: wgULS('完整页面名', '完整頁面名'),
+				tooltip: wgULS('您留下消息的完整页面名，比如“Wikipedia talk:Twinkle”。', '您留下消息的完整頁面名，比如「Wikipedia talk:Twinkle」。'),
+				value: prev_page,
+				required: true
+			});
+			work_area.append({
+				type: 'input',
+				name: 'section',
+				label: wgULS('章节（可选）', '章節（可選）'),
+				tooltip: wgULS('您留言的章节标题，留空则不会产生章节链接。', '您留言的章節標題，留空則不會產生章節連結。'),
+				value: prev_section
 			});
 			break;
 	}
@@ -212,94 +280,69 @@ var callback_change_target = function(e) {
 	$('#twinkle-talkback-optout-message').text(Twinkle.talkback.optout);
 };
 
-var callback_evaluate = function(e) {
+Twinkle.talkback.noticeboards = {
+	'affp': {
+		label: 'WP:AF/FP（' + wgULS('防滥用过滤器/错误报告', '防濫用過濾器/錯誤報告') + '）',
+		title: '過濾器錯誤報告通知',
+		content: '您的過濾器錯誤報告已有回應，請前往查看。--~~~~',
+		editSummary: '有關[[Wikipedia:防滥用过滤器/错误报告]]的通知',
+		defaultSelected: true
+	}
+};
 
-	var tbtarget = e.target.getChecked('tbtarget')[0];
-	var page = null;
-	var section = e.target.section.value;
-	var userName = Morebits.wiki.flow.relevantUserName();
-	var fullUserTalkPageName = mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user_talk] + ':' + userName;
+Twinkle.talkback.evaluate = function(e) {
+	var form = e.target;
+	var tbtarget = form.getChecked('tbtarget')[0];
+	var page, message;
+	var section = form.section.value;
 
-	if (tbtarget === 'usertalk' || tbtarget === 'other') {
-		page = e.target.page.value;
+	var editSummary;
+	if (tbtarget === 'notice') {
+		page = form.noticeboard.value;
+		editSummary = Twinkle.talkback.noticeboards[page].editSummary;
+	} else {
 
-		if (tbtarget === 'usertalk') {
-			if (!page) {
-				alert(wgULS('您必须指定用户名。', '您必須指定用戶名。'));
-				return;
+		// usertalk, other, see
+		page = form.page ? form.page.value : mw.config.get('wgUserName');
+		if (form.message) {
+			message = form.message.value.trim();
+		}
+
+		if (tbtarget === 'mail') {
+			editSummary = wgULS('通知：有新邮件', '通知：有新郵件');
+		} else if (tbtarget === 'see') {
+			editSummary = wgULS('请看看', '請看看') + '[[:' + page + (section ? '#' + section : '') + ']]' + wgULS('上的讨论', '上的討論');
+		} else {  // tbtarget one of mytalk, usertalk, other
+			editSummary = wgULS('回复通告', '回覆通告') + '（[[:';
+			if (tbtarget !== 'other' && !/^\s*user talk:/i.test(page)) {
+				editSummary += 'User talk:';
 			}
-		} else {
-			if (!page) {
-				alert(wgULS('您必须指定页面名。', '您必須指定頁面名。'));
-				return;
-			}
+			editSummary += page + (section ? '#' + section : '') + ']])';
 		}
 	}
 
-	var message;
-	if (e.target.message) {
-		message = e.target.message.value;
-	}
-
 	Morebits.simpleWindow.setButtonsEnabled(false);
-	Morebits.status.init(e.target);
+	Morebits.status.init(form);
+
+	var fullUserTalkPageName = mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user_talk] + ':' + Morebits.wiki.flow.relevantUserName();
 
 	Morebits.wiki.actionCompleted.redirect = fullUserTalkPageName;
 	Morebits.wiki.actionCompleted.notice = wgULS('回复通告完成，将在几秒内刷新', '回覆通告完成，將在幾秒內重新整理');
 
-	var tbPageName = tbtarget === 'mytalk' ? mw.config.get('wgUserName') : page;
-
-	var text;
-	var title, content, editSummary;
-	if (tbtarget === 'mail') {
-		title = Twinkle.getPref('mailHeading');
-		content = "{{you've got mail|subject=" + section + '|ts=~~~~~}}';
-
-		text = '\n\n==' + title + '==\n' + content;
-
-		if (message) {
-			content += '\n' + message.trim();
-			text += '\n' + message.trim() + '--~~~~';
-		} else if (Twinkle.getPref('insertTalkbackSignature')) {
-			text += '\n~~~~';
-		}
-
-		editSummary = wgULS('通知：有新邮件', '通知：有新郵件') + Twinkle.getPref('summaryAd');
-	} else {  // tbtarget one of mytalk, usertalk, other
-		// clean talkback heading: strip section header markers that were erroneously suggested in the documentation
-		title = Twinkle.getPref('talkbackHeading').replace(/^\s*=+\s*(.*?)\s*=+$\s*/, '$1');
-		content = '{{talkback|' + tbPageName;
-
-		if (section) {
-			content += '|' + section;
-		}
-		content += '|target=' + userName + '|ts=~~~~~}}';
-
-		text = '\n\n==' + title + '==\n' + content;
-
-		if (message) {
-			content += '\n' + message.trim();
-			text += '\n' + message.trim() + '--~~~~';
-		} else if (Twinkle.getPref('insertTalkbackSignature')) {
-			text += '\n~~~~';
-		}
-
-		editSummary = wgULS('回复通告（[[', '回覆通告（[[');
-		if (tbtarget !== 'other' && !/^\s*user talk:/i.test(tbPageName)) {
-			editSummary += 'User talk:';
-		}
-		editSummary += tbPageName + (section ? '#' + section : '') + ']]）';
-		editSummary += Twinkle.getPref('summaryAd');
-	}
-
 	Morebits.wiki.flow.check(fullUserTalkPageName, function () {
+		var data = Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message);
+		var title = data[1], content = data[2];
+
 		var flowpage = new Morebits.wiki.flow(fullUserTalkPageName, wgULS('添加回复通告', '加入回覆通告'));
 		flowpage.setTopic(title);
 		flowpage.setContent(content);
 		flowpage.newTopic();
 	}, function () {
+		var text = '\n\n' + Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message)[0];
+
 		var talkpage = new Morebits.wiki.page(fullUserTalkPageName, wgULS('添加回复通告', '加入回覆通告'));
-		talkpage.setEditSummary(editSummary);
+
+		talkpage.setEditSummary(editSummary + Twinkle.getPref('summaryAd'));
 		talkpage.setTags(Twinkle.getPref('revisionTags'));
 		talkpage.setAppendText(text);
 		talkpage.setCreateOption('recreate');
@@ -307,7 +350,62 @@ var callback_evaluate = function(e) {
 		talkpage.setFollowRedirect(true);
 		talkpage.append();
 	});
+};
 
+Twinkle.talkback.preview = function(form) {
+	var tbtarget = form.getChecked('tbtarget')[0];
+	var section = form.section.value;
+	var page, message;
+
+	if (tbtarget === 'notice') {
+		page = form.noticeboard.value;
+	} else {
+		// usertalk, other, see
+		page = form.page ? form.page.value : mw.config.get('wgUserName');
+		if (form.message) {
+			message = form.message.value.trim();
+		}
+	}
+
+	var noticetext = Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message)[0];
+	form.previewer.beginRender(noticetext, 'User_talk:' + Morebits.wiki.flow.relevantUserName()); // Force wikitext/correct username
+};
+
+Twinkle.talkback.getNoticeWikitext = function(tbtarget, page, section, message) {
+	var text;
+	var title, content;
+	if (tbtarget === 'notice') {
+		title = Twinkle.talkback.noticeboards[page].title;
+		content = Morebits.string.safeReplace(Twinkle.talkback.noticeboards[page].content, '$SECTION', section);
+		text = '== ' + title + ' ==\n' + content;
+	} else if (tbtarget === 'see') {
+		title = page + wgULS('的相关讨论', '的相關討論');
+		content = '{{subst:Please see|location=' + page + (section ? '#' + section : '') + '|more=' + message.trim() + '}}';
+		text = '{{subst:Please see|location=' + page + (section ? '#' + section : '') + '|more=' + message.trim() + '}}';
+	} else {
+		text = '==';
+		if (tbtarget === 'mail') {
+			title = Twinkle.getPref('mailHeading');
+			content = "{{You've got mail|subject=" + section + '|ts=~~~~~}}';
+			text += Twinkle.getPref('mailHeading') + '==\n' + "{{You've got mail|subject=" + section;
+		} else {  // tbtarget one of mytalk, usertalk, other
+			// clean talkback heading: strip section header markers that were erroneously suggested in the documentation
+			title = Twinkle.getPref('talkbackHeading').replace(/^\s*=+\s*(.*?)\s*=+$\s*/, '$1');
+			content = '{{talkback|' + page + (section ? '|' + section : '');
+			text += Twinkle.getPref('talkbackHeading').replace(/^\s*=+\s*(.*?)\s*=+$\s*/, '$1') +
+				'==\n' + '{{talkback|' + page + (section ? '|' + section : '');
+		}
+		content += '|ts=~~~~~}}';
+		text += '|ts=~~~~~}}';
+
+		if (message) {
+			content += '\n' + message;
+			text += '\n' + message + '  ~~~~';
+		} else if (Twinkle.getPref('insertTalkbackSignature')) {
+			text += '\n~~~~';
+		}
+	}
+	return [text, title, content];
 };
 
 })(jQuery);
