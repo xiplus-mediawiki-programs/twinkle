@@ -16,7 +16,8 @@ Twinkle.batchdelete = function twinklebatchdelete() {
 	if (
 		Morebits.userIsSysop && (
 			(mw.config.get('wgCurRevisionId') && mw.config.get('wgNamespaceNumber') > 0) ||
-			mw.config.get('wgCanonicalSpecialPageName') === 'Prefixindex'
+			mw.config.get('wgCanonicalSpecialPageName') === 'Prefixindex' ||
+			mw.config.get('wgCanonicalSpecialPageName') === 'BrokenRedirects'
 		)
 	) {
 		Twinkle.addPortletLink(Twinkle.batchdelete.callback, wgULS('批删', '批刪'), 'tw-batch', wgULS('删除此分类或页面中的所有链接', '刪除此分類或頁面中的所有連結'));
@@ -147,6 +148,12 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 				query.gapprefix = pathSplit.join('/');
 			}
 		}
+
+	// On Special:BrokenRedirects
+	} else if (mw.config.get('wgCanonicalSpecialPageName') === 'BrokenRedirects') {
+		query.generator = 'querypage';
+		query.gqppage = 'BrokenRedirects';
+		query.gqplimit = Twinkle.getPref('batchMax');
 
 	// On normal pages
 	} else {

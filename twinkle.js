@@ -431,7 +431,7 @@ Twinkle.load = function () {
 	// they load faster, especially the watchlist.
 	var specialPageWhitelist = [ 'Block', 'Contributions', 'AbuseLog', 'Recentchanges', 'Recentchangeslinked' ]; // wgRelevantUserName defined for non-sysops on Special:Block
 	if (Morebits.userIsSysop) {
-		specialPageWhitelist = specialPageWhitelist.concat([ 'DeletedContributions', 'Prefixindex' ]);
+		specialPageWhitelist = specialPageWhitelist.concat([ 'DeletedContributions', 'Prefixindex', 'BrokenRedirects' ]);
 	}
 	if (mw.config.get('wgNamespaceNumber') === -1 &&
 		specialPageWhitelist.indexOf(mw.config.get('wgCanonicalSpecialPageName')) === -1) {
