@@ -91,6 +91,7 @@ Twinkle.defaultConfig = {
 	speedyWindowWidth: 800,
 	logSpeedyNominations: false,
 	speedyLogPageName: 'CSD日志',
+	speedyLogHead: '',
 	noLogOnSpeedyNomination: [ 'o1' ],
 	enlargeG11Input: false,
 
@@ -186,6 +187,90 @@ switch (mw.config.get('skin')) {
 		Twinkle.defaultConfig.portletType = null;
 		Twinkle.defaultConfig.portletNext = null;
 }
+	
+//替換 speedyLogPageName 的魔術字
+//只檢驗由 twinkleoptions.js 帶入的（因為其他方式帶入的會轉換展開後再帶入，但 twinkleoptions.js 一定要格式正確）
+//可用魔術字：[year] => 年分（四位數），[month] => 月份，[month02] => 月份（二位數），[monthname] => 中文月份，[quarter] => 季數
+
+Twinkle.speedyhead = {}
+
+if (Twinkle.prefs['speedyLogPageName']) {
+	function month02 () {
+		return (new Date().getUTCMonth()+1) < 10) ? ('0' + new Date().getUTCMonth()+1)) : new Date().getUTCMonth()+1)
+	}
+	function monthname () {
+		switch (new Date().getUTCMonth() + 1) {
+			case 1:
+				return '一';
+				break;
+			case 2:
+				return '二';
+				break;
+			case 3:
+				return '三';
+				break;
+			case 4:
+				return '四';
+				break;
+			case 5:
+				return '五';
+				break;
+			case 6:
+				return '六';
+				break;
+			case 7:
+				return '七';
+				break;
+			case 8:
+				return '八';
+				break;
+			case 9:
+				return '九';
+				break;
+			case 10:
+				return '十';
+				break;
+			case 11:
+				return '十一';
+				break;
+			case 12:
+				return '十二';
+				break;
+		}
+	}
+	function quarter () {
+		switch (new Date().getUTCMonth() + 1) {
+			case 1:
+			case 2:
+			case 3:
+				return 1;
+				break;
+			case 4:
+			case 5:
+			case 6:
+				return 2;
+				break;
+			case 7:
+			case 8:
+			case 9:
+				return 3;
+				break;
+			case 10:
+			case 11:
+			case 12:
+				return 4;
+				break;
+		}
+	}
+	var Twinkle.speedyhead.year = Twinkle.prefs['speedyLogPageName'].match('[year]')
+	var Twinkle.speedyhead.month = Twinkle.prefs['speedyLogPageName'].match(/\[month(02|name|)\]/)
+	Twinkle.prefs['speedyLogPageName'] = Twinkle.prefs['speedyLogPageName']
+		.replace('[year]', new Date().getUTCFullYear())
+		.replace('[month]', (new Date().getUTCMonth()+1))
+		.replace('[month02]', month02())
+		.replace('[monthname]', monthname())
+		.replace('[quarter]', quarter())
+}
 
 
 Twinkle.getPref = function twinkleGetPref(name) {
@@ -193,7 +278,7 @@ Twinkle.getPref = function twinkleGetPref(name) {
 	if ($.inArray(name, ['summaryAd', 'deletionSummaryAd', 'protectionSummaryAd', 'blockSummaryAd']) !== -1) {
 		return '';
 	}
-
+//
 	// Old preferences format
 	if (typeof Twinkle.prefs === 'object' && typeof Twinkle.prefs.twinkle === 'object' && Twinkle.prefs.twinkle[name]) {
 		return Twinkle.prefs.twinkle[name];
