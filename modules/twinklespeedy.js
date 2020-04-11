@@ -1328,19 +1328,21 @@ Twinkle.speedy.callbacks = {
 
 			// add blurb if log page doesn't exist
 			if (!pageobj.exists()) {
-				appendText +=
-					'这是该用户使用[[WP:TW|Twinkle]]的速删模块做出的[[WP:CSD|快速删除]]提名列表。\n\n' +
-					'如果您不再想保留此日志，请在[[' + Twinkle.getPref('configPage') + '|参数设置]]中关掉，并' +
-					'使用[[WP:CSD#O1|CSD O1]]提交快速删除。\n';
-				if (Morebits.userIsSysop) {
-					appendText += '\n此日志并不记录用Twinkle直接执行的删除。\n';
+				if (Twinkle.getPref('speedyLogHead') !== '') {
+					appendText += Twinkle.getPref('speedyLogHead')
+				} else {
+					appendText += '这是该用户使用[[WP:TW|Twinkle]]的速删-{zh-hans:模块;zh-hant:模組}-做出的[[WP:CSD|快速删除]]提名列表。\n\n' + 
+						'如果您不再想保留此日志，请在[[' + Twinkle.getPref('configPage') + '|参数设置]]中关掉，并使用[[WP:CSD#O1|CSD O1]]提交快速删除。\n'
+					if (Morebits.userIsSysop) {
+						appendText += '\n此日志并不记录用Twinkle直接执行的删除。\n';
+					}
 				}
 			}
 
 			// create monthly header
 			var date = new Date(pageobj.getLoadTime());
 			var headerRe = new RegExp('^==+\\s*' + date.getUTCFullYear() + '\\s*年\\s*' + (date.getUTCMonth() + 1) + '\\s*月\\s*==+', 'm');
-			if (!headerRe.exec(text)) {
+			if (!headerRe.exec(text) && !Twinkle.getPref('speedyLogTitle')) {
 				appendText += '\n\n=== ' + date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月 ===';
 			}
 
@@ -1369,7 +1371,7 @@ Twinkle.speedy.callbacks = {
 			if (params.logInitialContrib) {
 				appendText += '；通知{{user|' + params.logInitialContrib + '}}';
 			}
-			appendText += ' ~~~~~\n';
+			appendText += ' {{subst:' + '5~}}\n';
 
 			pageobj.setAppendText(appendText);
 			pageobj.setEditSummary(wgULS('记录对[[', '記錄對[[') + Morebits.pageNameNorm + wgULS(']]的快速删除提名', ']]的快速刪除提名') + Twinkle.getPref('summaryAd'));
