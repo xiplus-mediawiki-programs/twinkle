@@ -466,7 +466,13 @@ Twinkle.config.sections = [
 			{
 				name: 'speedyLogPageName',
 				label: wgULS('在此页保留日志', '在此頁保留日誌'),
-				helptip: wgULS('在此框中输入子页面名称，您将在User:<i>用户名</i>/<i>子页面</i>找到CSD日志。仅在打开日志时工作。', '在此框中輸入子頁面名稱，您將在User:<i>用戶名</i>/<i>子頁面</i>找到CSD日誌。僅在開啟日誌時工作。'),
+				helptip: wgULS('在此框中输入子页面名称，您将在User:<i>用户名/<i>子页面找到CSD日志。您可以使用以下变数设定存档位置：[year] => 年分（四位数），[month] => 月份，[month02] => 月份（二位数），[monthname] => 中文月份，[quarter] => 季数。仅在开启日志时工作。', '在此框中輸入子頁面名稱，您將在User:<i>用戶名</i>/<i>子頁面</i>找到CSD日誌。您可以使用以下變數設定存檔位置：[year] => 年分（四位數），[month] => 月份，[month02] => 月份（二位數），[monthname] => 中文月份，[quarter] => 季數。僅在開啟日誌時工作。'),
+				type: 'string'
+			},
+			{
+				name: 'speedyLogHead',
+				label: wgULS('自訂日志头部', '自訂日誌頭部'),
+				helptip: wgULS('您可以用自订文字（例如日志索引）来覆盖掉预设的日志头部。仅在打开日志时工作。', '您可以用自訂文字（例如日誌索引）來覆蓋掉預設的日誌頭部。僅在開啟日誌時工作。'),
 				type: 'string'
 			},
 			{
@@ -739,7 +745,7 @@ Twinkle.config.sections = [
 			{
 				name: 'markXfdPagesAsPatrolled',
 				label: wgULS('标记时标记页面为已巡查（如可能）', '標記時標記頁面為已巡查（如可能）'),
-				helptip: wgULS('基于技术原因，页面仅会在由Special:NewPages到达时被标记为已巡查。', '基於技術原因，頁面僅會在由Special:NewPages到達時被標記為已巡查。'),
+				helptip: wgULS('基于技术原因，页面仅会在由[[Special:NewPages]]到达时被标记为已巡查。', '基於技術原因，頁面僅會在由[[Special:NewPages]]到達時被標記為已巡查。'),
 				type: 'boolean'
 			},
 
