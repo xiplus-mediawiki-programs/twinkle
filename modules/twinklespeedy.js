@@ -1342,8 +1342,15 @@ Twinkle.speedy.callbacks = {
 			// create monthly header
 			var date = new Date(pageobj.getLoadTime());
 			var headerRe = new RegExp('^==+\\s*' + date.getUTCFullYear() + '\\s*年\\s*' + (date.getUTCMonth() + 1) + '\\s*月\\s*==+', 'm');
-			if (!headerRe.exec(text) && !Twinkle.getPref('speedyLogTitle')) {
-				appendText += '\n\n=== ' + date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月 ===';
+			var title = ''
+			if (!Twinkle.speedyhead.year){
+				title += date.getUTCFullYear() + '年';
+			}
+			if (!Twinkle.speedyhead.month){
+				title += (date.getUTCMonth() + 1) + '月';
+			}
+			if (!headerRe.exec(text) && title !== '') {
+				appendText += '\n\n=== ' + title + ' ===';
 			}
 
 			appendText += '\n# [[:' + Morebits.pageNameNorm + ']]: ';
