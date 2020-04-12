@@ -262,8 +262,8 @@ if (Twinkle.prefs['speedyLogPageName']) {
 				break;
 		}
 	}
-	var Twinkle.speedyhead.year = Twinkle.prefs['speedyLogPageName'].match('[year]')
-	var Twinkle.speedyhead.month = Twinkle.prefs['speedyLogPageName'].match(/\[month(02|name|)\]/)
+	Twinkle.speedyhead.year = Twinkle.prefs['speedyLogPageName'].match('[year]')
+	Twinkle.speedyhead.month = Twinkle.prefs['speedyLogPageName'].match(/\[month(02|name|)\]/)
 	Twinkle.prefs['speedyLogPageName'] = Twinkle.prefs['speedyLogPageName']
 		.replace('[year]', new Date().getUTCFullYear())
 		.replace('[month]', (new Date().getUTCMonth()+1))
@@ -278,7 +278,7 @@ Twinkle.getPref = function twinkleGetPref(name) {
 	if ($.inArray(name, ['summaryAd', 'deletionSummaryAd', 'protectionSummaryAd', 'blockSummaryAd']) !== -1) {
 		return '';
 	}
-//
+
 	// Old preferences format
 	if (typeof Twinkle.prefs === 'object' && typeof Twinkle.prefs.twinkle === 'object' && Twinkle.prefs.twinkle[name]) {
 		return Twinkle.prefs.twinkle[name];
