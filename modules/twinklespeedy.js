@@ -728,7 +728,7 @@ Twinkle.speedy.generalList = [
 	{
 		label: wgULS('G8: 因技术原因删除页面', 'G8: 因技術原因刪除頁面'),
 		value: 'g8',
-		tooltip: wgULS('包括解封用户后删除用户页、因用户夺取而删除、删除MediaWiki页面、因移动请求而删除页面。', '包括解封使用者後刪除使用者頁面、因使用者奪取而刪除、刪除無用的MediaWiki頁面、因移動請求而刪除頁面。'),
+		tooltip: wgULS('包括解封用户后删除用户页、因用户夺取而删除、删除MediaWiki页面、因移动请求而删除页面、以覆盖删除重定向。', '包括解封使用者後刪除使用者頁面、因使用者奪取而刪除、刪除無用的MediaWiki頁面、因移動請求而刪除頁面、以覆寫刪除重新導向。'),
 		hideWhenUser: true
 	},
 	{
