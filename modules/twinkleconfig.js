@@ -466,7 +466,7 @@ Twinkle.config.sections = [
 			{
 				name: 'speedyLogPageName',
 				label: wgULS('在此页保留日志', '在此頁保留日誌'),
-				helptip: wgULS('在此框中输入子页面名称，您将在User:<i>用户名/<i>子页面找到CSD日志。您可以使用以下变数设定存档位置：[year] => 年分（四位数），[month] => 月份，[month02] => 月份（二位数），[monthname] => 中文月份，[quarter] => 季数。仅在开启日志时工作。', '在此框中輸入子頁面名稱，您將在User:<i>用戶名</i>/<i>子頁面</i>找到CSD日誌。您可以使用以下變數設定存檔位置：[year] => 年分（四位數），[month] => 月份，[month02] => 月份（二位數），[monthname] => 中文月份，[quarter] => 季數。僅在開啟日誌時工作。'),
+				helptip: wgULS('在此框中输入子页面名称，您将在User:<i>用户名</i>/<i>子页面</i>找到CSD日志。您可以使用以下变数设定存档位置：[year] => 年分（四位数），[month] => 月份，[month02] => 月份（二位数），[monthname] => 中文月份，[quarter] => 季数。仅在开启日志时工作。', '在此框中輸入子頁面名稱，您將在User:<i>用戶名</i>/<i>子頁面</i>找到CSD日誌。您可以使用以下變數設定存檔位置：[year] => 年分（四位數），[month] => 月份，[month02] => 月份（二位數），[monthname] => 中文月份，[quarter] => 季數。僅在開啟日誌時工作。'),
 				type: 'string'
 			},
 			{
