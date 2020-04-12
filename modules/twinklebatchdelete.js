@@ -189,7 +189,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 			}
 			if (isProtected) {
 				metadata.push(wgULS('全保护，', '全保護，') +
-					($editprot.attr('expiry') === 'infinity' ? wgULS('无限期', '無限期') : wgULS('过期时间', '過期時間') + $editprot.attr('expiry')));
+					($editprot.attr('expiry') === 'infinity' ? wgULS('无限期', '無限期') : new Morebits.date($editprot.attr('expiry')).calendar('utc') + ' (UTC)') + wgULS('过期', '過期'));
 			}
 			if (ns === '6') {  // mimic what delimages used to show for files
 				metadata.push(wgULS('上传者：', '上傳者：') + $page.find('ii').attr('user'));
@@ -367,7 +367,7 @@ Twinkle.batchdelete.callback.toggleSubpages = function twDbatchToggleSubpages(e)
 					}
 					if (isProtected) {
 						metadata.push(wgULS('全保护，', '全保護，') +
-							($editprot.attr('expiry') === 'infinity' ? wgULS('无限期', '無限期') : wgULS('过期时间', '過期時間') + $editprot.attr('expiry')));
+							($editprot.attr('expiry') === 'infinity' ? wgULS('无限期', '無限期') : new Morebits.date($editprot.attr('expiry')).calendar('utc') + ' (UTC)') + wgULS('过期', '過期'));
 					}
 					if (ns === '6') {  // mimic what delimages used to show for files
 						metadata.push(wgULS('上传者：', '上傳者：') + $page.find('ii').attr('user'));

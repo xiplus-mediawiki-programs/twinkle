@@ -73,7 +73,7 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 			var isProtected = $editprot.length > 0;
 
 			list.push({
-				label: title + (isProtected ? wgULS('全保护，', '全保護，') + ($editprot.attr('expiry') === 'infinity' ? wgULS('无限期', '無限期') : wgULS('过期时间', '過期時間') + $editprot.attr('expiry')) + '）' : ''),
+				label: title + (isProtected ? '（' + wgULS('全保护，', '全保護，') + ($editprot.attr('expiry') === 'infinity' ? wgULS('无限期', '無限期') : new Morebits.date($editprot.attr('expiry')).calendar('utc') + ' (UTC)' + wgULS('过期', '過期')) + '）' : ''),
 				value: title,
 				checked: true,
 				style: isProtected ? 'color:red' : ''
