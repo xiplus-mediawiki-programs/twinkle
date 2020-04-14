@@ -661,7 +661,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	switch (type) {
 
 		case 'afd': // AFD
-			logpage = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD');
+			logpage = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
 			params = { usertalk: usertalk, xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, fwdcsdreason: fwdcsdreason, logpage: logpage };
 
 			Morebits.wiki.addCheckpoint();
@@ -680,7 +680,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 			break;
 
 		case 'ffd': // FFD
-			logpage = 'Wikipedia:檔案存廢討論/記錄/' + date.format('YYYY/MM/DD');
+			logpage = 'Wikipedia:檔案存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
 			params = { usertalk: usertalk, reason: reason, logpage: logpage };
 
 			Morebits.wiki.addCheckpoint();
@@ -783,7 +783,7 @@ Twinkle.xfd.aprilfool.evaluate = function(e) {
 	var wikipedia_page, logpage, params;
 	var date = new Morebits.date();
 
-	logpage = 'Wikipedia:頁面存廢和諧討論/記錄/' + date.format('YYYY') + '/04/01';
+	logpage = 'Wikipedia:頁面存廢和諧討論/記錄/' + date.format('YYYY', 'utc') + '/04/01';
 	params = { xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, logpage: logpage };
 
 	Morebits.wiki.addCheckpoint();
