@@ -2070,7 +2070,7 @@ Twinkle.warn.callbacks = {
 		var params = pageobj.getCallbackParameters();
 		var messageData = params.messageData;
 
-		var history_re = /<!-- Template:(uw-.*?) -->.*?(\d{4})年(\d{1,2})月(\d{1,2})日 \([日一二三四五六]\) (\d{1,2}):(\d{1,2}) \(UTC\)/g;
+		var history_re = /<!--\s?Template:([uU]w-.*?)\s?-->.*?(\d{4})年(\d{1,2})月(\d{1,2})日 \([日一二三四五六]\) (\d{1,2}):(\d{1,2}) \(UTC\)/g;
 		var history = {};
 		var latest = { date: new Morebits.date(0), type: '' };
 		var current;
