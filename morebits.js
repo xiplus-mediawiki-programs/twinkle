@@ -3728,11 +3728,11 @@ Morebits.wiki.flow = function(pageName, currentAction) {
 	}
 
 	/**
-     * Private context variables
-     *
-     * This context is not visible to the outside, thus all the data here
-     * must be accessed via getter and setter functions.
-     */
+	 * Private context variables
+	 *
+	 * This context is not visible to the outside, thus all the data here
+	 * must be accessed via getter and setter functions.
+	 */
 	var ctx = {
 		// backing fields for public properties
 		pageName: pageName,
@@ -3772,8 +3772,8 @@ Morebits.wiki.flow = function(pageName, currentAction) {
 	var emptyFunction = function() { };
 
 	/**
-     * Public interface accessors
-     */
+	 * Public interface accessors
+	 */
 	this.getPageName = function() {
 		return ctx.pageName;
 	};
@@ -3800,6 +3800,18 @@ Morebits.wiki.flow = function(pageName, currentAction) {
 
 	this.setContent = function(content) {
 		ctx.content = content;
+	};
+
+	this.setCallbackParameters = function(callbackParameters) {
+		ctx.callbackParameters = callbackParameters;
+	};
+
+	this.getCallbackParameters = function() {
+		return ctx.callbackParameters;
+	};
+
+	this.getStatusElement = function() {
+		return ctx.statusElement;
 	};
 
 
@@ -3871,9 +3883,9 @@ Morebits.wiki.flow = function(pageName, currentAction) {
 
 
 	/* Private member functions
-     *
-     * These are not exposed outside
-     */
+	 *
+	 * These are not exposed outside
+	 */
 
 	// callback from newTopicApi.post()
 	var fnNewTopicSuccess = function() {
