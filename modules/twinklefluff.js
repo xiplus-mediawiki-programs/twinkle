@@ -54,7 +54,7 @@ Twinkle.fluff = function twinklefluff() {
 			mw.hook('wikipage.diff').add(function () { // Reload alongside the revision slider
 				Twinkle.fluff.addLinks.diff();
 			});
-		} else if (mw.config.get('wgAction') === 'view' && mw.config.get('wgCurRevisionId') !== mw.config.get('wgRevisionId')) {
+		} else if (mw.config.get('wgAction') === 'view' && mw.config.get('wgRevisionId') !== 0 && mw.config.get('wgCurRevisionId') !== mw.config.get('wgRevisionId')) {
 			Twinkle.fluff.addLinks.oldid();
 		}
 	} else if (
