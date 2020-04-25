@@ -165,13 +165,37 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		type: 'div',
 		label: '',
 		style: 'color: red',
-		id: 'twinkle-warn-olddiff-message'
+		id: 'twinkle-warn-revert-messages'
 	});
 
-	// Confirm edit wasn't too old for a warning
 	var vanrevid = mw.util.getParamValue('vanarticlerevid');
 	if (vanrevid) {
-		var query = {
+		var message = '';
+		var query = {};
+
+		// If you tried reverting, check if *you* actually reverted
+		if (!mw.util.getParamValue('noautowarn') && mw.util.getParamValue('vanarticle')) { // Via fluff link
+			query = {
+				action: 'query',
+				titles: mw.util.getParamValue('vanarticle'),
+				prop: 'revisions',
+				rvstartid: vanrevid,
+				rvlimit: 2,
+				rvdir: 'newer',
+				rvprop: 'user'
+			};
+
+			new Morebits.wiki.api(wgULS('检查您是否成功回退该页面', '檢查您是否成功回退該頁面'), query, function(apiobj) {
+				var revertUser = $(apiobj.getResponse()).find('revisions rev')[1].getAttribute('user');
+				if (revertUser && revertUser !== mw.config.get('wgUserName')) {
+					message += wgULS('其他人回退了该页面，并可能已经警告该用户。', '其他人回退了該頁面，並可能已經警告該使用者。');
+					$('#twinkle-warn-revert-messages').text('注意：' + message);
+				}
+			}).post();
+		}
+
+		// Confirm edit wasn't too old for a warning
+		query = {
 			action: 'query',
 			prop: 'revisions',
 			rvprop: 'timestamp',
@@ -182,7 +206,8 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 			var revDate = new Morebits.date(vantimestamp);
 			if (vantimestamp && revDate.isValid()) {
 				if (revDate.add(24, 'hours').isBefore(new Date())) {
-					$('#twinkle-warn-olddiff-message').text(wgULS('注意：这笔编辑是在24小时前做出的，现在警告可能已过时。', '注意：這筆編輯是在24小時前做出的，現在警告可能已過時。'));
+					message += wgULS('这笔编辑是在24小时前做出的，现在警告可能已过时。', '這筆編輯是在24小時前做出的，現在警告可能已過時。');
+					$('#twinkle-warn-revert-messages').text('注意：' + message);
 				}
 			}
 		}).post();
