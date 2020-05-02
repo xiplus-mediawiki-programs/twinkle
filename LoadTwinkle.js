@@ -69,7 +69,7 @@ tests.push({ name: 'modules/twinklestub.js', test: true });
 tests.push({ name: 'modules/twinkleunlink.js', test: true });
 tests.push({ name: 'modules/twinklexfd.js', test: true });
 
-mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.notify', 'mediawiki.Title', 'jquery.ui', 'jquery.tipsy', 'jquery.chosen']).done(function () {
+mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.Title', 'jquery.ui', 'jquery.tipsy', 'jquery.chosen']).done(function () {
 	mw.loader.load('https://zh.wikipedia.org/w/index.php?title=User:Xiplus/Twinkle/morebits.css&action=raw&ctype=text/css', 'text/css');
 	mw.loader.load('https://zh.wikipedia.org/w/index.php?title=User:Xiplus/Twinkle/select2.min.css&action=raw&ctype=text/css', 'text/css');
 	mw.loader.load('https://zh.wikipedia.org/w/index.php?title=User:Xiplus/Twinkle/twinkle.css&action=raw&ctype=text/css', 'text/css');
