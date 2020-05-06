@@ -207,6 +207,7 @@ Twinkle.config.sections = [
 				name: 'disabledSysopModules',
 				label: wgULS('关闭指定的Twinkle管理员模块', '關閉指定的Twinkle管理員模組'),
 				helptip: wgULS('您在此选择的功能将无法使用，取消选择以重新激活功能。', '您在此選擇的功能將無法使用，取消選擇以重新啟用功能。'),
+				adminOnly: true,
 				type: 'set',
 				setValues: { block: wgULS('封禁', '封鎖'), batchdelete: wgULS('批删', '批刪'), batchundelete: wgULS('批复', '批復') }
 			}
