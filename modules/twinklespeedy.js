@@ -1354,37 +1354,14 @@ Twinkle.speedy.callbacks = {
 		//   for CSD: params.values, params.normalizeds  (note: normalizeds is an array)
 		//   for DI: params.fromDI = true, params.templatename, params.normalized  (note: normalized is a string)
 		addToLog: function(params, initialContrib) {
-			var wikipedia_page = new Morebits.wiki.page('User:' + mw.config.get('wgUserName') + '/' + Twinkle.getPref('speedyLogPageName'), wgULS('添加项目到用户日志', '加入項目到用戶日誌'));
-			params.logInitialContrib = initialContrib;
-			wikipedia_page.setFollowRedirect(true);
-			wikipedia_page.setCallbackParameters(params);
-			wikipedia_page.load(Twinkle.speedy.callbacks.user.saveLog);
-		},
+			var usl = new Morebits.userspaceLogger(Twinkle.getPref('speedyLogPageName'));
+			usl.initialText =
+				'这是该用户使用[[WP:TW|Twinkle]]的速删模块做出的[[WP:CSD|快速删除]]提名列表。\n\n' +
+				'如果您不再想保留此日志，请在[[' + Twinkle.getPref('configPage') + '|参数设置]]中关掉，并' +
+				'使用[[WP:CSD#O1|CSD O1]]提交快速删除。' +
+				(Morebits.userIsSysop ? '\n\n此日志并不记录用Twinkle直接执行的删除。' : '');
 
-		saveLog: function(pageobj) {
-			var text = pageobj.getPageText();
-			var params = pageobj.getCallbackParameters();
-
-			var appendText = '';
-
-			// add blurb if log page doesn't exist
-			if (!pageobj.exists()) {
-				appendText +=
-					'这是该用户使用[[WP:TW|Twinkle]]的速删模块做出的[[WP:CSD|快速删除]]提名列表。\n\n' +
-					'如果您不再想保留此日志，请在[[' + Twinkle.getPref('configPage') + '|参数设置]]中关掉，并' +
-					'使用[[WP:CSD#O1|CSD O1]]提交快速删除。\n';
-				if (Morebits.userIsSysop) {
-					appendText += '\n此日志并不记录用Twinkle直接执行的删除。\n';
-				}
-			}
-
-			// create monthly header
-			var date = new Morebits.date(pageobj.getLoadTime());
-			if (!date.monthHeaderRegex().test(text)) {
-				appendText += '\n\n' + date.monthHeader(3);
-			}
-
-			appendText += '\n# [[:' + Morebits.pageNameNorm + ']]: ';
+			var appendText = '# [[:' + Morebits.pageNameNorm + ']]: ';
 			if (params.fromDI) {
 				if (params.normalized === 'f3 f4') {
 					appendText += '图版[[WP:CSD#F3|CSD F3]]+[[WP:CSD#F4|CSD F4]]（{{tl|no source no license/auto}}）';
@@ -1406,16 +1383,12 @@ Twinkle.speedy.callbacks = {
 				}
 			}
 
-			if (params.logInitialContrib) {
-				appendText += '；通知{{user|' + params.logInitialContrib + '}}';
+			if (initialContrib) {
+				appendText += '；通知{{user|' + initialContrib + '}}';
 			}
 			appendText += ' ~~~~~\n';
 
-			pageobj.setAppendText(appendText);
-			pageobj.setEditSummary(wgULS('记录对[[', '記錄對[[') + Morebits.pageNameNorm + wgULS(']]的快速删除提名', ']]的快速刪除提名') + Twinkle.getPref('summaryAd'));
-			pageobj.setTags(Twinkle.getPref('revisionTags'));
-			pageobj.setCreateOption('recreate');
-			pageobj.append();
+			usl.log(appendText, wgULS('记录对[[', '記錄對[[') + Morebits.pageNameNorm + wgULS(']]的快速删除提名', ']]的快速刪除提名') + Twinkle.getPref('summaryAd'));
 		}
 	}
 };

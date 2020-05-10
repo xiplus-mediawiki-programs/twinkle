@@ -4324,6 +4324,43 @@ Morebits.wikitext.page.prototype = {
 };
 
 /**
+ * *********** Morebits.userspaceLogger ************
+ * Handles logging actions to a userspace log, used in
+ * twinklespeedy and twinkleprod.
+ */
+
+Morebits.userspaceLogger = function(logPageName) {
+	if (!logPageName) {
+		throw new Error(wgULS('未指定日志页面名称', '未指定日誌頁面名稱'));
+	}
+	this.initialText = '';
+	this.headerLevel = 3;
+
+	this.log = function(logText, summaryText) {
+		if (!logText) {
+			return;
+		}
+		var page = new Morebits.wiki.page('User:' + mw.config.get('wgUserName') + '/' + logPageName,
+			wgULS('将项目加入到用户空间日志', '將項目加入到使用者空間日誌')); // make this '... to ' + logPageName ?
+		return page.load(function(pageobj) {
+			// add blurb if log page doesn't exist or is blank
+			var text = pageobj.getPageText() || this.initialText;
+
+			// create monthly header if it doesn't exist already
+			var date = new Morebits.date(pageobj.getLoadTime());
+			if (!date.monthHeaderRegex().exec(text)) {
+				text += '\n\n' + date.monthHeader(this.headerLevel);
+			}
+
+			pageobj.setPageText(text + '\n' + logText);
+			pageobj.setEditSummary(summaryText);
+			pageobj.setCreateOption('recreate');
+			pageobj.save();
+		}.bind(this));
+	};
+};
+
+/**
  * **************** Morebits.status ****************
  */
 
