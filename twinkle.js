@@ -387,7 +387,7 @@ $.ajax({
 	dataType: 'text'
 })
 	.fail(function () {
-		mw.notify('未能加载twinkleoptions.js');
+		mw.notify(wgULS('未能加载您的Twinkle参数设置', '未能載入您的Twinkle偏好設定'), {type: 'error'});
 	})
 	.done(function (optionsText) {
 
@@ -416,7 +416,7 @@ $.ajax({
 				Twinkle.prefs.optionsVersion = Twinkle.prefs.optionsVersion || 1;
 			}
 		} catch (e) {
-			mw.notify('未能解析twinkleoptions.js');
+			mw.notify(wgULS('未能解析您的Twinkle参数设置', '未能解析您的Twinkle偏好設定'), {type: 'error'});
 		}
 	})
 	.always(function () {
