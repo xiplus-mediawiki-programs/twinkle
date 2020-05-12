@@ -441,8 +441,8 @@ Twinkle.fluff.userIpLink = function(user) {
 
 Twinkle.fluff.callbacks = {
 	toRevision: {
-		main: function(self) {
-			var xmlDoc = self.responseXML;
+		main: function(apiobj) {
+			var xmlDoc = apiobj.responseXML;
 
 			var lastrevid = parseInt($(xmlDoc).find('page').attr('lastrevid'), 10);
 			var touched = $(xmlDoc).find('page').attr('touched');
@@ -451,14 +451,14 @@ Twinkle.fluff.callbacks = {
 			var revertToRevID = $(xmlDoc).find('rev').attr('revid');
 			var revertToUser = $(xmlDoc).find('rev').attr('user');
 
-			if (revertToRevID !== self.params.rev) {
-				self.statelem.error(wgULS('抓取到的修订版本与请求的修订版本不符，取消。', '抓取到的修訂版本與請求的修訂版本不符，取消。'));
+			if (revertToRevID !== apiobj.params.rev) {
+				apiobj.statelem.error(wgULS('抓取到的修订版本与请求的修订版本不符，取消。', '抓取到的修訂版本與請求的修訂版本不符，取消。'));
 				return;
 			}
 
-			var optional_summary = prompt(wgULS('请输入回退理由：', '請輸入回退理由：') + '                                ', self.params.summary);  // padded out to widen prompt in Firefox
+			var optional_summary = prompt(wgULS('请输入回退理由：', '請輸入回退理由：') + '                                ', apiobj.params.summary);  // padded out to widen prompt in Firefox
 			if (optional_summary === null) {
-				self.statelem.error(wgULS('由用户取消。', '由使用者取消。'));
+				apiobj.statelem.error(wgULS('由用户取消。', '由使用者取消。'));
 				return;
 			}
 			var summary = Twinkle.fluff.formatSummary(wgULS('回退到由$USER做出的修订版本', '回退到由$USER做出的修訂版本') + revertToRevID, revertToUser, optional_summary);
@@ -483,14 +483,14 @@ Twinkle.fluff.callbacks = {
 			}
 			Morebits.wiki.actionCompleted.notice = wgULS('修订版本完成', '修訂版本完成');
 
-			var wikipedia_api = new Morebits.wiki.api(wgULS('保存回退内容', '儲存回退內容'), query, Twinkle.fluff.callbacks.complete, self.statelem);
-			wikipedia_api.params = self.params;
+			var wikipedia_api = new Morebits.wiki.api(wgULS('保存回退内容', '儲存回退內容'), query, Twinkle.fluff.callbacks.complete, apiobj.statelem);
+			wikipedia_api.params = apiobj.params;
 			wikipedia_api.post();
 
 		}
 	},
-	main: function(self) {
-		var xmlDoc = self.responseXML;
+	main: function(apiobj) {
+		var xmlDoc = apiobj.responseXML;
 
 		var lastrevid = parseInt($(xmlDoc).find('page').attr('lastrevid'), 10);
 		var touched = $(xmlDoc).find('page').attr('touched');
@@ -500,33 +500,36 @@ Twinkle.fluff.callbacks = {
 
 		var revs = $(xmlDoc).find('rev');
 
+		var statelem = apiobj.statelem;
+		var params = apiobj.params;
+
 		if (revs.length < 1) {
-			self.statelem.error(wgULS('没有其它修订版本，无法回退', '沒有其它修訂版本，無法回退'));
+			statelem.error(wgULS('没有其它修订版本，无法回退', '沒有其它修訂版本，無法回退'));
 			return;
 		}
 		var top = revs[0];
-		if (lastrevid < self.params.revid) {
+		if (lastrevid < params.revid) {
 			Morebits.status.error(wgULS('错误', '錯誤'), wgULS([ '从服务器获取的最新修订版本ID ', Morebits.htmlNode('strong', lastrevid), ' 小于目前所显示的修订版本ID。这可能意味着当前修订版本已被删除、服务器延迟、或抓取到了坏掉的信息。取消。' ], [ '從伺服器取得的最新修訂版本ID ', Morebits.htmlNode('strong', lastrevid), ' 小於目前所顯示的修訂版本ID。這可能意味著當前修訂版本已被刪除、伺服器延遲、或擷取到了壞掉的資訊。取消。' ]));
 			return;
 		}
 		var index = 1;
-		if (self.params.revid !== lastrevid) {
-			Morebits.status.warn('警告', wgULS([ '最新修订版本 ', Morebits.htmlNode('strong', lastrevid), ' 与我们的修订版本 ', Morebits.htmlNode('strong', self.params.revid), '不等' ], [ '最新修訂版本 ', Morebits.htmlNode('strong', lastrevid), ' 與我們的修訂版本 ', Morebits.htmlNode('strong', self.params.revid), ' 不等' ]));
-			if (lastuser === self.params.user) {
-				switch (self.params.type) {
+		if (params.revid !== lastrevid) {
+			Morebits.status.warn('警告', wgULS([ '最新修订版本 ', Morebits.htmlNode('strong', lastrevid), ' 与我们的修订版本 ', Morebits.htmlNode('strong', params.revid), '不等' ], [ '最新修訂版本 ', Morebits.htmlNode('strong', lastrevid), ' 與我們的修訂版本 ', Morebits.htmlNode('strong', params.revid), ' 不等' ]));
+			if (lastuser === params.user) {
+				switch (params.type) {
 					case 'vand':
-						Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，因我们假定破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，因我們假定破壞，繼續回退操作。' ]));
+						Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，因我们假定破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，因我們假定破壞，繼續回退操作。' ]));
 						break;
 					case 'agf':
-						Morebits.status.warn('警告', wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，因我们假定善意，取消回退操作，因为问题可能已被修复。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，因我們假定善意，取消回退操作，因為問題可能已被修復。' ]));
+						Morebits.status.warn('警告', wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，因我们假定善意，取消回退操作，因为问题可能已被修复。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，因我們假定善意，取消回退操作，因為問題可能已被修復。' ]));
 						return;
 					default:
-						Morebits.status.warn('提示', wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，但我们还是不回退了。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', self.params.user), ' 做出，但我們還是不回退了。' ]));
+						Morebits.status.warn('提示', wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，但我们还是不回退了。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，但我們還是不回退了。' ]));
 						return;
 				}
-			} else if (self.params.type === 'vand' &&
+			} else if (params.type === 'vand' &&
 					Twinkle.fluff.whiteList.indexOf(top.getAttribute('user')) !== -1 && revs.length > 1 &&
-					revs[1].getAttribute('pageId') === self.params.revid) {
+					revs[1].getAttribute('pageId') === params.revid) {
 				Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', lastuser), '，一个可信的机器人做出，之前的版本被认为是破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', lastuser), '，一個可信的機器人做出，之前的版本被認為是破壞，繼續回退操作。' ]));
 				index = 2;
 			} else {
@@ -536,26 +539,26 @@ Twinkle.fluff.callbacks = {
 
 		}
 
-		if (Twinkle.fluff.whiteList.indexOf(self.params.user) !== -1) {
-			switch (self.params.type) {
+		if (Twinkle.fluff.whiteList.indexOf(params.user) !== -1) {
+			switch (params.type) {
 				case 'vand':
-					Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '将对 ', Morebits.htmlNode('strong', self.params.user), ' 执行破坏回退，这是一个可信的机器人，我们假定您要回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', self.params.user), ' 執行破壞回退，這是一個可信的機器人，我們假定您要回退前一個修訂版本。' ]));
+					Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行破坏回退，这是一个可信的机器人，我们假定您要回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行破壞回退，這是一個可信的機器人，我們假定您要回退前一個修訂版本。' ]));
 					index = 2;
-					self.params.user = revs[1].getAttribute('user');
+					params.user = revs[1].getAttribute('user');
 					break;
 				case 'agf':
-					Morebits.status.warn('提示', wgULS([ '将对 ', Morebits.htmlNode('strong', self.params.user), ' 执行善意回退，这是一个可信的机器人，取消回退操作。' ], [ '將對 ', Morebits.htmlNode('strong', self.params.user), ' 執行善意回退，這是一個可信的機器人，取消回退操作。' ]));
+					Morebits.status.warn('提示', wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行善意回退，这是一个可信的机器人，取消回退操作。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行善意回退，這是一個可信的機器人，取消回退操作。' ]));
 					return;
 				case 'norm':
 				/* falls through */
 				default:
-					var cont = confirm(wgULS('选择了常规回退，但最新修改是由一个可信的机器人（' + self.params.user + '）做出的。您是否想回退前一个修订版本？', '選擇了常規回退，但最新修改是由一個可信的機器人（' + self.params.user + '）做出的。您是否想回退前一個修訂版本？'));
+					var cont = confirm(wgULS('选择了常规回退，但最新修改是由一个可信的机器人（' + params.user + '）做出的。您是否想回退前一个修订版本？', '選擇了常規回退，但最新修改是由一個可信的機器人（' + params.user + '）做出的。您是否想回退前一個修訂版本？'));
 					if (cont) {
-						Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '将对 ', Morebits.htmlNode('strong', self.params.user), ' 执行常规回退，这是一个可信的机器人，基于确认，我们将回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', self.params.user), ' 執行常規回退，這是一個可信的機器人，基於確認，我們將回退前一個修訂版本。' ]));
+						Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行常规回退，这是一个可信的机器人，基于确认，我们将回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行常規回退，這是一個可信的機器人，基於確認，我們將回退前一個修訂版本。' ]));
 						index = 2;
-						self.params.user = revs[1].getAttribute('user');
+						params.user = revs[1].getAttribute('user');
 					} else {
-						Morebits.status.warn('提示', wgULS([ '将对 ', Morebits.htmlNode('strong', self.params.user), ' 执行常规回退，这是一个可信的机器人，基于确认，我们仍将回退这个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', self.params.user), ' 執行常規回退，這是一個可信的機器人，基於確認，我們仍將回退這個修訂版本。' ]));
+						Morebits.status.warn('提示', wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行常规回退，这是一个可信的机器人，基于确认，我们仍将回退这个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行常規回退，這是一個可信的機器人，基於確認，我們仍將回退這個修訂版本。' ]));
 					}
 					break;
 			}
@@ -565,14 +568,14 @@ Twinkle.fluff.callbacks = {
 
 		for (var i = index; i < revs.length; ++i) {
 			++count;
-			if (revs[i].getAttribute('user') !== self.params.user) {
+			if (revs[i].getAttribute('user') !== params.user) {
 				found = i;
 				break;
 			}
 		}
 
 		if (!found) {
-			self.statelem.error(wgULS([ '未找到之前的修订版本，可能 ', Morebits.htmlNode('strong', self.params.user), ' 是唯一贡献者，或这个用户连续做出了超过 ' + Twinkle.getPref('revertMaxRevisions') + ' 次编辑。' ], [ '未找到之前的修訂版本，可能 ', Morebits.htmlNode('strong', self.params.user), ' 是唯一貢獻者，或這個用戶連續做出了超過 ' + Twinkle.getPref('revertMaxRevisions') + ' 次編輯。' ]));
+			statelem.error(wgULS([ '未找到之前的修订版本，可能 ', Morebits.htmlNode('strong', params.user), ' 是唯一贡献者，或这个用户连续做出了超过 ' + Twinkle.getPref('revertMaxRevisions') + ' 次编辑。' ], [ '未找到之前的修訂版本，可能 ', Morebits.htmlNode('strong', params.user), ' 是唯一貢獻者，或這個用戶連續做出了超過 ' + Twinkle.getPref('revertMaxRevisions') + ' 次編輯。' ]));
 			return;
 		}
 
@@ -583,78 +586,78 @@ Twinkle.fluff.callbacks = {
 
 		var good_revision = revs[found];
 		var userHasAlreadyConfirmedAction = false;
-		if (self.params.type !== 'vand' && count > 1) {
-			if (!confirm(wgULS(self.params.user + ' 连续做出了 ' + count + ' 次编辑，是否要回退所有这些？', self.params.user + ' 連續做出了 ' + count + ' 次編輯，是否要回退所有這些？'))) {
+		if (params.type !== 'vand' && count > 1) {
+			if (!confirm(wgULS(params.user + ' 连续做出了 ' + count + ' 次编辑，是否要回退所有这些？', params.user + ' 連續做出了 ' + count + ' 次編輯，是否要回退所有這些？'))) {
 				Morebits.status.info('提示', wgULS('用户取消操作', '使用者取消操作'));
 				return;
 			}
 			userHasAlreadyConfirmedAction = true;
 		}
 
-		self.params.count = count;
+		params.count = count;
 
-		self.params.goodid = good_revision.getAttribute('revid');
-		self.params.gooduser = good_revision.getAttribute('user');
+		params.goodid = good_revision.getAttribute('revid');
+		params.gooduser = good_revision.getAttribute('user');
 
-		self.statelem.status([ Morebits.htmlNode('strong', count), wgULS(' 个修订版本之前由 ', ' 個修訂版本之前由 '), Morebits.htmlNode('strong', self.params.gooduser), wgULS(' 做出的修订版本 ', ' 做出的修訂版本 '), Morebits.htmlNode('strong', self.params.goodid) ]);
+		statelem.status([ Morebits.htmlNode('strong', count), wgULS(' 个修订版本之前由 ', ' 個修訂版本之前由 '), Morebits.htmlNode('strong', params.gooduser), wgULS(' 做出的修订版本 ', ' 做出的修訂版本 '), Morebits.htmlNode('strong', params.goodid) ]);
 
 		var summary, extra_summary;
-		switch (self.params.type) {
+		switch (params.type) {
 			case 'agf':
-				extra_summary = prompt(wgULS('可选的编辑摘要：', '可選的編輯摘要：') + '                              ', self.params.summary);  // padded out to widen prompt in Firefox
+				extra_summary = prompt(wgULS('可选的编辑摘要：', '可選的編輯摘要：') + '                              ', params.summary);  // padded out to widen prompt in Firefox
 				if (extra_summary === null) {
-					self.statelem.error(wgULS('用户取消操作。', '使用者取消操作。'));
+					statelem.error(wgULS('用户取消操作。', '使用者取消操作。'));
 					return;
 				}
 				userHasAlreadyConfirmedAction = true;
 
-				summary = Twinkle.fluff.formatSummary(wgULS('回退$USER做出的出于[[WP:AGF|善意]]的编辑', '回退$USER做出的出於[[WP:AGF|善意]]的編輯'), self.params.user, extra_summary);
+				summary = Twinkle.fluff.formatSummary(wgULS('回退$USER做出的出于[[WP:AGF|善意]]的编辑', '回退$USER做出的出於[[WP:AGF|善意]]的編輯'), params.user, extra_summary);
 				break;
 
 			case 'vand':
 
 				summary = '回退[[Special:Contributions/' +
-				self.params.user + '|' + self.params.user + ']] ([[User talk:' + self.params.user + '|讨论]])' +
-				'做出的 ' + self.params.count + wgULS(' 次编辑，到由', ' 次編輯，到由') +
-				self.params.gooduser + wgULS('做出的前一个修订版本 ', '做出的前一個修訂版本 ') + Twinkle.getPref('summaryAd');
+				params.user + '|' + params.user + ']] ([[User talk:' + params.user + '|讨论]])' +
+				'做出的 ' + params.count + wgULS(' 次编辑，到由', ' 次編輯，到由') +
+				params.gooduser + wgULS('做出的前一个修订版本 ', '做出的前一個修訂版本 ') + Twinkle.getPref('summaryAd');
 				break;
 
 			case 'norm':
 			/* falls through */
 			default:
 				if (Twinkle.getPref('offerReasonOnNormalRevert')) {
-					extra_summary = prompt(wgULS('可选的编辑摘要：', '可選的編輯摘要：') + '                              ', self.params.summary);  // padded out to widen prompt in Firefox
+					extra_summary = prompt(wgULS('可选的编辑摘要：', '可選的編輯摘要：') + '                              ', params.summary);  // padded out to widen prompt in Firefox
 					if (extra_summary === null) {
-						self.statelem.error(wgULS('用户取消操作。', '使用者取消操作。'));
+						statelem.error(wgULS('用户取消操作。', '使用者取消操作。'));
 						return;
 					}
 					userHasAlreadyConfirmedAction = true;
 				}
 
-				summary = Twinkle.fluff.formatSummary(wgULS('回退$USER做出的' + self.params.count + '次编辑', '回退$USER做出的' + self.params.count + '次編輯'), self.params.user, extra_summary);
+				summary = Twinkle.fluff.formatSummary(wgULS('回退$USER做出的' + params.count + '次编辑', '回退$USER做出的' + params.count + '次編輯'), params.user, extra_summary);
 				break;
 		}
 
 		if (Twinkle.getPref('confirmOnFluff') && !userHasAlreadyConfirmedAction && !confirm(wgULS('回退页面：您确定吗？', '回退頁面：您確定嗎？'))) {
-			self.statelem.error(wgULS('用户取消操作。', '使用者取消操作。'));
+			statelem.error(wgULS('用户取消操作。', '使用者取消操作。'));
 			return;
 		}
 
 		var query;
-		if ((!self.params.autoRevert || Twinkle.getPref('openTalkPageOnAutoRevert')) &&
-				Twinkle.getPref('openTalkPage').indexOf(self.params.type) !== -1 &&
-				mw.config.get('wgUserName') !== self.params.user) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '打开用户 ', Morebits.htmlNode('strong', self.params.user), ' 的对话页' ], [ '開啟用戶 ', Morebits.htmlNode('strong', self.params.user), ' 的討論頁' ]));
+		if ((!params.autoRevert || Twinkle.getPref('openTalkPageOnAutoRevert')) &&
+				Twinkle.getPref('openTalkPage').indexOf(params.type) !== -1 &&
+				mw.config.get('wgUserName') !== params.user) {
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '打开用户 ', Morebits.htmlNode('strong', params.user), ' 的对话页' ], [ '開啟用戶 ', Morebits.htmlNode('strong', params.user), ' 的討論頁' ]));
 
 			query = {
-				'title': 'User talk:' + self.params.user,
+				'title': 'User talk:' + params.user,
 				'action': 'edit',
 				'preview': 'yes',
-				'vanarticle': self.params.pagename.replace(/_/g, ' '),
-				'vanarticlerevid': self.params.revid,
-				'vanarticlegoodrevid': self.params.goodid,
-				'type': self.params.type,
-				'count': self.params.count
+				'vanarticle': params.pagename.replace(/_/g, ' '),
+				'vanarticlerevid': params.revid,
+				'vanarticlegoodrevid': params.goodid,
+				'type': params.type,
+				'count': params.count
 			};
 
 			switch (Twinkle.getPref('userTalkPageMode')) {
@@ -677,26 +680,26 @@ Twinkle.fluff.callbacks = {
 
 		query = {
 			'action': 'edit',
-			'title': self.params.pagename,
+			'title': params.pagename,
 			'tags': Twinkle.getPref('revisionTags'),
 			'summary': summary,
 			'token': csrftoken,
 			'undo': lastrevid,
-			'undoafter': self.params.goodid,
+			'undoafter': params.goodid,
 			'basetimestamp': touched,
 			'starttimestamp': loadtimestamp,
-			'watchlist': Twinkle.getPref('watchRevertedPages').indexOf(self.params.type) !== -1 ? 'watch' : undefined,
-			'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf(self.params.type) !== -1 ? true : undefined,
+			'watchlist': Twinkle.getPref('watchRevertedPages').indexOf(params.type) !== -1 ? 'watch' : undefined,
+			'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf(params.type) !== -1 ? true : undefined,
 			'bot': true
 		};
 
 		if (!Twinkle.fluff.useNotify) {
-			Morebits.wiki.actionCompleted.redirect = self.params.pagename;
+			Morebits.wiki.actionCompleted.redirect = params.pagename;
 		}
 		Morebits.wiki.actionCompleted.notice = '回退完成';
 
-		var wikipedia_api = new Morebits.wiki.api(wgULS('保存回退内容', '儲存回退內容'), query, Twinkle.fluff.callbacks.complete, self.statelem);
-		wikipedia_api.params = self.params;
+		var wikipedia_api = new Morebits.wiki.api(wgULS('保存回退内容', '儲存回退內容'), query, Twinkle.fluff.callbacks.complete, statelem);
+		wikipedia_api.params = params;
 		wikipedia_api.post();
 
 	},
