@@ -16,7 +16,7 @@ Twinkle.tag = function friendlytag() {
 	// redirect tagging
 	if (Morebits.wiki.isPageRedirect()) {
 		Twinkle.tag.mode = '重定向';
-		Twinkle.addPortletLink(Twinkle.tag.callback, wgULS('标记', '標記'), 'friendly-tag', wgULS('标记重定向', '標記重定向'));
+		Twinkle.addPortletLink(Twinkle.tag.callback, wgULS('标记', '標記'), 'friendly-tag', wgULS('标记重定向', '標記重新導向'));
 	// file tagging
 	} else if (mw.config.get('wgNamespaceNumber') === 6 && !document.getElementById('mw-sharedupload') && document.getElementById('mw-imagepage-section-filehistory')) {
 		Twinkle.tag.mode = wgULS('文件', '檔案');
@@ -102,7 +102,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 						value: 'group',
 						name: 'group',
 						tooltip: wgULS('如果添加{{multiple issues}}支持的三个以上的模板，所有支持的模板都会被合并入{{multiple issues}}模板中。',
-							'如果添加{{multiple issues}}支持的三個以上的模板，所有支持的模板都會被合並入{{multiple issues}}模板中。'),
+							'如果加入{{multiple issues}}支援的三個以上的模板，所有支援的模板都會被合併入{{multiple issues}}模板中。'),
 						checked: Twinkle.getPref('groupByDefault')
 					}
 				]
@@ -120,7 +120,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			break;
 
 		case '重定向':
-			Window.setTitle(wgULS('重定向标记', '重定向標記'));
+			Window.setTitle(wgULS('重定向标记', '重新導向標記'));
 
 			Twinkle.tag.quickFilter(form);
 
@@ -142,7 +142,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 
 			// TODO: perhaps add custom tags TO list of checkboxes
 
-			form.append({ type: 'header', label: wgULS('版权和来源问题标签', '版權和來源問題標籤') });
+			form.append({ type: 'header', label: wgULS('版权和来源问题标签', '著作權和來源問題標籤') });
 			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.licenseList });
 
 			form.append({ type: 'header', label: wgULS('维基共享资源相关标签', '維基共享資源相關標籤') });
@@ -321,7 +321,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 					name: 'expert',
 					type: 'input',
 					label: wgULS('哪个领域的专家：', '哪個領域的專家：'),
-					tooltip: wgULS('可选，可参考 Category:需要专业人士关注的页面 使用现存的分类。', '選填，可參考 Category:需要专业人士关注的页面 使用現存的分類。')
+					tooltip: wgULS('可选，可参考 Category:需要专业人士关注的页面 使用现存的分类。', '可選，可參考 Category:需要專業人士關注的頁面 使用現存的分類。')
 				};
 				break;
 			case 'Merge':
@@ -374,7 +374,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 					name: 'missingInformation',
 					type: 'input',
 					label: wgULS('缺少的内容（必填）：', '缺少的內容（必填）：'),
-					tooltip: wgULS('必填，显示为“缺少有关……的资讯。”', '必填，顯示為「缺少有關……的資訊。」。')
+					tooltip: wgULS('必填，显示为“缺少有关……的资讯。”', '必填，顯示為「缺少有關……的資訊。」')
 				};
 				break;
 			case 'Notability':
@@ -1443,7 +1443,7 @@ Twinkle.tag.callbacks = {
 			}
 
 			// Remove tags which appear in page text as redirects
-			var api = new Morebits.wiki.api(wgULS('获取模板重定向', '取得模板重定向'), {
+			var api = new Morebits.wiki.api(wgULS('获取模板重定向', '取得模板重新導向'), {
 				'action': 'query',
 				'prop': 'linkshere',
 				'titles': getRedirectsFor.join('|'),
@@ -1626,7 +1626,7 @@ Twinkle.tag.callbacks = {
 		var miTest = /\{\{(multiple ?issues|article ?issues|mi|ai|issues|多個問題|多个问题|問題條目|问题条目|數個問題|数个问题)\s*\|[^}]+\{/im.exec(pageText);
 
 		if (miTest && groupableTags.length > 0) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加支持的标记入已存在的{{multiple issues}}', '添加支持的標記入已存在的{{multiple issues}}'));
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加支持的标记入已存在的{{multiple issues}}', '加入支援的標記入已存在的{{multiple issues}}'));
 
 			tagText = '';
 			$.each(groupableTags, addTag);
@@ -1638,7 +1638,7 @@ Twinkle.tag.callbacks = {
 			addUngroupedTags();
 
 		} else if (params.group && !miTest && (groupableExistingTags.length + groupableTags.length) >= 2) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加支持的标记入{{multiple issues}}', '添加支持的標記入{{multiple issues}}'));
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加支持的标记入{{multiple issues}}', '加入支援的標記入{{multiple issues}}'));
 
 			tagText += '{{Multiple issues|\n';
 
@@ -1672,7 +1672,7 @@ Twinkle.tag.callbacks = {
 				return;
 			}
 
-			var api = new Morebits.wiki.api(wgULS('获取模板重定向', '取得模板重定向'), {
+			var api = new Morebits.wiki.api(wgULS('获取模板重定向', '取得模板重新導向'), {
 				'action': 'query',
 				'prop': 'linkshere',
 				'titles': getRedirectsFor.join('|'),
@@ -1854,7 +1854,7 @@ Twinkle.tag.callbacks = {
 						} else if (input !== '') {
 							currentTag += '|1=' + input;
 						}
-						input = prompt('{{Rename media}} ─ ' + wgULS('输入重命名的原因（可选）：', '輸入重命名的原因（可選）：'), '');
+						input = prompt('{{Rename media}} ─ ' + wgULS('输入重命名的原因（可选）：', '輸入重新命名的原因（可選）：'), '');
 						if (input === null) {
 							return true;  // continue
 						} else if (input !== '') {

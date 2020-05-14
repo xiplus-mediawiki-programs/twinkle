@@ -177,7 +177,7 @@ Twinkle.protect.callback.showLogAndCurrentProtectInfo = function twinkleprotectC
 		protectionNode.push($('<b>' + wgULS('无保护', '無保護') + '</b>')[0]);
 	}
 
-	Morebits.status[statusLevel](wgULS('当前保护等级', '當前保護等級'), protectionNode);
+	Morebits.status[statusLevel](wgULS('当前保护等级', '目前保護等級'), protectionNode);
 };
 
 Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAction(e) {
@@ -199,7 +199,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					Twinkle.protect.protectionTypesCreate
 			});
 
-			field2 = new Morebits.quickForm.element({ type: 'field', label: wgULS('保护选项', '保護設定'), name: 'field2' });
+			field2 = new Morebits.quickForm.element({ type: 'field', label: wgULS('保护选项', '保護選項'), name: 'field2' });
 			field2.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
 			field2.append({ type: 'div', name: 'hasprotectlog', label: ' ' });
 			// for existing pages
@@ -230,7 +230,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				});
 				editlevel.append({
 					type: 'option',
-					label: wgULS('仅允许自动确认用户', '僅允許自動確認用戶'),
+					label: wgULS('仅允许自动确认用户', '僅允許自動確認使用者'),
 					value: 'autoconfirmed'
 				});
 				editlevel.append({
@@ -308,7 +308,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				});
 				movelevel.append({
 					type: 'option',
-					label: wgULS('仅允许自动确认用户', '僅允許自動確認用戶'),
+					label: wgULS('仅允许自动确认用户', '僅允許自動確認使用者'),
 					value: 'autoconfirmed'
 				});
 				movelevel.append({
@@ -373,7 +373,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				});
 				createlevel.append({
 					type: 'option',
-					label: wgULS('仅允许自动确认用户', '僅允許自動確認用戶'),
+					label: wgULS('仅允许自动确认用户', '僅允許自動確認使用者'),
 					value: 'autoconfirmed'
 				});
 				createlevel.append({
@@ -444,7 +444,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			}
 			/* falls through */
 		case 'tag':
-			field1 = new Morebits.quickForm.element({ type: 'field', label: wgULS('标记选项', '標記設定'), name: 'field1' });
+			field1 = new Morebits.quickForm.element({ type: 'field', label: wgULS('标记选项', '標記選項'), name: 'field1' });
 			field1.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
 			field1.append({ type: 'div', name: 'hasprotectlog', label: ' ' });
 			field1.append({
@@ -489,7 +489,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				list: mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypes : Twinkle.protect.protectionTypesCreate
 			});
 
-			field1 = new Morebits.quickForm.element({ type: 'field', label: wgULS('选项', '設定'), name: 'field1' });
+			field1 = new Morebits.quickForm.element({ type: 'field', label: wgULS('选项', '選項'), name: 'field1' });
 			field1.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
 			field1.append({ type: 'div', name: 'hasprotectlog', label: ' ' });
 			field1.append({
@@ -1320,7 +1320,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 
 			// Updating data for the action completed event
 			Morebits.wiki.actionCompleted.redirect = rppName;
-			Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重定向到討論頁');
+			Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重新導向到討論頁');
 
 			var rppPage = new Morebits.wiki.page(rppName, wgULS('请求保护页面', '請求保護頁面'));
 			rppPage.setFollowRedirect(true);
@@ -1357,7 +1357,7 @@ Twinkle.protect.callbacks = {
 		var oldtag_re = /(?:<noinclude>)?[ \t]*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
 		var re_result = oldtag_re.exec(text);
 		if (re_result) {
-			if (params.tag === 'none' || confirm(wgULS('在页面上找到{{' + re_result[1] + '}}\n点击确定以移除，或点击取消以取消。', '在頁面上找到{{' + re_result[1] + '}}\n點選確定以移除，或點選取消以取消。'))) {
+			if (params.tag === 'none' || confirm(wgULS('在页面上找到{{' + re_result[1] + '}}\n点击确定以移除，或点击取消以取消。', '在頁面上找到{{' + re_result[1] + '}}\n點擊確定以移除，或點擊取消以取消。'))) {
 				text = text.replace(oldtag_re, '');
 			}
 		}
@@ -1589,7 +1589,7 @@ Twinkle.protect.callbacks = {
 				summary = wgULS('解除保护', '解除保護');
 				break;
 			default:
-				statusElement.warn(wgULS('未知保护类型', '未知保護類型'));
+				statusElement.warn(wgULS('未知保护类型', '未知保護類別'));
 				return;
 		}
 

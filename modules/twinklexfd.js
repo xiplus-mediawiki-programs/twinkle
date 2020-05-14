@@ -35,7 +35,7 @@ Twinkle.xfd.currentRationale = null;
 // error callback on Morebits.status.object
 Twinkle.xfd.printRationale = function twinklexfdPrintRationale() {
 	if (Twinkle.xfd.currentRationale) {
-		Morebits.status.printUserText(Twinkle.xfd.currentRationale, wgULS('您的理由已在下方提供，如果您想重新提交，请将其复制到一新窗口中：', '您的理由已在下方提供，如果您想重新提交，請將其複製到一新窗口中：'));
+		Morebits.status.printUserText(Twinkle.xfd.currentRationale, wgULS('您的理由已在下方提供，如果您想重新提交，请将其复制到一新窗口中：', '您的理由已在下方提供，如果您想重新提交，請將其複製到一新視窗中：'));
 		// only need to print the rationale once
 		Twinkle.xfd.currentRationale = null;
 	}
@@ -125,7 +125,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 			name: 'xfdreason',
 			label: wgULS('提删理由：', '提刪理由：'),
 			value: oldreason,
-			tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您加入签名。如果您使用批量提删功能，存废讨论页只会使用第一次提交的理由，但您仍需在之后提供以用于删除通告模板的参数。', '您可以使用維基格式，Twinkle將自動為您加入簽名。如果您使用批量提刪功能，存廢討論頁只會使用第一次提交的理由，但您仍需在之後提供以用於刪除通告模板的參數。'),
+			tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您加入签名。如果您使用批量提删功能，存废讨论页只会使用第一次提交的理由，但您仍需在之后提供以用于删除通告模板的参数。', '您可以使用維基格式，Twinkle將自動為您加入簽名。如果您使用批次提刪功能，存廢討論頁只會使用第一次提交的理由，但您仍需在之後提供以用於刪除通告模板的參數。'),
 			placeholder: wgULS('此值亦显示于页面的删除通告模板内，故务必提供此值，避免使用“同上”等用语。', '此值亦顯示於頁面的刪除通告模板內，故務必提供此值，避免使用「同上」等用語。')
 		});
 		// TODO possible future "preview" link here
@@ -177,9 +177,9 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 			if (Twinkle.getPref('FwdCsdToXfd')) {
 				afd_category.append({ type: 'option', label: wgULS('转交自快速删除候选', '轉交自快速刪除候選'), value: 'fwdcsd', selected: afd_cat === 'fwdcsd' });
 			}
-			afd_category.append({ type: 'option', label: wgULS('批量关注度提删', '批量關注度提刪'), value: 'fame', selected: afd_cat === 'fame' });
-			afd_category.append({ type: 'option', label: wgULS('批量小小作品提删', '批量小小作品提刪'), value: 'substub', selected: afd_cat === 'substub' });
-			afd_category.append({ type: 'option', label: wgULS('批量其他提删', '批量其他提刪'), value: 'batch', selected: afd_cat === 'batch' });
+			afd_category.append({ type: 'option', label: wgULS('批量关注度提删', '批次關注度提刪'), value: 'fame', selected: afd_cat === 'fame' });
+			afd_category.append({ type: 'option', label: wgULS('批量小小作品提删', '批次小小作品提刪'), value: 'substub', selected: afd_cat === 'substub' });
+			afd_category.append({ type: 'option', label: wgULS('批量其他提删', '批次其他提刪'), value: 'batch', selected: afd_cat === 'batch' });
 
 
 			work_area.append({
@@ -264,7 +264,7 @@ Twinkle.xfd.callbacks = {
 			var params = pageobj.getCallbackParameters();
 
 			// Adding discussion
-			var wikipedia_page = new Morebits.wiki.page(params.logpage, wgULS('添加讨论到当日列表', '加入討論到當日清單'));
+			var wikipedia_page = new Morebits.wiki.page(params.logpage, wgULS('添加讨论到当日列表', '加入討論到當日列表'));
 			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.xfd.callbacks.afd.todaysList);
@@ -491,7 +491,7 @@ Twinkle.xfd.callbacks = {
 
 			var copyvio = /(?:\{\{\s*(copyvio)[^{}]*?\}\})/i.exec(text);
 			if (copyvio) {
-				statelem.error(wgULS('页面中已有版权验证模板。', '頁面中已有版權驗證模板。'));
+				statelem.error(wgULS('页面中已有版权验证模板。', '頁面中已有著作權驗證模板。'));
 				return;
 			}
 
@@ -513,7 +513,7 @@ Twinkle.xfd.callbacks = {
 			params.uploader = initialContrib;
 
 			// Adding discussion
-			var wikipedia_page = new Morebits.wiki.page(params.logpage, wgULS('添加讨论到当日列表', '加入討論到當日清單'));
+			var wikipedia_page = new Morebits.wiki.page(params.logpage, wgULS('添加讨论到当日列表', '加入討論到當日列表'));
 			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.xfd.callbacks.ffd.todaysList);
@@ -667,7 +667,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 			Morebits.wiki.addCheckpoint();
 			// Updating data for the action completed event
 			Morebits.wiki.actionCompleted.redirect = logpage;
-			Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重定向到討論頁');
+			Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重新導向到討論頁');
 
 			// Tagging page
 			var isScribunto = mw.config.get('wgPageContentModel') === 'Scribunto';
@@ -686,7 +686,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 			Morebits.wiki.addCheckpoint();
 			// Updating data for the action completed event
 			Morebits.wiki.actionCompleted.redirect = logpage;
-			Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重定向到討論頁');
+			Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重新導向到討論頁');
 
 			// Tagging file
 			wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('添加存废讨论模板到文件描述页', '加入存廢討論模板到檔案描述頁'));
@@ -789,7 +789,7 @@ Twinkle.xfd.aprilfool.evaluate = function(e) {
 	Morebits.wiki.addCheckpoint();
 	// Updating data for the action completed event
 	Morebits.wiki.actionCompleted.redirect = logpage;
-	Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重定向到討論頁');
+	Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重新導向到討論頁');
 
 	// Tagging file
 	wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('假装添加存废讨论模板到页面', '假裝加入存廢討論模板到頁面'));
@@ -862,10 +862,10 @@ Twinkle.xfd.aprilfool.tryTagging = function (pageobj) {
 
 	var copyvio = /(?:\{\{\s*(copyvio)[^{}]*?\}\})/i.exec(text);
 	if (copyvio) {
-		statelem.error(wgULS('页面中已有版权验证模板。', '頁面中已有版權驗證模板。'));
+		statelem.error(wgULS('页面中已有版权验证模板。', '頁面中已有著作權驗證模板。'));
 	}
 
-	var wikipedia_page = new Morebits.wiki.page(params.logpage, wgULS('添加讨论到当日列表', '加入討論到當日清單'));
+	var wikipedia_page = new Morebits.wiki.page(params.logpage, wgULS('添加讨论到当日列表', '加入討論到當日列表'));
 	wikipedia_page.setFollowRedirect(true);
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.xfd.aprilfool.todaysList);

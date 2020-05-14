@@ -391,7 +391,7 @@ Twinkle.fluff.revert = function revertPage(type, vandal, autoRevert, rev, page) 
 		'rvprop': [ 'ids', 'timestamp', 'user', 'comment' ],
 		'intoken': 'edit'
 	};
-	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取较早修订版本信息', '擷取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.main);
+	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取较早修订版本信息', '抓取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.main);
 	wikipedia_api.statelem.status(wgULS('正在准备回退……', '正在準備回退……'));
 	wikipedia_api.params = params;
 	wikipedia_api.post();
@@ -424,7 +424,7 @@ Twinkle.fluff.revertToRevision = function revertToRevision(oldrev) {
 		'intoken': 'edit',
 		'format': 'xml'
 	};
-	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取较早修订版本信息', '擷取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.toRevision.main);
+	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取较早修订版本信息', '抓取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.toRevision.main);
 	wikipedia_api.statelem.status(wgULS('正在准备回退……', '正在準備回退……'));
 	wikipedia_api.params = { rev: oldrev, summary: summary };
 	wikipedia_api.post();
@@ -447,13 +447,13 @@ Twinkle.fluff.callbacks = {
 			var revertToUser = $(xmlDoc).find('rev').attr('user');
 
 			if (revertToRevID !== self.params.rev) {
-				self.statelem.error(wgULS('抓取到的修订版本与请求的修订版本不符，取消。', '擷取到的修訂版本與請求的修訂版本不符，取消。'));
+				self.statelem.error(wgULS('抓取到的修订版本与请求的修订版本不符，取消。', '抓取到的修訂版本與請求的修訂版本不符，取消。'));
 				return;
 			}
 
 			var optional_summary = prompt(wgULS('请输入回退理由：', '請輸入回退理由：') + '                                ', self.params.summary);  // padded out to widen prompt in Firefox
 			if (optional_summary === null) {
-				self.statelem.error(wgULS('由用户取消。', '由用戶取消。'));
+				self.statelem.error(wgULS('由用户取消。', '由使用者取消。'));
 				return;
 			}
 			var summary = Twinkle.fluff.formatSummary(wgULS('回退到由$USER做出的修订版本', '回退到由$USER做出的修訂版本') + revertToRevID, revertToUser, optional_summary);
@@ -580,7 +580,7 @@ Twinkle.fluff.callbacks = {
 		var userHasAlreadyConfirmedAction = false;
 		if (self.params.type !== 'vand' && count > 1) {
 			if (!confirm(wgULS(self.params.user + ' 连续做出了 ' + count + ' 次编辑，是否要回退所有这些？', self.params.user + ' 連續做出了 ' + count + ' 次編輯，是否要回退所有這些？'))) {
-				Morebits.status.info('提示', wgULS('用户取消操作', '用戶取消操作'));
+				Morebits.status.info('提示', wgULS('用户取消操作', '使用者取消操作'));
 				return;
 			}
 			userHasAlreadyConfirmedAction = true;
@@ -598,7 +598,7 @@ Twinkle.fluff.callbacks = {
 			case 'agf':
 				extra_summary = prompt(wgULS('可选的编辑摘要：', '可選的編輯摘要：') + '                              ', self.params.summary);  // padded out to widen prompt in Firefox
 				if (extra_summary === null) {
-					self.statelem.error(wgULS('用户取消操作。', '用戶取消操作。'));
+					self.statelem.error(wgULS('用户取消操作。', '使用者取消操作。'));
 					return;
 				}
 				userHasAlreadyConfirmedAction = true;
@@ -620,7 +620,7 @@ Twinkle.fluff.callbacks = {
 				if (Twinkle.getPref('offerReasonOnNormalRevert')) {
 					extra_summary = prompt(wgULS('可选的编辑摘要：', '可選的編輯摘要：') + '                              ', self.params.summary);  // padded out to widen prompt in Firefox
 					if (extra_summary === null) {
-						self.statelem.error(wgULS('用户取消操作。', '用戶取消操作。'));
+						self.statelem.error(wgULS('用户取消操作。', '使用者取消操作。'));
 						return;
 					}
 					userHasAlreadyConfirmedAction = true;
@@ -631,7 +631,7 @@ Twinkle.fluff.callbacks = {
 		}
 
 		if (Twinkle.getPref('confirmOnFluff') && !userHasAlreadyConfirmedAction && !confirm(wgULS('回退页面：您确定吗？', '回退頁面：您確定嗎？'))) {
-			self.statelem.error(wgULS('用户取消操作。', '用戶取消操作。'));
+			self.statelem.error(wgULS('用户取消操作。', '使用者取消操作。'));
 			return;
 		}
 
@@ -703,7 +703,7 @@ Twinkle.fluff.callbacks = {
 		if ($(xml).find('captcha').length > 0) {
 			apiobj.statelem.error(wgULS('不能回退，因维基服务器要求您输入验证码。', '不能回退，因維基伺服器要求您輸入驗證碼。'));
 		} else if ($edit.attr('nochange') === '') {
-			apiobj.statelem.warn(wgULS('要回退到的版本与当前版本相同，没什么要做的', '要回退到的版本與當前版本相同，沒什麼要做的'));
+			apiobj.statelem.warn(wgULS('要回退到的版本与当前版本相同，没什么要做的', '要回退到的版本與目前版本相同，沒什麼要做的'));
 		} else {
 			apiobj.statelem.info('完成');
 		}

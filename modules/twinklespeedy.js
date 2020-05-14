@@ -138,7 +138,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 		});
 		deleteOptions.append({
 			type: 'header',
-			label: wgULS('删除相关选项', '刪除相關設定')
+			label: wgULS('删除相关选项', '刪除相關選項')
 		});
 		if (mw.config.get('wgNamespaceNumber') % 2 === 0 && mw.config.get('wgNamespaceNumber') !== 2) {  // hide option for user pages, to avoid accidentally deleting user talk page
 			deleteOptions.append({
@@ -161,10 +161,10 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 			type: 'checkbox',
 			list: [
 				{
-					label: wgULS('删除重定向', '刪除重定向'),
+					label: wgULS('删除重定向', '刪除重新導向'),
 					value: 'redirects',
 					name: 'redirects',
-					tooltip: wgULS('删除到此页的重定向。', '刪除到此頁的重定向。'),
+					tooltip: wgULS('删除到此页的重定向。', '刪除到此頁的重新導向。'),
 					checked: Twinkle.getPref('deleteRedirectsOnDelete'),
 					event: function(event) {
 						event.stopPropagation();
@@ -191,7 +191,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 			type: 'checkbox',
 			list: [
 				{
-					label: wgULS('开启用户对话页', '開啟用戶對話頁'),
+					label: wgULS('开启用户对话页', '開啟使用者對話頁'),
 					value: 'openusertalk',
 					name: 'openusertalk',
 					tooltip: wgULS('此项的默认值为您的开启对话页设置。在您选择应用多条理由删除时此项将保持不变。', '此項的預設值為您的開啟對話頁設定。在您選擇應用多條理由刪除時此項將保持不變。'),
@@ -321,7 +321,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 
 		work_area.append({
 			type: 'div',
-			label: wgULS('当选择完成后，点击：', '當選擇完成後，點選：')
+			label: wgULS('当选择完成后，点击：', '當選擇完成後，點擊：')
 		});
 		work_area.append({
 			type: 'button',
@@ -354,7 +354,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 
 		case 3:  // user talk
 			if (mw.util.isIPAddress(mw.config.get('wgRelevantUserName'))) {
-				work_area.append({ type: 'header', label: wgULS('用户讨论页', '使用者討論') });
+				work_area.append({ type: 'header', label: wgULS('用户讨论页', '使用者討論頁') });
 				work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.usertalkList, mode) });
 			}
 			break;
@@ -546,8 +546,8 @@ Twinkle.speedy.fileList = [
 		subgroup: {
 			name: 'f1_filename',
 			type: 'input',
-			label: wgULS('与此文件相同的文件名：', '與此檔案相同的檔案名：'),
-			tooltip: wgULS('可不含“File:”前缀。', '可不含「File:」前綴。')
+			label: wgULS('与此文件相同的文件名：', '與此檔案相同的檔名：'),
+			tooltip: wgULS('可不含“File:”前缀。', '可不含「File:」字首。')
 		}
 	},
 	{
@@ -556,7 +556,7 @@ Twinkle.speedy.fileList = [
 		hideWhenUser: true
 	},
 	{
-		label: wgULS('F4: 未知版权或版权无法被查证的文件', 'F4: 未知版權或版權無法被查證的檔案'),
+		label: wgULS('F4: 未知版权或版权无法被查证的文件', 'F4: 未知著作權或著作權無法被查證的檔案'),
 		value: 'f4',
 		hideWhenUser: true
 	},
@@ -566,12 +566,12 @@ Twinkle.speedy.fileList = [
 		subgroup: {
 			name: 'f5_filename',
 			type: 'input',
-			label: wgULS('新文件名：', '新檔案名：'),
-			tooltip: wgULS('可不含“File:”前缀。', '可不含「File:」前綴。')
+			label: wgULS('新文件名：', '新檔名：'),
+			tooltip: wgULS('可不含“File:”前缀。', '可不含「File:」字首。')
 		}
 	},
 	{
-		label: wgULS('F6: 没有被条目使用的非自由版权档案', 'F6: 沒有被條目使用的非自由版權檔案'),
+		label: wgULS('F6: 没有被条目使用的非自由版权档案', 'F6: 沒有被條目使用的非自由著作權檔案'),
 		value: 'f6',
 		hideWhenUser: true
 	},
@@ -581,9 +581,9 @@ Twinkle.speedy.fileList = [
 		subgroup: {
 			name: 'f7_filename',
 			type: 'input',
-			label: wgULS('维基共享资源上的文件名：', '維基共享資源上的檔案名：'),
+			label: wgULS('维基共享资源上的文件名：', '維基共享資源上的檔名：'),
 			value: Morebits.pageNameNorm,
-			tooltip: wgULS('如与本文件名相同则可留空，可不含“File:”前缀。', '如與本檔案名相同則可留空，可不含「File:」字首。')
+			tooltip: wgULS('如与本文件名相同则可留空，可不含“File:”前缀。', '如與本檔名相同則可留空，可不含「File:」字首。')
 		},
 		hideWhenMultiple: true
 	},
@@ -627,9 +627,9 @@ Twinkle.speedy.articleList = [
 		}
 	},
 	{
-		label: wgULS('A5: 条目创建时之内容即与其他现有条目内容完全相同或非常相似，且名称不适合作为其他条目之重定向。', 'A5: 條目建立時之內容即與其他現有條目內容完全相同或非常相似，且名稱不適合作為其他條目之重定向。'),
+		label: wgULS('A5: 条目创建时之内容即与其他现有条目内容完全相同或非常相似，且名称不适合作为其他条目之重定向。', 'A5: 條目建立時之內容即與其他現有條目內容完全相同或非常相似，且名稱不適合作為其他條目之重新導向。'),
 		value: 'a5',
-		tooltip: wgULS('条目被创建时，第一个版本的内容或其历史版本的全部或部分内容与当时其他现存条目完全相同或非常相似，且这个条目的名称不适合改为重定向，就可以提送快速删除。如果名称可以作为重定向，就应直接改重定向，不要提送快速删除。如果是多个条目合并产生的新条目，不适用。如果是从主条目拆分产生的条目，不适用；如有疑虑，应提送存废讨论处理。', '條目被建立時，第一個版本的內容或其歷史版本的全部或部分內容與當時其他現存條目完全相同或非常相似，且這個條目的名稱不適合改為重定向，就可以提送快速刪除。如果名稱可以作為重定向，就應直接改重定向，不要提送快速刪除。如果是多個條目合併產生的新條目，不適用。如果是從主條目拆分產生的條目，不適用；如有疑慮，應提送存廢討論處理。'),
+		tooltip: wgULS('条目被创建时，第一个版本的内容或其历史版本的全部或部分内容与当时其他现存条目完全相同或非常相似，且这个条目的名称不适合改为重定向，就可以提送快速删除。如果名称可以作为重定向，就应直接改重定向，不要提送快速删除。如果是多个条目合并产生的新条目，不适用。如果是从主条目拆分产生的条目，不适用；如有疑虑，应提送存废讨论处理。', '條目被建立時，第一個版本的內容或其歷史版本的全部或部分內容與當時其他現存條目完全相同或非常相似，且這個條目的名稱不適合改為重新導向，就可以提送快速刪除。如果名稱可以作為重新導向，就應直接改重新導向，不要提送快速刪除。如果是多個條目合併產生的新條目，不適用。如果是從主條目拆分產生的條目，不適用；如有疑慮，應提送存廢討論處理。'),
 		subgroup: {
 			name: 'a5_pagename',
 			type: 'input',
@@ -699,10 +699,10 @@ Twinkle.speedy.generalList = [
 	{
 		label: wgULS('G3: 纯粹破坏，包括但不限于明显的恶作剧、错误信息、人身攻击等', 'G3: 純粹破壞，包括但不限於明顯的惡作劇、錯誤資訊、人身攻擊等'),
 		value: 'g3',
-		tooltip: wgULS('包括明显的错误信息、明显的恶作剧、信息明显错误的图片，以及清理移动破坏时留下的重定向。', '包括明顯的錯誤資訊、明顯的惡作劇、資訊明顯錯誤的圖片，以及清理移動破壞時留下的重定向。')
+		tooltip: wgULS('包括明显的错误信息、明显的恶作剧、信息明显错误的图片，以及清理移动破坏时留下的重定向。', '包括明顯的錯誤資訊、明顯的惡作劇、資訊明顯錯誤的圖片，以及清理移動破壞時留下的重新導向。')
 	},
 	{
-		label: wgULS('G5: 曾经根据页面存废讨论、侵权审核或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同', 'G5: 曾經根據頁面存廢討論、侵權審核或檔案存廢討論結果刪除後又重新建立的內容，而有關內容與已刪除版本相同或非常相似，無論標題是否相同'),
+		label: wgULS('G5: 曾经根据页面存废讨论、侵权审核或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同', 'G5: 曾經根據頁面存廢討論、侵權稽核或檔案存廢討論結果刪除後又重新建立的內容，而有關內容與已刪除版本相同或非常相似，無論標題是否相同'),
 		value: 'g5',
 		tooltip: wgULS('该内容之前必须是经存废讨论删除，如之前属于快速删除，请以相同理由重新提送快速删除。该内容如与被删除的版本明显不同，而提删者认为需要删除，请交到存废讨论，如果提删者对此不肯定，请先联络上次执行删除的管理人员。不适用于根据存废复核结果被恢复的内容。在某些情况下，重新创建的条目有机会发展。那么不应提交快速删除，而应该提交存废复核或存废讨论重新评核。', '該內容之前必須是經存廢討論刪除，如之前屬於快速刪除，請以相同理由重新提送快速刪除。該內容如與被刪除的版本明顯不同，而提刪者認為需要刪除，請交到存廢討論，如果提刪者對此不肯定，請先聯絡上次執行刪除的管理人員。不適用於根據存廢覆核結果被恢復的內容。在某些情況下，重新建立的條目有機會發展。那麼不應提交快速刪除，而應該提交存廢覆核或存廢討論重新評核。'),
 		subgroup: [
@@ -712,7 +712,7 @@ Twinkle.speedy.generalList = [
 					{
 						name: 'g5_copyvio',
 						value: 'g5_copyvio',
-						label: wgULS('前次以侵权审核删除。若页面名称不同，请在“删除讨论位置”提供页面名称。勾选此项将自动张贴疑似侵权模板。', '前次以侵權審核刪除。若頁面名稱不同，請在「刪除討論位置」提供頁面名稱。勾選此項將自動張貼疑似侵權模板。')
+						label: wgULS('前次以侵权审核删除。若页面名称不同，请在“删除讨论位置”提供页面名称。勾选此项将自动张贴疑似侵权模板。', '前次以侵權稽核刪除。若頁面名稱不同，請在「刪除討論位置」提供頁面名稱。勾選此項將自動張貼疑似侵權模板。')
 					}
 				]
 			},
@@ -728,7 +728,7 @@ Twinkle.speedy.generalList = [
 	{
 		label: wgULS('G8: 因技术原因删除页面', 'G8: 因技術原因刪除頁面'),
 		value: 'g8',
-		tooltip: wgULS('包括解封用户后删除用户页、因用户夺取而删除、删除MediaWiki页面、因移动请求而删除页面、以覆盖删除重定向。', '包括解封使用者後刪除使用者頁面、因使用者奪取而刪除、刪除無用的MediaWiki頁面、因移動請求而刪除頁面、以覆寫刪除重新導向。'),
+		tooltip: wgULS('包括解封用户后删除用户页、因用户夺取而删除、删除MediaWiki页面、因移动请求而删除页面、以覆盖删除重定向。', '包括解封使用者後刪除使用者頁面、因使用者奪取而刪除、刪除MediaWiki頁面、因移動請求而刪除頁面、以覆蓋刪除重新導向。'),
 		hideWhenUser: true
 	},
 	{
@@ -745,7 +745,7 @@ Twinkle.speedy.generalList = [
 		hideSubgroupWhenSysop: true
 	},
 	{
-		label: wgULS('G11: 明显的广告宣传页面，或只有相关人物或团体的联系方法的页面', 'G11: 明顯的廣告宣傳頁面，或只有相關人物或團體的聯係方法的頁面'),
+		label: wgULS('G11: 明显的广告宣传页面，或只有相关人物或团体的联系方法的页面', 'G11: 明顯的廣告宣傳頁面，或只有相關人物或團體的聯絡方法的頁面'),
 		value: 'g11',
 		tooltip: wgULS('页面只收宣传之用，并须完全重写才能贴合百科全书要求。须注意，仅仅以某公司或产品为主题的条目，并不直接导致其自然满足此速删标准。', '頁面只收宣傳之用，並須完全重寫才能貼合百科全書要求。須注意，僅僅以某公司或產品為主題的條目，並不直接導致其自然滿足此速刪標準。')
 	},
@@ -761,16 +761,16 @@ Twinkle.speedy.generalList = [
 		hideInNamespaces: [ 1, 2, 3, 5, 7, 9, 11, 13, 15, 101, 118, 119, 829 ] // all talk, user, draft
 	},
 	{
-		label: wgULS('G14: 超过两周没有进行任何翻译的非现代标准汉语页面', 'G14: 超過兩周沒有進行任何翻譯的非現代標準漢語頁面'),
+		label: wgULS('G14: 超过两周没有进行任何翻译的非现代标准汉语页面', 'G14: 超過兩週沒有進行任何翻譯的非現代標準漢語頁面'),
 		value: 'g14',
 		tooltip: wgULS('包括所有未翻译的外语、汉语方言以及文言文。', '包括所有未翻譯的外語、漢語方言以及文言文。'),
 		hideWhenUser: true,
 		showInNamespaces: [ 0, 4, 12 ] // main, wikipedia, help
 	},
 	{
-		label: wgULS('G15: 孤立页面，比如没有主页面的讨论页、指向空页面的重定向等', 'G15: 孤立頁面，比如沒有主頁面的討論頁、指向空頁面的重定向等'),
+		label: wgULS('G15: 孤立页面，比如没有主页面的讨论页、指向空页面的重定向等', 'G15: 孤立頁面，比如沒有主頁面的討論頁、指向空頁面的重新導向等'),
 		value: 'g15',
-		tooltip: wgULS('包括以下几种类型：1. 没有对应文件的文件页面；2. 没有对应母页面的子页面，用户页子页面除外；3. 指向不存在页面的重定向；4. 没有对应内容页面的讨论页，讨论页存档和用户讨论页除外；5. 不存在注册用户的用户页及用户页子页面，localhost对应IP用户的用户页和随用户更名产生的用户页重定向除外。请在删除时注意有无将内容移至他处的必要。不包括在主页面挂有{{CSD Placeholder}}模板的讨论页。', '包括以下幾種類型：1. 沒有對應檔案的檔案頁面；2. 沒有對應母頁面的子頁面，使用者頁面子頁面除外；3. 指向不存在頁面的重新導向；4. 沒有對應內容頁面的討論頁，討論頁存檔和使用者討論頁除外；5. 不存在註冊使用者的使用者頁面及使用者頁面子頁面，localhost對應IP使用者的使用者頁面和隨使用者更名產生的使用者頁面重新導向除外。請在刪除時注意有無將內容移至他處的必要。不包括在主頁面掛有{{CSD Placeholder}}模板的討論頁。')
+		tooltip: wgULS('包括以下几种类型：1. 没有对应文件的文件页面；2. 没有对应母页面的子页面，用户页子页面除外；3. 指向不存在页面的重定向；4. 没有对应内容页面的讨论页，讨论页存档和用户讨论页除外；5. 不存在注册用户的用户页及用户页子页面，localhost对应IP用户的用户页和随用户更名产生的用户页重定向除外。请在删除时注意有无将内容移至他处的必要。不包括在主页面挂有{{CSD Placeholder}}模板的讨论页。', '包括以下幾種類別：1. 沒有對應檔案的檔案頁面；2. 沒有對應母頁面的子頁面，使用者頁面子頁面除外；3. 指向不存在頁面的重新導向；4. 沒有對應內容頁面的討論頁，討論頁存檔和使用者討論頁除外；5. 不存在註冊使用者的使用者頁面及使用者頁面子頁面，localhost對應IP使用者的使用者頁面和隨使用者更名產生的使用者頁面重新導向除外。請在刪除時注意有無將內容移至他處的必要。不包括在主頁面掛有{{CSD Placeholder}}模板的討論頁。')
 	},
 	{
 		label: wgULS('G16: 页面与介绍相同事物的原页面同样侵权', 'G16: 頁面與介紹相同事物的原頁面同樣侵權'),
@@ -784,7 +784,7 @@ Twinkle.speedy.generalList = [
 			},
 			{
 				type: 'div',
-				label: wgULS('若另一页面已依侵权审核删除，请使用CSD G5。标记首次侵权的页面，请使用Twinkle的“侵权”功能。', '若另一頁面已依侵權審核刪除，請使用CSD G5。標記首次侵權的頁面，請使用Twinkle的「侵權」功能。')
+				label: wgULS('若另一页面已依侵权审核删除，请使用CSD G5。标记首次侵权的页面，请使用Twinkle的“侵权”功能。', '若另一頁面已依侵權稽核刪除，請使用CSD G5。標記首次侵權的頁面，請使用Twinkle的「侵權」功能。')
 			}
 		]
 	}
@@ -792,7 +792,7 @@ Twinkle.speedy.generalList = [
 
 Twinkle.speedy.redirectList = [
 	{
-		label: wgULS('R2: 跨名字空间重定向。', 'R2: 跨命名空間的重新導向。'),
+		label: wgULS('R2: 跨名字空间重定向。', 'R2: 跨命名空間重新導向。'),
 		value: 'r2',
 		tooltip: wgULS('由条目的名字空间重定向至非条目名字空间，或者从草稿名字空间指向非草稿名字空间的重定向。', '由條目的命名空間重新導向至非條目命名空間，或者從草稿命名空間指向非草稿命名空間的重新導向。'),
 		showInNamespaces: [ 0, 118 ] // main, draft
@@ -824,19 +824,19 @@ Twinkle.speedy.redirectList = [
 		hideSubgroupWhenSysop: true
 	},
 	{
-		label: wgULS('R5: 指向本身或循环的重定向。', 'R5: 指向本身或循環的重新導向。'),
+		label: wgULS('R5: 指向本身或循环的重定向。', 'R5: 指向本身或迴圈的重新導向。'),
 		value: 'r5',
 		tooltip: '如A→B→C→……→A。'
 	},
 	{
-		label: wgULS('R6: 移动文件而产生的重定向，且页面标题不匹配文件名称指引。', 'R6: 移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引。'),
+		label: wgULS('R6: 移动文件而产生的重定向，且页面标题不匹配文件名称指引。', 'R6: 移動檔案而產生的重新導向，且頁面標題不匹配檔案名稱指引。'),
 		value: 'r6',
 		showInNamespaces: [ 6 ] // file
 	},
 	{
 		label: wgULS('R7: 明显与导向目标所涵盖的主题无关或比导向目标所涵盖的主题更广泛的重定向。', 'R7: 明顯與導向目標所涵蓋的主題無關或比導向目標所涵蓋的主題更廣泛的重新導向。'),
 		value: 'r7',
-		tooltip: wgULS('挂有{{关注度重定向}}或{{合并重定向}}模板的页面不适用，请改为提出存废讨论。如有用户对标题用字存在未解决的争议，则应交由存废讨论处理。', '掛有{{關注度重定向}}或{{合併重定向}}模板的頁面不適用，請改為提出存廢討論。如有使用者對標題用字存在未解決的爭議，則應交由存廢討論處理。')
+		tooltip: wgULS('挂有{{关注度重定向}}或{{合并重定向}}模板的页面不适用，请改为提出存废讨论。如有用户对标题用字存在未解决的争议，则应交由存废讨论处理。', '掛有{{關注度重新導向}}或{{合併重新導向}}模板的頁面不適用，請改為提出存廢討論。如有使用者對標題用字存在未解決的爭議，則應交由存廢討論處理。')
 	}
 ];
 
@@ -949,7 +949,7 @@ Twinkle.speedy.callbacks = {
 				var code = Twinkle.speedy.callbacks.getTemplateCodeAndParams(params)[0];
 				Twinkle.speedy.callbacks.parseWikitext(mw.config.get('wgPageName'), code, function(reason) {
 					if (params.promptForSummary) {
-						reason = prompt(wgULS('输入删除理由，或点击确定以接受自动生成的：', '輸入刪除理由，或點選確定以接受自動生成的：'), reason);
+						reason = prompt(wgULS('输入删除理由，或点击确定以接受自动生成的：', '輸入刪除理由，或點擊確定以接受自動生成的：'), reason);
 					}
 					Twinkle.speedy.callbacks.sysop.deletePage(reason, params);
 				});
@@ -976,11 +976,11 @@ Twinkle.speedy.callbacks = {
 					});
 					mbApi.post();
 				}, function() {
-					statusElement.error(wgULS('未能抓取操作令牌', '未能擷取操作權杖'));
+					statusElement.error(wgULS('未能抓取操作令牌', '未能抓取操作權杖'));
 				});
 			} else {
 				if (reason === null) {
-					return Morebits.status.error(wgULS('询问理由', '詢問理由'), wgULS('用户取消操作。', '用戶取消操作。'));
+					return Morebits.status.error(wgULS('询问理由', '詢問理由'), wgULS('用户取消操作。', '使用者取消操作。'));
 				} else if (!reason || !reason.replace(/^\s*/, '').replace(/\s*$/, '')) {
 					return Morebits.status.error(wgULS('询问理由', '詢問理由'), wgULS('你不给我理由…我就…不管了…', '你不給我理由…我就…不管了…'));
 				}
@@ -1035,8 +1035,8 @@ Twinkle.speedy.callbacks = {
 					'prop': 'redirects',
 					'rdlimit': 5000  // 500 is max for normal users, 5000 for bots and sysops
 				};
-				var wikipedia_api = new Morebits.wiki.api(wgULS('获取重定向列表…', '取得重定向清單…'), query, Twinkle.speedy.callbacks.sysop.deleteRedirectsMain,
-					new Morebits.status(wgULS('删除重定向', '刪除重定向')));
+				var wikipedia_api = new Morebits.wiki.api(wgULS('获取重定向列表…', '取得重新導向列表…'), query, Twinkle.speedy.callbacks.sysop.deleteRedirectsMain,
+					new Morebits.status(wgULS('删除重定向', '刪除重新導向')));
 				wikipedia_api.params = params;
 				wikipedia_api.post();
 			}
@@ -1046,7 +1046,7 @@ Twinkle.speedy.callbacks = {
 			if (params.normalized === 'g11') {
 				$link = $('<a/>', {
 					'href': '#',
-					'text': wgULS('点击这里施行保护', '點選這裡施行保護'),
+					'text': wgULS('点击这里施行保护', '點擊這裡施行保護'),
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' },
 					'click': function() {
 						Morebits.wiki.actionCompleted.redirect = null;
@@ -1066,7 +1066,7 @@ Twinkle.speedy.callbacks = {
 			if (mw.config.get('wgNamespaceNumber') === 6 && params.normalized !== 'f7') {
 				$link = $('<a/>', {
 					'href': '#',
-					'text': wgULS('点击这里前往反链工具', '點選這裏前往反鏈工具'),
+					'text': wgULS('点击这里前往反链工具', '點擊這裡前往反鏈工具'),
 					'css': { 'fontWeight': 'bold' },
 					'click': function() {
 						Morebits.wiki.actionCompleted.redirect = null;
@@ -1082,7 +1082,7 @@ Twinkle.speedy.callbacks = {
 			} else if (params.normalized !== 'f7') {
 				$link = $('<a/>', {
 					'href': '#',
-					'text': wgULS('点击这里前往反链工具', '點選這裏前往反鏈工具'),
+					'text': wgULS('点击这里前往反链工具', '點擊這裡前往反鏈工具'),
 					'css': { 'fontWeight': 'bold' },
 					'click': function() {
 						Morebits.wiki.actionCompleted.redirect = null;
@@ -1114,7 +1114,7 @@ Twinkle.speedy.callbacks = {
 				var $link, $bigtext;
 				$link = $('<a/>', {
 					'href': mw.util.wikiScript('index') + '?' + $.param(query),
-					'text': wgULS('点此打开User talk:', '點此開啟User talk:') + user,
+					'text': wgULS('点此打开User talk:', '點此打開User talk:') + user,
 					'target': '_blank',
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
 				});
@@ -1125,7 +1125,7 @@ Twinkle.speedy.callbacks = {
 				Morebits.status.info($bigtext[0], $link[0]);
 			} else {
 				// open the initial contributor's talk page
-				var statusIndicator = new Morebits.status(wgULS('打开用户' + user + '对话页编辑表单', '開啟用戶' + user + '對話頁編輯表單'), wgULS('打开中…', '開啟中…'));
+				var statusIndicator = new Morebits.status(wgULS('打开用户' + user + '对话页编辑表单', '打開使用者' + user + '對話頁編輯表單'), wgULS('打开中…', '打開中…'));
 
 				switch (Twinkle.getPref('userTalkPageMode')) {
 					case 'tab':
@@ -1153,7 +1153,7 @@ Twinkle.speedy.callbacks = {
 			var statusIndicator = apiobj.statelem;
 
 			if (!total) {
-				statusIndicator.status(wgULS('未发现重定向', '未發現重定向'));
+				statusIndicator.status(wgULS('未发现重定向', '未發現重新導向'));
 				return;
 			}
 
@@ -1174,7 +1174,7 @@ Twinkle.speedy.callbacks = {
 
 			$snapshot.each(function(key, value) {
 				var title = $(value).attr('title');
-				var page = new Morebits.wiki.page(title, wgULS('删除重定向 "', '刪除重定向 "') + title + '"');
+				var page = new Morebits.wiki.page(title, wgULS('删除重定向 "', '刪除重新導向 "') + title + '"');
 				page.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 重定向到已删除页面“' + Morebits.pageNameNorm + '”' + Twinkle.getPref('deletionSummaryAd'));
 				page.setTags(Twinkle.getPref('revisionTags'));
 				page.deletePage(onsuccess);
@@ -1199,15 +1199,15 @@ Twinkle.speedy.callbacks = {
 
 			// check for existing deletion tags
 			var textNoSd = text.replace(/\{\{\s*(db(-\w*)?|d|delete|deletebecause|speedy|csd|速刪|速删|快删|快刪)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, '');
-			if (text !== textNoSd && !confirm(wgULS('在页面上找到快速删除模板，要移除并添加新的吗？', '在頁面上找到快速刪除模板，要移除並添加新的嗎？'))) {
+			if (text !== textNoSd && !confirm(wgULS('在页面上找到快速删除模板，要移除并添加新的吗？', '在頁面上找到快速刪除模板，要移除並加入新的嗎？'))) {
 				statelem.error(wgULS('快速删除模板已被置于页面中。', '快速刪除模板已被置於頁面中。'));
 				return;
 			}
 			text = textNoSd;
 
 			var copyvio = /(?:\{\{\s*(copyvio|侵权|侵權)[^{}]*?\}\})/i.exec(text);
-			if (copyvio && !confirm(wgULS('版权验证模板已被置于页面中，您是否仍想添加一个快速删除模板？', '版權驗證模板已被置於頁面中，您是否仍想加入一個快速刪除模板？'))) {
-				statelem.error(wgULS('页面中已有版权验证模板。', '頁面中已有版權驗證模板。'));
+			if (copyvio && !confirm(wgULS('版权验证模板已被置于页面中，您是否仍想添加一个快速删除模板？', '著作權驗證模板已被置於頁面中，您是否仍想加入一個快速刪除模板？'))) {
+				statelem.error(wgULS('页面中已有版权验证模板。', '頁面中已有著作權驗證模板。'));
 				return;
 			}
 
@@ -1297,7 +1297,7 @@ Twinkle.speedy.callbacks = {
 
 					// don't notify users when their user talk page is nominated
 					} else if (initialContrib === mw.config.get('wgTitle') && mw.config.get('wgNamespaceNumber') === 3) {
-						Morebits.status.warn(wgULS('通知页面创建者：用户创建了自己的对话页', '通知頁面建立者：用戶建立了自己的對話頁'));
+						Morebits.status.warn(wgULS('通知页面创建者：用户创建了自己的对话页', '通知頁面建立者：使用者建立了自己的對話頁'));
 						initialContrib = null;
 
 					// quick hack to prevent excessive unwanted notifications. Should actually be configurable on recipient page...

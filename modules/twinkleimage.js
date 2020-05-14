@@ -36,7 +36,7 @@ Twinkle.image.callback = function twinkleimageCallback() {
 				label: wgULS('通知上传者', '通知上傳者'),
 				value: 'notify',
 				name: 'notify',
-				tooltip: wgULS('如果您在标记同一用户的很多文件，请取消此复选框以避免使用户对话页过载。CSD F6永远不会通知。', '如果您在標記同一用戶的很多檔案，請取消此複選框以避免使用戶對話頁過載。CSD F6永遠不會通知。'),
+				tooltip: wgULS('如果您在标记同一用户的很多文件，请取消此复选框以避免使用户对话页过载。CSD F6永远不会通知。', '如果您在標記同一使用者的很多檔案，請取消此核取方塊以避免使使用者對話頁過載。CSD F6永遠不會通知。'),
 				checked: Twinkle.getPref('notifyUserOnDeli')
 			}
 		]
@@ -54,22 +54,22 @@ Twinkle.image.callback = function twinkleimageCallback() {
 				label: wgULS('来源不明（CSD F3）', '來源不明（CSD F3）'),
 				value: 'no source',
 				checked: true,
-				tooltip: wgULS('本档案并未注明原始出处', '本檔案並未注明原始出處')
+				tooltip: wgULS('本档案并未注明原始出处', '本檔案並未註明原始出處')
 			},
 			{
-				label: wgULS('未知版权或版权无法被查证（CSD F4）', '未知版權或版權無法被查證（CSD F4）'),
+				label: wgULS('未知版权或版权无法被查证（CSD F4）', '未知著作權或著作權無法被查證（CSD F4）'),
 				value: 'no license',
-				tooltip: wgULS('本档案缺少版权信息，或声称的版权信息无法予以查证', '本檔案缺少版權資訊，或聲稱的版權資訊無法予以查證')
+				tooltip: wgULS('本档案缺少版权信息，或声称的版权信息无法予以查证', '本檔案缺少著作權資訊，或聲稱的著作權資訊無法予以查證')
 			},
 			{
-				label: wgULS('来源不明（CSD F3）且未知版权或版权无法被查证（CSD F4）', '來源不明（CSD F3）且未知版權或版權無法被查證（CSD F4）'),
+				label: wgULS('来源不明（CSD F3）且未知版权或版权无法被查证（CSD F4）', '來源不明（CSD F3）且未知著作權或著作權無法被查證（CSD F4）'),
 				value: 'no source no license',
-				tooltip: wgULS('本档案并未注明原始出处，且本档案缺少版权信息或声称的版权信息无法予以查证', '本檔案並未注明原始出處，且本檔案缺少版權資訊或聲稱的版權資訊無法予以查證')
+				tooltip: wgULS('本档案并未注明原始出处，且本档案缺少版权信息或声称的版权信息无法予以查证', '本檔案並未註明原始出處，且本檔案缺少著作權資訊或聲稱的著作權資訊無法予以查證')
 			},
 			{
-				label: wgULS('没有被条目使用的非自由版权文件（CSD F6）', '沒有被條目使用的非自由版權檔案（CSD F6）'),
+				label: wgULS('没有被条目使用的非自由版权文件（CSD F6）', '沒有被條目使用的非自由著作權檔案（CSD F6）'),
 				value: 'orphaned fair use',
-				tooltip: wgULS('本文件为非自由版权且没有被条目使用', '本檔案為非自由版權且沒有被條目使用')
+				tooltip: wgULS('本文件为非自由版权且没有被条目使用', '本檔案為非自由著作權且沒有被條目使用')
 			},
 			{
 				label: wgULS('明显侵权之文件（CSD F8）', '明顯侵權之檔案（CSD F8）'),
@@ -84,12 +84,12 @@ Twinkle.image.callback = function twinkleimageCallback() {
 			{
 				label: wgULS('没有填写任何合理使用依据的非自由著作权文件（CSD F9）', '沒有填寫任何合理使用依據的非自由著作權檔案（CSD F9）'),
 				value: 'no fair use rationale',
-				tooltip: wgULS('本文件为非自由版权且没有被条目使用', '本檔案為非自由版權且沒有被條目使用')
+				tooltip: wgULS('本文件为非自由版权且没有被条目使用', '本檔案為非自由著作權且沒有被條目使用')
 			},
 			{
-				label: wgULS('可被替代的非自由著作权文件（CSD F10）', ' 可被替代的非自由著作權檔案（CSD F10）'),
+				label: wgULS('可被替代的非自由著作权文件（CSD F10）', '可被替代的非自由著作權檔案（CSD F10）'),
 				value: 'replaceable fair use',
-				tooltip: wgULS('本文件为非自由版权且没有被条目使用', '本檔案為非自由版權且沒有被條目使用'),
+				tooltip: wgULS('本文件为非自由版权且没有被条目使用', '本檔案為非自由著作權且沒有被條目使用'),
 				subgroup: {
 					name: 'f10_type',
 					type: 'select',
@@ -285,12 +285,12 @@ Twinkle.image.callbacks = {
 		} else {
 			var talkPageName = 'User talk:' + initialContrib;
 			Morebits.wiki.flow.check(talkPageName, function () {
-				var flowpage = new Morebits.wiki.flow(talkPageName, wgULS('通知上传者(', '通知上傳者(') + initialContrib + ')');
-				flowpage.setTopic(wgULS('请补充文件[[:', '請補充檔案[[:') + Morebits.pageNameNorm + wgULS(']]的版权或来源信息', ']]的版權或來源資訊'));
+				var flowpage = new Morebits.wiki.flow(talkPageName, wgULS('通知上传者（', '通知上傳者（') + initialContrib + '）');
+				flowpage.setTopic(wgULS('请补充文件[[:', '請補充檔案[[:') + Morebits.pageNameNorm + wgULS(']]的版权或来源信息', ']]的著作權或來源資訊'));
 				flowpage.setContent('{{subst:Uploadvionotice|' + Morebits.pageNameNorm + '|flow=yes}}');
 				flowpage.newTopic();
 			}, function () {
-				var usertalkpage = new Morebits.wiki.page(talkPageName, wgULS('通知上传者(', '通知上傳者(') + initialContrib + ')');
+				var usertalkpage = new Morebits.wiki.page(talkPageName, wgULS('通知上传者（', '通知上傳者（') + initialContrib + '）');
 				var notifytext = '\n{{subst:Uploadvionotice|' + Morebits.pageNameNorm + '}}--~~~~';
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary(wgULS('通知：文件[[', '通知：檔案[[') + Morebits.pageNameNorm + wgULS(']]快速删除提名', ']]快速刪除提名') + Twinkle.getPref('summaryAd'));
