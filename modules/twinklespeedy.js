@@ -220,7 +220,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				label: wgULS('如可能，通知创建者', '如可能，通知建立者'),
 				value: 'notify',
 				name: 'notify',
-				tooltip: wgULS('一个通知模板将会被加入创建者的对话页，如果您启用了该理据的通知。', '一個通知模板將會被加入建立者的對話頁，如果您啟用了該理據的通知。'),
+				tooltip: wgULS('一个通知模板将会被添加创建者的对话页，如果您激活了该理据的通知。', '一個通知模板將會被加入建立者的對話頁，如果您啟用了該理據的通知。'),
 				checked: !Morebits.userIsSysop || !(Twinkle.speedy.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete')),
 				event: function(event) {
 					event.stopPropagation();
@@ -321,7 +321,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 
 		work_area.append({
 			type: 'div',
-			label: wgULS('当选择完成后，点击：', '當選擇完成後，點擊：')
+			label: wgULS('当选择完成后，单击：', '當選擇完成後，點擊：')
 		});
 		work_area.append({
 			type: 'button',
@@ -541,7 +541,7 @@ Twinkle.speedy.customRationale = [
 
 Twinkle.speedy.fileList = [
 	{
-		label: wgULS('F1: 重复的档案（完全相同或缩小），而且不再被条目使用', 'F1: 重複的檔案（完全相同或縮小），而且不再被條目使用'),
+		label: wgULS('F1: 重复的文件（完全相同或缩小），而且不再被条目使用', 'F1: 重複的檔案（完全相同或縮小），而且不再被條目使用'),
 		value: 'f1',
 		subgroup: {
 			name: 'f1_filename',
@@ -556,12 +556,12 @@ Twinkle.speedy.fileList = [
 		hideWhenUser: true
 	},
 	{
-		label: wgULS('F4: 未知版权或版权无法被查证的文件', 'F4: 未知著作權或著作權無法被查證的檔案'),
+		label: wgULS('F4: 未知著作权或著作权无法被查证的文件', 'F4: 未知著作權或著作權無法被查證的檔案'),
 		value: 'f4',
 		hideWhenUser: true
 	},
 	{
-		label: wgULS('F5: 被高分辨率或SVG档案取代的图片', 'F5: 被高解析度或SVG檔案取代的圖片'),
+		label: wgULS('F5: 被高清晰度或SVG文件取代的图片', 'F5: 被高解析度或SVG檔案取代的圖片'),
 		value: 'f5',
 		subgroup: {
 			name: 'f5_filename',
@@ -571,12 +571,12 @@ Twinkle.speedy.fileList = [
 		}
 	},
 	{
-		label: wgULS('F6: 没有被条目使用的非自由版权档案', 'F6: 沒有被條目使用的非自由著作權檔案'),
+		label: wgULS('F6: 没有被条目使用的非自由著作权文件', 'F6: 沒有被條目使用的非自由著作權檔案'),
 		value: 'f6',
 		hideWhenUser: true
 	},
 	{
-		label: wgULS('F7: 与维基共享资源档案重复的档案', 'F7: 與維基共享資源檔案重複的檔案'),
+		label: wgULS('F7: 与维基共享资源文件重复的文件', 'F7: 與維基共享資源檔案重複的檔案'),
 		value: 'f7',
 		subgroup: {
 			name: 'f7_filename',
@@ -622,7 +622,7 @@ Twinkle.speedy.articleList = [
 			name: 'a3_pagename',
 			type: 'input',
 			label: wgULS('现有条目名：', '現有條目名：'),
-			tooltip: wgULS('请加上跨 wiki 字首。不自动加上连结，若需要请自行加上[[]]。', '請加上跨 wiki 字首。不自動加上連結，若需要請自行加上[[]]。'),
+			tooltip: wgULS('请加上跨 wiki 前缀。不自动加上链接，若需要请自行加上[[]]。', '請加上跨 wiki 字首。不自動加上連結，若需要請自行加上[[]]。'),
 			size: 60
 		}
 	},
@@ -645,7 +645,7 @@ Twinkle.speedy.articleList = [
 			name: 'a6_pagename',
 			type: 'input',
 			label: wgULS('现有条目名：', '現有條目名：'),
-			tooltip: wgULS('请加上跨 wiki 字首。不自动加上连结，若需要请自行加上[[]]。', '請加上跨 wiki 字首。不自動加上連結，若需要請自行加上[[]]。'),
+			tooltip: wgULS('请加上跨 wiki 前缀。不自动加上链接，若需要请自行加上[[]]。', '請加上跨 wiki 字首。不自動加上連結，若需要請自行加上[[]]。'),
 			size: 60
 		}
 	}
@@ -704,7 +704,7 @@ Twinkle.speedy.generalList = [
 	{
 		label: wgULS('G5: 曾经根据页面存废讨论、侵权审核或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同', 'G5: 曾經根據頁面存廢討論、侵權稽核或檔案存廢討論結果刪除後又重新建立的內容，而有關內容與已刪除版本相同或非常相似，無論標題是否相同'),
 		value: 'g5',
-		tooltip: wgULS('该内容之前必须是经存废讨论删除，如之前属于快速删除，请以相同理由重新提送快速删除。该内容如与被删除的版本明显不同，而提删者认为需要删除，请交到存废讨论，如果提删者对此不肯定，请先联络上次执行删除的管理人员。不适用于根据存废复核结果被恢复的内容。在某些情况下，重新创建的条目有机会发展。那么不应提交快速删除，而应该提交存废复核或存废讨论重新评核。', '該內容之前必須是經存廢討論刪除，如之前屬於快速刪除，請以相同理由重新提送快速刪除。該內容如與被刪除的版本明顯不同，而提刪者認為需要刪除，請交到存廢討論，如果提刪者對此不肯定，請先聯絡上次執行刪除的管理人員。不適用於根據存廢覆核結果被恢復的內容。在某些情況下，重新建立的條目有機會發展。那麼不應提交快速刪除，而應該提交存廢覆核或存廢討論重新評核。'),
+		tooltip: wgULS('该内容之前必须是经存废讨论删除，如之前属于快速删除，请以相同理由重新提送快速删除。该内容如与被删除的版本明显不同，而提删者认为需要删除，请交到存废讨论，如果提删者对此不肯定，请先联系上次执行删除的管理人员。不适用于根据存废复核结果被恢复的内容。在某些情况下，重新创建的条目有机会发展。那么不应提交快速删除，而应该提交存废复核或存废讨论重新评核。', '該內容之前必須是經存廢討論刪除，如之前屬於快速刪除，請以相同理由重新提送快速刪除。該內容如與被刪除的版本明顯不同，而提刪者認為需要刪除，請交到存廢討論，如果提刪者對此不肯定，請先聯絡上次執行刪除的管理人員。不適用於根據存廢覆核結果被恢復的內容。在某些情況下，重新建立的條目有機會發展。那麼不應提交快速刪除，而應該提交存廢覆核或存廢討論重新評核。'),
 		subgroup: [
 			{
 				type: 'checkbox',
@@ -804,7 +804,7 @@ Twinkle.speedy.redirectList = [
 		subgroup: {
 			name: 'r3_type',
 			type: 'select',
-			label: wgULS('适用类别：', '適用類別：'),
+			label: wgULS('适用类型：', '適用類別：'),
 			list: wgULS([
 				{ label: '请选择', value: '' },
 				{ label: '标题繁简混用', value: '标题繁简混用。' },
@@ -949,7 +949,7 @@ Twinkle.speedy.callbacks = {
 				var code = Twinkle.speedy.callbacks.getTemplateCodeAndParams(params)[0];
 				Twinkle.speedy.callbacks.parseWikitext(mw.config.get('wgPageName'), code, function(reason) {
 					if (params.promptForSummary) {
-						reason = prompt(wgULS('输入删除理由，或点击确定以接受自动生成的：', '輸入刪除理由，或點擊確定以接受自動生成的：'), reason);
+						reason = prompt(wgULS('输入删除理由，或单击确定以接受自动生成的：', '輸入刪除理由，或點擊確定以接受自動生成的：'), reason);
 					}
 					Twinkle.speedy.callbacks.sysop.deletePage(reason, params);
 				});
@@ -972,7 +972,7 @@ Twinkle.speedy.callbacks = {
 						tags: Twinkle.getPref('revisionTags'),
 						token: token
 					}, function() {
-						statusElement.info(wgULS('请记得阅读[[Wikipedia:不要删除首页]]。', '請記得閱讀[[Wikipedia:不要刪除首頁]]。'));
+						statusElement.info(wgULS('请记得阅读[[Wikipedia:不要删除主页]]。', '請記得閱讀[[Wikipedia:不要刪除首頁]]。'));
 					});
 					mbApi.post();
 				}, function() {
@@ -1046,7 +1046,7 @@ Twinkle.speedy.callbacks = {
 			if (params.normalized === 'g11') {
 				$link = $('<a/>', {
 					'href': '#',
-					'text': wgULS('点击这里施行保护', '點擊這裡施行保護'),
+					'text': wgULS('单击这里施行保护', '點擊這裡施行保護'),
 					'css': { 'fontSize': '130%', 'fontWeight': 'bold' },
 					'click': function() {
 						Morebits.wiki.actionCompleted.redirect = null;
@@ -1066,7 +1066,7 @@ Twinkle.speedy.callbacks = {
 			if (mw.config.get('wgNamespaceNumber') === 6 && params.normalized !== 'f7') {
 				$link = $('<a/>', {
 					'href': '#',
-					'text': wgULS('点击这里前往反链工具', '點擊這裡前往反鏈工具'),
+					'text': wgULS('单击这里前往反链工具', '點擊這裡前往反鏈工具'),
 					'css': { 'fontWeight': 'bold' },
 					'click': function() {
 						Morebits.wiki.actionCompleted.redirect = null;
@@ -1082,7 +1082,7 @@ Twinkle.speedy.callbacks = {
 			} else if (params.normalized !== 'f7') {
 				$link = $('<a/>', {
 					'href': '#',
-					'text': wgULS('点击这里前往反链工具', '點擊這裡前往反鏈工具'),
+					'text': wgULS('单击这里前往反链工具', '點擊這裡前往反鏈工具'),
 					'css': { 'fontWeight': 'bold' },
 					'click': function() {
 						Morebits.wiki.actionCompleted.redirect = null;
@@ -1125,7 +1125,7 @@ Twinkle.speedy.callbacks = {
 				Morebits.status.info($bigtext[0], $link[0]);
 			} else {
 				// open the initial contributor's talk page
-				var statusIndicator = new Morebits.status(wgULS('打开用户' + user + '对话页编辑表单', '打開使用者' + user + '對話頁編輯表單'), wgULS('打开中…', '打開中…'));
+				var statusIndicator = new Morebits.status(wgULS('打开用户' + user + '对话页编辑窗体', '打開使用者' + user + '對話頁編輯表單'), wgULS('打开中…', '打開中…'));
 
 				switch (Twinkle.getPref('userTalkPageMode')) {
 					case 'tab':
@@ -1206,8 +1206,8 @@ Twinkle.speedy.callbacks = {
 			text = textNoSd;
 
 			var copyvio = /(?:\{\{\s*(copyvio|侵权|侵權)[^{}]*?\}\})/i.exec(text);
-			if (copyvio && !confirm(wgULS('版权验证模板已被置于页面中，您是否仍想添加一个快速删除模板？', '著作權驗證模板已被置於頁面中，您是否仍想加入一個快速刪除模板？'))) {
-				statelem.error(wgULS('页面中已有版权验证模板。', '頁面中已有著作權驗證模板。'));
+			if (copyvio && !confirm(wgULS('著作权验证模板已被置于页面中，您是否仍想添加一个快速删除模板？', '著作權驗證模板已被置於頁面中，您是否仍想加入一個快速刪除模板？'))) {
+				statelem.error(wgULS('页面中已有著作权验证模板。', '頁面中已有著作權驗證模板。'));
 				return;
 			}
 
@@ -1276,7 +1276,7 @@ Twinkle.speedy.callbacks = {
 						titles: mw.config.get('wgPageName'),
 						token: mw.user.tokens.get('watchToken')
 					};
-					new Morebits.wiki.api(wgULS('将模块加入到监视清单', '將模組加入到監視清單'), watch_query).post();
+					new Morebits.wiki.api(wgULS('将模块添加到监视清单', '將模組加入到監視清單'), watch_query).post();
 				}
 			}
 			pageobj.save(Twinkle.speedy.callbacks.user.tagComplete);
@@ -1302,7 +1302,7 @@ Twinkle.speedy.callbacks = {
 
 					// quick hack to prevent excessive unwanted notifications. Should actually be configurable on recipient page...
 					} else if (initialContrib === 'A2093064-bot' && params.normalizeds[0] === 'g15') {
-						Morebits.status.warn(wgULS('通知页面创建者：由机器人建立，跳过通知', '通知頁面建立者：由機器人建立，跳過通知'));
+						Morebits.status.warn(wgULS('通知页面创建者：由机器人创建，跳过通知', '通知頁面建立者：由機器人建立，跳過通知'));
 						initialContrib = null;
 
 					} else {
@@ -1515,7 +1515,7 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 				if (form['csd.r3_type']) {
 					var redirtype = form['csd.r3_type'].value;
 					if (!redirtype) {
-						alert(wgULS('CSD R3：请选择适用类别。', 'CSD R3：請選擇適用類別。'));
+						alert(wgULS('CSD R3：请选择适用类型。', 'CSD R3：請選擇適用類別。'));
 						parameters = null;
 						return false;
 					}
@@ -1699,7 +1699,7 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 
 	// Modules can't be tagged, follow standard at TfD and place on /doc subpage
 	params.scribunto = mw.config.get('wgPageContentModel') === 'Scribunto';
-	var wikipedia_page = params.scribunto ? new Morebits.wiki.page(mw.config.get('wgPageName') + '/doc', wgULS('标记模块文档页', '標記模組文件頁')) : new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('标记页面', '標記頁面'));
+	var wikipedia_page = params.scribunto ? new Morebits.wiki.page(mw.config.get('wgPageName') + '/doc', wgULS('标记模块文件页', '標記模組文件頁')) : new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('标记页面', '標記頁面'));
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.speedy.callbacks.user.main);
 };

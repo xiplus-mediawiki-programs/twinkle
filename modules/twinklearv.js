@@ -200,7 +200,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			});
 			work_area.append({
 				type: 'header',
-				label: wgULS('不当用户名类别', '不當使用者名稱類別'),
+				label: wgULS('不当用户名类型', '不當使用者名稱類別'),
 				tooltip: wgULS('维基百科不允许使用带有误导性、宣传性、侮辱性或破坏性的用户名。此外，使用域名及邮箱地址的用户名亦被禁止。这些准则俱应应用至用户名及签名。在其他语言中不当的用户名或通过错拼、替代、暗示、拆字或任何间接方法达成的非妥当用户名同样视为违规。',
 					'維基百科不允許使用帶有誤導性、宣傳性、侮辱性或破壞性的使用者名稱。此外，使用域名及電子信箱位址的使用者名稱亦被禁止。這些準則俱應應用至使用者名稱及簽名。在其他語言中不當的使用者名稱或通過錯拼、替代、暗示、拆字或任何間接方法達成的非妥當使用者名稱同樣視為違規。')
 			});
@@ -601,8 +601,8 @@ Twinkle.arv.callback.evaluate = function(e) {
 
 				// check if user has already been reported
 				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + RegExp.escape(uid, true) + '\\s*\\}\\}\\s*===').test(text)) {
-					aivPage.getStatusElement().error(wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的'));
-					Morebits.status.printUserText(reason, wgULS('您键入的评论已在下方提供，您可以将其加入到' + $aivLink + '已存在的小节中：', '您鍵入的評論已在下方提供，您可以將其加入到' + $aivLink + '已存在的小節中：'));
+					aivPage.getStatusElement().error(wgULS('报告已存在，将不会添加新的', '報告已存在，將不會加入新的'));
+					Morebits.status.printUserText(reason, wgULS('您键入的评论已在下方提供，您可以将其添加到' + $aivLink + '已存在的小节中：', '您鍵入的評論已在下方提供，您可以將其加入到' + $aivLink + '已存在的小節中：'));
 					return;
 				}
 				aivPage.setPageSection(0);
@@ -672,7 +672,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				if (new RegExp('\\{\\{\\s*user-uaa\\s*\\|\\s*(1\\s*=\\s*)?' + RegExp.escape(uid, true) + '\\s*(\\||\\})').test(text)) {
 					uaaPage.getStatusElement().error(wgULS('用户已被列入。', '使用者已被列入。'));
 					var $uaaLink = '<a target="_blank" href="/wiki/WP:UAA">WP:UAA</a>';
-					Morebits.status.printUserText(reason, wgULS('您键入的评论已在下方提供，您可以将其手工加入' + $uaaLink + '上该用户的报告中：', '您鍵入的評論已在下方提供，您可以將其手工加入' + $uaaLink + '上該使用者的報告中：'));
+					Morebits.status.printUserText(reason, wgULS('您键入的评论已在下方提供，您可以将其手工添加' + $uaaLink + '上该用户的报告中：', '您鍵入的評論已在下方提供，您可以將其手工加入' + $uaaLink + '上該使用者的報告中：'));
 					return;
 				}
 				uaaPage.getStatusElement().status(wgULS('添加新报告…', '加入新報告…'));

@@ -125,7 +125,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 			name: 'xfdreason',
 			label: wgULS('提删理由：', '提刪理由：'),
 			value: oldreason,
-			tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您加入签名。如果您使用批量提删功能，存废讨论页只会使用第一次提交的理由，但您仍需在之后提供以用于删除通告模板的参数。', '您可以使用維基格式，Twinkle將自動為您加入簽名。如果您使用批次提刪功能，存廢討論頁只會使用第一次提交的理由，但您仍需在之後提供以用於刪除通告模板的參數。'),
+			tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您添加签名。如果您使用批量提删功能，存废讨论页只会使用第一次提交的理由，但您仍需在之后提供以用于删除通告模板的参数。', '您可以使用維基格式，Twinkle將自動為您加入簽名。如果您使用批次提刪功能，存廢討論頁只會使用第一次提交的理由，但您仍需在之後提供以用於刪除通告模板的參數。'),
 			placeholder: wgULS('此值亦显示于页面的删除通告模板内，故务必提供此值，避免使用“同上”等用语。', '此值亦顯示於頁面的刪除通告模板內，故務必提供此值，避免使用「同上」等用語。')
 		});
 		// TODO possible future "preview" link here
@@ -154,7 +154,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 			var afd_category = work_area.append({
 				type: 'select',
 				name: 'xfdcat',
-				label: wgULS('选择提删类别：', '選擇提刪類別：'),
+				label: wgULS('选择提删类型：', '選擇提刪類別：'),
 				event: Twinkle.xfd.callback.change_afd_category
 			});
 
@@ -193,7 +193,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 				type: 'textarea',
 				name: 'fwdcsdreason',
 				label: wgULS('转交理由：', '轉交理由：'),
-				tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您加入签名。', '您可以使用維基格式，Twinkle將自動為您加入簽名。'),
+				tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您添加签名。', '您可以使用維基格式，Twinkle將自動為您加入簽名。'),
 				hidden: true
 			});
 
@@ -491,7 +491,7 @@ Twinkle.xfd.callbacks = {
 
 			var copyvio = /(?:\{\{\s*(copyvio)[^{}]*?\}\})/i.exec(text);
 			if (copyvio) {
-				statelem.error(wgULS('页面中已有版权验证模板。', '頁面中已有著作權驗證模板。'));
+				statelem.error(wgULS('页面中已有著作权验证模板。', '頁面中已有著作權驗證模板。'));
 				return;
 			}
 
@@ -671,7 +671,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 
 			// Tagging page
 			var isScribunto = mw.config.get('wgPageContentModel') === 'Scribunto';
-			wikipedia_page = isScribunto ? new Morebits.wiki.page(mw.config.get('wgPageName') + '/doc', wgULS('添加存废讨论模板到模块文档页', '加入存廢討論模板到模組文件頁')) : new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('添加存废讨论模板到页面', '加入存廢討論模板到頁面'));
+			wikipedia_page = isScribunto ? new Morebits.wiki.page(mw.config.get('wgPageName') + '/doc', wgULS('添加存废讨论模板到模块文件页', '加入存廢討論模板到模組文件頁')) : new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('添加存废讨论模板到页面', '加入存廢討論模板到頁面'));
 			wikipedia_page.setFollowRedirect(false);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.xfd.callbacks.afd.tryTagging);
@@ -862,7 +862,7 @@ Twinkle.xfd.aprilfool.tryTagging = function (pageobj) {
 
 	var copyvio = /(?:\{\{\s*(copyvio)[^{}]*?\}\})/i.exec(text);
 	if (copyvio) {
-		statelem.error(wgULS('页面中已有版权验证模板。', '頁面中已有著作權驗證模板。'));
+		statelem.error(wgULS('页面中已有著作权验证模板。', '頁面中已有著作權驗證模板。'));
 	}
 
 	var wikipedia_page = new Morebits.wiki.page(params.logpage, wgULS('添加讨论到当日列表', '加入討論到當日列表'));

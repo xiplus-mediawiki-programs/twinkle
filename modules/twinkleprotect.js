@@ -509,7 +509,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			});
 			break;
 		default:
-			alert(wgULS('这玩意儿被逆襲的天邪鬼吃掉了！', '這玩意兒被逆襲的天邪鬼吃掉了！'));
+			alert(wgULS('这玩意儿被逆袭的天邪鬼吃掉了！', '這玩意兒被逆襲的天邪鬼吃掉了！'));
 			break;
 	}
 
@@ -1357,7 +1357,7 @@ Twinkle.protect.callbacks = {
 		var oldtag_re = /(?:<noinclude>)?[ \t]*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
 		var re_result = oldtag_re.exec(text);
 		if (re_result) {
-			if (params.tag === 'none' || confirm(wgULS('在页面上找到{{' + re_result[1] + '}}\n点击确定以移除，或点击取消以取消。', '在頁面上找到{{' + re_result[1] + '}}\n點擊確定以移除，或點擊取消以取消。'))) {
+			if (params.tag === 'none' || confirm(wgULS('在页面上找到{{' + re_result[1] + '}}\n单击确定以移除，或单击取消以取消。', '在頁面上找到{{' + re_result[1] + '}}\n點擊確定以移除，或點擊取消以取消。'))) {
 				text = text.replace(oldtag_re, '');
 			}
 		}

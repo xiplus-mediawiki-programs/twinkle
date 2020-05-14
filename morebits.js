@@ -2284,7 +2284,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		if (ctx.fullyProtected && !ctx.suppressProtectWarning &&
 			!confirm(wgULS('您即将编辑全保护页面 "', '您即將編輯全保護頁面 "') + ctx.pageName +
 			(ctx.fullyProtected === 'infinity' ? '（永久）' : '（到期：' + new Morebits.date(ctx.fullyProtected).calendar('utc') + ' (UTC)）') +
-			wgULS('。\n\n点击确定以确定，或点击取消以取消。', '。\n\n點擊確定以確定，或點擊取消以取消。'))) {
+			wgULS('。\n\n单击确定以确定，或单击取消以取消。', '。\n\n點擊確定以確定，或點擊取消以取消。'))) {
 			ctx.statusElement.error(wgULS('已取消对全保护页面的编辑。', '已取消對全保護頁面的編輯。'));
 			ctx.onSaveFailure(this);
 			return;
@@ -3326,7 +3326,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !ctx.suppressProtectWarning &&
 				!confirm(wgULS('您即将移动全保护页面“', '您即將移動全保護頁面「') + ctx.pageName + wgULS('”', '」') +
 				(editprot.attr('expiry') === 'infinity' ? '（永久）' : '（到期：' + new Morebits.date(editprot.attr('expiry')).calendar('utc') + ' (UTC)）') +
-				wgULS('。\n\n点击确定以确定，或点击取消以取消。', '。\n\n點擊確定以確定，或點擊取消以取消。'))) {
+				wgULS('。\n\n单击确定以确定，或单击取消以取消。', '。\n\n點擊確定以確定，或點擊取消以取消。'))) {
 				ctx.statusElement.error(wgULS('对全保护页面的移动已取消。', '對全保護頁面的移動已取消。'));
 				ctx.onMoveFailure(this);
 				return;
@@ -3386,7 +3386,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !ctx.suppressProtectWarning &&
 				!confirm(wgULS('您即将删除全保护页面“' + ctx.pageName + '”', '您即將刪除全保護頁面「' + ctx.pageName + '」') +
 				(editprot.attr('expiry') === 'infinity' ? '（永久）' : '（到期：' + new Morebits.date(editprot.attr('expiry')).calendar('utc') + ' (UTC)）') +
-				wgULS('。\n\n点击确定以确定，或点击取消以取消。', '。\n\n點擊確定以確定，或點擊取消以取消。'))) {
+				wgULS('。\n\n单击确定以确定，或单击取消以取消。', '。\n\n點擊確定以確定，或點擊取消以取消。'))) {
 				ctx.statusElement.error(wgULS('对全保护页面的删除已取消。', '對全保護頁面的刪除已取消。'));
 				ctx.onDeleteFailure(this);
 				return;
@@ -3475,7 +3475,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			if (editprot.length > 0 && editprot.attr('level') === 'sysop' && !ctx.suppressProtectWarning &&
 				!confirm(wgULS('您即将取消删除全保护页面“' + ctx.pageName + '”', '您即將取消刪除全保護頁面「' + ctx.pageName + '」') +
 				(editprot.attr('expiry') === 'infinity' ? '（永久）' : '（到期：' + new Morebits.date(editprot.attr('expiry')).calendar('utc') + ' (UTC)）') +
-				wgULS('。\n\n点击确定以取消删除，或点击取消以取消。', '。\n\n點擊確定以取消刪除，或點擊取消以取消。'))) {
+				wgULS('。\n\n单击确定以取消删除，或单击取消以取消。', '。\n\n點擊確定以取消刪除，或點擊取消以取消。'))) {
 				ctx.statusElement.error(wgULS('对全保护页面的取消删除已取消。', '對全保護頁面的取消刪除已取消。'));
 				ctx.onUndeleteFailure(this);
 				return;
@@ -4341,7 +4341,7 @@ Morebits.userspaceLogger = function(logPageName) {
 			return;
 		}
 		var page = new Morebits.wiki.page('User:' + mw.config.get('wgUserName') + '/' + logPageName,
-			wgULS('将项目加入到用户空间日志', '將項目加入到使用者空間日誌')); // make this '... to ' + logPageName ?
+			wgULS('将项目添加到用户空间日志', '將項目加入到使用者空間日誌')); // make this '... to ' + logPageName ?
 		return page.load(function(pageobj) {
 			// add blurb if log page doesn't exist or is blank
 			var text = pageobj.getPageText() || this.initialText;
@@ -4732,7 +4732,7 @@ Morebits.batchOperation = function(currentAction) {
 	 */
 	this.run = function(worker, postFinish) {
 		if (ctx.running) {
-			ctx.statusElement.error(wgULS('批量操作已在运行', '批次操作已在執行'));
+			ctx.statusElement.error(wgULS('批量操作已在执行', '批次操作已在執行'));
 			return;
 		}
 		ctx.running = true;

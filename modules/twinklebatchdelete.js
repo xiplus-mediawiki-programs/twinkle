@@ -80,7 +80,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 										value: 'delete_subpage_redirects'
 									},
 									{
-										label: wgULS('取消所有已删页面的链入（仅处理条目及Portal命名空间）', '取消所有已刪頁面的連入（僅處理條目及Portal命名空間）'),
+										label: wgULS('取消所有已删页面的链入（仅处理条目及Portal名字空间）', '取消所有已刪頁面的連入（僅處理條目及Portal命名空間）'),
 										name: 'unlink_subpages',
 										value: 'unlink_subpages'
 									}
@@ -91,13 +91,13 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 				}
 			},
 			{
-				label: wgULS('取消链入（仅处理条目及Portal命名空间）', '取消連入（僅處理條目及Portal命名空間）'),
+				label: wgULS('取消链入（仅处理条目及Portal名字空间）', '取消連入（僅處理條目及Portal命名空間）'),
 				name: 'unlink_page',
 				value: 'unlink',
 				checked: false
 			},
 			{
-				label: wgULS('移除文件使用（所有命名空间）', '移除檔案使用（所有命名空間）'),
+				label: wgULS('移除文件使用（所有名字空间）', '移除檔案使用（所有命名空間）'),
 				name: 'unlink_file',
 				value: 'unlink_file',
 				checked: true

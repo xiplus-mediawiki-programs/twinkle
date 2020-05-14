@@ -267,7 +267,7 @@ Twinkle.config.sections = [
 			{
 				name: 'autoMenuAfterRollback',
 				label: wgULS('在Twinkle回退后自动打开用户对话页上的Twinkle警告菜单', '在Twinkle回退後自動打開使用者對話頁上的Twinkle警告選單'),
-				helptip: wgULS('仅在选取下方对应框时才运行', '僅在選取下方對應框時才執行'),
+				helptip: wgULS('仅在选取下方对应框时才执行', '僅在選取下方對應框時才執行'),
 				type: 'boolean'
 			},
 
@@ -285,7 +285,7 @@ Twinkle.config.sections = [
 			{
 				name: 'openTalkPageOnAutoRevert',
 				label: wgULS('在从用户贡献中发起回退时打开用户对话页', '在從使用者貢獻中發起回退時打開使用者對話頁'),
-				helptip: wgULS('您经常会在破坏者的用户贡献中发起许多回退，总是打开用户对话页可能不太适当，所以这个选项默认关闭。当它打开时，依赖上一个设定。', '您經常會在破壞者的使用者貢獻中發起許多回退，總是打開使用者對話頁可能不太適當，所以這個選項預設關閉。當它打開時，依賴上一個設定。'),
+				helptip: wgULS('您经常会在破坏者的用户贡献中发起许多回退，总是打开用户对话页可能不太适当，所以这个选项默认关闭。当它打开时，依赖上一个设置。', '您經常會在破壞者的使用者貢獻中發起許多回退，總是打開使用者對話頁可能不太適當，所以這個選項預設關閉。當它打開時，依賴上一個設定。'),
 				type: 'boolean'
 			},
 
@@ -302,7 +302,7 @@ Twinkle.config.sections = [
 			// What types of actions that should result in forced addition to watchlist
 			{
 				name: 'watchRevertedPages',
-				label: wgULS('把这些类型的回退加入监视列表', '把這些類別的回退加入監視列表'),
+				label: wgULS('把这些类型的回退添加监视列表', '把這些類別的回退加入監視列表'),
 				type: 'set',
 				setValues: wgULS({ agf: '善意回退', norm: '常规回退', vand: '破坏回退', torev: '“恢复此版本”' }, { agf: '善意回退', norm: '常規回退', vand: '破壞回退', torev: '「恢復此版本」' })
 			},
@@ -343,10 +343,10 @@ Twinkle.config.sections = [
 			{
 				name: 'customRevertSummary',
 				label: wgULS('回退理由', '回退理由'),
-				helptip: wgULS('在检视差异时可选，仅善意回退、常规回退、恢復此版本', '在檢視差異時可選，僅善意回退、常規回退、恢復此版本'),
+				helptip: wgULS('在查看差异时可选，仅善意回退、常规回退、恢复此版本', '在檢視差異時可選，僅善意回退、常規回退、恢復此版本'),
 				type: 'customList',
 				customListValueTitle: wgULS('理由', '理由'),
-				customListLabelTitle: wgULS('显示的文字', '顯示的文字')
+				customListLabelTitle: wgULS('显示的文本', '顯示的文字')
 			}
 		]
 	},
@@ -407,7 +407,7 @@ Twinkle.config.sections = [
 			{
 				name: 'welcomeUserOnSpeedyDeletionNotification',
 				label: wgULS('在使用以下理由时欢迎页面创建者', '在使用以下理由時歡迎頁面建立者'),
-				helptip: wgULS('欢迎模板仅在用户被通知时加入，使用的模板是{{firstarticle}}。', '歡迎模板僅在使用者被通知時加入，使用的模板是{{firstarticle}}。'),
+				helptip: wgULS('欢迎模板仅在用户被通知时添加，使用的模板是{{firstarticle}}。', '歡迎模板僅在使用者被通知時加入，使用的模板是{{firstarticle}}。'),
 				type: 'set',
 				setValues: Twinkle.config.commonSets.csdCriteriaNotification,
 				setDisplayOrder: Twinkle.config.commonSets.csdCriteriaNotificationDisplayOrder
@@ -538,7 +538,7 @@ Twinkle.config.sections = [
 				name: 'tagArticleSortOrder',
 				label: wgULS('条目标记的默认查看方式', '條目標記的預設檢視方式'),
 				type: 'enum',
-				enumValues: { 'cat': wgULS('按类别', '按類別'), 'alpha': '按字母' }
+				enumValues: { 'cat': wgULS('按类型', '按類別'), 'alpha': '按字母' }
 			},
 			{
 				name: 'customTagList',
@@ -546,7 +546,7 @@ Twinkle.config.sections = [
 				helptip: wgULS('这些会出现在列表的末尾。', '這些會出現在列表的末尾。'),
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
-				customListLabelTitle: wgULS('显示的文字', '顯示的文字')
+				customListLabelTitle: wgULS('显示的文本', '顯示的文字')
 			}
 		]
 	},
@@ -573,7 +573,7 @@ Twinkle.config.sections = [
 				name: 'stubArticleSortOrder',
 				label: wgULS('条目小作品的默认查看方式', '條目小作品的預設檢視方式'),
 				type: 'enum',
-				enumValues: { 'cat': wgULS('按类别', '按類別'), 'alpha': '按字母' }
+				enumValues: { 'cat': wgULS('按类型', '按類別'), 'alpha': '按字母' }
 			},
 			{
 				name: 'customStubList',
@@ -581,7 +581,7 @@ Twinkle.config.sections = [
 				helptip: wgULS('这些会出现在列表的末尾。', '這些會出現在列表的末尾。'),
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
-				customListLabelTitle: wgULS('显示的文字', '顯示的文字')
+				customListLabelTitle: wgULS('显示的文本', '顯示的文字')
 			}
 		]
 	},
@@ -620,7 +620,7 @@ Twinkle.config.sections = [
 		// In what namespaces unlink should happen, default in 0 (article) and 100 (portal)
 			{
 				name: 'unlinkNamespaces',
-				label: wgULS('取消以下命名空间中的反链', '取消以下命名空間中的反鏈'),
+				label: wgULS('取消以下名字空间中的反链', '取消以下命名空間中的反鏈'),
 				helptip: wgULS('请避免选择讨论页，因这样会导致Twinkle试图修改讨论存档。', '請避免選擇討論頁，因這樣會導致Twinkle試圖修改討論存檔。'),
 				type: 'set',
 				setValues: Twinkle.config.commonSets.namespacesNoSpecial
@@ -697,10 +697,10 @@ Twinkle.config.sections = [
 			{
 				name: 'customWarningList',
 				label: wgULS('自定义警告模板', '自訂警告模板'),
-				helptip: wgULS('您可以加入模板或用户子页面。自定义警告会出现在警告对话框中“自定义警告”一节。', '您可以加入模板或使用者子頁面。自訂警告會出現在警告對話方塊中「自訂警告」一節。'),
+				helptip: wgULS('您可以添加模板或用户子页面。自定义警告会出现在警告对话框中“自定义警告”一节。', '您可以加入模板或使用者子頁面。自訂警告會出現在警告對話方塊中「自訂警告」一節。'),
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
-				customListLabelTitle: wgULS('显示的文字（和编辑摘要）', '顯示的文字（和編輯摘要）')
+				customListLabelTitle: wgULS('显示的文本（和编辑摘要）', '顯示的文字（和編輯摘要）')
 			}
 		]
 	},
@@ -711,10 +711,10 @@ Twinkle.config.sections = [
 			{
 				name: 'customBlockReasonList',
 				label: wgULS('自定义封禁理由', '自訂封鎖理由'),
-				helptip: wgULS('您可以加入常用的封禁理由。自订的封禁理由会出现在一般的封禁理由下方。', '您可以加入常用的封鎖理由。自訂的封鎖理由會出現在一般的封鎖理由下方。'),
+				helptip: wgULS('您可以添加常用的封禁理由。自定义的封禁理由会出现在一般的封禁理由下方。', '您可以加入常用的封鎖理由。自訂的封鎖理由會出現在一般的封鎖理由下方。'),
 				type: 'customList',
-				customListValueTitle: wgULS('使用封禁模板（预设为 uw-block1）', '使用封鎖模板（預設為 uw-block1）'),
-				customListLabelTitle: wgULS('「由于…您已被封禁」及封禁日志理由', '「由於…您已被封鎖」及封鎖日誌理由')
+				customListValueTitle: wgULS('使用封禁模板（默认为 uw-block1）', '使用封鎖模板（預設為 uw-block1）'),
+				customListLabelTitle: wgULS('“由于…您已被封禁”及封禁日志理由', '「由於…您已被封鎖」及封鎖日誌理由')
 			}
 		]
 	},
@@ -765,14 +765,14 @@ Twinkle.config.sections = [
 
 			{
 				name: 'FwdCsdToXfd',
-				label: wgULS('提删类别增加转交自快速删除候选', '提刪類別增加轉交自快速刪除候選'),
+				label: wgULS('提删类型增加转交自快速删除候选', '提刪類別增加轉交自快速刪除候選'),
 				helptip: wgULS('请确保您充分了解[[Wikipedia:快速删除方针]]才开启此功能。', '請確保您充分了解[[Wikipedia:快速刪除方針]]才開啟此功能。'),
 				type: 'boolean'
 			},
 
 			{
 				name: 'afdDefaultCategory',
-				label: wgULS('默认提删类别', '預設提刪類別'),
+				label: wgULS('默认提删类型', '預設提刪類別'),
 				helptip: wgULS('若选择“相同于上次选择”将使用localStorage来记忆。', '若選擇「相同於上次選擇」將使用localStorage來記憶。'),
 				type: 'enum',
 				enumValues: wgULS({
@@ -818,7 +818,7 @@ Twinkle.config.sections = [
 	},
 
 	{
-		title: wgULS('侵犯版权', '侵犯著作權'),
+		title: wgULS('侵犯著作权', '侵犯著作權'),
 		preferences: [
 		// TwinkleConfig.copyvioWatchPage (string)
 		// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't

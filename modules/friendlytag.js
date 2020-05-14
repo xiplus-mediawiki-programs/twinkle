@@ -70,7 +70,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 				tooltip: wgULS('您可以在Twinkle参数设置（WP:TWPREFS）中更改此项。', '您可以在Twinkle偏好設定（WP:TWPREFS）中更改此項。'),
 				event: Twinkle.tag.updateSortOrder,
 				list: [
-					{ type: 'option', value: 'cat', label: wgULS('按类别', '按類別'), selected: Twinkle.getPref('tagArticleSortOrder') === 'cat' },
+					{ type: 'option', value: 'cat', label: wgULS('按类型', '按類別'), selected: Twinkle.getPref('tagArticleSortOrder') === 'cat' },
 					{ type: 'option', value: 'alpha', label: '按字母', selected: Twinkle.getPref('tagArticleSortOrder') === 'alpha' }
 				]
 			});
@@ -142,7 +142,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 
 			// TODO: perhaps add custom tags TO list of checkboxes
 
-			form.append({ type: 'header', label: wgULS('版权和来源问题标签', '著作權和來源問題標籤') });
+			form.append({ type: 'header', label: wgULS('著作权和来源问题标签', '著作權和來源問題標籤') });
 			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.licenseList });
 
 			form.append({ type: 'header', label: wgULS('维基共享资源相关标签', '維基共享資源相關標籤') });
@@ -151,7 +151,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			form.append({ type: 'header', label: wgULS('清理标签', '清理標籤') });
 			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.cleanupList });
 
-			form.append({ type: 'header', label: wgULS('档案取代标签', '檔案取代標籤') });
+			form.append({ type: 'header', label: wgULS('文件取代标签', '檔案取代標籤') });
 			form.append({ type: 'checkbox', name: 'imageTags', list: Twinkle.tag.file.replacementList });
 			break;
 
@@ -374,7 +374,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 					name: 'missingInformation',
 					type: 'input',
 					label: wgULS('缺少的内容（必填）：', '缺少的內容（必填）：'),
-					tooltip: wgULS('必填，显示为“缺少有关……的资讯。”', '必填，顯示為「缺少有關……的資訊。」')
+					tooltip: wgULS('必填，显示为“缺少有关……的信息。”', '必填，顯示為「缺少有關……的資訊。」')
 				};
 				break;
 			case 'Notability':
@@ -410,7 +410,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 					{
 						name: 'moveReason',
 						type: 'textarea',
-						label: wgULS('移动理由（会被贴上这条目的讨论页）：', '移動理由（會被貼上這條目的討論頁）：'),
+						label: wgULS('移动理由（会被粘贴这条目的讨论页）：', '移動理由（會被貼上這條目的討論頁）：'),
 						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。', '可選，但強烈推薦。如不需要請留空。')
 					}
 				];
@@ -1989,7 +1989,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		return;
 	}
 	if ((params.mergeTagOther || params.mergeReason) && params.mergeTarget.indexOf('|') !== -1) {
-		alert(wgULS('目前还不支持在一次合并中标记多个条目，与开启关于多个条目的讨论。请不要勾选“标记其他条目”和/或清理“理由”框，并重试。', '目前還不支援在一次合併中標記多個條目，與開啟關於多個條目的討論。請不要勾選「標記其他條目」和/或清理「理由」框，並重試。'));
+		alert(wgULS('当前还不支持在一次合并中标记多个条目，与开启关于多个条目的讨论。请不要勾选“标记其他条目”和/或清理“理由”框，并重试。', '目前還不支援在一次合併中標記多個條目，與開啟關於多個條目的討論。請不要勾選「標記其他條目」和/或清理「理由」框，並重試。'));
 		return;
 	}
 

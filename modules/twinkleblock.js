@@ -88,7 +88,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 		]
 	});
 
-	form.append({ type: 'field', label: wgULS('预设', '預設'), name: 'field_preset' });
+	form.append({ type: 'field', label: wgULS('默认', '預設'), name: 'field_preset' });
 	form.append({ type: 'field', label: wgULS('模板选项', '模板選項'), name: 'field_template_options' });
 	form.append({ type: 'field', label: wgULS('封禁选项', '封鎖選項'), name: 'field_block_options' });
 	form.append({ type: 'field', label: wgULS('标记用户页', '標記使用者頁面'), name: 'field_tag_options' });
@@ -207,11 +207,11 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	Twinkle.block.callback.saveFieldset($('[name=field_unblock_options]'));
 
 	if (blockBox) {
-		field_preset = new Morebits.quickForm.element({ type: 'field', label: wgULS('预设', '預設'), name: 'field_preset' });
+		field_preset = new Morebits.quickForm.element({ type: 'field', label: wgULS('默认', '預設'), name: 'field_preset' });
 		field_preset.append({
 			type: 'select',
 			name: 'preset',
-			label: wgULS('选择预设：', '選擇預設：'),
+			label: wgULS('选择默认：', '選擇預設：'),
 			event: Twinkle.block.callback.change_preset,
 			list: Twinkle.block.callback.filtered_block_groups(blockGroup)
 		});
@@ -281,7 +281,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		var blockoptions = [
 			{
 				checked: Twinkle.block.field_block_options.nocreate,
-				label: wgULS('禁止创建帐户', '禁止建立帳戶'),
+				label: wgULS('禁止创建账户', '禁止建立帳戶'),
 				name: 'nocreate',
 				value: '1'
 			},
@@ -425,7 +425,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			display: 'none',
 			label: wgULS('封禁区域', '封鎖區域'),
 			value: '',
-			tooltip: wgULS('阻止用户编辑的页面或名字空间的可选说明。', '阻止使用者編輯的頁面或命名空間的可選說明。')
+			tooltip: wgULS('阻止用户编辑的页面或名字空间的可选帮助。', '阻止使用者編輯的頁面或命名空間的可選說明。')
 		});
 
 		if (!blockBox) {
@@ -902,7 +902,7 @@ Twinkle.block.blockGroups = [
 			{ label: wgULS('[[WP:VAN#LANG|繁简破坏]]', '[[WP:VAN#LANG|繁簡破壞]]'), value: 'uw-block1' },
 			{ label: wgULS('跨维基项目破坏', '跨維基項目破壞'), value: 'uw-block1', forRegisteredOnly: true },
 			{ label: wgULS('[[WP:VOA|纯粹破坏]]', '[[WP:VOA|純粹破壞]]'), value: 'uw-block3' },
-			{ label: wgULS('不断加入[[Wikipedia:垃圾内容|垃圾链接]]', '不斷加入[[Wikipedia:垃圾內容|垃圾連結]]'), value: 'uw-sblock' },
+			{ label: wgULS('不断添加[[Wikipedia:垃圾内容|垃圾链接]]', '不斷加入[[Wikipedia:垃圾內容|垃圾連結]]'), value: 'uw-sblock' },
 			{ label: wgULS('[[WP:SOAP|散发广告/宣传]]', '[[WP:SOAP|散發廣告/宣傳]]'), value: 'uw-block1' },
 			{ label: wgULS('仅[[WP:SOAP|散发广告/宣传]]', '僅[[WP:SOAP|散發廣告/宣傳]]'), value: 'uw-block3', forRegisteredOnly: true },
 			{ label: wgULS('违反[[WP:3RR|回退不过三原则]]', '違反[[WP:3RR|回退不過三原則]]'), value: 'uw-3block' },
@@ -913,16 +913,16 @@ Twinkle.block.blockGroups = [
 			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]]', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]]'), value: 'uw-block3' },
 			{ label: wgULS('滥用[[WP:SOCK|傀儡]]', '濫用[[WP:SOCK|傀儡]]'), value: 'uw-block1', forRegisteredOnly: true },
 			{ label: wgULS('屡次增加不实资料', '屢次增加不實資料'), value: 'uw-block1' },
-			{ label: wgULS('在条目中增加无意义文字', '在條目中增加無意義文字'), value: 'uw-block1' },
+			{ label: wgULS('在条目中增加无意义文本', '在條目中增加無意義文字'), value: 'uw-block1' },
 			{ label: wgULS('无故删除条目内容', '無故刪除條目內容'), value: 'uw-dblock' },
-			{ label: wgULS('多次加入[[WP:COPYVIO|侵犯版权]]的内容', '多次加入[[WP:COPYVIO|侵犯著作權]]的內容'), value: 'uw-block1' },
+			{ label: wgULS('多次添加[[WP:COPYVIO|侵犯著作权]]的内容', '多次加入[[WP:COPYVIO|侵犯著作權]]的內容'), value: 'uw-block1' },
 			{ label: wgULS('机器人发生故障并必须紧急停止', '機器人發生故障並必須緊急停止'), value: 'Bot block message', forRegisteredOnly: true }
 			// { label: wgULS('剥夺编辑对话页权限', '剝奪編輯對話頁權限'), value: '' }
 		]
 	},
 	{
 		custom: true,
-		label: wgULS('自订的封禁理由', '自訂的封鎖理由')
+		label: wgULS('自定义的封禁理由', '自訂的封鎖理由')
 	},
 	{
 		label: wgULS('用户名封禁', '使用者名稱封鎖'),
@@ -1255,7 +1255,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		Morebits.status.init(e.target);
 
 		if (Morebits.isIPRange(Morebits.wiki.flow.relevantUserName(true))) {
-			new Morebits.status(wgULS('信息', '資訊'), wgULS('由于封禁目标为IP段，加入封鎖模板已略过', '由於封鎖目標為IP段，加入封鎖模板已略過'), 'warn');
+			new Morebits.status(wgULS('信息', '資訊'), wgULS('由于封禁目标为IP段，添加封禁模板已略过', '由於封鎖目標為IP段，加入封鎖模板已略過'), 'warn');
 		} else {
 			Twinkle.block.callback.issue_template(templateoptions);
 		}
