@@ -56,6 +56,7 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:分辨率;zh-hant:解析度}-
 -{H|zh-hans:类型;zh-hant:類別}-
 -{H|zh-hans:账户;zh-hant:帳號}-
+-{H|zh-hans:已在运行;zh-hant:已在執行}-
 '''
 
 

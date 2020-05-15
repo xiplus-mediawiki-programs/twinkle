@@ -4732,7 +4732,7 @@ Morebits.batchOperation = function(currentAction) {
 	 */
 	this.run = function(worker, postFinish) {
 		if (ctx.running) {
-			ctx.statusElement.error(wgULS('批量操作已在执行', '批次操作已在執行'));
+			ctx.statusElement.error(wgULS('批量操作已在运行', '批次操作已在執行'));
 			return;
 		}
 		ctx.running = true;
