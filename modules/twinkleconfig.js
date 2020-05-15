@@ -178,11 +178,11 @@ Twinkle.config.sections = [
 			// 'blank': force open in a new window, even if such a window exists
 			{
 				name: 'userTalkPageMode',
-				label: wgULS('当要打开用户对话页时，', '當要打開使用者對話頁時，'),
+				label: wgULS('当要打开用户讨论页时，', '當要打開使用者討論頁時，'),
 				type: 'enum',
 				enumValues: wgULS(
 					{ window: '在窗口中，替换成其它用户对话页', tab: '在新标签页中', blank: '在全新的窗口中' },
-					{ window: '在當前分頁，替換成其它用戶對話頁', tab: '在新分頁中', blank: '在新視窗中' }
+					{ window: '在當前分頁，替換成其它用戶討論頁', tab: '在新分頁中', blank: '在新視窗中' }
 				)
 			},
 
@@ -197,7 +197,7 @@ Twinkle.config.sections = [
 			{
 				name: 'disabledModules',
 				label: wgULS('关闭指定的Twinkle模块', '關閉指定的Twinkle模組'),
-				helptip: wgULS('您在此选择的功能将无法使用，取消选择以重新激活功能。', '您在此選擇的功能將無法使用，取消選擇以重新啟用功能。'),
+				helptip: wgULS('您在此选择的功能将无法使用，取消选择以重新启用功能。', '您在此選擇的功能將無法使用，取消選擇以重新啟用功能。'),
 				type: 'set',
 				setValues: { arv: wgULS('告状', '告狀'), warn: '警告', talkback: '通告', speedy: wgULS('速删', '速刪'), copyvio: wgULS('侵权', '侵權'), xfd: wgULS('提删', '提刪'), image: wgULS('图权', '圖權'), protect: wgULS('保护', '保護'), tag: wgULS('标记', '標記'), stub: '小作品', diff: wgULS('差异', '差異'), unlink: wgULS('链入', '連入'), 'fluff': '回退' }
 			},
@@ -206,7 +206,7 @@ Twinkle.config.sections = [
 			{
 				name: 'disabledSysopModules',
 				label: wgULS('关闭指定的Twinkle管理员模块', '關閉指定的Twinkle管理員模組'),
-				helptip: wgULS('您在此选择的功能将无法使用，取消选择以重新激活功能。', '您在此選擇的功能將無法使用，取消選擇以重新啟用功能。'),
+				helptip: wgULS('您在此选择的功能将无法使用，取消选择以重新启用功能。', '您在此選擇的功能將無法使用，取消選擇以重新啟用功能。'),
 				adminOnly: true,
 				type: 'set',
 				setValues: { block: wgULS('封禁', '封鎖'), batchdelete: wgULS('批删', '批刪'), batchundelete: wgULS('批复', '批復') }
@@ -252,7 +252,7 @@ Twinkle.config.sections = [
 			// The watchlist setting of the user talk page if a notification is placed. Either "yes", "no", or "default". Default is "default" (Duh).
 			{
 				name: 'deliWatchUser',
-				label: wgULS('标记图片时添加创建者对话页到监视列表', '標記圖片時加入建立者對話頁到監視列表'),
+				label: wgULS('标记图片时添加创建者讨论页到监视列表', '標記圖片時加入建立者討論頁到監視列表'),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
 			}
@@ -266,7 +266,7 @@ Twinkle.config.sections = [
 		// Option to automatically open the warning menu if the user talk page is opened post-reversion
 			{
 				name: 'autoMenuAfterRollback',
-				label: wgULS('在Twinkle回退后自动打开用户对话页上的Twinkle警告菜单', '在Twinkle回退後自動打開使用者對話頁上的Twinkle警告選單'),
+				label: wgULS('在Twinkle回退后自动打开用户讨论页上的Twinkle警告菜单', '在Twinkle回退後自動打開使用者討論頁上的Twinkle警告選單'),
 				helptip: wgULS('仅在选取下方对应框时才执行', '僅在選取下方對應框時才執行'),
 				type: 'boolean'
 			},
@@ -275,7 +275,7 @@ Twinkle.config.sections = [
 			// What types of actions that should result in opening of talk page
 			{
 				name: 'openTalkPage',
-				label: wgULS('在这些类型的回退后打开用户对话页', '在這些類別的回退後打開使用者對話頁'),
+				label: wgULS('在这些类型的回退后打开用户讨论页', '在這些類別的回退後打開使用者討論頁'),
 				type: 'set',
 				setValues: wgULS({ agf: '善意回退', norm: '常规回退', vand: '破坏回退', torev: '“恢复此版本”' }, { agf: '善意回退', norm: '常規回退', vand: '破壞回退', torev: '「恢復此版本」' })
 			},
@@ -284,8 +284,8 @@ Twinkle.config.sections = [
 			// Defines if talk page should be opened when calling revert from contrib page, because from there, actions may be multiple, and opening talk page not suitable. If set to true, openTalkPage defines then if talk page will be opened.
 			{
 				name: 'openTalkPageOnAutoRevert',
-				label: wgULS('在从用户贡献中发起回退时打开用户对话页', '在從使用者貢獻中發起回退時打開使用者對話頁'),
-				helptip: wgULS('您经常会在破坏者的用户贡献中发起许多回退，总是打开用户对话页可能不太适当，所以这个选项默认关闭。当它打开时，依赖上一个设置。', '您經常會在破壞者的使用者貢獻中發起許多回退，總是打開使用者對話頁可能不太適當，所以這個選項預設關閉。當它打開時，依賴上一個設定。'),
+				label: wgULS('在从用户贡献中发起回退时打开用户讨论页', '在從使用者貢獻中發起回退時打開使用者討論頁'),
+				helptip: wgULS('您经常会在破坏者的用户贡献中发起许多回退，总是打开用户讨论页可能不太适当，所以这个选项默认关闭。当它打开时，依赖上一个设置。', '您經常會在破壞者的使用者貢獻中發起許多回退，總是打開使用者討論頁可能不太適當，所以這個選項預設關閉。當它打開時，依賴上一個設定。'),
 				type: 'boolean'
 			},
 
@@ -319,7 +319,7 @@ Twinkle.config.sections = [
 			{
 				name: 'confirmOnFluff',
 				label: wgULS('回退前要求确认', '回退前要求確認'),
-				helptip: wgULS('给那些手持手持设备的用户，或者意志不坚定的。', '給那些手持行動裝置的使用者，或者意志不堅定的。'),
+				helptip: wgULS('给那些手持移动设备的用户，或者意志不坚定的。', '給那些手持行動裝置的使用者，或者意志不堅定的。'),
 				type: 'boolean'
 			},
 
@@ -346,7 +346,7 @@ Twinkle.config.sections = [
 				helptip: wgULS('在查看差异时可选，仅善意回退、常规回退、恢复此版本', '在檢視差異時可選，僅善意回退、常規回退、恢復此版本'),
 				type: 'customList',
 				customListValueTitle: wgULS('理由', '理由'),
-				customListLabelTitle: wgULS('显示的文本', '顯示的文字')
+				customListLabelTitle: wgULS('显示的文字', '顯示的文字')
 			}
 		]
 	},
@@ -427,7 +427,7 @@ Twinkle.config.sections = [
 			// What types of actions that should result user talk page to be opened when speedily deleting (admin only)
 			{
 				name: 'openUserTalkPageOnSpeedyDelete',
-				label: wgULS('使用以下理由时打开用户对话页', '使用以下理由時打開使用者對話頁'),
+				label: wgULS('使用以下理由时打开用户讨论页', '使用以下理由時打開使用者討論頁'),
 				adminOnly: true,
 				type: 'set',
 				setValues: Twinkle.config.commonSets.csdAndDICriteria,
@@ -473,7 +473,7 @@ Twinkle.config.sections = [
 			{
 				name: 'speedyWindowHeight',
 				label: wgULS('快速删除对话框高度（像素）', '快速刪除對話方塊高度（像素）'),
-				helptip: wgULS('如果您有一只很大的监视器，您可以将此调高。', '如果您有一隻很大的監視器，您可以將此調高。'),
+				helptip: wgULS('如果您有一台很大的显示器，您可以将此调高。', '如果您有一台很大的顯示器，您可以將此調高。'),
 				type: 'integer'
 			},
 
@@ -486,7 +486,7 @@ Twinkle.config.sections = [
 			{
 				name: 'speedyLogPageName',
 				label: wgULS('在此页保留日志', '在此頁保留日誌'),
-				helptip: wgULS('在此框中输入子页面名称，您将在User:<i>用户名</i>/<i>子页面</i>找到CSD日志。仅在打开日志时工作。', '在此框中輸入子頁面名稱，您將在User:<i>使用者名稱</i>/<i>子頁面</i>找到CSD日誌。僅在打開日誌時工作。'),
+				helptip: wgULS('在此框中输入子页面名称，您将在User:<i>用户名</i>/<i>子页面</i>找到CSD日志。仅在启用日志时工作。', '在此框中輸入子頁面名稱，您將在User:<i>使用者名稱</i>/<i>子頁面</i>找到CSD日誌。僅在啟用日誌時工作。'),
 				type: 'string'
 			},
 			{
@@ -546,7 +546,7 @@ Twinkle.config.sections = [
 				helptip: wgULS('这些会出现在列表的末尾。', '這些會出現在列表的末尾。'),
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
-				customListLabelTitle: wgULS('显示的文本', '顯示的文字')
+				customListLabelTitle: wgULS('显示的文字', '顯示的文字')
 			}
 		]
 	},
@@ -556,7 +556,7 @@ Twinkle.config.sections = [
 		preferences: [
 			{
 				name: 'enableStub',
-				label: wgULS('激活这个功能', '啟用這個功能'),
+				label: wgULS('启用这个功能', '啟用這個功能'),
 				type: 'boolean'
 			},
 			{
@@ -581,7 +581,7 @@ Twinkle.config.sections = [
 				helptip: wgULS('这些会出现在列表的末尾。', '這些會出現在列表的末尾。'),
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
-				customListLabelTitle: wgULS('显示的文本', '顯示的文字')
+				customListLabelTitle: wgULS('显示的文字', '顯示的文字')
 			}
 		]
 	},
@@ -663,7 +663,7 @@ Twinkle.config.sections = [
 			{
 				name: 'combinedSingletMenus',
 				label: wgULS('将两个单层级菜单合并成一个', '將兩個單層級選單合併成一個'),
-				helptip: wgULS('当激活此选项时，无论默认警告级别选择单层级通知或单层级警告皆属于此项。', '當啟用此選項時，無論預設警告級別選擇單層級通知或單層級警告皆屬於此項。'),
+				helptip: wgULS('当启用此选项时，无论默认警告级别选择单层级通知或单层级警告皆属于此项。', '當啟用此選項時，無論預設警告級別選擇單層級通知或單層級警告皆屬於此項。'),
 				type: 'boolean'
 			},
 
@@ -672,7 +672,7 @@ Twinkle.config.sections = [
 			// false: to not print the notice
 			{
 				name: 'showSharedIPNotice',
-				label: wgULS('在IP对话页上显示附加信息', '在IP對話頁上顯示附加資訊'),
+				label: wgULS('在IP讨论页上显示附加信息', '在IP討論頁上顯示附加資訊'),
 				helptip: wgULS('使用的模板是{{SharedIPAdvice}}。', '使用的模板是{{SharedIPAdvice}}。'),
 				type: 'boolean'
 			},
@@ -681,7 +681,7 @@ Twinkle.config.sections = [
 			// if true, watch the page which has been dispatched an warning or notice, if false, default applies
 			{
 				name: 'watchWarnings',
-				label: wgULS('警告时添加用户对话页到监视列表', '警告時加入使用者對話頁到監視列表'),
+				label: wgULS('警告时添加用户讨论页到监视列表', '警告時加入使用者討論頁到監視列表'),
 				helptip: wgULS('注意：如果对方使用Flow，对应讨论串总会加到监视列表中。', '注意：如果對方使用Flow，對應討論串總會加到監視列表中。'),
 				type: 'boolean'
 			},
@@ -700,7 +700,7 @@ Twinkle.config.sections = [
 				helptip: wgULS('您可以添加模板或用户子页面。自定义警告会出现在警告对话框中“自定义警告”一节。', '您可以加入模板或使用者子頁面。自訂警告會出現在警告對話方塊中「自訂警告」一節。'),
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
-				customListLabelTitle: wgULS('显示的文本（和编辑摘要）', '顯示的文字（和編輯摘要）')
+				customListLabelTitle: wgULS('显示的文字（和编辑摘要）', '顯示的文字（和編輯摘要）')
 			}
 		]
 	},
@@ -749,7 +749,7 @@ Twinkle.config.sections = [
 			// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 			{
 				name: 'xfdWatchUser',
-				label: wgULS('添加创建者对话页到监视列表（在通知时）', '加入建立者對話頁到監視列表（在通知時）'),
+				label: wgULS('添加创建者讨论页到监视列表（在通知时）', '加入建立者討論頁到監視列表（在通知時）'),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
 			},
@@ -835,7 +835,7 @@ Twinkle.config.sections = [
 			// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 			{
 				name: 'copyvioWatchUser',
-				label: wgULS('添加创建者对话页到监视列表（在通知时）', '加入建立者對話頁到監視列表（在通知時）'),
+				label: wgULS('添加创建者讨论页到监视列表（在通知时）', '加入建立者討論頁到監視列表（在通知時）'),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
 			},

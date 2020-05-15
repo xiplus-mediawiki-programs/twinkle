@@ -639,7 +639,7 @@ Twinkle.fluff.callbacks = {
 		if ((!self.params.autoRevert || Twinkle.getPref('openTalkPageOnAutoRevert')) &&
 				Twinkle.getPref('openTalkPage').indexOf(self.params.type) !== -1 &&
 				mw.config.get('wgUserName') !== self.params.user) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '打开用户 ', Morebits.htmlNode('strong', self.params.user), ' 的对话页' ], [ '開啟用戶 ', Morebits.htmlNode('strong', self.params.user), ' 的對話頁' ]));
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '打开用户 ', Morebits.htmlNode('strong', self.params.user), ' 的对话页' ], [ '開啟用戶 ', Morebits.htmlNode('strong', self.params.user), ' 的討論頁' ]));
 
 			query = {
 				'title': 'User talk:' + self.params.user,

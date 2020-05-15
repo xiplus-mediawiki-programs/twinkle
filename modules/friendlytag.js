@@ -410,7 +410,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 					{
 						name: 'moveReason',
 						type: 'textarea',
-						label: wgULS('移动理由（会被粘贴这条目的讨论页）：', '移動理由（會被貼上這條目的討論頁）：'),
+						label: wgULS('移动理由（会被粘贴该条目的讨论页）：', '移動理由（會被貼上該條目的討論頁）：'),
 						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。', '可選，但強烈推薦。如不需要請留空。')
 					}
 				];

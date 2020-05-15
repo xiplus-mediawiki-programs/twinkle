@@ -74,7 +74,7 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 				label: wgULS('如可能，通知页面创建者', '如可能，通知頁面建立者'),
 				value: 'notify',
 				name: 'notify',
-				tooltip: wgULS('在页面创建者对话页上放置一通知模板。', '在頁面建立者對話頁上放置一通知模板。'),
+				tooltip: wgULS('在页面创建者讨论页上放置一通知模板。', '在頁面建立者討論頁上放置一通知模板。'),
 				checked: true
 			}
 		]
@@ -125,7 +125,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 			name: 'xfdreason',
 			label: wgULS('提删理由：', '提刪理由：'),
 			value: oldreason,
-			tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您添加签名。如果您使用批量提删功能，存废讨论页只会使用第一次提交的理由，但您仍需在之后提供以用于删除通告模板的参数。', '您可以使用維基格式，Twinkle將自動為您加入簽名。如果您使用批次提刪功能，存廢討論頁只會使用第一次提交的理由，但您仍需在之後提供以用於刪除通告模板的參數。'),
+			tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您添加签名。如果您使用批量提删功能，存废讨论页只会使用第一次提交的理由，但之后您仍需提供以用于删除通告模板的参数。', '您可以使用維基格式，Twinkle將自動為您加入簽名。如果您使用批次提刪功能，存廢討論頁只會使用第一次提交的理由，但之後您仍需提供以用於刪除通告模板的參數。'),
 			placeholder: wgULS('此值亦显示于页面的删除通告模板内，故务必提供此值，避免使用“同上”等用语。', '此值亦顯示於頁面的刪除通告模板內，故務必提供此值，避免使用「同上」等用語。')
 		});
 		// TODO possible future "preview" link here

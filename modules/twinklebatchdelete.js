@@ -49,7 +49,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 					type: 'checkbox',
 					list: [
 						{
-							label: wgULS('删除关联的讨论页（用户对话页除外）', '刪除關聯的討論頁（使用者對話頁除外）'),
+							label: wgULS('删除关联的讨论页（用户讨论页除外）', '刪除關聯的討論頁（使用者討論頁除外）'),
 							name: 'delete_talk',
 							value: 'delete_talk',
 							checked: true

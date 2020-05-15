@@ -49,7 +49,7 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 				label: wgULS('通知页面创建者', '通知頁面建立者'),
 				value: 'notify',
 				name: 'notify',
-				tooltip: wgULS('在页面创建者对话页上放置一通知模板。', '在頁面建立者對話頁上放置一通知模板。'),
+				tooltip: wgULS('在页面创建者对话页上放置一通知模板。', '在頁面建立者討論頁上放置一通知模板。'),
 				checked: true
 			}
 		]

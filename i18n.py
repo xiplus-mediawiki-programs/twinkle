@@ -42,19 +42,20 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:单击;zh-hant:點擊}-
 -{H|zh-hans:支持;zh-hant:支援}-
 -{H|zh-hans:标清;zh-hant:標清}-
--{H|zh-hans:手持设备;zh-hant:行動裝置}-
+-{H|zh-hans:移动设备;zh-hant:行動裝置}-
 -{H|zh-hans:关联;zh-hant:關聯}-
 -{H|zh-hans:保存;zh-hant:儲存}-
 -{H|zh-hans:执行;zh-hant:執行}-
 -{H|zh-hans:消息;zh-hant:訊息}-
 -{H|zh-hans:启动;zh-hant:啟動}-
--{H|zh-hans:激活功能;zh-hant:啟用功能}-
+-{H|zh-hans:启用功能;zh-hant:啟用功能}-
+-{H|zh-hans:启用;zh-hant:啟用}-
 -{H|zh-hans:计划;zh-hant:計劃}-
 -{H|zh-hans:不实资料;zh-hant:不實資料}-
 -{H|zh-hans:注释;zh-hant:注釋}-
 -{H|zh-hans:分辨率;zh-hant:解析度}-
--{H|zh-hans:文本;zh-hant:文字}-
 -{H|zh-hans:类型;zh-hant:類別}-
+-{H|zh-hans:账户;zh-hant:帳號}-
 '''
 
 

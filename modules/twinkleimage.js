@@ -208,7 +208,7 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		if (type !== 'orphaned fair use') {
 			var noteData = document.createElement('pre');
 			noteData.appendChild(document.createTextNode('{{subst:Uploadvionotice|' + Morebits.pageNameNorm + '}}--~~~~'));
-			Morebits.status.info('提示', wgULS([ '这些内容应贴进上传者对话页：', document.createElement('br'), noteData ], [ '這些內容應貼進上傳者對話頁：', document.createElement('br'), noteData ]));
+			Morebits.status.info('提示', wgULS([ '这些内容应贴进上传者对话页：', document.createElement('br'), noteData ], [ '這些內容應貼進上傳者討論頁：', document.createElement('br'), noteData ]));
 		}
 	}
 };

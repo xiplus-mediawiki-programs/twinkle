@@ -97,7 +97,7 @@ Twinkle.warn = function twinklewarn() {
 };
 
 Twinkle.warn.makeVandalTalkLink = function($vandalTalkLink, pagename) {
-	$vandalTalkLink.wrapInner($('<span/>').attr('title', wgULS('如果合适，您可以用Twinkle在该用户对话页上做出警告。', '如果合適，您可以用Twinkle在該使用者對話頁上做出警告。')));
+	$vandalTalkLink.wrapInner($('<span/>').attr('title', wgULS('如果合适，您可以用Twinkle在该用户讨论页上做出警告。', '如果合適，您可以用Twinkle在該使用者討論頁上做出警告。')));
 
 	var extraParam = 'vanarticle=' + mw.util.rawurlencode(pagename);
 	var href = $vandalTalkLink.attr('href');
@@ -2282,11 +2282,11 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	Morebits.wiki.actionCompleted.notice = wgULS('警告完成，将在几秒后刷新', '警告完成，將在幾秒後重新整理');
 
 	Morebits.wiki.flow.check(userTalkPage, function () {
-		var flow_page = new Morebits.wiki.flow(userTalkPage, wgULS('用户Flow对话页留言', '使用者Flow對話頁留言'));
+		var flow_page = new Morebits.wiki.flow(userTalkPage, wgULS('用户Flow讨论页留言', '使用者Flow討論頁留言'));
 		flow_page.setCallbackParameters(params);
 		Twinkle.warn.callbacks.main_flow(flow_page);
 	}, function () {
-		var wikipedia_page = new Morebits.wiki.page(userTalkPage, wgULS('用户对话页修改', '使用者對話頁修改'));
+		var wikipedia_page = new Morebits.wiki.page(userTalkPage, wgULS('用户讨论页修改', '使用者討論頁修改'));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.setFollowRedirect(true);
 		wikipedia_page.load(Twinkle.warn.callbacks.main);

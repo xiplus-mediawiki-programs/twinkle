@@ -191,10 +191,10 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 			type: 'checkbox',
 			list: [
 				{
-					label: wgULS('开启用户对话页', '開啟使用者對話頁'),
+					label: wgULS('开启用户讨论页', '開啟使用者討論頁'),
 					value: 'openusertalk',
 					name: 'openusertalk',
-					tooltip: wgULS('此项的默认值为您的开启对话页设置。在您选择应用多条理由删除时此项将保持不变。', '此項的預設值為您的開啟對話頁設定。在您選擇應用多條理由刪除時此項將保持不變。'),
+					tooltip: wgULS('此项的默认值为您的开启讨论页设置。在您选择应用多条理由删除时此项将保持不变。', '此項的預設值為您的開啟討論頁設定。在您選擇應用多條理由刪除時此項將保持不變。'),
 					checked: false
 				}
 			]
@@ -220,7 +220,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				label: wgULS('如可能，通知创建者', '如可能，通知建立者'),
 				value: 'notify',
 				name: 'notify',
-				tooltip: wgULS('一个通知模板将会被添加创建者的对话页，如果您激活了该理据的通知。', '一個通知模板將會被加入建立者的對話頁，如果您啟用了該理據的通知。'),
+				tooltip: wgULS('一个通知模板将会被添加创建者的讨论页，如果您启用了该理据的通知。', '一個通知模板將會被加入建立者的討論頁，如果您啟用了該理據的通知。'),
 				checked: !Morebits.userIsSysop || !(Twinkle.speedy.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete')),
 				event: function(event) {
 					event.stopPropagation();
@@ -702,7 +702,7 @@ Twinkle.speedy.generalList = [
 		tooltip: wgULS('包括明显的错误信息、明显的恶作剧、信息明显错误的图片，以及清理移动破坏时留下的重定向。', '包括明顯的錯誤資訊、明顯的惡作劇、資訊明顯錯誤的圖片，以及清理移動破壞時留下的重新導向。')
 	},
 	{
-		label: wgULS('G5: 曾经根据页面存废讨论、侵权审核或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同', 'G5: 曾經根據頁面存廢討論、侵權稽核或檔案存廢討論結果刪除後又重新建立的內容，而有關內容與已刪除版本相同或非常相似，無論標題是否相同'),
+		label: wgULS('G5: 曾经根据页面存废讨论、侵权审核或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同', 'G5: 曾經根據頁面存廢討論、侵權審核或檔案存廢討論結果刪除後又重新建立的內容，而有關內容與已刪除版本相同或非常相似，無論標題是否相同'),
 		value: 'g5',
 		tooltip: wgULS('该内容之前必须是经存废讨论删除，如之前属于快速删除，请以相同理由重新提送快速删除。该内容如与被删除的版本明显不同，而提删者认为需要删除，请交到存废讨论，如果提删者对此不肯定，请先联系上次执行删除的管理人员。不适用于根据存废复核结果被恢复的内容。在某些情况下，重新创建的条目有机会发展。那么不应提交快速删除，而应该提交存废复核或存废讨论重新评核。', '該內容之前必須是經存廢討論刪除，如之前屬於快速刪除，請以相同理由重新提送快速刪除。該內容如與被刪除的版本明顯不同，而提刪者認為需要刪除，請交到存廢討論，如果提刪者對此不肯定，請先聯絡上次執行刪除的管理人員。不適用於根據存廢覆核結果被恢復的內容。在某些情況下，重新建立的條目有機會發展。那麼不應提交快速刪除，而應該提交存廢覆核或存廢討論重新評核。'),
 		subgroup: [
@@ -712,7 +712,7 @@ Twinkle.speedy.generalList = [
 					{
 						name: 'g5_copyvio',
 						value: 'g5_copyvio',
-						label: wgULS('前次以侵权审核删除。若页面名称不同，请在“删除讨论位置”提供页面名称。勾选此项将自动张贴疑似侵权模板。', '前次以侵權稽核刪除。若頁面名稱不同，請在「刪除討論位置」提供頁面名稱。勾選此項將自動張貼疑似侵權模板。')
+						label: wgULS('前次以侵权审核删除。若页面名称不同，请在“删除讨论位置”提供页面名称。勾选此项将自动张贴疑似侵权模板。', '前次以侵權審核刪除。若頁面名稱不同，請在「刪除討論位置」提供頁面名稱。勾選此項將自動張貼疑似侵權模板。')
 					}
 				]
 			},
@@ -784,7 +784,7 @@ Twinkle.speedy.generalList = [
 			},
 			{
 				type: 'div',
-				label: wgULS('若另一页面已依侵权审核删除，请使用CSD G5。标记首次侵权的页面，请使用Twinkle的“侵权”功能。', '若另一頁面已依侵權稽核刪除，請使用CSD G5。標記首次侵權的頁面，請使用Twinkle的「侵權」功能。')
+				label: wgULS('若另一页面已依侵权审核删除，请使用CSD G5。标记首次侵权的页面，请使用Twinkle的“侵权”功能。', '若另一頁面已依侵權審核刪除，請使用CSD G5。標記首次侵權的頁面，請使用Twinkle的「侵權」功能。')
 			}
 		]
 	}
@@ -824,12 +824,12 @@ Twinkle.speedy.redirectList = [
 		hideSubgroupWhenSysop: true
 	},
 	{
-		label: wgULS('R5: 指向本身或循环的重定向。', 'R5: 指向本身或迴圈的重新導向。'),
+		label: wgULS('R5: 指向本身或循环的重定向。', 'R5: 指向本身或循環的重新導向。'),
 		value: 'r5',
 		tooltip: '如A→B→C→……→A。'
 	},
 	{
-		label: wgULS('R6: 移动文件而产生的重定向，且页面标题不匹配文件名称指引。', 'R6: 移動檔案而產生的重新導向，且頁面標題不匹配檔案名稱指引。'),
+		label: wgULS('R6: 移动文件而产生的重定向，且页面标题不符合文件名称指引。', 'R6: 移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引。'),
 		value: 'r6',
 		showInNamespaces: [ 6 ] // file
 	},
@@ -1125,7 +1125,7 @@ Twinkle.speedy.callbacks = {
 				Morebits.status.info($bigtext[0], $link[0]);
 			} else {
 				// open the initial contributor's talk page
-				var statusIndicator = new Morebits.status(wgULS('打开用户' + user + '对话页编辑窗体', '打開使用者' + user + '對話頁編輯表單'), wgULS('打开中…', '打開中…'));
+				var statusIndicator = new Morebits.status(wgULS('打开用户' + user + '讨论页编辑窗口', '打開使用者' + user + '討論頁編輯視窗'), wgULS('打开中…', '打開中…'));
 
 				switch (Twinkle.getPref('userTalkPageMode')) {
 					case 'tab':
@@ -1297,7 +1297,7 @@ Twinkle.speedy.callbacks = {
 
 					// don't notify users when their user talk page is nominated
 					} else if (initialContrib === mw.config.get('wgTitle') && mw.config.get('wgNamespaceNumber') === 3) {
-						Morebits.status.warn(wgULS('通知页面创建者：用户创建了自己的对话页', '通知頁面建立者：使用者建立了自己的對話頁'));
+						Morebits.status.warn(wgULS('通知页面创建者：用户创建了自己的讨论页', '通知頁面建立者：使用者建立了自己的討論頁'));
 						initialContrib = null;
 
 					// quick hack to prevent excessive unwanted notifications. Should actually be configurable on recipient page...

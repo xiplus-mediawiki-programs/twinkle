@@ -838,7 +838,7 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	'pp-usertalk': {
 		edit: 'sysop',
 		move: 'sysop',
-		reason: '已封禁用戶濫用其對話頁'
+		reason: '已封禁用戶濫用其討論頁'
 	},
 	'pp-semi-vandalism': {
 		edit: 'autoconfirmed',
@@ -852,7 +852,7 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	'pp-semi-usertalk': {
 		edit: 'autoconfirmed',
 		move: 'sysop',
-		reason: '已封禁用戶濫用其對話頁'
+		reason: '已封禁用戶濫用其討論頁'
 	},
 	'pp-semi-template': {  // removed for now
 		edit: 'autoconfirmed',
@@ -1357,7 +1357,7 @@ Twinkle.protect.callbacks = {
 		var oldtag_re = /(?:<noinclude>)?[ \t]*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
 		var re_result = oldtag_re.exec(text);
 		if (re_result) {
-			if (params.tag === 'none' || confirm(wgULS('在页面上找到{{' + re_result[1] + '}}\n单击确定以移除，或单击取消以取消。', '在頁面上找到{{' + re_result[1] + '}}\n點擊確定以移除，或點擊取消以取消。'))) {
+			if (params.tag === 'none' || confirm(wgULS('在页面上找到{{' + re_result[1] + '}}\n单击确定以移除，或单击取消以取消操作。', '在頁面上找到{{' + re_result[1] + '}}\n點擊確定以移除，或點擊取消以取消操作。'))) {
 				text = text.replace(oldtag_re, '');
 			}
 		}

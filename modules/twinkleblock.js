@@ -59,11 +59,11 @@ Twinkle.block.callback = function twinkleblockCallback() {
 			{
 				label: wgULS('部分封禁', '部分封鎖'),
 				value: 'partial',
-				tooltip: wgULS('激活部分封禁及部分封禁模板。', '啟用部分封鎖及部分封鎖模板。'),
+				tooltip: wgULS('启用部分封禁及部分封禁模板。', '啟用部分封鎖及部分封鎖模板。'),
 				checked: Twinkle.getPref('defaultToPartialBlocks')
 			},
 			{
-				label: wgULS('添加封禁模板到用户对话页', '加入封鎖模板到使用者對話頁'),
+				label: wgULS('添加封禁模板到用户讨论页', '加入封鎖模板到使用者討論頁'),
 				value: 'template',
 				tooltip: wgULS('如果执行封禁的管理员忘记发出封禁模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。勾选部分封禁以使用部分封禁模板。', '如果執行封鎖的管理員忘記發出封鎖模板，或你封鎖了使用者而沒有給其發出模板，則你可以用此來發出合適的模板。勾選部分封鎖以使用部分封鎖模板。'),
 				checked: true
@@ -281,7 +281,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		var blockoptions = [
 			{
 				checked: Twinkle.block.field_block_options.nocreate,
-				label: wgULS('禁止创建账户', '禁止建立帳戶'),
+				label: wgULS('禁止创建账户', '禁止建立帳號'),
 				name: 'nocreate',
 				value: '1'
 			},
@@ -404,7 +404,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		field_template_options.append({
 			type: 'select',
 			name: 'template',
-			label: wgULS('选择对话页模板：', '選擇對話頁模板：'),
+			label: wgULS('选择讨论页模板：', '選擇討論頁模板：'),
 			event: Twinkle.block.callback.change_template,
 			list: Twinkle.block.callback.filtered_block_groups(blockGroup, true),
 			value: Twinkle.block.field_template_options.template
@@ -467,7 +467,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 						label: wgULS('不能编辑自己的讨论页', '不能編輯自己的討論頁'),
 						name: 'notalk',
 						checked: Twinkle.block.field_template_options.notalk,
-						tooltip: wgULS('用此在保护模板中指明该用户编辑对话页的权限已被移除', '用此在保護模板中指明該使用者編輯對話頁的權限已被移除')
+						tooltip: wgULS('用此在保护模板中指明该用户编辑讨论页的权限已被移除', '用此在保護模板中指明該使用者編輯討論頁的權限已被移除')
 					}/* ,
 					{
 						label: wgULS('不能发送电子邮件', '不能傳送電子郵件'),
@@ -476,10 +476,10 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 						tooltip: wgULS('用此在保护模板中指明该用户发送电子邮件的权限已被移除', '用此在保護模板中指明該使用者傳送電子郵件的權限已被移除')
 					},
 					{
-						label: wgULS('不能创建账号', '不能建立帳號'),
+						label: wgULS('不能创建账户', '不能建立帳號'),
 						name: 'nocreate_template',
 						checked: Twinkle.block.field_template_options.nocreate_template,
-						tooltip: wgULS('用此在保护模板中指明该用户创建账号的权限已被移除', '用此在保護模板中指明該使用者建立帳號的權限已被移除')
+						tooltip: wgULS('用此在保护模板中指明该用户创建账户的权限已被移除', '用此在保護模板中指明該使用者建立帳號的權限已被移除')
 					} */
 				]
 			});
@@ -512,7 +512,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		field_tag_options.append({
 			type: 'input',
 			name: 'username',
-			label: wgULS('主账号用户名：', '主帳號使用者名稱：'),
+			label: wgULS('主账户用户名：', '主帳號使用者名稱：'),
 			display: 'none'
 		});
 
@@ -913,11 +913,11 @@ Twinkle.block.blockGroups = [
 			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]]', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]]'), value: 'uw-block3' },
 			{ label: wgULS('滥用[[WP:SOCK|傀儡]]', '濫用[[WP:SOCK|傀儡]]'), value: 'uw-block1', forRegisteredOnly: true },
 			{ label: wgULS('屡次增加不实资料', '屢次增加不實資料'), value: 'uw-block1' },
-			{ label: wgULS('在条目中增加无意义文本', '在條目中增加無意義文字'), value: 'uw-block1' },
+			{ label: wgULS('在条目中增加无意义文字', '在條目中增加無意義文字'), value: 'uw-block1' },
 			{ label: wgULS('无故删除条目内容', '無故刪除條目內容'), value: 'uw-dblock' },
 			{ label: wgULS('多次添加[[WP:COPYVIO|侵犯著作权]]的内容', '多次加入[[WP:COPYVIO|侵犯著作權]]的內容'), value: 'uw-block1' },
 			{ label: wgULS('机器人发生故障并必须紧急停止', '機器人發生故障並必須緊急停止'), value: 'Bot block message', forRegisteredOnly: true }
-			// { label: wgULS('剥夺编辑对话页权限', '剝奪編輯對話頁權限'), value: '' }
+			// { label: wgULS('剥夺编辑讨论页权限', '剝奪編輯討論頁權限'), value: '' }
 		]
 	},
 	{
@@ -1208,7 +1208,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			}
 			if (!blockoptions.namespacerestrictions && !blockoptions.pagerestrictions) {
 				if (!blockoptions.noemail && !blockoptions.nocreate) { // Blank entries technically allowed [[phab:T208645]]
-					return alert(wgULS('没有选择页面或名字空间，也没有停用电子邮件或禁止创建账户；请选择至少一个选项以应用部分封禁！', '沒有選擇頁面或命名空間，也沒有停用電子郵件或禁止建立帳戶；請選擇至少一個選項以應用部分封鎖！'));
+					return alert(wgULS('没有选择页面或名字空间，也没有停用电子邮件或禁止创建账户；请选择至少一个选项以应用部分封禁！', '沒有選擇頁面或命名空間，也沒有停用電子郵件或禁止建立帳號；請選擇至少一個選項以應用部分封鎖！'));
 				} else if (!confirm(wgULS('您将要进行封禁，但没有阻止任何页面或名字空间的编辑，确定要继续？', '您將要進行封鎖，但沒有阻止任何頁面或命名空間的編輯，確定要繼續？'))) {
 					return;
 				}
@@ -1309,7 +1309,7 @@ Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pa
 			case 'spp':
 				var username = params.username.trim();
 				if (!username) {
-					return alert(wgULS('请给主账号用户名！', '請給主帳號使用者名稱！'));
+					return alert(wgULS('请给主账户用户名！', '請給主帳號使用者名稱！'));
 				}
 				pagetext = '{{spp|' + username + '}}';
 				break;
@@ -1362,14 +1362,14 @@ Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTempla
 	params.template = params.template.split(':', 1)[0];
 
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
-	Morebits.wiki.actionCompleted.notice = wgULS('完成，将在几秒后加载用户对话页', '完成，將在幾秒後載入使用者對話頁');
+	Morebits.wiki.actionCompleted.notice = wgULS('完成，将在几秒后加载用户讨论页', '完成，將在幾秒後載入使用者討論頁');
 
 	Morebits.wiki.flow.check(userTalkPage, function () {
-		var flowpage = new Morebits.wiki.flow(userTalkPage, wgULS('用户Flow对话页留言', '使用者Flow對話頁留言'));
+		var flowpage = new Morebits.wiki.flow(userTalkPage, wgULS('用户Flow讨论页留言', '使用者Flow討論頁留言'));
 		flowpage.setCallbackParameters(params);
 		Twinkle.block.callback.main_flow(flowpage);
 	}, function () {
-		var wikipedia_page = new Morebits.wiki.page(userTalkPage, wgULS('用户对话页修改', '使用者對話頁修改'));
+		var wikipedia_page = new Morebits.wiki.page(userTalkPage, wgULS('用户讨论页修改', '使用者討論頁修改'));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.setFollowRedirect(true);
 		wikipedia_page.load(Twinkle.block.callback.main);
