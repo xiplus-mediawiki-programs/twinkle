@@ -1276,7 +1276,7 @@ Twinkle.speedy.callbacks = {
 						titles: mw.config.get('wgPageName'),
 						token: mw.user.tokens.get('watchToken')
 					};
-					new Morebits.wiki.api(wgULS('将模块添加到监视清单', '將模組加入到監視清單'), watch_query).post();
+					new Morebits.wiki.api(wgULS('将模块添加到监视列表', '將模組加入到監視清單'), watch_query).post();
 				}
 			}
 			pageobj.save(Twinkle.speedy.callbacks.user.tagComplete);
