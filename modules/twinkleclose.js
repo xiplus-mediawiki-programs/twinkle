@@ -185,6 +185,11 @@ Twinkle.close.codes = wgULS({
 			action: 'noop',
 			adminonly: true
 		},
+		'twv': {
+			label: '转移至维基学院',
+			action: 'noop',
+			adminonly: true
+		},
 		'twvoy': {
 			label: '转移至维基导游',
 			action: 'noop',
@@ -352,6 +357,11 @@ Twinkle.close.codes = wgULS({
 		},
 		'twt': {
 			label: '轉移至維基詞典',
+			action: 'noop',
+			adminonly: true
+		},
+		'twv': {
+			label: '轉移至維基學院',
 			action: 'noop',
 			adminonly: true
 		},
