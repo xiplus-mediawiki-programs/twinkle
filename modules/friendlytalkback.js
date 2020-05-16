@@ -225,7 +225,7 @@ Twinkle.talkback.changeTarget = function(e) {
 				type: 'input',
 				name: 'page',
 				label: wgULS('完整页面名', '完整頁面名'),
-				tooltip: wgULS('您留下消息的完整页面名，比如“Wikipedia talk:Twinkle”。', '您留下消息的完整頁面名，比如「Wikipedia talk:Twinkle」。'),
+				tooltip: wgULS('您留下消息的完整页面名，比如“Wikipedia talk:Twinkle”。', '您留下訊息的完整頁面名，比如「Wikipedia talk:Twinkle」。'),
 				value: prev_page,
 				required: true
 			});
@@ -253,7 +253,7 @@ Twinkle.talkback.changeTarget = function(e) {
 				type: 'input',
 				name: 'page',
 				label: wgULS('完整页面名', '完整頁面名'),
-				tooltip: wgULS('您留下消息的完整页面名，比如“Wikipedia talk:Twinkle”。', '您留下消息的完整頁面名，比如「Wikipedia talk:Twinkle」。'),
+				tooltip: wgULS('您留下消息的完整页面名，比如“Wikipedia talk:Twinkle”。', '您留下訊息的完整頁面名，比如「Wikipedia talk:Twinkle」。'),
 				value: prev_page,
 				required: true
 			});
@@ -268,7 +268,7 @@ Twinkle.talkback.changeTarget = function(e) {
 	}
 
 	if (value !== 'notice') {
-		work_area.append({ type: 'textarea', label: wgULS('附加信息（可选）：', '附加訊息（可選）：'), name: 'message', tooltip: wgULS('会在回复通告模板下出现的消息，您的签名会被加在最后。', '會在回覆通告模板下出現的訊息，您的簽名會被加在最後。') });
+		work_area.append({ type: 'textarea', label: wgULS('附加信息（可选）：', '附加資訊（可選）：'), name: 'message', tooltip: wgULS('会在回复通告模板下出现的消息，您的签名会被加在最后。', '會在回覆通告模板下出現的訊息，您的簽名會被加在最後。') });
 	}
 
 	work_area = work_area.render();

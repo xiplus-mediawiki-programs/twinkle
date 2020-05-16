@@ -16,7 +16,7 @@ Twinkle.diff = function twinklediff() {
 	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageContentModel') === 'flow-board' || !mw.config.get('wgArticleId')) {
 		return;
 	}
-	Twinkle.addPortletLink(mw.util.getUrl(mw.config.get('wgPageName'), {diff: 'cur', oldid: 'prev'}), wgULS('最后', '最後'), 'tw-lastdiff', wgULS('显示最后修改', '顯示最後變更'));
+	Twinkle.addPortletLink(mw.util.getUrl(mw.config.get('wgPageName'), {diff: 'cur', oldid: 'prev'}), wgULS('最后', '最後'), 'tw-lastdiff', wgULS('显示最后修改', '顯示最後修改'));
 
 	// Show additional tabs only on diff pages
 	if (mw.util.getParamValue('diff')) {
@@ -55,7 +55,7 @@ Twinkle.diff.evaluate = function twinklediffEvaluate(me) {
 		'rvuser': user
 	};
 	Morebits.status.init(document.getElementById('mw-content-text'));
-	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取最初贡献者信息', '擷取最初貢獻者資訊'), query, Twinkle.diff.callbacks.main);
+	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取最初贡献者信息', '抓取最初貢獻者資訊'), query, Twinkle.diff.callbacks.main);
 	wikipedia_api.params = { user: user };
 	wikipedia_api.post();
 };

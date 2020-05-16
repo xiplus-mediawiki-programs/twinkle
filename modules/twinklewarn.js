@@ -17,7 +17,7 @@
 Twinkle.warn = function twinklewarn() {
 
 	if (Morebits.wiki.flow.relevantUserName()) {
-		Twinkle.addPortletLink(Twinkle.warn.callback, '警告', 'tw-warn', wgULS('警告或提醒用户', '警告或提醒用戶'));
+		Twinkle.addPortletLink(Twinkle.warn.callback, '警告', 'tw-warn', wgULS('警告或提醒用户', '警告或提醒使用者'));
 		if (Twinkle.getPref('autoMenuAfterRollback') &&
 			mw.config.get('wgNamespaceNumber') === 3 &&
 			mw.util.getParamValue('vanarticle') &&
@@ -97,7 +97,7 @@ Twinkle.warn = function twinklewarn() {
 };
 
 Twinkle.warn.makeVandalTalkLink = function($vandalTalkLink, pagename) {
-	$vandalTalkLink.wrapInner($('<span/>').attr('title', wgULS('如果合适，您可以用Twinkle在该用户对话页上做出警告。', '如果合適，您可以用Twinkle在該用戶對話頁上做出警告。')));
+	$vandalTalkLink.wrapInner($('<span/>').attr('title', wgULS('如果合适，您可以用Twinkle在该用户讨论页上做出警告。', '如果合適，您可以用Twinkle在該使用者討論頁上做出警告。')));
 
 	var extraParam = 'vanarticle=' + mw.util.rawurlencode(pagename);
 	var href = $vandalTalkLink.attr('href');
@@ -115,7 +115,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	}
 
 	var Window = new Morebits.simpleWindow(600, 440);
-	Window.setTitle(wgULS('警告、通知用户', '警告、通知用戶'));
+	Window.setTitle(wgULS('警告、通知用户', '警告、通知使用者'));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(wgULS('选择警告级别', '選擇警告級別'), 'WP:WARN');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#warn');
@@ -123,7 +123,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	var form = new Morebits.quickForm(Twinkle.warn.callback.evaluate);
 	var main_select = form.append({
 		type: 'field',
-		label: wgULS('选择要发送的警告或通知类别', '選擇要發送的警告或通知類別'),
+		label: wgULS('选择要发送的警告或通知类型', '選擇要傳送的警告或通知類別'),
 		tooltip: wgULS('首先选择一组，再选择具体的警告模板。', '首先選擇一組，再選擇具體的警告模板。')
 	});
 
@@ -140,7 +140,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	main_group.append({ type: 'option', label: wgULS('层级4', '層級4'), value: 'level4', selected: defaultGroup === 4 });
 	main_group.append({ type: 'option', label: wgULS('层级4im', '層級4im'), value: 'level4im', selected: defaultGroup === 5 });
 	if (Twinkle.getPref('combinedSingletMenus')) {
-		main_group.append({ type: 'option', label: wgULS('单层级讯息', '單層級訊息'), value: 'singlecombined', selected: defaultGroup === 6 || defaultGroup === 7 });
+		main_group.append({ type: 'option', label: wgULS('单层级消息', '單層級訊息'), value: 'singlecombined', selected: defaultGroup === 6 || defaultGroup === 7 });
 	} else {
 		main_group.append({ type: 'option', label: wgULS('单层级通知', '單層級通知'), value: 'singlenotice', selected: defaultGroup === 6 });
 		main_group.append({ type: 'option', label: wgULS('单层级警告', '單層級警告'), value: 'singlewarn', selected: defaultGroup === 7 });
@@ -157,7 +157,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		label: wgULS('页面链接', '頁面連結'),
 		value: mw.util.getParamValue('vanarticle') || '',
 		size: 50,
-		tooltip: wgULS('给模板中加入一页面链接，可留空。', '給模板中加入一頁面連結，可留空。'),
+		tooltip: wgULS('给模板中添加一页面链接，可留空。', '給模板中加入一頁面連結，可留空。'),
 		placeholder: wgULS('仅限一个，勿使用网址、[[ ]]，可使用Special:Diff', '僅限一個，勿使用網址、[[ ]]，可使用Special:Diff')
 	});
 
@@ -213,8 +213,8 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		}).post();
 	}
 
-	var more = form.append({ type: 'field', name: 'reasonGroup', label: wgULS('警告信息', '警告訊息') });
-	more.append({ type: 'textarea', label: wgULS('可选信息：', '可選訊息：'), name: 'reason', tooltip: wgULS('理由或是附加信息', '理由或是附加訊息') });
+	var more = form.append({ type: 'field', name: 'reasonGroup', label: wgULS('警告信息', '警告資訊') });
+	more.append({ type: 'textarea', label: wgULS('可选信息：', '可選資訊：'), name: 'reason', tooltip: wgULS('理由或是附加信息', '理由或是附加資訊') });
 
 	var previewlink = document.createElement('a');
 	$(previewlink).click(function() {
@@ -2035,13 +2035,13 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 	// change form labels according to the warning selected
 	if (value === 'uw-socksuspect') {
 		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
-		Morebits.quickForm.overrideElementLabel(e.target.form.article, wgULS('傀儡操纵者用户名，如果知道的话（不含User:） ', '傀儡操縱者用戶名，如果知道的話（不含User:） '));
+		Morebits.quickForm.overrideElementLabel(e.target.form.article, wgULS('傀儡操纵者用户名，如果知道的话（不含User:） ', '傀儡操縱者使用者名稱，如果知道的話（不含User:） '));
 	} else if (value === 'uw-username') {
 		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
-		Morebits.quickForm.overrideElementLabel(e.target.form.article, wgULS('用户名违反方针，因为… ', '用戶名違反方針，因為… '));
+		Morebits.quickForm.overrideElementLabel(e.target.form.article, wgULS('用户名违反方针，因为… ', '使用者名稱違反方針，因為… '));
 	} else if (value === 'uw-bite') {
 		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
-		Morebits.quickForm.overrideElementLabel(e.target.form.article, wgULS('被“咬到”的用户（不含User:） ', '被「咬到」的用戶（不含User:） '));
+		Morebits.quickForm.overrideElementLabel(e.target.form.article, wgULS('被“咬到”的用户（不含User:） ', '被「咬到」的使用者（不含User:） '));
 	} else {
 		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, true);
 		Morebits.quickForm.resetElementLabel(e.target.form.article);
@@ -2126,7 +2126,7 @@ Twinkle.warn.callbacks = {
 		latest.date.add(1, 'minute'); // after long debate, one minute is max
 
 		if (latest.date.isAfter(now)) {
-			if (!confirm(wgULS('近1分钟内 ' + latest.type + ' 模板已被发出。\n是否继续？', '近1分鍾內 ' + latest.type + ' 模板已被發出。\n是否繼續？'))) {
+			if (!confirm(wgULS('近1分钟内 ' + latest.type + ' 模板已被发出。\n是否继续？', '近1分鐘內 ' + latest.type + ' 模板已被發出。\n是否繼續？'))) {
 				statelem.error('用户取消');
 				return;
 			}
@@ -2155,7 +2155,7 @@ Twinkle.warn.callbacks = {
 			params.reason, params.main_group === 'custom') + '--~~~~';
 
 		if (Twinkle.getPref('showSharedIPNotice') && mw.util.isIPAddress(mw.config.get('wgTitle'))) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加共享IP说明', '加入共享IP說明'));
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加共享IP帮助', '加入共享IP說明'));
 			text += '\n{{subst:SharedIPAdvice}}';
 		}
 
@@ -2282,11 +2282,11 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	Morebits.wiki.actionCompleted.notice = wgULS('警告完成，将在几秒后刷新', '警告完成，將在幾秒後重新整理');
 
 	Morebits.wiki.flow.check(userTalkPage, function () {
-		var flow_page = new Morebits.wiki.flow(userTalkPage, wgULS('用户Flow对话页留言', '用戶Flow對話頁留言'));
+		var flow_page = new Morebits.wiki.flow(userTalkPage, wgULS('用户Flow讨论页留言', '使用者Flow討論頁留言'));
 		flow_page.setCallbackParameters(params);
 		Twinkle.warn.callbacks.main_flow(flow_page);
 	}, function () {
-		var wikipedia_page = new Morebits.wiki.page(userTalkPage, wgULS('用户对话页修改', '用戶對話頁修改'));
+		var wikipedia_page = new Morebits.wiki.page(userTalkPage, wgULS('用户讨论页修改', '使用者討論頁修改'));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.setFollowRedirect(true);
 		wikipedia_page.load(Twinkle.warn.callbacks.main);

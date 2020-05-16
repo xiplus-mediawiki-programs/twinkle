@@ -32,7 +32,7 @@ var subpagesLoaded;
 Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 	subpagesLoaded = false;
 	var Window = new Morebits.simpleWindow(600, 400);
-	Window.setTitle(wgULS('批量删除', '批量刪除'));
+	Window.setTitle(wgULS('批量删除', '批次刪除'));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#batchdelete');
 
@@ -49,13 +49,13 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 					type: 'checkbox',
 					list: [
 						{
-							label: wgULS('删除关联的讨论页（用户对话页除外）', '刪除關聯的討論頁（用戶對話頁除外）'),
+							label: wgULS('删除关联的讨论页（用户讨论页除外）', '刪除關聯的討論頁（使用者討論頁除外）'),
 							name: 'delete_talk',
 							value: 'delete_talk',
 							checked: true
 						},
 						{
-							label: wgULS('删除到已删页面的重定向页', '刪除到已刪頁面的重新導向頁'),
+							label: wgULS('删除到已删页面的重定向页', '刪除到已刪頁面的重新導向頁面'),
 							name: 'delete_redirects',
 							value: 'delete_redirects',
 							checked: true
@@ -75,12 +75,12 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 										value: 'delete_subpage_talks'
 									},
 									{
-										label: wgULS('删除到已删子页面的重定向页', '刪除到已刪子頁面的重新導向頁'),
+										label: wgULS('删除到已删子页面的重定向页', '刪除到已刪子頁面的重新導向頁面'),
 										name: 'delete_subpage_redirects',
 										value: 'delete_subpage_redirects'
 									},
 									{
-										label: wgULS('取消所有已删页面的链入（仅处理条目及Portal命名空间）', '取消所有已刪頁面的連入（僅處理條目及Portal名字空間）'),
+										label: wgULS('取消所有已删页面的链入（仅处理条目及Portal名字空间）', '取消所有已刪頁面的連入（僅處理條目及Portal命名空間）'),
 										name: 'unlink_subpages',
 										value: 'unlink_subpages'
 									}
@@ -91,13 +91,13 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 				}
 			},
 			{
-				label: wgULS('取消链入（仅处理条目及Portal命名空间）', '取消連入（僅處理條目及Portal名字空間）'),
+				label: wgULS('取消链入（仅处理条目及Portal名字空间）', '取消連入（僅處理條目及Portal命名空間）'),
 				name: 'unlink_page',
 				value: 'unlink',
 				checked: false
 			},
 			{
-				label: wgULS('移除文件使用（所有命名空间）', '移除檔案使用（所有名字空間）'),
+				label: wgULS('移除文件使用（所有名字空间）', '移除檔案使用（所有命名空間）'),
 				name: 'unlink_file',
 				value: 'unlink_file',
 				checked: true
@@ -170,7 +170,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 
 	Twinkle.batchdelete.pages = {};
 
-	var statelem = new Morebits.status(wgULS('抓取页面列表', '擷取頁面列表'));
+	var statelem = new Morebits.status(wgULS('抓取页面列表', '抓取頁面列表'));
 	var wikipedia_api = new Morebits.wiki.api(wgULS('加载中…', '載入中…'), query, function(apiobj) {
 		var xml = apiobj.responseXML;
 		var $pages = $(xml).find('page').filter(':not([missing])');  // :not([imagerepository="shared"])
@@ -441,7 +441,7 @@ Twinkle.batchdelete.callback.toggleSubpages = function twDbatchToggleSubpages(e)
 };
 
 Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvaluate(event) {
-	Morebits.wiki.actionCompleted.notice = wgULS('批量删除已完成', '批量刪除已完成');
+	Morebits.wiki.actionCompleted.notice = wgULS('批量删除已完成', '批次刪除已完成');
 
 	var form = event.target;
 
@@ -633,7 +633,7 @@ Twinkle.batchdelete.callbacks = {
 		}
 
 		var page = new Morebits.wiki.page(apiobj.params.talkPage, wgULS('正在删除页面 ', '正在刪除頁面 ') + apiobj.params.page + wgULS(' 的讨论页', ' 的討論頁'));
-		page.setEditSummary('[[WP:CSD#G15|G15]]: ' + wgULS('已删页面“', '已刪頁面「 ') + apiobj.params.page + wgULS('”的[[Wikipedia:讨论页|讨论页]]', '」的[[Wikipedia:讨论页|討論頁]]') + Twinkle.getPref('deletionSummaryAd'));
+		page.setEditSummary('[[WP:CSD#G15|G15]]: ' + wgULS('已删页面“', '已刪頁面「') + apiobj.params.page + wgULS('”的[[Wikipedia:讨论页|讨论页]]', '」的[[Wikipedia:討論頁|討論頁]]') + Twinkle.getPref('deletionSummaryAd'));
 		page.setTags(Twinkle.getPref('revisionTags'));
 		page.deletePage();
 	},

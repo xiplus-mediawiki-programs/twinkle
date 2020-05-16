@@ -44,8 +44,8 @@ Twinkle.unlink.callback = function(presetReason) {
 	var form = new Morebits.quickForm(Twinkle.unlink.callback.evaluate);
 
 	// prepend some basic documentation
-	var node1 = Morebits.htmlNode('code', '[[' + Morebits.pageNameNorm + wgULS('|链接文本]]', '|連結文本]]'));
-	var node2 = Morebits.htmlNode('code', wgULS('链接文本', '連結文本'));
+	var node1 = Morebits.htmlNode('code', '[[' + Morebits.pageNameNorm + wgULS('|链接文字]]', '|連結文字]]'));
+	var node2 = Morebits.htmlNode('code', wgULS('链接文字', '連結文字'));
 	node1.style.fontFamily = node2.style.fontFamily = 'monospace';
 	node1.style.fontStyle = node2.style.fontStyle = 'normal';
 	form.append({
@@ -53,7 +53,7 @@ Twinkle.unlink.callback = function(presetReason) {
 		style: 'margin-bottom: 0.5em',
 		label: [
 			wgULS('这个工具可以取消所有指向该页的链接（“链入”）', '這個工具可以取消所有指向該頁的連結（「連入」）') +
-				(mw.config.get('wgNamespaceNumber') === 6 ? wgULS('，和/或通过加入<!-- -->注释标记隐藏所有对此文件的使用', '，和/或通過加入<!-- -->注釋標記隱藏所有對此檔案的使用') : '') +
+				(mw.config.get('wgNamespaceNumber') === 6 ? wgULS('，和/或通过添加<!-- -->注释标记隐藏所有对此文件的使用', '，和/或通過加入<!-- -->注釋標記隱藏所有對此檔案的使用') : '') +
 				'。比如，',
 			node1,
 			wgULS('将会变成', '將會變成'),
@@ -94,7 +94,7 @@ Twinkle.unlink.callback = function(presetReason) {
 			'rawcontinue': true
 		};
 	}
-	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取链入', '擷取連入'), query, Twinkle.unlink.callbacks.display.backlinks);
+	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取链入', '抓取連入'), query, Twinkle.unlink.callbacks.display.backlinks);
 	wikipedia_api.params = { form: form, Window: Window, image: mw.config.get('wgNamespaceNumber') === 6 };
 	wikipedia_api.post();
 
@@ -165,7 +165,7 @@ Twinkle.unlink.callbacks = {
 					});
 					apiobj.params.form.append({
 						type: 'div',
-						label: wgULS('已选择的命名空间：', '已選擇的名字空間：') + namespaces.join(', '),
+						label: wgULS('已选择的名字空间：', '已選擇的命名空間：') + namespaces.join(', '),
 						tooltip: wgULS('您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]', '您可在Twinkle屬性中更改這個，請參見[[WP:TWPREFS]]')
 					});
 					if ($(xmlDoc).find('query-continue').length) {
@@ -211,7 +211,7 @@ Twinkle.unlink.callbacks = {
 				});
 				apiobj.params.form.append({
 					type: 'div',
-					label: wgULS('已选择的名字空间：', '已選擇的名字空間：') + namespaces.join(', '),
+					label: wgULS('已选择的名字空间：', '已選擇的命名空間：') + namespaces.join(', '),
 					tooltip: wgULS('您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]', '您可在Twinkle屬性中更改這個，請參見[[WP:TWPREFS]]')
 				});
 				if ($(xmlDoc).find('query-continue').length) {
@@ -283,7 +283,7 @@ Twinkle.unlink.callbacks = {
 			text = wikiPage.getText();
 			// did we actually make any changes?
 			if (text === oldtext) {
-				warningString = warningString ? wgULS('反链或文件使用', '反連或檔案使用') : wgULS('反链', '反連');
+				warningString = warningString ? wgULS('反链或文件使用', '反鏈或檔案使用') : wgULS('反链', '反鏈');
 			} else {
 				summaryText = (summaryText ? summaryText + ' / ' : '') + wgULS('取消链接到', '取消連結到');
 				oldtext = text;

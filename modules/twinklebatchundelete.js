@@ -25,7 +25,7 @@ Twinkle.batchundelete = function twinklebatchundelete() {
 Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 	var Window = new Morebits.simpleWindow(600, 400);
 	Window.setScriptName('Twinkle');
-	Window.setTitle(wgULS('批量反删除', '批量反刪除'));
+	Window.setTitle(wgULS('批量反删除', '批次反刪除'));
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#batchundelete');
 
 	var form = new Morebits.quickForm(Twinkle.batchundelete.callback.evaluate);
@@ -61,7 +61,7 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 		'titles': mw.config.get('wgPageName'),
 		'gpllimit': Twinkle.getPref('batchMax')
 	};
-	var statelem = new Morebits.status(wgULS('抓取页面列表', '擷取頁面列表'));
+	var statelem = new Morebits.status(wgULS('抓取页面列表', '抓取頁面列表'));
 	var wikipedia_api = new Morebits.wiki.api(wgULS('加载中…', '載入中…'), query, function(apiobj) {
 		var xml = apiobj.responseXML;
 		var $pages = $(xml).find('page[missing]');
@@ -198,7 +198,7 @@ Twinkle.batchundelete.callbacks = {
 		}
 
 		var page = new Morebits.wiki.page(apiobj.params.talkPage, wgULS('正在反删除', '正在反刪除') + apiobj.params.page + wgULS('的讨论页', '的討論頁'));
-		page.setEditSummary(wgULS('反删除“', '反刪除「 ') + apiobj.params.page + wgULS('”的[[Wikipedia:讨论页|讨论页]]', '」的[[Wikipedia:讨论页|討論頁]]') + Twinkle.getPref('deletionSummaryAd'));
+		page.setEditSummary(wgULS('反删除“', '反刪除「') + apiobj.params.page + wgULS('”的[[Wikipedia:讨论页|讨论页]]', '」的[[Wikipedia:討論頁|討論頁]]') + Twinkle.getPref('deletionSummaryAd'));
 		page.setTags(Twinkle.getPref('revisionTags'));
 		page.undeletePage();
 	}
