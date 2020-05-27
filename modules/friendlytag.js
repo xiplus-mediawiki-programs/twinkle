@@ -630,7 +630,7 @@ Twinkle.tag.article.tags = wgULS({
 	'Requested move': '建议将此页面移动到新名称',
 	'Review': '阅读起来类似评论，需要清理',
 	'Rewrite': '不符合维基百科的质量标准，需要完全重写',
-	'Roughtranslation': '翻译品质不佳',
+	'Rough translation': '翻译品质不佳',
 	'Substub': '过于短小',
 	'Trivia': '应避免有陈列杂项、琐碎资料的部分',
 	'Uncategorized': '缺少页面分类',
@@ -693,7 +693,7 @@ Twinkle.tag.article.tags = wgULS({
 	'Requested move': '建議將此頁面移動到新名稱',
 	'Review': '閱讀起來類似評論，需要清理',
 	'Rewrite': '不符合維基百科的質量標準，需要完全重寫',
-	'Roughtranslation': '翻譯品質不佳',
+	'Rough translation': '翻譯品質不佳',
 	'Substub': '過於短小',
 	'Trivia': '應避免有陳列雜項、瑣碎資料的部分',
 	'Uncategorized': '缺少頁面分類',
@@ -787,7 +787,7 @@ Twinkle.tag.article.tagCategories = wgULS({
 	'具体内容问题': {
 		'语言': [
 			'Notmandarin',
-			'Roughtranslation'
+			'Rough translation'
 		],
 		'链接': [
 			'Dead end',
@@ -889,7 +889,7 @@ Twinkle.tag.article.tagCategories = wgULS({
 	'具體內容問題': {
 		'語言': [
 			'Notmandarin',
-			'Roughtranslation'
+			'Rough translation'
 		],
 		'連結': [
 			'Dead end',
