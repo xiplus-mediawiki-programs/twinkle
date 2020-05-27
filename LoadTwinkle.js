@@ -13,7 +13,7 @@
 
 (function () {
 
-var VERSION = '{{subst:#time:YmdHis}}';
+var VERSION = '{{subst:#time:Y-m-d H:i:s}}';
 var PREFIX = 'User:Xiplus/Twinkle/';
 var rebuildcache = localStorage.A64Twinkle_version !== VERSION;
 var tests = [];
