@@ -878,6 +878,10 @@ Twinkle.warn.messages = wgULS({
 			label: '利益冲突',
 			summary: '单层级通知：利益冲突'
 		},
+		'uw-concovid19': {
+			label: '违反COVID-19条目共识',
+			summary: '单层级通知：违反COVID-19条目共识'
+		},
 		'uw-copyright-friendly': {
 			label: '初次加入侵犯版权的内容',
 			summary: '单层级通知：初次加入侵犯版权的内容'
@@ -1693,6 +1697,10 @@ Twinkle.warn.messages = wgULS({
 		'uw-coi': {
 			label: '利益衝突',
 			summary: '單層級通知：利益衝突'
+		},
+		'uw-concovid19': {
+			label: '違反COVID-19條目共識',
+			summary: '單層級通知：違反COVID-19條目共識'
 		},
 		'uw-copyright-friendly': {
 			label: '初次加入侵犯版權的內容',
