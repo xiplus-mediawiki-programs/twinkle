@@ -8,9 +8,9 @@
  ****************************************
  *** twinkleconfig.js: Preferences module
  ****************************************
- * Mode of invocation:     Adds configuration form to Wikipedia:Twinkle/Preferences and user
-                           subpages named "/Twinkle preferences", and adds ad box to the top of user
-                           subpages belonging to the currently logged-in user which end in '.js'
+ * Mode of invocation:     Adds configuration form to Wikipedia:Twinkle/Preferences,
+                           and adds an ad box to the top of user subpages belonging to the
+                           currently logged-in user which end in '.js'
  * Active on:              What I just said.  Yeah.
 
  I, [[User:This, that and the other]], originally wrote this.  If the code is misbehaving, or you have any
@@ -920,10 +920,9 @@ Twinkle.config.sections = [
 
 Twinkle.config.init = function twinkleconfigInit() {
 
-	if ((mw.config.get('wgPageName') === Twinkle.getPref('configPage') ||
-			(mw.config.get('wgNamespaceNumber') === mw.config.get('wgNamespaceIds').user && mw.config.get('wgTitle').lastIndexOf('/Twinkle参数') === (mw.config.get('wgTitle').length - 10))) &&
+	// create the config page at Twinkle.getPref('configPage')
+	if (mw.config.get('wgPageName') === Twinkle.getPref('configPage') &&
 			mw.config.get('wgAction') === 'view') {
-		// create the config page at Twinkle.getPref('configPage'), and at user subpages (for testing purposes)
 
 		if (!document.getElementById('twinkle-config')) {
 			return;  // maybe the page is misconfigured, or something - but any attempt to modify it will be pointless
