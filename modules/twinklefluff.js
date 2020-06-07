@@ -703,7 +703,7 @@ Twinkle.fluff.callbacks = {
 		if ($(xml).find('captcha').length > 0) {
 			apiobj.statelem.error(wgULS('不能回退，因维基服务器要求您输入验证码。', '不能回退，因維基伺服器要求您輸入驗證碼。'));
 		} else if ($edit.attr('nochange') === '') {
-			apiobj.statelem.warn(wgULS('要回退到的版本与当前版本相同，没什么要做的', '要回退到的版本與目前版本相同，沒什麼要做的'));
+			apiobj.statelem.error(wgULS('要回退到的版本与当前版本相同，没什么要做的', '要回退到的版本與目前版本相同，沒什麼要做的'));
 		} else {
 			apiobj.statelem.info('完成');
 		}
