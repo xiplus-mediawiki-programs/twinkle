@@ -419,7 +419,7 @@ Twinkle.xfd.callbacks = {
 				case 'substub':
 				case 'batch':
 					var commentText = '<!-- Twinkle: User:' + mw.config.get('wgUserName') + ' 的 ' + type + ' 提刪插入點，請勿變更或移除此行，除非不再於此頁提刪 -->';
-					var newText = '===[[' + Morebits.pageNameNorm + ']]===';
+					var newText = '===[[:' + Morebits.pageNameNorm + ']]===';
 					if (type === 'fame') {
 						newText += '\n{{Findsources|' + Morebits.pageNameNorm + '}}';
 					}
