@@ -747,8 +747,8 @@ Twinkle.tag.article.tagCategories = wgULS({
 			'Tone'
 		],
 		'内容': [
-			'Missing information', // has subcategories and special-cased code
 			'Expand language', // has subcategories and special-cased code
+			'Missing information', // has subcategories and special-cased code
 			'Substub',
 			'Unencyclopedic'
 		],
@@ -791,9 +791,9 @@ Twinkle.tag.article.tagCategories = wgULS({
 		],
 		'链接': [
 			'Dead end',
-			'Underlinked',
 			'Orphan',
-			'Overlinked'
+			'Overlinked',
+			'Underlinked'
 		],
 		'参考技术': [
 			'Citation style'
@@ -849,8 +849,8 @@ Twinkle.tag.article.tagCategories = wgULS({
 			'Tone'
 		],
 		'內容': [
-			'Missing information', // has subcategories and special-cased code
 			'Expand language', // has subcategories and special-cased code
+			'Missing information', // has subcategories and special-cased code
 			'Substub',
 			'Unencyclopedic'
 		],
@@ -893,9 +893,9 @@ Twinkle.tag.article.tagCategories = wgULS({
 		],
 		'連結': [
 			'Dead end',
-			'Underlinked',
 			'Orphan',
-			'Overlinked'
+			'Overlinked',
+			'Underlinked'
 		],
 		'參考技術': [
 			'Citation style'
@@ -919,9 +919,9 @@ Twinkle.tag.article.tagCategories = wgULS({
 Twinkle.tag.multipleIssuesExceptions = [
 	'Current', // Works but not intended for use in MI
 	'Improve categories',
+	'Merge',
 	'Merge from',
 	'Merge to',
-	'Merge',
 	'Notability',
 	'NotMandarin',
 	'Requested move',
