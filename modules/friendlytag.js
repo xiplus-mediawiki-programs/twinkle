@@ -583,12 +583,12 @@ Twinkle.tag.article.tags = wgULS({
 	'BLP unsourced': '生者传记没有列出任何参考或来源',
 	'BLPdispute': '可能违反了维基百科关于生者传记的方针',
 	'BLPsources': '生者传记需要补充更多可供查证的来源',
-	'COI': '主要贡献者与本条目所宣扬的内容可能存在利益冲突',
 	'Citation style': '引用需要进行清理',
 	'Citecheck': '可能包含不适用或被曲解的引用资料，部分内容的准确性无法被证实',
-	'Cleanup rewrite': '不符合维基百科的质量标准，需要完全重写',
 	'Cleanup': '可能需要进行清理，以符合维基百科的质量标准',
+	'Cleanup rewrite': '不符合维基百科的质量标准，需要完全重写',
 	'Cleanup-jargon': '包含过多行话或专业术语，可能需要简化或提出进一步解释',
+	'COI': '主要贡献者与本条目所宣扬的内容可能存在利益冲突',
 	'Copy edit': '需要编修，以确保文法、用词、语气、格式、标点等使用恰当',
 	'Copypaste': '内容可能是从某个来源处拷贝后贴上',
 	'Current': '记述新闻动态',
@@ -607,16 +607,16 @@ Twinkle.tag.article.tags = wgULS({
 	'Lead too long': '导言部分也许过于冗长',
 	'Lead too short': '导言部分也许不足以概括其内容',
 	'Long plot': '可能包含过于详细的剧情摘要',
+	'Merge': '建议此页面与页面合并',
 	'Merge from': '建议将页面并入本页面',
 	'Merge to': '建议将此页面并入页面',
-	'Merge': '建议此页面与页面合并',
 	'Missing information': '缺少必要的信息',
 	'Newsrelease': '阅读起来像是新闻稿及包含过度的宣传性语调',
 	'No footnotes': '因为没有内文引用而来源仍然不明',
 	'Non-free': '可能过多或不当地使用了受版权保护的文字、图像或/及多媒体文件',
-	'NotMandarin': '包含过多不是现代标准汉语的内容',
-	'Notability Unreferenced': '可能具备关注度，但需要来源加以彰显',
 	'Notability': '可能不符合通用关注度指引',
+	'Notability Unreferenced': '可能具备关注度，但需要来源加以彰显',
+	'NotMandarin': '包含过多不是现代标准汉语的内容',
 	'Onesource': '极大或完全地依赖于某个单一的来源',
 	'Original research': '可能包含原创研究或未查证内容',
 	'Orphan': '没有或只有很少链入页面',
@@ -646,12 +646,12 @@ Twinkle.tag.article.tags = wgULS({
 	'BLP unsourced': '生者傳記沒有列出任何參考或來源',
 	'BLPdispute': '可能違反了維基百科關於生者傳記的方針',
 	'BLPsources': '生者傳記需要補充更多可供查證的來源',
-	'COI': '主要貢獻者與本條目所宣揚的內容可能存在利益衝突',
 	'Citation style': '引用需要進行清理',
 	'Citecheck': '可能包含不適用或被曲解的引用資料，部分內容的準確性無法被證實',
-	'Cleanup rewrite': '不符合維基百科的質量標準，需要完全重寫',
 	'Cleanup': '可能需要進行清理，以符合維基百科的質量標準',
+	'Cleanup rewrite': '不符合維基百科的質量標準，需要完全重寫',
 	'Cleanup-jargon': '包含過多行話或專業術語，可能需要簡化或提出進一步解釋',
+	'COI': '主要貢獻者與本條目所宣揚的內容可能存在利益衝突',
 	'Copy edit': '需要編修，以確保文法、用詞、語氣、格式、標點等使用恰當',
 	'Copypaste': '內容可能是從某個來源處拷貝後貼上',
 	'Current': '記述新聞動態',
@@ -670,16 +670,16 @@ Twinkle.tag.article.tags = wgULS({
 	'Lead too long': '導言部分也許過於冗長',
 	'Lead too short': '導言部分也許不足以概括其內容',
 	'Long plot': '可能包含過於詳細的劇情摘要',
+	'Merge': '建議此頁面與頁面合併',
 	'Merge from': '建議將頁面併入本頁面',
 	'Merge to': '建議將此頁面併入頁面',
-	'Merge': '建議此頁面與頁面合併',
 	'Missing information': '缺少必要的信息',
 	'Newsrelease': '閱讀起來像是新聞稿及包含過度的宣傳性語調',
 	'No footnotes': '因為沒有內文引用而來源仍然不明',
 	'Non-free': '可能過多或不當地使用了受版權保護的文字、圖像或/及多媒體檔案',
-	'NotMandarin': '包含過多不是現代標準漢語的內容',
-	'Notability Unreferenced': '可能具備關注度，但需要來源加以彰顯',
 	'Notability': '可能不符合通用關注度指引',
+	'Notability Unreferenced': '可能具備關注度，但需要來源加以彰顯',
+	'NotMandarin': '包含過多不是現代標準漢語的內容',
 	'Onesource': '極大或完全地依賴於某個單一的來源',
 	'Original research': '可能包含原創研究或未查證內容',
 	'Orphan': '沒有或只有很少連入頁面',
@@ -722,8 +722,8 @@ Twinkle.tag.article.tagCategories = wgULS({
 			'Non-free'
 		],
 		'结构和导言': [
-			'Lead too short',
 			'Lead too long',
+			'Lead too short',
 			'Very long'
 		],
 		'虚构作品相关清理': [
@@ -741,14 +741,14 @@ Twinkle.tag.article.tagCategories = wgULS({
 			'Fanpov',
 			'How-to',
 			'Inappropriate person',
-			'Tone',
 			'Newsrelease',
 			'Prose',
-			'Review'
+			'Review',
+			'Tone'
 		],
 		'内容': [
-			'Missing information', // has subcategories and special-cased code
 			'Expand language', // has subcategories and special-cased code
+			'Missing information', // has subcategories and special-cased code
 			'Substub',
 			'Unencyclopedic'
 		],
@@ -764,17 +764,17 @@ Twinkle.tag.article.tagCategories = wgULS({
 		'中立、偏见和事实准确性': [
 			'Autobiography',
 			'COI',
-			'Self-contradictory',
 			'Disputed',
 			'Globalize',
 			'Hoax',
 			'POV',
+			'Self-contradictory',
 			'Weasel'
 		],
 		'可供查证和来源': [
+			'BLP unsourced',
 			'BLPdispute',
 			'BLPsources',
-			'BLP unsourced',
 			'Citecheck',
 			'No footnotes',
 			'Onesource',
@@ -791,9 +791,9 @@ Twinkle.tag.article.tagCategories = wgULS({
 		],
 		'链接': [
 			'Dead end',
-			'Underlinked',
 			'Orphan',
-			'Overlinked'
+			'Overlinked',
+			'Underlinked'
 		],
 		'参考技术': [
 			'Citation style'
@@ -824,8 +824,8 @@ Twinkle.tag.article.tagCategories = wgULS({
 			'Non-free'
 		],
 		'結構和導言': [
-			'Lead too short',
 			'Lead too long',
+			'Lead too short',
 			'Very long'
 		],
 		'虛構作品相關清理': [
@@ -843,14 +843,14 @@ Twinkle.tag.article.tagCategories = wgULS({
 			'Fanpov',
 			'How-to',
 			'Inappropriate person',
-			'Tone',
 			'Newsrelease',
 			'Prose',
-			'Review'
+			'Review',
+			'Tone'
 		],
 		'內容': [
-			'Missing information', // has subcategories and special-cased code
 			'Expand language', // has subcategories and special-cased code
+			'Missing information', // has subcategories and special-cased code
 			'Substub',
 			'Unencyclopedic'
 		],
@@ -866,17 +866,17 @@ Twinkle.tag.article.tagCategories = wgULS({
 		'中立、偏見和事實準確性': [
 			'Autobiography',
 			'COI',
-			'Self-contradictory',
 			'Disputed',
 			'Globalize',
 			'Hoax',
 			'POV',
+			'Self-contradictory',
 			'Weasel'
 		],
 		'可供查證和來源': [
+			'BLP unsourced',
 			'BLPdispute',
 			'BLPsources',
-			'BLP unsourced',
 			'Citecheck',
 			'No footnotes',
 			'Onesource',
@@ -893,9 +893,9 @@ Twinkle.tag.article.tagCategories = wgULS({
 		],
 		'連結': [
 			'Dead end',
-			'Underlinked',
 			'Orphan',
-			'Overlinked'
+			'Overlinked',
+			'Underlinked'
 		],
 		'參考技術': [
 			'Citation style'
@@ -919,9 +919,9 @@ Twinkle.tag.article.tagCategories = wgULS({
 Twinkle.tag.multipleIssuesExceptions = [
 	'Current', // Works but not intended for use in MI
 	'Improve categories',
+	'Merge',
 	'Merge from',
 	'Merge to',
-	'Merge',
 	'Notability',
 	'NotMandarin',
 	'Requested move',
