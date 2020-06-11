@@ -104,8 +104,7 @@ Twinkle.close.codes = wgULS({
 		},
 		'tk': {
 			label: '暂时保留',
-			action: 'keep',
-			adminonly: true
+			action: 'keep'
 		},
 		'rr': {
 			label: '请求理由消失',
@@ -279,8 +278,7 @@ Twinkle.close.codes = wgULS({
 		},
 		'tk': {
 			label: '暫時保留',
-			action: 'keep',
-			adminonly: true
+			action: 'keep'
 		},
 		'rr': {
 			label: '請求理由消失',

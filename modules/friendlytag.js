@@ -383,7 +383,6 @@ Twinkle.tag.updateSortOrder = function(e) {
 					type: 'select',
 					list: [
 						{ label: '{{Notability}}：' + wgULS('通用的关注度指引', '通用的關注度指引'), value: 'none' },
-						{ label: '{{Notability|Album}}：' + '唱片', value: 'Album' },
 						{ label: '{{Notability|Astro}}：' + wgULS('天体', '天體'), value: 'Astro' },
 						{ label: '{{Notability|Biographies}}：' + wgULS('人物传记', '人物傳記'), value: 'Biographies' },
 						{ label: '{{Notability|Book}}：' + wgULS('书籍', '書籍'), value: 'Book' },
@@ -393,6 +392,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 						{ label: '{{Notability|Geographic}}：' + wgULS('地理特征', '地理特徵'), value: 'Geographic' },
 						{ label: '{{Notability|Geometry}}：' + wgULS('几何图形', '幾何圖形'), value: 'Geometry' },
 						{ label: '{{Notability|Invention}}：' + wgULS('发明、研究', '發明、研究'), value: 'Invention' },
+						{ label: '{{Notability|Music}}：' + wgULS('音乐', '音樂'), value: 'Music' },
 						{ label: '{{Notability|Numbers}}：' + wgULS('数字', '數字'), value: 'Numbers' },
 						{ label: '{{Notability|Property}}：' + wgULS('性质表', '性質表'), value: 'Property' },
 						{ label: '{{Notability|Traffic}}：' + '交通', value: 'Traffic' },

@@ -178,7 +178,7 @@ Twinkle.config.sections = [
 			// 'blank': force open in a new window, even if such a window exists
 			{
 				name: 'userTalkPageMode',
-				label: wgULS('当要打开用户讨论页时，', '當要打開使用者討論頁時，'),
+				label: wgULS('当要打开用户讨论页时', '當要打開使用者討論頁時'),
 				type: 'enum',
 				enumValues: wgULS(
 					{ window: '在窗口中，替换成其它用户对话页', tab: '在新标签页中', blank: '在全新的窗口中' },
