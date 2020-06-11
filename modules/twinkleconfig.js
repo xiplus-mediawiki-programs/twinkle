@@ -1707,7 +1707,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 		'// </nowiki>';
 
 	pageobj.setPageText(text);
-	pageobj.setEditSummary(wgULS('保存Twinkle参数设置：来自[[' + Morebits.pageNameNorm + ']]的自动编辑。', '儲存Twinkle偏好設定：來自[[' + Morebits.pageNameNorm + ']]的自動編輯。'));
+	pageobj.setEditSummary(wgULS('保存Twinkle参数设置：来自[[' + Morebits.pageNameNorm + ']]的自动编辑', '儲存Twinkle偏好設定：來自[[' + Morebits.pageNameNorm + ']]的自動編輯'));
 	pageobj.setTags(Twinkle.getPref('revisionTags'));
 	pageobj.setCreateOption('recreate');
 	pageobj.save(Twinkle.config.saveSuccess);
