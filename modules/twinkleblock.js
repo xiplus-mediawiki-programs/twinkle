@@ -3,9 +3,14 @@
 
 (function($) {
 
-var relevantUserName;
+var api = new mw.Api(), relevantUserName;
 var menuFormattedNamespaces = mw.config.get('wgFormattedNamespaces');
 menuFormattedNamespaces[0] = wgULS('（条目）', '（條目）');
+var blockActionText = {
+	'block': wgULS('封禁', '封鎖'),
+	'reblock': wgULS('重新封禁', '重新封鎖'),
+	'unblock': wgULS('解除封禁', '解除封鎖')
+};
 
 /*
  ****************************************
@@ -119,7 +124,6 @@ Twinkle.block.callback = function twinkleblockCallback() {
 };
 
 Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
-	var api = new mw.Api();
 	var userName = Morebits.wiki.flow.relevantUserName(true);
 
 	var query = {
@@ -152,6 +156,8 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 			}
 
 			Twinkle.block.hasBlockLog = !!data.query.logevents.length;
+			// Used later to check if block status changed while filling out the form
+			Twinkle.block.blockLogId = Twinkle.block.hasBlockLog ? data.query.logevents[0].logid : false;
 
 			if (typeof fn === 'function') {
 				return fn();
@@ -1240,12 +1246,83 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			blockoptions.expiry = 'infinite';
 		}
 
-		// execute block
-		blockoptions.token = mw.user.tokens.get('csrfToken');
-		var mbApi = new Morebits.wiki.api(wgULS('执行封禁', '執行封鎖'), blockoptions, function() {
-			statusElement.info('完成');
+		/*
+		  Check if block status changed while processing the form.
+
+		  There's a lot to consider here. list=blocks provides the
+		  current block status, but there are at least two issues with
+		  relying on it. First, the id doesn't update on a reblock,
+		  meaning the individual parameters need to be compared. This
+		  can be done roughly with JSON.stringify - we can thankfully
+		  rely on order from the server, although sorting would be
+		  fine if not - but falsey values are problematic and is
+		  non-ideal. More importantly, list=blocks won't indicate if a
+		  non-blocked user is blocked then unblocked. This should be
+		  exceedingy rare, but regardless, we thus need to check
+		  list=logevents, which has a nicely updating logid
+		  parameter. We can't rely just on that, though, since it
+		  doesn't account for blocks that have expired on their own.
+
+		  As such, we use both. Using some ternaries, the logid
+		  variables are false if there's no logevents, so if they
+		  aren't equal we defintely have a changed entry (send
+		  confirmation). If they are equal, then either the user was
+		  never blocked (the block statuses will be equal, no
+		  confirmation) or there's no new block, in which case either
+		  a block expired (different statuses, confirmation) or the
+		  same block is still active (same status, no confirmation).
+		*/
+		api.get({
+			format: 'json',
+			action: 'query',
+			list: 'blocks|logevents',
+			letype: 'block',
+			lelimit: 1,
+			letitle: 'User:' + blockoptions.user,
+			bkusers: blockoptions.user
+		}).then(function(data) {
+			var block = data.query.blocks[0];
+			var logevents = data.query.logevents[0];
+			var logid = data.query.logevents.length ? logevents.logid : false;
+
+			if (logid !== Twinkle.block.blockLogId || !!block !== !!Twinkle.block.currentBlockInfo) {
+				var message = mw.config.get('wgRelevantUserName') + wgULS('的封禁状态已被修改。', '的封鎖狀態已被修改。');
+				if (block) {
+					message += wgULS('新状态：', '新狀態：');
+				} else {
+					message += wgULS('最新日志：', '最新日誌：');
+				}
+
+				var logExpiry = '';
+				if (logevents.params.duration) {
+					if (logevents.params.duration === 'infinity') {
+						logExpiry = wgULS('无限期', '無限期');
+					} else {
+						var expiryDate = new Morebits.date(logevents.params.expiry);
+						logExpiry += '到' + expiryDate.calendar();
+					}
+				} else { // no duration, action=unblock, just show timestamp
+					logExpiry = '於' + new Morebits.date(logevents.timestamp).calendar();
+				}
+				message += '由' + logevents.user + wgULS('以“', '以「') + logevents.comment + wgULS('”', '」') +
+					blockActionText[logevents.action] + logExpiry + wgULS('，你想要以你的设置覆盖吗？', '，你想要以你的設定覆蓋嗎？');
+
+				if (!confirm(message)) {
+					Morebits.status.error(wgULS('执行封禁', '執行封鎖'), wgULS('用户取消操作', '使用者取消操作'));
+					return;
+				}
+				blockoptions.reblock = 1; // Writing over a block will fail otherwise
+			}
+			// execute block
+			blockoptions.token = mw.user.tokens.get('csrfToken');
+			var mbApi = new Morebits.wiki.api(wgULS('执行封禁', '執行封鎖'), blockoptions, function() {
+				statusElement.info('完成');
+				if (toWarn) {
+					Twinkle.block.callback.issue_template(templateoptions);
+				}
+			});
+			mbApi.post();
 		});
-		mbApi.post();
 	}
 	if (toWarn) {
 		Morebits.simpleWindow.setButtonsEnabled(false);
