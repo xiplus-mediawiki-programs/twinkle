@@ -336,7 +336,7 @@ Twinkle.config.sections = [
 			{
 				name: 'rollbackInCurrentWindow',
 				label: wgULS('在当前窗口内执行回退', '在目前視窗內執行回退'),
-				helptip: wgULS('不要开新窗口或者改变当前窗口的状态，或者意志不坚定的。', '不要開新視窗或者改變目前視窗的狀態，或者意志不堅定的。'),
+				helptip: wgULS('不要开新窗口或者改变当前窗口的状态。', '不要開新視窗或者改變目前視窗的狀態。'),
 				type: 'boolean'
 			},
 
