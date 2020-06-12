@@ -242,7 +242,7 @@ Twinkle.fluff.addLinks = {
 		if (mw.config.get('wgDiffOldId') && (mw.config.get('wgDiffOldId') !== mw.config.get('wgDiffNewId'))) {
 			// Add a [restore this revision] link to the older revision
 			Twinkle.fluff.restoreThisRevision('mw-diff-otitle1', 'wgDiffOldId');
-			if ($(Twinkle.getPref('customRevertSummary')) === '[]') {
+			if (Twinkle.getPref('customRevertSummary').length > 0) {
 				var revertToRevision = document.getElementById('tw-revert-to-orevision');
 				revertToRevision.appendChild(document.createTextNode(' || '));
 				var revertsummary = new Morebits.quickForm.element({ type: 'select', name: 'revertsummary' });
