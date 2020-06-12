@@ -242,24 +242,24 @@ Twinkle.fluff.addLinks = {
 		if (mw.config.get('wgDiffOldId') && (mw.config.get('wgDiffOldId') !== mw.config.get('wgDiffNewId'))) {
 			// Add a [restore this revision] link to the older revision
 			Twinkle.fluff.restoreThisRevision('mw-diff-otitle1', 'wgDiffOldId');
-
-			var revertToRevision = document.getElementById('tw-revert-to-orevision');
-			revertToRevision.appendChild(document.createTextNode(' || '));
-
-			var revertsummary = new Morebits.quickForm.element({ type: 'select', name: 'revertsummary' });
-			revertsummary.append({
-				type: 'option',
-				label: wgULS('选择回退理由', '選擇回退理由'),
-				value: ''
-			});
-			$(Twinkle.getPref('customRevertSummary')).each(function(_, e) {
+			if (Twinkle.getPref('customRevertSummary').length > 0) {
+				var revertToRevision = document.getElementById('tw-revert-to-orevision');
+				revertToRevision.appendChild(document.createTextNode(' || '));
+				var revertsummary = new Morebits.quickForm.element({ type: 'select', name: 'revertsummary' });
 				revertsummary.append({
 					type: 'option',
-					label: e.label,
-					value: e.value
+					label: wgULS('选择回退理由', '選擇回退理由'),
+					value: ''
 				});
-			});
-			revertToRevision.appendChild(revertsummary.render().childNodes[0]);
+				$(Twinkle.getPref('customRevertSummary')).each(function(_, e) {
+					revertsummary.append({
+						type: 'option',
+						label: e.label,
+						value: e.value
+					});
+				});
+				revertToRevision.appendChild(revertsummary.render().childNodes[0]);
+			}
 		}
 
 		// Newer revision
