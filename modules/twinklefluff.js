@@ -179,7 +179,7 @@ Twinkle.fluff.addLinks = {
 				var vandNode = document.createElement('strong');
 				var normNode = document.createElement('strong');
 
-				var agfLink = Twinkle.fluff.buildLink('DarkOliveGreen', wgULS('回退（AGF）', '回退（AGF）'));
+				var agfLink = Twinkle.fluff.buildLink('DarkOliveGreen', '回退（AGF）');
 				var vandLink = Twinkle.fluff.buildLink('Red', wgULS('破坏', '破壞'));
 				var normLink = Twinkle.fluff.buildLink('SteelBlue', '回退');
 
@@ -327,7 +327,7 @@ Twinkle.fluff.addLinks = {
 			var vandNode = document.createElement('strong');
 			var normNode = document.createElement('strong');
 
-			var agfLink = Twinkle.fluff.buildLink('DarkOliveGreen', wgULS('回退（AGF）', '回退（AGF）'));
+			var agfLink = Twinkle.fluff.buildLink('DarkOliveGreen', '回退（AGF）');
 			var vandLink = Twinkle.fluff.buildLink('Red', wgULS('回退（破坏）', '回退（破壞）'));
 			var normLink = Twinkle.fluff.buildLink('SteelBlue', '回退');
 
