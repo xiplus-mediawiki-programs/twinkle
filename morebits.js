@@ -163,27 +163,27 @@ Morebits.sanitizeIPv6 = function (address) {
  *   radio     A radio button. Must use "list" parameter.
  *              - Attributes: name, list, event
  *              - Attributes (within list): name, label, value, checked, disabled, hidden, event, subgroup
-*   input     A text box.
-	*              - Attributes: name, label, value, size, disabled, required, readonly, hidden, maxlength, event
-	*   dyninput  A set of text boxes with "Remove" buttons and an "Add" button.
-	*              - Attributes: name, label, min, max, sublabel, value, size, maxlength, event
-	*   hidden    An invisible form field.
-	*              - Attributes: name, value
-	*   header    A level 5 header.
-	*              - Attributes: label
-	*   div       A generic placeholder element or label.
-	*              - Attributes: name, label
-	*   submit    A submit button. Morebits.simpleWindow moves these to the footer of the dialog.
-	*              - Attributes: name, label, disabled
-	*   button    A generic button.
-	*              - Attributes: name, label, disabled, event
-	*   textarea  A big, multi-line text box.
-	*              - Attributes: name, label, value, cols, rows, disabled, required, readonly, hidden
-	*   fragment  A DocumentFragment object.
-	*              - No attributes, and no global attributes except adminonly
-	*
-	* Global attributes: id, className, style, tooltip, extra, adminonly
-	*/
+ *   input     A text box.
+ *              - Attributes: name, label, value, size, disabled, required, readonly, hidden, maxlength, event
+ *   dyninput  A set of text boxes with "Remove" buttons and an "Add" button.
+ *              - Attributes: name, label, min, max, sublabel, value, size, maxlength, event
+ *   hidden    An invisible form field.
+ *              - Attributes: name, value
+ *   header    A level 5 header.
+ *              - Attributes: label
+ *   div       A generic placeholder element or label.
+ *              - Attributes: name, label
+ *   submit    A submit button. Morebits.simpleWindow moves these to the footer of the dialog.
+ *              - Attributes: name, label, disabled
+ *   button    A generic button.
+ *              - Attributes: name, label, disabled, event
+ *   textarea  A big, multi-line text box.
+ *              - Attributes: name, label, value, cols, rows, disabled, required, readonly, hidden
+ *   fragment  A DocumentFragment object.
+ *              - No attributes, and no global attributes except adminonly
+ *
+ * Global attributes: id, className, style, tooltip, extra, adminonly
+ */
 
 /**
  * @constructor
@@ -1140,7 +1140,7 @@ Morebits.string = {
 	/**
 	 * Determine input string is represents as infinity
 	 * @param {string} time The string to determine
-		 * @returns {boolean}
+	 * @returns {boolean}
 	 * @see https://gerrit.wikimedia.org/g/mediawiki/core/+/7c4a3f8aae57066236b83ec21dc0ef2f5f2c4ead/includes/GlobalFunctions.php#2878
 	 */
 	isInfinity: function morebitsStringIsInfinity(time) {
@@ -1579,9 +1579,9 @@ $.extend(Morebits.date.prototype, {
 		unbinder.unbind('\\[', '\\]');
 		unbinder.content = unbinder.content.replace(
 			/* Regex notes:
-				* d(d{2,3})? matches exactly 1, 3 or 4 occurrences of 'd' ('dd' is treated as a double match of 'd')
-				* Y{1,2}(Y{2})? matches exactly 1, 2 or 4 occurrences of 'Y'
-				*/
+			 * d(d{2,3})? matches exactly 1, 3 or 4 occurrences of 'd' ('dd' is treated as a double match of 'd')
+			 * Y{1,2}(Y{2})? matches exactly 1, 2 or 4 occurrences of 'Y'
+			 */
 			/H{1,2}|h{1,2}|m{1,2}|s{1,2}|d(d{2,3})?|D{1,2}|M{1,4}|Y{1,2}(Y{2})?|A/g,
 			function(match) {
 				return replacementMap[match];
@@ -2941,9 +2941,9 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	};
 
 	/*
-		* Private member functions
-		* These are not exposed outside
-		*/
+	 * Private member functions
+	 * These are not exposed outside
+	 */
 
 	/**
 	 * Determines whether we can save an API call by using the csrf token sent with the page
@@ -3657,11 +3657,11 @@ Morebits.wiki.page = function(pageName, currentAction) {
 }; // end Morebits.wiki.page
 
 /* Morebits.wiki.page TODO: (XXX)
-	* - Should we retry loads also?
-	* - Need to reset current action before the save?
-	* - Deal with action.completed stuff
-	* - Need to reset all parameters once done (e.g. edit summary, move destination, etc.)
-	*/
+ * - Should we retry loads also?
+ * - Need to reset current action before the save?
+ * - Deal with action.completed stuff
+ * - Need to reset all parameters once done (e.g. edit summary, move destination, etc.)
+ */
 
 
 /**
@@ -3894,9 +3894,9 @@ Morebits.wiki.flow = function(pageName, currentAction) {
 
 
 	/* Private member functions
-		*
-		* These are not exposed outside
-		*/
+	 *
+	 * These are not exposed outside
+	 */
 
 	// callback from newTopicApi.post()
 	var fnNewTopicSuccess = function() {
