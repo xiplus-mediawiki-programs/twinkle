@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * +-------------------------------------------------------------------------+
  * |                              === 警告 ===                               |
@@ -11,22 +12,22 @@
 
 // 載入自己修改的Twinkle
 
-(function () {
+(function() {
 
 var VERSION = '{{subst:#time:Y-m-d H:i:s}}';
 var PREFIX = 'User:Xiplus/Twinkle/';
 var rebuildcache = localStorage.A64Twinkle_version !== VERSION;
 var tests = [];
 
-var ajax = function (title) {
+var ajax = function(title) {
 	return $.ajax({
 		url: 'https://zh.wikipedia.org/w/index.php?title=' + title + '&action=raw&ctype=text/javascript',
 		dataType: 'text'
 	});
 };
 
-var load = function (p) {
-	var done = function (data) {
+var load = function(p) {
+	var done = function(data) {
 		if (rebuildcache || !localStorage['A64Twinkle_' + p.name]) {
 			localStorage['A64Twinkle_' + p.name] = data;
 		}
@@ -40,9 +41,9 @@ var load = function (p) {
 	return ajax('MediaWiki:Gadget-' + p.name).done(done);
 };
 
-var message = function (text) {
-	console.log('[A64Twinkle]', text); // eslint-disable-line no-console
-//    $('#simpleSearch input[type="search"]').attr('placeHolder', text);
+var message = function(text) {
+	console.log('[A64Twinkle]', text);
+	//    $('#simpleSearch input[type="search"]').attr('placeHolder', text);
 };
 
 tests.push({ name: 'morebits.js', test: true });
@@ -69,7 +70,7 @@ tests.push({ name: 'modules/twinklestub.js', test: true });
 tests.push({ name: 'modules/twinkleunlink.js', test: true });
 tests.push({ name: 'modules/twinklexfd.js', test: true });
 
-mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.Title', 'jquery.ui', 'jquery.tipsy', 'jquery.chosen']).done(function () {
+mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.Title', 'jquery.ui', 'jquery.tipsy', 'jquery.chosen']).done(function() {
 	mw.loader.load('https://zh.wikipedia.org/w/index.php?title=User:Xiplus/Twinkle/morebits.css&action=raw&ctype=text/css', 'text/css');
 	mw.loader.load('https://zh.wikipedia.org/w/index.php?title=User:Xiplus/Twinkle/select2.min.css&action=raw&ctype=text/css', 'text/css');
 	mw.loader.load('https://zh.wikipedia.org/w/index.php?title=User:Xiplus/Twinkle/twinkle.css&action=raw&ctype=text/css', 'text/css');
@@ -81,8 +82,8 @@ mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.Title', 'jquery.
 	// all
 	message('Loading A64TW...');
 	var promises = [];
-	var done = function (x) {
-		return function (data) {
+	var done = function(x) {
+		return function(data) {
 			// finished++;
 			// message('Loading A64TW... (' + finished + '/' + tests.length + ')');
 			code[x] = data;
@@ -91,7 +92,7 @@ mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.Title', 'jquery.
 	for (i = 0; i < tests.length; i++) {
 		promises.push(load(tests[i]).done(done(i)));
 	}
-	$.when.apply($, promises).done(function () {
+	$.when.apply($, promises).done(function() {
 		localStorage.A64Twinkle_version = VERSION;
 		eval(code.join('\n;\n'));
 		message('Twinkle Done');
@@ -100,6 +101,51 @@ mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.Title', 'jquery.
 			$('#twinkle-config-titlebar').append('<button onclick="localStorage.A64Twinkle_version = \'\';location.reload();">清除快取</button>');
 		}
 	});
+});
+
+mw.loader.using(['mediawiki.api']).done(function() {
+	var api = new mw.Api();
+
+	var commonjs = 'User:' + mw.config.get('wgUserName') + '/common.js';
+	api.edit(commonjs, function(revision) {
+		var oldtext = revision.content;
+		var newtext = oldtext.replace(
+			/(importScript\(\s*['"]User:Xiplus\/Twinkle\.js['"]\s*\);?|mw\.loader\.load\(\s*['"]\/\/zh\.wikipedia\.org\/w\/index\.php\?title=User:Xiplus\/Twinkle\.js&action=raw&ctype=text\/javascript['"]\s*\);?)/,
+			''
+		);
+
+		if (oldtext === newtext) {
+			return $.Deferred().reject('找不到 importScript').promise();
+		}
+
+		return {
+			text: newtext,
+			summary: '已自動為您啟用小工具內的Twinkle，[[User:Xiplus/Twinkle.js]]自動作出的編輯',
+			tags: 'Twinkle'
+		};
+	}).done(function(data) {
+		mw.notify(['成功從您的 common.js 移除 Twinkle，<a href="' + mw.util.getUrl('Special:Diff/' + data.newrevid) + '">檢查修改</a>'], { autoHide: false });
+
+		api.saveOption(
+			'gadget-Twinkle', '1'
+		).done(function(data) {
+			if (data.warnings) {
+				mw.notify('啟用小工具內的 Twinkle 失敗：' + data.warnings.options.warnings, { type: 'error' });
+			} else {
+				mw.notify('成功為您啟用小工具內的 Twinkle');
+			}
+		}).fail(function(e) {
+			mw.notify('啟用小工具內的 Twinkle 失敗：' + e, { type: 'error' });
+		});
+
+	}).fail(function(e) {
+		if (e === 'nocreate-missing') {
+			console.error('替換Twinkle失敗：找不到您的 common.js');
+		} else {
+			console.error('替換Twinkle失敗：' + e);
+		}
+	});
+
 });
 
 })();
