@@ -389,7 +389,9 @@ Twinkle.fluff.revert = function revertPage(type, vandal, autoRevert, rev, page) 
 		'titles': pagename,
 		'rvlimit': 50, // max possible
 		'rvprop': [ 'ids', 'timestamp', 'user', 'comment' ],
-		'intoken': 'edit'
+		'curtimestamp': '',
+		'meta': 'tokens',
+		'type': 'csrf'
 	};
 	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取较早修订版本信息', '抓取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.main);
 	wikipedia_api.statelem.status(wgULS('正在准备回退……', '正在準備回退……'));
@@ -422,7 +424,10 @@ Twinkle.fluff.revertToRevision = function revertToRevision(oldrev) {
 		'rvstartid': oldrev,
 		'rvprop': [ 'ids', 'timestamp', 'user', 'comment' ],
 		'intoken': 'edit',
-		'format': 'xml'
+		'format': 'xml',
+		'curtimestamp': '',
+		'meta': 'tokens',
+		'type': 'csrf'
 	};
 	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取较早修订版本信息', '抓取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.toRevision.main);
 	wikipedia_api.statelem.status(wgULS('正在准备回退……', '正在準備回退……'));
@@ -441,8 +446,8 @@ Twinkle.fluff.callbacks = {
 
 			var lastrevid = parseInt($(xmlDoc).find('page').attr('lastrevid'), 10);
 			var touched = $(xmlDoc).find('page').attr('touched');
-			var starttimestamp = $(xmlDoc).find('page').attr('starttimestamp');
-			var edittoken = $(xmlDoc).find('page').attr('edittoken');
+			var loadtimestamp = $(xmlDoc).find('api').attr('curtimestamp');
+			var csrftoken = $(xmlDoc).find('tokens').attr('csrftoken');
 			var revertToRevID = $(xmlDoc).find('rev').attr('revid');
 			var revertToUser = $(xmlDoc).find('rev').attr('user');
 
@@ -463,11 +468,11 @@ Twinkle.fluff.callbacks = {
 				'title': mw.config.get('wgPageName'),
 				'tags': Twinkle.getPref('revisionTags'),
 				'summary': summary,
-				'token': edittoken,
+				'token': csrftoken,
 				'undo': lastrevid,
 				'undoafter': revertToRevID,
 				'basetimestamp': touched,
-				'starttimestamp': starttimestamp,
+				'starttimestamp': loadtimestamp,
 				'watchlist': Twinkle.getPref('watchRevertedPages').indexOf('torev') !== -1 ? 'watch' : undefined,
 				'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf('torev') !== -1 ? true : undefined,
 				'bot': true
@@ -489,8 +494,8 @@ Twinkle.fluff.callbacks = {
 
 		var lastrevid = parseInt($(xmlDoc).find('page').attr('lastrevid'), 10);
 		var touched = $(xmlDoc).find('page').attr('touched');
-		var starttimestamp = $(xmlDoc).find('page').attr('starttimestamp');
-		var edittoken = $(xmlDoc).find('page').attr('edittoken');
+		var loadtimestamp = $(xmlDoc).find('api').attr('curtimestamp');
+		var csrftoken = $(xmlDoc).find('tokens').attr('csrftoken');
 		var lastuser = $(xmlDoc).find('rev').attr('user');
 
 		var revs = $(xmlDoc).find('rev');
@@ -675,11 +680,11 @@ Twinkle.fluff.callbacks = {
 			'title': self.params.pagename,
 			'tags': Twinkle.getPref('revisionTags'),
 			'summary': summary,
-			'token': edittoken,
+			'token': csrftoken,
 			'undo': lastrevid,
 			'undoafter': self.params.goodid,
 			'basetimestamp': touched,
-			'starttimestamp': starttimestamp,
+			'starttimestamp': loadtimestamp,
 			'watchlist': Twinkle.getPref('watchRevertedPages').indexOf(self.params.type) !== -1 ? 'watch' : undefined,
 			'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf(self.params.type) !== -1 ? true : undefined,
 			'bot': true

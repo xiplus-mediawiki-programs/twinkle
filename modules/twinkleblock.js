@@ -3,7 +3,7 @@
 
 (function($) {
 
-var api = new mw.Api(), relevantUserName;
+var relevantUserName;
 var menuFormattedNamespaces = mw.config.get('wgFormattedNamespaces');
 menuFormattedNamespaces[0] = wgULS('（条目）', '（條目）');
 
@@ -119,6 +119,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 };
 
 Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
+	var api = new mw.Api();
 	var userName = Morebits.wiki.flow.relevantUserName(true);
 
 	var query = {
@@ -1240,16 +1241,11 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		}
 
 		// execute block
-		api.getToken('block').then(function(token) {
-			statusElement.status(wgULS('处理中…', '處理中…'));
-			blockoptions.token = token;
-			var mbApi = new Morebits.wiki.api(wgULS('执行封禁', '執行封鎖'), blockoptions, function() {
-				statusElement.info('完成');
-			});
-			mbApi.post();
-		}, function() {
-			statusElement.error(wgULS('未能抓取封禁令牌', '未能抓取封鎖權杖'));
+		blockoptions.token = mw.user.tokens.get('csrfToken');
+		var mbApi = new Morebits.wiki.api(wgULS('执行封禁', '執行封鎖'), blockoptions, function() {
+			statusElement.info('完成');
 		});
+		mbApi.post();
 	}
 	if (toWarn) {
 		Morebits.simpleWindow.setButtonsEnabled(false);
@@ -1281,17 +1277,12 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		unblockoptions.action = 'unblock';
 		unblockoptions.tags = Twinkle.getPref('revisionTags');
 		unblockoptions.user = Morebits.wiki.flow.relevantUserName(true);
-
-		api.getToken('block').then(function(token) {
-			unblockStatusElement.status(wgULS('处理中…', '處理中…'));
-			unblockoptions.token = token;
-			var mbApi = new Morebits.wiki.api(wgULS('执行解除封禁', '執行解除封鎖'), unblockoptions, function() {
-				unblockStatusElement.info('完成');
-			});
-			mbApi.post();
-		}, function() {
-			unblockStatusElement.error(wgULS('未能抓取封禁令牌', '未能抓取封鎖權杖'));
+		// execute unblock
+		unblockoptions.token = mw.user.tokens.get('csrfToken');
+		var unblockMbApi = new Morebits.wiki.api(wgULS('执行解除封禁', '執行解除封鎖'), unblockoptions, function() {
+			unblockStatusElement.info('完成');
 		});
+		unblockMbApi.post();
 	}
 	if (!toBlock && !toWarn && !toTag && !toProtect && !toUnblock) {
 		return alert(wgULS('请给Twinkle点事做！', '請給Twinkle點事做！'));
