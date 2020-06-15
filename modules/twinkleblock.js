@@ -1305,7 +1305,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 					logExpiry = '於' + new Morebits.date(logevents.timestamp).calendar();
 				}
 				message += '由' + logevents.user + wgULS('以“', '以「') + logevents.comment + wgULS('”', '」') +
-					blockActionText[logevents.action] + logExpiry + wgULS('，你想要以你的设置覆盖吗？', '，你想要以你的設定覆蓋嗎？');
+					blockActionText[logevents.action] + logExpiry + wgULS('，你想要以你的设置变更封禁吗？', '，你想要以你的設定變更封鎖嗎？');
 
 				if (!confirm(message)) {
 					Morebits.status.error(wgULS('执行封禁', '執行封鎖'), wgULS('用户取消操作', '使用者取消操作'));
