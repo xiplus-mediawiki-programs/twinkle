@@ -5,12 +5,12 @@
 
 
 /*
-	****************************************
-	*** twinklexfd.js: XFD module
-	****************************************
-	* Mode of invocation:     Tab ("XFD")
-	* Active on:              Existing, non-special pages, except for file pages with no local (non-Commons) file which are not redirects
-	*/
+ ****************************************
+ *** twinklexfd.js: XFD module
+ ****************************************
+ * Mode of invocation:     Tab ("XFD")
+ * Active on:              Existing, non-special pages, except for file pages with no local (non-Commons) file which are not redirects
+ */
 
 Twinkle.xfd = function twinklexfd() {
 	// Disable on:
