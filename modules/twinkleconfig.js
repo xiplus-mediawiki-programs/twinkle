@@ -76,6 +76,18 @@ Twinkle.config.commonSets = {
 		'f1', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10',
 		'r2', 'r3', 'r5', 'r6', 'r7'
 	],
+	xfdCriteria: {
+		'delete': wgULS('删除', '刪除'), 'merge': wgULS('合并', '合併'),
+		'vmd': wgULS('移动到维基词典', '移動到維基詞典'), 'vms': wgULS('移动到维基文库', '移動到維基文庫'), 'vmb': wgULS('移动到维基教科书', '移動到維基教科書'), 'vmq': wgULS('移动到维基语录', '移動到維基語錄'), 'vmvoy': wgULS('移动到维基导游', '移動到維基導遊'), 'vmv': wgULS('移动到维基学院', '移動到維基學院'),
+		'fwdcsd': wgULS('转交自快速删除候选', '轉交自快速刪除候選'),
+		'fame': wgULS('批量关注度提删', '批次關注度提刪'), 'substub': wgULS('批量小小作品提删', '批次小小作品提刪'), 'batch': wgULS('批量其他提删', '批次其他提刪')
+	},
+	xfdCriteriaDisplayOrder: [
+		'delete', 'merge',
+		'vmd', 'vms', 'vmb', 'vmq', 'vmvoy', 'vmv',
+		'fwdcsd',
+		'fame', 'substub', 'batch'
+	],
 	namespacesNoSpecial: {
 		'0': wgULS('（条目）', '（條目）'),
 		'1': 'Talk',
@@ -722,9 +734,29 @@ Twinkle.config.sections = [
 	{
 		title: wgULS('存废讨论', '存廢討論'),
 		preferences: [
-		// TwinkleConfig.xfdWatchPage (string)
-		// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't
-		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
+			{
+				name: 'logXfdNominations',
+				label: wgULS('在用户空间中记录所有存废讨论提名', '在使用者空間中記錄所有存廢討論提名'),
+				helptip: wgULS('非管理员无法访问到已删除的贡献，用户空间日志提供了一个很好的方法来记录这些历史。', '非管理員無法存取到已刪除的貢獻，使用者空間日誌提供了一個很好的方法來記錄這些歷史。'),
+				type: 'boolean'
+			},
+			{
+				name: 'xfdLogPageName',
+				label: wgULS('在此页保留日志', '在此頁保留日誌'),
+				helptip: wgULS('在此框中输入子页面名称，您将在User:<i>用户名</i>/<i>子页面</i>找到XFD日志。仅在启用日志时工作。', '在此框中輸入子頁面名稱，您將在User:<i>使用者名稱</i>/<i>子頁面</i>找到XFD日誌。僅在啟用日誌時工作。'),
+				type: 'string'
+			},
+			{
+				name: 'noLogOnXfdNomination',
+				label: wgULS('在使用以下理由时不做记录', '在使用以下理由時不做記錄'),
+				type: 'set',
+				setValues: Twinkle.config.commonSets.xfdCriteria,
+				setDisplayOrder: Twinkle.config.commonSets.xfdCriteriaDisplayOrder
+			},
+
+			// TwinkleConfig.xfdWatchPage (string)
+			// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't
+			// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 			{
 				name: 'xfdWatchPage',
 				label: wgULS('添加提名的页面到监视列表', '加入提名的頁面到監視清單'),
