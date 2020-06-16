@@ -401,9 +401,6 @@ Twinkle.xfd.callbacks = {
 				case 'vmq':
 				case 'vmvoy':
 				case 'vmv':
-					type = 'vm';
-					to = params.xfdcat;
-					break;
 				case 'fwdcsd':
 				case 'merge':
 					to = params.mergeinto;
