@@ -108,7 +108,7 @@ Twinkle.defaultConfig = {
 
 	// XfD
 	logXfdNominations: false,
-	xfdLogPageName: 'XFD日志',
+	xfdLogPageName: 'AFD日志',
 	noLogOnXfdNomination: [],
 	xfdWatchDiscussion: 'default',
 	xfdWatchPage: 'default',
