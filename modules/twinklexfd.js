@@ -745,7 +745,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	switch (type) {
 
 		case 'afd': // AFD
-			logpage = 'User:Hamish/AFD';
+			logpage = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
 			params = { usertalk: usertalk, xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, fwdcsdreason: fwdcsdreason, logpage: logpage, lognomination: lognomination};
 
 			Morebits.wiki.addCheckpoint();
