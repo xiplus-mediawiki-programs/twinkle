@@ -737,7 +737,7 @@ Twinkle.config.sections = [
 			{
 				name: 'logXfdNominations',
 				label: wgULS('在用户空间中记录所有存废讨论提名', '在使用者空間中記錄所有存廢討論提名'),
-				helptip: wgULS('非管理员无法访问到已删除的贡献，用户空间日志提供了一个很好的方法来记录这些历史。', '非管理員無法存取到已刪除的貢獻，使用者空間日誌提供了一個很好的方法來記錄這些歷史。'),
+				helptip: wgULS('该日志供您追踪所有使用Twinkle提交的存废讨论', '該日誌供您追蹤所有透過Twinke提交的存廢討論'),
 				type: 'boolean'
 			},
 			{
