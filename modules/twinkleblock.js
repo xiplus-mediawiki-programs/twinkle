@@ -1317,9 +1317,6 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			blockoptions.token = mw.user.tokens.get('csrfToken');
 			var mbApi = new Morebits.wiki.api(wgULS('执行封禁', '執行封鎖'), blockoptions, function() {
 				statusElement.info('完成');
-				if (toWarn) {
-					Twinkle.block.callback.issue_template(templateoptions);
-				}
 			});
 			mbApi.post();
 		});
