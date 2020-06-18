@@ -723,7 +723,6 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		xfdcat = e.target.xfdcat.value;
 		mergeinto = e.target.mergeinto.value;
 	}
-	var lognomination = Twinkle.getPref('logXfdNominations') && Twinkle.getPref('noLogOnXfdNomination').indexOf(xfdcat) === -1;
 	if (xfdcat === 'merge' && mergeinto.trim() === '') {
 		alert(wgULS('请提供合并目标！', '請提供合併目標！'));
 		return;
@@ -740,12 +739,13 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		return;
 	}
 
-	var wikipedia_page, logpage, params;
+	var wikipedia_page, logpage, lognomination, params;
 	var date = new Morebits.date(); // XXX: avoid use of client clock, still used by TfD, FfD and CfD
 	switch (type) {
 
 		case 'afd': // AFD
 			logpage = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
+			lognomination = Twinkle.getPref('logXfdNominations') && Twinkle.getPref('noLogOnXfdNomination').indexOf(xfdcat) === -1;
 			params = { usertalk: usertalk, xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, fwdcsdreason: fwdcsdreason, logpage: logpage, lognomination: lognomination};
 
 			Morebits.wiki.addCheckpoint();
@@ -765,6 +765,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 
 		case 'ffd': // FFD
 			logpage = 'Wikipedia:檔案存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
+			lognomination = Twinkle.getPref('logXfdNominations') && Twinkle.getPref('noLogOnXfdNomination').indexOf('ffd') === -1;
 			params = { usertalk: usertalk, reason: reason, logpage: logpage, lognomination: lognomination};
 
 			Morebits.wiki.addCheckpoint();

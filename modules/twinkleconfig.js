@@ -80,13 +80,15 @@ Twinkle.config.commonSets = {
 		'delete': wgULS('删除', '刪除'), 'merge': wgULS('合并', '合併'),
 		'vmd': wgULS('移动到维基词典', '移動到維基詞典'), 'vms': wgULS('移动到维基文库', '移動到維基文庫'), 'vmb': wgULS('移动到维基教科书', '移動到維基教科書'), 'vmq': wgULS('移动到维基语录', '移動到維基語錄'), 'vmvoy': wgULS('移动到维基导游', '移動到維基導遊'), 'vmv': wgULS('移动到维基学院', '移動到維基學院'),
 		'fwdcsd': wgULS('转交自快速删除候选', '轉交自快速刪除候選'),
-		'fame': wgULS('批量关注度提删', '批次關注度提刪'), 'substub': wgULS('批量小小作品提删', '批次小小作品提刪'), 'batch': wgULS('批量其他提删', '批次其他提刪')
+		'fame': wgULS('批量关注度提删', '批次關注度提刪'), 'substub': wgULS('批量小小作品提删', '批次小小作品提刪'), 'batch': wgULS('批量其他提删', '批次其他提刪'),
+		'ffd': wgULS('文件存废讨论', '檔案存廢討論')
 	},
 	xfdCriteriaDisplayOrder: [
 		'delete', 'merge',
 		'vmd', 'vms', 'vmb', 'vmq', 'vmvoy', 'vmv',
 		'fwdcsd',
-		'fame', 'substub', 'batch'
+		'fame', 'substub', 'batch',
+		'ffd'
 	],
 	namespacesNoSpecial: {
 		'0': wgULS('（条目）', '（條目）'),
