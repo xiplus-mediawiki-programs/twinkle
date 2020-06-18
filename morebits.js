@@ -1060,6 +1060,22 @@ Morebits.string = {
 	},
 
 	/**
+	 * Append punctuation to a string when it's missing
+	 * @param {string} str
+	 * @param {string} punctuation
+	 * @returns {String}
+	 */
+	appendPunctuation: function(str, punctuation) {
+		if (punctuation === undefined) {
+			punctuation = '。';
+		}
+		if (str.search(/[.?!;。？！；]$/) === -1) {
+			str += punctuation;
+		}
+		return str;
+	},
+
+	/**
 	 * Gives an array of substrings of `str` starting with `start` and
 	 * ending with `end`, which is not in `skiplist`
 	 * @param {string} str

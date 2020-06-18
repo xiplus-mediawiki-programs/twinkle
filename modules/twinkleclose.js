@@ -669,7 +669,7 @@ Twinkle.close.callbacks = {
 		text = split[0] + '\n{{delh|' + params.code + '}}\n' + split.slice(1).join('\n');
 		text += '\n<hr>\n: ' + params.messageData.label;
 		if (params.remark) {
-			text += '：' + params.remark;
+			text += '：' + Morebits.string.appendPunctuation(params.remark);
 		} else {
 			text += '。';
 		}
