@@ -694,18 +694,32 @@ Twinkle.xfd.callbacks = {
 		}
 
 		// If a logged file is deleted but exists on commons, the wikilink will be blue, so provide a link to the log
-		var fileLogLink = mw.config.get('wgNamespaceNumber') === 6 ? ' ([{{fullurl:Special:Log|page=' + mw.util.wikiUrlencode(mw.config.get('wgPageName')) + '}} log])' : '';
-		var appendText = '# [[:' + Morebits.pageNameNorm + ']]' + fileLogLink + ': ' + xfdCatName;
+		var appendText = '# [[:' + Morebits.pageNameNorm + ']]';
+		if (mw.config.get('wgNamespaceNumber') === 6) {
+			appendText += '（[{{fullurl:Special:Log|page=' + mw.util.wikiUrlencode(mw.config.get('wgPageName')) + '}} ' + wgULS('日志', '日誌') + ']）';
+		}
+		appendText += '：' + xfdCatName + '。';
 
 		if (params.xfdcat === 'fwdcsd') {
-			appendText += (params.reason ? "\n#* '''原刪除理據''': " + Morebits.string.formatReasonText(params.reason) : '') + (params.reason ? "\n#* '''轉交理據''': " + Morebits.string.formatReasonText(params.fwdcsdreason) : '');
+			if (params.reason) {
+				appendText += "'''原刪除理據'''：" + Morebits.string.formatReasonText(params.reason);
+			}
+			if (params.fwdcsdreason) {
+				appendText += "'''轉交理據'''：" + Morebits.string.formatReasonText(params.fwdcsdreason);
+			}
 		} else if (params.xfdcat === 'merge') {
-			appendText += '[[' + params.mergeinto + ']]' + (params.reason ? "\n#* '''轉交理據''': " + Morebits.string.formatReasonText(params.reason) : '');
+			appendText += '[[:' + params.mergeinto + ']]';
+			if (params.reason) {
+				appendText += "'''理據'''：" + Morebits.string.formatReasonText(params.reason);
+			}
 		} else {
-			appendText += params.reason ? "\n#* '''理據''': " + Morebits.string.formatReasonText(params.reason) : '';
+			appendText += params.reason ? "'''理據'''：" + Morebits.string.formatReasonText(params.reason) : '';
 		}
 
-		appendText += (initialContrib ? '；通知{{user|' + initialContrib + '}}' : '') + ' ~~~~~\n';
+		if (initialContrib) {
+			appendText += '；通知{{user|' + initialContrib + '}}';
+		}
+		appendText += ' ~~~~~\n';
 		usl.log(appendText, editsummary);
 	}
 };
