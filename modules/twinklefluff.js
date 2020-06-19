@@ -22,7 +22,7 @@ Twinkle.fluff = function twinklefluff() {
 	// This is for handling quick bots that makes edits seconds after the original edit is made.
 	// This only affects vandalism rollback; for good faith rollback, it will stop, indicating a bot
 	// has no faith, and for normal rollback, it will rollback that edit.
-	Twinkle.fluff.whiteList = [
+	Twinkle.fluff.trustedBots = [
 		'Antigng-bot',
 		'Jimmy-bot',
 		'Jimmy-abot',
@@ -528,7 +528,7 @@ Twinkle.fluff.callbacks = {
 						return;
 				}
 			} else if (params.type === 'vand' &&
-					Twinkle.fluff.whiteList.indexOf(top.getAttribute('user')) !== -1 && revs.length > 1 &&
+					Twinkle.fluff.trustedBots.indexOf(top.getAttribute('user')) !== -1 && revs.length > 1 &&
 					revs[1].getAttribute('pageId') === params.revid) {
 				Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', lastuser), '，一个可信的机器人做出，之前的版本被认为是破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', lastuser), '，一個可信的機器人做出，之前的版本被認為是破壞，繼續回退操作。' ]));
 				index = 2;
@@ -539,7 +539,7 @@ Twinkle.fluff.callbacks = {
 
 		}
 
-		if (Twinkle.fluff.whiteList.indexOf(params.user) !== -1) {
+		if (Twinkle.fluff.trustedBots.indexOf(params.user) !== -1) {
 			switch (params.type) {
 				case 'vand':
 					Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行破坏回退，这是一个可信的机器人，我们假定您要回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行破壞回退，這是一個可信的機器人，我們假定您要回退前一個修訂版本。' ]));
