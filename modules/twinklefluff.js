@@ -597,7 +597,7 @@ Twinkle.fluff.callbacks = {
 		}
 
 		if (!found) {
-			statelem.error(wgULS([ '未找到之前的修订版本，可能 ', Morebits.htmlNode('strong', params.user), ' 是唯一贡献者，或这个用户连续做出了超过 ' + Twinkle.getPref('revertMaxRevisions') + ' 次编辑。' ], [ '未找到之前的修訂版本，可能 ', Morebits.htmlNode('strong', params.user), ' 是唯一貢獻者，或這個用戶連續做出了超過 ' + Twinkle.getPref('revertMaxRevisions') + ' 次編輯。' ]));
+			statelem.error(wgULS([ '未找到之前的修订版本，可能 ', Morebits.htmlNode('strong', params.user), ' 是唯一贡献者，或这个用户连续做出了超过 ' + mw.language.convertNumber(Twinkle.getPref('revertMaxRevisions')) + ' 次编辑。' ], [ '未找到之前的修訂版本，可能 ', Morebits.htmlNode('strong', params.user), ' 是唯一貢獻者，或這個用戶連續做出了超過 ' + mw.language.convertNumber(Twinkle.getPref('revertMaxRevisions')) + ' 次編輯。' ]));
 			return;
 		}
 
@@ -609,7 +609,7 @@ Twinkle.fluff.callbacks = {
 		var good_revision = revs[found];
 		var userHasAlreadyConfirmedAction = false;
 		if (params.type !== 'vand' && count > 1) {
-			if (!confirm(wgULS(params.user + ' 连续做出了 ' + count + ' 次编辑，是否要回退所有这些？', params.user + ' 連續做出了 ' + count + ' 次編輯，是否要回退所有這些？'))) {
+			if (!confirm(wgULS(params.user + ' 连续做出了 ' + mw.language.convertNumber(count) + ' 次编辑，是否要回退所有这些？', params.user + ' 連續做出了 ' + mw.language.convertNumber(count) + ' 次編輯，是否要回退所有這些？'))) {
 				Morebits.status.info('提示', wgULS('用户取消操作', '使用者取消操作'));
 				return;
 			}
@@ -621,7 +621,7 @@ Twinkle.fluff.callbacks = {
 		params.goodid = good_revision.getAttribute('revid');
 		params.gooduser = good_revision.getAttribute('user');
 
-		statelem.status([ Morebits.htmlNode('strong', count), wgULS(' 个修订版本之前由 ', ' 個修訂版本之前由 '), Morebits.htmlNode('strong', params.gooduser), wgULS(' 做出的修订版本 ', ' 做出的修訂版本 '), Morebits.htmlNode('strong', params.goodid) ]);
+		statelem.status([ Morebits.htmlNode('strong', mw.language.convertNumber(count)), wgULS(' 个修订版本之前由 ', ' 個修訂版本之前由 '), Morebits.htmlNode('strong', params.gooduser), wgULS(' 做出的修订版本 ', ' 做出的修訂版本 '), Morebits.htmlNode('strong', params.goodid) ]);
 
 		var summary, extra_summary;
 		switch (params.type) {

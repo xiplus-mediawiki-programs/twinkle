@@ -202,7 +202,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 				metadata.push(wgULS('上传者：', '上傳者：') + $page.find('ii').attr('user'));
 				metadata.push(wgULS('最后编辑：', '最後編輯：') + $page.find('rev').attr('user'));
 			} else {
-				metadata.push(size + wgULS('字节', '位元組'));
+				metadata.push(mw.language.convertNumber(size) + wgULS('字节', '位元組'));
 			}
 			Twinkle.batchdelete.pages[title] = {
 				label: title + (metadata.length ? '（' + metadata.join('，') + '）' : ''),
@@ -423,7 +423,7 @@ Twinkle.batchdelete.callback.toggleSubpages = function twDbatchToggleSubpages(e)
 						metadata.push(wgULS('上传者：', '上傳者：') + $page.find('ii').attr('user'));
 						metadata.push(wgULS('最后编辑：', '最後編輯：') + $page.find('rev').attr('user'));
 					} else {
-						metadata.push(size + wgULS('字节', '位元組'));
+						metadata.push(mw.language.convertNumber(size) + wgULS('字节', '位元組'));
 					}
 					subpageList.push({
 						label: title + (metadata.length ? ' (' + metadata.join('; ') + ')' : ''),
@@ -498,7 +498,7 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 	var numProtected = $(Morebits.quickForm.getElements(form, 'pages')).filter(function(index, element) {
 		return element.checked && element.nextElementSibling.style.color === 'red';
 	}).length;
-	if (numProtected > 0 && !confirm(wgULS('您正要删除 ', '您正要刪除 ') + numProtected + wgULS(' 个全保护页面，您确定吗？', ' 個全保護頁面，您確定嗎？'))) {
+	if (numProtected > 0 && !confirm(wgULS('您正要删除 ', '您正要刪除 ') + mw.language.convertNumber(numProtected) + wgULS(' 个全保护页面，您确定吗？', ' 個全保護頁面，您確定嗎？'))) {
 		return;
 	}
 
