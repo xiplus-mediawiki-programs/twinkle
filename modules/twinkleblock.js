@@ -1272,15 +1272,21 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		  a block expired (different statuses, confirmation) or the
 		  same block is still active (same status, no confirmation).
 		*/
-		api.get({
+		var query = {
 			format: 'json',
 			action: 'query',
 			list: 'blocks|logevents',
 			letype: 'block',
 			lelimit: 1,
-			letitle: 'User:' + blockoptions.user,
-			bkusers: blockoptions.user
-		}).then(function(data) {
+			letitle: 'User:' + blockoptions.user
+		};
+		if (Morebits.isIPRange(blockoptions.user)) {
+			query.bkip = blockoptions.user;
+		} else {
+			query.bkusers = blockoptions.user;
+		}
+
+		api.get(query).then(function(data) {
 			var block = data.query.blocks[0];
 			var logevents = data.query.logevents[0];
 			var logid = data.query.logevents.length ? logevents.logid : false;
