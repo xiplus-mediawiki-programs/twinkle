@@ -3258,7 +3258,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			return; // abort
 		}
 
-		if (!ctx.lookupNonRedirectCreator || !/^\s*#(redirect|重定向|重新導向)/i.test($(xml).find('rev').text())) {
+		if (!ctx.lookupNonRedirectCreator || !/^\s*#(redirect|重定向|重新導向)/im.test($(xml).find('rev').text())) {
 
 			ctx.creator = $(xml).find('rev').attr('user');
 			if (!ctx.creator) {
