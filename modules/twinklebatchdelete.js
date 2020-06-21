@@ -105,12 +105,19 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 		]
 	});
 	form.append({
-		type: 'input',
+		type: 'select',
 		name: 'reason',
 		label: '理由：',
+		style: 'width: 85%;',
+		list: Twinkle.batchdelete.deletereasonlist,
+		event: Twinkle.batchdelete.callback.change_custom_reason
+	});
+	form.append({
+		name: 'custom_reason',
+		type: 'input',
+		label: wgULS('自定义理由：', '自訂理由：'),
 		size: 60
 	});
-
 	var query = {
 		'action': 'query',
 		'prop': 'revisions|info|imageinfo',
@@ -279,6 +286,163 @@ Twinkle.batchdelete.generateNewPageList = function(form) {
 			return e;
 		})
 	}).render();
+};
+
+Twinkle.batchdelete.deletereasonlist = [
+	{
+		label: wgULS('自定义', '自訂'),
+		value: 'custom'
+	},
+	{
+		label: wgULS('G1: 没有实际内容的页面', 'G1: 沒有實際內容的頁面'),
+		value: wgULS('G1: 没有实际内容的页面', 'G1: 沒有實際內容的頁面')
+	},
+	{
+		label: wgULS('G2: 测试页面', 'G2: 測試頁面'),
+		value: wgULS('G2: 测试页面', 'G2: 測試頁面')
+	},
+	{
+		label: wgULS('G3: 纯粹破坏，包括但不限于明显的恶作剧、错误信息、人身攻击等', 'G3: 純粹破壞，包括但不限於明顯的惡作劇、錯誤資訊、人身攻擊等'),
+		value: wgULS('G3: 纯粹破坏，包括但不限于明显的恶作剧、错误信息、人身攻击等', 'G3: 純粹破壞，包括但不限於明顯的惡作劇、錯誤資訊、人身攻擊等')
+	},
+	{
+		label: wgULS('G5: 曾经根据页面存废讨论、侵权审核或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同', 'G5: 曾經根據頁面存廢討論、侵權審核或檔案存廢討論結果刪除後又重新建立的內容，而有關內容與已刪除版本相同或非常相似，無論標題是否相同'),
+		value: wgULS('G5: 曾经根据页面存废讨论、侵权审核或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同', 'G5: 曾經根據頁面存廢討論、侵權審核或檔案存廢討論結果刪除後又重新建立的內容，而有關內容與已刪除版本相同或非常相似，無論標題是否相同')
+	},
+	{
+		label: wgULS('G8: 因技术原因删除页面', 'G8: 因技術原因刪除頁面'),
+		value: wgULS('G8: 因技术原因删除页面', 'G8: 因技術原因刪除頁面')
+	},
+	{
+		label: wgULS('G10: 原作者清空页面或提出删除，且实际贡献者只有一人', 'G10: 原作者清空頁面或提出刪除，且實際貢獻者只有一人'),
+		value: wgULS('G10: 原作者清空页面或提出删除，且实际贡献者只有一人', 'G10: 原作者清空頁面或提出刪除，且實際貢獻者只有一人')
+	},
+	{
+		label: wgULS('G11: 明显的广告宣传页面，或只有相关人物或团体的联系方法的页面', 'G11: 明顯的廣告宣傳頁面，或只有相關人物或團體的聯絡方法的頁面'),
+		value: wgULS('G11: 明显的广告宣传页面，或只有相关人物或团体的联系方法的页面', 'G11: 明顯的廣告宣傳頁面，或只有相關人物或團體的聯絡方法的頁面')
+	},
+	{
+		label: wgULS('G12: 未列明来源且语调负面的生者传记', 'G12: 未列明來源且語調負面的生者傳記'),
+		value: wgULS('G12: 未列明来源且语调负面的生者传记', 'G12: 未列明來源且語調負面的生者傳記')
+	},
+	{
+		label: wgULS('G13: 翻译拙劣', 'G13: 翻譯拙劣'),
+		value: wgULS('G13: 翻译拙劣', 'G13: 翻譯拙劣')
+	},
+	{
+		label: wgULS('G14: 超过两周没有进行任何翻译的非现代标准汉语页面', 'G14: 超過兩週沒有進行任何翻譯的非現代標準漢語頁面'),
+		value: wgULS('G14: 超过两周没有进行任何翻译的非现代标准汉语页面', 'G14: 超過兩週沒有進行任何翻譯的非現代標準漢語頁面')
+	},
+	{
+		label: wgULS('G15: 孤立页面，比如没有主页面的讨论页、指向空页面的重定向等', 'G15: 孤立頁面，比如沒有主頁面的討論頁、指向空頁面的重新導向等'),
+		value: wgULS('G15: 孤立页面，比如没有主页面的讨论页、指向空页面的重定向等', 'G15: 孤立頁面，比如沒有主頁面的討論頁、指向空頁面的重新導向等')
+	},
+	{
+		label: wgULS('G16: 页面与介绍相同事物的原页面同样侵权', 'G16: 頁面與介紹相同事物的原頁面同樣侵權'),
+		value: wgULS('G16: 页面与介绍相同事物的原页面同样侵权', 'G16: 頁面與介紹相同事物的原頁面同樣侵權')
+	},
+	{
+		label: wgULS('A1: 内容空泛（包括但不限于没有定义）。', 'A1: 內容空泛（包括但不限於沒有定義）。'),
+		value: wgULS('A1: 内容空泛（包括但不限于没有定义）。', 'A1: 內容空泛（包括但不限於沒有定義）。')
+	},
+	{
+		label: wgULS('A2: 内容只包括外部链接、参见、图书参考、分类、模板、跨语言链接的条目', 'A2: 內容只包括外部連結、參見、圖書參考、分類、模板、跨語言連結的條目'),
+		value: wgULS('A2: 内容只包括外部链接、参见、图书参考、分类、模板、跨语言链接的条目', 'A2: 內容只包括外部連結、參見、圖書參考、分類、模板、跨語言連結的條目')
+	},
+	{
+		label: wgULS('A3: 复制自其他中文维基计划，或是与其他中文维基计划内容相同的文章。', 'A3: 複製自其他中文維基計劃，或是與其他中文維基計劃內容相同的文章。'),
+		value: wgULS('A3: 复制自其他中文维基计划，或是与其他中文维基计划内容相同的文章。', 'A3: 複製自其他中文維基計劃，或是與其他中文維基計劃內容相同的文章。')
+	},
+	{
+		label: wgULS('A5: 条目创建时之内容即与其他现有条目内容完全相同或非常相似，且名称不适合作为其他条目之重定向。', 'A5: 條目建立時之內容即與其他現有條目內容完全相同或非常相似，且名稱不適合作為其他條目之重新導向。'),
+		value: wgULS('A5: 条目创建时之内容即与其他现有条目内容完全相同或非常相似，且名称不适合作为其他条目之重定向。', 'A5: 條目建立時之內容即與其他現有條目內容完全相同或非常相似，且名稱不適合作為其他條目之重新導向。')
+	},
+	{
+		label: wgULS('A6: 复制自其他维基百科语言版本，且完全没有翻译。', 'A6: 複製自其他維基百科語言版本，且完全沒有翻譯。'),
+		value: wgULS('A6: 复制自其他维基百科语言版本，且完全没有翻译。', 'A6: 複製自其他維基百科語言版本，且完全沒有翻譯。')
+	},
+	{
+		label: wgULS('R2: 跨名字空间重定向。', 'R2: 跨命名空間重新導向。'),
+		value: wgULS('R2: 跨名字空间重定向。', 'R2: 跨命名空間重新導向。')
+	},
+	{
+		label: wgULS('R3: 格式错误，或明显笔误的重定向。', 'R3: 格式錯誤，或明顯筆誤的重新導向。'),
+		value: wgULS('R3: 格式错误，或明显笔误的重定向。', 'R3: 格式錯誤，或明顯筆誤的重新導向。')
+	},
+	{
+		label: wgULS('R5: 指向本身或循环的重定向。', 'R5: 指向本身或循環的重新導向。'),
+		value: wgULS('R5: 指向本身或循环的重定向。', 'R5: 指向本身或循環的重新導向。')
+	},
+	{
+		label: wgULS('R6: 移动文件而产生的重定向，且页面标题不符合文件名称指引。', 'R6: 移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引。'),
+		value: wgULS('R6: 移动文件而产生的重定向，且页面标题不符合文件名称指引。', 'R6: 移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引。')
+	},
+	{
+		label: wgULS('R7: 明显与导向目标所涵盖的主题无关或比导向目标所涵盖的主题更广泛的重定向。', 'R7: 明顯與導向目標所涵蓋的主題無關或比導向目標所涵蓋的主題更廣泛的重新導向。'),
+		value: wgULS('R7: 明显与导向目标所涵盖的主题无关或比导向目标所涵盖的主题更广泛的重定向。', 'R7: 明顯與導向目標所涵蓋的主題無關或比導向目標所涵蓋的主題更廣泛的重新導向。')
+	},
+	{
+		label: wgULS('F1: 重复的文件（完全相同或缩小），而且不再被条目使用', 'F1: 重複的檔案（完全相同或縮小），而且不再被條目使用'),
+		value: wgULS('F1: 重复的文件（完全相同或缩小），而且不再被条目使用', 'F1: 重複的檔案（完全相同或縮小），而且不再被條目使用')
+	},
+	{
+		label: wgULS('F3: 来源不明的文件', 'F3: 來源不明的檔案'),
+		value: wgULS('F3: 来源不明的文件', 'F3: 來源不明的檔案')
+	},
+	{
+		label: wgULS('F4: 未知著作权或著作权无法被查证的文件', 'F4: 未知著作權或著作權無法被查證的檔案'),
+		value: wgULS('F4: 未知著作权或著作权无法被查证的文件', 'F4: 未知著作權或著作權無法被查證的檔案')
+	},
+	{
+		label: wgULS('F5: 被高清晰度或SVG文件取代的图片', 'F5: 被高解析度或SVG檔案取代的圖片'),
+		value: wgULS('F5: 被高清晰度或SVG文件取代的图片', 'F5: 被高解析度或SVG檔案取代的圖片')
+	},
+	{
+		label: wgULS('F6: 没有被条目使用的非自由著作权文件', 'F6: 沒有被條目使用的非自由著作權檔案'),
+		value: wgULS('F6: 没有被条目使用的非自由著作权文件', 'F6: 沒有被條目使用的非自由著作權檔案')
+	},
+	{
+		label: wgULS('F7: 与维基共享资源文件重复的文件', 'F7: 與維基共享資源檔案重複的檔案'),
+		value: wgULS('F7: 与维基共享资源文件重复的文件', 'F7: 與維基共享資源檔案重複的檔案')
+	},
+	{
+		label: wgULS('F8: 明显侵权之文件', 'F8: 明顯侵權之檔案'),
+		value: wgULS('F8: 明显侵权之文件', 'F8: 明顯侵權之檔案')
+	},
+	{
+		label: wgULS('F9: 没有填写任何合理使用依据的非自由著作权文件', 'F9: 沒有填寫任何合理使用依據的非自由著作權檔案'),
+		value: wgULS('F9: 没有填写任何合理使用依据的非自由著作权文件', 'F9: 沒有填寫任何合理使用依據的非自由著作權檔案')
+	},
+	{
+		label: wgULS('F10: 可被替代的非自由著作权文件', 'F10: 可被替代的非自由著作權檔案'),
+		value: wgULS('F10: 可被替代的非自由著作权文件', 'F10: 可被替代的非自由著作權檔案')
+	},
+	{
+		label: wgULS('O1: 用户请求删除自己的用户页或其子页面。', 'O1: 使用者請求刪除自己的使用者頁面或其子頁面。'),
+		value: wgULS('O1: 用户请求删除自己的用户页或其子页面。', 'O1: 使用者請求刪除自己的使用者頁面或其子頁面。')
+	},
+	{
+		label: wgULS('O3: 已超过一个月未有编辑动作的匿名（IP）用户的用户讨论页', 'O3: 已超過一個月未有編輯動作的匿名（IP）使用者的使用者討論頁'),
+		value: wgULS('O3: 已超过一个月未有编辑动作的匿名（IP）用户的用户讨论页', 'O3: 已超過一個月未有編輯動作的匿名（IP）使用者的使用者討論頁')
+	},
+	{
+		label: wgULS('O4: 空的分类（没有条目也没有子分类）。', 'O4: 空的分類（沒有條目也沒有子分類）。'),
+		value: wgULS('O4: 空的分类（没有条目也没有子分类）。', 'O4: 空的分類（沒有條目也沒有子分類）。')
+	},
+	{
+		label: wgULS('O7: 废弃草稿。', 'O7: 廢棄草稿。'),
+		value: wgULS('O7: 废弃草稿。', 'O7: 廢棄草稿。')
+	}
+];
+
+Twinkle.batchdelete.callback.change_custom_reason = function twinklebatchdeleteCallbackChangeCustomReason(e) {
+	var customReason = e.target.form.custom_reason;
+	if (e.target.value === 'custom') {
+		Morebits.quickForm.setElementVisibility(customReason.parentNode, true);
+	} else {
+		Morebits.quickForm.setElementVisibility(customReason.parentNode, false);
+	}
+	// do not clear text here to avoid losing reason from accidental switch
 };
 
 Twinkle.batchdelete.callback.toggleSubpages = function twDbatchToggleSubpages(e) {
@@ -455,6 +619,9 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 	var pages = form.getChecked('pages');
 	var subpages = form.getChecked('pages.subpages');
 	var reason = form.reason.value;
+	if (reason === 'custom') {
+		reason = form.custom_reason.value;
+	}
 	var delete_page = form.delete_page.checked;
 	var delete_talk, delete_redirects, delete_subpages;
 	var delete_subpage_redirects, delete_subpage_talks, unlink_subpages;
