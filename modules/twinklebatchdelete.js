@@ -324,13 +324,11 @@ Twinkle.batchdelete.deletereasonlist = [
 ];
 
 Twinkle.batchdelete.callback.change_custom_reason = function twinklebatchdeleteCallbackChangeCustomReason(e) {
-	var customReason = e.target.form.custom_reason;
 	if (e.target.value === 'custom') {
-		Morebits.quickForm.setElementVisibility(customReason.parentNode, true);
+		e.target.form.custom_reason.value = '';
 	} else {
-		Morebits.quickForm.setElementVisibility(customReason.parentNode, false);
+		e.target.form.custom_reason.value = e.target.value;
 	}
-	// do not clear text here to avoid losing reason from accidental switch
 };
 
 Twinkle.batchdelete.callback.toggleSubpages = function twDbatchToggleSubpages(e) {
