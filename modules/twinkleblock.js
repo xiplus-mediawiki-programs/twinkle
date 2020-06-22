@@ -1590,8 +1590,7 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 	text += Twinkle.block.callback.getBlockNoticeWikitext(params);
 
 	// build the edit summary
-	var templateName = messageData.templateName || messageData.template || messageData.value;
-	var summary = '{{' + templateName + '}}: ' + params.reason;
+	var summary = wgULS('封禁通知：', '封鎖通知：') + params.reason;
 	if (messageData.suppressArticleInSummary !== true && params.article) {
 		summary += wgULS('，于[[', '，於[[') + params.article + ']]';
 	}
