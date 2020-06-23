@@ -722,6 +722,7 @@ Twinkle.block.blockPresetsInfo = {
 		nocreate: true,
 		nonstandard: true,
 		reason: '{{anonblock}}',
+		summary: wgULS('匿名编辑封禁', '匿名編輯封鎖'),
 		sig: '~~~~'
 	},
 	'blocked proxy': {
@@ -730,6 +731,7 @@ Twinkle.block.blockPresetsInfo = {
 		hardblock: true,
 		nonstandard: true,
 		reason: '{{blocked proxy}}',
+		summary: wgULS('开放代理封禁', '開放代理封鎖'),
 		sig: '~~~~'
 	},
 	'checkuserblock': {
@@ -739,6 +741,7 @@ Twinkle.block.blockPresetsInfo = {
 		hardblock: true,
 		nonstandard: true,
 		reason: '{{checkuserblock}}',
+		summary: wgULS('用户查核IP封禁', '使用者查核IP封鎖'),
 		sig: '~~~~'
 	},
 	'checkuserblock-account': {
@@ -748,6 +751,7 @@ Twinkle.block.blockPresetsInfo = {
 		nocreate: true,
 		nonstandard: true,
 		reason: '{{checkuserblock-account}}',
+		summary: wgULS('用户查核账户封禁', '使用者查核帳號封鎖'),
 		sig: '~~~~'
 	},
 	'range block': {
@@ -756,6 +760,7 @@ Twinkle.block.blockPresetsInfo = {
 		nocreate: true,
 		nonstandard: true,
 		reason: '{{range block}}',
+		summary: wgULS('广域封禁', '廣域封鎖'),
 		sig: '~~~~'
 	},
 	'schoolblock': {
@@ -763,6 +768,7 @@ Twinkle.block.blockPresetsInfo = {
 		nocreate: true,
 		nonstandard: true,
 		reason: '{{schoolblock}}',
+		summary: wgULS('公用IP封禁', '公共IP封鎖'),
 		sig: '~~~~'
 	},
 	// uw-prefixed
@@ -806,23 +812,28 @@ Twinkle.block.blockPresetsInfo = {
 		nocreate: true
 	},
 	'uw-ublock': {
-		expiry: 'infinity'
+		expiry: 'infinity',
+		summary: wgULS('不当用户名', '不當使用者名稱')
 	},
 	'uw-ublock|误导': {
 		expiry: 'infinity',
-		reason: wgULS('{{uw-ublock|误导}}', '{{uw-ublock|誤導}}')
+		reason: wgULS('{{uw-ublock|误导}}', '{{uw-ublock|誤導}}'),
+		summary: wgULS('误导性用户名', '誤導性使用者名稱')
 	},
 	'uw-ublock|宣传': {
 		expiry: 'infinity',
-		reason: wgULS('{{uw-ublock|宣传}}', '{{uw-ublock|宣傳}}')
+		reason: wgULS('{{uw-ublock|宣传}}', '{{uw-ublock|宣傳}}'),
+		summary: wgULS('宣传性用户名', '宣傳性使用者名稱')
 	},
 	'uw-ublock|攻击|或侮辱性': {
 		expiry: 'infinity',
-		reason: wgULS('{{uw-ublock|攻击|或侮辱性}}', '{{uw-ublock|攻擊|或侮辱性}}')
+		reason: wgULS('{{uw-ublock|攻击|或侮辱性}}', '{{uw-ublock|攻擊|或侮辱性}}'),
+		summary: wgULS('攻击或侮辱性用户名', '攻擊或侮辱性使用者名稱}')
 	},
 	'uw-ublock|混淆': {
 		expiry: 'infinity',
-		reason: '{{uw-ublock|混淆}}'
+		reason: '{{uw-ublock|混淆}}',
+		summary: wgULS('令人混淆的用户名', '令人混淆的使用者名稱')
 	},
 	'uw-vblock': {
 		autoblock: true,
@@ -1590,47 +1601,8 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 	text += Twinkle.block.callback.getBlockNoticeWikitext(params);
 
 	// build the edit summary
-	if ((/\{\{/).test(params.reason)) {
-		switch (params.reason) {
-			case '{{anonblock}}':
-				params.reason = wgULS('匿名编辑封禁', '匿名編輯封鎖');
-				break;
-			case '{{blocked proxy}}':
-				params.reason = wgULS('开放代理封禁', '開放代理封鎖');
-				break;
-			case '{{checkuserblock}}':
-				params.reason = wgULS('用户查核IP封禁', '使用者查核IP封鎖');
-				break;
-			case '{{checkuserblock-account}}':
-				params.reason = wgULS('用户查核账户封禁', '使用者查核賬戶封鎖');
-				break;
-			case '{{range block}}':
-				params.reason = wgULS('广域封禁', '廣域封鎖');
-				break;
-			case '{{schoolblock}}':
-				params.reason = wgULS('公用IP封禁', '公共IP封鎖');
-				break;
-			case '{{uw-ublock|误导}}':
-			case '{{uw-ublock|誤導}}':
-				params.reason = wgULS('误导性用户名', '誤導性使用者名稱');
-				break;
-			case '{{uw-ublock|宣传}}':
-			case '{{uw-ublock|宣傳}}':
-				params.reason = wgULS('宣传性用户名', '宣傳性使用者名稱}');
-				break;
-			case '{{uw-ublock|攻击|或侮辱性}}':
-			case '{{uw-ublock|攻擊|或侮辱性}}':
-				params.reason = wgULS('攻击或侮辱性用户名', '攻擊或侮辱性使用者名稱}');
-				break;
-			case '{{uw-ublock|混淆}}':
-				params.reason = wgULS('令人混淆的用户名', '令人混淆的使用者名稱');
-				break;
-			default:
-				break;
-		}
-	}
-
-	var summary = wgULS('封禁通知：', '封鎖通知：') + params.reason;
+	var summary = wgULS('封禁通知：', '封鎖通知：');
+	summary += messageData.summary || params.reason;
 	if (messageData.suppressArticleInSummary !== true && params.article) {
 		summary += wgULS('，于[[', '，於[[') + params.article + ']]';
 	}
