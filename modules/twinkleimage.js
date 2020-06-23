@@ -286,12 +286,12 @@ Twinkle.image.callbacks = {
 			var talkPageName = 'User talk:' + initialContrib;
 			Morebits.wiki.flow.check(talkPageName, function () {
 				var flowpage = new Morebits.wiki.flow(talkPageName, wgULS('通知上传者（', '通知上傳者（') + initialContrib + '）');
-				flowpage.setTopic(wgULS('请补充文件[[:', '請補充檔案[[:') + Morebits.pageNameNorm + wgULS(']]的著作权或来源信息', ']]的著作權或來源資訊'));
-				flowpage.setContent('{{subst:Uploadvionotice|' + Morebits.pageNameNorm + '|flow=yes}}');
+				flowpage.setTopic(wgULS('文件[[', '檔案[[') + Morebits.pageNameNorm + wgULS(']]的快速删除通知', ']]的快速刪除通知'));
+				flowpage.setContent('{{subst:Di-' + params.templatename + '-notice|1=' + Morebits.pageNameNorm + '}}');
 				flowpage.newTopic();
 			}, function () {
 				var usertalkpage = new Morebits.wiki.page(talkPageName, wgULS('通知上传者（', '通知上傳者（') + initialContrib + '）');
-				var notifytext = '\n{{subst:Uploadvionotice|' + Morebits.pageNameNorm + '}}--~~~~';
+				var notifytext = '\n{{subst:Di-' + params.templatename + '-notice|1=' + Morebits.pageNameNorm + '}}--~~~~';
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary(wgULS('通知：文件[[', '通知：檔案[[') + Morebits.pageNameNorm + wgULS(']]快速删除提名', ']]快速刪除提名') + Twinkle.getPref('summaryAd'));
 				usertalkpage.setTags(Twinkle.getPref('revisionTags'));
