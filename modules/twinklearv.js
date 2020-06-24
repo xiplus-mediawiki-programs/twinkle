@@ -581,9 +581,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				reason += (types ? '。' : '* ') + comment;
 			}
 			reason = reason.trim();
-			if (reason.search(/[.?!;。？！；]$/) === -1) {
-				reason += '。';
-			}
+			reason = Morebits.string.appendPunctuation(reason);
 			reason += '\n* 发现人：~~~~\n* 处理：';
 
 			Morebits.simpleWindow.setButtonsEnabled(false);

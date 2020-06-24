@@ -1302,8 +1302,8 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				}
 				reason += form.reason.value;
 			}
-			if (reason !== '' && reason.charAt(reason.length - 1) !== '。') {
-				reason += '。';
+			if (reason !== '') {
+				reason = Morebits.string.appendPunctuation(reason);
 			}
 
 			var rppparams = {
