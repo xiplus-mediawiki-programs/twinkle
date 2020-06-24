@@ -281,11 +281,11 @@ Twinkle.config.sections = [
 			},
 
 			// TwinkleConfig.openTalkPageOnAutoRevert (bool)
-			// Defines if talk page should be opened when calling revert from contrib page, because from there, actions may be multiple, and opening talk page not suitable. If set to true, openTalkPage defines then if talk page will be opened.
+			// Defines if talk page should be opened when calling revert from contribs or recent changes pages. If set to true, openTalkPage defines then if talk page will be opened.
 			{
 				name: 'openTalkPageOnAutoRevert',
-				label: wgULS('在从用户贡献中发起回退时打开用户讨论页', '在從使用者貢獻中發起回退時打開使用者討論頁'),
-				helptip: wgULS('您经常会在破坏者的用户贡献中发起许多回退，总是打开用户讨论页可能不太适当，所以这个选项默认关闭。当它打开时，依赖上一个设置。', '您經常會在破壞者的使用者貢獻中發起許多回退，總是打開使用者討論頁可能不太適當，所以這個選項預設關閉。當它打開時，依賴上一個設定。'),
+				label: wgULS('在从用户贡献及最近更改中发起回退时打开用户讨论页', '在從使用者貢獻及近期變更中發起回退時打開使用者討論頁'),
+				helptip: wgULS('当它打开时，依赖上一个设置。', '當它打開時，依賴上一個設定。'),
 				type: 'boolean'
 			},
 
@@ -324,7 +324,8 @@ Twinkle.config.sections = [
 			},
 
 			// TwinkleConfig.showRollbackLinks (array)
-			// Where Twinkle should show rollback links (diff, others, mine, contribs, recentchanges)
+			// Where Twinkle should show rollback links:
+			// diff, others, mine, contribs, history, recent
 			// Note from TTO: |contribs| seems to be equal to |others| + |mine|, i.e. redundant, so I left it out heres
 			{
 				name: 'showRollbackLinks',
