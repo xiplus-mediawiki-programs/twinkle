@@ -183,8 +183,8 @@ div.morebits-previewbox .mw-editsection
 .morebits-dialog {
 	border: 1px #666 solid;
 	font: small sans-serif;
-	background-color: #F0F8FF !important;
-	background-image: none !important;
+	background-color: #F0F8FF;
+	background-image: none;
 }
 
 body.skin-monobook .morebits-dialog {
@@ -193,7 +193,8 @@ body.skin-monobook .morebits-dialog {
 
 body .ui-dialog.morebits-dialog .ui-dialog-titlebar {
 	height: 1em;
-	background: repeat-x 50% 80% #cfd6e1 !important;  /* the actual image is specified in morebits.js - ResourceLoader mangles data: URIs in CSS */
+	background-color: #BCCADF !important;
+	background-image: none !important;
 	font: bold 1em sans-serif;
 	overflow: hidden;
 	padding: .4em .3em .5em !important;
