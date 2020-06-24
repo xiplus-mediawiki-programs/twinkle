@@ -2035,6 +2035,8 @@ Morebits.wiki.api.setApiUserAgent = function(ua) {
  *
  * move([onSuccess], [onFailure]): Moves a page to another title
  *
+ * patrol(): Patrols a page; ignores errors
+ *
  * deletePage([onSuccess], [onFailure]): Deletes a page (for admins only)
  *
  * undeletePage([onSuccess], [onFailure]): Undeletes a page (for admins only)
@@ -2206,6 +2208,8 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		lookupCreationApi: null,
 		moveApi: null,
 		moveProcessApi: null,
+		patrolApi: null,
+		patrolProcessApi: null,
 		deleteApi: null,
 		deleteProcessApi: null,
 		undeleteApi: null,
@@ -2740,30 +2744,40 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	};
 
 	/**
-	 * marks the page as patrolled, if possible
+	 * Marks the page as patrolled, using rcid (if available) or revid
+	 *
+	 * Patrolling as such doesn't need to rely on loading the page in
+	 * question; simply passing a revid to the API is sufficient, so in
+	 * those cases just using Morebits.wiki.api is probably preferable.
+	 *
+	 * No error handling since we don't actually care about the errors
 	 */
 	this.patrol = function() {
-		// There's no patrol link on page, so we can't patrol
-		if (!$('.patrollink').length) {
+		if (!Morebits.userIsSysop && !Morebits.userIsInGroup('patroller')) {
 			return;
 		}
 
-		// Extract the Recentchanges ID (rcid) token from the "Mark page as patrolled" link on page
-		var patrolhref = $('.patrollink a').attr('href'),
-			rcid = mw.util.getParamValue('rcid', patrolhref);
+		// If a link is present, don't need to check if it's patrolled
+		if ($('.patrollink').length) {
+			var patrolhref = $('.patrollink a').attr('href');
+			ctx.rcid = mw.util.getParamValue('rcid', patrolhref);
+			fnProcessPatrol(this, this);
+		} else {
+			var patrolQuery = {
+				action: 'query',
+				prop: 'info',
+				meta: 'tokens',
+				type: 'patrol', // as long as we're querying, might as well get a token
+				list: 'recentchanges', // check if the page is unpatrolled
+				titles: ctx.pageName,
+				rcprop: 'patrolled',
+				rctitle: ctx.pageName,
+				rclimit: 1
+			};
 
-		if (rcid) {
-
-			var patrolstat = new Morebits.status(wgULS('标记页面为已巡查', '標記頁面為已巡查'));
-
-			var wikipedia_api = new Morebits.wiki.api(wgULS('进行中…', '進行中…'), {
-				action: 'patrol',
-				rcid: rcid,
-				token: mw.user.tokens.get('patrolToken')
-			}, null, patrolstat);
-
-			// We don't really care about the response
-			wikipedia_api.post();
+			ctx.patrolApi = new Morebits.wiki.api(wgULS('抓取巡查令牌…', '抓取巡查權杖…'), patrolQuery, fnProcessPatrol);
+			ctx.patrolApi.setParent(this);
+			ctx.patrolApi.post();
 		}
 	};
 
@@ -2988,9 +3002,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		// do we need to fetch the edit protection expiry?
 		if (Morebits.userIsSysop && !ctx.suppressProtectWarning) {
-			// poor man's normalisation
-			if (Morebits.string.toUpperCaseFirstChar(mw.config.get('wgPageName')).replace(/ /g, '_').trim() !==
-				Morebits.string.toUpperCaseFirstChar(ctx.pageName).replace(/ /g, '_').trim()) {
+			if (new mw.Title(Morebits.pageNameNorm).getPrefixedText() === new mw.Title(ctx.pageName).getPrefixedText()) {
 				return false;
 			}
 
@@ -3388,6 +3400,44 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		ctx.moveProcessApi = new Morebits.wiki.api(wgULS('移动页面…', '移動頁面…'), query, ctx.onMoveSuccess, ctx.statusElement, ctx.onMoveFailure);
 		ctx.moveProcessApi.setParent(this);
 		ctx.moveProcessApi.post();
+	};
+
+	var fnProcessPatrol = function() {
+		var query = {
+			action: 'patrol'
+		};
+
+		// Didn't need to load the page
+		if (ctx.rcid) {
+			query.rcid = ctx.rcid;
+			query.token = mw.user.tokens.get('patrolToken');
+		} else {
+			var xml = ctx.patrolApi.getResponse();
+
+			// Don't patrol if not unpatrolled
+			if ($(xml).find('rc').attr('unpatrolled') !== '') {
+				return;
+			}
+
+			var lastrevid = $(xml).find('page').attr('lastrevid');
+			if (!lastrevid) {
+				return;
+			}
+			query.revid = lastrevid;
+
+			var token = $(xml).find('tokens').attr('patroltoken');
+			if (!token) {
+				return;
+			}
+
+			query.token = token;
+		}
+
+		var patrolStat = new Morebits.status(wgULS('标记页面为已巡查', '標記頁面為已巡查'));
+
+		ctx.patrolProcessApi = new Morebits.wiki.api(wgULS('进行中…', '進行中…'), query, null, patrolStat);
+		ctx.patrolProcessApi.setParent(this);
+		ctx.patrolProcessApi.post();
 	};
 
 	var fnProcessDelete = function() {
