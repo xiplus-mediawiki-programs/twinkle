@@ -412,7 +412,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 
 	// enlarge G11 radio/checkbox and its label
 	if (document.querySelector('input[value="g11"]') && Twinkle.getPref('enlargeG11Input')) {
-		document.querySelector('input[value="g11"]').style = 'height: 2em; width: 2em; height: -moz-initial; width: -moz-initial; -moz-transform: scale(2); -o-transform: scale(2); font-size: 1.5em; line-height: 1.5em;';
+		document.querySelector('input[value="g11"]').style = 'height: 2em; width: 2em; height: -moz-initial; width: -moz-initial; -moz-transform: scale(2); -o-transform: scale(2);';
 		document.querySelector('input[value="g11"]').labels[0].style = 'font-size: 1.5em; line-height: 1.5em;';
 	}
 };
