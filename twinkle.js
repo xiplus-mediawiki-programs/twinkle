@@ -107,6 +107,9 @@ Twinkle.defaultConfig = {
 	autoMenuAfterRollback: false,
 
 	// XfD
+	logXfdNominations: false,
+	xfdLogPageName: 'AFD日志',
+	noLogOnXfdNomination: [],
 	xfdWatchDiscussion: 'default',
 	xfdWatchPage: 'default',
 	xfdWatchUser: 'default',
