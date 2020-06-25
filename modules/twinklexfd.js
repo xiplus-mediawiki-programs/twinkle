@@ -276,37 +276,46 @@ Twinkle.xfd.callbacks = {
 				// Disallow warning yourself
 				if (initialContrib === mw.config.get('wgUserName')) {
 					pageobj.getStatusElement().warn(wgULS('您（' + initialContrib + '）创建了该页，跳过通知', '您（' + initialContrib + '）建立了該頁，跳過通知'));
-					return;
+					initialContrib = null;
+				} else {
+					var talkPageName = 'User talk:' + initialContrib;
+					Morebits.wiki.flow.check(talkPageName, function () {
+						var flowpage = new Morebits.wiki.flow(talkPageName, wgULS('通知页面创建者（' + initialContrib + '）', '通知頁面建立者（' + initialContrib + '）'));
+						flowpage.setTopic('页面[[:' + Morebits.pageNameNorm + ']]存废讨论通知');
+						flowpage.setContent('{{subst:AFDNote|' + Morebits.pageNameNorm + '|flow=yes}}');
+						flowpage.newTopic();
+					}, function () {
+						var usertalkpage = new Morebits.wiki.page(talkPageName, wgULS('通知页面创建者（' + initialContrib + '）', '通知頁面建立者（' + initialContrib + '）'));
+						var notifytext = '\n{{subst:AFDNote|' + Morebits.pageNameNorm + '}}--~~~~';
+						usertalkpage.setAppendText(notifytext);
+						usertalkpage.setEditSummary('通知：页面[[' + Morebits.pageNameNorm + ']]存废讨论提名' + Twinkle.getPref('summaryAd'));
+						usertalkpage.setTags(Twinkle.getPref('revisionTags'));
+						usertalkpage.setCreateOption('recreate');
+						switch (Twinkle.getPref('xfdWatchUser')) {
+							case 'yes':
+								usertalkpage.setWatchlist(true);
+								break;
+							case 'no':
+								usertalkpage.setWatchlistFromPreferences(false);
+								break;
+							default:
+								usertalkpage.setWatchlistFromPreferences(true);
+								break;
+						}
+						usertalkpage.setFollowRedirect(true);
+						usertalkpage.append();
+					});
+				}
+				// add this nomination to the user's userspace log, if the user has enabled it
+				if (params.lognomination) {
+					Twinkle.xfd.callbacks.addToLog(params, initialContrib);
 				}
 
-				var talkPageName = 'User talk:' + initialContrib;
-				Morebits.wiki.flow.check(talkPageName, function () {
-					var flowpage = new Morebits.wiki.flow(talkPageName, wgULS('通知页面创建者（' + initialContrib + '）', '通知頁面建立者（' + initialContrib + '）'));
-					flowpage.setTopic('页面[[:' + Morebits.pageNameNorm + ']]存废讨论通知');
-					flowpage.setContent('{{subst:AFDNote|' + Morebits.pageNameNorm + '|flow=yes}}');
-					flowpage.newTopic();
-				}, function () {
-					var usertalkpage = new Morebits.wiki.page(talkPageName, wgULS('通知页面创建者（' + initialContrib + '）', '通知頁面建立者（' + initialContrib + '）'));
-					var notifytext = '\n{{subst:AFDNote|' + Morebits.pageNameNorm + '}}--~~~~';
-					usertalkpage.setAppendText(notifytext);
-					usertalkpage.setEditSummary('通知：页面[[' + Morebits.pageNameNorm + ']]存废讨论提名' + Twinkle.getPref('summaryAd'));
-					usertalkpage.setTags(Twinkle.getPref('revisionTags'));
-					usertalkpage.setCreateOption('recreate');
-					switch (Twinkle.getPref('xfdWatchUser')) {
-						case 'yes':
-							usertalkpage.setWatchlist(true);
-							break;
-						case 'no':
-							usertalkpage.setWatchlistFromPreferences(false);
-							break;
-						default:
-							usertalkpage.setWatchlistFromPreferences(true);
-							break;
-					}
-					usertalkpage.setFollowRedirect(true);
-					usertalkpage.append();
-				});
+			// or, if not notifying, add this nomination to the user's userspace log without the initial contributor's name
+			} else if (params.lognomination) {
+				Twinkle.xfd.callbacks.addToLog(params, null);
 			}
+
 		},
 		taggingArticle: function(pageobj) {
 			var text = pageobj.getPageText();
@@ -549,6 +558,13 @@ Twinkle.xfd.callbacks = {
 					usertalkpage.setFollowRedirect(true);
 					usertalkpage.append();
 				});
+				// add this nomination to the user's userspace log, if the user has enabled it
+				if (params.lognomination) {
+					Twinkle.xfd.callbacks.addToLog(params, initialContrib);
+				}
+			// or, if not notifying, add this nomination to the user's userspace log without the initial contributor's name
+			} else if (params.lognomination) {
+				Twinkle.xfd.callbacks.addToLog(params, null);
 			}
 		},
 		taggingImage: function(pageobj) {
@@ -618,6 +634,88 @@ Twinkle.xfd.callbacks = {
 			wikipedia_page.setLookupNonRedirectCreator(true); // Look for author of first non-redirect revision
 			wikipedia_page.lookupCreator(Twinkle.xfd.callbacks.ffd.main);
 		}
+	},
+	addToLog: function(params, initialContrib) {
+		var editsummary = wgULS('记录对[[', '記錄對[[') + Morebits.pageNameNorm + wgULS(']]的存废讨论提名', ']]的存廢討論提名') + Twinkle.getPref('summaryAd');
+		var usl = new Morebits.userspaceLogger(Twinkle.getPref('xfdLogPageName'));
+		usl.initialText =
+			wgULS('这是该用户使用[[WP:TW|Twinkle]]的提删模块做出的[[WP:XFD|存废讨论]]提名列表。\n\n' +
+			'如果您不再想保留此日志，请在[[' + Twinkle.getPref('configPage') + '|参数设置]]中关掉，并' +
+			'使用[[WP:CSD#O1|CSD O1]]提交快速删除。',
+			'這是該使用者使用[[WP:TW|Twinkle]]的提刪模塊做出的[[WP:XFD|存廢討論]]提名列表。\n\n' +
+			'如果您不再想保留此日誌，請在[[' + Twinkle.getPref('configPage') + '|偏好設定]]中關掉，並' +
+			'使用[[WP:CSD#O1|CSD O1]]提交快速刪除。');
+		var xfdCatName;
+		switch (params.xfdcat) {
+			case 'delete':
+				xfdCatName = wgULS('删除', '刪除');
+				break;
+			case 'merge':
+				xfdCatName = wgULS('合并到', '合併到');
+				break;
+			case 'vmd':
+				xfdCatName = wgULS('移动到维基词典', '移動到維基詞典');
+				break;
+			case 'vms':
+				xfdCatName = wgULS('移动到维基文库', '移動到維基文庫');
+				break;
+			case 'vmb':
+				xfdCatName = wgULS('移动到维基教科书', '移動到維基教科書');
+				break;
+			case 'vmq':
+				xfdCatName = wgULS('移动到维基语录', '移動到維基語錄');
+				break;
+			case 'vmvoy':
+				xfdCatName = wgULS('移动到维基导游', '移動到維基導遊');
+				break;
+			case 'vmv':
+				xfdCatName = wgULS('移动到维基学院', '移動到維基學院');
+				break;
+			case 'fwdcsd':
+				xfdCatName = wgULS('转交自快速删除候选', '轉交自快速刪除候選');
+				break;
+			case 'fame':
+				xfdCatName = wgULS('批量关注度提删', '批次關注度提刪');
+				break;
+			case 'substub':
+				xfdCatName = wgULS('批量小小作品提删', '批次小小作品提刪');
+				break;
+			case 'batch':
+				xfdCatName = wgULS('批量其他提删', '批次其他提刪');
+				break;
+			default:
+				xfdCatName = wgULS('文件存废讨论', '檔案存廢討論');
+				break;
+		}
+
+		// If a logged file is deleted but exists on commons, the wikilink will be blue, so provide a link to the log
+		var appendText = '# [[:' + Morebits.pageNameNorm + ']]';
+		if (mw.config.get('wgNamespaceNumber') === 6) {
+			appendText += '（[{{fullurl:Special:Log|page=' + mw.util.wikiUrlencode(mw.config.get('wgPageName')) + '}} ' + wgULS('日志', '日誌') + ']）';
+		}
+		appendText += '：' + xfdCatName + '。';
+
+		if (params.xfdcat === 'fwdcsd') {
+			if (params.reason) {
+				appendText += "'''原刪除理據'''：" + Morebits.string.formatReasonText(params.reason);
+			}
+			if (params.fwdcsdreason) {
+				appendText += "'''轉交理據'''：" + Morebits.string.formatReasonText(params.fwdcsdreason);
+			}
+		} else if (params.xfdcat === 'merge') {
+			appendText += '[[:' + params.mergeinto + ']]';
+			if (params.reason) {
+				appendText += "'''理據'''：" + Morebits.string.formatReasonText(params.reason);
+			}
+		} else {
+			appendText += params.reason ? "'''理據'''：" + Morebits.string.formatReasonText(params.reason) : '';
+		}
+
+		if (initialContrib) {
+			appendText += '；通知{{user|' + initialContrib + '}}';
+		}
+		appendText += ' ~~~~~\n';
+		usl.log(appendText, editsummary);
 	}
 };
 
@@ -634,7 +732,6 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		xfdcat = e.target.xfdcat.value;
 		mergeinto = e.target.mergeinto.value;
 	}
-
 	if (xfdcat === 'merge' && mergeinto.trim() === '') {
 		alert(wgULS('请提供合并目标！', '請提供合併目標！'));
 		return;
@@ -651,13 +748,14 @@ Twinkle.xfd.callback.evaluate = function(e) {
 		return;
 	}
 
-	var wikipedia_page, logpage, params;
+	var wikipedia_page, logpage, lognomination, params;
 	var date = new Morebits.date(); // XXX: avoid use of client clock, still used by TfD, FfD and CfD
 	switch (type) {
 
 		case 'afd': // AFD
 			logpage = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
-			params = { usertalk: usertalk, xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, fwdcsdreason: fwdcsdreason, logpage: logpage };
+			lognomination = Twinkle.getPref('logXfdNominations') && Twinkle.getPref('noLogOnXfdNomination').indexOf(xfdcat) === -1;
+			params = { usertalk: usertalk, xfdcat: xfdcat, mergeinto: mergeinto, noinclude: noinclude, reason: reason, fwdcsdreason: fwdcsdreason, logpage: logpage, lognomination: lognomination};
 
 			Morebits.wiki.addCheckpoint();
 			// Updating data for the action completed event
@@ -676,7 +774,8 @@ Twinkle.xfd.callback.evaluate = function(e) {
 
 		case 'ffd': // FFD
 			logpage = 'Wikipedia:檔案存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
-			params = { usertalk: usertalk, reason: reason, logpage: logpage };
+			lognomination = Twinkle.getPref('logXfdNominations') && Twinkle.getPref('noLogOnXfdNomination').indexOf('ffd') === -1;
+			params = { usertalk: usertalk, reason: reason, logpage: logpage, lognomination: lognomination};
 
 			Morebits.wiki.addCheckpoint();
 			// Updating data for the action completed event

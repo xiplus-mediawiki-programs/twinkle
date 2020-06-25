@@ -76,6 +76,20 @@ Twinkle.config.commonSets = {
 		'f1', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10',
 		'r2', 'r3', 'r5', 'r6', 'r7'
 	],
+	xfdCriteria: {
+		'delete': wgULS('删除', '刪除'), 'merge': wgULS('合并', '合併'),
+		'vmd': wgULS('移动到维基词典', '移動到維基詞典'), 'vms': wgULS('移动到维基文库', '移動到維基文庫'), 'vmb': wgULS('移动到维基教科书', '移動到維基教科書'), 'vmq': wgULS('移动到维基语录', '移動到維基語錄'), 'vmvoy': wgULS('移动到维基导游', '移動到維基導遊'), 'vmv': wgULS('移动到维基学院', '移動到維基學院'),
+		'fwdcsd': wgULS('转交自快速删除候选', '轉交自快速刪除候選'),
+		'fame': wgULS('批量关注度提删', '批次關注度提刪'), 'substub': wgULS('批量小小作品提删', '批次小小作品提刪'), 'batch': wgULS('批量其他提删', '批次其他提刪'),
+		'ffd': wgULS('文件存废讨论', '檔案存廢討論')
+	},
+	xfdCriteriaDisplayOrder: [
+		'delete', 'merge',
+		'vmd', 'vms', 'vmb', 'vmq', 'vmvoy', 'vmv',
+		'fwdcsd',
+		'fame', 'substub', 'batch',
+		'ffd'
+	],
 	namespacesNoSpecial: {
 		'0': wgULS('（条目）', '（條目）'),
 		'1': 'Talk',
@@ -281,11 +295,11 @@ Twinkle.config.sections = [
 			},
 
 			// TwinkleConfig.openTalkPageOnAutoRevert (bool)
-			// Defines if talk page should be opened when calling revert from contrib page, because from there, actions may be multiple, and opening talk page not suitable. If set to true, openTalkPage defines then if talk page will be opened.
+			// Defines if talk page should be opened when calling revert from contribs or recent changes pages. If set to true, openTalkPage defines then if talk page will be opened.
 			{
 				name: 'openTalkPageOnAutoRevert',
-				label: wgULS('在从用户贡献中发起回退时打开用户讨论页', '在從使用者貢獻中發起回退時打開使用者討論頁'),
-				helptip: wgULS('您经常会在破坏者的用户贡献中发起许多回退，总是打开用户讨论页可能不太适当，所以这个选项默认关闭。当它打开时，依赖上一个设置。', '您經常會在破壞者的使用者貢獻中發起許多回退，總是打開使用者討論頁可能不太適當，所以這個選項預設關閉。當它打開時，依賴上一個設定。'),
+				label: wgULS('在从用户贡献及最近更改中发起回退时打开用户讨论页', '在從使用者貢獻及近期變更中發起回退時打開使用者討論頁'),
+				helptip: wgULS('当它打开时，依赖上一个设置。', '當它打開時，依賴上一個設定。'),
 				type: 'boolean'
 			},
 
@@ -324,7 +338,8 @@ Twinkle.config.sections = [
 			},
 
 			// TwinkleConfig.showRollbackLinks (array)
-			// Where Twinkle should show rollback links (diff, others, mine, contribs, recentchanges)
+			// Where Twinkle should show rollback links:
+			// diff, others, mine, contribs, history, recent
 			// Note from TTO: |contribs| seems to be equal to |others| + |mine|, i.e. redundant, so I left it out heres
 			{
 				name: 'showRollbackLinks',
@@ -722,9 +737,29 @@ Twinkle.config.sections = [
 	{
 		title: wgULS('存废讨论', '存廢討論'),
 		preferences: [
-		// TwinkleConfig.xfdWatchPage (string)
-		// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't
-		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
+			{
+				name: 'logXfdNominations',
+				label: wgULS('在用户空间中记录所有存废讨论提名', '在使用者空間中記錄所有存廢討論提名'),
+				helptip: wgULS('该日志供您追踪所有使用Twinkle提交的存废讨论', '該日誌供您追蹤所有透過Twinke提交的存廢討論'),
+				type: 'boolean'
+			},
+			{
+				name: 'xfdLogPageName',
+				label: wgULS('在此页保留日志', '在此頁保留日誌'),
+				helptip: wgULS('在此框中输入子页面名称，您将在User:<i>用户名</i>/<i>子页面</i>找到XFD日志。仅在启用日志时工作。', '在此框中輸入子頁面名稱，您將在User:<i>使用者名稱</i>/<i>子頁面</i>找到XFD日誌。僅在啟用日誌時工作。'),
+				type: 'string'
+			},
+			{
+				name: 'noLogOnXfdNomination',
+				label: wgULS('在使用以下理由时不做记录', '在使用以下理由時不做記錄'),
+				type: 'set',
+				setValues: Twinkle.config.commonSets.xfdCriteria,
+				setDisplayOrder: Twinkle.config.commonSets.xfdCriteriaDisplayOrder
+			},
+
+			// TwinkleConfig.xfdWatchPage (string)
+			// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't
+			// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 			{
 				name: 'xfdWatchPage',
 				label: wgULS('添加提名的页面到监视列表', '加入提名的頁面到監視清單'),

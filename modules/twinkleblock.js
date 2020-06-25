@@ -400,6 +400,19 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				}
 			]
 		});
+		field_block_options.append({
+			type: 'checkbox',
+			name: 'filter_see_also',
+			event: Twinkle.block.callback.toggle_see_alsos,
+			style: 'display:inline-block; margin-right:5px',
+			list: [
+				{
+					label: wgULS('跨维基贡献', '跨維基貢獻'),
+					checked: false,
+					value: wgULS('跨维基贡献', '跨維基貢獻')
+				}
+			]
+		});
 
 		if (Twinkle.block.currentBlockInfo) {
 			field_block_options.append({ type: 'hidden', name: 'reblock', value: '1' });
