@@ -15,10 +15,6 @@
  */
 
 Twinkle.stub = function friendlytag() {
-	if (!Twinkle.getPref('enableStub')) {
-		return;
-	}
-
 	// redirect tagging
 	if (Morebits.wiki.isPageRedirect()) {
 		Twinkle.stub.mode = '重定向';

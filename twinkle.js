@@ -148,7 +148,6 @@ Twinkle.defaultConfig = {
 	tagArticleSortOrder: 'cat',
 
 	// Stub
-	enableStub: true,
 	customTagList: [],
 	watchStubbedPages: false,
 	markStubbedPagesAsMinor: false,

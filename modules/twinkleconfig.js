@@ -570,11 +570,6 @@ Twinkle.config.sections = [
 		title: '小作品',
 		preferences: [
 			{
-				name: 'enableStub',
-				label: wgULS('启用这个功能', '啟用這個功能'),
-				type: 'boolean'
-			},
-			{
 				name: 'watchStubbedPages',
 				label: wgULS('标记时添加到监视列表', '標記時加入到監視清單'),
 				type: 'boolean'
