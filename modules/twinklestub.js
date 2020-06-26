@@ -39,6 +39,20 @@ Twinkle.stub.callback = function friendlytagCallback() {
 
 	var form = new Morebits.quickForm(Twinkle.stub.callback.evaluate);
 
+	if (document.getElementsByClassName('patrollink').length) {
+		form.append({
+			type: 'checkbox',
+			list: [
+				{
+					label: wgULS('标记页面为已巡查', '標記頁面為已巡查'),
+					value: 'patrolPage',
+					name: 'patrolPage',
+					checked: Twinkle.getPref('markStubbedPagesAsPatrolled')
+				}
+			]
+		});
+	}
+
 	switch (Twinkle.stub.mode) {
 		case '條目':
 		case '条目':
@@ -422,12 +436,19 @@ Twinkle.stub.callbacks = {
 		pageobj.setMinorEdit(Twinkle.getPref('markStubbedPagesAsMinor'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save();
+
+		if (params.patrol) {
+			pageobj.patrol();
+		}
 	}
 };
 
 Twinkle.stub.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	var form = e.target;
 	var params = {};
+	if (form.patrolPage) {
+		params.patrol = form.patrolPage.checked;
+	}
 
 	switch (Twinkle.stub.mode) {
 		case '條目':
