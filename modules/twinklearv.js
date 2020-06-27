@@ -647,17 +647,20 @@ Twinkle.arv.callback.evaluate = function(e) {
 				alert(wgULS('您必须指定理由', '您必須指定理由'));
 				return;
 			}
+			header = '\n=== {{vandal|' + (/=/.test(uid) ? '1=' : '') + uid + '}} ===\n';
 
 			var pages = $.map($('input:text[name=page]', form), function (o) {
 				return $(o).val() || null;
 			});
-			reason = '{{safesubst:/form\n| 用户名 = ' + uid + '\n';
 			if (pages.length >= 1) {
-				pages.forEach(function(v, i) {
-					reason += '| 受影响的条目' + (i + 1) + ' = ' + v + '\n';
+				pages.forEach(function(v) {
+					reason += '* {{pagelinks|' + v + '}}\n';
 				});
 			}
-			reason += '| 说明 = ' + comment + '\n}}';
+			reason += '* ' + comment + '\n';
+			reason = reason.trim();
+			reason = Morebits.string.appendPunctuation(reason);
+			reason += wgULS('\n* 提报人：~~~~\n* 处理：', '\n* 提報人：~~~~\n* 處理：');
 			summary = wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]';
 			Morebits.simpleWindow.setButtonsEnabled(false);
 			Morebits.status.init(form);
@@ -682,7 +685,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				ewipPage.getStatusElement().status(wgULS('添加新报告…', '加入新報告…'));
 				ewipPage.setEditSummary(summary + Twinkle.getPref('summaryAd'));
 				ewipPage.setTags(Twinkle.getPref('revisionTags'));
-				ewipPage.setAppendText(reason);
+				ewipPage.setAppendText(header + reason);
 				ewipPage.append();
 			});
 			break;
