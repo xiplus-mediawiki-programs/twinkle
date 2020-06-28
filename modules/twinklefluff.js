@@ -18,21 +18,6 @@
  */
 
 Twinkle.fluff = function twinklefluff() {
-	// A list of usernames, usually only bots, that vandalism revert is jumped over; that is,
-	// if vandalism revert was chosen on such username, then its target is on the revision before.
-	// This is for handling quick bots that makes edits seconds after the original edit is made.
-	// This only affects vandalism rollback; for good faith rollback, it will stop, indicating a bot
-	// has no faith, and for normal rollback, it will rollback that edit.
-	Twinkle.fluff.trustedBots = [
-		'Antigng-bot',
-		'Jimmy-bot',
-		'Jimmy-abot',
-		'Liangent-bot',
-		'Liangent-adminbot',
-		'Cewbot',
-		'WhitePhosphorus-bot'
-	];
-
 	if (mw.util.getParamValue('twinklerevert')) {
 		// Return if the user can't edit the page in question
 		if (!mw.config.get('wgIsProbablyEditable')) {
@@ -69,6 +54,20 @@ Twinkle.fluff = function twinklefluff() {
 	}
 };
 
+// A list of usernames, usually only bots, that vandalism revert is jumped over; that is,
+// if vandalism revert was chosen on such username, then its target is on the revision before.
+// This is for handling quick bots that makes edits seconds after the original edit is made.
+// This only affects vandalism rollback; for good faith rollback, it will stop, indicating a bot
+// has no faith, and for normal rollback, it will rollback that edit.
+Twinkle.fluff.trustedBots = [
+	'Antigng-bot',
+	'Jimmy-bot',
+	'Jimmy-abot',
+	'Liangent-bot',
+	'Liangent-adminbot',
+	'Cewbot',
+	'WhitePhosphorus-bot'
+];
 
 Twinkle.fluff.spanTag = function twinklefluffspanTag(color, content) {
 	var span = document.createElement('span');
