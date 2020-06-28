@@ -3315,7 +3315,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		var xml = ctx.lookupCreationApi.getXML();
 
 		$(xml).find('rev').each(function(_, rev) {
-			if (!/^\s*#(redirect|重定向|重新導向)/i.test(rev.textContent)) { // inaccessible revisions also check out
+			if (!/^\s*#(redirect|重定向|重新導向)/im.test(rev.textContent)) { // inaccessible revisions also check out
 				ctx.creator = rev.getAttribute('user');
 				ctx.timestamp = rev.getAttribute('timestamp');
 				return false; // break
