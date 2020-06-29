@@ -105,12 +105,19 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 		]
 	});
 	form.append({
-		type: 'input',
-		name: 'reason',
-		label: '理由：',
-		size: 60
+		type: 'select',
+		name: 'common_reason',
+		label: '常用理由：',
+		style: 'width: 85%;',
+		list: Twinkle.batchdelete.deletereasonlist,
+		event: Twinkle.batchdelete.callback.change_common_reason
 	});
-
+	form.append({
+		name: 'reason',
+		type: 'input',
+		label: '理由：',
+		size: 75
+	});
 	var query = {
 		'action': 'query',
 		'prop': 'revisions|info|imageinfo',
@@ -279,6 +286,49 @@ Twinkle.batchdelete.generateNewPageList = function(form) {
 			return e;
 		})
 	}).render();
+};
+
+Twinkle.batchdelete.deletereasonlist = [
+	{
+		label: wgULS('请选择', '請選擇'),
+		value: ''
+	},
+	{
+		label: wgULS('G10: 原作者清空页面或提出删除，且实际贡献者只有一人', 'G10: 原作者清空頁面或提出刪除，且實際貢獻者只有一人'),
+		value: wgULS('[[Wikipedia:CSD#G10|G10]]: 原作者清空页面或提出删除，且实际贡献者只有一人', '[[Wikipedia:CSD#G10|G10]]: 原作者清空頁面或提出刪除，且實際貢獻者只有一人')
+	},
+	{
+		label: wgULS('G15: 孤立页面，比如没有主页面的讨论页、指向空页面的重定向等', 'G15: 孤立頁面，比如沒有主頁面的討論頁、指向空頁面的重新導向等'),
+		value: wgULS('[[Wikipedia:CSD#G15|G15]]: 孤立页面', '[[Wikipedia:CSD#G15|G15]]: 孤立頁面')
+	},
+	{
+		label: wgULS('F6: 没有被条目使用的非自由著作权文件', 'F6: 沒有被條目使用的非自由著作權檔案'),
+		value: wgULS('[[Wikipedia:CSD#F6|F6]]: 没有被条目使用的[[Wikipedia:合理使用|非自由著作权]]文件', '[[Wikipedia:CSD#F6|F6]]: 沒有被條目使用的[[Wikipedia:合理使用|非自由著作權]]檔案')
+	},
+	{
+		label: wgULS('F7: 与维基共享资源文件重复的文件', 'F7: 與維基共享資源檔案重複的檔案'),
+		value: wgULS('[[Wikipedia:CSD#F7|F7]]: 与[[维基共享资源]]文件重复的文件', '[[Wikipedia:CSD#F7|F7]]: 與[[維基共享資源]]檔案重複的檔案')
+	},
+	{
+		label: wgULS('O1: 用户请求删除自己的用户页或其子页面', 'O1: 使用者請求刪除自己的使用者頁面或其子頁面'),
+		value: wgULS('[[Wikipedia:CSD#O1|O1]]: 用户请求删除自己的[[Help:用户页|用户页]]或其子页面。', '[[Wikipedia:CSD#O1|O1]]: 使用者請求刪除自己的[[Help:用户页|使用者頁面]]或其子頁面。')
+	},
+	{
+		label: wgULS('O4: 空的分类（没有条目也没有子分类）', 'O4: 空的分類（沒有條目也沒有子分類）'),
+		value: wgULS('[[Wikipedia:CSD#O4|O4]]: 空的分类（没有条目也没有子分类）。', '[[Wikipedia:CSD#O4|O4]]: 空的分類（沒有條目也沒有子分類）。')
+	},
+	{
+		label: wgULS('O7: 废弃草稿', 'O7: 廢棄草稿'),
+		value: wgULS('[[Wikipedia:CSD#O7|O7]]: 废弃草稿。', '[[Wikipedia:CSD#O7|O7]]: 廢棄草稿。')
+	}
+];
+
+Twinkle.batchdelete.callback.change_common_reason = function twinklebatchdeleteCallbackChangeCustomReason(e) {
+	if (e.target.form.reason.value !== '') {
+		e.target.form.reason.value = Morebits.string.appendPunctuation(e.target.form.reason.value);
+	}
+	e.target.form.reason.value += e.target.value;
+	e.target.value = '';
 };
 
 Twinkle.batchdelete.callback.toggleSubpages = function twDbatchToggleSubpages(e) {

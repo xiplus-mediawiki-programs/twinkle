@@ -152,6 +152,7 @@ Twinkle.defaultConfig = {
 	customTagList: [],
 	watchStubbedPages: false,
 	markStubbedPagesAsMinor: false,
+	markStubbedPagesAsPatrolled: true,
 	stubArticleSortOrder: 'cat',
 	customStubList: [],
 
