@@ -658,6 +658,8 @@ Twinkle.arv.callback.evaluate = function(e) {
 					reason += '* {{pagelinks|' + v + '}}\n';
 				});
 			}
+			comment = comment.replace(/\n\n+/g, '\n');
+			comment = comment.replace(/\r?\n/g, '\n*:');  // indent newlines
 			reason += '* ' + comment + '\n';
 			reason = reason.trim();
 			reason = Morebits.string.appendPunctuation(reason);
