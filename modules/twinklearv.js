@@ -661,7 +661,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 			reason += '* ' + comment + '\n';
 			reason = reason.trim();
 			reason = Morebits.string.appendPunctuation(reason);
-			reason += wgULS('\n* 提报人：~~~~\n* 处理：', '\n* 提報人：~~~~\n* 處理：');
+			reason += '\n* 提報人：~~~~\n* 处理：';
 			summary = wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]';
 			Morebits.simpleWindow.setButtonsEnabled(false);
 			Morebits.status.init(form);
