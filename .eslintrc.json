@@ -6,8 +6,8 @@
 		"jquery": true
 	},
 	"globals": {
-		"mw": true,
-		"wgULS": true
+		"mw": "readonly",
+		"wgULS": "readonly"
 	},
 	"ignorePatterns": "select2*",
 	"rules": {
