@@ -519,7 +519,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 	var reason = '';
 	var comment = '';
 	if (form.reason) {
-		comment = form.reason.value;
+		comment = form.reason.value.trim();
 	}
 	var uid = form.uid.value;
 
@@ -577,6 +577,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				reason += '* ' + types;
 			}
 			if (comment !== '') {
+				comment = comment.replace(/\n\n+/g, '\n');
 				comment = comment.replace(/\r?\n/g, '\n*:');  // indent newlines
 				reason += (types ? '。' : '* ') + comment;
 			}
