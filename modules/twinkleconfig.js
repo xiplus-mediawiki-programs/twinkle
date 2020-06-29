@@ -585,6 +585,11 @@ Twinkle.config.sections = [
 				type: 'boolean'
 			},
 			{
+				name: 'markStubbedPagesAsPatrolled',
+				label: wgULS('默认勾选“标记页面为已巡查”框', '預設勾選「標記頁面為已巡查」框'),
+				type: 'boolean'
+			},
+			{
 				name: 'stubArticleSortOrder',
 				label: wgULS('条目小作品的默认查看方式', '條目小作品的預設檢視方式'),
 				type: 'enum',
