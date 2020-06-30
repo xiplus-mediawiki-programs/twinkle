@@ -381,8 +381,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 
 					var date = new Morebits.date().subtract(48, 'hours'); // all since 48 hours
 
-					var api = new mw.Api();
-					api.get({
+					new mw.Api.get({
 						action: 'query',
 						prop: 'revisions',
 						format: 'json',
