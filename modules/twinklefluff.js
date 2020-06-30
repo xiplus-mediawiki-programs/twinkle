@@ -237,10 +237,10 @@ Twinkle.fluff.addLinks = {
 			|| (mw.config.get('wgCanonicalSpecialPageName') === 'Recentchangeslinked' && Twinkle.getPref('showRollbackLinks').indexOf('recentchangeslinked') !== -1)
 		) {
 			// Latest and revertable (not page creations, logs, categorizations, etc.)
-			var list = $('.mw-changeslist .mw-changeslist-last.mw-changeslist-src-mw-edit');
+			var $list = $('.mw-changeslist .mw-changeslist-last.mw-changeslist-src-mw-edit');
 			// Exclude top-level header if "group changes" preference is used
 			// and find only individual lines or nested lines
-			list = list.not('.mw-rcfilters-ui-highlights-enhanced-toplevel').find('.mw-changeslist-line-inner, td.mw-enhanced-rc-nested');
+			$list = $list.not('.mw-rcfilters-ui-highlights-enhanced-toplevel').find('.mw-changeslist-line-inner, td.mw-enhanced-rc-nested');
 
 			var revNode = document.createElement('strong');
 			var revLink = Twinkle.fluff.buildLink('SteelBlue', '回退');
@@ -250,7 +250,7 @@ Twinkle.fluff.addLinks = {
 			var revVandLink = Twinkle.fluff.buildLink('Red', wgULS('破坏', '破壞'));
 			revVandNode.appendChild(revVandLink);
 
-			list.each(function(key, current) {
+			$list.each(function(key, current) {
 				current.appendChild(document.createTextNode(' '));
 				var href = $(current).find('.mw-changeslist-diff').attr('href');
 				var tmpNode = revNode.cloneNode(true);
