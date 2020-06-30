@@ -35,6 +35,7 @@ Twinkle.arv.callback = function (uid) {
 	Window.setTitle(wgULS('报告用户给管理人员', '報告使用者給管理人員'));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink('VIP', 'WP:VIP');
+	Window.addFooterLink('EWIP', 'WP:EWIP');
 	Window.addFooterLink('UAA', 'WP:UAA');
 	Window.addFooterLink(wgULS('用户名方针', '使用者名稱方針'), 'WP:U');
 	Window.addFooterLink('SRCU', 'WP:SRCU');
@@ -51,6 +52,11 @@ Twinkle.arv.callback = function (uid) {
 		type: 'option',
 		label: wgULS('破坏（WP:VIP）', '破壞（WP:VIP）'),
 		value: 'aiv'
+	});
+	categories.append({
+		type: 'option',
+		label: wgULS('编辑争议（WP:EWIP）', '編輯爭議（WP:EWIP）'),
+		value: 'ewip'
 	});
 	categories.append({
 		type: 'option',
@@ -188,6 +194,30 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				type: 'textarea',
 				name: 'reason',
 				label: wgULS('评论：', '評論：')
+			});
+			work_area = work_area.render();
+			old_area.parentNode.replaceChild(work_area, old_area);
+			break;
+		case 'ewip':
+			work_area = new Morebits.quickForm.element({
+				type: 'field',
+				label: wgULS('报告编辑争议', '報告編輯爭議'),
+				name: 'work_area'
+			});
+			work_area.append(
+				{
+					type: 'dyninput',
+					name: 'page',
+					label: wgULS('相关页面：', '相關頁面：'),
+					sublabel: wgULS('页面：', '頁面：'),
+					tooltip: wgULS('如不希望让报告链接到页面，请留空', '如不希望讓報告連結到頁面，請留空'),
+					min: 1,
+					max: 10
+				});
+			work_area.append({
+				type: 'textarea',
+				name: 'reason',
+				label: wgULS('说明：', '說明：')
 			});
 			work_area = work_area.render();
 			old_area.parentNode.replaceChild(work_area, old_area);
@@ -610,6 +640,56 @@ Twinkle.arv.callback.evaluate = function(e) {
 				aivPage.setTags(Twinkle.getPref('revisionTags'));
 				aivPage.setAppendText(header + reason);
 				aivPage.append();
+			});
+			break;
+		// Report 3RR
+		case 'ewip':
+			if (comment === '') {
+				alert(wgULS('您必须指定理由', '您必須指定理由'));
+				return;
+			}
+			header = '\n=== {{vandal|' + (/=/.test(uid) ? '1=' : '') + uid + '}} ===\n';
+
+			var pages = $.map($('input:text[name=page]', form), function (o) {
+				return $(o).val() || null;
+			});
+			if (pages.length >= 1) {
+				pages.forEach(function(v) {
+					reason += '* {{pagelinks|' + v + '}}\n';
+				});
+			}
+			comment = comment.replace(/\n\n+/g, '\n');
+			comment = comment.replace(/\r?\n/g, '\n*:');  // indent newlines
+			reason += '* ' + comment + '\n';
+			reason = reason.trim();
+			reason = Morebits.string.appendPunctuation(reason);
+			reason += '\n* 提報人：~~~~\n* 处理：';
+			summary = wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]';
+			Morebits.simpleWindow.setButtonsEnabled(false);
+			Morebits.status.init(form);
+
+			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:管理员通告板/3RR';
+			Morebits.wiki.actionCompleted.notice = wgULS('报告完成', '報告完成');
+
+			var ewipPage = new Morebits.wiki.page('Wikipedia:管理员通告板/3RR', wgULS('处理EWIP请求', '處理EWIP請求'));
+			ewipPage.setFollowRedirect(true);
+
+			ewipPage.load(function() {
+				var text = ewipPage.getPageText();
+				var $ewipLink = '<a target="_blank" href="/wiki/WP:EWIP">WP:EWIP</a>';
+
+				// check if user has already been reported
+				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + RegExp.escape(uid, true) + '\\s*\\}\\}\\s*===').test(text)) {
+					ewipPage.getStatusElement().error(wgULS('报告已存在，将不会添加新的', '報告已存在，將不會加入新的'));
+					Morebits.status.printUserText(reason, wgULS('您输入的评论已在下方提供，您可以将其添加到' + $ewipLink + '已存在的小节中：', '您輸入的評論已在下方提供，您可以將其加入到' + $ewipLink + '已存在的小節中：'));
+					return;
+				}
+				ewipPage.setPageSection(0);
+				ewipPage.getStatusElement().status(wgULS('添加新报告…', '加入新報告…'));
+				ewipPage.setEditSummary(summary + Twinkle.getPref('summaryAd'));
+				ewipPage.setTags(Twinkle.getPref('revisionTags'));
+				ewipPage.setAppendText(header + reason);
+				ewipPage.append();
 			});
 			break;
 
