@@ -4,12 +4,7 @@ import re
 
 import requests
 
-
-def findBetween(text, start, end):
-    idx1 = text.index(start)
-    idx2 = text.index(end)
-    return text[idx1 + len(start):idx2]
-
+from util import findBetween
 
 FILENAME = '../modules/friendlytag.js'
 with open(FILENAME, 'r', encoding='utf8') as f:
