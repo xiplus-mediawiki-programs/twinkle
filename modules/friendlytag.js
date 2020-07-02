@@ -254,7 +254,7 @@ Twinkle.tag.quickFilter = function(form) {
 
 	form.append({
 		type: 'input',
-		label: wgULS('快速筛选：', '快速篩選：'),
+		label: wgULS('筛选标记列表：', '篩選標記列表：'),
 		name: 'quickfilter',
 		size: '30px',
 		event: function twinkletagquickfilter() {
