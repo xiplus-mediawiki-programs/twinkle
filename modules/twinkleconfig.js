@@ -1697,7 +1697,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 							alert('twinkleconfig: 未知数据类型，属性 ' + pref.name);
 							break;
 					}
-				} else if (Twinkle.prefs[pref.name]) {
+				} else if (Twinkle.prefs) {
 					// Retain the hidden preferences that may have customised by the user from twinkleoptions.js
 					// undefined if not set
 					userValue = Twinkle.prefs[pref.name];
