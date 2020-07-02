@@ -1979,14 +1979,14 @@ Morebits.wiki.api.prototype = {
 
 // Custom user agent header, used by WMF for server-side logging
 // See https://lists.wikimedia.org/pipermail/mediawiki-api-announce/2014-November/000075.html
-var morebitsWikiApiUserAgent = 'morebits.js~zh/2.0 ([[w:zh:WT:TW]])';
+var morebitsWikiApiUserAgent = 'morebits.js~zh ([[w:zh:WT:TW]])';
 
 /**
  * Sets the custom user agent header
  * @param {string} ua   User agent
  */
 Morebits.wiki.api.setApiUserAgent = function(ua) {
-	morebitsWikiApiUserAgent = (ua ? ua + ' ' : '') + 'morebits.js~zh/2.0 ([[w:zh:WT:TW]])';
+	morebitsWikiApiUserAgent = (ua ? ua + ' ' : '') + 'morebits.js~zh ([[w:zh:WT:TW]])';
 };
 
 
