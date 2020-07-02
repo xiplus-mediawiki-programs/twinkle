@@ -145,7 +145,7 @@ Twinkle.fluff.addLinks = {
 					current.appendChild(tmpNode2);
 					if (Twinkle.getPref('rollbackInCurrentWindow')) {
 						var revid = parseInt(href.match(/oldid=(\d*)/)[1]);
-						var page = decodeURI(href.match(/title=(.*?)&/)[1]);
+						var page = decodeURIComponent(href.match(/title=(.*?)&/)[1]);
 						$(tmpNode).click(function () {
 							Twinkle.fluff.disableLinks([tmpNode, tmpNode2]);
 							Twinkle.fluff.revert('norm', username, false, revid, page);
