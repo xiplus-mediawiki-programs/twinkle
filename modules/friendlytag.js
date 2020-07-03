@@ -1762,6 +1762,10 @@ Twinkle.tag.callbacks = {
 			summaryText += '{{[[:' + (tagName.indexOf(':') !== -1 ? tagName : 'Template:' + tagName + '|' + tagName) + ']]}}';
 		};
 
+		if (!tags.length) {
+			Morebits.status.warn(wgULS('信息', '資訊'), wgULS('没有标签可供标记', '沒有標籤可供標記'));
+		}
+
 		tags.sort();
 		$.each(tags, addTag);
 
@@ -1772,19 +1776,20 @@ Twinkle.tag.callbacks = {
 			pageText = pageText.replace(oldTags[0], oldTags[1] + tagText + oldTags[2] + oldTags[3]);
 		} else {
 			// Fold any pre-existing Rcats into taglist and under Rcatshell
-			var pageTags = pageText.match(/\n{{R(?:edirect)? .*?}}/img);
+			var pageTags = pageText.match(/\s*{{.+?重定向}}/img);
 			var oldPageTags = '';
 			if (pageTags) {
 				pageTags.forEach(function(pageTag) {
 					var pageRe = new RegExp(pageTag, 'img');
 					pageText = pageText.replace(pageRe, '');
-					oldPageTags += pageTag;
+					pageTag = pageTag.trim();
+					oldPageTags += '\n' + pageTag;
 				});
 			}
 			pageText += '\n{{Redirect category shell|' + tagText + oldPageTags + '\n}}';
 		}
 
-		summaryText += (tags.length > 0 ? wgULS('标记', '標記') : '') + '到重定向';
+		summaryText += (tags.length > 0 ? wgULS('标记', '標記') : '{{Redirect category shell}}') + wgULS('到重定向', '到重新導向');
 
 		// avoid truncated summaries
 		if (summaryText.length > (499 - Twinkle.getPref('summaryAd').length)) {
