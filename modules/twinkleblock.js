@@ -133,6 +133,7 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 		letype: 'block',
 		lelimit: 1,
 		ususers: userName,
+		usprop: 'groupmemberships',
 		letitle: 'User:' + userName
 	};
 	if (Morebits.isIPRange(userName)) {
@@ -158,6 +159,10 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 			Twinkle.block.hasBlockLog = !!data.query.logevents.length;
 			// Used later to check if block status changed while filling out the form
 			Twinkle.block.blockLogId = Twinkle.block.hasBlockLog ? data.query.logevents[0].logid : false;
+
+			Twinkle.block.userIsBot = userinfo.groupmemberships.map(function(e) {
+				return e.group;
+			}).indexOf('bot') !== -1;
 
 			if (typeof fn === 'function') {
 				return fn();
@@ -1092,7 +1097,7 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 	data.hardblock = data.hardblock !== undefined ? data.hardblock : false;
 
 	// disable autoblock if blocking a bot
-	if (Twinkle.block.isRegistered && relevantUserName.search(/bot$/i) > 0) {
+	if (Twinkle.block.userIsBot || relevantUserName.search(/bot\b/i) > 0) {
 		data.autoblock = false;
 	}
 
