@@ -303,6 +303,15 @@ Twinkle.config.sections = [
 				type: 'boolean'
 			},
 
+			// TwinkleConfig.rollbackInPlace (bool)
+			//
+			{
+				name: 'rollbackInPlace',
+				label: wgULS('在从用户贡献及最近更改中发起回退时不刷新页面', '在從使用者貢獻及近期變更中發起回退時不重新整理頁面'),
+				helptip: wgULS('当它打开时，Twinkle将不会在从用户贡献及最近更改中发起回退时刷新页面，允许您一次性回退多个编辑。', '當它打開時，Twinkle將不會在從使用者貢獻及近期變更中發起回退時重新整理頁面，允許您一次性回退多個編輯。'),
+				type: 'boolean'
+			},
+
 			// TwinkleConfig.markRevertedPagesAsMinor (array)
 			// What types of actions that should result in marking edit as minor
 			{
@@ -347,14 +356,6 @@ Twinkle.config.sections = [
 				type: 'set',
 				setValues: wgULS({ diff: '差异', history: '历史记录', others: '其它用户的贡献', mine: '我的贡献', recentchanges: '最近更改', recentchangeslinked: '相关更改' }, { diff: '差異', history: '歷史記錄', others: '其它用戶的貢獻', mine: '我的貢獻', recentchanges: '近期變更', recentchangeslinked: '相關變更' })
 			},
-
-			{
-				name: 'rollbackInCurrentWindow',
-				label: wgULS('在当前窗口内执行回退', '在目前視窗內執行回退'),
-				helptip: wgULS('不要开新窗口或者改变当前窗口的状态。', '不要開新視窗或者改變目前視窗的狀態。'),
-				type: 'boolean'
-			},
-
 			{
 				name: 'customRevertSummary',
 				label: wgULS('回退理由', '回退理由'),
