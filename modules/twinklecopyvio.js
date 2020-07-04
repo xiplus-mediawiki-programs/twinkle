@@ -116,7 +116,7 @@ Twinkle.copyvio.callbacks = {
 						usertalkpage.setWatchlistFromPreferences(true);
 						break;
 				}
-				usertalkpage.setFollowRedirect(true);
+				usertalkpage.setFollowRedirect(true, false);
 				usertalkpage.append();
 			});
 		}

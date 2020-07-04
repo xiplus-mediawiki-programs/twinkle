@@ -2147,6 +2147,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		maxConflictRetries: 2,
 		maxRetries: 2,
 		followRedirect: false,
+		followCrossNsRedirect: true,
 		watchlistOption: 'nochange',
 		creator: null,
 		timestamp: null,
@@ -2542,14 +2543,20 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	 *     true  - a maximum of one redirect will be followed.
 	 *             In the event of a redirect, a message is displayed to the user and
 	 *             the redirect target can be retrieved with getPageName().
-	 *     false - the requested pageName will be used without regard to any redirect (default).
+	 *     false - (default) the requested pageName will be used without regard to any
+	 *             redirect.
+	 * @param {boolean} followCrossNsRedirect
+	 *      Not applicable if followRedirect is not set true.
+	 *      true - (default) follow redirect even if it is a cross-namespace redirect
+	 *      false - don't follow redirect if it is cross-namespace, edit the redirect itself
 	 */
-	this.setFollowRedirect = function(followRedirect) {
+	this.setFollowRedirect = function(followRedirect, followCrossNsRedirect) {
 		if (ctx.pageLoaded) {
 			ctx.statusElement.error('内部错误：不能在页面加载后修改重定向设置！');
 			return;
 		}
 		ctx.followRedirect = followRedirect;
+		ctx.followCrossNsRedirect = typeof followCrossNsRedirect !== 'undefined' ? followCrossNsRedirect : ctx.followCrossNsRedirect;
 	};
 
 	// lookup-creation setter function
@@ -2995,9 +3002,13 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		// API-based redirect resolution only works for action=query and
 		// action=edit in append/prepend modes (and section=new, but we don't
 		// really support that)
-		if (ctx.followRedirect && (action !== 'edit' ||
-			(ctx.editMode !== 'append' && ctx.editMode !== 'prepend'))) {
-			return false;
+		if (ctx.followRedirect) {
+			if (!ctx.followCrossNsRedirect) {
+				return false; // must load the page to check for cross namespace redirects
+			}
+			if (action !== 'edit' || (ctx.editMode !== 'append' && ctx.editMode !== 'prepend')) {
+				return false;
+			}
 		}
 
 		// do we need to fetch the edit protection expiry?
@@ -3132,11 +3143,22 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		if ($(xml).find('page').attr('title')) {
 			var resolvedName = $(xml).find('page').attr('title');
 
-			// only notify user for redirects, not normalization
 			if ($(xml).find('redirects').length > 0) {
+				// check for cross-namespace redirect:
+				var origNs = new mw.Title(ctx.pageName).namespace;
+				var newNs = new mw.Title(resolvedName).namespace;
+				if (origNs !== newNs && !ctx.followCrossNsRedirect) {
+					ctx.statusElement.error(ctx.pageName + wgULS('是跨名字空间重定向到', '是跨命名空間重新導向到') + resolvedName + wgULS('，略过', '，略過'));
+					onFailure(this);
+					return false;
+				}
+
+				// only notify user for redirects, not normalization
 				Morebits.status.info(wgULS('信息', '資訊'), wgULS('从 ', '從 ') + ctx.pageName + ' 重定向到 ' + resolvedName);
 			}
-			ctx.pageName = resolvedName;  // always update in case of normalization
+
+			ctx.pageName = resolvedName; // update to redirect target or normalized name
+
 		} else {
 			// could be a circular redirect or other problem
 			ctx.statusElement.error(wgULS('不能解析页面的重定向：', '不能解析頁面的重新導向：') + ctx.pageName);

@@ -302,7 +302,7 @@ Twinkle.xfd.callbacks = {
 								usertalkpage.setWatchlistFromPreferences(true);
 								break;
 						}
-						usertalkpage.setFollowRedirect(true);
+						usertalkpage.setFollowRedirect(true, false);
 						usertalkpage.append();
 					});
 				}
@@ -555,7 +555,7 @@ Twinkle.xfd.callbacks = {
 							usertalkpage.setWatchlistFromPreferences(true);
 							break;
 					}
-					usertalkpage.setFollowRedirect(true);
+					usertalkpage.setFollowRedirect(true, false);
 					usertalkpage.append();
 				});
 				// add this nomination to the user's userspace log, if the user has enabled it
