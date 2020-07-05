@@ -1822,6 +1822,9 @@ Morebits.wiki.removeCheckpoint = function() {
 /**
  * **************** Morebits.wiki.api ****************
  * An easy way to talk to the MediaWiki API.
+ * In new code, the use of the last 3 parameters should be avoided, instead use setStatusElement() to bind the
+ * status element (if needed) and use .then() or .catch() on the promise returned by post(), rather than specify
+ * the onSuccess or onFailure callbacks.
  */
 
 /**
@@ -1829,7 +1832,7 @@ Morebits.wiki.removeCheckpoint = function() {
  * @param {string} currentAction - The current action (required)
  * @param {Object} query - The query (required)
  * @param {Function} [onSuccess] - The function to call when request gotten
- * @param {Object} [statusElement] - A Morebits.status object to use for status messages (optional)
+ * @param {Morebits.status} [statusElement] - A Morebits.status object to use for status messages (optional)
  * @param {Function} [onError] - The function to call if an error occurs (optional)
  */
 Morebits.wiki.api = function(currentAction, query, onSuccess, statusElement, onError) {
@@ -1839,8 +1842,7 @@ Morebits.wiki.api = function(currentAction, query, onSuccess, statusElement, onE
 	this.onSuccess = onSuccess;
 	this.onError = onError;
 	if (statusElement) {
-		this.statelem = statusElement;
-		this.statelem.status(currentAction);
+		this.setStatusElement(statusElement);
 	} else {
 		this.statelem = new Morebits.status(currentAction);
 	}
@@ -1859,18 +1861,30 @@ Morebits.wiki.api.prototype = {
 	query: null,
 	response: null,
 	responseXML: null,  // use `response` instead; retained for backwards compatibility
-	setParent: function(parent) {
-		this.parent = parent;
-	},  // keep track of parent object for callbacks
 	statelem: null,  // this non-standard name kept for backwards compatibility
 	statusText: null, // result received from the API, normally "success" or "error"
 	errorCode: null, // short text error code, if any, as documented in the MediaWiki API
 	errorText: null, // full error description, if any
 
 	/**
+	 * Keep track of parent object for callbacks
+	 * @param {*} parent
+     */
+	setParent: function(parent) {
+		this.parent = parent;
+	},
+
+	/** @param {Morebits.status} statusElement */
+	setStatusElement: function(statusElement) {
+		this.statelem = statusElement;
+		this.statelem.status(this.currentAction);
+	},
+
+	/**
 	 * Carries out the request.
 	 * @param {Object} callerAjaxParameters Do not specify a parameter unless you really
 	 * really want to give jQuery some extra parameters
+	 * @returns {promise} - a jQuery promise object that is resolved or rejected with the api object.
 	 */
 	post: function(callerAjaxParameters) {
 
@@ -1896,8 +1910,8 @@ Morebits.wiki.api.prototype = {
 			}
 		}, callerAjaxParameters);
 
-		return $.ajax(ajaxparams).done(
-			function(response, statusText) {
+		return $.ajax(ajaxparams).then(
+			function onAPIsuccess(response, statusText) {
 				this.statusText = statusText;
 				this.response = this.responseXML = response;
 				if (this.query.format === 'json') {
@@ -1909,15 +1923,12 @@ Morebits.wiki.api.prototype = {
 				}
 
 				if (typeof this.errorCode === 'string') {
-
 					// the API didn't like what we told it, e.g., bad edit token or an error creating a page
-					this.returnError();
-					return;
+					return this.returnError();
 				}
 
 				// invoke success callback if one was supplied
 				if (this.onSuccess) {
-
 					// set the callback context to this.parent for new code and supply the API object
 					// as the first argument to the callback (for legacy code)
 					this.onSuccess.call(this.parent, this);
@@ -1926,20 +1937,21 @@ Morebits.wiki.api.prototype = {
 				}
 
 				Morebits.wiki.actionCompleted();
-			}
-		).fail(
+				return $.Deferred().resolveWith(this.parent, [this]);
+			},
 			// only network and server errors reach here - complaints from the API itself are caught in success()
-			function(jqXHR, statusText, errorThrown) {
+			function onAPIfailure(jqXHR, statusText, errorThrown) {
 				this.statusText = statusText;
 				this.errorThrown = errorThrown; // frequently undefined
 				this.errorText = statusText + wgULS('在调用API时发生了错误“', '在呼叫API時發生了錯誤「') + jqXHR.statusText + wgULS('”。', '」。');
-				this.returnError();
+				return this.returnError();
 			}
-		);  // the return value should be ignored, unless using callerAjaxParameters with |async: false|
+		);
 	},
 
 	returnError: function() {
 		if (this.errorCode === 'badtoken') {
+			// TODO from upstream: automatically retry after getting a new token
 			this.statelem.error(wgULS('无效令牌，请刷新页面并重试', '無效權杖，請重新整理頁面並重試'));
 		} else {
 			this.statelem.error(this.errorText);
@@ -1953,6 +1965,8 @@ Morebits.wiki.api.prototype = {
 			this.onError.call(this.parent, this);
 		}
 		// don't complete the action so that the error remains displayed
+
+		return $.Deferred().rejectWith(this.parent, [this]);
 	},
 
 	getStatusElement: function() {
@@ -2633,6 +2647,11 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		return ctx.revertUser;
 	};
 
+	/** @returns {string} ISO 8601 timestamp at which the page was last edited. */
+	this.getLastEditTime = function() {
+		return ctx.lastEditTime;
+	};
+
 	// Miscellaneous getters/setters:
 
 	/**
@@ -3171,22 +3190,15 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		return true; // all OK
 	};
 
-	// helper function to get a new token on encountering token errors
-	// in save, deletePage, and undeletePage
-	// Being a synchronous ajax call, this blocks the event loop,
-	// and hence should be used sparingly.
+	// helper function to get a new token on encountering token errors in save, deletePage, and undeletePage
 	var fnGetToken = function() {
-		var token;
 		var tokenApi = new Morebits.wiki.api(wgULS('获取令牌', '取得權杖'), {
 			action: 'query',
 			meta: 'tokens'
-		}, function(apiobj) {
-			token = $(apiobj.responseXML).find('tokens').attr('csrftoken');
-		}, null, function() {
-			this.getStatusElement().error(wgULS('获取令牌失败', '取得權杖失敗'));
 		});
-		tokenApi.post({async: false});
-		return token;
+		return tokenApi.post().then(function(apiobj) {
+			return $(apiobj.responseXML).find('tokens').attr('csrftoken');
+		});
 	};
 
 	// callback from saveApi.post()
@@ -3236,25 +3248,26 @@ Morebits.wiki.page = function(pageName, currentAction) {
 				titles: ctx.pageName  // redirects are already resolved
 			};
 
-			var purgeApi = new Morebits.wiki.api(wgULS('检测到编辑冲突，更新服务器缓存', '檢測到編輯衝突，更新伺服器快取'), purgeQuery, null, ctx.statusElement);
-			purgeApi.post({ async: false });  // just wait for it, result is for debugging
-
-			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
-
-			ctx.statusElement.info(wgULS('检测到编辑冲突，重试修改', '檢測到編輯衝突，重試修改'));
-			if (fnCanUseMwUserToken('edit')) {
-				ctx.saveApi.post(); // necessarily append or prepend, so this should work as desired
-			} else {
-				ctx.loadApi.post(); // reload the page and reapply the edit
-			}
+			var purgeApi = new Morebits.wiki.api(wgULS('检测到编辑冲突，更新服务器缓存', '檢測到編輯衝突，更新伺服器快取'), purgeQuery, function() {
+				--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
+				ctx.statusElement.info(wgULS('检测到编辑冲突，重试修改', '檢測到編輯衝突，重試修改'));
+				if (fnCanUseMwUserToken('edit')) {
+					ctx.saveApi.post(); // necessarily append or prepend, so this should work as desired
+				} else {
+					ctx.loadApi.post(); // reload the page and reapply the edit
+				}
+			}, ctx.statusElement);
+			purgeApi.post();
 
 		// check for loss of edit token
 		} else if (errorCode === 'badtoken' && ctx.retries++ < ctx.maxRetries) {
 
 			ctx.statusElement.info(wgULS('编辑令牌不可用，重试', '編輯權杖不可用，重試'));
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
-			ctx.saveApi.query.token = fnGetToken.call(this);
-			ctx.saveApi.post();
+			fnGetToken().then(function(token) {
+				ctx.saveApi.query.token = token;
+				ctx.saveApi.post();
+			});
 
 		// check for network or server error
 		} else if (errorCode === 'undefined' && ctx.retries++ < ctx.maxRetries) {
@@ -3525,8 +3538,10 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		} else if (errorCode === 'badtoken' && ctx.retries++ < ctx.maxRetries) {
 			ctx.statusElement.info(wgULS('无效令牌，重试', '無效權杖，重試'));
 			--Morebits.wiki.numberOfActionsLeft;
-			ctx.deleteProcessApi.query.token = fnGetToken.call(this);
-			ctx.deleteProcessApi.post();
+			fnGetToken().then(function(token) {
+				ctx.deleteProcessApi.query.token = token;
+				ctx.deleteProcessApi.post();
+			});
 		} else if (errorCode === 'missingtitle') {
 			ctx.statusElement.error(wgULS('不能删除页面，因其已不存在', '不能刪除頁面，因其已不存在'));
 			if (ctx.onDeleteFailure) {
@@ -3604,9 +3619,11 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		} else if (errorCode === 'badtoken' && ctx.retries++ < ctx.maxRetries) {
 			ctx.statusElement.error(wgULS('无效令牌，重试。', '無效權杖，重試。'));
 			--Morebits.wiki.numberOfActionsLeft;
-			ctx.undeleteProcessApi.query.token = fnGetToken.call(this);
-			ctx.undeleteProcessApi.post();
+			fnGetToken().then(function(token) {
+				ctx.undeleteProcessApi.query.token = token;
 
+				ctx.undeleteProcessApi.post();
+			});
 		} else if (errorCode === 'cantundelete') {
 			ctx.statusElement.error(wgULS('不能取消删除页面，因没有版本供取消删除或已被取消删除', '不能取消刪除頁面，因沒有版本供取消刪除或已被取消刪除'));
 			if (ctx.onUndeleteFailure) {
