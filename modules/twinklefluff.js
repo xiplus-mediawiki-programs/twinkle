@@ -265,9 +265,9 @@ Twinkle.fluff.addLinks = {
 		if (mw.config.get('wgDiffOldId') && (mw.config.get('wgDiffOldId') !== mw.config.get('wgDiffNewId'))) {
 			// Add a [restore this revision] link to the older revision
 			var oldTitle = document.getElementById('mw-diff-otitle1').parentNode;
-			oldTitle.insertBefore(Twinkle.fluff.linkBuilder.restoreThisRevisionLink('wgDiffOldId'), oldTitle.firstChild);
+			var revertToRevision = Twinkle.fluff.linkBuilder.restoreThisRevisionLink('wgDiffOldId');
+			oldTitle.insertBefore(revertToRevision, oldTitle.firstChild);
 			if (Twinkle.getPref('customRevertSummary').length > 0) {
-				var revertToRevision = document.getElementById('tw-revert-to-orevision');
 				revertToRevision.appendChild(document.createTextNode(' || '));
 				var revertsummary = new Morebits.quickForm.element({ type: 'select', name: 'revertsummary' });
 				revertsummary.append({
