@@ -159,8 +159,7 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 			Twinkle.block.hasBlockLog = !!data.query.logevents.length;
 			// Used later to check if block status changed while filling out the form
 			Twinkle.block.blockLogId = Twinkle.block.hasBlockLog ? data.query.logevents[0].logid : false;
-
-			Twinkle.block.userIsBot = userinfo.groupmemberships.map(function(e) {
+			Twinkle.block.userIsBot = !userinfo.groupmemberships ? false : userinfo.groupmemberships.map(function(e) {
 				return e.group;
 			}).indexOf('bot') !== -1;
 
