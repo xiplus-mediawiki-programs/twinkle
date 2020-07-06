@@ -323,7 +323,7 @@ Twinkle.image.callbacks = {
 		// var params = pageobj.getCallbackParameters();
 
 		pageobj.setPageText(text + '\n* [[:' + Morebits.pageNameNorm + ']]--~~~~');
-		pageobj.setEditSummary(wgULS('添加[[', '加入[[') + Morebits.pageNameNorm + ']]。' + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary(wgULS('添加[[', '加入[[') + Morebits.pageNameNorm + ']]' + Twinkle.getPref('summaryAd'));
 		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setCreateOption('recreate');
 		pageobj.save();
