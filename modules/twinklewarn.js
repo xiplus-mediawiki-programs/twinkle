@@ -13,7 +13,6 @@
  *                         etc.), as well as the rollback success page
  */
 
-
 Twinkle.warn = function twinklewarn() {
 
 	if (Morebits.wiki.flow.relevantUserName()) {
@@ -27,8 +26,8 @@ Twinkle.warn = function twinklewarn() {
 		}
 	}
 
-	// Modify URL of talk page on rollback success pages. This is only used
-	// when a user Ctrl+clicks on a rollback link.
+	// Modify URL of talk page on rollback success pages, makes use of a
+	// custom message box in [[MediaWiki:Rollback-success]]
 	if (mw.config.get('wgAction') === 'rollback') {
 		var $vandalTalkLink = $('#mw-rollback-success').find('.mw-usertoollinks a').first();
 		if ($vandalTalkLink.length) {
@@ -108,17 +107,22 @@ Twinkle.warn.makeVandalTalkLink = function($vandalTalkLink, pagename) {
 	}
 };
 
+// Used to close window when switching to ARV in autolevel
+Twinkle.warn.dialog = null;
+
 Twinkle.warn.callback = function twinklewarnCallback() {
 	if (Morebits.wiki.flow.relevantUserName() === mw.config.get('wgUserName') &&
 		!confirm(wgULS('您将要警告自己！您确定要继续吗？', '您將要警告自己！您確定要繼續嗎？'))) {
 		return;
 	}
 
-	var Window = new Morebits.simpleWindow(600, 440);
-	Window.setTitle(wgULS('警告、通知用户', '警告、通知使用者'));
-	Window.setScriptName('Twinkle');
-	Window.addFooterLink(wgULS('选择警告级别', '選擇警告級別'), 'WP:WARN');
-	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#warn');
+	var dialog;
+	Twinkle.warn.dialog = new Morebits.simpleWindow(600, 440);
+	dialog = Twinkle.warn.dialog;
+	dialog.setTitle(wgULS('警告、通知用户', '警告、通知使用者'));
+	dialog.setScriptName('Twinkle');
+	dialog.addFooterLink(wgULS('选择警告级别', '選擇警告級別'), 'WP:WARN');
+	dialog.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#warn');
 
 	var form = new Morebits.quickForm(Twinkle.warn.callback.evaluate);
 	var main_select = form.append({
@@ -134,7 +138,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	});
 
 	var defaultGroup = parseInt(Twinkle.getPref('defaultWarningGroup'), 10);
-	main_group.append({ type: 'option', label: wgULS('层级1', '層級1'), value: 'level1', selected: defaultGroup === 1 || defaultGroup < 1 || (Morebits.userIsSysop ? defaultGroup > 8 : defaultGroup > 7) });
+	main_group.append({ type: 'option', label: wgULS('层级1', '層級1'), value: 'level1', selected: defaultGroup === 1 });
 	main_group.append({ type: 'option', label: wgULS('层级2', '層級2'), value: 'level2', selected: defaultGroup === 2 });
 	main_group.append({ type: 'option', label: wgULS('层级3', '層級3'), value: 'level3', selected: defaultGroup === 3 });
 	main_group.append({ type: 'option', label: wgULS('层级4', '層級4'), value: 'level4', selected: defaultGroup === 4 });
@@ -148,6 +152,8 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	if (Twinkle.getPref('customWarningList').length) {
 		main_group.append({ type: 'option', label: wgULS('自定义警告', '自訂警告'), value: 'custom', selected: defaultGroup === 9 });
 	}
+	main_group.append({ type: 'option', label: wgULS('所有警告模板', '所有警告模板'), value: 'kitchensink', selected: defaultGroup === 10 });
+	main_group.append({ type: 'option', label: wgULS('自动选择层级（1-4）', '自動選擇層級（1-4）'), value: 'autolevel', selected: defaultGroup === 11 });
 
 	main_select.append({ type: 'select', name: 'sub_group', event: Twinkle.warn.callback.change_subcategory }); // Will be empty to begin with.
 
@@ -165,7 +171,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		type: 'div',
 		label: '',
 		style: 'color: red',
-		id: 'twinkle-warn-revert-messages'
+		id: 'twinkle-warn-warning-messages'
 	});
 
 	var vanrevid = mw.util.getParamValue('vanarticlerevid');
@@ -189,7 +195,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 				var revertUser = $(apiobj.getResponse()).find('revisions rev')[1].getAttribute('user');
 				if (revertUser && revertUser !== mw.config.get('wgUserName')) {
 					message += wgULS('其他人回退了该页面，并可能已经警告该用户。', '其他人回退了該頁面，並可能已經警告該使用者。');
-					$('#twinkle-warn-revert-messages').text('注意：' + message);
+					$('#twinkle-warn-warning-messages').text('注意：' + message);
 				}
 			}).post();
 		}
@@ -207,7 +213,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 			if (vantimestamp && revDate.isValid()) {
 				if (revDate.add(24, 'hours').isBefore(new Date())) {
 					message += wgULS('这笔编辑是在24小时前做出的，现在警告可能已过时。', '這筆編輯是在24小時前做出的，現在警告可能已過時。');
-					$('#twinkle-warn-revert-messages').text('注意：' + message);
+					$('#twinkle-warn-warning-messages').text('注意：' + message);
 				}
 			}
 		}).post();
@@ -228,8 +234,8 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	more.append({ type: 'submit', label: '提交' });
 
 	var result = form.render();
-	Window.setContent(result);
-	Window.display();
+	dialog.setContent(result);
+	dialog.display();
 	result.main_group.root = result;
 	result.previewer = new Morebits.wiki.preview($(result).find('div#twinklewarn-previewbox').last()[0]);
 
@@ -246,593 +252,595 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 //   suppressArticleInSummary (optional): Set to true to suppress showing the article name in the edit summary. Useful if the warning relates to attack pages, or some such.
 // 警告：警告消息有简体和繁体两个版本，请注意同时维护！
 Twinkle.warn.messages = wgULS({
-	level1: {
+	levels: {
 		'不同类型的非建设编辑': {
-			'uw-vandalism1': {
-				label: '明显的破坏',
-				summary: '层级1：明显破坏'
+			'uw-vandalism': {
+				level1: {
+					'label': '明显的破坏',
+					'summary': '层级1：明显破坏'
+				},
+				level2: {
+					'label': '明显的破坏',
+					'summary': '层级2：明显破坏'
+				},
+				level3: {
+					'label': '恶意破坏',
+					'summary': '层级3：恶意破坏'
+				},
+				level4: {
+					'label': '恶意破坏',
+					'summary': '层级4：恶意破坏'
+				},
+				level4im: {
+					'label': '恶意破坏',
+					'summary': '层级4im：恶意破坏'
+				}
 			},
-			'uw-test1': {
-				label: '进行编辑测试而未及时清理',
-				summary: '层级1：进行编辑测试而未及时清理'
+			'uw-test': {
+				level1: {
+					'label': '进行编辑测试而未及时清理',
+					'summary': '层级1：进行编辑测试而未及时清理'
+				},
+				level2: {
+					'label': '进行损毁性的编辑测试',
+					'summary': '层级2：进行编辑测试'
+				},
+				level3: {
+					'label': '编辑测试',
+					'summary': '层级3：编辑测试'
+				},
+				level4: {
+					'label': '编辑测试',
+					'summary': '层级4：编辑测试'
+				}
 			},
-			'uw-delete1': {
-				label: '不恰当地移除页面内容、模板或资料',
-				summary: '层级1：不恰当地移除页面内容、模板或资料'
+			'uw-delete': {
+				level1: {
+					'label': '不恰当地移除页面内容、模板或资料',
+					'summary': '层级1：不恰当地移除页面内容、模板或资料'
+				},
+				level2: {
+					'label': '不恰当地移除页面内容、模板或资料',
+					'summary': '层级2：不恰当地移除页面内容、模板或资料'
+				},
+				level3: {
+					'label': '不恰当地移除页面内容、模板或资料',
+					'summary': '层级3：不恰当地移除页面内容、模板或资料'
+				},
+				level4: {
+					'label': '移除页面、移除内容或模板',
+					'summary': '层级4：移除页面、移除内容或模板'
+				},
+				level4im: {
+					'label': '移除页面内容、模板或资料',
+					'summary': '层级4im：移除页面内容、模板或资料'
+				}
 			},
-			'uw-redirect1': {
-				label: '创建破坏性的重定向',
-				summary: '层级1：创建破坏性的重定向'
+			'uw-redirect': {
+				level1: {
+					'label': '创建破坏性的重定向',
+					'summary': '层级1：创建破坏性的重定向'
+				},
+				level2: {
+					'label': '创建恶意重定向',
+					'summary': '层级2：创建恶意重定向'
+				},
+				level3: {
+					'label': '创建恶意重定向',
+					'summary': '层级3：创建恶意重定向'
+				},
+				level4: {
+					'label': '创建恶意重定向',
+					'summary': '层级4：创建恶意重定向'
+				},
+				level4im: {
+					'label': '创建恶意重定向',
+					'summary': '层级4im：创建恶意重定向'
+				}
 			},
-			'uw-tdel1': {
-				label: '在问题仍未解决的情况下移除维护性模板',
-				summary: '层级1：移除维护性模板'
+			'uw-tdel': {
+				level1: {
+					'label': '在问题仍未解决的情况下移除维护性模板',
+					'summary': '层级1：移除维护性模板'
+				},
+				level2: {
+					'label': '在问题仍未解决的情况下移除维护性模板',
+					'summary': '层级2：移除维护性模板'
+				},
+				level3: {
+					'label': '移除维护性模板',
+					'summary': '层级3：移除维护性模板'
+				},
+				level4: {
+					'label': '移除维护性模板',
+					'summary': '层级4：移除维护性模板'
+				}
 			},
-			'uw-joke1': {
-				label: '在百科全书内容中加入玩笑',
-				summary: '层级1：加入不当玩笑'
+			'uw-joke': {
+				level1: {
+					'label': '在百科全书内容中加入玩笑',
+					'summary': '层级1：加入不当玩笑'
+				},
+				level2: {
+					'label': '在百科全书内容中加入玩笑',
+					'summary': '层级2：加入不当玩笑'
+				},
+				level3: {
+					'label': '在百科全书内容中加入不当玩笑',
+					'summary': '层级3：在百科全书内容中加入不当玩笑'
+				},
+				level4: {
+					'label': '在百科全书内容中加入不当玩笑',
+					'summary': '层级4：在百科全书内容中加入不当玩笑'
+				},
+				level4im: {
+					'label': '加入不当玩笑',
+					'summary': '层级4im：加入不当玩笑'
+				}
 			},
-			'uw-create1': {
-				label: '创建不当页面',
-				summary: '层级1：创建不当页面'
+			'uw-create': {
+				level1: {
+					'label': '创建不当页面',
+					'summary': '层级1：创建不当页面'
+				},
+				level2: {
+					'label': '创建不当页面',
+					'summary': '层级2：创建不当页面'
+				},
+				level3: {
+					'label': '创建不当页面',
+					'summary': '层级3：创建不当页面'
+				},
+				level4: {
+					'label': '创建不当页面',
+					'summary': '层级4：创建不当页面'
+				},
+				level4im: {
+					'label': '创建不当页面',
+					'summary': '层级4im：创建不当页面'
+				}
 			},
-			'uw-upload1': {
-				label: '上传不当图像',
-				summary: '层级1：上传不当图像'
+			'uw-upload': {
+				level1: {
+					'label': '上传不当图像',
+					'summary': '层级1：上传不当图像'
+				},
+				level2: {
+					'label': '上传不当图像',
+					'summary': '层级2：上传不当图像'
+				},
+				level3: {
+					'label': '上传不当图像',
+					'summary': '层级3：上传不当图像'
+				},
+				level4: {
+					'label': '上传不当图像',
+					'summary': '层级4：上传不当图像'
+				},
+				level4im: {
+					'label': '上传不当图像',
+					'summary': '层级4im：上传不当图像'
+				}
 			},
-			'uw-image1': {
-				label: '在页面中加入不当图片',
-				summary: '层级1：在页面中加入不当图片'
+			'uw-image': {
+				level1: {
+					'label': '在页面中加入不当图片',
+					'summary': '层级1：在页面中加入不当图片'
+				},
+				level2: {
+					'label': '在页面中加入不当图片',
+					'summary': '层级2：在页面中加入不当图片'
+				},
+				level3: {
+					'label': '在页面中加入不当图片',
+					'summary': '层级3：在页面中加入不当图片'
+				},
+				level4: {
+					'label': '在页面中加入不当图片',
+					'summary': '层级4：在页面中加入不当图片'
+				},
+				level4im: {
+					'label': '加入不恰当的图片',
+					'summary': '层级4im：加入不恰当的图片'
+				}
 			},
-			'uw-nor1': {
-				label: '在条目中加入原创研究',
-				summary: '层级1：在条目中加入原创研究'
+			'uw-nor': {
+				level1: {
+					'label': '在条目中加入原创研究',
+					'summary': '层级1：在条目中加入原创研究'
+				},
+				level2: {
+					'label': '在条目中加入原创研究',
+					'summary': '层级2：在条目中加入原创研究'
+				},
+				level3: {
+					'label': '在条目中加入原创研究',
+					'summary': '层级3：在条目中加入原创研究'
+				}
 			},
-			'uw-politicalbias1': {
-				label: '违反两岸用语方针',
-				summary: '层级1：违反两岸用语方针'
+			'uw-politicalbias': {
+				level1: {
+					'label': '违反两岸用语方针',
+					'summary': '层级1：违反两岸用语方针'
+				},
+				level2: {
+					'label': '违反两岸用语方针',
+					'summary': '层级2：违反两岸用语方针'
+				},
+				level3: {
+					'label': '违反两岸用语方针',
+					'summary': '层级3：违反两岸用语方针'
+				},
+				level4: {
+					'label': '违反两岸用语方针',
+					'summary': '层级4：违反两岸用语方针'
+				},
+				level4im: {
+					'label': '违反两岸用语方针',
+					'summary': '层级4im：违反两岸用语方针'
+				}
 			}
 		},
 		'增加商品或政治广告': {
-			'uw-spam1': {
-				label: '增加不合适的外部链接',
-				summary: '层级1：增加不合适的外部链接'
+			'uw-spam': {
+				level1: {
+					'label': '增加不合适的外部链接',
+					'summary': '层级1：增加不合适的外部链接'
+				},
+				level2: {
+					'label': '增加垃圾链接',
+					'summary': '层级2：增加垃圾链接'
+				},
+				level3: {
+					'label': '增加垃圾链接',
+					'summary': '层级3：增加垃圾链接'
+				},
+				level4: {
+					'label': '增加垃圾链接',
+					'summary': '层级4：增加垃圾链接'
+				},
+				level4im: {
+					'label': '增加垃圾连结',
+					'summary': '层级4im：增加垃圾连结'
+				}
 			},
-			'uw-advert1': {
-				label: '利用维基百科来发布广告或推广',
-				summary: '层级1：利用维基百科来发布广告或推广'
+			'uw-advert': {
+				level1: {
+					'label': '利用维基百科来发布广告或推广',
+					'summary': '层级1：利用维基百科来发布广告或推广'
+				},
+				level2: {
+					'label': '利用维基百科来发布广告或推广',
+					'summary': '层级2：利用维基百科来发布广告或推广'
+				},
+				level3: {
+					'label': '利用维基百科来发布广告或推广',
+					'summary': '层级3：利用维基百科来发布广告或推广'
+				},
+				level4: {
+					'label': '利用维基百科来发布广告或推广',
+					'summary': '层级4：利用维基百科来发布广告或推广'
+				}
 			},
-			'uw-npov1': {
-				label: '不遵守中立的观点方针',
-				summary: '层级1：不遵守中立的观点方针'
+			'uw-npov': {
+				level1: {
+					'label': '不遵守中立的观点方针',
+					'summary': '层级1：不遵守中立的观点方针'
+				},
+				level2: {
+					'label': '不遵守中立的观点方针',
+					'summary': '层级2：不遵守中立的观点方针'
+				},
+				level3: {
+					'label': '违反中立的观点方针',
+					'summary': '层级3：违反中立的观点方针'
+				},
+				level4: {
+					'label': '违反中立的观点方针',
+					'summary': '层级4：违反中立的观点方针'
+				}
 			}
 		},
 		'加插不实及/或诽谤文字': {
-			'uw-unsourced1': {
-				label: '加入没有可靠来源佐证的内容',
-				summary: '层级1：加入没有可靠来源佐证的内容'
+			'uw-unsourced': {
+				level1: {
+					'label': '加入没有可靠来源佐证的内容',
+					'summary': '层级1：加入没有可靠来源佐证的内容'
+				},
+				level2: {
+					'label': '加入没有可靠来源佐证的内容',
+					'summary': '层级2：加入没有可靠来源佐证的内容'
+				},
+				level3: {
+					'label': '加入没有可靠来源佐证的内容',
+					'summary': '层级3：加入没有可靠来源佐证的内容'
+				}
 			},
-			'uw-error1': {
-				label: '故意加入不实内容',
-				summary: '层级1：故意加入不实内容'
+			'uw-error': {
+				level1: {
+					'label': '故意加入不实内容',
+					'summary': '层级1：故意加入不实内容'
+				},
+				level2: {
+					'label': '故意加入不实内容',
+					'summary': '层级2：故意加入不实内容'
+				},
+				level3: {
+					'label': '故意加入不实内容',
+					'summary': '层级3：故意加入不实内容'
+				}
 			},
-			'uw-biog1': {
-				label: '在生者传记中加入没有可靠来源佐证而且可能引发争议的内容',
-				summary: '层级1：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
+			'uw-biog': {
+				level1: {
+					'label': '在生者传记中加入没有可靠来源佐证而且可能引发争议的内容',
+					'summary': '层级1：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
+				},
+				level2: {
+					'label': '在生者传记中加入没有可靠来源佐证而且可能引发争议的内容',
+					'summary': '层级2：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
+				},
+				level3: {
+					'label': '在生者传记中加入没有可靠来源佐证而且带有争议的内容',
+					'summary': '层级3：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
+				},
+				level4: {
+					'label': '加入有关在生人物而又缺乏来源的资料',
+					'summary': '层级4：加入有关在生人物而又缺乏来源的资料'
+				},
+				level4im: {
+					'label': '加入有关在生人物而又缺乏来源的资料',
+					'summary': '层级4im：加入有关在生人物而又缺乏来源的资料'
+				}
 			},
-			'uw-defamatory1': {
-				label: '加入诽谤内容',
-				summary: '层级1：加入诽谤内容'
+			'uw-defamatory': {
+				level1: {
+					'label': '加入诽谤内容',
+					'summary': '层级1：加入诽谤内容'
+				},
+				level2: {
+					'label': '加入诽谤内容',
+					'summary': '层级2：加入诽谤内容'
+				},
+				level3: {
+					'label': '加入诽谤内容',
+					'summary': '层级3：加入诽谤内容'
+				},
+				level4: {
+					'label': '加入诽谤内容',
+					'summary': '层级4：加入诽谤内容'
+				},
+				level4im: {
+					'label': '加入诽谤内容',
+					'summary': '层级4im：加入诽谤内容'
+				}
 			}
 		},
 		'翻译品质': {
-			'uw-roughtranslation1': {
-				label: '您翻译的质量有待改善',
-				summary: '层级1：您翻译的质量有待改善'
+			'uw-roughtranslation': {
+				level1: {
+					'label': '您翻译的质量有待改善',
+					'summary': '层级1：您翻译的质量有待改善'
+				},
+				level2: {
+					'label': '粗劣翻译',
+					'summary': '层级2：粗劣翻译'
+				},
+				level3: {
+					'label': '粗劣翻译',
+					'summary': '层级3：粗劣翻译'
+				}
 			}
 		},
 		'非能接受且违反方针或指引的单方面行为或操作': {
-			'uw-notcensored1': {
-				label: '因为“内容使人反感”而删除条目内容',
-				summary: '层级1：审查条目内容'
+			'uw-notcensored': {
+				level1: {
+					'label': '因为“内容使人反感”而删除条目内容',
+					'summary': '层级1：审查条目内容'
+				},
+				level2: {
+					'label': '内容审查',
+					'summary': '层级2：内容审查'
+				},
+				level3: {
+					'label': '审查内容',
+					'summary': '层级3：审查内容'
+				}
 			},
-			'uw-mos1': {
-				label: '不恰当的条目格式、日期、语言等',
-				summary: '层级1：不恰当的条目格式、日期、语言等'
+			'uw-mos': {
+				level1: {
+					'label': '不恰当的条目格式、日期、语言等',
+					'summary': '层级1：不恰当的条目格式、日期、语言等'
+				},
+				level2: {
+					'label': '不恰当的条目格式、日期、语言等',
+					'summary': '层级2：不恰当的条目格式、日期、语言等'
+				},
+				level3: {
+					'label': '违反格式、日期、语言等规定',
+					'summary': '层级3：违反格式、日期、语言等规定'
+				},
+				level4: {
+					'label': '违反格式、日期、语言等相关规定',
+					'summary': '层级4：违反格式、日期、语言等相关规定'
+				}
 			},
-			'uw-move1': {
-				label: '无故移动条目/新名称不符合命名规范',
-				summary: '层级1：不恰当地移动页面'
+			'uw-move': {
+				level1: {
+					'label': '无故移动条目/新名称不符合命名规范',
+					'summary': '层级1：不恰当地移动页面'
+				},
+				level2: {
+					'label': '把页面移动到不恰当、违反命名常规或违反共识的标题',
+					'summary': '层级2：不恰当地移动页面'
+				},
+				level3: {
+					'label': '不恰当地移动页面',
+					'summary': '层级3：不恰当地移动页面'
+				},
+				level4: {
+					'label': '不恰当地移动页面',
+					'summary': '层级4：不恰当地移动页面'
+				},
+				level4im: {
+					'label': '不恰当地移动页面',
+					'summary': '层级4im：不恰当地移动页面'
+				}
 			},
-			'uw-cd1': {
-				label: '清空讨论页',
-				summary: '层级1：清空讨论页'
+			'uw-cd': {
+				level1: {
+					'label': '清空讨论页',
+					'summary': '层级1：清空讨论页'
+				},
+				level2: {
+					'label': '清空讨论页',
+					'summary': '层级2：清空讨论页'
+				},
+				level3: {
+					'label': '清空讨论页',
+					'summary': '层级3：清空讨论页'
+				}
 			},
-			'uw-chat1': {
-				label: '在讨论页发表与改善条目无关的内容',
-				summary: '层级1：在讨论页发表与改善条目无关的内容'
+			'uw-chat': {
+				level1: {
+					'label': '在讨论页发表与改善条目无关的内容',
+					'summary': '层级1：在讨论页发表与改善条目无关的内容'
+				},
+				level2: {
+					'label': '在讨论页发表与改善条目无关的内容',
+					'summary': '层级2：在讨论页发表与改善条目无关的内容'
+				},
+				level3: {
+					'label': '在讨论页发表无关内容',
+					'summary': '层级3：在讨论页发表无关内容'
+				},
+				level4: {
+					'label': '在讨论页进行不当讨论',
+					'summary': '层级4：在讨论页进行不当讨论'
+				}
 			},
-			'uw-tpv1': {
-				label: '修改他人留言',
-				summary: '层级1：修改他人留言'
+			'uw-tpv': {
+				level1: {
+					'label': '修改他人留言',
+					'summary': '层级1：修改他人留言'
+				},
+				level2: {
+					'label': '修改他人留言',
+					'summary': '层级2：修改他人留言'
+				},
+				level3: {
+					'label': '修改他人留言',
+					'summary': '层级3：修改他人留言'
+				}
 			},
-			'uw-afd1': {
-				label: '移除{{afd}}（页面存废讨论）模板',
-				summary: '层级1：移除{{afd}}（页面存废讨论）模板'
+			'uw-afd': {
+				level1: {
+					'label': '移除{{afd}}（页面存废讨论）模板',
+					'summary': '层级1：移除{{afd}}（页面存废讨论）模板'
+				},
+				level2: {
+					'label': '移除{{afd}}（页面存废讨论）模板',
+					'summary': '层级2：移除{{afd}}（页面存废讨论）模板'
+				},
+				level3: {
+					'label': '移除{{afd}}（页面存废讨论）模板',
+					'summary': '层级3：移除{{afd}}（页面存废讨论）模板'
+				},
+				level4: {
+					'label': '移除{{afd}}模板',
+					'summary': '层级4：移除{{afd}}模板'
+				}
 			},
-			'uw-speedy1': {
-				label: '移除{{delete}}（快速删除）模板',
-				summary: '层级1：移除{{delete}}（快速删除）模板'
+			'uw-speedy': {
+				level1: {
+					'label': '移除{{delete}}（快速删除）模板',
+					'summary': '层级1：移除{{delete}}（快速删除）模板'
+				},
+				level2: {
+					'label': '移除{{delete}}（快速删除）模板',
+					'summary': '层级2：移除{{delete}}（快速删除）模板'
+				},
+				level3: {
+					'label': '移除{{delete}}（快速删除）模板',
+					'summary': '层级3：移除{{delete}}（快速删除）模板'
+				},
+				level4: {
+					'label': '移除{{delete}}模板',
+					'summary': '层级4：移除{{delete}}模板'
+				}
 			}
 		},
 		'对其他用户和条目的态度': {
-			'uw-npa1': {
-				label: '针对用户的人身攻击',
-				summary: '层级1：针对用户的人身攻击'
-			},
-			'uw-agf1': {
-				label: '没有假定善意',
-				summary: '层级1：没有假定善意'
-			},
-			'uw-own1': {
-				label: '主张条目所有权',
-				summary: '层级1：主张条目所有权'
-			},
-			'uw-tempabuse1': {
-				label: '不当使用警告或封禁模板',
-				summary: '层级1：不当使用警告或封禁模板'
-			}
-		}
-	},
-
-
-	level2: {
-		'不同类型的非建设编辑': {
-			'uw-vandalism2': {
-				label: '明显的破坏',
-				summary: '层级2：明显破坏'
-			},
-			'uw-test2': {
-				label: '进行损毁性的编辑测试',
-				summary: '层级2：进行编辑测试'
-			},
-			'uw-delete2': {
-				label: '不恰当地移除页面内容、模板或资料',
-				summary: '层级2：不恰当地移除页面内容、模板或资料'
-			},
-			'uw-redirect2': {
-				label: '创建恶意重定向',
-				summary: '层级2：创建恶意重定向'
-			},
-			'uw-tdel2': {
-				label: '在问题仍未解决的情况下移除维护性模板',
-				summary: '层级2：移除维护性模板'
-			},
-			'uw-joke2': {
-				label: '在百科全书内容中加入玩笑',
-				summary: '层级2：加入不当玩笑'
-			},
-			'uw-create2': {
-				label: '创建不当页面',
-				summary: '层级2：创建不当页面'
-			},
-			'uw-upload2': {
-				label: '上传不当图像',
-				summary: '层级2：上传不当图像'
-			},
-			'uw-image2': {
-				label: '在页面中加入不当图片',
-				summary: '层级2：在页面中加入不当图片'
-			},
-			'uw-nor2': {
-				label: '在条目中加入原创研究',
-				summary: '层级2：在条目中加入原创研究'
-			},
-			'uw-politicalbias2': {
-				label: '违反两岸用语方针',
-				summary: '层级2：违反两岸用语方针'
-			}
-		},
-		'增加商品或政治广告': {
-			'uw-spam2': {
-				label: '增加垃圾链接',
-				summary: '层级2：增加垃圾链接'
-			},
-			'uw-advert2': {
-				label: '利用维基百科来发布广告或推广',
-				summary: '层级2：利用维基百科来发布广告或推广'
-			},
-			'uw-npov2': {
-				label: '不遵守中立的观点方针',
-				summary: '层级2：不遵守中立的观点方针'
-			}
-		},
-		'加插不实及/或诽谤文字': {
-			'uw-unsourced2': {
-				label: '加入没有可靠来源佐证的内容',
-				summary: '层级2：加入没有可靠来源佐证的内容'
-			},
-			'uw-error2': {
-				label: '故意加入不实内容',
-				summary: '层级2：故意加入不实内容'
-			},
-			'uw-biog2': {
-				label: '在生者传记中加入没有可靠来源佐证而且可能引发争议的内容',
-				summary: '层级2：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
-			},
-			'uw-defamatory2': {
-				label: '加入诽谤内容',
-				summary: '层级2：加入诽谤内容'
-			}
-		},
-		'翻译品质': {
-			'uw-roughtranslation2': {
-				label: '粗劣翻译',
-				summary: '层级2：粗劣翻译'
-			}
-		},
-		'非能接受且违反方针或指引的单方面行为或操作': {
-			'uw-notcensored2': {
-				label: '内容审查',
-				summary: '层级2：内容审查'
-			},
-			'uw-mos2': {
-				label: '不恰当的条目格式、日期、语言等',
-				summary: '层级2：不恰当的条目格式、日期、语言等'
-			},
-			'uw-move2': {
-				label: '把页面移动到不恰当、违反命名常规或违反共识的标题',
-				summary: '层级2：不恰当地移动页面'
-			},
-			'uw-cd2': {
-				label: '清空讨论页',
-				summary: '层级2：清空讨论页'
-			},
-			'uw-chat2': {
-				label: '在讨论页发表与改善条目无关的内容',
-				summary: '层级2：在讨论页发表与改善条目无关的内容'
-			},
-			'uw-tpv2': {
-				label: '修改他人留言',
-				summary: '层级2：修改他人留言'
-			},
-			'uw-afd2': {
-				label: '移除{{afd}}（页面存废讨论）模板',
-				summary: '层级2：移除{{afd}}（页面存废讨论）模板'
-			},
-			'uw-speedy2': {
-				label: '移除{{delete}}（快速删除）模板',
-				summary: '层级2：移除{{delete}}（快速删除）模板'
-			}
-		},
-		'对其他用户和条目的态度': {
-			'uw-npa2': {
-				label: '针对用户的人身攻击',
-				summary: '层级2：针对用户的人身攻击'
-			},
-			'uw-agf2': {
-				label: '没有假定善意',
-				summary: '层级2：没有假定善意'
-			},
-			'uw-own2': {
-				label: '主张条目的所有权',
-				summary: '层级2：主张条目的所有权'
-			},
-			'uw-tempabuse2': {
-				label: '不当使用警告或封禁模板',
-				summary: '层级2：不当使用警告或封禁模板'
-			}
-		}
-	},
-
-
-	level3: {
-		'不同类型的非建设编辑': {
-			'uw-vandalism3': {
-				label: '恶意破坏',
-				summary: '层级3：恶意破坏'
-			},
-			'uw-test3': {
-				label: '编辑测试',
-				summary: '层级3：编辑测试'
-			},
-			'uw-delete3': {
-				label: '不恰当地移除页面内容、模板或资料',
-				summary: '层级3：不恰当地移除页面内容、模板或资料'
-			},
-			'uw-redirect3': {
-				label: '创建恶意重定向',
-				summary: '层级3：创建恶意重定向'
-			},
-			'uw-tdel3': {
-				label: '移除维护性模板',
-				summary: '层级3：移除维护性模板'
-			},
-			'uw-joke3': {
-				label: '在百科全书内容中加入不当玩笑',
-				summary: '层级3：在百科全书内容中加入不当玩笑'
-			},
-			'uw-create3': {
-				label: '创建不当页面',
-				summary: '层级3：创建不当页面'
-			},
-			'uw-upload3': {
-				label: '上传不当图像',
-				summary: '层级3：上传不当图像'
-			},
-			'uw-image3': {
-				label: '在页面中加入不当图片',
-				summary: '层级3：在页面中加入不当图片'
-			},
-			'uw-nor3': {
-				label: '在条目中加入原创研究',
-				summary: '层级3：在条目中加入原创研究'
-			},
-			'uw-politicalbias3': {
-				label: '违反两岸用语方针',
-				summary: '层级3：违反两岸用语方针'
-			}
-		},
-		'增加商品或政治广告': {
-			'uw-spam3': {
-				label: '增加垃圾链接',
-				summary: '层级3：增加垃圾链接'
-			},
-			'uw-advert3': {
-				label: '利用维基百科来发布广告或推广',
-				summary: '层级3：利用维基百科来发布广告或推广'
-			},
-			'uw-npov3': {
-				label: '违反中立的观点方针',
-				summary: '层级3：违反中立的观点方针'
-			}
-		},
-		'加插不实及/或诽谤文字': {
-			'uw-unsourced3': {
-				label: '加入没有可靠来源佐证的内容',
-				summary: '层级3：加入没有可靠来源佐证的内容'
-			},
-			'uw-error3': {
-				label: '故意加入不实内容',
-				summary: '层级3：故意加入不实内容'
-			},
-			'uw-biog3': {
-				label: '在生者传记中加入没有可靠来源佐证而且带有争议的内容',
-				summary: '层级3：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
-			},
-			'uw-defamatory3': {
-				label: '加入诽谤内容',
-				summary: '层级3：加入诽谤内容'
-			}
-		},
-		'翻译品质': {
-			'uw-roughtranslation3': {
-				label: '粗劣翻译',
-				summary: '层级3：粗劣翻译'
-			}
-		},
-		'非能接受且违反方针或指引的单方面行为或操作': {
-			'uw-notcensored3': {
-				label: '审查内容',
-				summary: '层级3：审查内容'
-			},
-			'uw-mos3': {
-				label: '违反格式、日期、语言等规定',
-				summary: '层级3：违反格式、日期、语言等规定'
-			},
-			'uw-move3': {
-				label: '不恰当地移动页面',
-				summary: '层级3：不恰当地移动页面'
-			},
-			'uw-cd3': {
-				label: '清空讨论页',
-				summary: '层级3：清空讨论页'
-			},
-			'uw-chat3': {
-				label: '在讨论页发表无关内容',
-				summary: '层级3：在讨论页发表无关内容'
-			},
-			'uw-tpv3': {
-				label: '修改他人留言',
-				summary: '层级3：修改他人留言'
-			},
-			'uw-afd3': {
-				label: '移除{{afd}}（页面存废讨论）模板',
-				summary: '层级3：移除{{afd}}（页面存废讨论）模板'
-			},
-			'uw-speedy3': {
-				label: '移除{{delete}}（快速删除）模板',
-				summary: '层级3：移除{{delete}}（快速删除）模板'
-			}
-		},
-		'对其他用户和条目的态度': {
-			'uw-npa3': {
-				label: '针对用户的人身攻击',
-				summary: '层级3：针对用户的人身攻击'
-			},
-			'uw-agf3': {
-				label: '没有假定善意',
-				summary: '层级3：没有假定善意'
-			},
-			'uw-own3': {
-				label: '主张条目的所有权',
-				summary: '层级3：主张条目的所有权'
-			},
-			'uw-tempabuse3': {
-				label: '不当使用警告或封禁模板',
-				summary: '层级3：不当使用警告或封禁模板'
-			}
-		}
-	},
-
-
-	level4: {
-		'不同类型的非建设编辑': {
-			'uw-vandalism4': {
-				label: '恶意破坏',
-				summary: '层级4：恶意破坏'
-			},
-			'uw-test4': {
-				label: '编辑测试',
-				summary: '层级4：编辑测试'
-			},
-			'uw-delete4': {
-				label: '移除页面、移除内容或模板',
-				summary: '层级4：移除页面、移除内容或模板'
-			},
-			'uw-redirect4': {
-				label: '创建恶意重定向',
-				summary: '层级4：创建恶意重定向'
-			},
-			'uw-tdel4': {
-				label: '移除维护性模板',
-				summary: '层级4：移除维护性模板'
-			},
-			'uw-joke4': {
-				label: '在百科全书内容中加入不当玩笑',
-				summary: '层级4：在百科全书内容中加入不当玩笑'
-			},
-			'uw-create4': {
-				label: '创建不当页面',
-				summary: '层级4：创建不当页面'
-			},
-			'uw-upload4': {
-				label: '上传不当图像',
-				summary: '层级4：上传不当图像'
-			},
-			'uw-image4': {
-				label: '在页面中加入不当图片',
-				summary: '层级4：在页面中加入不当图片'
-			},
-			'uw-politicalbias4': {
-				label: '违反两岸用语方针',
-				summary: '层级4：违反两岸用语方针'
-			}
-		},
-		'增加商品或政治广告': {
-			'uw-spam4': {
-				label: '增加垃圾链接',
-				summary: '层级4：增加垃圾链接'
-			},
-			'uw-advert4': {
-				label: '利用维基百科来发布广告或推广',
-				summary: '层级4：利用维基百科来发布广告或推广'
-			},
-			'uw-npov4': {
-				label: '违反中立的观点方针',
-				summary: '层级4：违反中立的观点方针'
-			}
-		},
-		'加插不实及/或诽谤文字': {
-			'uw-biog4': {
-				label: '加入有关在生人物而又缺乏来源的资料',
-				summary: '层级4：加入有关在生人物而又缺乏来源的资料'
-			},
-			'uw-defamatory4': {
-				label: '加入诽谤内容',
-				summary: '层级4：加入诽谤内容'
-			}
-		},
-		'非能接受且违反方针或指引的单方面行为或操作': {
-			'uw-mos4': {
-				label: '违反格式、日期、语言等相关规定',
-				summary: '层级4：违反格式、日期、语言等相关规定'
-			},
-			'uw-move4': {
-				label: '不恰当地移动页面',
-				summary: '层级4：不恰当地移动页面'
-			},
-			'uw-chat4': {
-				label: '在讨论页进行不当讨论',
-				summary: '层级4：在讨论页进行不当讨论'
-			},
-			'uw-afd4': {
-				label: '移除{{afd}}模板',
-				summary: '层级4：移除{{afd}}模板'
-			},
-			'uw-speedy4': {
-				label: '移除{{delete}}模板',
-				summary: '层级4：移除{{delete}}模板'
-			}
-		},
-		'对其他用户和条目的态度': {
-			'uw-npa4': {
-				label: '针对用户的人身攻击',
-				summary: '层级4：针对用户的人身攻击'
-			},
-			'uw-tempabuse4': {
-				label: '不当使用警告或封禁模板',
-				summary: '层级4：不当使用警告或封禁模板'
-			}
-		}
-	},
-
-
-	level4im: {
-		'不同类型的非建设编辑': {
-			'uw-vandalism4im': {
-				label: '恶意破坏',
-				summary: '层级4im：恶意破坏'
-			},
-			'uw-delete4im': {
-				label: '移除页面内容、模板或资料',
-				summary: '层级4im：移除页面内容、模板或资料'
-			},
-			'uw-redirect4im': {
-				label: '创建恶意重定向',
-				summary: '层级4im：创建恶意重定向'
-			},
-			'uw-joke4im': {
-				label: '加入不当玩笑',
-				summary: '层级4im：加入不当玩笑'
-			},
-			'uw-create4im': {
-				label: '创建不当页面',
-				summary: '层级4im：创建不当页面'
-			},
-			'uw-upload4im': {
-				label: '上传不当图像',
-				summary: '层级4im：上传不当图像'
-			},
-			'uw-image4im': {
-				label: '加入不恰当的图片',
-				summary: '层级4im：加入不恰当的图片'
-			},
-			'uw-politicalbias4im': {
-				label: '违反两岸用语方针',
-				summary: '层级4im：违反两岸用语方针'
-			}
-		},
-		'增加商品或政治广告': {
-			'uw-spam4im': {
-				label: '增加垃圾连结',
-				summary: '层级4im：增加垃圾连结'
-			}
-		},
-		'加插不实及/或诽谤文字': {
-			'uw-biog4im': {
-				label: '加入有关在生人物而又缺乏来源的资料',
-				summary: '层级4im：加入有关在生人物而又缺乏来源的资料'
-			},
-			'uw-defamatory4im': {
-				label: '加入诽谤内容',
-				summary: '层级4im：加入诽谤内容'
-			}
-		},
-		'非能接受且违反方针或指引的单方面行为或操作': {
-			'uw-move4im': {
-				label: '不恰当地移动页面',
-				summary: '层级4im：不恰当地移动页面'
-			}
-		},
-		'对其他用户和条目的态度': {
-			'uw-npa4im': {
-				label: '针对用户的人身攻击',
-				summary: '层级4im：针对用户的人身攻击'
-			},
-			'uw-tempabuse4im': {
-				label: '不当使用警告或封禁模板',
-				summary: '层级4im：不当使用警告或封禁模板'
+			'uw-npa': {
+				level1: {
+					'label': '针对用户的人身攻击',
+					'summary': '层级1：针对用户的人身攻击'
+				},
+				level2: {
+					'label': '针对用户的人身攻击',
+					'summary': '层级2：针对用户的人身攻击'
+				},
+				level3: {
+					'label': '针对用户的人身攻击',
+					'summary': '层级3：针对用户的人身攻击'
+				},
+				level4: {
+					'label': '针对用户的人身攻击',
+					'summary': '层级4：针对用户的人身攻击'
+				},
+				level4im: {
+					'label': '针对用户的人身攻击',
+					'summary': '层级4im：针对用户的人身攻击'
+				}
+			},
+			'uw-agf': {
+				level1: {
+					'label': '没有假定善意',
+					'summary': '层级1：没有假定善意'
+				},
+				level2: {
+					'label': '没有假定善意',
+					'summary': '层级2：没有假定善意'
+				},
+				level3: {
+					'label': '没有假定善意',
+					'summary': '层级3：没有假定善意'
+				}
+			},
+			'uw-own': {
+				level1: {
+					'label': '主张条目所有权',
+					'summary': '层级1：主张条目所有权'
+				},
+				level2: {
+					'label': '主张条目的所有权',
+					'summary': '层级2：主张条目的所有权'
+				},
+				level3: {
+					'label': '主张条目的所有权',
+					'summary': '层级3：主张条目的所有权'
+				}
+			},
+			'uw-tempabuse': {
+				level1: {
+					'label': '不当使用警告或封禁模板',
+					'summary': '层级1：不当使用警告或封禁模板'
+				},
+				level2: {
+					'label': '不当使用警告或封禁模板',
+					'summary': '层级2：不当使用警告或封禁模板'
+				},
+				level3: {
+					'label': '不当使用警告或封禁模板',
+					'summary': '层级3：不当使用警告或封禁模板'
+				},
+				level4: {
+					'label': '不当使用警告或封禁模板',
+					'summary': '层级4：不当使用警告或封禁模板'
+				},
+				level4im: {
+					'label': '不当使用警告或封禁模板',
+					'summary': '层级4im：不当使用警告或封禁模板'
+				}
 			}
 		}
 	},
@@ -984,7 +992,6 @@ Twinkle.warn.messages = wgULS({
 		}
 	},
 
-
 	singlewarn: {
 		'uw-3rr': {
 			label: '用户潜在违反回退不过三原则的可能性',
@@ -1066,593 +1073,595 @@ Twinkle.warn.messages = wgULS({
 		}
 	}
 }, {
-	level1: {
+	levels: {
 		'不同類別的非建設編輯': {
-			'uw-vandalism1': {
-				label: '明顯的破壞',
-				summary: '層級1：明顯破壞'
+			'uw-vandalism': {
+				level1: {
+					'label': '明顯的破壞',
+					'summary': '層級1：明顯破壞'
+				},
+				level2: {
+					'label': '明顯的破壞',
+					'summary': '層級2：明顯破壞'
+				},
+				level3: {
+					'label': '惡意破壞',
+					'summary': '層級3：惡意破壞'
+				},
+				level4: {
+					'label': '惡意破壞',
+					'summary': '層級4：惡意破壞'
+				},
+				level4im: {
+					'label': '惡意破壞',
+					'summary': '層級4im：惡意破壞'
+				}
 			},
-			'uw-test1': {
-				label: '進行編輯測試而未及時清理',
-				summary: '層級1：進行編輯測試而未及時清理'
+			'uw-test': {
+				level1: {
+					'label': '進行編輯測試而未及時清理',
+					'summary': '層級1：進行編輯測試而未及時清理'
+				},
+				level2: {
+					'label': '進行損毀性的編輯測試',
+					'summary': '層級2：進行編輯測試'
+				},
+				level3: {
+					'label': '編輯測試',
+					'summary': '層級3：編輯測試'
+				},
+				level4: {
+					'label': '編輯測試',
+					'summary': '層級4：編輯測試'
+				}
 			},
-			'uw-delete1': {
-				label: '不恰當地移除頁面內容、模板或資料',
-				summary: '層級1：不恰當地移除頁面內容、模板或資料'
+			'uw-delete': {
+				level1: {
+					'label': '不恰當地移除頁面內容、模板或資料',
+					'summary': '層級1：不恰當地移除頁面內容、模板或資料'
+				},
+				level2: {
+					'label': '不恰當地移除頁面內容、模板或資料',
+					'summary': '層級2：不恰當地移除頁面內容、模板或資料'
+				},
+				level3: {
+					'label': '不恰當地移除頁面內容、模板或資料',
+					'summary': '層級3：不恰當地移除頁面內容、模板或資料'
+				},
+				level4: {
+					'label': '移除頁面、移除內容或模板',
+					'summary': '層級4：移除頁面、移除內容或模板'
+				},
+				level4im: {
+					'label': '移除頁面內容、模板或資料',
+					'summary': '層級4im：移除頁面內容、模板或資料'
+				}
 			},
-			'uw-redirect1': {
-				label: '建立破壞性的重定向',
-				summary: '層級1：建立破壞性的重定向'
+			'uw-redirect': {
+				level1: {
+					'label': '建立破壞性的重定向',
+					'summary': '層級1：建立破壞性的重定向'
+				},
+				level2: {
+					'label': '建立惡意重定向',
+					'summary': '層級2：建立惡意重定向'
+				},
+				level3: {
+					'label': '建立惡意重定向',
+					'summary': '層級3：建立惡意重定向'
+				},
+				level4: {
+					'label': '建立惡意重定向',
+					'summary': '層級4：建立惡意重定向'
+				},
+				level4im: {
+					'label': '建立惡意重定向',
+					'summary': '層級4im：建立惡意重定向'
+				}
 			},
-			'uw-tdel1': {
-				label: '在問題仍未解決的情況下移除維護性模板',
-				summary: '層級1：移除維護性模板'
+			'uw-tdel': {
+				level1: {
+					'label': '在問題仍未解決的情況下移除維護性模板',
+					'summary': '層級1：移除維護性模板'
+				},
+				level2: {
+					'label': '在問題仍未解決的情況下移除維護性模板',
+					'summary': '層級2：移除維護性模板'
+				},
+				level3: {
+					'label': '移除維護性模板',
+					'summary': '層級3：移除維護性模板'
+				},
+				level4: {
+					'label': '移除維護性模板',
+					'summary': '層級4：移除維護性模板'
+				}
 			},
-			'uw-joke1': {
-				label: '在百科全書內容中加入玩笑',
-				summary: '層級1：加入不當玩笑'
+			'uw-joke': {
+				level1: {
+					'label': '在百科全書內容中加入玩笑',
+					'summary': '層級1：加入不當玩笑'
+				},
+				level2: {
+					'label': '在百科全書內容中加入玩笑',
+					'summary': '層級2：加入不當玩笑'
+				},
+				level3: {
+					'label': '在百科全書內容中加入不當玩笑',
+					'summary': '層級3：在百科全書內容中加入不當玩笑'
+				},
+				level4: {
+					'label': '在百科全書內容中加入不當玩笑',
+					'summary': '層級4：在百科全書內容中加入不當玩笑'
+				},
+				level4im: {
+					'label': '加入不當玩笑',
+					'summary': '層級4im：加入不當玩笑'
+				}
 			},
-			'uw-create1': {
-				label: '建立不當頁面',
-				summary: '層級1：建立不當頁面'
+			'uw-create': {
+				level1: {
+					'label': '建立不當頁面',
+					'summary': '層級1：建立不當頁面'
+				},
+				level2: {
+					'label': '建立不當頁面',
+					'summary': '層級2：建立不當頁面'
+				},
+				level3: {
+					'label': '建立不當頁面',
+					'summary': '層級3：建立不當頁面'
+				},
+				level4: {
+					'label': '建立不當頁面',
+					'summary': '層級4：建立不當頁面'
+				},
+				level4im: {
+					'label': '建立不當頁面',
+					'summary': '層級4im：建立不當頁面'
+				}
 			},
-			'uw-upload1': {
-				label: '上傳不當圖像',
-				summary: '層級1：上傳不當圖像'
+			'uw-upload': {
+				level1: {
+					'label': '上傳不當圖像',
+					'summary': '層級1：上傳不當圖像'
+				},
+				level2: {
+					'label': '上傳不當圖像',
+					'summary': '層級2：上傳不當圖像'
+				},
+				level3: {
+					'label': '上傳不當圖像',
+					'summary': '層級3：上傳不當圖像'
+				},
+				level4: {
+					'label': '上傳不當圖像',
+					'summary': '層級4：上傳不當圖像'
+				},
+				level4im: {
+					'label': '上傳不當圖像',
+					'summary': '層級4im：上傳不當圖像'
+				}
 			},
-			'uw-image1': {
-				label: '在頁面中加入不當圖片',
-				summary: '層級1：在頁面中加入不當圖片'
+			'uw-image': {
+				level1: {
+					'label': '在頁面中加入不當圖片',
+					'summary': '層級1：在頁面中加入不當圖片'
+				},
+				level2: {
+					'label': '在頁面中加入不當圖片',
+					'summary': '層級2：在頁面中加入不當圖片'
+				},
+				level3: {
+					'label': '在頁面中加入不當圖片',
+					'summary': '層級3：在頁面中加入不當圖片'
+				},
+				level4: {
+					'label': '在頁面中加入不當圖片',
+					'summary': '層級4：在頁面中加入不當圖片'
+				},
+				level4im: {
+					'label': '加入不恰當的圖片',
+					'summary': '層級4im：加入不恰當的圖片'
+				}
 			},
-			'uw-nor1': {
-				label: '在條目中加入原創研究',
-				summary: '層級1：在條目中加入原創研究'
+			'uw-nor': {
+				level1: {
+					'label': '在條目中加入原創研究',
+					'summary': '層級1：在條目中加入原創研究'
+				},
+				level2: {
+					'label': '在條目中加入原創研究',
+					'summary': '層級2：在條目中加入原創研究'
+				},
+				level3: {
+					'label': '在條目中加入原創研究',
+					'summary': '層級3：在條目中加入原創研究'
+				}
 			},
-			'uw-politicalbias1': {
-				label: '違反兩岸用語方針',
-				summary: '層級1：違反兩岸用語方針'
+			'uw-politicalbias': {
+				level1: {
+					'label': '違反兩岸用語方針',
+					'summary': '層級1：違反兩岸用語方針'
+				},
+				level2: {
+					'label': '違反兩岸用語方針',
+					'summary': '層級2：違反兩岸用語方針'
+				},
+				level3: {
+					'label': '違反兩岸用語方針',
+					'summary': '層級3：違反兩岸用語方針'
+				},
+				level4: {
+					'label': '違反兩岸用語方針',
+					'summary': '層級4：違反兩岸用語方針'
+				},
+				level4im: {
+					'label': '違反兩岸用語方針',
+					'summary': '層級4im：違反兩岸用語方針'
+				}
 			}
 		},
 		'增加商品或政治廣告': {
-			'uw-spam1': {
-				label: '增加不合適的外部連結',
-				summary: '層級1：增加不合適的外部連結'
+			'uw-spam': {
+				level1: {
+					'label': '增加不合適的外部連結',
+					'summary': '層級1：增加不合適的外部連結'
+				},
+				level2: {
+					'label': '增加垃圾連結',
+					'summary': '層級2：增加垃圾連結'
+				},
+				level3: {
+					'label': '增加垃圾連結',
+					'summary': '層級3：增加垃圾連結'
+				},
+				level4: {
+					'label': '增加垃圾連結',
+					'summary': '層級4：增加垃圾連結'
+				},
+				level4im: {
+					'label': '增加垃圾連結',
+					'summary': '層級4im：增加垃圾連結'
+				}
 			},
-			'uw-advert1': {
-				label: '利用維基百科來發布廣告或推廣',
-				summary: '層級1：利用維基百科來發布廣告或推廣'
+			'uw-advert': {
+				level1: {
+					'label': '利用維基百科來發布廣告或推廣',
+					'summary': '層級1：利用維基百科來發布廣告或推廣'
+				},
+				level2: {
+					'label': '利用維基百科來發布廣告或推廣',
+					'summary': '層級2：利用維基百科來發布廣告或推廣'
+				},
+				level3: {
+					'label': '利用維基百科來發布廣告或推廣',
+					'summary': '層級3：利用維基百科來發布廣告或推廣'
+				},
+				level4: {
+					'label': '利用維基百科來發布廣告或推廣',
+					'summary': '層級4：利用維基百科來發布廣告或推廣'
+				}
 			},
-			'uw-npov1': {
-				label: '不遵守中立的觀點方針',
-				summary: '層級1：不遵守中立的觀點方針'
+			'uw-npov': {
+				level1: {
+					'label': '不遵守中立的觀點方針',
+					'summary': '層級1：不遵守中立的觀點方針'
+				},
+				level2: {
+					'label': '不遵守中立的觀點方針',
+					'summary': '層級2：不遵守中立的觀點方針'
+				},
+				level3: {
+					'label': '違反中立的觀點方針',
+					'summary': '層級3：違反中立的觀點方針'
+				},
+				level4: {
+					'label': '違反中立的觀點方針',
+					'summary': '層級4：違反中立的觀點方針'
+				}
 			}
 		},
 		'加插不實及/或誹謗文字': {
-			'uw-unsourced1': {
-				label: '加入沒有可靠來源佐證的內容',
-				summary: '層級1：加入沒有可靠來源佐證的內容'
+			'uw-unsourced': {
+				level1: {
+					'label': '加入沒有可靠來源佐證的內容',
+					'summary': '層級1：加入沒有可靠來源佐證的內容'
+				},
+				level2: {
+					'label': '加入沒有可靠來源佐證的內容',
+					'summary': '層級2：加入沒有可靠來源佐證的內容'
+				},
+				level3: {
+					'label': '加入沒有可靠來源佐證的內容',
+					'summary': '層級3：加入沒有可靠來源佐證的內容'
+				}
 			},
-			'uw-error1': {
-				label: '故意加入不實內容',
-				summary: '層級1：故意加入不實內容'
+			'uw-error': {
+				level1: {
+					'label': '故意加入不實內容',
+					'summary': '層級1：故意加入不實內容'
+				},
+				level2: {
+					'label': '故意加入不實內容',
+					'summary': '層級2：故意加入不實內容'
+				},
+				level3: {
+					'label': '故意加入不實內容',
+					'summary': '層級3：故意加入不實內容'
+				}
 			},
-			'uw-biog1': {
-				label: '在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容',
-				summary: '層級1：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
+			'uw-biog': {
+				level1: {
+					'label': '在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容',
+					'summary': '層級1：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
+				},
+				level2: {
+					'label': '在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容',
+					'summary': '層級2：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
+				},
+				level3: {
+					'label': '在生者傳記中加入沒有可靠來源佐證而且帶有爭議的內容',
+					'summary': '層級3：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
+				},
+				level4: {
+					'label': '加入有關在生人物而又缺乏來源的資料',
+					'summary': '層級4：加入有關在生人物而又缺乏來源的資料'
+				},
+				level4im: {
+					'label': '加入有關在生人物而又缺乏來源的資料',
+					'summary': '層級4im：加入有關在生人物而又缺乏來源的資料'
+				}
 			},
-			'uw-defamatory1': {
-				label: '加入誹謗內容',
-				summary: '層級1：加入誹謗內容'
+			'uw-defamatory': {
+				level1: {
+					'label': '加入誹謗內容',
+					'summary': '層級1：加入誹謗內容'
+				},
+				level2: {
+					'label': '加入誹謗內容',
+					'summary': '層級2：加入誹謗內容'
+				},
+				level3: {
+					'label': '加入誹謗內容',
+					'summary': '層級3：加入誹謗內容'
+				},
+				level4: {
+					'label': '加入誹謗內容',
+					'summary': '層級4：加入誹謗內容'
+				},
+				level4im: {
+					'label': '加入誹謗內容',
+					'summary': '層級4im：加入誹謗內容'
+				}
 			}
 		},
 		'翻譯品質': {
-			'uw-roughtranslation1': {
-				label: '您翻譯的質量有待改善',
-				summary: '層級1：您翻譯的質量有待改善'
+			'uw-roughtranslation': {
+				level1: {
+					'label': '您翻譯的質量有待改善',
+					'summary': '層級1：您翻譯的質量有待改善'
+				},
+				level2: {
+					'label': '粗劣翻譯',
+					'summary': '層級2：粗劣翻譯'
+				},
+				level3: {
+					'label': '粗劣翻譯',
+					'summary': '層級3：粗劣翻譯'
+				}
 			}
 		},
 		'非能接受且違反方針或指引的單方面行為或操作': {
-			'uw-notcensored1': {
-				label: '因為「內容使人反感」而刪除條目內容',
-				summary: '層級1：審查條目內容'
+			'uw-notcensored': {
+				level1: {
+					'label': '因為「內容使人反感」而刪除條目內容',
+					'summary': '層級1：審查條目內容'
+				},
+				level2: {
+					'label': '內容審查',
+					'summary': '層級2：內容審查'
+				},
+				level3: {
+					'label': '審查內容',
+					'summary': '層級3：審查內容'
+				}
 			},
-			'uw-mos1': {
-				label: '不恰當的條目格式、日期、語言等',
-				summary: '層級1：不恰當的條目格式、日期、語言等'
+			'uw-mos': {
+				level1: {
+					'label': '不恰當的條目格式、日期、語言等',
+					'summary': '層級1：不恰當的條目格式、日期、語言等'
+				},
+				level2: {
+					'label': '不恰當的條目格式、日期、語言等',
+					'summary': '層級2：不恰當的條目格式、日期、語言等'
+				},
+				level3: {
+					'label': '違反格式、日期、語言等規定',
+					'summary': '層級3：違反格式、日期、語言等規定'
+				},
+				level4: {
+					'label': '違反格式、日期、語言等相關規定',
+					'summary': '層級4：違反格式、日期、語言等相關規定'
+				}
 			},
-			'uw-move1': {
-				label: '無故移動條目/新名稱不符合命名規範',
-				summary: '層級1：不恰當地移動頁面'
+			'uw-move': {
+				level1: {
+					'label': '無故移動條目/新名稱不符合命名規範',
+					'summary': '層級1：不恰當地移動頁面'
+				},
+				level2: {
+					'label': '把頁面移動到不恰當、違反命名常規或違反共識的標題',
+					'summary': '層級2：不恰當地移動頁面'
+				},
+				level3: {
+					'label': '不恰當地移動頁面',
+					'summary': '層級3：不恰當地移動頁面'
+				},
+				level4: {
+					'label': '不恰當地移動頁面',
+					'summary': '層級4：不恰當地移動頁面'
+				},
+				level4im: {
+					'label': '不恰當地移動頁面',
+					'summary': '層級4im：不恰當地移動頁面'
+				}
 			},
-			'uw-cd1': {
-				label: '清空討論頁',
-				summary: '層級1：清空討論頁'
+			'uw-cd': {
+				level1: {
+					'label': '清空討論頁',
+					'summary': '層級1：清空討論頁'
+				},
+				level2: {
+					'label': '清空討論頁',
+					'summary': '層級2：清空討論頁'
+				},
+				level3: {
+					'label': '清空討論頁',
+					'summary': '層級3：清空討論頁'
+				}
 			},
-			'uw-chat1': {
-				label: '在討論頁發表與改善條目無關的內容',
-				summary: '層級1：在討論頁發表與改善條目無關的內容'
+			'uw-chat': {
+				level1: {
+					'label': '在討論頁發表與改善條目無關的內容',
+					'summary': '層級1：在討論頁發表與改善條目無關的內容'
+				},
+				level2: {
+					'label': '在討論頁發表與改善條目無關的內容',
+					'summary': '層級2：在討論頁發表與改善條目無關的內容'
+				},
+				level3: {
+					'label': '在討論頁發表無關內容',
+					'summary': '層級3：在討論頁發表無關內容'
+				},
+				level4: {
+					'label': '在討論頁進行不當討論',
+					'summary': '層級4：在討論頁進行不當討論'
+				}
 			},
-			'uw-tpv1': {
-				label: '修改他人留言',
-				summary: '層級1：修改他人留言'
+			'uw-tpv': {
+				level1: {
+					'label': '修改他人留言',
+					'summary': '層級1：修改他人留言'
+				},
+				level2: {
+					'label': '修改他人留言',
+					'summary': '層級2：修改他人留言'
+				},
+				level3: {
+					'label': '修改他人留言',
+					'summary': '層級3：修改他人留言'
+				}
 			},
-			'uw-afd1': {
-				label: '移除{{afd}}（頁面存廢討論）模板',
-				summary: '層級1：移除{{afd}}（頁面存廢討論）模板'
+			'uw-afd': {
+				level1: {
+					'label': '移除{{afd}}（頁面存廢討論）模板',
+					'summary': '層級1：移除{{afd}}（頁面存廢討論）模板'
+				},
+				level2: {
+					'label': '移除{{afd}}（頁面存廢討論）模板',
+					'summary': '層級2：移除{{afd}}（頁面存廢討論）模板'
+				},
+				level3: {
+					'label': '移除{{afd}}（頁面存廢討論）模板',
+					'summary': '層級3：移除{{afd}}（頁面存廢討論）模板'
+				},
+				level4: {
+					'label': '移除{{afd}}模板',
+					'summary': '層級4：移除{{afd}}模板'
+				}
 			},
-			'uw-speedy1': {
-				label: '移除{{delete}}（快速刪除）模板',
-				summary: '層級1：移除{{delete}}（快速刪除）模板'
+			'uw-speedy': {
+				level1: {
+					'label': '移除{{delete}}（快速刪除）模板',
+					'summary': '層級1：移除{{delete}}（快速刪除）模板'
+				},
+				level2: {
+					'label': '移除{{delete}}（快速刪除）模板',
+					'summary': '層級2：移除{{delete}}（快速刪除）模板'
+				},
+				level3: {
+					'label': '移除{{delete}}（快速刪除）模板',
+					'summary': '層級3：移除{{delete}}（快速刪除）模板'
+				},
+				level4: {
+					'label': '移除{{delete}}模板',
+					'summary': '層級4：移除{{delete}}模板'
+				}
 			}
 		},
 		'對其他用戶和條目的態度': {
-			'uw-npa1': {
-				label: '針對用戶的人身攻擊',
-				summary: '層級1：針對用戶的人身攻擊'
-			},
-			'uw-agf1': {
-				label: '沒有假定善意',
-				summary: '層級1：沒有假定善意'
-			},
-			'uw-own1': {
-				label: '主張條目所有權',
-				summary: '層級1：主張條目所有權'
-			},
-			'uw-tempabuse1': {
-				label: '不當使用警告或封禁模板',
-				summary: '層級1：不當使用警告或封禁模板'
-			}
-		}
-	},
-
-
-	level2: {
-		'不同類別的非建設編輯': {
-			'uw-vandalism2': {
-				label: '明顯的破壞',
-				summary: '層級2：明顯破壞'
-			},
-			'uw-test2': {
-				label: '進行損毀性的編輯測試',
-				summary: '層級2：進行編輯測試'
-			},
-			'uw-delete2': {
-				label: '不恰當地移除頁面內容、模板或資料',
-				summary: '層級2：不恰當地移除頁面內容、模板或資料'
-			},
-			'uw-redirect2': {
-				label: '建立惡意重定向',
-				summary: '層級2：建立惡意重定向'
-			},
-			'uw-tdel2': {
-				label: '在問題仍未解決的情況下移除維護性模板',
-				summary: '層級2：移除維護性模板'
-			},
-			'uw-joke2': {
-				label: '在百科全書內容中加入玩笑',
-				summary: '層級2：加入不當玩笑'
-			},
-			'uw-create2': {
-				label: '建立不當頁面',
-				summary: '層級2：建立不當頁面'
-			},
-			'uw-upload2': {
-				label: '上傳不當圖像',
-				summary: '層級2：上傳不當圖像'
-			},
-			'uw-image2': {
-				label: '在頁面中加入不當圖片',
-				summary: '層級2：在頁面中加入不當圖片'
-			},
-			'uw-nor2': {
-				label: '在條目中加入原創研究',
-				summary: '層級2：在條目中加入原創研究'
-			},
-			'uw-politicalbias2': {
-				label: '違反兩岸用語方針',
-				summary: '層級2：違反兩岸用語方針'
-			}
-		},
-		'增加商品或政治廣告': {
-			'uw-spam2': {
-				label: '增加垃圾連結',
-				summary: '層級2：增加垃圾連結'
-			},
-			'uw-advert2': {
-				label: '利用維基百科來發布廣告或推廣',
-				summary: '層級2：利用維基百科來發布廣告或推廣'
-			},
-			'uw-npov2': {
-				label: '不遵守中立的觀點方針',
-				summary: '層級2：不遵守中立的觀點方針'
-			}
-		},
-		'加插不實及/或誹謗文字': {
-			'uw-unsourced2': {
-				label: '加入沒有可靠來源佐證的內容',
-				summary: '層級2：加入沒有可靠來源佐證的內容'
-			},
-			'uw-error2': {
-				label: '故意加入不實內容',
-				summary: '層級2：故意加入不實內容'
-			},
-			'uw-biog2': {
-				label: '在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容',
-				summary: '層級2：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
-			},
-			'uw-defamatory2': {
-				label: '加入誹謗內容',
-				summary: '層級2：加入誹謗內容'
-			}
-		},
-		'翻譯品質': {
-			'uw-roughtranslation2': {
-				label: '粗劣翻譯',
-				summary: '層級2：粗劣翻譯'
-			}
-		},
-		'非能接受且違反方針或指引的單方面行為或操作': {
-			'uw-notcensored2': {
-				label: '內容審查',
-				summary: '層級2：內容審查'
-			},
-			'uw-mos2': {
-				label: '不恰當的條目格式、日期、語言等',
-				summary: '層級2：不恰當的條目格式、日期、語言等'
-			},
-			'uw-move2': {
-				label: '把頁面移動到不恰當、違反命名常規或違反共識的標題',
-				summary: '層級2：不恰當地移動頁面'
-			},
-			'uw-cd2': {
-				label: '清空討論頁',
-				summary: '層級2：清空討論頁'
-			},
-			'uw-chat2': {
-				label: '在討論頁發表與改善條目無關的內容',
-				summary: '層級2：在討論頁發表與改善條目無關的內容'
-			},
-			'uw-tpv2': {
-				label: '修改他人留言',
-				summary: '層級2：修改他人留言'
-			},
-			'uw-afd2': {
-				label: '移除{{afd}}（頁面存廢討論）模板',
-				summary: '層級2：移除{{afd}}（頁面存廢討論）模板'
-			},
-			'uw-speedy2': {
-				label: '移除{{delete}}（快速刪除）模板',
-				summary: '層級2：移除{{delete}}（快速刪除）模板'
-			}
-		},
-		'對其他用戶和條目的態度': {
-			'uw-npa2': {
-				label: '針對用戶的人身攻擊',
-				summary: '層級2：針對用戶的人身攻擊'
-			},
-			'uw-agf2': {
-				label: '沒有假定善意',
-				summary: '層級2：沒有假定善意'
-			},
-			'uw-own2': {
-				label: '主張條目的所有權',
-				summary: '層級2：主張條目的所有權'
-			},
-			'uw-tempabuse2': {
-				label: '不當使用警告或封禁模板',
-				summary: '層級2：不當使用警告或封禁模板'
-			}
-		}
-	},
-
-
-	level3: {
-		'不同類別的非建設編輯': {
-			'uw-vandalism3': {
-				label: '惡意破壞',
-				summary: '層級3：惡意破壞'
-			},
-			'uw-test3': {
-				label: '編輯測試',
-				summary: '層級3：編輯測試'
-			},
-			'uw-delete3': {
-				label: '不恰當地移除頁面內容、模板或資料',
-				summary: '層級3：不恰當地移除頁面內容、模板或資料'
-			},
-			'uw-redirect3': {
-				label: '建立惡意重定向',
-				summary: '層級3：建立惡意重定向'
-			},
-			'uw-tdel3': {
-				label: '移除維護性模板',
-				summary: '層級3：移除維護性模板'
-			},
-			'uw-joke3': {
-				label: '在百科全書內容中加入不當玩笑',
-				summary: '層級3：在百科全書內容中加入不當玩笑'
-			},
-			'uw-create3': {
-				label: '建立不當頁面',
-				summary: '層級3：建立不當頁面'
-			},
-			'uw-upload3': {
-				label: '上傳不當圖像',
-				summary: '層級3：上傳不當圖像'
-			},
-			'uw-image3': {
-				label: '在頁面中加入不當圖片',
-				summary: '層級3：在頁面中加入不當圖片'
-			},
-			'uw-nor3': {
-				label: '在條目中加入原創研究',
-				summary: '層級3：在條目中加入原創研究'
-			},
-			'uw-politicalbias3': {
-				label: '違反兩岸用語方針',
-				summary: '層級3：違反兩岸用語方針'
-			}
-		},
-		'增加商品或政治廣告': {
-			'uw-spam3': {
-				label: '增加垃圾連結',
-				summary: '層級3：增加垃圾連結'
-			},
-			'uw-advert3': {
-				label: '利用維基百科來發布廣告或推廣',
-				summary: '層級3：利用維基百科來發布廣告或推廣'
-			},
-			'uw-npov3': {
-				label: '違反中立的觀點方針',
-				summary: '層級3：違反中立的觀點方針'
-			}
-		},
-		'加插不實及/或誹謗文字': {
-			'uw-unsourced3': {
-				label: '加入沒有可靠來源佐證的內容',
-				summary: '層級3：加入沒有可靠來源佐證的內容'
-			},
-			'uw-error3': {
-				label: '故意加入不實內容',
-				summary: '層級3：故意加入不實內容'
-			},
-			'uw-biog3': {
-				label: '在生者傳記中加入沒有可靠來源佐證而且帶有爭議的內容',
-				summary: '層級3：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
-			},
-			'uw-defamatory3': {
-				label: '加入誹謗內容',
-				summary: '層級3：加入誹謗內容'
-			}
-		},
-		'翻譯品質': {
-			'uw-roughtranslation3': {
-				label: '粗劣翻譯',
-				summary: '層級3：粗劣翻譯'
-			}
-		},
-		'非能接受且違反方針或指引的單方面行為或操作': {
-			'uw-notcensored3': {
-				label: '審查內容',
-				summary: '層級3：審查內容'
-			},
-			'uw-mos3': {
-				label: '違反格式、日期、語言等規定',
-				summary: '層級3：違反格式、日期、語言等規定'
-			},
-			'uw-move3': {
-				label: '不恰當地移動頁面',
-				summary: '層級3：不恰當地移動頁面'
-			},
-			'uw-cd3': {
-				label: '清空討論頁',
-				summary: '層級3：清空討論頁'
-			},
-			'uw-chat3': {
-				label: '在討論頁發表無關內容',
-				summary: '層級3：在討論頁發表無關內容'
-			},
-			'uw-tpv3': {
-				label: '修改他人留言',
-				summary: '層級3：修改他人留言'
-			},
-			'uw-afd3': {
-				label: '移除{{afd}}（頁面存廢討論）模板',
-				summary: '層級3：移除{{afd}}（頁面存廢討論）模板'
-			},
-			'uw-speedy3': {
-				label: '移除{{delete}}（快速刪除）模板',
-				summary: '層級3：移除{{delete}}（快速刪除）模板'
-			}
-		},
-		'對其他用戶和條目的態度': {
-			'uw-npa3': {
-				label: '針對用戶的人身攻擊',
-				summary: '層級3：針對用戶的人身攻擊'
-			},
-			'uw-agf3': {
-				label: '沒有假定善意',
-				summary: '層級3：沒有假定善意'
-			},
-			'uw-own3': {
-				label: '主張條目的所有權',
-				summary: '層級3：主張條目的所有權'
-			},
-			'uw-tempabuse3': {
-				label: '不當使用警告或封禁模板',
-				summary: '層級3：不當使用警告或封禁模板'
-			}
-		}
-	},
-
-
-	level4: {
-		'不同類別的非建設編輯': {
-			'uw-vandalism4': {
-				label: '惡意破壞',
-				summary: '層級4：惡意破壞'
-			},
-			'uw-test4': {
-				label: '編輯測試',
-				summary: '層級4：編輯測試'
-			},
-			'uw-delete4': {
-				label: '移除頁面、移除內容或模板',
-				summary: '層級4：移除頁面、移除內容或模板'
-			},
-			'uw-redirect4': {
-				label: '建立惡意重定向',
-				summary: '層級4：建立惡意重定向'
-			},
-			'uw-tdel4': {
-				label: '移除維護性模板',
-				summary: '層級4：移除維護性模板'
-			},
-			'uw-joke4': {
-				label: '在百科全書內容中加入不當玩笑',
-				summary: '層級4：在百科全書內容中加入不當玩笑'
-			},
-			'uw-create4': {
-				label: '建立不當頁面',
-				summary: '層級4：建立不當頁面'
-			},
-			'uw-upload4': {
-				label: '上傳不當圖像',
-				summary: '層級4：上傳不當圖像'
-			},
-			'uw-image4': {
-				label: '在頁面中加入不當圖片',
-				summary: '層級4：在頁面中加入不當圖片'
-			},
-			'uw-politicalbias4': {
-				label: '違反兩岸用語方針',
-				summary: '層級4：違反兩岸用語方針'
-			}
-		},
-		'增加商品或政治廣告': {
-			'uw-spam4': {
-				label: '增加垃圾連結',
-				summary: '層級4：增加垃圾連結'
-			},
-			'uw-advert4': {
-				label: '利用維基百科來發布廣告或推廣',
-				summary: '層級4：利用維基百科來發布廣告或推廣'
-			},
-			'uw-npov4': {
-				label: '違反中立的觀點方針',
-				summary: '層級4：違反中立的觀點方針'
-			}
-		},
-		'加插不實及/或誹謗文字': {
-			'uw-biog4': {
-				label: '加入有關在生人物而又缺乏來源的資料',
-				summary: '層級4：加入有關在生人物而又缺乏來源的資料'
-			},
-			'uw-defamatory4': {
-				label: '加入誹謗內容',
-				summary: '層級4：加入誹謗內容'
-			}
-		},
-		'非能接受且違反方針或指引的單方面行為或操作': {
-			'uw-mos4': {
-				label: '違反格式、日期、語言等相關規定',
-				summary: '層級4：違反格式、日期、語言等相關規定'
-			},
-			'uw-move4': {
-				label: '不恰當地移動頁面',
-				summary: '層級4：不恰當地移動頁面'
-			},
-			'uw-chat4': {
-				label: '在討論頁進行不當討論',
-				summary: '層級4：在討論頁進行不當討論'
-			},
-			'uw-afd4': {
-				label: '移除{{afd}}模板',
-				summary: '層級4：移除{{afd}}模板'
-			},
-			'uw-speedy4': {
-				label: '移除{{delete}}模板',
-				summary: '層級4：移除{{delete}}模板'
-			}
-		},
-		'對其他用戶和條目的態度': {
-			'uw-npa4': {
-				label: '針對用戶的人身攻擊',
-				summary: '層級4：針對用戶的人身攻擊'
-			},
-			'uw-tempabuse4': {
-				label: '不當使用警告或封禁模板',
-				summary: '層級4：不當使用警告或封禁模板'
-			}
-		}
-	},
-
-
-	level4im: {
-		'不同類別的非建設編輯': {
-			'uw-vandalism4im': {
-				label: '惡意破壞',
-				summary: '層級4im：惡意破壞'
-			},
-			'uw-delete4im': {
-				label: '移除頁面內容、模板或資料',
-				summary: '層級4im：移除頁面內容、模板或資料'
-			},
-			'uw-redirect4im': {
-				label: '建立惡意重定向',
-				summary: '層級4im：建立惡意重定向'
-			},
-			'uw-joke4im': {
-				label: '加入不當玩笑',
-				summary: '層級4im：加入不當玩笑'
-			},
-			'uw-create4im': {
-				label: '建立不當頁面',
-				summary: '層級4im：建立不當頁面'
-			},
-			'uw-upload4im': {
-				label: '上傳不當圖像',
-				summary: '層級4im：上傳不當圖像'
-			},
-			'uw-image4im': {
-				label: '加入不恰當的圖片',
-				summary: '層級4im：加入不恰當的圖片'
-			},
-			'uw-politicalbias4im': {
-				label: '違反兩岸用語方針',
-				summary: '層級4im：違反兩岸用語方針'
-			}
-		},
-		'增加商品或政治廣告': {
-			'uw-spam4im': {
-				label: '增加垃圾連結',
-				summary: '層級4im：增加垃圾連結'
-			}
-		},
-		'加插不實及/或誹謗文字': {
-			'uw-biog4im': {
-				label: '加入有關在生人物而又缺乏來源的資料',
-				summary: '層級4im：加入有關在生人物而又缺乏來源的資料'
-			},
-			'uw-defamatory4im': {
-				label: '加入誹謗內容',
-				summary: '層級4im：加入誹謗內容'
-			}
-		},
-		'非能接受且違反方針或指引的單方面行為或操作': {
-			'uw-move4im': {
-				label: '不恰當地移動頁面',
-				summary: '層級4im：不恰當地移動頁面'
-			}
-		},
-		'對其他用戶和條目的態度': {
-			'uw-npa4im': {
-				label: '針對用戶的人身攻擊',
-				summary: '層級4im：針對用戶的人身攻擊'
-			},
-			'uw-tempabuse4im': {
-				label: '不當使用警告或封禁模板',
-				summary: '層級4im：不當使用警告或封禁模板'
+			'uw-npa': {
+				level1: {
+					'label': '針對用戶的人身攻擊',
+					'summary': '層級1：針對用戶的人身攻擊'
+				},
+				level2: {
+					'label': '針對用戶的人身攻擊',
+					'summary': '層級2：針對用戶的人身攻擊'
+				},
+				level3: {
+					'label': '針對用戶的人身攻擊',
+					'summary': '層級3：針對用戶的人身攻擊'
+				},
+				level4: {
+					'label': '針對用戶的人身攻擊',
+					'summary': '層級4：針對用戶的人身攻擊'
+				},
+				level4im: {
+					'label': '針對用戶的人身攻擊',
+					'summary': '層級4im：針對用戶的人身攻擊'
+				}
+			},
+			'uw-agf': {
+				level1: {
+					'label': '沒有假定善意',
+					'summary': '層級1：沒有假定善意'
+				},
+				level2: {
+					'label': '沒有假定善意',
+					'summary': '層級2：沒有假定善意'
+				},
+				level3: {
+					'label': '沒有假定善意',
+					'summary': '層級3：沒有假定善意'
+				}
+			},
+			'uw-own': {
+				level1: {
+					'label': '主張條目所有權',
+					'summary': '層級1：主張條目所有權'
+				},
+				level2: {
+					'label': '主張條目的所有權',
+					'summary': '層級2：主張條目的所有權'
+				},
+				level3: {
+					'label': '主張條目的所有權',
+					'summary': '層級3：主張條目的所有權'
+				}
+			},
+			'uw-tempabuse': {
+				level1: {
+					'label': '不當使用警告或封禁模板',
+					'summary': '層級1：不當使用警告或封禁模板'
+				},
+				level2: {
+					'label': '不當使用警告或封禁模板',
+					'summary': '層級2：不當使用警告或封禁模板'
+				},
+				level3: {
+					'label': '不當使用警告或封禁模板',
+					'summary': '層級3：不當使用警告或封禁模板'
+				},
+				level4: {
+					'label': '不當使用警告或封禁模板',
+					'summary': '層級4：不當使用警告或封禁模板'
+				},
+				level4im: {
+					'label': '不當使用警告或封禁模板',
+					'summary': '層級4im：不當使用警告或封禁模板'
+				}
 			}
 		}
 	},
@@ -1804,7 +1813,6 @@ Twinkle.warn.messages = wgULS({
 		}
 	},
 
-
 	singlewarn: {
 		'uw-3rr': {
 			label: '用戶潛在違反回退不過三原則的可能性',
@@ -1887,27 +1895,37 @@ Twinkle.warn.messages = wgULS({
 	}
 });
 
+// Used repeatedly below across menu rebuilds
 Twinkle.warn.prev_article = null;
 Twinkle.warn.prev_reason = null;
+Twinkle.warn.talkpageObj = null;
 
 Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCategory(e) {
-
 	var value = e.target.value;
 	var sub_group = e.target.root.sub_group;
 	sub_group.main_group = value;
 	var old_subvalue = sub_group.value;
 	var old_subvalue_re;
 	if (old_subvalue) {
-		old_subvalue = old_subvalue.replace(/\d*(im)?$/, '');
-		old_subvalue_re = new RegExp(mw.util.escapeRegExp(old_subvalue) + '(\\d*(?:im)?)$');
+		if (value === 'kitchensink') { // Exact match possible in kitchensink menu
+			old_subvalue_re = new RegExp(mw.util.escapeRegExp(old_subvalue));
+		} else {
+			old_subvalue = old_subvalue.replace(/\d*(im)?$/, '');
+			old_subvalue_re = new RegExp(mw.util.escapeRegExp(old_subvalue) + '(\\d*(?:im)?)$');
+		}
 	}
 
 	while (sub_group.hasChildNodes()) {
 		sub_group.removeChild(sub_group.firstChild);
 	}
 
+	var selected = false;
 	// worker function to create the combo box entries
-	var createEntries = function(contents, container, wrapInOptgroup) {
+	var createEntries = function(contents, container, wrapInOptgroup, val) {
+		val = typeof val !== 'undefined' ? val : value; // IE doesn't support default parameters
+		// level2->2, singlewarn->''; also used to distinguish the
+		// scaled levels from singlenotice, singlewarn, and custom
+		var level = val.replace(/^\D+/g, '');
 		// due to an apparent iOS bug, we have to add an option-group to prevent truncation of text
 		// (search WT:TW archives for "Problem selecting warnings on an iPhone")
 		if (wrapInOptgroup && $.client.profile().platform === 'iphone') {
@@ -1921,56 +1939,134 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 		}
 
 		$.each(contents, function(itemKey, itemProperties) {
-			var key = typeof itemKey === 'string' ? itemKey : itemProperties.value;
-
-			var selected = false;
-			if (old_subvalue && old_subvalue_re.test(key)) {
-				selected = true;
+			// Skip if the current template doesn't have a version for the current level
+			if (!!level && !itemProperties[val]) {
+				return;
 			}
+			var key = typeof itemKey === 'string' ? itemKey : itemProperties.value;
+			var template = key + level;
 
 			var elem = new Morebits.quickForm.element({
 				type: 'option',
-				label: '{{' + key + '}}: ' + itemProperties.label,
-				value: key,
-				selected: selected
+				label: '{{' + template + '}}: ' + (level ? itemProperties[val].label : itemProperties.label),
+				value: template
 			});
+
+			// Select item best corresponding to previous selection
+			if (!selected && old_subvalue && old_subvalue_re.test(template)) {
+				elem.data.selected = selected = true;
+			}
 			var elemRendered = container.appendChild(elem.render());
 			$(elemRendered).data('messageData', itemProperties);
 		});
 	};
 
-	if (value === 'singlenotice' || value === 'singlewarn') {
-		// no categories, just create the options right away
-		createEntries(Twinkle.warn.messages[value], sub_group, true);
-	} else if (value === 'singlecombined') {
-		var unSortedSinglets = $.extend({}, Twinkle.warn.messages.singlenotice, Twinkle.warn.messages.singlewarn);
-		var sortedSingletMessages = {};
-		Object.keys(unSortedSinglets).sort().forEach(function(key) {
-			sortedSingletMessages[key] = unSortedSinglets[key];
-		});
-		createEntries(sortedSingletMessages, sub_group, true);
-	} else if (value === 'custom') {
-		createEntries(Twinkle.getPref('customWarningList'), sub_group, true);
-	} else {
-		// create the option-groups
-		$.each(Twinkle.warn.messages[value], function(groupLabel, groupContents) {
-			var optgroup = new Morebits.quickForm.element({
-				type: 'optgroup',
-				label: groupLabel
+	switch (value) {
+		case 'singlenotice':
+		case 'singlewarn':
+			createEntries(Twinkle.warn.messages[value], sub_group, true);
+			break;
+		case 'singlecombined':
+			var unSortedSinglets = $.extend({}, Twinkle.warn.messages.singlenotice, Twinkle.warn.messages.singlewarn);
+			var sortedSingletMessages = {};
+			Object.keys(unSortedSinglets).sort().forEach(function(key) {
+				sortedSingletMessages[key] = unSortedSinglets[key];
 			});
-			optgroup = optgroup.render();
-			sub_group.appendChild(optgroup);
-			// create the options
-			createEntries(groupContents, optgroup, false);
-		});
+			createEntries(sortedSingletMessages, sub_group, true);
+			break;
+		case 'custom':
+			createEntries(Twinkle.getPref('customWarningList'), sub_group, true);
+			break;
+		case 'kitchensink':
+			['level1', 'level2', 'level3', 'level4', 'level4im'].forEach(function(lvl) {
+				$.each(Twinkle.warn.messages.levels, function(_, levelGroup) {
+					createEntries(levelGroup, sub_group, true, lvl);
+				});
+			});
+			createEntries(Twinkle.warn.messages.singlenotice, sub_group, true);
+			createEntries(Twinkle.warn.messages.singlewarn, sub_group, true);
+			createEntries(Twinkle.getPref('customWarningList'), sub_group, true);
+			break;
+		case 'level1':
+		case 'level2':
+		case 'level3':
+		case 'level4':
+		case 'level4im':
+			// Creates subgroup regardless of whether there is anything to place in it;
+			// leaves "Removal of deletion tags" empty for 4im
+			$.each(Twinkle.warn.messages.levels, function(groupLabel, groupContents) {
+				var optgroup = new Morebits.quickForm.element({
+					type: 'optgroup',
+					label: groupLabel
+				});
+				optgroup = optgroup.render();
+				sub_group.appendChild(optgroup);
+				// create the options
+				createEntries(groupContents, optgroup, false);
+			});
+			break;
+		case 'autolevel':
+			// Check user page to determine appropriate level
+			var autolevelProc = function() {
+				var wikitext = Twinkle.warn.talkpageObj.getPageText();
+				// history not needed for autolevel
+				var latest = Twinkle.warn.callbacks.dateProcessing(wikitext)[0];
+				// Pseudo-params with only what's needed to parse the level i.e. no messageData
+				var params = {
+					sub_group: old_subvalue,
+					article: e.target.root.article.value
+				};
+				var lvl = 'level' + Twinkle.warn.callbacks.autolevelParseWikitext(wikitext, params, latest)[1];
+
+				// Identical to level1, etc. above but explicitly provides the level
+				$.each(Twinkle.warn.messages.levels, function(groupLabel, groupContents) {
+					var optgroup = new Morebits.quickForm.element({
+						type: 'optgroup',
+						label: groupLabel
+					});
+					optgroup = optgroup.render();
+					sub_group.appendChild(optgroup);
+					// create the options
+					createEntries(groupContents, optgroup, false, lvl);
+				});
+
+				// Trigger subcategory change, add select menu, etc.
+				Twinkle.warn.callback.postCategoryCleanup(e);
+			};
+
+
+			if (Twinkle.warn.talkpageObj) {
+				autolevelProc();
+			} else {
+				var usertalk_page = new Morebits.wiki.page('User_talk:' + Morebits.wiki.flow.relevantUserName(), wgULS('加载上次警告', '載入上次警告'));
+				usertalk_page.setFollowRedirect(true);
+				usertalk_page.load(function(pageobj) {
+					Twinkle.warn.talkpageObj = pageobj; // Update talkpageObj
+					autolevelProc();
+				});
+			}
+			break;
+		default:
+			alert(wgULS('twinklewarn中未知的警告组', 'twinklewarn中未知的警告組'));
+			break;
 	}
 
+	// Trigger subcategory change, add select menu, etc.
+	// Here because of the async load for autolevel
+	if (value !== 'autolevel') {
+		// reset any autolevel-specific messages while we're here
+		$('#twinkle-warn-autolevel-message').remove();
+
+		Twinkle.warn.callback.postCategoryCleanup(e);
+	}
+};
+
+Twinkle.warn.callback.postCategoryCleanup = function twinklewarnCallbackPostCategoryCleanup(e) {
 	// clear overridden label on article textbox
 	Morebits.quickForm.setElementTooltipVisibility(e.target.root.article, true);
 	Morebits.quickForm.resetElementLabel(e.target.root.article);
-
-	// hide the big red notice
-	$('#tw-warn-red-notice').remove();
+	// Trigger custom label/change on main category change
+	Twinkle.warn.callback.change_subcategory(e);
 
 	// Use select2 to make the select menu searchable
 	if (!Twinkle.getPref('oldSelect')) {
@@ -2009,13 +2105,13 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 	// Tags that don't take a linked article, but something else (often a username).
 	// The value of each tag is the label next to the input field
 	var notLinkedArticle = {
-		'uw-agf-sock': 'Optional username of other account (without User:) ',
-		'uw-bite': "Username of 'bitten' user (without User:) ",
-		'uw-socksuspect': 'Username of sock master, if known (without User:) ',
-		'uw-username': 'Username violates policy because... '
+		'uw-bite': wgULS('被“咬到”的用户（不含User:） ', '被「咬到」的使用者（不含User:） '),
+		'uw-socksuspect': wgULS('傀儡操纵者用户名，如果知道的话（不含User:） ', '傀儡操縱者使用者名稱，如果知道的話（不含User:） '),
+		'uw-username': wgULS('用户名违反方针，因为… ', '使用者名稱違反方針，因為… '),
+		'uw-aiv': wgULS('可选输入被警告的用户名（不含User:） ', '可選輸入被警告的使用者名稱（不含User:） ')
 	};
 
-	if (['singlenotice', 'singlewarn', 'singlecombined'].indexOf(main_group) !== -1) {
+	if (['singlenotice', 'singlewarn', 'singlecombined', 'kitchensink'].indexOf(main_group) !== -1) {
 		if (notLinkedArticle[value]) {
 			if (Twinkle.warn.prev_article === null) {
 				Twinkle.warn.prev_article = e.target.form.article.value;
@@ -2037,24 +2133,8 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 		}
 	}
 
-	// change form labels according to the warning selected
-	if (value === 'uw-socksuspect') {
-		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
-		Morebits.quickForm.overrideElementLabel(e.target.form.article, wgULS('傀儡操纵者用户名，如果知道的话（不含User:） ', '傀儡操縱者使用者名稱，如果知道的話（不含User:） '));
-	} else if (value === 'uw-username') {
-		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
-		Morebits.quickForm.overrideElementLabel(e.target.form.article, wgULS('用户名违反方针，因为… ', '使用者名稱違反方針，因為… '));
-	} else if (value === 'uw-bite') {
-		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
-		Morebits.quickForm.overrideElementLabel(e.target.form.article, wgULS('被“咬到”的用户（不含User:） ', '被「咬到」的使用者（不含User:） '));
-	} else {
-		Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, true);
-		Morebits.quickForm.resetElementLabel(e.target.form.article);
-	}
-
 	// add big red notice, warning users about how to use {{uw-[coi-]username}} appropriately
 	$('#tw-warn-red-notice').remove();
-
 	var $redWarning;
 	if (value === 'uw-username') {
 		$redWarning = $(wgULS("<div style='color: red;' id='tw-warn-red-notice'>{{uw-username}}<b>不应</b>被用于<b>明显</b>违反用户名方针的用户。" +
@@ -2072,27 +2152,191 @@ Twinkle.warn.callbacks = {
 	getWarningWikitext: function(templateName, article, reason, isCustom) { // eslint-disable-line no-unused-vars
 		var text = '{{subst:' + templateName;
 
+		// add linked article for user warnings
 		if (article) {
-			// add linked article for user warnings
 			text += '|1=' + article;
 		}
-
 		if (reason) {
-			text += '|2=' + reason;
+			// add extra message
+			if (templateName === 'uw-csd') {
+				text += '|3=' + reason;
+			} else {
+				text += '|2=' + reason;
+			}
 		}
 		text += '|subst=subst:}}';
 
-		return text;
+		return text + ' ~~~~';
 	},
-	preview: function(form) {
-		var templatename = form.sub_group.value;
-		var linkedarticle = form.article.value;
+	showPreview: function(form, templatename) {
+		var input = Morebits.quickForm.getInputData(form);
+		// Provided on autolevel, not otherwise
+		templatename = templatename || input.sub_group;
+		var linkedarticle = input.article;
 		var templatetext;
 
 		templatetext = Twinkle.warn.callbacks.getWarningWikitext(templatename, linkedarticle,
-			form.reason.value, form.main_group.value === 'custom');
+			input.reason, input.main_group === 'custom');
 
-		form.previewer.beginRender(templatetext);
+		form.previewer.beginRender(templatetext, 'User_talk:' + Morebits.wiki.flow.relevantUserName()); // Force wikitext/correct username
+	},
+	// Just a pass-through unless the autolevel option was selected
+	preview: function(form) {
+		if (form.main_group.value === 'autolevel') {
+			// Always get a new, updated talkpage for autolevel processing
+			var usertalk_page = new Morebits.wiki.page('User_talk:' + Morebits.wiki.flow.relevantUserName(), wgULS('加载上次警告', '載入上次警告'));
+			usertalk_page.setFollowRedirect(true);
+			usertalk_page.load(function(pageobj) {
+				Twinkle.warn.talkpageObj = pageobj; // Update talkpageObj
+
+				var wikitext = pageobj.getPageText();
+				// history not needed for autolevel
+				var latest = Twinkle.warn.callbacks.dateProcessing(wikitext)[0];
+				var params = {
+					sub_group: form.sub_group.value,
+					article: form.article.value,
+					messageData: $(form.sub_group).find('option[value="' + $(form.sub_group).val() + '"]').data('messageData')
+				};
+				var template = Twinkle.warn.callbacks.autolevelParseWikitext(wikitext, params, latest)[0];
+				Twinkle.warn.callbacks.showPreview(form, template);
+
+				// If the templates have diverged, fake a change event
+				// to reload the menu with the updated pageobj
+				if (form.sub_group.value !== template) {
+					var evt = document.createEvent('Event');
+					evt.initEvent('change', true, true);
+					form.main_group.dispatchEvent(evt);
+				}
+			});
+		} else {
+			Twinkle.warn.callbacks.showPreview(form);
+		}
+	},
+	/**
+	* Used in the main and autolevel loops to determine when to warn
+	* about excessively recent, stale, or identical warnings.
+	* @param {string} wikitext  The text of a user's talk page, from getPageText()
+	* @returns {Object[]} - Array of objects: latest contains most recent
+	* warning and date; history lists all prior warnings
+	*/
+	dateProcessing: function(wikitext) {
+		var history_re = /<!--\s?Template:([uU]w-.*?)\s?-->.*?(\d{4})年(\d{1,2})月(\d{1,2})日 \([日一二三四五六]\) (\d{1,2}):(\d{1,2}) \(UTC\)/g;
+		var history = {};
+		var latest = { date: new Morebits.date(0), type: '' };
+		var current;
+
+		while ((current = history_re.exec(wikitext)) !== null) {
+			var template = current[1];
+			var current_date = new Morebits.date(current[2] + '-' + current[3] + '-' + current[4] + ' ' + current[5] + ':' + current[6] + ' UTC');
+			if (!(template in history) || history[template].isBefore(current_date)) {
+				history[template] = current_date;
+			}
+			if (!latest.date.isAfter(current_date)) {
+				latest.date = current_date;
+				latest.type = template;
+			}
+		}
+		return [latest, history];
+	},
+	/**
+	* Main loop for deciding what the level should increment to. Most of
+	* this is really just error catching and updating the subsequent data.
+	* May produce up to two notices in a twinkle-warn-autolevel-messages div
+	*
+	* @param {string} wikitext  The text of a user's talk page, from getPageText() (required)
+	* @param {Object} params  Params object: sub_group is the template (required);
+	* article is the user-provided article (form.article) used to link ARV on recent level4 warnings;
+	* messageData is only necessary if getting the full template, as it's
+	* used to ensure a valid template of that level exists
+	* @param {Object} latest  First element of the array returned from
+	* dateProcessing. Provided here rather than processed within to avoid
+	* repeated call to dateProcessing
+	* @param {(Date|Morebits.date)} date  Date from which staleness is determined
+	* @param {Morebits.status} statelem  Status element, only used for handling error in final execution
+	*
+	* @returns {Array} - Array that contains the full template and just the warning level
+	*/
+	autolevelParseWikitext: function(wikitext, params, latest, date, statelem) {
+		var template = params.sub_group.replace(/(.*)\d$/, '$1');
+
+		var level; // undefined rather than '' means the isNaN below will return true
+		if (/\d(?:im)?$/.test(latest.type)) { // level1-4im
+			level = parseInt(latest.type.replace(/.*(\d)(?:im)?$/, '$1'), 10);
+		} else if (latest.type) { // Non-numbered warning
+			// Try to leverage existing categorization of
+			// warnings, all but one are universally lowercased
+			var loweredType = /uw-multipleIPs/i.test(template) ? 'uw-multipleIPs' : template.toLowerCase();
+			// It would be nice to account for blocks, but in most
+			// cases the hidden message is terminal, not the sig
+			if (Twinkle.warn.messages.singlewarn[loweredType]) {
+				level = 3;
+			} else {
+				level = 1; // singlenotice or not found
+			}
+		}
+
+		var $autolevelMessage = $('<div/>', {'id': 'twinkle-warn-autolevel-message'});
+
+		if (isNaN(level)) { // No prior warnings found, this is the first
+			level = 1;
+		} else if (level > 4 || level < 1) { // Shouldn't happen
+			var message = wgULS('无法解析上次的警告层级，请手动选择一个警告层级。', '無法解析上次的警告層級，請手動選擇一個警告層級。');
+			if (statelem) {
+				statelem.error(message);
+			} else {
+				alert(message);
+			}
+			return;
+		} else {
+			date = date || new Date();
+			var autoTimeout = new Morebits.date(latest.date.getTime()).add(parseInt(Twinkle.getPref('autolevelStaleDays'), 10), 'day');
+			if (autoTimeout.isAfter(date)) {
+				if (level === 4) {
+					level = 4;
+					// Basically indicates whether we're in the final Main evaluation or not,
+					// and thus whether we can continue or need to display the warning and link
+					if (!statelem) {
+						var $link = $('<a/>', {
+							'href': '#',
+							'text': wgULS('单击此处打开告状工具', '點擊此處打開告狀工具'),
+							'css': { 'fontWeight': 'bold' },
+							'click': function() {
+								Morebits.wiki.actionCompleted.redirect = null;
+								Twinkle.warn.dialog.close();
+								Twinkle.arv.callback(Morebits.wiki.flow.relevantUserName());
+								$('input[name=page]').val(params.article); // Target page
+								$('input[value=final]').prop('checked', true); // Vandalism after final
+							}
+						});
+						var statusNode = $('<div/>', {
+							'text': Morebits.wiki.flow.relevantUserName() + wgULS('最后收到了一个层级4警告（', '最後收到了一個層級4警告（') + latest.type + wgULS('），所以将其报告给管理人员会比较好；', '），所以將其報告給管理人員會比較好；'),
+							'css': {'color': 'red' }
+						});
+						statusNode.append($link[0]);
+						$autolevelMessage.append(statusNode);
+					}
+				} else { // Automatically increase severity
+					level += 1;
+				}
+			} else { // Reset warning level if most-recent warning is too old
+				level = 1;
+			}
+		}
+
+		// Validate warning level, falling back to the uw-generic series.
+		// Only a few items are missing a level, and in all but a handful
+		// of cases, the uw-generic series is explicitly used elsewhere per WP:UTM.
+		if (params.messageData && !params.messageData['level' + level]) {
+			template = 'uw-generic';
+		}
+		template += level;
+
+		$autolevelMessage.prepend($('<div>' + wgULS('将发送', '將發送') + '<span style="font-weight: bold;">' + wgULS('层级', '層級') + level + '</span>' + wgULS('警告模板', '警告模板') + '</div>'));
+		// Place after the stale and other-user-reverted (text-only) messages
+		$('#twinkle-warn-autolevel-message').remove(); // clean slate
+		$autolevelMessage.insertAfter($('#twinkle-warn-warning-messages'));
+
+		return [template, level];
 	},
 	main: function(pageobj) {
 		var text = pageobj.getPageText();
@@ -2100,29 +2344,30 @@ Twinkle.warn.callbacks = {
 		var params = pageobj.getCallbackParameters();
 		var messageData = params.messageData;
 
-		var history_re = /<!--\s?Template:([uU]w-.*?)\s?-->.*?(\d{4})年(\d{1,2})月(\d{1,2})日 \([日一二三四五六]\) (\d{1,2}):(\d{1,2}) \(UTC\)/g;
-		var history = {};
-		var latest = { date: new Morebits.date(0), type: '' };
-		var current;
-
-		while ((current = history_re.exec(text)) !== null) {
-			var template = current[1];
-			var current_date = new Morebits.date(current[2] + '-' + current[3] + '-' + current[4] + ' ' + current[5] + ':' + current[6] + ' UTC');
-			if (!(template in history) || history[template].isBefore(current_date)) {
-				history[template] = current_date;
-			}
-			if (current_date.getTime() >= latest.date.getTime()) {
-				latest.date = current_date;
-				latest.type = template;
-			}
-		}
+		// JS somehow didn't get destructured assignment until ES6 so of course IE doesn't support it
+		var warningHistory = Twinkle.warn.callbacks.dateProcessing(text);
+		var latest = warningHistory[0];
+		var history = warningHistory[1];
 
 		var now = new Morebits.date(pageobj.getLoadTime());
 
-		if (params.sub_group in history) {
+		Twinkle.warn.talkpageObj = pageobj; // Update talkpageObj, just in case
+		if (params.main_group === 'autolevel') {
+			// [template, level]
+			var templateAndLevel = Twinkle.warn.callbacks.autolevelParseWikitext(text, params, latest, now, statelem);
+
+			// Only if there's a change from the prior display/load
+			if (params.sub_group !== templateAndLevel[0] && !confirm(wgULS('将发送给用户{{', '將發送給使用者{{') + templateAndLevel[0] + wgULS('}}模板，好吗？', '}}模板，好嗎？'))) {
+				statelem.error(wgULS('用户取消', '使用者取消'));
+				return;
+			}
+			// Update params now that we've selected a warning
+			params.sub_group = templateAndLevel[0];
+			messageData = params.messageData['level' + templateAndLevel[1]];
+		} else if (params.sub_group in history) {
 			if (new Morebits.date(history[params.sub_group]).add(1, 'day').isAfter(now)) {
 				if (!confirm(wgULS('近24小时内一个同样的 ' + params.sub_group + ' 模板已被发出。\n是否继续？', '近24小時內一個同樣的 ' + params.sub_group + ' 模板已被發出。\n是否繼續？'))) {
-					statelem.error('用户取消');
+					statelem.error(wgULS('用户取消', '使用者取消'));
 					return;
 				}
 			}
@@ -2132,7 +2377,7 @@ Twinkle.warn.callbacks = {
 
 		if (latest.date.isAfter(now)) {
 			if (!confirm(wgULS('近1分钟内 ' + latest.type + ' 模板已被发出。\n是否继续？', '近1分鐘內 ' + latest.type + ' 模板已被發出。\n是否繼續？'))) {
-				statelem.error('用户取消');
+				statelem.error(wgULS('用户取消', '使用者取消'));
 				return;
 			}
 		}
@@ -2157,7 +2402,7 @@ Twinkle.warn.callbacks = {
 			text += now.monthHeader() + '\n';
 		}
 		text += Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
-			params.reason, params.main_group === 'custom') + '--~~~~';
+			params.reason, params.main_group === 'custom');
 
 		if (Twinkle.getPref('showSharedIPNotice') && mw.util.isIPAddress(mw.config.get('wgTitle'))) {
 			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加共享IP帮助', '加入共享IP說明'));
@@ -2191,11 +2436,23 @@ Twinkle.warn.callbacks = {
 					summary = '提示';
 					break;
 			}
-			summary += '：' + Morebits.string.toUpperCaseFirstChar(messageData.label);
+			summary += ': ' + Morebits.string.toUpperCaseFirstChar(messageData.label);
 		} else {
-			summary = messageData.summary;
+			// Normalize kitchensink to the 1-4im style
+			if (params.main_group === 'kitchensink' && !/^D+$/.test(params.sub_group)) {
+				var sub = params.sub_group.substr(-1);
+				if (sub === 'm') {
+					sub = params.sub_group.substr(-3);
+				}
+				// Don't overwrite uw-3rr, technically unnecessary
+				if (/\d/.test(sub)) {
+					params.main_group = 'level' + sub;
+				}
+			}
+			summary = /^\D+$/.test(params.main_group) ? messageData.summary : messageData[params.main_group].summary;
 			if (messageData.suppressArticleInSummary !== true && params.article) {
-				if (params.sub_group === 'uw-socksuspect') {  // this template requires a username
+				if (params.sub_group === 'uw-socksuspect' ||
+						params.sub_group === 'uw-aiv') {  // these templates require a username
 					summary += '，[[User:' + params.article + ']]的';
 				} else if (params.sub_group === 'uw-bite') {  // this template requires a username
 					summary += '，' + wgULS('于', '於') + '[[User talk:' + params.article + ']]';
@@ -2208,77 +2465,26 @@ Twinkle.warn.callbacks = {
 
 		pageobj.setPageText(text);
 		pageobj.setEditSummary(summary);
-		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setWatchlist(Twinkle.getPref('watchWarnings'));
 		pageobj.save();
-	},
-	main_flow: function (flowobj) {
-		var params = flowobj.getCallbackParameters();
-		var messageData = params.messageData;
-
-		var topic;
-		if (messageData.heading) {
-			topic = messageData.heading;
-		} else {
-			var summary;
-			switch (params.sub_group.substr(-1)) {
-				case '1':
-					summary = '提醒';
-					break;
-				case '2':
-					summary = '注意';
-					break;
-				case '3':
-					summary = '警告';
-					break;
-				case '4':
-					summary = wgULS('最后警告', '最後警告');
-					break;
-				case 'm':
-					if (params.sub_group.substr(-3) === '4im') {
-						summary = '唯一警告';
-						break;
-					}
-					summary = '提示';
-					break;
-				default:
-					summary = '提示';
-					break;
-			}
-			// 因为Flow讨论串自带时间，所以不需要再另外标注
-			topic = summary + ' (' + Morebits.string.toUpperCaseFirstChar(messageData.label) + ')';
-		}
-
-		var content = Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
-			params.reason, params.main_group === 'custom');
-
-		flowobj.setTopic(topic);
-		flowobj.setContent(content);
-		flowobj.newTopic();
 	}
 };
 
 Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	var userTalkPage = 'User_talk:' + Morebits.wiki.flow.relevantUserName();
 
-	// First, check to make sure a reason was filled in if uw-username was selected
+	// reason, main_group, sub_group, article
+	var params = Morebits.quickForm.getInputData(e.target);
 
-	if (e.target.sub_group.value === 'uw-username' && e.target.article.value.trim() === '') {
+	// Check that a reason was filled in if uw-username was selected
+	if (params.sub_group === 'uw-username' && !params.article) {
 		alert(wgULS('必须给{{uw-username}}提供理由。', '必須給{{uw-username}}提供理由。'));
 		return;
 	}
 
 	// Find the selected <option> element so we can fetch the data structure
-	var selectedEl = $(e.target.sub_group).find('option[value="' + $(e.target.sub_group).val() + '"]');
-
-	// Then, grab all the values provided by the form
-	var params = {
-		reason: e.target.reason.value,
-		main_group: e.target.main_group.value,
-		sub_group: e.target.sub_group.value,
-		article: e.target.article.value,  // .replace( /^(Image|Category):/i, ':$1:' ),  -- apparently no longer needed...
-		messageData: selectedEl.data('messageData')
-	};
+	var $selectedEl = $(e.target.sub_group).find('option[value="' + $(e.target.sub_group).val() + '"]');
+	params.messageData = $selectedEl.data('messageData');
 
 	Morebits.simpleWindow.setButtonsEnabled(false);
 	Morebits.status.init(e.target);
@@ -2296,7 +2502,6 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 		wikipedia_page.setFollowRedirect(true);
 		wikipedia_page.load(Twinkle.warn.callbacks.main);
 	});
-
 };
 })(jQuery);
 

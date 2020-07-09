@@ -127,6 +127,7 @@ Twinkle.defaultConfig = {
 	markCopyvioPagesAsPatrolled: true,
 
 	// Hidden preferences
+	autolevelStaleDays: 3,
 	revertMaxRevisions: 50, // intentionally limited
 	batchMax: 5000,
 	batchChunks: 50,
