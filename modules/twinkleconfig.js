@@ -746,7 +746,7 @@ Twinkle.config.sections = [
 			{
 				name: 'logXfdNominations',
 				label: wgULS('在用户空间中记录所有存废讨论提名', '在使用者空間中記錄所有存廢討論提名'),
-				helptip: wgULS('该日志供您追踪所有使用Twinkle提交的存废讨论', '該日誌供您追蹤所有透過Twinke提交的存廢討論'),
+				helptip: wgULS('该日志供您追踪所有透过Twinke提交的存废讨论', '該日誌供您追蹤所有透過Twinkle提交的存廢討論'),
 				type: 'boolean'
 			},
 			{
