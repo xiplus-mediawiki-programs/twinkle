@@ -11,6 +11,44 @@ from util import findBetween
 # parser.add_argument('mode', type=int, choices=[1, 2])
 # args = parser.parse_args()
 
+
+redirectTable = dict()
+
+
+def normalizeTitle(title):
+    title = title[0].upper() + title[1:]
+    if title.startswith('Wikipedia:'):
+        pass
+    elif not title.startswith('Template:'):
+        title = 'Template:' + title
+    if title in redirectTable:
+        title = redirectTable[title]
+    return title
+
+
+postData = {
+    "action": "query",
+    "format": "json",
+    "prop": "redirects",
+    "generator": "embeddedin",
+    "utf8": 1,
+    "rdlimit": "max",
+    "geititle": "Template:Twinkle standard installation",
+    "geinamespace": "10",
+    "geilimit": "max"
+}
+pages = requests.post('https://zh.wikipedia.org/w/api.php', data=postData).json()['query']['pages']
+markedPages = set()
+for pageid in pages:
+    page = pages[pageid]
+    if re.search(r'/(doc|sandbox)$', page['title']):
+        continue
+    markedPages.add(page['title'])
+    if 'redirects' in page:
+        for redirect in page['redirects']:
+            redirectTable[redirect['title']] = page['title']
+print(markedPages, len(markedPages))
+
 basedir = os.path.join(os.path.dirname(__file__), '..')
 
 filenames = [
@@ -44,9 +82,18 @@ for filename in filenames:
     matches = re.findall(r"{{subst:([^#|}']+)(?:\||}|\\n)", jstext)
 
     for match in matches:
-        templates.add(match)
-        print('\t', match)
+        templates.add(normalizeTitle(match))
+        print('\t', normalizeTitle(match))
 
+    matches = re.findall(r"'{{(?!subst:)([^#|<\[{}']+)\|?'", jstext)
+    for match in matches:
+        templates.add(normalizeTitle(match))
+        print('\t', normalizeTitle(match))
+
+    matches = re.findall(r'"{{(?!subst:)([^#|<\[{}]+)\|?', jstext)
+    for match in matches:
+        templates.add(normalizeTitle(match))
+        print('\t', normalizeTitle(match))
 
 # modules/twinkleblock.js
 print('modules/twinkleblock.js')
@@ -57,8 +104,8 @@ blockPresetsInfo = findBetween(jstext, 'Twinkle.block.blockPresetsInfo = {', 'Tw
 
 matches = re.findall(r"'([^|\n]+?)(?:\|[^\n]+?)?': {\n", blockPresetsInfo)
 for match in matches:
-    templates.add(match)
-    print('\t', match)
+    templates.add(normalizeTitle(match))
+    print('\t', normalizeTitle(match))
 
 
 # modules/twinkleimage.js
@@ -70,8 +117,8 @@ blockPresetsInfo = findBetween(jstext, "'来源不明（CSD F3）'", "'f10_type'
 
 matches = re.findall(r"value: '([^\n]+?)',", blockPresetsInfo)
 for match in matches:
-    templates.add(match)
-    print('\t', match)
+    templates.add(normalizeTitle(match))
+    print('\t', normalizeTitle(match))
 
 
 # modules/twinkleprotect.js
@@ -85,8 +132,8 @@ matches = re.findall(r", value: '([^\n]+?)'", blockPresetsInfo)
 for match in matches:
     if match in ['unprotect']:
         continue
-    templates.add(match)
-    print('\t', match)
+    templates.add(normalizeTitle(match))
+    print('\t', normalizeTitle(match))
 
 
 # modules/twinklewarn.js
@@ -98,8 +145,17 @@ blockPresetsInfo = findBetween(jstext, 'Twinkle.warn.messages = wgULS({', 'Twink
 
 matches = re.findall(r"'([^|\n]+?)(?:\|[^\n]+?)?': {\n\t+label", blockPresetsInfo)
 for match in matches:
-    templates.add(match)
-    print('\t', match)
+    templates.add(normalizeTitle(match))
+    print('\t', normalizeTitle(match))
 
+text = ''
+text += 'Unmarked pages\n'
+for template in templates - markedPages:
+    text += '# [[{}]]\n'.format(template)
+text += 'Unused pages\n'
+for template in markedPages - templates:
+    text += '# [[{}]]\n'.format(template)
 
-print(templates)
+outpath = os.path.join(basedir, 'maintenance/get_templates-output.txt')
+with open(outpath, 'w', encoding='utf8') as f:
+    f.write(text)
