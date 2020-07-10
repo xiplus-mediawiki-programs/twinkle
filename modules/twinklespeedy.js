@@ -1332,7 +1332,7 @@ Twinkle.speedy.callbacks = {
 							usertalkpage.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
 							usertalkpage.setTags(Twinkle.getPref('revisionTags'));
 							usertalkpage.setCreateOption('recreate');
-							usertalkpage.setFollowRedirect(true);
+							usertalkpage.setFollowRedirect(true, false);
 							usertalkpage.append();
 						});
 					}

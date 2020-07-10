@@ -84,12 +84,12 @@ Twinkle.image.callback = function twinkleimageCallback() {
 			{
 				label: wgULS('没有填写任何合理使用依据的非自由著作权文件（CSD F9）', '沒有填寫任何合理使用依據的非自由著作權檔案（CSD F9）'),
 				value: 'no fair use rationale',
-				tooltip: wgULS('本文件为非自由著作权且没有被条目使用', '本檔案為非自由著作權且沒有被條目使用')
+				tooltip: wgULS('不适用于有争议但完整的合理使用依据。如果非自由著作权文件只有部分条目的使用依据，但同时被使用于未提供合理使用依据的条目，则本方针也不适用。', '不適用於有爭議但完整的合理使用依據。如果非自由著作權檔案只有部分條目的使用依據，但同時被使用於未提供合理使用依據的條目，則本方針也不適用。')
 			},
 			{
 				label: wgULS('可被替代的非自由著作权文件（CSD F10）', '可被替代的非自由著作權檔案（CSD F10）'),
 				value: 'replaceable fair use',
-				tooltip: wgULS('本文件为非自由著作权且没有被条目使用', '本檔案為非自由著作權且沒有被條目使用'),
+				tooltip: wgULS('文件仅用于描述、识别或评论文件中展示的事物，或仅用作插图，且满足以下四个条件之一。如果给出了其他合理使用依据，不适用本条。如对文件的可替代性存在争议，应交文件存废讨论处理。本条也不适用于正在或曾经由文件存废讨论处理过的文件。', '檔案僅用於描述、辨識或評論檔案中展示的事物，或僅用作插圖，且滿足以下四個條件之一。如果給出了其他合理使用依據，不適用本條。如對檔案的可替代性存在爭議，應交檔案存廢討論處理。本條也不適用於正在或曾經由檔案存廢討論處理過的檔案。'),
 				subgroup: {
 					name: 'f10_type',
 					type: 'select',
@@ -286,12 +286,12 @@ Twinkle.image.callbacks = {
 			var talkPageName = 'User talk:' + initialContrib;
 			Morebits.wiki.flow.check(talkPageName, function () {
 				var flowpage = new Morebits.wiki.flow(talkPageName, wgULS('通知上传者（', '通知上傳者（') + initialContrib + '）');
-				flowpage.setTopic(wgULS('请补充文件[[:', '請補充檔案[[:') + Morebits.pageNameNorm + wgULS(']]的著作权或来源信息', ']]的著作權或來源資訊'));
-				flowpage.setContent('{{subst:Uploadvionotice|' + Morebits.pageNameNorm + '|flow=yes}}');
+				flowpage.setTopic(wgULS('文件[[', '檔案[[') + Morebits.pageNameNorm + wgULS(']]的快速删除通知', ']]的快速刪除通知'));
+				flowpage.setContent('{{subst:Di-' + params.templatename + '-notice|1=' + Morebits.pageNameNorm + '}}');
 				flowpage.newTopic();
 			}, function () {
 				var usertalkpage = new Morebits.wiki.page(talkPageName, wgULS('通知上传者（', '通知上傳者（') + initialContrib + '）');
-				var notifytext = '\n{{subst:Uploadvionotice|' + Morebits.pageNameNorm + '}}--~~~~';
+				var notifytext = '\n{{subst:Di-' + params.templatename + '-notice|1=' + Morebits.pageNameNorm + '}}--~~~~';
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary(wgULS('通知：文件[[', '通知：檔案[[') + Morebits.pageNameNorm + wgULS(']]快速删除提名', ']]快速刪除提名') + Twinkle.getPref('summaryAd'));
 				usertalkpage.setTags(Twinkle.getPref('revisionTags'));
@@ -307,7 +307,7 @@ Twinkle.image.callbacks = {
 						usertalkpage.setWatchlistFromPreferences(true);
 						break;
 				}
-				usertalkpage.setFollowRedirect(true);
+				usertalkpage.setFollowRedirect(true, false);
 				usertalkpage.append();
 			});
 		}
@@ -323,7 +323,7 @@ Twinkle.image.callbacks = {
 		// var params = pageobj.getCallbackParameters();
 
 		pageobj.setPageText(text + '\n* [[:' + Morebits.pageNameNorm + ']]--~~~~');
-		pageobj.setEditSummary(wgULS('添加[[', '加入[[') + Morebits.pageNameNorm + ']]。' + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary(wgULS('添加[[', '加入[[') + Morebits.pageNameNorm + ']]' + Twinkle.getPref('summaryAd'));
 		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setCreateOption('recreate');
 		pageobj.save();

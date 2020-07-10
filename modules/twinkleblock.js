@@ -133,6 +133,7 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 		letype: 'block',
 		lelimit: 1,
 		ususers: userName,
+		usprop: 'groupmemberships',
 		letitle: 'User:' + userName
 	};
 	if (Morebits.isIPRange(userName)) {
@@ -146,7 +147,15 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 				userinfo = data.query.users[0];
 
 			Twinkle.block.isRegistered = !!userinfo.userid;
-			relevantUserName = Twinkle.block.isRegistered ? 'User:' + userName : userName;
+			if (Twinkle.block.isRegistered) {
+				relevantUserName = 'User:' + userName;
+				Twinkle.block.userIsBot = !!userinfo.groupmemberships && userinfo.groupmemberships.map(function(e) {
+					return e.group;
+				}).indexOf('bot') !== -1;
+			} else {
+				relevantUserName = userName;
+				Twinkle.block.userIsBot = false;
+			}
 
 			if (blockinfo) {
 			// handle frustrating system of inverted boolean values
@@ -621,8 +630,6 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		});
 
 		mw.util.addCSS(
-			// prevent dropdown from appearing behind the dialog, just in case
-			'.select2-container { z-index: 10000; }' +
 			// Reduce padding
 			'.select2-results .select2-results__option { padding-top: 1px; padding-bottom: 1px; }' +
 			// Adjust font size
@@ -1094,7 +1101,7 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 	data.hardblock = data.hardblock !== undefined ? data.hardblock : false;
 
 	// disable autoblock if blocking a bot
-	if (Twinkle.block.isRegistered && relevantUserName.search(/bot$/i) > 0) {
+	if (Twinkle.block.userIsBot || relevantUserName.search(/bot\b/i) > 0) {
 		data.autoblock = false;
 	}
 

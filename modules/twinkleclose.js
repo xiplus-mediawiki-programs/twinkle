@@ -54,6 +54,7 @@ Twinkle.close = function twinkleclose() {
 			return;
 		}
 		title = decodeURIComponent(title);
+		title = title.replace(/_/g, ' '); // Normalize for using in interface and summary
 		var pagenotexist = $(current).find('.mw-headline a').hasClass('new');
 		var section = current.getAttribute('data-section');
 		var node = current.getElementsByClassName('mw-headline')[0];
@@ -585,7 +586,7 @@ Twinkle.close.callbacks = {
 				}
 			});
 		} else {
-			page.setEditSummary(wgULS('存废讨论通过：[[', '存廢討論通過：[[') + mw.config.get('wgPageName') + ']]' + Twinkle.getPref('deletionSummaryAd'));
+			page.setEditSummary(wgULS('存废讨论通过：[[', '存廢討論通過：[[') + mw.config.get('wgPageName') + '#' + params.title + ']]' + Twinkle.getPref('deletionSummaryAd'));
 			page.setTags(Twinkle.getPref('revisionTags'));
 			page.deletePage(function() {
 				page.getStatusElement().info('完成');
@@ -612,7 +613,7 @@ Twinkle.close.callbacks = {
 			var talkpage = new Morebits.wiki.page(talkpagetitle.toString(), wgULS('标记讨论页', '標記討論頁'));
 			var vfdkept = '{{vfd-kept|' + mw.config.get('wgPageName').split('/').slice(2).join('/') + '|' + params.messageData.label + '}}\n';
 			talkpage.setPrependText(vfdkept);
-			talkpage.setEditSummary('[[' + mw.config.get('wgPageName') + ']]：' + params.messageData.label + Twinkle.getPref('summaryAd'));
+			talkpage.setEditSummary('[[' + mw.config.get('wgPageName') + '#' + params.title + ']]：' + params.messageData.label + Twinkle.getPref('summaryAd'));
 			talkpage.setTags(Twinkle.getPref('revisionTags'));
 			talkpage.setCreateOption('recreate');
 			talkpage.prepend();
@@ -629,7 +630,7 @@ Twinkle.close.callbacks = {
 			Twinkle.close.callbacks.talkend(params);
 			return;
 		}
-		var editsummary = wgULS('存废讨论关闭：[[', '存廢討論關閉：[[') + mw.config.get('wgPageName') + ']]';
+		var editsummary = wgULS('存废讨论关闭：[[', '存廢討論關閉：[[') + mw.config.get('wgPageName') + '#' + params.title + ']]';
 
 		pageobj.setPageText(newtext);
 		pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));

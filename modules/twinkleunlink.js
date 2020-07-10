@@ -171,7 +171,7 @@ Twinkle.unlink.callbacks = {
 					if ($(xmlDoc).find('query-continue').length) {
 						apiobj.params.form.append({
 							type: 'div',
-							label: wgULS('显示头 ' + list.length.toString() + ' 个文件使用。', '顯示頭 ' + list.length.toString() + ' 個檔案使用。')
+							label: wgULS('显示头 ' + mw.language.convertNumber(list.length) + ' 个文件使用。', '顯示頭 ' + mw.language.convertNumber(list.length) + ' 個檔案使用。')
 						});
 					}
 					apiobj.params.form.append({
@@ -217,7 +217,7 @@ Twinkle.unlink.callbacks = {
 				if ($(xmlDoc).find('query-continue').length) {
 					apiobj.params.form.append({
 						type: 'div',
-						label: wgULS('显示头 ' + list.length.toString() + ' 个链入。', '顯示頭 ' + list.length.toString() + ' 個連入。')
+						label: wgULS('显示头 ' + mw.language.convertNumber(list.length) + ' 个链入。', '顯示頭 ' + mw.language.convertNumber(list.length) + ' 個連入。')
 					});
 				}
 				apiobj.params.form.append({

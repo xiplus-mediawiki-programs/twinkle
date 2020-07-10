@@ -206,12 +206,11 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			if (mw.config.get('wgArticleId')) {
 				field2.append({
 					type: 'checkbox',
-					name: 'editmodify',
 					event: Twinkle.protect.formevents.editmodify,
 					list: [
 						{
 							label: wgULS('修改编辑权限', '修改編輯權限'),
-							value: 'editmodify',
+							name: 'editmodify',
 							tooltip: wgULS('如果此项关闭，编辑权限将不会修改。', '如果此項關閉，編輯權限將不會修改。'),
 							checked: true
 						}
@@ -284,12 +283,11 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				});
 				field2.append({
 					type: 'checkbox',
-					name: 'movemodify',
 					event: Twinkle.protect.formevents.movemodify,
 					list: [
 						{
 							label: wgULS('修改移动权限', '修改移動權限'),
-							value: 'movemodify',
+							name: 'movemodify',
 							tooltip: wgULS('如果此项被关闭，移动权限将不被修改。', '如果此項被關閉，移動權限將不被修改。'),
 							checked: true
 						}
