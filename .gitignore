@@ -1,12 +1,13 @@
 .mediawiki-bot-*
-.vscode/
-twinkle.js
+alltwinkle.js
+.twinklerc
 /.settings
 /.project
 jsl.conf
 stash*.txt
 stash*.diff
 *.jsX
+.vscode/
 
 # Windows
 Thumbs.db
@@ -23,4 +24,6 @@ Icon
 .Spotlight-V100
 .Trashes
 
-node_modules
+# Node
+node_modules/
+npm-debug.log*
