@@ -5,7 +5,7 @@ import re
 import requests
 
 parser = argparse.ArgumentParser()
-parser.add_argument('mode', type=int, choices=[1, 2], default=2)
+parser.add_argument('mode', nargs='?', type=int, choices=[1, 2], default=2)
 args = parser.parse_args()
 
 filenames = [
@@ -58,6 +58,7 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:账户;zh-hant:帳號}-
 -{H|zh-hans:已在运行;zh-hant:已在執行}-
 -{H|zh-hans:当前;zh-hant:目前}-
+-{H|zh-hans:最近更改;zh-hant:近期變更}-
 '''
 
 

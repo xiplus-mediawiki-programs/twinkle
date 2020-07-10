@@ -848,7 +848,7 @@ Twinkle.block.blockPresetsInfo = {
 	'uw-ublock|攻击|或侮辱性': {
 		expiry: 'infinity',
 		reason: wgULS('{{uw-ublock|攻击|或侮辱性}}', '{{uw-ublock|攻擊|或侮辱性}}'),
-		summary: wgULS('攻击或侮辱性用户名', '攻擊或侮辱性使用者名稱}')
+		summary: wgULS('攻击或侮辱性用户名', '攻擊或侮辱性使用者名稱')
 	},
 	'uw-ublock|混淆': {
 		expiry: 'infinity',
