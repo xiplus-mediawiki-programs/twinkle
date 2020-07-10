@@ -3638,7 +3638,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 			token = $(xml).find('tokens').attr('csrftoken');
 			if (!token) {
-				ctx.statusElement.error(wgULS('未能抓取取消删除令牌', '未能抓取取消刪除權杖…'));
+				ctx.statusElement.error(wgULS('未能抓取取消删除令牌。', '未能抓取取消刪除權杖。'));
 				ctx.onUndeleteFailure(this);
 				return;
 			}
