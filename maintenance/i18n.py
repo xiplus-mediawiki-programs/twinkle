@@ -1,8 +1,11 @@
 import argparse
 import html
+import os
 import re
 
 import requests
+
+BASEDIR = os.path.dirname(os.path.abspath(__file__))
 
 parser = argparse.ArgumentParser()
 parser.add_argument('mode', nargs='?', type=int, choices=[1, 2], default=2)
@@ -74,7 +77,9 @@ def escapeWikitext(text):
 for filename in filenames:
     print(filename)
 
-    with open(filename, 'r', encoding='utf8') as f:
+    full_filename = os.path.join(BASEDIR, '..', filename)
+
+    with open(full_filename, 'r', encoding='utf8') as f:
         jstext = f.read()
 
     matches = re.findall(r"wgULS\('(.*?)',[\s\n]*?'((?:[^()]|\([^()]\))*?)'\)", jstext)
@@ -122,5 +127,5 @@ for filename in filenames:
             jstext,
         )
 
-    with open(filename, 'w', encoding='utf8') as f:
+    with open(full_filename, 'w', encoding='utf8') as f:
         f.write(jstext)
