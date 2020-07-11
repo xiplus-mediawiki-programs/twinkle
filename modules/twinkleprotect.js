@@ -241,7 +241,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				field2.append({
 					type: 'select',
 					name: 'editexpiry',
-					label: '终止时间：',
+					label: wgULS('终止时间：', '終止時間：'),
 					event: function(e) {
 						if (e.target.value === 'custom') {
 							Twinkle.protect.doCustomExpiry(e.target);
