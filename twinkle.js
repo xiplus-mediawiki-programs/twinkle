@@ -129,10 +129,7 @@ Twinkle.defaultConfig = {
 	// Hidden preferences
 	revertMaxRevisions: 50, // intentionally limited
 	batchMax: 5000,
-	batchdeleteChunks: 50,
-	batchProtectChunks: 50,
-	batchundeleteChunks: 50,
-	proddeleteChunks: 50,
+	batchChunks: 50,
 	revisionTags: 'Twinkle',
 	configPage: 'Wikipedia:Twinkle/参数设置',
 	projectNamespaceName: mw.config.get('wgFormattedNamespaces')[4],

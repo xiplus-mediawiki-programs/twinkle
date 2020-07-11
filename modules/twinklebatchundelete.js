@@ -137,7 +137,7 @@ Twinkle.batchundelete.callback.evaluate = function(event) {
 
 
 	var pageUndeleter = new Morebits.batchOperation(wgULS('反删除页面', '反刪除頁面'));
-	pageUndeleter.setOption('chunkSize', Twinkle.getPref('batchUndeleteChunks'));
+	pageUndeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 	pageUndeleter.setOption('preserveIndividualStatusLines', true);
 	pageUndeleter.setPageList(pages);
 	pageUndeleter.run(function(pageName) {

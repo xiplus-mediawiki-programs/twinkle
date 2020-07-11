@@ -924,27 +924,9 @@ Twinkle.config.sections = [
 				type: 'integer',
 				adminOnly: true
 			},
-			// twinklebatchdelete.js: How many pages should be processed at a time
+			// How many pages should be processed at a time by deprod and batchdelete/protect/undelete
 			{
-				name: 'batchdeleteChunks',
-				type: 'integer',
-				adminOnly: true
-			},
-			// twinklebatchprotect.js: How many pages should be processed at a time
-			{
-				name: 'batchProtectChunks',
-				type: 'integer',
-				adminOnly: true
-			},
-			// twinklebatchundelete.js: How many pages should be processed at a time
-			{
-				name: 'batchundeleteChunks',
-				type: 'integer',
-				adminOnly: true
-			},
-			// twinkledeprod.js: How many pages should be processed at a time
-			{
-				name: 'proddeleteChunks',
+				name: 'batchChunks',
 				type: 'integer',
 				adminOnly: true
 			}
