@@ -376,7 +376,7 @@ Twinkle.batchdelete.callback.toggleSubpages = function twDbatchToggleSubpages(e)
 		}).get();
 
 		var subpageLister = new Morebits.batchOperation();
-		subpageLister.setOption('chunkSize', Twinkle.getPref('batchdeleteChunks'));
+		subpageLister.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 		subpageLister.setPageList(pages);
 		subpageLister.run(function worker (pageName) {
 			var pageTitle = mw.Title.newFromText(pageName);
@@ -532,7 +532,7 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 	}
 
 	var pageDeleter = new Morebits.batchOperation(delete_page ? wgULS('正在删除页面', '正在刪除頁面') : wgULS('正在启动要求的任务', '正在啟動要求的任務'));
-	pageDeleter.setOption('chunkSize', Twinkle.getPref('batchdeleteChunks'));
+	pageDeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 	// we only need the initial status lines if we're deleting the pages in the pages array
 	pageDeleter.setOption('preserveIndividualStatusLines', delete_page);
 	pageDeleter.setPageList(pages);
@@ -561,7 +561,7 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 	}, function postFinish() {
 		if (delete_subpages) {
 			var subpageDeleter = new Morebits.batchOperation(wgULS('正在删除子页面', '正在刪除子頁面'));
-			subpageDeleter.setOption('chunkSize', Twinkle.getPref('batchdeleteChunks'));
+			subpageDeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 			subpageDeleter.setOption('preserveIndividualStatusLines', true);
 			subpageDeleter.setPageList(subpages);
 			subpageDeleter.run(function(pageName) {
@@ -664,7 +664,7 @@ Twinkle.batchdelete.callbacks = {
 		}
 
 		var redirectDeleter = new Morebits.batchOperation(wgULS('正在删除到 ', '正在刪除到 ') + apiobj.params.page + wgULS(' 的重定向', ' 的重新導向'));
-		redirectDeleter.setOption('chunkSize', Twinkle.getPref('batchdeleteChunks'));
+		redirectDeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 		redirectDeleter.setPageList(pages);
 		redirectDeleter.run(function(pageName) {
 			var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('正在删除 ', '正在刪除 ') + pageName);
@@ -697,7 +697,7 @@ Twinkle.batchdelete.callbacks = {
 		}
 
 		var unlinker = new Morebits.batchOperation(wgULS('正在取消到 ', '正在取消到 ') + apiobj.params.page + wgULS(' 的链入', ' 的連入'));
-		unlinker.setOption('chunkSize', Twinkle.getPref('batchdeleteChunks'));
+		unlinker.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 		unlinker.setPageList(pages);
 		unlinker.run(function(pageName) {
 			var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('正在取消 ', '正在取消 ') + pageName + wgULS(' 上的链入', ' 上的連入'));
@@ -750,7 +750,7 @@ Twinkle.batchdelete.callbacks = {
 		}
 
 		var unlinker = new Morebits.batchOperation(wgULS('正在取消到 ', '正在取消到 ') + apiobj.params.page + wgULS(' 的链入', ' 的連入'));
-		unlinker.setOption('chunkSize', Twinkle.getPref('batchdeleteChunks'));
+		unlinker.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 		unlinker.setPageList(pages);
 		unlinker.run(function(pageName) {
 			var wikipedia_page = new Morebits.wiki.page(pageName, '取消 ' + pageName + wgULS(' 的文件使用', ' 的檔案使用'));
