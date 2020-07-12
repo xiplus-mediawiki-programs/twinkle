@@ -2409,9 +2409,19 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		switch (ctx.editMode) {
 			case 'append':
+				if (ctx.appendText === null) {
+					ctx.statusElement.error('内部错误：保存前未设置append文字！');
+					ctx.onSaveFailure(this);
+					return;
+				}
 				query.appendtext = ctx.appendText;  // use mode to append to current page contents
 				break;
 			case 'prepend':
+				if (ctx.prependText === null) {
+					ctx.statusElement.error('内部错误：保存前未设置prepend文字！');
+					ctx.onSaveFailure(this);
+					return;
+				}
 				query.prependtext = ctx.prependText;  // use mode to prepend to current page contents
 				break;
 			case 'revert':
