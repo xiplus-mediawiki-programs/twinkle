@@ -298,7 +298,7 @@ Twinkle.unlink.callbacks = {
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary(summaryText + ' "' + Morebits.pageNameNorm + '": ' + params.reason + '.' + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary(summaryText + wgULS('“', '「') + Morebits.pageNameNorm + wgULS('”：', '」：') + params.reason + Twinkle.getPref('summaryAd'));
 		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(params.unlinker.workerSuccess, params.unlinker.workerFailure);
