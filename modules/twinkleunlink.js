@@ -107,36 +107,37 @@ Twinkle.unlink.callback = function(presetReason) {
 };
 
 Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event) {
-	var reason = event.target.reason.value;
-	if (!reason) {
+	var form = event.target;
+	var input = Morebits.quickForm.getInputData(form);
+
+	if (!input.reason) {
 		alert(wgULS('您必须指定取消链入的理由。', '您必須指定取消連入的理由。'));
 		return;
 	}
 
-	var backlinks = [], imageusage = [];
-	if (event.target.backlinks) {
-		backlinks = Twinkle.unlink.getChecked2(event.target.backlinks);
-	}
-	if (event.target.imageusage) {
-		imageusage = Twinkle.unlink.getChecked2(event.target.imageusage);
+	input.backlinks = input.backlinks || [];
+	input.imageusage = input.imageusage || [];
+	var pages = Morebits.array.uniq(input.backlinks.concat(input.imageusage));
+	if (!pages.length) {
+		alert(wgULS('您必须至少选择一个要取消链入的页面。', '您必須至少選擇一個要取消連入的頁面。'));
+		return;
 	}
 
 	Morebits.simpleWindow.setButtonsEnabled(false);
-	Morebits.status.init(event.target);
+	Morebits.status.init(form);
 
-	var pages = Morebits.array.uniq(backlinks.concat(imageusage));
-
-	var unlinker = new Morebits.batchOperation(wgULS('取消链入', '取消連入') + (imageusage ? wgULS('与文件使用', '與檔案使用') : ''));
+	var unlinker = new Morebits.batchOperation(wgULS('取消', '取消') + (input.backlinks.length ? wgULS('链入', '連入') +
+			(input.imageusage.length ? wgULS('与文件使用', '與檔案使用') : '') : wgULS('文件使用', '檔案使用')));
 	unlinker.setOption('preserveIndividualStatusLines', true);
 	unlinker.setPageList(pages);
-	var params = { reason: reason, unlinker: unlinker };
+	var params = { reason: input.reason, unlinker: unlinker };
 	unlinker.run(function(pageName) {
-		var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('在条目“' + pageName + '”中取消链入', '在條目「' + pageName + '」中取消連入'));
+		var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('在页面“', '在頁面「') + pageName + wgULS('”中取消链入', '」中取消連入'));
 		wikipedia_page.setBotEdit(true);  // unlink considered a floody operation
-		var innerParams = $.extend({}, params);
-		innerParams.doBacklinks = backlinks && backlinks.indexOf(pageName) !== -1;
-		innerParams.doImageusage = imageusage && imageusage.indexOf(pageName) !== -1;
-		wikipedia_page.setCallbackParameters(innerParams);
+		wikipedia_page.setCallbackParameters($.extend({
+			doBacklinks: input.backlinks.indexOf(pageName) !== -1,
+			doImageusage: input.imageusage.indexOf(pageName) !== -1
+		}, params));
 		wikipedia_page.load(Twinkle.unlink.callbacks.unlinkBacklinks);
 	});
 };
