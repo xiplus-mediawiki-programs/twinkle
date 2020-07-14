@@ -134,10 +134,12 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	var main_group = main_select.append({
 		type: 'select',
 		name: 'main_group',
+		tooltip: wgULS('您可在Twinkle参数设置中设置默认选择的选项', '您可在Twinkle偏好設定中設定預設選擇的選項'),
 		event: Twinkle.warn.callback.change_category
 	});
 
 	var defaultGroup = parseInt(Twinkle.getPref('defaultWarningGroup'), 10);
+	main_group.append({ type: 'option', label: wgULS('自动选择层级（1-4）', '自動選擇層級（1-4）'), value: 'autolevel', selected: defaultGroup === 11 });
 	main_group.append({ type: 'option', label: wgULS('层级1', '層級1'), value: 'level1', selected: defaultGroup === 1 });
 	main_group.append({ type: 'option', label: wgULS('层级2', '層級2'), value: 'level2', selected: defaultGroup === 2 });
 	main_group.append({ type: 'option', label: wgULS('层级3', '層級3'), value: 'level3', selected: defaultGroup === 3 });
@@ -153,7 +155,6 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		main_group.append({ type: 'option', label: wgULS('自定义警告', '自訂警告'), value: 'custom', selected: defaultGroup === 9 });
 	}
 	main_group.append({ type: 'option', label: wgULS('所有警告模板', '所有警告模板'), value: 'kitchensink', selected: defaultGroup === 10 });
-	main_group.append({ type: 'option', label: wgULS('自动选择层级（1-4）', '自動選擇層級（1-4）'), value: 'autolevel', selected: defaultGroup === 11 });
 
 	main_select.append({ type: 'select', name: 'sub_group', event: Twinkle.warn.callback.change_subcategory }); // Will be empty to begin with.
 
@@ -2081,7 +2082,7 @@ Twinkle.warn.callback.postCategoryCleanup = function twinklewarnCallbackPostCate
 			})
 			.change(Twinkle.warn.callback.change_subcategory);
 
-		$('.select2-selection').keydown(Morebits.select2.autoStart);
+		$('.select2-selection').keydown(Morebits.select2.autoStart).focus();
 
 		mw.util.addCSS(
 			// Increase height
