@@ -21,6 +21,7 @@ Twinkle.talkback = function() {
 
 	Twinkle.addPortletLink(Twinkle.talkback.callback, '通告', 'friendly-talkback', wgULS('回复通告', '回覆通告'));
 };
+Twinkle.addInitCallback(Twinkle.talkback, 'talkback');
 
 Twinkle.talkback.callback = function() {
 	if (Morebits.wiki.flow.relevantUserName() === mw.config.get('wgUserName') && !confirm(wgULS('您寂寞到了要自己回复自己的程度么？', '您寂寞到了要自己回覆自己的程度麼？'))) {

@@ -68,6 +68,7 @@ Twinkle.close = function twinkleclose() {
 		node.appendChild(tmpNode);
 	});
 };
+Twinkle.addInitCallback(Twinkle.close, 'close');
 
 // Keep this synchronized with {{delh}}
 Twinkle.close.codes = wgULS({

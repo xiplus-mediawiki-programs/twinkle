@@ -28,10 +28,16 @@ if (!Morebits.userIsInGroup('autoconfirmed') && !Morebits.userIsInGroup('confirm
 var Twinkle = {};
 window.Twinkle = Twinkle;  // allow global access
 
-// for use by custom modules (normally empty)
 Twinkle.initCallbacks = [];
-Twinkle.addInitCallback = function twinkleAddInitCallback(func) {
-	Twinkle.initCallbacks.push(func);
+
+/**
+ * Adds a callback to execute when Twinkle has loaded.
+ * @param {function} func
+ * @param {string} [name] - name of module used to check if is disabled.
+ * If name is not given, module is loaded unconditionally.
+ */
+Twinkle.addInitCallback = function twinkleAddInitCallback(func, name) {
+	Twinkle.initCallbacks.push({ func: func, name: name });
 };
 
 Twinkle.defaultConfig = {};
@@ -449,39 +455,21 @@ Twinkle.load = function () {
 	// Set custom Api-User-Agent header, for server-side logging purposes
 	Morebits.wiki.api.setApiUserAgent('Twinkle~zh (' + mw.config.get('wgWikiID') + ')');
 
-	// Load all the modules in the order that the tabs should appear
-	var twinkleModules = [
-		// User/user talk-related
-		'arv', 'warn', 'block', 'talkback',
-		// Deletion
-		'speedy', 'copyvio', 'xfd', 'image',
-		// Maintenance
-		'protect', 'tag', 'stub',
-		// Misc. ones last
-		'diff', 'unlink', 'fluff', 'batchdelete', 'batchundelete'
-	];
-	// Don't load modules users have disabled
-	var disabledModules = Twinkle.getPref('disabledModules').concat(Twinkle.getPref('disabledSysopModules'));
-	twinkleModules.filter(function(mod) {
-		return disabledModules.indexOf(mod) === -1;
-	}).forEach(function(module) {
-		Twinkle[module]();
-	});
+	Twinkle.disabledModules = Twinkle.getPref('disabledModules').concat(Twinkle.getPref('disabledSysopModules'));
 
-	if (Twinkle.getPref('XfdClose') !== 'hide') {
-		Twinkle.close();
-	}
-	Twinkle.config.init(); // Can't turn off
+	// Redefine addInitCallback so that any modules being loaded now on are directly
+	// initialised rather than added to initCallbacks array
+	Twinkle.addInitCallback = function(func, name) {
+		if (!name || Twinkle.disabledModules.indexOf(name) === -1) {
+			func();
+		}
+	};
+	// Initialise modules that were saved in initCallbacks array
+	Twinkle.initCallbacks.forEach(function(module) {
+		Twinkle.addInitCallback(module.func, module.name);
+	});
 
 	Twinkle.addPortletLink(mw.util.wikiScript('index') + '?title=' + Twinkle.getPref('configPage'), wgULS('设置', '設定'), 'tw-config', wgULS('设置Twinkle参数', '設定Twinkle參數'));
-
-	// Run the initialization callbacks for any custom modules
-	Twinkle.initCallbacks.forEach(function (func) {
-		func();
-	});
-	Twinkle.addInitCallback = function (func) {
-		func();
-	};
 
 	// Increases text size in Twinkle dialogs, if so configured
 	if (Twinkle.getPref('dialogLargeFont')) {

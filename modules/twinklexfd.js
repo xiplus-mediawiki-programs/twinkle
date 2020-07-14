@@ -29,6 +29,7 @@ Twinkle.xfd = function twinklexfd() {
 		Twinkle.addPortletLink(Twinkle.xfd.aprilfool, wgULS('愚人节提删', '愚人節提刪'), 'tw-xfd-april-fool', wgULS('愚人节提删', '愚人節提刪'));
 	}
 };
+Twinkle.addInitCallback(Twinkle.xfd, 'xfd');
 
 Twinkle.xfd.currentRationale = null;
 
