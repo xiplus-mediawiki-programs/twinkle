@@ -1901,6 +1901,8 @@ Morebits.wiki.api = function(currentAction, query, onSuccess, statusElement, onE
 	}
 	if (!query.format) {
 		this.query.format = 'xml';
+	} else if (query.format === 'json' && !query.formatversion) {
+		this.query.formatversion = '2';
 	} else if (['xml', 'json'].indexOf(query.format) === -1) {
 		this.statelem.error('Invalid API format: only xml and json are supported.');
 	}
@@ -1918,6 +1920,7 @@ Morebits.wiki.api.prototype = {
 	statusText: null, // result received from the API, normally "success" or "error"
 	errorCode: null, // short text error code, if any, as documented in the MediaWiki API
 	errorText: null, // full error description, if any
+	badtokenRetry: false, // set to true if this on a retry attempted after a badtoken error
 
 	/**
 	 * Keep track of parent object for callbacks
@@ -1954,7 +1957,7 @@ Morebits.wiki.api.prototype = {
 
 		var ajaxparams = $.extend({}, {
 			context: this,
-			type: 'POST',
+			type: this.query.action === 'query' ? 'GET' : 'POST',
 			url: mw.util.wikiScript('api'),
 			data: queryString,
 			dataType: this.query.format,
@@ -1977,7 +1980,7 @@ Morebits.wiki.api.prototype = {
 
 				if (typeof this.errorCode === 'string') {
 					// the API didn't like what we told it, e.g., bad edit token or an error creating a page
-					return this.returnError();
+					return this.returnError(callerAjaxParameters);
 				}
 
 				// invoke success callback if one was supplied
@@ -2002,13 +2005,19 @@ Morebits.wiki.api.prototype = {
 		);
 	},
 
-	returnError: function() {
-		if (this.errorCode === 'badtoken') {
-			// TODO from upstream: automatically retry after getting a new token
-			this.statelem.error(wgULS('无效令牌，请刷新页面并重试', '無效權杖，請重新整理頁面並重試'));
-		} else {
-			this.statelem.error(this.errorText);
+	returnError: function(callerAjaxParameters) {
+		if (this.errorCode === 'badtoken' && !this.badtokenRetry) {
+			this.statelem.error(wgULS('无效令牌，获取新的令牌并重试...', '無效權杖，取得新的權杖並重試...'));
+			this.badtokenRetry = true;
+			// Get a new CSRF token and retry. If the original action needs a different
+			// type of action than CSRF, we do one pointless retry before bailing out
+			return Morebits.wiki.api.getToken().then(function(token) {
+				this.query.token = token;
+				return this.post(callerAjaxParameters);
+			});
 		}
+
+		this.statelem.error(this.errorText);
 
 		// invoke failure callback if one was supplied
 		if (this.onError) {
@@ -2056,6 +2065,17 @@ Morebits.wiki.api.setApiUserAgent = function(ua) {
 	morebitsWikiApiUserAgent = (ua ? ua + ' ' : '') + 'morebits.js~zh ([[w:zh:WT:TW]])';
 };
 
+/** Get a new CSRF token on encountering token errors */
+Morebits.wiki.api.getToken = function() {
+	var tokenApi = new Morebits.wiki.api(wgULS('获取令牌', '取得權杖'), {
+		action: 'query',
+		meta: 'tokens',
+		type: 'csrf'
+	});
+	return tokenApi.post().then(function(apiobj) {
+		return $(apiobj.responseXML).find('tokens').attr('csrftoken');
+	});
+};
 
 
 /**
@@ -3253,17 +3273,6 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		return true; // all OK
 	};
 
-	// helper function to get a new token on encountering token errors in save, deletePage, and undeletePage
-	var fnGetToken = function() {
-		var tokenApi = new Morebits.wiki.api(wgULS('获取令牌', '取得權杖'), {
-			action: 'query',
-			meta: 'tokens'
-		});
-		return tokenApi.post().then(function(apiobj) {
-			return $(apiobj.responseXML).find('tokens').attr('csrftoken');
-		});
-	};
-
 	// callback from saveApi.post()
 	var fnSaveSuccess = function() {
 		ctx.editMode = 'all';  // cancel append/prepend/revert modes
@@ -3321,16 +3330,6 @@ Morebits.wiki.page = function(pageName, currentAction) {
 				}
 			}, ctx.statusElement);
 			purgeApi.post();
-
-		// check for loss of edit token
-		} else if (errorCode === 'badtoken' && ctx.retries++ < ctx.maxRetries) {
-
-			ctx.statusElement.info(wgULS('编辑令牌不可用，重试', '編輯權杖不可用，重試'));
-			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
-			fnGetToken().then(function(token) {
-				ctx.saveApi.query.token = token;
-				ctx.saveApi.post();
-			});
 
 		// check for network or server error
 		} else if (errorCode === 'undefined' && ctx.retries++ < ctx.maxRetries) {
@@ -3598,13 +3597,6 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			ctx.statusElement.info(wgULS('数据库查询错误，重试', '資料庫查詢錯誤，重試'));
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
 			ctx.deleteProcessApi.post(); // give it another go!
-		} else if (errorCode === 'badtoken' && ctx.retries++ < ctx.maxRetries) {
-			ctx.statusElement.info(wgULS('无效令牌，重试', '無效權杖，重試'));
-			--Morebits.wiki.numberOfActionsLeft;
-			fnGetToken().then(function(token) {
-				ctx.deleteProcessApi.query.token = token;
-				ctx.deleteProcessApi.post();
-			});
 		} else if (errorCode === 'missingtitle') {
 			ctx.statusElement.error(wgULS('不能删除页面，因其已不存在', '不能刪除頁面，因其已不存在'));
 			if (ctx.onDeleteFailure) {
@@ -3679,14 +3671,6 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			ctx.statusElement.info(wgULS('数据库查询错误，重试', '資料庫查詢錯誤，重試'));
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
 			ctx.undeleteProcessApi.post(); // give it another go!
-		} else if (errorCode === 'badtoken' && ctx.retries++ < ctx.maxRetries) {
-			ctx.statusElement.error(wgULS('无效令牌，重试。', '無效權杖，重試。'));
-			--Morebits.wiki.numberOfActionsLeft;
-			fnGetToken().then(function(token) {
-				ctx.undeleteProcessApi.query.token = token;
-
-				ctx.undeleteProcessApi.post();
-			});
 		} else if (errorCode === 'cantundelete') {
 			ctx.statusElement.error(wgULS('不能取消删除页面，因没有版本供取消删除或已被取消删除', '不能取消刪除頁面，因沒有版本供取消刪除或已被取消刪除'));
 			if (ctx.onUndeleteFailure) {
@@ -4714,7 +4698,7 @@ Morebits.status.error = function(text, status) {
  */
 Morebits.status.actionCompleted = function(text) {
 	var node = document.createElement('div');
-	node.appendChild(document.createElement('span')).appendChild(document.createTextNode(text));
+	node.appendChild(document.createElement('b')).appendChild(document.createTextNode(text));
 	node.className = 'morebits_status_info';
 	if (Morebits.status.root) {
 		Morebits.status.root.appendChild(node);
