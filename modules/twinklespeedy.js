@@ -1265,7 +1265,18 @@ Twinkle.speedy.callbacks = {
 				editsummary = wgULS('请求快速删除', '請求快速刪除') + '（[[WP:CSD#' + params.normalizeds[0].toUpperCase() + '|CSD ' + params.normalizeds[0].toUpperCase() + ']]）';
 			}
 
-			pageobj.setPageText(code + (params.blank ? '' : '\n' + text));
+
+			// Blank attack pages
+			if (params.blank) {
+				text = code;
+			} else {
+				// Insert tag after short description or any hatnotes
+				var wikipage = new Morebits.wikitext.page(text);
+				text = wikipage.insertAfterTemplates(code + '\n', Twinkle.hatnoteRegex).getText();
+			}
+
+
+			pageobj.setPageText(text);
 			pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
 			pageobj.setTags(Twinkle.getPref('revisionTags'));
 			pageobj.setWatchlist(params.watch);
