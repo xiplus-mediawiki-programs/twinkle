@@ -148,12 +148,18 @@ for match in matches:
     templates.add(normalizeTitle(match))
     print('\t', normalizeTitle(match))
 
+# end
+
+BLACKLIST = set([
+    'Template:Block notice',
+])
+
 text = ''
 text += 'Unmarked pages\n'
-for template in templates - markedPages:
+for template in templates - markedPages - BLACKLIST:
     text += '# [[{}]]\n'.format(template)
 text += 'Unused pages\n'
-for template in markedPages - templates:
+for template in markedPages - templates - BLACKLIST:
     text += '# [[{}]]\n'.format(template)
 
 outpath = os.path.join(basedir, 'maintenance/get_templates-output.txt')
