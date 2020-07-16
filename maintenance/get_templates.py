@@ -95,6 +95,25 @@ for filename in filenames:
         templates.add(normalizeTitle(match))
         print('\t', normalizeTitle(match))
 
+
+# modules/friendlytag.js
+print('modules/friendlytag.js')
+with open(os.path.join(basedir, 'modules/friendlytag.js'), 'r', encoding='utf8') as f:
+    jstext = f.read()
+
+articleTags = findBetween(jstext, 'Twinkle.tag.article.tags = wgULS', 'Twinkle.tag.article.tagCategories = wgULS')
+matches = re.findall(r"'(.+?)': '", articleTags)
+for match in matches:
+    templates.add(normalizeTitle(match))
+    print('\t', normalizeTitle(match))
+
+articleTags = findBetween(jstext, 'Twinkle.tag.frequentList = wgULS', 'Twinkle.tag.callbacks = {')
+matches = re.findall(r"{{(.+?)}}", articleTags)
+for match in matches:
+    templates.add(normalizeTitle(match))
+    print('\t', normalizeTitle(match))
+
+
 # modules/twinkleblock.js
 print('modules/twinkleblock.js')
 with open(os.path.join(basedir, 'modules/twinkleblock.js'), 'r', encoding='utf8') as f:
@@ -119,6 +138,14 @@ matches = re.findall(r"value: '([^\n]+?)',", blockPresetsInfo)
 for match in matches:
     templates.add(normalizeTitle(match))
     print('\t', normalizeTitle(match))
+
+    notice = 'Di-{}-notice'.format(match)
+    templates.add(normalizeTitle(notice))
+    print('\t', normalizeTitle(notice))
+
+    auto = '{}/auto'.format(match)
+    templates.add(normalizeTitle(auto))
+    print('\t', normalizeTitle(auto))
 
 
 # modules/twinkleprotect.js
@@ -150,8 +177,24 @@ for match in matches:
 
 # end
 
-BLACKLIST = set([
+# can't found from code or core templates
+WHITELIST = set([
+    # on-wiki
     'Template:Block notice',
+    'Template:Singlenotice',
+    # talkback
+    'Template:No talkback',
+    # tag
+    'Template:Multiple issues',
+])
+# non-exists templates
+BLACKLIST = set([
+    # image
+    'Template:Orphaned fair use/auto',
+    # protect
+    'Template:Pp-create-userpage',
+    'Template:Pp-create-vandalism',
+    'Template:Pp-userpage',
 ])
 
 text = ''
@@ -159,7 +202,7 @@ text += 'Unmarked pages\n'
 for template in templates - markedPages - BLACKLIST:
     text += '# [[{}]]\n'.format(template)
 text += 'Unused pages\n'
-for template in markedPages - templates - BLACKLIST:
+for template in markedPages - templates - WHITELIST:
     text += '# [[{}]]\n'.format(template)
 
 outpath = os.path.join(basedir, 'maintenance/get_templates-output.txt')
