@@ -653,25 +653,19 @@ Twinkle.config.sections = [
 				name: 'defaultWarningGroup',
 				label: wgULS('默认警告级别', '預設警告級別'),
 				type: 'enum',
-				enumValues: wgULS({
-					'1': '层级1',
-					'2': '层级2',
-					'3': '层级3',
-					'4': '层级4',
-					'5': '层级4im',
-					'6': '单层级通知',
-					'7': '单层级警告',
-					'9': '自定义警告'
-				}, {
-					'1': '層級1',
-					'2': '層級2',
-					'3': '層級3',
-					'4': '層級4',
-					'5': '層級4im',
-					'6': '單層級通知',
-					'7': '單層級警告',
-					'9': '自訂警告'
-				})
+				enumValues: {
+					'1': wgULS('层级1', '層級1'),
+					'2': wgULS('层级2', '層級2'),
+					'3': wgULS('层级3', '層級3'),
+					'4': wgULS('层级4', '層級4'),
+					'5': wgULS('层级4im', '層級4im'),
+					'6': wgULS('单层级通知', '單層級通知'),
+					'7': wgULS('单层级警告', '單層級警告'),
+					// 8 was used for block templates before #260
+					'9': wgULS('自定义警告', '自訂警告'),
+					'10': wgULS('所有警告模板', '所有警告模板'),
+					'11': wgULS('自动选择层级（1-4）', '自動選擇層級（1-4）')
+				}
 			},
 
 			// TwinkleConfig.combinedSingletMenus (boolean)
