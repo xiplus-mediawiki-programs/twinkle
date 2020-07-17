@@ -912,10 +912,6 @@ Twinkle.warn.messages = wgULS({
 			label: '消歧义页格式错误',
 			summary: '单层级通知：消歧义页格式错误'
 		},
-		'uw-date': {
-			label: '不必要地更换日期格式',
-			summary: '单层级通知：不必要地更换日期格式'
-		},
 		'uw-editsummary': {
 			label: '没有使用编辑摘要',
 			summary: '单层级通知：没有使用编辑摘要'
@@ -1733,10 +1729,6 @@ Twinkle.warn.messages = wgULS({
 			label: '消歧義頁格式錯誤',
 			summary: '單層級通知：消歧義頁格式錯誤'
 		},
-		'uw-date': {
-			label: '不必要地更換日期格式',
-			summary: '單層級通知：不必要地更換日期格式'
-		},
 		'uw-editsummary': {
 			label: '沒有使用編輯摘要',
 			summary: '單層級通知：沒有使用編輯摘要'
@@ -2108,7 +2100,6 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 	// The value of each tag is the label next to the input field
 	var notLinkedArticle = {
 		'uw-bite': wgULS('被“咬到”的用户（不含User:） ', '被「咬到」的使用者（不含User:） '),
-		'uw-socksuspect': wgULS('傀儡操纵者用户名，如果知道的话（不含User:） ', '傀儡操縱者使用者名稱，如果知道的話（不含User:） '),
 		'uw-username': wgULS('用户名违反方针，因为… ', '使用者名稱違反方針，因為… '),
 		'uw-aiv': wgULS('可选输入被警告的用户名（不含User:） ', '可選輸入被警告的使用者名稱（不含User:） ')
 	};
@@ -2463,9 +2454,8 @@ Twinkle.warn.callbacks = {
 				summary = customProcess(params.sub_group);
 			}
 			if (messageData.suppressArticleInSummary !== true && params.article) {
-				if (params.sub_group === 'uw-socksuspect' ||
-						params.sub_group === 'uw-aiv') {  // these templates require a username
-					summary += '，[[User:' + params.article + ']]的';
+				if (params.sub_group === 'uw-aiv') {  // these templates require a username
+					summary += '（' + wgULS('对于', '對於') + '[[User:' + params.article + ']]）';
 				} else if (params.sub_group === 'uw-bite') {  // this template requires a username
 					summary += '，' + wgULS('于', '於') + '[[User talk:' + params.article + ']]';
 				} else {
