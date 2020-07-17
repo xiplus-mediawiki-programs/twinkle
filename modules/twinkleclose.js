@@ -421,7 +421,7 @@ Twinkle.close.codes = wgULS({
 });
 
 Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
-	var Window = new Morebits.simpleWindow(400, 150);
+	var Window = new Morebits.simpleWindow(400, 200);
 	Window.setTitle(wgULS('关闭存废讨论', '關閉存廢討論') + ' \u00B7 ' + title);
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#close');
@@ -456,7 +456,41 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 				label: wgULS('只关闭讨论，不进行其他操作', '只關閉討論，不進行其他操作'),
 				value: 'noop',
 				name: 'noop',
+				event: Twinkle.close.callback.change_operation,
 				checked: noop
+			}
+		]
+	});
+
+	if (new mw.Title(title).namespace % 2 === 0 && new mw.Title(title).namespace !== 2) {  // hide option for user pages, to avoid accidentally deleting user talk page
+		form.append({
+			type: 'checkbox',
+			list: [
+				{
+					label: wgULS('删除关联的讨论页（用户讨论页除外）', '刪除關聯的討論頁（使用者討論頁除外）'),
+					value: 'talkpage',
+					name: 'talkpage',
+					tooltip: wgULS('删除时附带删除此页面的讨论页。', '刪除時附帶刪除此頁面的討論頁。'),
+					checked: true,
+					event: function(event) {
+						event.stopPropagation();
+					}
+				}
+			]
+		});
+	}
+	form.append({
+		type: 'checkbox',
+		list: [
+			{
+				label: wgULS('删除重定向页', '刪除重新導向頁面'),
+				value: 'redirects',
+				name: 'redirects',
+				tooltip: wgULS('删除到此页的重定向。', '刪除到此頁的重新導向。'),
+				checked: true,
+				event: function(event) {
+					event.stopPropagation();
+				}
 			}
 		]
 	});
@@ -508,22 +542,59 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 	result.sub_group.dispatchEvent(evt);
 };
 
+Twinkle.close.callback.change_operation = function twinklecloseCallbackChangeOperation(e) {
+	var noop = e.target.checked;
+	var code = e.target.form.sub_group.value;
+	var messageData = $(e.target.form.sub_group).find('option[value="' + code + '"]').data('messageData');
+	var talkpage = e.target.form.talkpage;
+	var redirects = e.target.form.redirects;
+	if (noop || messageData.action === 'keep') {
+		talkpage.checked = false;
+		talkpage.disabled = true;
+		redirects.checked = false;
+		redirects.disabled = true;
+	} else {
+		talkpage.checked = true;
+		talkpage.disabled = false;
+		redirects.checked = true;
+		redirects.disabled = false;
+	}
+};
+
 Twinkle.close.callback.change_code = function twinklecloseCallbackChangeCode(e) {
 	var resultData = $(e.target.form).data('resultData');
 	var messageData = $(e.target).find('option[value="' + e.target.value + '"]').data('messageData');
 	var noop = e.target.form.noop;
+	var talkpage = e.target.form.talkpage;
+	var redirects = e.target.form.redirects;
 	if (resultData.noop || messageData.action === 'noop') {
 		noop.checked = true;
 		noop.disabled = true;
+		talkpage.checked = false;
+		talkpage.disabled = true;
+		redirects.checked = false;
+		redirects.disabled = true;
 	} else {
 		noop.checked = false;
 		noop.disabled = false;
+		if (messageData.action === 'keep') {
+			talkpage.checked = false;
+			talkpage.disabled = true;
+			redirects.checked = false;
+			redirects.disabled = true;
+		} else {
+			talkpage.checked = true;
+			talkpage.disabled = false;
+			redirects.checked = true;
+			redirects.disabled = false;
+		}
 		if (e.target.value === 'sd') {
 			e.target.form.sdreason.parentElement.removeAttribute('hidden');
 		} else {
 			e.target.form.sdreason.parentElement.setAttribute('hidden', '');
 		}
 	}
+
 };
 
 Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
@@ -531,13 +602,17 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 	var resultData = $(e.target).data('resultData');
 	var messageData = $(e.target.sub_group).find('option[value="' + code + '"]').data('messageData');
 	var noop = e.target.noop.checked;
+	var talkpage = e.target.talkpage.checked;
+	var redirects = e.target.redirects.checked;
 	var params = {
 		title: resultData.title,
 		code: code,
 		remark: e.target.remark.value,
 		sdreason: e.target.sdreason.value,
 		section: resultData.section,
-		messageData: messageData
+		messageData: messageData,
+		talkpage: talkpage,
+		redirects: redirects
 	};
 
 	Morebits.simpleWindow.setButtonsEnabled(false);
@@ -566,6 +641,7 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 
 Twinkle.close.callbacks = {
 	del: function (params) {
+		var query, wikipedia_api;
 		Morebits.wiki.addCheckpoint();
 
 		var page = new Morebits.wiki.page(params.title, wgULS('删除页面', '刪除頁面'));
@@ -593,8 +669,66 @@ Twinkle.close.callbacks = {
 				Twinkle.close.callbacks.talkend(params);
 			});
 		}
+		if (params.redirects) {
+			query = {
+				'action': 'query',
+				'titles': params.title,
+				'prop': 'redirects',
+				'rdlimit': 'max' // 500 is max for normal users, 5000 for bots and sysops
+			};
+			wikipedia_api = new Morebits.wiki.api(wgULS('正在获取重定向', '正在取得重新導向'), query, Twinkle.close.callbacks.deleteRedirectsMain);
+			wikipedia_api.params = params;
+			wikipedia_api.post();
+		}
+		if (params.talkpage) {
+			var pageTitle = mw.Title.newFromText(params.title);
+			if (pageTitle && pageTitle.namespace % 2 === 0 && pageTitle.namespace !== 2) {
+				pageTitle.namespace++;  // now pageTitle is the talk page title!
+				query = {
+					'action': 'query',
+					'titles': pageTitle.toText()
+				};
+				wikipedia_api = new Morebits.wiki.api(wgULS('正在检查讨论页面是否存在', '正在檢查討論頁面是否存在'), query, Twinkle.close.callbacks.deleteTalk);
+				wikipedia_api.params = params;
+				wikipedia_api.params.talkPage = pageTitle.toText();
+				wikipedia_api.post();
+			}
+		}
 
 		Morebits.wiki.removeCheckpoint();
+	},
+	deleteRedirectsMain: function(apiobj) {
+		var xml = apiobj.responseXML;
+		var pages = $(xml).find('rd').map(function() {
+			return $(this).attr('title');
+		}).get();
+		if (!pages.length) {
+			return;
+		}
+
+		var redirectDeleter = new Morebits.batchOperation(wgULS('正在删除到 ', '正在刪除到 ') + apiobj.params.title + wgULS(' 的重定向', ' 的重新導向'));
+		redirectDeleter.setOption('chunkSize', Twinkle.getPref('batchdeleteChunks'));
+		redirectDeleter.setPageList(pages);
+		redirectDeleter.run(function(pageName) {
+			var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('正在删除 ', '正在刪除 ') + pageName);
+			wikipedia_page.setEditSummary('[[WP:CSD#G15|G15]]: ' + wgULS('指向已删页面“', '指向已刪頁面「') + apiobj.params.title + wgULS('”的重定向', '」的重新導向') + Twinkle.getPref('deletionSummaryAd'));
+			wikipedia_page.setTags(Twinkle.getPref('revisionTags'));
+			wikipedia_page.deletePage(redirectDeleter.workerSuccess, redirectDeleter.workerFailure);
+		});
+	},
+	deleteTalk: function(apiobj) {
+		var xml = apiobj.responseXML;
+		var exists = $(xml).find('page:not([missing])').length > 0;
+
+		if (!exists) {
+			// no talk page; forget about it
+			return;
+		}
+
+		var page = new Morebits.wiki.page(apiobj.params.talkPage, wgULS('正在删除页面 ', '正在刪除頁面 ') + apiobj.params.title + wgULS(' 的讨论页', ' 的討論頁'));
+		page.setEditSummary('[[WP:CSD#G15|G15]]: ' + wgULS('已删页面“', '已刪頁面「') + apiobj.params.title + wgULS('”的[[Wikipedia:讨论页|讨论页]]', '」的[[Wikipedia:討論頁|討論頁]]') + Twinkle.getPref('deletionSummaryAd'));
+		page.setTags(Twinkle.getPref('revisionTags'));
+		page.deletePage();
 	},
 	keep: function (pageobj) {
 		var statelem = pageobj.getStatusElement();
