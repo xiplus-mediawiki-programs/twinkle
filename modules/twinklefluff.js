@@ -52,6 +52,8 @@ Twinkle.fluff = function twinklefluff() {
 	}
 };
 
+Twinkle.addInitCallback(Twinkle.fluff, 'fluff');
+
 Twinkle.fluff.skipTalk = null;
 Twinkle.fluff.rollbackInPlace = null;
 

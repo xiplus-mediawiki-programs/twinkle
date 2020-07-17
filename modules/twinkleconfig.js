@@ -1305,6 +1305,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		}
 	}
 };
+Twinkle.addInitCallback(Twinkle.config.init);
 
 // Morebits.wiki.page callback from init code
 Twinkle.config.legacyPrefsNotice = function twinkleconfigLegacyPrefsNotice(pageobj) {

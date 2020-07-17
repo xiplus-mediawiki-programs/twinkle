@@ -23,6 +23,7 @@ Twinkle.batchdelete = function twinklebatchdelete() {
 		Twinkle.addPortletLink(Twinkle.batchdelete.callback, wgULS('批删', '批刪'), 'tw-batch', wgULS('删除此分类或页面中的所有链接', '刪除此分類或頁面中的所有連結'));
 	}
 };
+Twinkle.addInitCallback(Twinkle.batchdelete, 'batchdelete');
 
 Twinkle.batchdelete.unlinkCache = {};
 

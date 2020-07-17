@@ -33,6 +33,7 @@ Twinkle.unlink.getChecked2 = function twinkleunlinkGetChecked2(nodelist) {
 	}
 	return result;
 };
+Twinkle.addInitCallback(Twinkle.unlink, 'unlink');
 
 // the parameter is used when invoking unlink from admin speedy
 Twinkle.unlink.callback = function(presetReason) {

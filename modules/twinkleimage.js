@@ -20,6 +20,7 @@ Twinkle.image = function twinkleimage() {
 		Twinkle.addPortletLink(Twinkle.image.callback, wgULS('图权', '圖權'), 'tw-di', wgULS('提交文件快速删除', '提交檔案快速刪除'));
 	}
 };
+Twinkle.addInitCallback(Twinkle.image, 'image');
 
 Twinkle.image.callback = function twinkleimageCallback() {
 	var Window = new Morebits.simpleWindow(600, 330);

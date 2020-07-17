@@ -24,6 +24,7 @@ Twinkle.arv = function twinklearv() {
 		Twinkle.arv.callback(username);
 	}, wgULS('告状', '告狀'), 'tw-arv', title);
 };
+Twinkle.addInitCallback(Twinkle.arv, 'arv');
 
 Twinkle.arv.callback = function (uid) {
 	if (uid === mw.config.get('wgUserName')) {

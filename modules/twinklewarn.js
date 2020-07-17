@@ -95,6 +95,7 @@ Twinkle.warn = function twinklewarn() {
 	// for testing, use:
 	// mw.notify([ $("<p>Reverted edits by foo; changed</p>")[0] ], { title: mw.msg('actioncomplete') } );
 };
+Twinkle.addInitCallback(Twinkle.warn, 'warn');
 
 Twinkle.warn.makeVandalTalkLink = function($vandalTalkLink, pagename) {
 	$vandalTalkLink.wrapInner($('<span/>').attr('title', wgULS('如果合适，您可以用Twinkle在该用户讨论页上做出警告。', '如果合適，您可以用Twinkle在該使用者討論頁上做出警告。')));
