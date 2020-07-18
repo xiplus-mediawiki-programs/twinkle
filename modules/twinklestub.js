@@ -111,6 +111,20 @@ Twinkle.stub.updateSortOrder = function(e) {
 		return checkbox;
 	};
 
+	// append any custom tags
+	if (Twinkle.getPref('customStubList').length) {
+		container.append({ type: 'header', label: wgULS('自定义模板', '自訂模板') });
+		var customcheckboxes = [];
+		$.each(Twinkle.getPref('customStubList'), function(_, item) {
+			customcheckboxes.push(makeCheckbox(item.value, item.label));
+		});
+		container.append({
+			type: 'checkbox',
+			name: 'articleTags',
+			list: customcheckboxes
+		});
+	}
+
 	// categorical sort order
 	if (sortorder === 'cat') {
 		// function to iterate through the tags and create a checkbox for each one
@@ -151,20 +165,6 @@ Twinkle.stub.updateSortOrder = function(e) {
 			type: 'checkbox',
 			name: 'articleTags',
 			list: checkboxes
-		});
-	}
-
-	// append any custom tags
-	if (Twinkle.getPref('customStubList').length) {
-		container.append({ type: 'header', label: wgULS('自定义模板', '自訂模板') });
-		var customcheckboxes = [];
-		$.each(Twinkle.getPref('customStubList'), function(_, item) {
-			customcheckboxes.push(makeCheckbox(item.value, item.label));
-		});
-		container.append({
-			type: 'checkbox',
-			name: 'articleTags',
-			list: customcheckboxes
 		});
 	}
 
