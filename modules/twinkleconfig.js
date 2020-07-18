@@ -563,6 +563,22 @@ Twinkle.config.sections = [
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
 				customListLabelTitle: wgULS('显示的文字', '顯示的文字')
+			},
+			{
+				name: 'customFileTagList',
+				label: wgULS('自定义条目维护标记', '自訂檔案維護標記'),
+				helptip: wgULS('这些会出现在列表的末尾。', '這些會出現在列表的末尾。'),
+				type: 'customList',
+				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
+				customListLabelTitle: wgULS('显示的文字', '顯示的文字')
+			},
+			{
+				name: 'customRedirectTagList',
+				label: wgULS('自定义条目维护标记', '自訂重新導向維護標記'),
+				helptip: wgULS('这些会出现在列表的末尾。', '這些會出現在列表的末尾。'),
+				type: 'customList',
+				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
+				customListLabelTitle: wgULS('显示的文字', '顯示的文字')
 			}
 		]
 	},
