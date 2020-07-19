@@ -52,15 +52,11 @@ Twinkle.fluff = function twinklefluff() {
 	}
 };
 
-Twinkle.addInitCallback(Twinkle.fluff, 'fluff');
-
-Twinkle.fluff.skipTalk = null;
-Twinkle.fluff.rollbackInPlace = null;
-
-// A list of usernames, usually only bots, that vandalism revert is jumped over; that is,
-// if vandalism revert was chosen on such username, then its target is on the revision before.
-// This is for handling quick bots that makes edits seconds after the original edit is made.
-// This only affects vandalism rollback; for good faith rollback, it will stop, indicating a bot
+// A list of usernames, usually only bots, that vandalism revert is jumped
+// over; that is, if vandalism revert was chosen on such username, then its
+// target is on the revision before.  This is for handling quick bots that
+// makes edits seconds after the original edit is made.  This only affects
+// vandalism rollback; for good faith rollback, it will stop, indicating a bot
 // has no faith, and for normal rollback, it will rollback that edit.
 Twinkle.fluff.trustedBots = [
 	'Antigng-bot',
@@ -71,6 +67,8 @@ Twinkle.fluff.trustedBots = [
 	'Cewbot',
 	'WhitePhosphorus-bot'
 ];
+Twinkle.fluff.skipTalk = null;
+Twinkle.fluff.rollbackInPlace = null;
 
 Twinkle.fluff.linkBuilder = {
 	spanTag: function(color, content) {
@@ -727,6 +725,8 @@ Twinkle.fluff.formatSummary = function(builtInString, userName, userString) {
 
 	return result;
 };
+
+Twinkle.addInitCallback(Twinkle.fluff, 'fluff');
 })(jQuery);
 
 

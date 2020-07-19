@@ -33,7 +33,6 @@ Twinkle.unlink.getChecked2 = function twinkleunlinkGetChecked2(nodelist) {
 	}
 	return result;
 };
-Twinkle.addInitCallback(Twinkle.unlink, 'unlink');
 
 // the parameter is used when invoking unlink from admin speedy
 Twinkle.unlink.callback = function(presetReason) {
@@ -306,6 +305,8 @@ Twinkle.unlink.callbacks = {
 		pageobj.save(params.unlinker.workerSuccess, params.unlinker.workerFailure);
 	}
 };
+
+Twinkle.addInitCallback(Twinkle.unlink, 'unlink');
 })(jQuery);
 
 

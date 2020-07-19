@@ -27,7 +27,6 @@ Twinkle.copyvio = function twinklecopyvio() {
 	}
 	Twinkle.addPortletLink(Twinkle.copyvio.callback, wgULS('侵权', '侵權'), 'tw-copyvio', wgULS('提报侵权页面', '提報侵權頁面'), '');
 };
-Twinkle.addInitCallback(Twinkle.copyvio, 'copyvio');
 
 Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 	var Window = new Morebits.simpleWindow(600, 350);
@@ -204,6 +203,8 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 
 	Morebits.wiki.removeCheckpoint();
 };
+
+Twinkle.addInitCallback(Twinkle.copyvio, 'copyvio');
 })(jQuery);
 
 

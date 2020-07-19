@@ -27,7 +27,6 @@ Twinkle.protect = function twinkleprotect() {
 	Twinkle.addPortletLink(Twinkle.protect.callback, wgULS('保护', '保護'), 'tw-rpp',
 		Morebits.userIsSysop ? wgULS('保护页面', '保護頁面') : wgULS('请求保护页面', '請求保護頁面'));
 };
-Twinkle.addInitCallback(Twinkle.protect, 'protect');
 
 Twinkle.protect.callback = function twinkleprotectCallback() {
 	var Window = new Morebits.simpleWindow(620, 530);
@@ -1604,6 +1603,8 @@ Twinkle.protect.callbacks = {
 		rppPage.save();
 	}
 };
+
+Twinkle.addInitCallback(Twinkle.protect, 'protect');
 })(jQuery);
 
 

@@ -21,7 +21,6 @@ Twinkle.batchundelete = function twinklebatchundelete() {
 	}
 	Twinkle.addPortletLink(Twinkle.batchundelete.callback, wgULS('批复', '批復'), 'tw-batch-undel', wgULS('反删除页面', '反刪除頁面'));
 };
-Twinkle.addInitCallback(Twinkle.batchundelete, 'batchundelete');
 
 Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 	var Window = new Morebits.simpleWindow(600, 400);
@@ -205,6 +204,7 @@ Twinkle.batchundelete.callbacks = {
 	}
 };
 
+Twinkle.addInitCallback(Twinkle.batchundelete, 'batchundelete');
 })(jQuery);
 
 

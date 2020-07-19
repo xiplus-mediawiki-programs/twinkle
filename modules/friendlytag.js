@@ -33,7 +33,6 @@ Twinkle.tag = function friendlytag() {
 		Twinkle.addPortletLink(Twinkle.tag.callback, wgULS('标记', '標記'), 'friendly-tag', wgULS('标记条目', '標記條目'));
 	}
 };
-Twinkle.addInitCallback(Twinkle.tag, 'tag');
 
 Twinkle.tag.checkedTags = [];
 
@@ -2027,6 +2026,8 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			break;
 	}
 };
+
+Twinkle.addInitCallback(Twinkle.tag, 'tag');
 })(jQuery);
 
 

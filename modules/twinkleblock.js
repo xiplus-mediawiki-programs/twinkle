@@ -26,7 +26,6 @@ Twinkle.block = function twinkleblock() {
 		Twinkle.addPortletLink(Twinkle.block.callback, wgULS('封禁', '封鎖'), 'tw-block', wgULS('封禁相关用户', '封鎖相關使用者'));
 	}
 };
-Twinkle.addInitCallback(Twinkle.block, 'block');
 
 Twinkle.block.callback = function twinkleblockCallback() {
 	if (Morebits.wiki.flow.relevantUserName(true) === mw.config.get('wgUserName') &&
@@ -1650,6 +1649,7 @@ Twinkle.block.callback.main_flow = function twinkleblockcallbackMain(flowobj) {
 	flowobj.newTopic();
 };
 
+Twinkle.addInitCallback(Twinkle.block, 'block');
 })(jQuery);
 
 
