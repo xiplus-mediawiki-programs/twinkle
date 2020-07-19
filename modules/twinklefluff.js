@@ -69,6 +69,8 @@ Twinkle.fluff.trustedBots = [
 ];
 Twinkle.fluff.skipTalk = null;
 Twinkle.fluff.rollbackInPlace = null;
+// String to insert when a username is hidden
+Twinkle.fluff.hiddenName = wgULS('已隐藏的用户', '已隱藏的使用者');
 
 Twinkle.fluff.linkBuilder = {
 	spanTag: function(color, content) {
@@ -89,6 +91,7 @@ Twinkle.fluff.linkBuilder = {
 
 	/**
 	 * @param {string} vandal - Username of the editor being reverted (required)
+	 * Provide a falsey value if the username is hidden
 	 * @param {boolean} inline - True to create two links in a span, false
 	 * to create three links in a div (optional)
 	 * @param {number|string} [rev=wgCurRevisionId] - Revision ID being reverted (optional)
@@ -185,6 +188,9 @@ Twinkle.fluff.addLinks = {
 					// revid is also available in the href of both
 					// .mw-changeslist-date or .mw-changeslist-diff
 					var page = $(current).find('.mw-contributions-title').text();
+
+					// It's unlikely, but we can't easily check for revdel'd usernames
+					// since only a strong element is provided, with no easy selector [[phab:T255903]]
 					current.appendChild(Twinkle.fluff.linkBuilder.rollbackLinks(username, true, current.dataset.mwRevid, page));
 				});
 			}
@@ -200,7 +206,7 @@ Twinkle.fluff.addLinks = {
 			// links to the top revision
 			if (!$('.mw-firstlink').length) {
 				var first = histList.shift();
-				var vandal = first.querySelector('.mw-userlink').text;
+				var vandal = $(first).find('.mw-userlink:not(.history-deleted)').text();
 
 				first.appendChild(Twinkle.fluff.linkBuilder.rollbackLinks(vandal, true));
 			}
@@ -297,7 +303,20 @@ Twinkle.fluff.addLinks = {
 			var newTitle = document.getElementById('mw-diff-ntitle1').parentNode;
 			newTitle.insertBefore(Twinkle.fluff.linkBuilder.restoreThisRevisionLink('wgDiffNewId'), newTitle.firstChild);
 		} else if (Twinkle.getPref('showRollbackLinks').indexOf('diff') !== -1 && mw.config.get('wgDiffOldId') && (mw.config.get('wgDiffOldId') !== mw.config.get('wgDiffNewId') || document.getElementById('differences-prevlink'))) {
-			var vandal = $('#mw-diff-ntitle2').find('a').first().text();
+			// Normally .mw-userlink is a link, but if the
+			// username is hidden, it will be a span with
+			// .history-deleted as well. When a sysop views the
+			// hidden content, the span contains the username in a
+			// link element, which will *just* have
+			// .mw-userlink. The below thus finds the first
+			// instance of the class, which if hidden is the span
+			// and thus text returns undefined. Technically, this
+			// is a place where sysops *could* have more
+			// information available to them (as above, via
+			// &unhide=1), since the username will be available by
+			// checking a.mw-userlink instead, but revert() will
+			// need reworking around userHidden
+			var vandal = $('#mw-diff-ntitle2').find('.mw-userlink')[0].text;
 			var ntitle = document.getElementById('mw-diff-ntitle1').parentNode;
 			ntitle.insertBefore(Twinkle.fluff.linkBuilder.rollbackLinks(vandal), ntitle.firstChild);
 		}
@@ -352,11 +371,13 @@ Twinkle.fluff.revert = function revertPage(type, vandal, rev, page) {
 
 	var params = {
 		type: type,
-		user: vandal,
+		user: vandal || Twinkle.fluff.hiddenName,
+		userHidden: !vandal, // Keep track of whether the username was hidden
 		pagename: pagename,
 		revid: revid,
 		summary: summary
 	};
+
 	var query = {
 		'action': 'query',
 		'prop': ['info', 'revisions'],
@@ -422,8 +443,10 @@ Twinkle.fluff.callbacks = {
 		var touched = $(xmlDoc).find('page').attr('touched');
 		var loadtimestamp = $(xmlDoc).find('api').attr('curtimestamp');
 		var csrftoken = $(xmlDoc).find('tokens').attr('csrftoken');
-		var revertToRevID = $(xmlDoc).find('rev').attr('revid');
+		var revertToRevID = parseInt($(xmlDoc).find('rev').attr('revid'), 10);
+
 		var revertToUser = $(xmlDoc).find('rev').attr('user');
+		var revertToUserHidden = typeof $(xmlDoc).find('rev').attr('userhidden') === 'string';
 
 		if (revertToRevID !== apiobj.params.rev.toString()) {
 			apiobj.statelem.error(wgULS('抓取到的修订版本与请求的修订版本不符，取消。', '抓取到的修訂版本與請求的修訂版本不符，取消。'));
@@ -435,7 +458,9 @@ Twinkle.fluff.callbacks = {
 			apiobj.statelem.error(wgULS('由用户取消。', '由使用者取消。'));
 			return;
 		}
-		var summary = Twinkle.fluff.formatSummary(wgULS('回退到由$USER做出的修订版本', '回退到由$USER做出的修訂版本') + revertToRevID, revertToUser, optional_summary);
+
+		var summary = Twinkle.fluff.formatSummary(wgULS('回退到由$USER做出的修订版本', '回退到由$USER做出的修訂版本') + revertToRevID,
+			revertToUserHidden ? null : revertToUser, optional_summary);
 
 		var query = {
 			'action': 'edit',
@@ -474,7 +499,6 @@ Twinkle.fluff.callbacks = {
 		var touched = $(xmlDoc).find('page').attr('touched');
 		var loadtimestamp = $(xmlDoc).find('api').attr('curtimestamp');
 		var csrftoken = $(xmlDoc).find('tokens').attr('csrftoken');
-		var lastuser = $(xmlDoc).find('rev').attr('user');
 
 		var revs = $(xmlDoc).find('rev');
 
@@ -486,6 +510,8 @@ Twinkle.fluff.callbacks = {
 			return;
 		}
 		var top = revs[0];
+		var lastuser = top.getAttribute('user');
+
 		if (lastrevid < params.revid) {
 			Morebits.status.error(wgULS('错误', '錯誤'), wgULS([ '从服务器获取的最新修订版本ID ', Morebits.htmlNode('strong', lastrevid), ' 小于目前所显示的修订版本ID。这可能意味着当前修订版本已被删除、服务器延迟、或抓取到了坏掉的信息。取消。' ], [ '從伺服器取得的最新修訂版本ID ', Morebits.htmlNode('strong', lastrevid), ' 小於目前所顯示的修訂版本ID。這可能意味著當前修訂版本已被刪除、伺服器延遲、或擷取到了壞掉的資訊。取消。' ]));
 			return;
@@ -506,6 +532,8 @@ Twinkle.fluff.callbacks = {
 						return;
 				}
 			} else if (params.type === 'vand' &&
+					// Okay to test on user since it will either fail or sysop will correctly access it
+					// Besides, none of the trusted bots are going to be revdel'd
 					Twinkle.fluff.trustedBots.indexOf(top.getAttribute('user')) !== -1 && revs.length > 1 &&
 					revs[1].getAttribute('pageId') === params.revid) {
 				Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', lastuser), '，一个可信的机器人做出，之前的版本被认为是破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', lastuser), '，一個可信的機器人做出，之前的版本被認為是破壞，繼續回退操作。' ]));
@@ -523,6 +551,7 @@ Twinkle.fluff.callbacks = {
 					Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行破坏回退，这是一个可信的机器人，我们假定您要回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行破壞回退，這是一個可信的機器人，我們假定您要回退前一個修訂版本。' ]));
 					index = 2;
 					params.user = revs[1].getAttribute('user');
+					params.userHidden = revs[1].getAttribute('userhidden') === '';
 					break;
 				case 'agf':
 					Morebits.status.warn('提示', wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行善意回退，这是一个可信的机器人，取消回退操作。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行善意回退，這是一個可信的機器人，取消回退操作。' ]));
@@ -535,6 +564,7 @@ Twinkle.fluff.callbacks = {
 						Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行常规回退，这是一个可信的机器人，基于确认，我们将回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行常規回退，這是一個可信的機器人，基於確認，我們將回退前一個修訂版本。' ]));
 						index = 2;
 						params.user = revs[1].getAttribute('user');
+						params.userHidden = revs[1].getAttribute('userhidden') === '';
 					} else {
 						Morebits.status.warn('提示', wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行常规回退，这是一个可信的机器人，基于确认，我们仍将回退这个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行常規回退，這是一個可信的機器人，基於確認，我們仍將回退這個修訂版本。' ]));
 					}
@@ -576,6 +606,7 @@ Twinkle.fluff.callbacks = {
 
 		params.goodid = good_revision.getAttribute('revid');
 		params.gooduser = good_revision.getAttribute('user');
+		params.gooduserHidden = good_revision.getAttribute('userhidden') === '';
 
 		statelem.status([ Morebits.htmlNode('strong', mw.language.convertNumber(count)), wgULS(' 个修订版本之前由 ', ' 個修訂版本之前由 '), Morebits.htmlNode('strong', params.gooduser), wgULS(' 做出的修订版本 ', ' 做出的修訂版本 '), Morebits.htmlNode('strong', params.goodid) ]);
 
@@ -589,15 +620,13 @@ Twinkle.fluff.callbacks = {
 				}
 				userHasAlreadyConfirmedAction = true;
 
-				summary = Twinkle.fluff.formatSummary(wgULS('回退$USER做出的出于[[WP:AGF|善意]]的编辑', '回退$USER做出的出於[[WP:AGF|善意]]的編輯'), params.user, extra_summary);
+				summary = Twinkle.fluff.formatSummary(wgULS('回退$USER做出的出于[[WP:AGF|善意]]的编辑', '回退$USER做出的出於[[WP:AGF|善意]]的編輯'),
+					params.userHidden ? null : params.user, extra_summary);
 				break;
 
 			case 'vand':
-
-				summary = '回退[[Special:Contributions/' +
-				params.user + '|' + params.user + ']] ([[User talk:' + params.user + '|讨论]])' +
-				'做出的 ' + params.count + wgULS(' 次编辑，到由', ' 次編輯，到由') +
-				params.gooduser + wgULS('做出的前一个修订版本 ', '做出的前一個修訂版本 ') + Twinkle.getPref('summaryAd');
+				summary = Twinkle.fluff.formatSummary('回退$USER做出的' + params.count + wgULS('次编辑，到由', '次編輯，到由') +
+					(params.gooduserHidden ? Twinkle.fluff.hiddenName : params.gooduser) + wgULS('做出的最后修订版本 ', '做出的最後修訂版本 '), params.userHidden ? null : params.user);
 				break;
 
 			case 'norm':
@@ -612,7 +641,8 @@ Twinkle.fluff.callbacks = {
 					userHasAlreadyConfirmedAction = true;
 				}
 
-				summary = Twinkle.fluff.formatSummary(wgULS('回退$USER做出的' + params.count + '次编辑', '回退$USER做出的' + params.count + '次編輯'), params.user, extra_summary);
+				summary = Twinkle.fluff.formatSummary(wgULS('回退$USER做出的', '回退$USER做出的') + params.count + wgULS('次编辑', '次編輯'),
+					params.userHidden ? null : params.user, extra_summary);
 				break;
 		}
 
@@ -623,7 +653,7 @@ Twinkle.fluff.callbacks = {
 
 		var query;
 		if (!Twinkle.fluff.skipTalk && Twinkle.getPref('openTalkPage').indexOf(params.type) !== -1 &&
-				mw.config.get('wgUserName') !== params.user) {
+				mw.config.get('wgUserName') !== params.user && !params.userHidden) {
 			Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '打开用户 ', Morebits.htmlNode('strong', params.user), ' 的对话页' ], [ '開啟用戶 ', Morebits.htmlNode('strong', params.user), ' 的討論頁' ]));
 
 			query = {
@@ -695,32 +725,38 @@ Twinkle.fluff.callbacks = {
 	}
 };
 
-// builtInString should contain the string "$USER", which will be replaced
-// by an appropriate user link
-Twinkle.fluff.formatSummary = function(builtInString, userName, userString) {
+// If builtInString contains the string "$USER", it will be replaced
+// by an appropriate user link if a user name is provided
+Twinkle.fluff.formatSummary = function(builtInString, userName, customString) {
 	var result = builtInString;
 
 	// append user's custom reason
-	if (userString) {
-		result += '：' + Morebits.string.toUpperCaseFirstChar(userString);
+	if (customString) {
+		result += ': ' + Morebits.string.toUpperCaseFirstChar(customString);
 	}
 	result += Twinkle.getPref('summaryAd');
 
 	// find number of UTF-8 bytes the resulting string takes up, and possibly add
 	// a contributions or contributions+talk link if it doesn't push the edit summary
-	// over the 255-byte limit
-	var resultLen = unescape(encodeURIComponent(result.replace('$USER', ''))).length;
-	var contribsLink = '[[Special:Contributions/' + userName + '|' + userName + ']]';
-	var contribsLen = unescape(encodeURIComponent(contribsLink)).length;
-	if (resultLen + contribsLen <= 255) {
-		var talkLink = ' ([[User talk:' + userName + wgULS('|讨论]])', '|討論]])');
-		if (resultLen + contribsLen + unescape(encodeURIComponent(talkLink)).length <= 255) {
-			result = Morebits.string.safeReplace(result, '$USER', contribsLink + talkLink);
+	// over the 499-byte limit
+	if (/\$USER/.test(builtInString)) {
+		if (userName) {
+			var resultLen = unescape(encodeURIComponent(result.replace('$USER', ''))).length;
+			var contribsLink = '[[Special:Contributions/' + userName + '|' + userName + ']]';
+			var contribsLen = unescape(encodeURIComponent(contribsLink)).length;
+			if (resultLen + contribsLen <= 499) {
+				var talkLink = '（[[User talk:' + userName + wgULS('|讨论]]）', '|討論]]）');
+				if (resultLen + contribsLen + unescape(encodeURIComponent(talkLink)).length <= 499) {
+					result = Morebits.string.safeReplace(result, '$USER', contribsLink + talkLink);
+				} else {
+					result = Morebits.string.safeReplace(result, '$USER', contribsLink);
+				}
+			} else {
+				result = Morebits.string.safeReplace(result, '$USER', userName);
+			}
 		} else {
-			result = Morebits.string.safeReplace(result, '$USER', contribsLink);
+			result = Morebits.string.safeReplace(result, '$USER', Twinkle.fluff.hiddenName);
 		}
-	} else {
-		result = Morebits.string.safeReplace(result, '$USER', userName);
 	}
 
 	return result;
