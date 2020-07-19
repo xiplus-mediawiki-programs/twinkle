@@ -29,7 +29,6 @@ Twinkle.speedy = function twinklespeedy() {
 
 	Twinkle.addPortletLink(Twinkle.speedy.callback, wgULS('速删', '速刪'), 'tw-csd', Morebits.userIsSysop ? wgULS('快速删除', '快速刪除') : wgULS('请求快速删除', '請求快速刪除'));
 };
-Twinkle.addInitCallback(Twinkle.speedy, 'speedy');
 
 // This function is run when the CSD tab/header link is clicked
 Twinkle.speedy.callback = function twinklespeedyCallback() {
@@ -1705,6 +1704,8 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.speedy.callbacks.user.main);
 };
+
+Twinkle.addInitCallback(Twinkle.speedy, 'speedy');
 })(jQuery);
 
 

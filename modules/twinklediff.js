@@ -31,7 +31,6 @@ Twinkle.diff = function twinklediff() {
 		Twinkle.addPortletLink(mw.util.getUrl(mw.config.get('wgPageName'), {diff: 'cur', oldid: oldid}), wgULS('当前', '目前'), 'tw-curdiff', wgULS('显示与当前版本间的差异', '顯示與目前版本間的差異'));
 	}
 };
-Twinkle.addInitCallback(Twinkle.diff, 'diff');
 
 Twinkle.diff.evaluate = function twinklediffEvaluate(me) {
 
@@ -76,6 +75,8 @@ Twinkle.diff.callbacks = {
 		});
 	}
 };
+
+Twinkle.addInitCallback(Twinkle.diff, 'diff');
 })(jQuery);
 
 

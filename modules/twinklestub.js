@@ -27,7 +27,6 @@ Twinkle.stub = function friendlytag() {
 		Twinkle.addPortletLink(Twinkle.stub.callback, '小作品', 'friendly-tag', wgULS('标记小作品', '標記小作品'));
 	}
 };
-Twinkle.addInitCallback(Twinkle.stub, 'stub');
 
 Twinkle.stub.callback = function friendlytagCallback() {
 	var Window = new Morebits.simpleWindow(630, Twinkle.stub.mode === 'article' ? 450 : 400);
@@ -497,6 +496,8 @@ Twinkle.stub.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			break;
 	}
 };
+
+Twinkle.addInitCallback(Twinkle.stub, 'stub');
 })(jQuery);
 
 

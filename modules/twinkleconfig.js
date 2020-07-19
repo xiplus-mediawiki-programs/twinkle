@@ -1299,7 +1299,6 @@ Twinkle.config.init = function twinkleconfigInit() {
 		}
 	}
 };
-Twinkle.addInitCallback(Twinkle.config.init);
 
 // Morebits.wiki.page callback from init code
 Twinkle.config.legacyPrefsNotice = function twinkleconfigLegacyPrefsNotice(pageobj) {
@@ -1738,6 +1737,8 @@ Twinkle.config.saveSuccess = function twinkleconfigSaveSuccess(pageobj) {
 	noticeclear.style.clear = 'both';
 	Morebits.status.root.appendChild(noticeclear);
 };
+
+Twinkle.addInitCallback(Twinkle.config.init);
 })(jQuery);
 
 
