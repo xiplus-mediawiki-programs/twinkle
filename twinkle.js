@@ -159,9 +159,11 @@ Twinkle.defaultConfig = {
 	markTaggedPagesAsMinor: false,
 	markTaggedPagesAsPatrolled: true,
 	tagArticleSortOrder: 'cat',
+	customTagList: [],
+	customFileTagList: [],
+	customRedirectTagList: [],
 
 	// Stub
-	customTagList: [],
 	watchStubbedPages: false,
 	markStubbedPagesAsMinor: false,
 	markStubbedPagesAsPatrolled: true,
