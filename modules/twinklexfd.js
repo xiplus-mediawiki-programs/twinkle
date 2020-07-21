@@ -376,7 +376,11 @@ Twinkle.xfd.callbacks = {
 				pageobj.patrol();
 			}
 
-			pageobj.setPageText(tag + text);
+			// Insert tag after short description or any hatnotes
+			var wikipage = new Morebits.wikitext.page(text);
+			text = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
+
+			pageobj.setPageText(text);
 			pageobj.setEditSummary(wgULS('页面存废讨论：[[', '頁面存廢討論：[[') + params.logpage + '#' + Morebits.pageNameNorm + ']]' + Twinkle.getPref('summaryAd'));
 			pageobj.setTags(Twinkle.getPref('revisionTags'));
 			switch (Twinkle.getPref('xfdWatchPage')) {

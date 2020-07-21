@@ -266,21 +266,19 @@ Twinkle.unlink.callbacks = {
 
 		// remove image usages
 		if (params.doImageusage) {
-			wikiPage.commentOutImage(mw.config.get('wgTitle'), wgULS('注释出', '注釋出'));
-			text = wikiPage.getText();
+			text = wikiPage.commentOutImage(mw.config.get('wgTitle'), wgULS('注释', '注釋')).getText();
 			// did we actually make any changes?
 			if (text === oldtext) {
 				warningString = wgULS('文件使用', '檔案使用');
 			} else {
-				summaryText = wgULS('注释出文件使用', '注釋出檔案使用');
+				summaryText = wgULS('注释文件使用', '注釋檔案使用');
 				oldtext = text;
 			}
 		}
 
 		// remove backlinks
 		if (params.doBacklinks) {
-			wikiPage.removeLink(Morebits.pageNameNorm);
-			text = wikiPage.getText();
+			text = wikiPage.removeLink(Morebits.pageNameNorm).getText();
 			// did we actually make any changes?
 			if (text === oldtext) {
 				warningString = warningString ? wgULS('反链或文件使用', '反鏈或檔案使用') : wgULS('反链', '反鏈');

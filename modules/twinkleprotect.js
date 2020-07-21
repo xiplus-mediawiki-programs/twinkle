@@ -1374,45 +1374,29 @@ Twinkle.protect.callbacks = {
 				tag += '|small=yes';
 			}
 
-			if (params.noinclude) {
-				text = '<noinclude>{{' + tag + '}}</noinclude>' + text;
-			} else if (/^\s*#(redirect|重定向|重新導向)/i.test(text)) { // redirect page
-				text = text + '\n{{' + tag + '}}';
+			if (/^\s*#(?:redirect|重定向|重新導向)/i.test(text)) { // redirect page
+				// Only tag if no {{rcat shell}} is found
+				if (!text.match(/{{(?:Redirect[ _]category shell|Rcat[ _]shell|This[ _]is a redirect|多种类型重定向|多種類型重定向|多種類型重新導向|多种类型重新导向|R0|其他重定向|RCS|Redirect[ _]shell)/i)) {
+					text = text.replace(/#(?:redirect|重定向|重新導向) ?(\[\[.*?\]\])(.*)/i, '#REDIRECT $1$2\n\n{{' + tag + '}}');
+				} else {
+					Morebits.status.info('已存在Redirect category shell', wgULS('没什么可做的', '沒什麼可做的'));
+					return;
+				}
 			} else {
-				var firstSection, otherSection;
-				var index = text.indexOf('\n==');
-				if (index === -1) {
-					firstSection = text;
-					otherSection = '';
+				if (params.noinclude) {
+					tag = '<noinclude>{{' + tag + '}}</noinclude>';
+
+					// 只有表格需要单独加回车，其他情况加回车会破坏模板。
+					if (text.indexOf('{|') === 0) {
+						tag += '\n';
+					}
 				} else {
-					firstSection = text.substr(0, index);
-					otherSection = text.substr(index);
+					tag = '{{' + tag + '}}\n';
 				}
 
-				var dabTemplates = new RegExp('([\\s\\S]*(?:^|\\n)[ \\t]*{{\\s*(?:'
-					+ '(?:主条目消歧义|主條目消歧義|消歧义链接|消歧義鏈接|消歧義連結|消连|消連|消歧义连结|[Dd]isambLink|[Nn]oteref|[Dd]ablink)'
-					+ '|(?:[Rr]ellink|[Hh]atnote)'
-					+ '|(?:[Aa]bout|[Oo]theruses4|关于|關於)'
-					+ '|(?:[Ff]or)'
-					+ '|(?:[Ff]or2)'
-					+ '|(?:[Oo]ther[ _]uses|[Oo]theruse|条目消歧义|條目消歧義|他用|[Oo]theruses)'
-					+ '|(?:[Rr]edirect|重定向至此|[Rr]edirects[ _]here|[Rr]edirect[ _]to)'
-					+ '|(?:[Rr]edirect2|主條目消歧義2|主条目消歧义2|[Rr]edir|重定向至此2)'
-					+ '|(?:[Rr]edirect-multi)'
-					+ '|(?:[Rr]edirect3)'
-					+ '|(?:[Rr]edirect-synonym)'
-					+ '|(?:[Dd]istinguish|不是|[Nn]ot|提示|混淆|分別|分别|區別|区别|[Nn]OT|本条目的主题不是|本條目的主題不是|本条目主题不是|本條目主題不是|条目主题不是|條目主題不是)'
-					+ '|(?:[Dd]istinguish2|[Ss]elfDistinguish|[Ss]elfdistinguish|[Nn]ot2|不是2)'
-					+ '|(?:[Ss]elfref)'
-					+ '|(?:[Oo]ther[ _]places)'
-					+ '|(?:[Cc]ontrast|對比|对比)'
-					+ ')\\|.*}}[ \\t]*\\n)');
-
-				if (firstSection.match(dabTemplates)) {
-					text = firstSection.replace(dabTemplates, '$1{{' + tag + '}}\n') + otherSection;
-				} else {
-					text = '{{' + tag + '}}\n' + text;
-				}
+				// Insert tag after short description or any hatnotes
+				var wikipage = new Morebits.wikitext.page(text);
+				text = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
 			}
 			summary = wgULS('添加{{' + params.tag + '}}', '加入{{' + params.tag + '}}') + Twinkle.getPref('summaryAd');
 		}

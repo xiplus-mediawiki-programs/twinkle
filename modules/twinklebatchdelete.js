@@ -712,9 +712,8 @@ Twinkle.batchdelete.callbacks = {
 		}
 		var old_text = text;
 		var wikiPage = new Morebits.wikitext.page(text);
-		wikiPage.removeLink(params.page);
+		text = wikiPage.removeLink(params.page).getText();
 
-		text = wikiPage.getText();
 		Twinkle.batchdelete.unlinkCache[params.title] = text;
 		if (text === old_text) {
 			// Nothing to do, return
@@ -766,9 +765,8 @@ Twinkle.batchdelete.callbacks = {
 		}
 		var old_text = text;
 		var wikiPage = new Morebits.wikitext.page(text);
-		wikiPage.commentOutImage(image, wgULS('因文件已删，故注解', '因檔案已刪，故註解'));
+		text = wikiPage.commentOutImage(image, wgULS('因文件已删，故注解', '因檔案已刪，故註解')).getText();
 
-		text = wikiPage.getText();
 		Twinkle.batchdelete.unlinkCache[params.title] = text;
 		if (text === old_text) {
 			pageobj.getStatusElement().error(wgULS('在 ', '在 ') + pageobj.getPageName() + wgULS(' 上取消文件 ', ' 上取消檔案 ') + image + wgULS(' 链接失败', ' 連結失敗'));
