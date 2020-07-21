@@ -4491,13 +4491,13 @@ Morebits.wikitext.page.prototype = {
 	 * @returns {Morebits.wikitext.page}
 	 */
 	insertAfterTemplates: function(tag, regex, flags, preRegex) {
-		if (tag === undefined) {
+		if (typeof tag === 'undefined') {
 			throw new Error(wgULS('没有提供tag', '沒有提供tag'));
 		}
 
 		// .length is only a property of strings and arrays so we
 		// shouldn't need to check type
-		if (regex === undefined || !regex.length) {
+		if (typeof regex === 'undefined' || !regex.length) {
 			throw new Error(wgULS('没有提供regex', '沒有提供regex'));
 		} else if (Array.isArray(regex)) {
 			regex = regex.join('|');
