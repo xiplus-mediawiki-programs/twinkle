@@ -29,7 +29,7 @@ Twinkle.fluff = function twinklefluff() {
 			mw.hook('wikipage.diff').add(function () { // Reload alongside the revision slider
 				Twinkle.fluff.addLinks.diff();
 			});
-		} else if (mw.config.get('wgAction') === 'view' && mw.config.get('wgRevisionId') !== 0 && mw.config.get('wgCurRevisionId') !== mw.config.get('wgRevisionId')) {
+		} else if (mw.config.get('wgAction') === 'view' && mw.config.get('wgRevisionId') !== 0 && mw.config.get('wgCurRevisionId') !== mw.config.get('wgRevisionId')) { // wgRevisionId is 0 on flow page
 			Twinkle.fluff.addLinks.oldid();
 		} else if (mw.config.get('wgAction') === 'history') {
 			Twinkle.fluff.addLinks.history();
@@ -72,6 +72,7 @@ Twinkle.fluff.rollbackInPlace = null;
 // String to insert when a username is hidden
 Twinkle.fluff.hiddenName = wgULS('已隐藏的用户', '已隱藏的使用者');
 
+// Consolidated construction of fluff links
 Twinkle.fluff.linkBuilder = {
 	spanTag: function(color, content) {
 		var span = document.createElement('span');
@@ -171,6 +172,7 @@ Twinkle.fluff.linkBuilder = {
 	}
 };
 
+
 Twinkle.fluff.addLinks = {
 	contributions: function() {
 		// $('sp-contributions-footer-anon-range') relies on the fmbox
@@ -181,11 +183,11 @@ Twinkle.fluff.addLinks = {
 			// Get the username these contributions are for
 			var username = mw.config.get('wgRelevantUserName');
 			if (Twinkle.getPref('showRollbackLinks').indexOf('contribs') !== -1 ||
-					(mw.config.get('wgUserName') !== username && Twinkle.getPref('showRollbackLinks').indexOf('others') !== -1) ||
-					(mw.config.get('wgUserName') === username && Twinkle.getPref('showRollbackLinks').indexOf('mine') !== -1)) {
-				var list = $('#mw-content-text').find('ul li:has(span.mw-uctop):has(.mw-changeslist-diff)');
+				(mw.config.get('wgUserName') !== username && Twinkle.getPref('showRollbackLinks').indexOf('others') !== -1) ||
+				(mw.config.get('wgUserName') === username && Twinkle.getPref('showRollbackLinks').indexOf('mine') !== -1)) {
+				var $list = $('#mw-content-text').find('ul li:has(span.mw-uctop):has(.mw-changeslist-diff)');
 
-				list.each(function(key, current) {
+				$list.each(function(key, current) {
 					// revid is also available in the href of both
 					// .mw-changeslist-date or .mw-changeslist-diff
 					var page = $(current).find('.mw-contributions-title').text();
@@ -202,6 +204,29 @@ Twinkle.fluff.addLinks = {
 					current.appendChild(Twinkle.fluff.linkBuilder.rollbackLinks(username, true, current.dataset.mwRevid, page));
 				});
 			}
+		}
+	},
+
+	recentchanges: function() {
+		if (
+			(mw.config.get('wgCanonicalSpecialPageName') === 'Recentchanges' && Twinkle.getPref('showRollbackLinks').indexOf('recentchanges') !== -1)
+			|| (mw.config.get('wgCanonicalSpecialPageName') === 'Recentchangeslinked' && Twinkle.getPref('showRollbackLinks').indexOf('recentchangeslinked') !== -1)
+		) {
+			// Latest and revertable (not page creations, logs, categorizations, etc.)
+			var $list = $('.mw-changeslist .mw-changeslist-last.mw-changeslist-src-mw-edit');
+			// Exclude top-level header if "group changes" preference is used
+			// and find only individual lines or nested lines
+			$list = $list.not('.mw-rcfilters-ui-highlights-enhanced-toplevel').find('.mw-changeslist-line-inner, td.mw-enhanced-rc-nested');
+
+			$list.each(function(key, current) {
+				// The :not is possibly unnecessary, as it appears that
+				// .mw-userlink is simply not present if the username is hidden
+				var vandal = $(current).find('.mw-userlink:not(.history-deleted)').text();
+				var href = $(current).find('.mw-changeslist-diff').attr('href');
+				var rev = mw.util.getParamValue('diff', href);
+				var page = current.dataset.targetPage;
+				current.appendChild(Twinkle.fluff.linkBuilder.rollbackLinks(vandal, true, rev, page));
+			});
 		}
 	},
 
@@ -232,27 +257,6 @@ Twinkle.fluff.addLinks = {
 			});
 
 
-		}
-	},
-
-	recentchanges: function() {
-		if (
-			(mw.config.get('wgCanonicalSpecialPageName') === 'Recentchanges' && Twinkle.getPref('showRollbackLinks').indexOf('recentchanges') !== -1)
-			|| (mw.config.get('wgCanonicalSpecialPageName') === 'Recentchangeslinked' && Twinkle.getPref('showRollbackLinks').indexOf('recentchangeslinked') !== -1)
-		) {
-			// Latest and revertable (not page creations, logs, categorizations, etc.)
-			var $list = $('.mw-changeslist .mw-changeslist-last.mw-changeslist-src-mw-edit');
-			// Exclude top-level header if "group changes" preference is used
-			// and find only individual lines or nested lines
-			$list = $list.not('.mw-rcfilters-ui-highlights-enhanced-toplevel').find('.mw-changeslist-line-inner, td.mw-enhanced-rc-nested');
-
-			$list.each(function(key, current) {
-				var vandal = $(current).find('.mw-userlink').text();
-				var href = $(current).find('.mw-changeslist-diff').attr('href');
-				var rev = mw.util.getParamValue('diff', href);
-				var page = current.dataset.targetPage;
-				current.appendChild(Twinkle.fluff.linkBuilder.rollbackLinks(vandal, true, rev, page));
-			});
 		}
 	},
 
@@ -326,6 +330,7 @@ Twinkle.fluff.addLinks = {
 			// need reworking around userHidden
 			var vandal = $('#mw-diff-ntitle2').find('.mw-userlink')[0].text;
 			var ntitle = document.getElementById('mw-diff-ntitle1').parentNode;
+
 			ntitle.insertBefore(Twinkle.fluff.linkBuilder.rollbackLinks(vandal), ntitle.firstChild);
 		}
 	},
@@ -344,6 +349,7 @@ Twinkle.fluff.disableLinks = function disablelinks(parentNode) {
 	});
 };
 
+
 Twinkle.fluff.revert = function revertPage(type, vandal, rev, page) {
 	if (mw.util.isIPv6Address(vandal)) {
 		vandal = Morebits.sanitizeIPv6(vandal);
@@ -356,14 +362,6 @@ Twinkle.fluff.revert = function revertPage(type, vandal, rev, page) {
 		summary = document.getElementsByName('revertsummary')[0].value;
 	}
 
-	var statusElement = document.getElementById('mw-content-text');
-	if (Twinkle.fluff.useNotify) {
-		statusElement = document.createElement('small');
-		statusElement.id = 'twinklefluff_' + Twinkle.fluff.notifyId++;
-		mw.notify(statusElement, {
-			autoHide: false
-		});
-	}
 	if (Twinkle.fluff.rollbackInPlace) {
 		var notifyStatus = document.createElement('span');
 		mw.notify(notifyStatus, {
@@ -398,7 +396,6 @@ Twinkle.fluff.revert = function revertPage(type, vandal, rev, page) {
 		'type': 'csrf'
 	};
 	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取较早修订版本信息', '抓取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.main);
-	wikipedia_api.statelem.status(wgULS('正在准备回退……', '正在準備回退……'));
 	wikipedia_api.params = params;
 	wikipedia_api.post();
 };
@@ -410,15 +407,7 @@ Twinkle.fluff.revertToRevision = function revertToRevision(oldrev) {
 		summary = document.getElementsByName('revertsummary')[0].value;
 	}
 
-	var statusElement = document.getElementById('mw-content-text');
-	if (Twinkle.fluff.useNotify) {
-		statusElement = document.createElement('small');
-		statusElement.id = 'twinklefluff_' + Twinkle.fluff.notifyId++;
-		mw.notify(statusElement, {
-			autoHide: false
-		});
-	}
-	Morebits.status.init(statusElement);
+	Morebits.status.init(document.getElementById('mw-content-text'));
 
 	var query = {
 		'action': 'query',
@@ -426,14 +415,13 @@ Twinkle.fluff.revertToRevision = function revertToRevision(oldrev) {
 		'titles': mw.config.get('wgPageName'),
 		'rvlimit': 1,
 		'rvstartid': oldrev,
-		'rvprop': [ 'ids', 'timestamp', 'user', 'comment' ],
+		'rvprop': [ 'ids', 'user' ],
 		'format': 'xml',
 		'curtimestamp': '',
 		'meta': 'tokens',
 		'type': 'csrf'
 	};
 	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取较早修订版本信息', '抓取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.toRevision);
-	wikipedia_api.statelem.status(wgULS('正在准备回退……', '正在準備回退……'));
 	wikipedia_api.params = { rev: oldrev, summary: summary };
 	wikipedia_api.post();
 };
@@ -484,9 +472,7 @@ Twinkle.fluff.callbacks = {
 			'bot': true
 		};
 
-		if (!Twinkle.fluff.useNotify) {
-			Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
-		}
+		Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 		Morebits.wiki.actionCompleted.notice = wgULS('修订版本完成', '修訂版本完成');
 
 		var wikipedia_api = new Morebits.wiki.api(wgULS('保存回退内容', '儲存回退內容'), query, Twinkle.fluff.callbacks.complete, apiobj.statelem);
@@ -658,42 +644,15 @@ Twinkle.fluff.callbacks = {
 			return;
 		}
 
-		var query;
+		// Decide whether to notify the user on success
 		if (!Twinkle.fluff.skipTalk && Twinkle.getPref('openTalkPage').indexOf(params.type) !== -1 &&
-				mw.config.get('wgUserName') !== params.user && !params.userHidden) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '打开用户 ', Morebits.htmlNode('strong', params.user), ' 的对话页' ], [ '開啟用戶 ', Morebits.htmlNode('strong', params.user), ' 的討論頁' ]));
-
-			query = {
-				'title': 'User talk:' + params.user,
-				'action': 'edit',
-				'preview': 'yes',
-				'vanarticle': params.pagename.replace(/_/g, ' '),
-				'vanarticlerevid': params.revid,
-				'vantimestamp': top.getAttribute('timestamp'),
-				'vanarticlegoodrevid': params.goodid,
-				'type': params.type,
-				'count': params.count
-			};
-
-			switch (Twinkle.getPref('userTalkPageMode')) {
-				case 'tab':
-					window.open(mw.util.getUrl('', query), '_blank');
-					break;
-				case 'blank':
-					window.open(mw.util.getUrl('', query), '_blank',
-						'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800');
-					break;
-				case 'window':
-				/* falls through */
-				default:
-					window.open(mw.util.getUrl('', query),
-						window.name === 'twinklewarnwindow' ? '_blank' : 'twinklewarnwindow',
-						'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800');
-					break;
-			}
+				!params.userHidden && mw.config.get('wgUserName') !== params.user) {
+			params.notifyUser = true;
+			// Pass along to the warn module
+			params.vantimestamp = top.getAttribute('timestamp');
 		}
 
-		query = {
+		var query = {
 			'action': 'edit',
 			'title': params.pagename,
 			'tags': Twinkle.getPref('revisionTags'),
@@ -708,7 +667,7 @@ Twinkle.fluff.callbacks = {
 			'bot': true
 		};
 
-		if (!Twinkle.fluff.useNotify && !Twinkle.fluff.rollbackInPlace) {
+		if (!Twinkle.fluff.rollbackInPlace) {
 			Morebits.wiki.actionCompleted.redirect = params.pagename;
 		}
 		Morebits.wiki.actionCompleted.notice = '回退完成';
@@ -729,6 +688,40 @@ Twinkle.fluff.callbacks = {
 			apiobj.statelem.error(wgULS('要回退到的版本与当前版本相同，没什么要做的', '要回退到的版本與目前版本相同，沒什麼要做的'));
 		} else {
 			apiobj.statelem.info('完成');
+			var params = apiobj.params;
+
+			if (params.notifyUser && !params.userHidden) { // notifyUser only from main, not from toRevision
+				Morebits.status.info(wgULS('信息', '資訊'), [wgULS('', '開啟使用者 '), Morebits.htmlNode('strong', params.user), wgULS('', ' 的討論頁')]);
+
+				var windowQuery = {
+					'title': 'User talk:' + params.user,
+					'action': 'edit',
+					'preview': 'yes',
+					'vanarticle': params.pagename.replace(/_/g, ' '),
+					'vanarticlerevid': params.revid,
+					'vantimestamp': params.vantimestamp,
+					'vanarticlegoodrevid': params.goodid,
+					'type': params.type,
+					'count': params.count
+				};
+
+				switch (Twinkle.getPref('userTalkPageMode')) {
+					case 'tab':
+						window.open(mw.util.getUrl('', windowQuery), '_blank');
+						break;
+					case 'blank':
+						window.open(mw.util.getUrl('', windowQuery), '_blank',
+							'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800');
+						break;
+					case 'window':
+					/* falls through */
+					default:
+						window.open(mw.util.getUrl('', windowQuery),
+							window.name === 'twinklewarnwindow' ? '_blank' : 'twinklewarnwindow',
+							'location=no,toolbar=no,status=no,directories=no,scrollbars=yes,width=1200,height=800');
+						break;
+				}
+			}
 		}
 	}
 };
