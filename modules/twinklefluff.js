@@ -419,7 +419,6 @@ Twinkle.fluff.revertToRevision = function revertToRevision(oldrev) {
 		'rvlimit': 1,
 		'rvstartid': oldrev,
 		'rvprop': [ 'ids', 'timestamp', 'user', 'comment' ],
-		'intoken': 'edit',
 		'format': 'xml',
 		'curtimestamp': '',
 		'meta': 'tokens',
@@ -448,7 +447,7 @@ Twinkle.fluff.callbacks = {
 		var revertToUser = $(xmlDoc).find('rev').attr('user');
 		var revertToUserHidden = typeof $(xmlDoc).find('rev').attr('userhidden') === 'string';
 
-		if (revertToRevID !== apiobj.params.rev.toString()) {
+		if (revertToRevID !== apiobj.params.rev) {
 			apiobj.statelem.error(wgULS('抓取到的修订版本与请求的修订版本不符，取消。', '抓取到的修訂版本與請求的修訂版本不符，取消。'));
 			return;
 		}
