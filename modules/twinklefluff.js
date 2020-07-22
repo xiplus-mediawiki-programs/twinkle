@@ -732,7 +732,7 @@ Twinkle.fluff.formatSummary = function(builtInString, userName, customString) {
 
 	// append user's custom reason
 	if (customString) {
-		result += ': ' + Morebits.string.toUpperCaseFirstChar(customString);
+		result += '：' + Morebits.string.toUpperCaseFirstChar(customString);
 	}
 	result += Twinkle.getPref('summaryAd');
 
