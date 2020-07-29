@@ -495,9 +495,9 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				name: 'expiry',
 				label: wgULS('时长：', '時長：'),
 				list: [
+					{ label: '', selected: true, value: '' },
 					{ label: wgULS('临时', '臨時'), value: 'temporary' },
-					{ label: '永久', value: 'infinity' },
-					{ label: '', selected: true, value: '' }
+					{ label: '永久', value: 'infinity' }
 				]
 			});
 			field1.append({
@@ -1080,58 +1080,49 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 
 Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 	var form = e.target;
-
-	var actiontypes = form.actiontype;
-	var actiontype;
-	for (var i = 0; i < actiontypes.length; i++) {
-		if (!actiontypes[i].checked) {
-			continue;
-		}
-		actiontype = actiontypes[i].values;
-		break;
-	}
+	var input = Morebits.quickForm.getInputData(form);
 
 	var tagparams;
-	if (actiontype === 'tag' || (actiontype === 'protect' && mw.config.get('wgArticleId') && mw.config.get('wgPageContentModel') !== 'Scribunto')) {
+	if (input.actiontype === 'tag' || (input.actiontype === 'protect' && mw.config.get('wgArticleId') && mw.config.get('wgPageContentModel') !== 'Scribunto')) {
 		tagparams = {
-			tag: form.tagtype.value,
-			reason: (form.tagtype.value === 'pp-protected' || form.tagtype.value === 'pp-semi-protected' || form.tagtype.value === 'pp-move') && form.protectReason ? form.protectReason.value : null,
-			showexpiry: actiontype === 'protect' ? form.showexpiry.checked : null,
-			expiry: actiontype === 'protect' ?
-				form.editmodify.checked ? form.editexpiry.value :
-					form.movemodify.checked ? form.moveexpiry.value : null
+			tag: input.tagtype,
+			reason: (input.tagtype === 'pp-protected' || input.tagtype === 'pp-semi-protected' || input.tagtype === 'pp-move') && input.protectReason ? input.protectReason : null,
+			showexpiry: input.actiontype === 'protect' ? input.showexpiry : null,
+			expiry: input.actiontype === 'protect' ?
+				input.editmodify ? input.editexpiry :
+					input.movemodify ? input.moveexpiry : null
 				: null,
-			small: form.small.checked,
-			noinclude: form.noinclude.checked
+			small: input.small,
+			noinclude: input.noinclude
 		};
 	}
 
 	var closeparams = {};
-	if (form.close && form.close.checked) {
-		if (form.category.value === 'unprotect') {
+	if (input.close) {
+		if (input.category === 'unprotect') {
 			closeparams.type = 'unprotect';
 		} else if (mw.config.get('wgArticleId')) {
-			if (form.editmodify.checked) {
-				if (form.editlevel.value === 'sysop') {
+			if (input.editmodify) {
+				if (input.editlevel === 'sysop') {
 					closeparams.type = 'full';
-					closeparams.expiry = form.editexpiry.value;
-				} else if (form.editlevel.value === 'autoconfirmed') {
+					closeparams.expiry = input.editexpiry;
+				} else if (input.editlevel === 'autoconfirmed') {
 					closeparams.type = 'semi';
-					closeparams.expiry = form.editexpiry.value;
+					closeparams.expiry = input.editexpiry;
 				}
-			} else if (form.movemodify.checked && form.movelevel.value === 'sysop') {
+			} else if (input.movemodify && input.movelevel === 'sysop') {
 				closeparams.type = 'move';
-				closeparams.expiry = form.moveexpiry.value;
+				closeparams.expiry = input.moveexpiry;
 			}
 		} else {
-			if (form.createlevel.value !== 'all') {
+			if (input.createlevel !== 'all') {
 				closeparams.type = 'salt';
-				closeparams.expiry = form.createexpiry.value;
+				closeparams.expiry = input.createexpiry;
 			}
 		}
 	}
 
-	switch (actiontype) {
+	switch (input.actiontype) {
 		case 'protect':
 			// protect the page
 
@@ -1159,19 +1150,25 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			var protectIt = function twinkleprotectCallbackProtectIt(next) {
 				thispage = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('保护页面', '保護頁面'));
 				if (mw.config.get('wgArticleId')) {
-					if (form.editmodify.checked) {
-						thispage.setEditProtection(form.editlevel.value, form.editexpiry.value);
+					if (input.editmodify) {
+						thispage.setEditProtection(input.editlevel, input.editexpiry);
 					}
-					if (form.movemodify.checked) {
-						thispage.setMoveProtection(form.movelevel.value, form.moveexpiry.value);
+					if (input.movemodify) {
+						// Ensure a level has actually been chosen
+						if (input.movelevel) {
+							thispage.setMoveProtection(input.movelevel, input.moveexpiry);
+						} else {
+							alert(wgULS('您需要选择保护层级！', '您需要選擇保護層級！'));
+							return;
+						}
 					}
 				} else {
-					thispage.setCreateProtection(form.createlevel.value, form.createexpiry.value);
+					thispage.setCreateProtection(input.createlevel, input.createexpiry);
 					thispage.setWatchlist(false);
 				}
 
-				if (form.protectReason.value) {
-					thispage.setEditSummary(form.protectReason.value + Twinkle.getPref('protectionSummaryAd'));
+				if (input.protectReason) {
+					thispage.setEditSummary(input.protectReason + Twinkle.getPref('protectionSummaryAd'));
 					thispage.setTags(Twinkle.getPref('revisionTags'));
 				} else {
 					alert(wgULS('您必须输入保护理由，这将被记录在保护日志中。', '您必須輸入保護理由，這將被記錄在保護日誌中。'));
@@ -1187,8 +1184,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				thispage.protect(next);
 			};
 
-			if ((form.editmodify && form.editmodify.checked) || (form.movemodify && form.movemodify.checked) ||
-				!mw.config.get('wgArticleId')) {
+			if (input.editmodify || input.movemodify || !mw.config.get('wgArticleId')) {
 				protectIt(allDone);
 			} else {
 				alert(wgULS('请告诉Twinkle要做什么！\n如果您只是想标记该页，请选择上面的“用保护模板标记此页”选项。', '請告訴Twinkle要做什麼！\n如果您只是想標記該頁，請選擇上面的「用保護模板標記此頁」選項。'));
@@ -1212,7 +1208,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 		case 'request':
 			// file request at RFPP
 			var typename, typereason;
-			switch (form.category.value) {
+			switch (input.category) {
 				case 'pp-dispute':
 				case 'pp-vandalism':
 				case 'pp-template':
@@ -1249,7 +1245,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 					typename = '解除保护';
 					break;
 			}
-			switch (form.category.value) {
+			switch (input.category) {
 				case 'pp-dispute':
 					typereason = '争议、编辑战';
 					break;
@@ -1294,11 +1290,11 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			}
 
 			var reason = typereason;
-			if (form.reason.value !== '') {
+			if (input.reason !== '') {
 				if (typereason !== '') {
 					reason += '：';
 				}
-				reason += form.reason.value;
+				reason += input.reason;
 			}
 			if (reason !== '') {
 				reason = Morebits.string.appendPunctuation(reason);
@@ -1307,8 +1303,8 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			var rppparams = {
 				reason: reason,
 				typename: typename,
-				category: form.category.value,
-				expiry: form.expiry.value
+				category: input.category,
+				expiry: input.expiry
 			};
 
 			Morebits.simpleWindow.setButtonsEnabled(false);
