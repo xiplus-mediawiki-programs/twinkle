@@ -974,10 +974,10 @@ Twinkle.tag.file.commonsList = wgULS([
 	},
 	{
 		label: '{{Now Commons}}：文件已被复制到维基共享资源（CSD F7）',
-		value: 'subst:ncd',
+		value: 'Now Commons',
 		subgroup: {
 			type: 'input',
-			name: 'ncdName',
+			name: 'nowcommonsName',
 			label: '共享资源的不同图像名称：',
 			tooltip: '输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀'
 		}
@@ -1014,10 +1014,10 @@ Twinkle.tag.file.commonsList = wgULS([
 	},
 	{
 		label: '{{Now Commons}}：檔案已被複製到維基共享資源（CSD F7）',
-		value: 'subst:ncd',
+		value: 'Now Commons',
 		subgroup: {
 			type: 'input',
-			name: 'ncdName',
+			name: 'nowcommonsName',
 			label: '共享資源的不同圖像名稱：',
 			tooltip: '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首'
 		}
@@ -1608,20 +1608,20 @@ Twinkle.tag.callbacks = {
 			var tagtext = '', currentTag;
 			$.each(params.tags, function(k, tag) {
 				// when other commons-related tags are placed, remove "move to Commons" tag
-				if (['Keep local', 'subst:ncd', 'Do not move to Commons_reason', 'Do not move to Commons',
-					'Now Commons'].indexOf(tag) !== -1) {
+				if (['Keep local', 'Now Commons', 'Do not move to Commons_reason', 'Do not move to Commons'].indexOf(tag) !== -1) {
 					text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, '');
 				}
 				if (tag === 'Vector version available') {
 					text = text.replace(/\{\{((convert to |convertto|should be |shouldbe|to)?svg|badpng|vectorize)[^}]*\}\}/gi, '');
 				}
 
-				currentTag = '{{' + (tag === 'Do not move to Commons_reason' ? 'Do not move to Commons' : tag);
+				currentTag = tag === 'Do not move to Commons_reason' ? 'Do not move to Commons' : tag;
 
 				switch (tag) {
-					case 'subst:ncd':
-						if (params.ncdName !== '') {
-							currentTag += '|1=' + params.ncdName;
+					case 'Now Commons':
+						currentTag = 'subst:' + currentTag; // subst
+						if (params.nowcommonsName !== '') {
+							currentTag += '|1=' + params.nowcommonsName;
 						}
 						break;
 					case 'Keep local':
@@ -1655,7 +1655,7 @@ Twinkle.tag.callbacks = {
 						break;  // don't care
 				}
 
-				currentTag += '}}\n';
+				currentTag = '{{' + currentTag + '}}\n';
 
 				tagtext += currentTag;
 				summary += '{{' + tag + '}}, ';
