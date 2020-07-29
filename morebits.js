@@ -1207,14 +1207,13 @@ Morebits.string = {
 	},
 
 	/**
-	 * Determine input string is represents as infinity
-	 * @param {string} time The string to determine
+	 * Determine if user input expiration will be translated to an
+	 * infinite-length by MW: https://phabricator.wikimedia.org/T68646
+	 * @param {string} expiry
 	 * @returns {boolean}
-	 * @see https://gerrit.wikimedia.org/g/mediawiki/core/+/7c4a3f8aae57066236b83ec21dc0ef2f5f2c4ead/includes/GlobalFunctions.php#2878
 	 */
-	isInfinity: function morebitsStringIsInfinity(time) {
-		var infinityValues = ['infinite', 'indefinite', 'infinity', 'never'];
-		return infinityValues.indexOf(time) !== -1;
+	isInfinity: function morebitsStringIsInfinity(expiry) {
+		return ['indefinite', 'infinity', 'infinite', 'never'].indexOf(expiry) !== -1;
 	},
 
 	/**

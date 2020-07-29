@@ -262,7 +262,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						{ label: '3月', value: '3 months' },
 						{ label: '6月', value: '6 months' },
 						{ label: '1年', value: '1 year' },
-						{ label: '无限期', value: 'indefinite' },
+						{ label: '无限期', value: 'infinity' },
 						{ label: '自定义…', value: 'custom' }
 					], [
 						{ label: '1小時', value: '1 hour' },
@@ -277,7 +277,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						{ label: '3月', value: '3 months' },
 						{ label: '6月', value: '6 months' },
 						{ label: '1年', value: '1 year' },
-						{ label: '無限期', value: 'indefinite' },
+						{ label: '無限期', value: 'infinity' },
 						{ label: '自訂…', value: 'custom' }
 					])
 				});
@@ -338,7 +338,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						{ label: '3月', value: '3 months' },
 						{ label: '6月', value: '6 months' },
 						{ label: '1年', value: '1 year' },
-						{ label: '无限期', value: 'indefinite' },
+						{ label: '无限期', value: 'infinity' },
 						{ label: '自定义…', value: 'custom' }
 					], [
 						{ label: '1小時', value: '1 hour' },
@@ -353,7 +353,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						{ label: '3月', value: '3 months' },
 						{ label: '6月', value: '6 months' },
 						{ label: '1年', value: '1 year' },
-						{ label: '無限期', value: 'indefinite' },
+						{ label: '無限期', value: 'infinity' },
 						{ label: '自訂…', value: 'custom' }
 					])
 				});
@@ -402,7 +402,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						{ label: '3月', value: '3 months' },
 						{ label: '6月', value: '6 months' },
 						{ label: '1年', selected: true, value: '1 year' },
-						{ label: '无限期', value: 'indefinite' },
+						{ label: '无限期', value: 'infinity' },
 						{ label: '自定义…', value: 'custom' }
 					], [
 						{ label: '1小時', value: '1 hour' },
@@ -417,7 +417,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						{ label: '3月', value: '3 months' },
 						{ label: '6月', value: '6 months' },
 						{ label: '1年', selected: true, value: '1 year' },
-						{ label: '無限期', value: 'indefinite' },
+						{ label: '無限期', value: 'infinity' },
 						{ label: '自訂…', value: 'custom' }
 					])
 				});
@@ -496,7 +496,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				label: wgULS('时长：', '時長：'),
 				list: [
 					{ label: wgULS('临时', '臨時'), value: 'temporary' },
-					{ label: '永久', value: 'indefinite' },
+					{ label: '永久', value: 'infinity' },
 					{ label: '', selected: true, value: '' }
 				]
 			});
@@ -562,7 +562,7 @@ Twinkle.protect.formevents = {
 			e.target.form.moveexpiry.value = e.target.form.editexpiry.value;
 		} else if (e.target.form.editlevel.disabled) {
 			e.target.form.movelevel.value = 'sysop';
-			e.target.form.moveexpiry.value = 'indefinite';
+			e.target.form.moveexpiry.value = 'infinity';
 		}
 		e.target.form.movelevel.disabled = !e.target.checked;
 		e.target.form.moveexpiry.disabled = !e.target.checked || (e.target.form.movelevel.value === 'all');
@@ -1061,7 +1061,7 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 
 			if (/template/.test(form.category.value)) {
 				form.noinclude.checked = true;
-				form.editexpiry.value = form.moveexpiry.value = 'indefinite';
+				form.editexpiry.value = form.moveexpiry.value = 'infinity';
 			} else if (mw.config.get('wgNamespaceNumber') !== 10) {
 				form.noinclude.checked = false;
 			}
@@ -1455,7 +1455,7 @@ Twinkle.protect.callbacks = {
 			case 'temporary':
 				words = '临时';
 				break;
-			case 'indefinite':
+			case 'infinity':
 				words = '永久';
 				break;
 			default:
