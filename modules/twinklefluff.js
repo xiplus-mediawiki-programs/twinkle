@@ -473,7 +473,7 @@ Twinkle.fluff.callbacks = {
 		};
 
 		Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
-		Morebits.wiki.actionCompleted.notice = wgULS('修订版本完成', '修訂版本完成');
+		Morebits.wiki.actionCompleted.notice = '回退完成';
 
 		var wikipedia_api = new Morebits.wiki.api(wgULS('保存回退内容', '儲存回退內容'), query, Twinkle.fluff.callbacks.complete, apiobj.statelem);
 		wikipedia_api.params = apiobj.params;
@@ -511,7 +511,7 @@ Twinkle.fluff.callbacks = {
 		}
 		var index = 1;
 		if (params.revid !== lastrevid) {
-			Morebits.status.warn('警告', wgULS([ '最新修订版本 ', Morebits.htmlNode('strong', lastrevid), ' 与我们的修订版本 ', Morebits.htmlNode('strong', params.revid), '不等' ], [ '最新修訂版本 ', Morebits.htmlNode('strong', lastrevid), ' 與我們的修訂版本 ', Morebits.htmlNode('strong', params.revid), ' 不等' ]));
+			Morebits.status.warn('警告', wgULS([ '最新修订版本 ', Morebits.htmlNode('strong', lastrevid), ' 与我们的修订版本 ', Morebits.htmlNode('strong', params.revid), '不同' ], [ '最新修訂版本 ', Morebits.htmlNode('strong', lastrevid), ' 與我們的修訂版本 ', Morebits.htmlNode('strong', params.revid), ' 不同' ]));
 			if (lastuser === params.user) {
 				switch (params.type) {
 					case 'vand':
@@ -529,10 +529,10 @@ Twinkle.fluff.callbacks = {
 					// Besides, none of the trusted bots are going to be revdel'd
 					Twinkle.fluff.trustedBots.indexOf(top.getAttribute('user')) !== -1 && revs.length > 1 &&
 					revs[1].getAttribute('pageId') === params.revid) {
-				Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', lastuser), '，一个可信的机器人做出，之前的版本被认为是破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', lastuser), '，一個可信的機器人做出，之前的版本被認為是破壞，繼續回退操作。' ]));
+				Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', lastuser), '，一个可信的机器人做出，但之前的版本被认为是破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', lastuser), '，一個可信的機器人做出，但之前的版本被認為是破壞，繼續回退操作。' ]));
 				index = 2;
 			} else {
-				Morebits.status.error('错误', wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', lastuser), ' 做出，所以这个修订版本可能已经被回退了，取消回退操作。'], [ '最新修訂版本由 ', Morebits.htmlNode('strong', lastuser), ' 做出，所以這個修訂版本可能已經被回退了，取消回退操作。']));
+				Morebits.status.error(wgULS('错误', '錯誤'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', lastuser), ' 做出，所以这个修订版本可能已经被回退了，取消回退操作。'], [ '最新修訂版本由 ', Morebits.htmlNode('strong', lastuser), ' 做出，所以這個修訂版本可能已經被回退了，取消回退操作。']));
 				return;
 			}
 
@@ -547,7 +547,7 @@ Twinkle.fluff.callbacks = {
 					params.userHidden = revs[1].getAttribute('userhidden') === '';
 					break;
 				case 'agf':
-					Morebits.status.warn('提示', wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行善意回退，这是一个可信的机器人，取消回退操作。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行善意回退，這是一個可信的機器人，取消回退操作。' ]));
+					Morebits.status.warn('提示', wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行善意回退，但这是一个可信的机器人，取消回退操作。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行善意回退，但這是一個可信的機器人，取消回退操作。' ]));
 					return;
 				case 'norm':
 				/* falls through */
