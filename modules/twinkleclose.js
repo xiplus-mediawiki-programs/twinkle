@@ -467,7 +467,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 			type: 'checkbox',
 			list: [
 				{
-					label: wgULS('删除关联的讨论页（用户讨论页除外）', '刪除關聯的討論頁（使用者討論頁除外）'),
+					label: wgULS('删除关联的讨论页', '刪除關聯的討論頁'),
 					value: 'talkpage',
 					name: 'talkpage',
 					tooltip: wgULS('删除时附带删除此页面的讨论页。', '刪除時附帶刪除此頁面的討論頁。'),
@@ -549,13 +549,17 @@ Twinkle.close.callback.change_operation = function twinklecloseCallbackChangeOpe
 	var talkpage = e.target.form.talkpage;
 	var redirects = e.target.form.redirects;
 	if (noop || messageData.action === 'keep') {
-		talkpage.checked = false;
-		talkpage.disabled = true;
+		if (talkpage) {
+			talkpage.checked = false;
+			talkpage.disabled = true;
+		}
 		redirects.checked = false;
 		redirects.disabled = true;
 	} else {
-		talkpage.checked = true;
-		talkpage.disabled = false;
+		if (talkpage) {
+			talkpage.checked = true;
+			talkpage.disabled = false;
+		}
 		redirects.checked = true;
 		redirects.disabled = false;
 	}
@@ -570,21 +574,27 @@ Twinkle.close.callback.change_code = function twinklecloseCallbackChangeCode(e) 
 	if (resultData.noop || messageData.action === 'noop') {
 		noop.checked = true;
 		noop.disabled = true;
-		talkpage.checked = false;
-		talkpage.disabled = true;
+		if (talkpage) {
+			talkpage.checked = false;
+			talkpage.disabled = true;
+		}
 		redirects.checked = false;
 		redirects.disabled = true;
 	} else {
 		noop.checked = false;
 		noop.disabled = false;
 		if (messageData.action === 'keep') {
-			talkpage.checked = false;
-			talkpage.disabled = true;
+			if (talkpage) {
+				talkpage.checked = false;
+				talkpage.disabled = true;
+			}
 			redirects.checked = false;
 			redirects.disabled = true;
 		} else {
-			talkpage.checked = true;
-			talkpage.disabled = false;
+			if (talkpage) {
+				talkpage.checked = true;
+				talkpage.disabled = false;
+			}
 			redirects.checked = true;
 			redirects.disabled = false;
 		}
