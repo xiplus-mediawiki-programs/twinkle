@@ -39,7 +39,7 @@ Twinkle是维基人用于快速执行常见维护工作（如提交删除候选�
 
 [MediaWiki:Gadgets-definition][]应当包含这一行：
 
-    * Twinkle[ResourceLoader|dependencies=mediawiki.user,mediawiki.util,mediawiki.Title,jquery.ui,jquery.tipsy|rights=autoconfirmed]|morebits.js|morebits.css|Twinkle.js|friendlyshared.js|friendlytag.js|friendlytalkback.js|twinklearv.js|twinklebatchdelete.js|twinklebatchundelete.js|twinkleblock.js|twinkleclose.js|twinkleconfig.js|twinklecopyvio.js|twinkledelimages.js|twinklediff.js|twinklefluff.js|twinkleimage.js|twinkleprotect.js|twinklespeedy.js|twinkleunlink.js|twinklewarn.js|twinklexfd.js
+    * Twinkle[ResourceLoader|dependencies=ext.gadget.morebits,ext.gadget.select2,mediawiki.api,mediawiki.language|rights=autoconfirmed|type=general|peers=Twinkle-pagestyles]|Twinkle.js|Twinkle.css|twinklearv.js|twinklewarn.js|twinkleblock.js|friendlywelcome.js|friendlytalkback.js|twinklespeedy.js|twinklecopyvio.js|twinklexfd.js|twinkleimage.js|twinkleprotect.js|friendlytag.js|twinklestub.js|twinklediff.js|twinkleunlink.js|twinklefluff.js|twinklebatchdelete.js|twinklebatchundelete.js|twinkleclose.js|twinkleconfig.js
 
 ### 使用`sync.pl`同步
 

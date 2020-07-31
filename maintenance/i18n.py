@@ -27,6 +27,7 @@ filenames = [
     'modules/twinkleunlink.js',
     'modules/twinklewarn.js',
     'modules/twinklexfd.js',
+    'modules/friendlywelcome.js',
     'modules/friendlytag.js',
     'modules/friendlytalkback.js',
 ]

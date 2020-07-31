@@ -438,3 +438,4 @@ twinkle.js
   modules/friendlyshared.js
   modules/friendlytag.js
   modules/friendlytalkback.js
+  modules/friendlywelcome.js

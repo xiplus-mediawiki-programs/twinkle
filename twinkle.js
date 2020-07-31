@@ -168,6 +168,18 @@ Twinkle.defaultConfig = {
 	stubArticleSortOrder: 'cat',
 	customStubList: [],
 
+	// Welcome
+	topWelcomes: false,
+	watchWelcomes: true,
+	welcomeHeading: wgULS('欢迎', '歡迎'),
+	insertHeadings: true,
+	insertUsername: true,
+	insertSignature: true,  // sign welcome templates, where appropriate
+	quickWelcomeMode: 'norm',
+	quickWelcomeTemplate: 'Welcome',
+	customWelcomeList: [],
+	customWelcomeSignature: true,
+
 	// Talkback
 	markTalkbackAsMinor: true,
 	insertTalkbackSignature: true,  // always sign talkback templates
