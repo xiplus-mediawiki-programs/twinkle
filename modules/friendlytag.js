@@ -39,7 +39,7 @@ Twinkle.tag = function friendlytag() {
 Twinkle.tag.checkedTags = [];
 
 Twinkle.tag.callback = function friendlytagCallback() {
-	var Window = new Morebits.simpleWindow(630, Twinkle.tag.mode === '条目' || Twinkle.tag.mode === '條目' ? 500 : 400);
+	var Window = new Morebits.simpleWindow(630, Twinkle.tag.modeEn === 'article' ? 500 : 400);
 	Window.setScriptName('Twinkle');
 	// anyone got a good policy/guideline/info page/instructional page link??
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#tag');
@@ -87,9 +87,8 @@ Twinkle.tag.callback = function friendlytagCallback() {
 		}
 	});
 
-	switch (Twinkle.tag.mode) {
-		case '条目':
-		case '條目':
+	switch (Twinkle.tag.modeEn) {
+		case 'article':
 			Window.setTitle(wgULS('条目维护标记', '條目維護標記'));
 
 
@@ -165,8 +164,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 
 			break;
 
-		case '文件':
-		case '檔案':
+		case 'file':
 			Window.setTitle(wgULS('文件维护标记', '檔案維護標記'));
 
 			form.append({ type: 'header', label: wgULS('著作权和来源问题标签', '著作權和來源問題標籤') });
@@ -187,8 +185,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			}
 			break;
 
-		case '重定向':
-		case '重新導向':
+		case 'redirect':
 			Window.setTitle(wgULS('重定向标记', '重新導向標記'));
 
 			var i = 1;
@@ -245,7 +242,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 		}
 	});
 
-	if (Twinkle.tag.mode === '条目' || Twinkle.tag.mode === '條目') {
+	if (Twinkle.tag.modeEn === 'article') {
 
 		Twinkle.tag.alreadyPresentTags = [];
 
@@ -1699,7 +1696,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			return sum += params.tags.indexOf(tag) !== -1;
 		}, 0);
 		if (count > 1) {
-			var message = wgULS('请在以下标签只选择其中一个', '請在以下標籤只選擇其中一個') + '：{{' + conflicts.join('}}、{{') + '}}。';
+			var message = wgULS('请只选择以下标签中的一个', '請只選擇以下標籤中的一個') + '：{{' + conflicts.join('}}、{{') + '}}。';
 			message += extra ? extra : '';
 			alert(message);
 			return true;
@@ -1719,9 +1716,8 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	// forEach loop, but it's probably clearer not to have [[array one],
 	// [array two]] devoid of context. Likewise, all the checkParameter
 	// calls could be in one if, but could be similarly confusing.
-	switch (Twinkle.tag.mode) {
-		case '條目':
-		case '条目':
+	switch (Twinkle.tag.modeEn) {
+		case 'article':
 			params.tagsToRemove = form.getUnchecked('existingTags'); // not in `input`
 			params.tagsToRemain = params.existingTags || []; // container not created if none present
 
@@ -1735,7 +1731,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 					return;
 				}
 				if ((params.mergeTagOther || params.mergeReason) && params.mergeTarget.indexOf('|') !== -1) {
-					alert(wgULS('当前还不支持在一次合并中标记多个条目，与开启关于多个条目的讨论。请不要勾选“标记其他条目”和/或清理“理由”框，并重试。', '目前還不支援在一次合併中標記多個條目，與開啟關於多個條目的討論。請不要勾選「標記其他條目」和/或清理「理由」框，並重試。'));
+					alert(wgULS('当前还不支持在一次合并中标记多个条目，与开启关于多个条目的讨论。请不要勾选“标记其他条目”并清空“理由”框后再提交。', '目前還不支援在一次合併中標記多個條目，與開啟關於多個條目的討論。請不要勾選「標記其他條目」並清空「理由」框後再提交。'));
 					return;
 				}
 			}
@@ -1748,8 +1744,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			}
 			break;
 
-		case '文件':
-		case '檔案':
+		case 'file':
 			// Silly to provide the same string to each of these
 			if (checkParameter('Obsolete', 'ObsoleteFile', wgULS('替换的文件名称', '替換的檔案名稱')) ||
 				checkParameter('Vector version available', 'Vector_version_availableFile', wgULS('替换的文件名称', '替換的檔案名稱'))) {
@@ -1760,8 +1755,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			}
 			break;
 
-		case '重定向':
-		case '重新導向':
+		case 'redirect':
 			break;
 
 		default:
@@ -1771,7 +1765,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 
 	// File/redirect: return if no tags selected
 	// Article: return if no tag is selected and no already present tag is deselected
-	if (params.tags.length === 0 && (['条目', '條目'].indexOf(Twinkle.tag.mode) === -1 || params.tagsToRemove.length === 0)) {
+	if (params.tags.length === 0 && (Twinkle.tag.modeEn !== 'article' || params.tagsToRemove.length === 0)) {
 		alert(wgULS('必须选择至少一个标记！', '必須選擇至少一個標記！'));
 		return;
 	}
@@ -1781,7 +1775,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 
 	Morebits.wiki.actionCompleted.redirect = Morebits.pageNameNorm;
 	Morebits.wiki.actionCompleted.notice = wgULS('标记完成，在几秒内刷新页面', '標記完成，在幾秒內重新整理頁面');
-	if (Twinkle.tag.mode === '重定向' || Twinkle.tag.mode === '重新導向') {
+	if (Twinkle.tag.modeEn === 'redirect') {
 		Morebits.wiki.actionCompleted.followRedirect = false;
 	}
 
