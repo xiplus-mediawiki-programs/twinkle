@@ -154,7 +154,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	if (Twinkle.getPref('customWarningList').length) {
 		main_group.append({ type: 'option', label: wgULS('自定义警告', '自訂警告'), value: 'custom', selected: defaultGroup === 9 });
 	}
-	main_group.append({ type: 'option', label: wgULS('所有警告模板', '所有警告模板'), value: 'kitchensink', selected: defaultGroup === 10 });
+	main_group.append({ type: 'option', label: '所有警告模板', value: 'kitchensink', selected: defaultGroup === 10 });
 
 	main_select.append({ type: 'select', name: 'sub_group', event: Twinkle.warn.callback.change_subcategory }); // Will be empty to begin with.
 
@@ -2341,7 +2341,7 @@ Twinkle.warn.callbacks = {
 			}
 		}
 
-		$autolevelMessage.prepend($('<div>' + wgULS('将发送', '將發送') + '<span style="font-weight: bold;">' + wgULS('层级', '層級') + level + '</span>' + wgULS('警告模板', '警告模板') + '。</div>'));
+		$autolevelMessage.prepend($('<div>' + wgULS('将发送', '將發送') + '<span style="font-weight: bold;">' + wgULS('层级', '層級') + level + '</span>' + '警告模板' + '。</div>'));
 		// Place after the stale and other-user-reverted (text-only) messages
 		$('#twinkle-warn-autolevel-message').remove(); // clean slate
 		$autolevelMessage.insertAfter($('#twinkle-warn-warning-messages'));
@@ -2424,7 +2424,7 @@ Twinkle.warn.callbacks = {
 			params.reason, params.main_group === 'custom');
 
 		if (Twinkle.getPref('showSharedIPNotice') && mw.util.isIPAddress(mw.config.get('wgTitle'))) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加共享IP帮助', '加入共享IP說明'));
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加共享IP说明', '加入共享IP說明'));
 			text += '\n{{subst:SharedIPAdvice}}';
 		}
 

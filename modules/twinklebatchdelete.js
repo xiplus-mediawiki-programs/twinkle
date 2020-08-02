@@ -684,11 +684,11 @@ Twinkle.batchdelete.callbacks = {
 			return;
 		}
 
-		var unlinker = new Morebits.batchOperation(wgULS('正在取消到 ', '正在取消到 ') + apiobj.params.page + wgULS(' 的链入', ' 的連入'));
+		var unlinker = new Morebits.batchOperation('正在取消到 ' + apiobj.params.page + wgULS(' 的链入', ' 的連入'));
 		unlinker.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 		unlinker.setPageList(pages);
 		unlinker.run(function(pageName) {
-			var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('正在取消 ', '正在取消 ') + pageName + wgULS(' 上的链入', ' 上的連入'));
+			var wikipedia_page = new Morebits.wiki.page(pageName, '正在取消 ' + pageName + wgULS(' 上的链入', ' 上的連入'));
 			var params = $.extend({}, apiobj.params);
 			params.title = pageName;
 			params.unlinker = unlinker;
@@ -736,7 +736,7 @@ Twinkle.batchdelete.callbacks = {
 			return;
 		}
 
-		var unlinker = new Morebits.batchOperation(wgULS('正在取消到 ', '正在取消到 ') + apiobj.params.page + wgULS(' 的链入', ' 的連入'));
+		var unlinker = new Morebits.batchOperation('正在取消到 ' + apiobj.params.page + wgULS(' 的链入', ' 的連入'));
 		unlinker.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 		unlinker.setPageList(pages);
 		unlinker.run(function(pageName) {
@@ -769,7 +769,7 @@ Twinkle.batchdelete.callbacks = {
 
 		Twinkle.batchdelete.unlinkCache[params.title] = text;
 		if (text === old_text) {
-			pageobj.getStatusElement().error(wgULS('在 ', '在 ') + pageobj.getPageName() + wgULS(' 上取消文件 ', ' 上取消檔案 ') + image + wgULS(' 链接失败', ' 連結失敗'));
+			pageobj.getStatusElement().error('在 ' + pageobj.getPageName() + ' 上取消 ' + image + wgULS(' 的文件使用失败', ' 的檔案使用失敗'));
 			params.unlinker.workerFailure(pageobj);
 			return;
 		}

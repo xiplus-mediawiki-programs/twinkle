@@ -110,7 +110,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 
 			form.append({
 				type: 'input',
-				label: wgULS('理由：', '理由：'),
+				label: '理由：',
 				name: 'reason',
 				tooltip: wgULS('附加于编辑摘要的可选理由，例如指出条目内容的哪些部分有问题或移除模板的理由，但如果理由很长则应该发表在讨论页。',
 					'附加於編輯摘要的可選理由，例如指出條目內容的哪些部分有問題或移除模板的理由，但如果理由很長則應該發表在討論頁。'),
@@ -1465,9 +1465,7 @@ Twinkle.tag.callbacks = {
 						}
 					});
 					if (!removed) {
-						Morebits.status.warn(wgULS('信息', '資訊'), wgULS('無法在页面上找到{{' + $(page).attr('title').slice(9) +
-							'}}…跳过', '無法在頁面上找到{{' + $(page).attr('title').slice(9) +
-							'}}…跳過'));
+						Morebits.status.warn(wgULS('信息', '資訊'), wgULS('无法在页面上找到{{', '無法在頁面上找到{{') + $(page).attr('title').slice(9) + wgULS('}}…跳过', '}}…跳過'));
 					}
 
 				});
@@ -1605,9 +1603,7 @@ Twinkle.tag.callbacks = {
 				if (tag === 'Merge from') {
 					tags.push(tag);
 				} else {
-					Morebits.status.warn(wgULS('信息', '資訊'), wgULS('在页面上找到{{' + tag +
-						'}}…跳过', '在頁面上找到{{' + tag +
-						'}}…跳過'));
+					Morebits.status.warn(wgULS('信息', '資訊'), wgULS('在页面上找到{{', '在頁面上找到{{') + tag + wgULS('}}…跳过', '}}…跳過'));
 					// don't do anything else with merge tags
 					if (['Merge', 'Merge to'].indexOf(tag) !== -1) {
 						params.mergeTarget = params.mergeReason = params.mergeTagOther = null;
@@ -1694,9 +1690,7 @@ Twinkle.tag.callbacks = {
 						}
 					});
 					if (!found) {
-						Morebits.status.warn(wgULS('信息', '資訊'), wgULS('無法在页面上找到{{' + $(page).attr('title').slice(9) +
-							'}}…跳过', '無法在頁面上找到{{' + $(page).attr('title').slice(9) +
-							'}}…跳過'));
+						Morebits.status.warn(wgULS('信息', '資訊'), wgULS('无法在页面上找到{{', '無法在頁面上找到{{') + $(page).attr('title').slice(9) + wgULS('}}…跳过', '}}…跳過'));
 					}
 				});
 				addNewTagsToMI();
@@ -1731,9 +1725,7 @@ Twinkle.tag.callbacks = {
 			if (!tagRe.exec(pageText)) {
 				tags.push(params.tags[i]);
 			} else {
-				Morebits.status.warn(wgULS('信息', '資訊'), wgULS('在重定向上找到{{' + params.tags[i] +
-					'}}…跳过', '在重定向上找到{{' + params.tags[i] +
-					'}}…跳過'));
+				Morebits.status.warn(wgULS('信息', '資訊'), wgULS('在重定向上找到{{', '在重新導向上找到{{') + params.tags[i] + wgULS('}}…跳过', '}}…跳過'));
 			}
 		}
 

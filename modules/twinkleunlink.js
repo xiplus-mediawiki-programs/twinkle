@@ -126,7 +126,7 @@ Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event)
 	Morebits.simpleWindow.setButtonsEnabled(false);
 	Morebits.status.init(form);
 
-	var unlinker = new Morebits.batchOperation(wgULS('取消', '取消') + (input.backlinks.length ? wgULS('链入', '連入') +
+	var unlinker = new Morebits.batchOperation('取消' + (input.backlinks.length ? wgULS('链入', '連入') +
 			(input.imageusage.length ? wgULS('与文件使用', '與檔案使用') : '') : wgULS('文件使用', '檔案使用')));
 	unlinker.setOption('preserveIndividualStatusLines', true);
 	unlinker.setPageList(pages);

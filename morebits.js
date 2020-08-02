@@ -4007,7 +4007,7 @@ Morebits.wiki.flow = function(pageName, currentAction) {
 			vhformat: 'wikitext'
 		};
 
-		ctx.viewHeaderApi = new Morebits.wiki.api(wgULS('抓取Flow描述…', '抓取Flow描述…'), query, fnViewHeaderSuccess, ctx.statusElement, ctx.onViewHeaderFailure);
+		ctx.viewHeaderApi = new Morebits.wiki.api('抓取Flow描述…', query, fnViewHeaderSuccess, ctx.statusElement, ctx.onViewHeaderFailure);
 		ctx.viewHeaderApi.setParent(this);
 		ctx.viewHeaderApi.post();
 	};
