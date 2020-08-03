@@ -1363,7 +1363,7 @@ Twinkle.protect.callbacks = {
 			if (params.reason) {
 				tag += '|reason=' + params.reason;
 			}
-			if (params.showexpiry && ['indefinite', 'infinite', 'never', null].indexOf(params.expiry) === -1) {
+			if (params.showexpiry && params.expiry && !Morebits.string.isInfinity(params.expiry)) {
 				tag += '|expiry={{subst:#time:c|' + params.expiry + '}}';
 			}
 			if (params.small) {
