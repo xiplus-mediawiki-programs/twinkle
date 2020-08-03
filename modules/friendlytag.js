@@ -1503,7 +1503,7 @@ Twinkle.tag.callbacks = {
 		// var params = pageobj.getCallbackParameters();
 
 		pageobj.setAppendText('\n{{subst:Fameitem|title=' + Morebits.pageNameNorm + '}}');
-		pageobj.setEditSummary('添加[[' + Morebits.pageNameNorm + ']]' + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary(wgULS('添加', '加入') + '[[' + Morebits.pageNameNorm + ']]' + Twinkle.getPref('summaryAd'));
 		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
@@ -1658,7 +1658,7 @@ Twinkle.tag.callbacks = {
 				currentTag = '{{' + currentTag + '}}\n';
 
 				tagtext += currentTag;
-				summary += '{{' + tag + '}}, ';
+				summary += '{{' + tag + '}}、';
 			});
 
 			if (!tagtext) {
@@ -1670,7 +1670,7 @@ Twinkle.tag.callbacks = {
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary(summary.substring(0, summary.length - 2) + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary(summary.substring(0, summary.length - 1) + Twinkle.getPref('summaryAd'));
 		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setWatchlist(Twinkle.getPref('watchTaggedPages'));
 		pageobj.setMinorEdit(Twinkle.getPref('markTaggedPagesAsMinor'));
@@ -1696,7 +1696,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			return sum += params.tags.indexOf(tag) !== -1;
 		}, 0);
 		if (count > 1) {
-			var message = wgULS('请只选择以下标签中的一个', '請只選擇以下標籤中的一個') + '：{{' + conflicts.join('}}、{{') + '}}。';
+			var message = wgULS('请在以下标签中择一使用', '請在以下標籤中擇一使用') + '：{{' + conflicts.join('}}、{{') + '}}。';
 			message += extra ? extra : '';
 			alert(message);
 			return true;
