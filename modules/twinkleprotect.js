@@ -427,7 +427,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				list: [
 					{
 						name: 'close',
-						label: wgULS('标记请求保护页面中的请求（测试功能，请复查编辑！）', '標記請求保護頁面中的請求（測試功能，請複查編輯！）'),
+						label: wgULS('标记请求保护页面中的请求', '標記請求保護頁面中的請求'),
 						checked: true
 					}
 				]
