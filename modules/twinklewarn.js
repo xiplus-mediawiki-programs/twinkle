@@ -2497,6 +2497,50 @@ Twinkle.warn.callbacks = {
 		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setWatchlist(Twinkle.getPref('watchWarnings'));
 		pageobj.save();
+	},
+	main_flow: function (flowobj) {
+		var params = flowobj.getCallbackParameters();
+		var messageData = params.messageData;
+
+		var topic;
+		if (messageData.heading) {
+			topic = messageData.heading;
+		} else {
+			var summary;
+			switch (params.sub_group.substr(-1)) {
+				case '1':
+					summary = '提醒';
+					break;
+				case '2':
+					summary = '注意';
+					break;
+				case '3':
+					summary = '警告';
+					break;
+				case '4':
+					summary = wgULS('最后警告', '最後警告');
+					break;
+				case 'm':
+					if (params.sub_group.substr(-3) === '4im') {
+						summary = '唯一警告';
+						break;
+					}
+					summary = '提示';
+					break;
+				default:
+					summary = '提示';
+					break;
+			}
+			// 因为Flow讨论串自带时间，所以不需要再另外标注
+			topic = summary + ' (' + Morebits.string.toUpperCaseFirstChar(messageData.label) + ')';
+		}
+
+		var content = Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
+			params.reason, params.main_group === 'custom');
+
+		flowobj.setTopic(topic);
+		flowobj.setContent(content);
+		flowobj.newTopic();
 	}
 };
 
