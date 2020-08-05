@@ -2179,7 +2179,7 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 };
 
 Twinkle.warn.callbacks = {
-	getWarningWikitext: function(templateName, article, reason, isCustom) { // eslint-disable-line no-unused-vars
+	getWarningWikitext: function(templateName, article, reason, isCustom, noSign) {
 		var text = '{{subst:' + templateName;
 
 		// add linked article for user warnings
@@ -2196,7 +2196,11 @@ Twinkle.warn.callbacks = {
 		}
 		text += '|subst=subst:}}';
 
-		return text + ' ~~~~';
+		if (!noSign) {
+			text += ' ~~~~';
+		}
+
+		return text;
 	},
 	showPreview: function(form, templatename) {
 		var input = Morebits.quickForm.getInputData(form);
@@ -2558,7 +2562,7 @@ Twinkle.warn.callbacks = {
 		}
 
 		var content = Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
-			params.reason, params.main_group === 'custom');
+			params.reason, params.main_group === 'custom', true);
 
 		flowobj.setTopic(topic);
 		flowobj.setContent(content);
