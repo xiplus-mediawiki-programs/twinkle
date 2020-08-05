@@ -373,7 +373,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			break;
 
 		case 118:  // draft
-			work_area.append({ type: 'header', label: wgULS('草稿', '草稿') });
+			work_area.append({ type: 'header', label: '草稿' });
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.draftList, mode) });
 			break;
 

@@ -634,7 +634,7 @@ Twinkle.fluff.callbacks = {
 					userHasAlreadyConfirmedAction = true;
 				}
 
-				summary = Twinkle.fluff.formatSummary(wgULS('回退$USER做出的', '回退$USER做出的') + params.count + wgULS('次编辑', '次編輯'),
+				summary = Twinkle.fluff.formatSummary('回退$USER做出的' + params.count + wgULS('次编辑', '次編輯'),
 					params.userHidden ? null : params.user, extra_summary);
 				break;
 		}
@@ -691,7 +691,7 @@ Twinkle.fluff.callbacks = {
 			var params = apiobj.params;
 
 			if (params.notifyUser && !params.userHidden) { // notifyUser only from main, not from toRevision
-				Morebits.status.info(wgULS('信息', '資訊'), [wgULS('', '開啟使用者 '), Morebits.htmlNode('strong', params.user), wgULS('', ' 的討論頁')]);
+				Morebits.status.info(wgULS('信息', '資訊'), [wgULS('开启用户 ', '開啟使用者 '), Morebits.htmlNode('strong', params.user), wgULS(' 的讨论页', ' 的討論頁')]);
 
 				var windowQuery = {
 					'title': 'User talk:' + params.user,

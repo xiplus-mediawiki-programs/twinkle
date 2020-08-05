@@ -454,7 +454,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			display: 'none',
 			label: wgULS('封禁区域', '封鎖區域'),
 			value: '',
-			tooltip: wgULS('阻止用户编辑的页面或名字空间的可选帮助。', '阻止使用者編輯的頁面或命名空間的可選說明。')
+			tooltip: wgULS('阻止用户编辑的页面或名字空间的可选说明。', '阻止使用者編輯的頁面或命名空間的可選說明。')
 		});
 
 		if (!blockBox) {

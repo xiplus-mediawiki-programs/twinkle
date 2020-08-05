@@ -358,10 +358,10 @@ Twinkle.config.sections = [
 			},
 			{
 				name: 'customRevertSummary',
-				label: wgULS('回退理由', '回退理由'),
+				label: '回退理由',
 				helptip: wgULS('在查看差异时可选，仅善意回退、常规回退、恢复此版本', '在檢視差異時可選，僅善意回退、常規回退、恢復此版本'),
 				type: 'customList',
-				customListValueTitle: wgULS('理由', '理由'),
+				customListValueTitle: '理由',
 				customListLabelTitle: wgULS('显示的文字', '顯示的文字')
 			}
 		]
@@ -663,7 +663,7 @@ Twinkle.config.sections = [
 					'7': wgULS('单层级警告', '單層級警告'),
 					// 8 was used for block templates before #260
 					'9': wgULS('自定义警告', '自訂警告'),
-					'10': wgULS('所有警告模板', '所有警告模板'),
+					'10': '所有警告模板',
 					'11': wgULS('自动选择层级（1-4）', '自動選擇層級（1-4）')
 				}
 			},
@@ -683,7 +683,7 @@ Twinkle.config.sections = [
 			{
 				name: 'showSharedIPNotice',
 				label: wgULS('在IP讨论页上显示附加信息', '在IP討論頁上顯示附加資訊'),
-				helptip: wgULS('使用的模板是{{SharedIPAdvice}}。', '使用的模板是{{SharedIPAdvice}}。'),
+				helptip: '使用的模板是{{SharedIPAdvice}}。',
 				type: 'boolean'
 			},
 
