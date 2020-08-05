@@ -2044,17 +2044,9 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 			if (Twinkle.warn.talkpageObj) {
 				autolevelProc();
 			} else {
-				var usertalk_page = new Morebits.wiki.page('User_talk:' + Morebits.wiki.flow.relevantUserName(), wgULS('加载上次警告', '載入上次警告'));
-				usertalk_page.setFollowRedirect(true, false);
-				usertalk_page.load(function(pageobj) {
-					Twinkle.warn.talkpageObj = pageobj; // Update talkpageObj
-					autolevelProc();
-				}, function() {
-					// Catch and warn if the talkpage can't load,
-					// most likely because it's a cross-namespace redirect
-					// Supersedes the typical $autolevelMessage added in autolevelParseWikitext
+				Morebits.wiki.flow.check('User_talk:' + Morebits.wiki.flow.relevantUserName(), function () {
 					var $noTalkPageNode = $('<strong/>', {
-						'text': wgULS('无法加载用户讨论页，这可能是因为它是跨名字空间重定向，自动选择警告级别将不会运作。', '無法載入使用者討論頁，這可能是因為它是跨命名空間重新導向，自動選擇警告級別將不會運作。'),
+						'text': wgULS('结构式讨论（Flow）不支持自动选择警告层级，请手动选择层级。', '結構式討論（Flow）不支援自動選擇警告層級，請手動選擇層級。'),
 						'id': 'twinkle-warn-autolevel-message',
 						'css': {'color': 'red' }
 					});
@@ -2062,6 +2054,26 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 					// If a preview was opened while in a different mode, close it
 					// Should nullify the need to catch the error in preview callback
 					e.target.root.previewer.closePreview();
+				}, function () {
+					var usertalk_page = new Morebits.wiki.page('User_talk:' + Morebits.wiki.flow.relevantUserName(), wgULS('加载上次警告', '載入上次警告'));
+					usertalk_page.setFollowRedirect(true, false);
+					usertalk_page.load(function(pageobj) {
+						Twinkle.warn.talkpageObj = pageobj; // Update talkpageObj
+						autolevelProc();
+					}, function() {
+						// Catch and warn if the talkpage can't load,
+						// most likely because it's a cross-namespace redirect
+						// Supersedes the typical $autolevelMessage added in autolevelParseWikitext
+						var $noTalkPageNode = $('<strong/>', {
+							'text': wgULS('无法加载用户讨论页，这可能是因为它是跨名字空间重定向，自动选择警告级别将不会运作。', '無法載入使用者討論頁，這可能是因為它是跨命名空間重新導向，自動選擇警告級別將不會運作。'),
+							'id': 'twinkle-warn-autolevel-message',
+							'css': {'color': 'red' }
+						});
+						$noTalkPageNode.insertBefore($('#twinkle-warn-warning-messages'));
+						// If a preview was opened while in a different mode, close it
+						// Should nullify the need to catch the error in preview callback
+						e.target.root.previewer.closePreview();
+					});
 				});
 			}
 			break;
@@ -2167,7 +2179,7 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 };
 
 Twinkle.warn.callbacks = {
-	getWarningWikitext: function(templateName, article, reason, isCustom) { // eslint-disable-line no-unused-vars
+	getWarningWikitext: function(templateName, article, reason, isCustom, noSign) {
 		var text = '{{subst:' + templateName;
 
 		// add linked article for user warnings
@@ -2184,7 +2196,11 @@ Twinkle.warn.callbacks = {
 		}
 		text += '|subst=subst:}}';
 
-		return text + ' ~~~~';
+		if (!noSign) {
+			text += ' ~~~~';
+		}
+
+		return text;
 	},
 	showPreview: function(form, templatename) {
 		var input = Morebits.quickForm.getInputData(form);
@@ -2392,6 +2408,11 @@ Twinkle.warn.callbacks = {
 			}
 		}
 
+		// messageData contains full-levels data for multi-level warnings
+		if (params.main_group in messageData) {
+			messageData = messageData[params.main_group];
+		}
+
 		latest.date.add(1, 'minute'); // after long debate, one minute is max
 
 		if (latest.date.isAfter(now)) {
@@ -2497,6 +2518,55 @@ Twinkle.warn.callbacks = {
 		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setWatchlist(Twinkle.getPref('watchWarnings'));
 		pageobj.save();
+	},
+	main_flow: function (flowobj) {
+		var params = flowobj.getCallbackParameters();
+		var messageData = params.messageData;
+
+		// messageData contains full-levels data for multi-level warnings
+		if (params.main_group in messageData) {
+			messageData = messageData[params.main_group];
+		}
+
+		var topic;
+		if (messageData.heading) {
+			topic = messageData.heading;
+		} else {
+			var summary;
+			switch (params.sub_group.substr(-1)) {
+				case '1':
+					summary = '提醒';
+					break;
+				case '2':
+					summary = '注意';
+					break;
+				case '3':
+					summary = '警告';
+					break;
+				case '4':
+					summary = wgULS('最后警告', '最後警告');
+					break;
+				case 'm':
+					if (params.sub_group.substr(-3) === '4im') {
+						summary = '唯一警告';
+						break;
+					}
+					summary = '提示';
+					break;
+				default:
+					summary = '提示';
+					break;
+			}
+			// 因为Flow讨论串自带时间，所以不需要再另外标注
+			topic = summary + ' (' + Morebits.string.toUpperCaseFirstChar(messageData.label) + ')';
+		}
+
+		var content = Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
+			params.reason, params.main_group === 'custom', true);
+
+		flowobj.setTopic(topic);
+		flowobj.setContent(content);
+		flowobj.newTopic();
 	}
 };
 
@@ -2522,6 +2592,11 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	// Find the selected <option> element so we can fetch the data structure
 	var $selectedEl = $(e.target.sub_group).find('option[value="' + $(e.target.sub_group).val() + '"]');
 	params.messageData = $selectedEl.data('messageData');
+
+	if (typeof params.messageData === 'undefined') {
+		alert(wgULS('请选择警告模板。', '請選擇警告模板。'));
+		return;
+	}
 
 	Morebits.simpleWindow.setButtonsEnabled(false);
 	Morebits.status.init(e.target);
