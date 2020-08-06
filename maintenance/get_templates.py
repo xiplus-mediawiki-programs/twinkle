@@ -110,6 +110,8 @@ for match in matches:
 articleTags = findBetween(jstext, 'Twinkle.tag.frequentList = wgULS', 'Twinkle.tag.callbacks = {')
 matches = re.findall(r"{{(.+?)}}", articleTags)
 for match in matches:
+    if re.search(r'重定向$', match):
+        continue
     templates.add(normalizeTitle(match))
     print('\t', normalizeTitle(match))
 
@@ -142,10 +144,6 @@ for match in matches:
     notice = 'Di-{}-notice'.format(match)
     templates.add(normalizeTitle(notice))
     print('\t', normalizeTitle(notice))
-
-    auto = '{}/auto'.format(match)
-    templates.add(normalizeTitle(auto))
-    print('\t', normalizeTitle(auto))
 
 
 # modules/twinkleprotect.js
@@ -182,19 +180,28 @@ WHITELIST = set([
     # on-wiki
     'Template:Block notice',
     'Template:Singlenotice',
+	# image
+	'Template:No source no license/auto',
     # talkback
     'Template:No talkback',
     # tag
     'Template:Multiple issues',
 ])
-# non-exists templates
+# non-exists or can't mark templates
 BLACKLIST = set([
+    # copyvio
+    'Template:Copyvio/auto',
     # image
-    'Template:Orphaned fair use/auto',
+    'Template:No source no license',
     # protect
+    'Template:Pp-create',
+    'Template:Pp-create-repeat',
+    'Template:Pp-semi-template',
     'Template:Pp-create-userpage',
     'Template:Pp-create-vandalism',
     'Template:Pp-userpage',
+    # other
+    'Template:!',
 ])
 
 text = ''
