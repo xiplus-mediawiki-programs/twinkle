@@ -166,12 +166,22 @@ print('modules/twinklewarn.js')
 with open(os.path.join(basedir, 'modules/twinklewarn.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
-blockPresetsInfo = findBetween(jstext, 'Twinkle.warn.messages = wgULS({', 'Twinkle.warn.prev_article = null;')
+warnTemplates = findBetween(jstext, 'Twinkle.warn.messages = wgULS({', 'Twinkle.warn.prev_article = null;')
 
-matches = re.findall(r"'([^|\n]+?)(?:\|[^\n]+?)?': {\n\t+label", blockPresetsInfo)
+matches = re.findall(r"\n\t{3}'[^|\n]+?'[\s\S]+?\n\t{3}}", warnTemplates)
 for match in matches:
-    templates.add(normalizeTitle(match))
-    print('\t', normalizeTitle(match))
+    match2 = re.match(r"\n\t{3}'([^|\n]+?)'", match)
+    if match2:
+        template = match2.group(1)
+        for level in ['1', '2', '3', '4', '4im']:
+            if 'level' + level in match:
+                templates.add(normalizeTitle(template + level))
+                print('\t', normalizeTitle(template + level))
+
+matches = re.findall(r"\n\t{2}'([^|\n]+?)': {\n\t+label", warnTemplates)
+for match in matches:
+	templates.add(normalizeTitle(match))
+	print('\t', normalizeTitle(match))
 
 # end
 
@@ -180,8 +190,8 @@ WHITELIST = set([
     # on-wiki
     'Template:Block notice',
     'Template:Singlenotice',
-	# image
-	'Template:No source no license/auto',
+    # image
+    'Template:No source no license/auto',
     # talkback
     'Template:No talkback',
     # tag
