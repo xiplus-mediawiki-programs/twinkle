@@ -755,7 +755,7 @@ Twinkle.close.callbacks = {
 		if (pagetitle.getNamespaceId() % 2 === 0) {
 			var talkpagetitle = new mw.Title(pagetitle.getMainText(), pagetitle.getNamespaceId() + 1);
 			var talkpage = new Morebits.wiki.page(talkpagetitle.toString(), wgULS('标记讨论页', '標記討論頁'));
-			var vfdkept = '{{vfd-kept|' + mw.config.get('wgPageName').split('/').slice(2).join('/') + '|' + params.messageData.label + '}}\n';
+			var vfdkept = '{{Old vfd multi|' + mw.config.get('wgPageName').split('/').slice(2).join('/') + '|' + params.messageData.label + '}}\n';
 			talkpage.setPrependText(vfdkept);
 			talkpage.setEditSummary('[[' + mw.config.get('wgPageName') + '#' + params.title + ']]：' + params.messageData.label + Twinkle.getPref('summaryAd'));
 			talkpage.setTags(Twinkle.getPref('revisionTags'));

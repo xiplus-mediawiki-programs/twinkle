@@ -1707,7 +1707,7 @@ Twinkle.tag.callbacks = {
 		// var text = pageobj.getPageText();
 		// var params = pageobj.getCallbackParameters();
 
-		pageobj.setAppendText('\n{{subst:Wikipedia:关注度/提报/item|title=' + Morebits.pageNameNorm + '}}');
+		pageobj.setAppendText('\n{{subst:Fameitem|title=' + Morebits.pageNameNorm + '}}');
 		pageobj.setEditSummary('添加[[' + Morebits.pageNameNorm + ']]' + Twinkle.getPref('summaryAd'));
 		pageobj.setTags(Twinkle.getPref('revisionTags'));
 		pageobj.setCreateOption('recreate');

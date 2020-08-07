@@ -783,11 +783,11 @@ Twinkle.block.blockPresetsInfo = {
 		summary: wgULS('广域封禁', '廣域封鎖'),
 		sig: '~~~~'
 	},
-	'schoolblock': {
+	'school block': {
 		forAnonOnly: true,
 		nocreate: true,
 		nonstandard: true,
-		reason: '{{schoolblock}}',
+		reason: '{{School block}}',
 		summary: wgULS('公用IP封禁', '公共IP封鎖'),
 		sig: '~~~~'
 	},
@@ -978,7 +978,7 @@ Twinkle.block.blockGroups = [
 			{ label: '', value: 'uw-ublock', forRegisteredOnly: true },
 			{ label: '', value: 'anonblock', forAnonOnly: true },
 			{ label: '', value: 'range block', forAnonOnly: true },
-			{ label: '', value: 'schoolblock', forAnonOnly: true },
+			{ label: '', value: 'school block', forAnonOnly: true },
 			{ label: '', value: 'blocked proxy', forAnonOnly: true },
 			{ label: '', value: 'checkuserblock', forAnonOnly: true },
 			{ label: '', value: 'checkuserblock-account', forRegisteredOnly: true }
@@ -1414,7 +1414,7 @@ Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pa
 				if (!username) {
 					return alert(wgULS('请给主账户用户名！', '請給主帳號使用者名稱！'));
 				}
-				pagetext = '{{spp|' + username + '}}';
+				pagetext = '{{Blocked sockpuppet|' + username + '}}';
 				break;
 			case 'spm':
 				pagetext = '{{Sockpuppeteer|blocked}}';
