@@ -190,6 +190,8 @@ WHITELIST = set([
     # on-wiki
     'Template:Block notice',
     'Template:Singlenotice',
+	# block
+	'Template:Sockpuppeteer',
     # image
     'Template:No source no license/auto',
     # talkback
