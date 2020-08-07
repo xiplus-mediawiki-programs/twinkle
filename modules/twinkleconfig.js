@@ -291,7 +291,7 @@ Twinkle.config.sections = [
 				name: 'openTalkPage',
 				label: wgULS('在这些类型的回退后打开用户讨论页', '在這些類別的回退後打開使用者討論頁'),
 				type: 'set',
-				setValues: wgULS({ agf: '善意回退', norm: '常规回退', vand: '破坏回退', torev: '“恢复此版本”' }, { agf: '善意回退', norm: '常規回退', vand: '破壞回退', torev: '「恢復此版本」' })
+				setValues: { agf: '善意回退', norm: wgULS('常规回退', '常規回退'), vand: wgULS('破坏回退', '破壞回退') }
 			},
 
 			// TwinkleConfig.openTalkPageOnAutoRevert (bool)
