@@ -710,17 +710,17 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-template': {
 		edit: 'sysop',
-		editexpiry: 'indefinite',
+		editexpiry: 'infinity',
 		move: 'sysop',
-		moveexpiry: 'indefinite',
+		moveexpiry: 'infinity',
 		reason: '高风险模板',
 		template: 'noop'
 	},
 	'pp-userpage': {
 		edit: 'sysop',
-		editexpiry: 'indefinite',
+		editexpiry: 'infinity',
 		move: 'sysop',
-		moveexpiry: 'indefinite',
+		moveexpiry: 'infinity',
 		reason: '被永久封禁的用户页',
 		template: 'noop'
 	},
@@ -745,9 +745,9 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-semi-template': {  // removed for now
 		edit: 'autoconfirmed',
-		editexpiry: 'indefinite',
+		editexpiry: 'infinity',
 		move: 'sysop',
-		moveexpiry: 'indefinite',
+		moveexpiry: 'infinity',
 		reason: '高风险模板',
 		template: 'noop'
 	},
@@ -774,7 +774,7 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-move-indef': {
 		move: 'sysop',
-		moveexpiry: 'indefinite',
+		moveexpiry: 'infinity',
 		reason: '高风险页面'
 	},
 	'unprotect': {
@@ -798,7 +798,7 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-create-userpage': {
 		create: 'sysop',
-		createexpiry: 'indefinite',
+		createexpiry: 'infinity',
 		reason: '被永久封禁的用户页'
 	}
 }, {
@@ -819,17 +819,17 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-template': {
 		edit: 'sysop',
-		editexpiry: 'indefinite',
+		editexpiry: 'infinity',
 		move: 'sysop',
-		moveexpiry: 'indefinite',
+		moveexpiry: 'infinity',
 		reason: '高風險模板',
 		template: 'noop'
 	},
 	'pp-userpage': {
 		edit: 'sysop',
-		editexpiry: 'indefinite',
+		editexpiry: 'infinity',
 		move: 'sysop',
-		moveexpiry: 'indefinite',
+		moveexpiry: 'infinity',
 		reason: '被永久封禁的用戶頁',
 		template: 'noop'
 	},
@@ -881,7 +881,7 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-move-indef': {
 		move: 'sysop',
-		moveexpiry: 'indefinite',
+		moveexpiry: 'infinity',
 		reason: '高風險頁面'
 	},
 	'unprotect': {
@@ -905,7 +905,7 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-create-userpage': {
 		create: 'sysop',
-		createexpiry: 'indefinite',
+		createexpiry: 'infinity',
 		reason: '被永久封禁的用戶頁'
 	}
 });
@@ -1524,7 +1524,7 @@ Twinkle.protect.callbacks = {
 					requestList[i] += '\n: {{RFPP|isun}}。--~~~~\n';
 				} else {
 					requestList[i] += '\n: {{RFPP|' + params.type + '|'
-						+ (Morebits.string.isInfinity(params.expiry) ? 'indefinite' : expiryText)
+						+ (Morebits.string.isInfinity(params.expiry) ? 'infinity' : expiryText)
 						+ '}}。--~~~~\n';
 				}
 				found = true;
