@@ -54,6 +54,7 @@ tests.push({ name: 'modules/twinklewarn.js', test: true });
 tests.push({ name: 'modules/friendlyshared.js', test: true });
 tests.push({ name: 'modules/friendlytag.js', test: true });
 tests.push({ name: 'modules/friendlytalkback.js', test: true });
+tests.push({ name: 'modules/friendlywelcome.js', test: true });
 tests.push({ name: 'modules/twinklebatchdelete.js', test: true });
 tests.push({ name: 'modules/twinklebatchundelete.js', test: true });
 tests.push({ name: 'modules/twinkleblock.js', test: true });
