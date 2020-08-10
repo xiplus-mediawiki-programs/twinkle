@@ -107,7 +107,7 @@ for match in matches:
     templates.add(normalizeTitle(match))
     print('\t', normalizeTitle(match))
 
-articleTags = findBetween(jstext, 'Twinkle.tag.file.licenseList = wgULS', 'Twinkle.tag.callbacks = {')
+articleTags = findBetween(jstext, 'Twinkle.tag.fileList =', 'Twinkle.tag.callbacks = {')
 matches = re.findall(r"{{(.+?)}}", articleTags)
 for match in matches:
     if re.search(r'重定向$', match):
