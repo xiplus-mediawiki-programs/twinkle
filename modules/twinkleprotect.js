@@ -184,7 +184,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 	var field_preset;
 	var field1;
 	var field2;
-	// var isTemplate = mw.config.get("wgNamespaceNumber") === 10 || mw.config.get("wgNamespaceNumber") === 828;
+	var isTemplate = mw.config.get('wgNamespaceNumber') === 10 || mw.config.get('wgNamespaceNumber') === 828;
 
 	switch (e.target.values) {
 		case 'protect':
@@ -195,7 +195,9 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				label: wgULS('选择默认：', '選擇預設：'),
 				event: Twinkle.protect.callback.changePreset,
 				list: mw.config.get('wgArticleId') ?
-					Twinkle.protect.protectionTypesAdmin :
+					Twinkle.protect.protectionTypesAdmin.filter(function(v) {
+						return isTemplate || (v.label !== '模板保护' && v.label !== '模板保護');
+					}) :
 					Twinkle.protect.protectionTypesCreate
 			});
 
@@ -232,6 +234,13 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					label: wgULS('仅允许自动确认用户', '僅允許自動確認使用者'),
 					value: 'autoconfirmed'
 				});
+				if (isTemplate) {
+					editlevel.append({
+						type: 'option',
+						label: wgULS('仅模板编辑员和管理员', '僅模板編輯員和管理員'),
+						value: 'templateeditor'
+					});
+				}
 				editlevel.append({
 					type: 'option',
 					label: wgULS('仅管理员', '僅管理員'),
@@ -309,6 +318,13 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					label: wgULS('仅允许自动确认用户', '僅允許自動確認使用者'),
 					value: 'autoconfirmed'
 				});
+				if (isTemplate) {
+					movelevel.append({
+						type: 'option',
+						label: wgULS('仅模板编辑员和管理员', '僅模板編輯員和管理員'),
+						value: 'templateeditor'
+					});
+				}
 				movelevel.append({
 					type: 'option',
 					label: wgULS('仅管理员', '僅管理員'),
@@ -374,6 +390,13 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					label: wgULS('仅允许自动确认用户', '僅允許自動確認使用者'),
 					value: 'autoconfirmed'
 				});
+				if (isTemplate) {
+					createlevel.append({
+						type: 'option',
+						label: wgULS('仅模板编辑员和管理员', '僅模板編輯員和管理員'),
+						value: 'templateeditor'
+					});
+				}
 				createlevel.append({
 					type: 'option',
 					label: wgULS('仅管理员', '僅管理員'),
@@ -600,9 +623,14 @@ Twinkle.protect.protectionTypesAdmin = wgULS([
 			{ label: '常规（全）', value: 'pp-protected' },
 			{ label: '争议、编辑战（全）', value: 'pp-dispute' },
 			{ label: '长期破坏（全）', value: 'pp-vandalism' },
-			{ label: '高风险模板（全）', value: 'pp-template' },
 			{ label: '已封禁用户的用户页（全）', value: 'pp-userpage' },
 			{ label: '已封禁用户的讨论页（全）', value: 'pp-usertalk' }
+		]
+	},
+	{
+		label: '模板保护',
+		list: [
+			{ label: '高风险模板（模板）', value: 'pp-template' }
 		]
 	},
 	{
@@ -633,9 +661,14 @@ Twinkle.protect.protectionTypesAdmin = wgULS([
 			{ label: '常規（全）', value: 'pp-protected' },
 			{ label: '爭議、編輯戰（全）', value: 'pp-dispute' },
 			{ label: '長期破壞（全）', value: 'pp-vandalism' },
-			{ label: '高風險模板（全）', value: 'pp-template' },
 			{ label: '已封禁用戶的用戶頁（全）', value: 'pp-userpage' },
 			{ label: '已封禁用戶的討論頁（全）', value: 'pp-usertalk' }
+		]
+	},
+	{
+		label: '模板保護',
+		list: [
+			{ label: '高風險模板（模板）', value: 'pp-template' }
 		]
 	},
 	{
@@ -709,9 +742,9 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 		reason: '被自动确认用户破坏'
 	},
 	'pp-template': {
-		edit: 'sysop',
+		edit: 'templateeditor',
 		editexpiry: 'infinity',
-		move: 'sysop',
+		move: 'templateeditor',
 		moveexpiry: 'infinity',
 		reason: '高风险模板',
 		template: 'noop'
@@ -818,9 +851,9 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 		reason: '被自動確認用戶破壞'
 	},
 	'pp-template': {
-		edit: 'sysop',
+		edit: 'templateeditor',
 		editexpiry: 'infinity',
-		move: 'sysop',
+		move: 'templateeditor',
 		moveexpiry: 'infinity',
 		reason: '高風險模板',
 		template: 'noop'
@@ -1211,10 +1244,12 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			switch (input.category) {
 				case 'pp-dispute':
 				case 'pp-vandalism':
-				case 'pp-template':
 				case 'pp-usertalk':
 				case 'pp-protected':
 					typename = '全保护';
+					break;
+				case 'pp-template':
+					typename = wgULS('模板保护', '模板保護');
 					break;
 				case 'pp-semi-vandalism':
 				case 'pp-semi-usertalk':
