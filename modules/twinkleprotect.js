@@ -1246,7 +1246,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				case 'pp-vandalism':
 				case 'pp-usertalk':
 				case 'pp-protected':
-					typename = '全保护';
+					typename = wgULS('全保护', '全保護');
 					break;
 				case 'pp-template':
 					typename = wgULS('模板保护', '模板保護');
@@ -1257,13 +1257,13 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				case 'pp-semi-sock':
 				case 'pp-semi-blp':
 				case 'pp-semi-protected':
-					typename = '半保护';
+					typename = wgULS('半保护', '半保護');
 					break;
 				case 'pp-move':
 				case 'pp-move-dispute':
 				case 'pp-move-indef':
 				case 'pp-move-vandalism':
-					typename = '移动保护';
+					typename = wgULS('移动保护', '移動保護');
 					break;
 				case 'pp-create':
 				case 'pp-create-offensive':
@@ -1277,47 +1277,47 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				case 'unprotect':
 					/* falls through */
 				default:
-					typename = '解除保护';
+					typename = wgULS('解除保护', '解除保護');
 					break;
 			}
 			switch (input.category) {
 				case 'pp-dispute':
-					typereason = '争议、编辑战';
+					typereason = wgULS('争议、编辑战', '爭議、編輯戰');
 					break;
 				case 'pp-vandalism':
 				case 'pp-semi-vandalism':
 				case 'pp-create-vandalism':
-					typereason = '长期破坏';
+					typereason = wgULS('长期破坏', '長期破壞');
 					break;
 				case 'pp-template':
 				case 'pp-semi-template':  // removed for now
-					typereason = '高风险模板';
+					typereason = wgULS('高风险模板', '高風險模板');
 					break;
 				case 'pp-userpage':
 				case 'pp-create-userpage':
-					typereason = '被永久封禁的用户页';
+					typereason = wgULS('被永久封禁的用户页', '被永久封鎖的使用者頁面');
 					break;
 				case 'pp-usertalk':
 				case 'pp-semi-usertalk':
-					typereason = '已封禁用户的讨论页';
+					typereason = wgULS('已封禁用户的讨论页', '已封鎖使用者的討論頁');
 					break;
 				case 'pp-semi-sock':
-					typereason = '傀儡破坏';
+					typereason = wgULS('傀儡破坏', '傀儡破壞');
 					break;
 				case 'pp-semi-blp':
-					typereason = '违反生者传记方针';
+					typereason = wgULS('违反生者传记方针', '違反生者傳記方針');
 					break;
 				case 'pp-move-dispute':
-					typereason = '争议、移动战';
+					typereason = wgULS('争议、移动战', '爭議、移動戰');
 					break;
 				case 'pp-move-vandalism':
-					typereason = '移动破坏';
+					typereason = wgULS('移动破坏', '移動破壞');
 					break;
 				case 'pp-move-indef':
-					typereason = '高风险页面';
+					typereason = wgULS('高风险页面', '高風險頁面');
 					break;
 				case 'pp-create-repeat':
-					typereason = '多次重复创建';
+					typereason = wgULS('多次重复创建', '多次重複建立');
 					break;
 				default:
 					typereason = '';
@@ -1386,7 +1386,7 @@ Twinkle.protect.callbacks = {
 		var oldtag_re = /(?:<noinclude>)?[ \t]*\{\{\s*(pp-[^{}]*?|protected|(?:t|v|s|p-|usertalk-v|usertalk-s|sb|move)protected(?:2)?|protected template|privacy protection)\s*?\}\}\s*(?:<\/noinclude>)?\s*/gi;
 		var re_result = oldtag_re.exec(text);
 		if (re_result) {
-			if (params.tag === 'none' || confirm(wgULS('在页面上找到{{' + re_result[1] + '}}\n单击确定以移除，或单击取消以取消操作。', '在頁面上找到{{' + re_result[1] + '}}\n點擊確定以移除，或點擊取消以取消操作。'))) {
+			if (params.tag === 'none' || confirm(wgULS('在页面上找到{{', '在頁面上找到{{') + re_result[1] + wgULS('}}\n单击确定以移除，或单击取消以取消操作。', '}}\n點擊確定以移除，或點擊取消以取消操作。'))) {
 				text = text.replace(oldtag_re, '');
 			}
 		}
@@ -1429,7 +1429,7 @@ Twinkle.protect.callbacks = {
 				var wikipage = new Morebits.wikitext.page(text);
 				text = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
 			}
-			summary = wgULS('添加{{' + params.tag + '}}', '加入{{' + params.tag + '}}') + Twinkle.getPref('summaryAd');
+			summary = wgULS('添加{{', '加入{{') + params.tag + '}}' + Twinkle.getPref('summaryAd');
 		}
 
 		return {
@@ -1471,20 +1471,20 @@ Twinkle.protect.callbacks = {
 		rppLink.appendChild(document.createTextNode(rppPage.getPageName()));
 
 		if (tag) {
-			statusElement.error(wgULS([ '已有对此条目的保护提名，在 ', rppLink, '，取消操作。' ], [ '已有對此條目的保護提名，在 ', rppLink, '，取消操作。' ]));
+			statusElement.error([rppLink, wgULS('已有对此页面的保护提名，取消操作。', '已有對此頁面的保護提名，取消操作。')]);
 			return;
 		}
 
 		var newtag = '=== [[:' + mw.config.get('wgPageName') + ']] ===' + '\n';
 		if (new RegExp('^' + RegExp.escape(newtag).replace(/\s+/g, '\\s*'), 'm').test(text)) {
-			statusElement.error(wgULS([ '已有对此条目的保护提名，在 ', rppLink, '，取消操作。' ], [ '已有對此條目的保護提名，在 ', rppLink, '，取消操作。' ]));
+			statusElement.error([rppLink, wgULS('已有对此页面的保护提名，取消操作。', '已有對此頁面的保護提名，取消操作。')]);
 			return;
 		}
 
 		var words;
 		switch (params.expiry) {
 			case 'temporary':
-				words = '临时';
+				words = wgULS('临时', '臨時');
 				break;
 			case 'infinity':
 				words = '永久';
@@ -1496,9 +1496,9 @@ Twinkle.protect.callbacks = {
 
 		words += params.typename;
 
-		newtag += '请求' + Morebits.string.toUpperCaseFirstChar(words) + (params.reason !== '' ? '：' +
+		newtag += wgULS('请求', '請求') + Morebits.string.toUpperCaseFirstChar(words) + (params.reason !== '' ? '：' +
 			Morebits.string.formatReasonText(params.reason) : '。') + '--~~~~';
-		newtag += '\n:: <small>当前保护状态：{{protection status|' + mw.config.get('wgPageName') + '}}</small>';
+		newtag += '\n:: <small>' + wgULS('当前保护状态', '目前保護狀態') + '：{{protection status|' + mw.config.get('wgPageName') + '}}</small>';
 
 		var reg;
 
@@ -1513,12 +1513,12 @@ Twinkle.protect.callbacks = {
 		if (text.length === originalTextLength) {
 			var linknode = document.createElement('a');
 			linknode.setAttribute('href', mw.util.getUrl('Wikipedia:Twinkle/修复RFPP'));
-			linknode.appendChild(document.createTextNode('如何修复RFPP'));
-			statusElement.error(wgULS([ '无法在WP:RFPP上找到相关位点标记，要修复此问题，请参见', linknode, '。' ], [ '無法在WP:RFPP上找到相關位點標記，要修複此問題，請參見', linknode, '。' ]));
+			linknode.appendChild(document.createTextNode(wgULS('如何修复RFPP', '如何修復RFPP')));
+			statusElement.error([wgULS('无法在WP:RFPP上找到相关定位点标记，要修复此问题，请参见', '無法在WP:RFPP上找到相關定位點標記，要修復此問題，請參見'), linknode, '。']);
 			return;
 		}
 		statusElement.status(wgULS('添加新提名…', '加入新提名…'));
-		rppPage.setEditSummary('/* ' + Morebits.pageNameNorm + ' */ 请求对[[' + Morebits.pageNameNorm + ']]' + params.typename + Twinkle.getPref('summaryAd'));
+		rppPage.setEditSummary('/* ' + Morebits.pageNameNorm + ' */ ' + wgULS('请求对', '請求對') + '[[' + Morebits.pageNameNorm + ']]' + params.typename + Twinkle.getPref('summaryAd'));
 		rppPage.setTags(Twinkle.getPref('revisionTags'));
 		rppPage.setPageText(text);
 		rppPage.setCreateOption('recreate');
@@ -1536,7 +1536,7 @@ Twinkle.protect.callbacks = {
 			var linknode2 = document.createElement('a');
 			linknode2.setAttribute('href', mw.util.getUrl('Wikipedia:Twinkle/修复RFPP'));
 			linknode2.appendChild(document.createTextNode('如何修复RFPP'));
-			statusElement.error(wgULS([ '无法在WP:RFPP上找到相关位点标记，要修复此问题，请参见', linknode2, '。' ], [ '無法在WP:RFPP上找到相關位點標記，要修複此問題，請參見', linknode2, '。' ]));
+			statusElement.error([wgULS('无法在WP:RFPP上找到相关定位点标记，要修复此问题，请参见', '無法在WP:RFPP上找到相關定位點標記，要修復此問題，請參見'), linknode2, '。']);
 			return;
 		}
 
