@@ -1269,6 +1269,8 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		}
 		if (!blockoptions.expiry) {
 			return alert(wgULS('请提供过期时间！', '請提供過期時間！'));
+		} else if (Morebits.string.isInfinity(blockoptions.expiry) && !Twinkle.block.isRegistered) {
+			return alert(wgULS('禁止无限期封禁IP地址！', '禁止無限期封鎖IP位址！'));
 		}
 		if (!blockoptions.reason) {
 			return alert(wgULS('请提供封禁理由！', '請提供封鎖理由！'));
