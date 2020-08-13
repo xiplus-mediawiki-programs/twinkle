@@ -615,117 +615,67 @@ Twinkle.protect.doCustomExpiry = function twinkleprotectDoCustomExpiry(target) {
 	}
 };
 
-Twinkle.protect.protectionTypesAdmin = wgULS([
-	{ label: '解除保护', value: 'unprotect' },
+Twinkle.protect.protectionTypesAdmin = [
+	{ label: wgULS('解除保护', '解除保護'), value: 'unprotect' },
 	{
-		label: '全保护',
+		label: wgULS('全保护', '全保護'),
 		list: [
-			{ label: '常规（全）', value: 'pp-protected' },
-			{ label: '争议、编辑战（全）', value: 'pp-dispute' },
-			{ label: '长期破坏（全）', value: 'pp-vandalism' },
-			{ label: '已封禁用户的用户页（全）', value: 'pp-userpage' },
-			{ label: '已封禁用户的讨论页（全）', value: 'pp-usertalk' }
+			{ label: wgULS('常规（全）', '常規（全）'), value: 'pp-protected' },
+			{ label: wgULS('争议、编辑战（全）', '爭議、編輯戰（全）'), value: 'pp-dispute' },
+			{ label: wgULS('长期破坏（全）', '長期破壞（全）'), value: 'pp-vandalism' },
+			{ label: wgULS('永久封禁的用户页（全）', '永久封禁的使用者頁面（全）'), value: 'pp-userpage' },
+			{ label: wgULS('被封禁用户滥用讨论页（全）', '被封禁使用者濫用討論頁（全）'), value: 'pp-usertalk' }
 		]
 	},
 	{
-		label: '模板保护',
+		label: wgULS('模板保护', '模板保護'),
 		list: [
-			{ label: '高风险模板（模板）', value: 'pp-template' }
+			{ label: wgULS('高风险模板（模板）', '高風險模板（模板）'), value: 'pp-template' }
 		]
 	},
 	{
-		label: '半保护',
+		label: wgULS('半保护', '半保護'),
 		list: [
-			{ label: '常规（半）', value: 'pp-semi-protected' },
-			{ label: '长期破坏（半）', value: 'pp-semi-vandalism' },
-			{ label: '违反生者传记方针（半）', value: 'pp-semi-blp' },
-			{ label: '傀儡破坏（半）', value: 'pp-semi-sock' },
-			{ label: '高风险模板（半）', value: 'pp-semi-template' },
-			{ label: '已封禁用户的讨论页（半）', value: 'pp-semi-usertalk' }
+			{ label: wgULS('常规（半）', '常規（半）'), value: 'pp-semi-protected' },
+			{ label: wgULS('长期破坏（半）', '長期破壞（半）'), value: 'pp-semi-vandalism' },
+			{ label: wgULS('违反生者传记方针（半）', '違反生者傳記方針（半）'), value: 'pp-semi-blp' },
+			{ label: wgULS('傀儡破坏（半）', '傀儡破壞（半）'), value: 'pp-semi-sock' },
+			{ label: wgULS('高风险模板（半）', '高風險模板（半）'), value: 'pp-semi-template' },
+			{ label: wgULS('被封禁用户滥用讨论页（半）', '被封禁使用者濫用討論頁（半）'), value: 'pp-semi-usertalk' }
 		]
 	},
 	{
-		label: '移动保护',
+		label: wgULS('移动保护', '移動保護'),
 		list: [
-			{ label: '常规（移动）', value: 'pp-move' },
-			{ label: '争议、移动战（移动）', value: 'pp-move-dispute' },
-			{ label: '移动破坏（移动）', value: 'pp-move-vandalism' },
-			{ label: '高风险页面（移动）', value: 'pp-move-indef' }
+			{ label: wgULS('常规（移动）', '常規（移動）'), value: 'pp-move' },
+			{ label: wgULS('争议、移动战（移动）', '爭議、移動戰（移動）'), value: 'pp-move-dispute' },
+			{ label: wgULS('移动破坏（移动）', '移動破壞（移動）'), value: 'pp-move-vandalism' },
+			{ label: wgULS('高风险页面（移动）', '高風險頁面（移動）'), value: 'pp-move-indef' }
 		]
 	}
-], [
-	{ label: '解除保護', value: 'unprotect' },
-	{
-		label: '全保護',
-		list: [
-			{ label: '常規（全）', value: 'pp-protected' },
-			{ label: '爭議、編輯戰（全）', value: 'pp-dispute' },
-			{ label: '長期破壞（全）', value: 'pp-vandalism' },
-			{ label: '已封禁用戶的用戶頁（全）', value: 'pp-userpage' },
-			{ label: '已封禁用戶的討論頁（全）', value: 'pp-usertalk' }
-		]
-	},
-	{
-		label: '模板保護',
-		list: [
-			{ label: '高風險模板（模板）', value: 'pp-template' }
-		]
-	},
-	{
-		label: '半保護',
-		list: [
-			{ label: '常規（半）', value: 'pp-semi-protected' },
-			{ label: '長期破壞（半）', value: 'pp-semi-vandalism' },
-			{ label: '違反生者傳記方針（半）', value: 'pp-semi-blp' },
-			{ label: '傀儡破壞（半）', value: 'pp-semi-sock' },
-			{ label: '高風險模板（半）', value: 'pp-semi-template' },
-			{ label: '已封禁用戶的討論頁（半）', value: 'pp-semi-usertalk' }
-		]
-	},
-	{
-		label: '移動保護',
-		list: [
-			{ label: '常規（移動）', value: 'pp-move' },
-			{ label: '爭議、移動戰（移動）', value: 'pp-move-dispute' },
-			{ label: '移動破壞（移動）', value: 'pp-move-vandalism' },
-			{ label: '高風險頁面（移動）', value: 'pp-move-indef' }
-		]
-	}
-]);
+];
 
-Twinkle.protect.protectionTypesCreateOnly = wgULS([
+Twinkle.protect.protectionTypesCreateOnly = [
 	{
-		label: '白纸保护',
+		label: wgULS('白纸保护', '白紙保護'),
 		list: [
-			{ label: '常规（白纸）', value: 'pp-create' },
-			{ label: '多次重复创建（白纸）', value: 'pp-create-repeat' },
-			{ label: '长期破坏（白纸）', value: 'pp-create-vandalism' },
-			{ label: '已封禁用户的用户页（白纸）', value: 'pp-create-userpage' }
+			{ label: wgULS('常规（白纸）', '常規（白紙）'), value: 'pp-create' },
+			{ label: wgULS('多次重复创建（白纸）', '多次重複建立（白紙）'), value: 'pp-create-repeat' },
+			{ label: wgULS('长期破坏（白纸）', '長期破壞（白紙）'), value: 'pp-create-vandalism' },
+			{ label: wgULS('已封禁用户的用户页（白纸）', '已封禁使用者的使用者頁（白紙）'), value: 'pp-create-userpage' }
 		]
 	}
-], [
-	{
-		label: '白紙保護',
-		list: [
-			{ label: '常規（白紙）', value: 'pp-create' },
-			{ label: '多次重複建立（白紙）', value: 'pp-create-repeat' },
-			{ label: '長期破壞（白紙）', value: 'pp-create-vandalism' },
-			{ label: '已封禁用戶的用戶頁（白紙）', value: 'pp-create-userpage' }
-		]
-	}
-]);
+];
 
 Twinkle.protect.protectionTypes = Twinkle.protect.protectionTypesAdmin.concat(
 	Twinkle.protect.protectionTypesCreateOnly);
 
-Twinkle.protect.protectionTypesCreate = wgULS([
-	{ label: '解除保护', value: 'unprotect' }
-], [
-	{ label: '解除保護', value: 'unprotect' }
-]).concat(Twinkle.protect.protectionTypesCreateOnly);
+Twinkle.protect.protectionTypesCreate = [
+	{ label: wgULS('解除保护', '解除保護'), value: 'unprotect' }
+].concat(Twinkle.protect.protectionTypesCreateOnly);
 
 // NOTICE: keep this synched with [[MediaWiki:Protect-dropdown]]
-Twinkle.protect.protectionPresetsInfo = wgULS({
+Twinkle.protect.protectionPresetsInfo = {
 	'pp-protected': {
 		edit: 'sysop',
 		move: 'sysop',
@@ -734,19 +684,17 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	'pp-dispute': {
 		edit: 'sysop',
 		move: 'sysop',
-		reason: '编辑战'
+		reason: wgULS('编辑战', '編輯戰')
 	},
 	'pp-vandalism': {
 		edit: 'sysop',
 		move: 'sysop',
-		reason: '被自动确认用户破坏'
+		reason: wgULS('被自动确认用户破坏', '被自動確認使用者破壞')
 	},
 	'pp-template': {
 		edit: 'templateeditor',
-		editexpiry: 'infinity',
 		move: 'templateeditor',
-		moveexpiry: 'infinity',
-		reason: '高风险模板',
+		reason: wgULS('高风险模板', '高風險模板'),
 		template: 'noop'
 	},
 	'pp-userpage': {
@@ -754,39 +702,37 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 		editexpiry: 'infinity',
 		move: 'sysop',
 		moveexpiry: 'infinity',
-		reason: '被永久封禁的用户页',
+		reason: wgULS('被永久封禁的用户页', '被永久封禁的使用者頁'),
 		template: 'noop'
 	},
 	'pp-usertalk': {
 		edit: 'sysop',
 		move: 'sysop',
-		reason: '已封禁用户滥用其对话页'
+		reason: wgULS('被封禁用户滥用其讨论页', '被封禁使用者濫用其討論頁')
 	},
 	'pp-semi-vandalism': {
 		edit: 'autoconfirmed',
-		reason: '被IP用户或新用户破坏',
+		reason: wgULS('被IP用户或新用户破坏', '被IP使用者或新使用者破壞'),
 		template: 'pp-vandalism'
 	},
 	'pp-semi-blp': {
 		edit: 'autoconfirmed',
-		reason: 'IP用户或新用户违反生者传记方针'
+		reason: wgULS('IP用户或新用户违反生者传记方针', 'IP使用者或新使用者違反生者傳記方針')
 	},
 	'pp-semi-usertalk': {
 		edit: 'autoconfirmed',
-		move: 'sysop',
-		reason: '已封禁用户滥用其对话页'
+		move: 'autoconfirmed',
+		reason: wgULS('被封禁用户滥用其讨论页', '被封禁使用者濫用其討論頁')
 	},
 	'pp-semi-template': {  // removed for now
 		edit: 'autoconfirmed',
-		editexpiry: 'infinity',
-		move: 'sysop',
-		moveexpiry: 'infinity',
-		reason: '高风险模板',
+		move: 'autoconfirmed',
+		reason: wgULS('高风险模板', '高風險模板'),
 		template: 'noop'
 	},
 	'pp-semi-sock': {
 		edit: 'autoconfirmed',
-		reason: '持续的傀儡破坏'
+		reason: wgULS('持续的傀儡破坏', '持續的傀儡破壞')
 	},
 	'pp-semi-protected': {
 		edit: 'autoconfirmed',
@@ -799,16 +745,16 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-move-dispute': {
 		move: 'sysop',
-		reason: '页面移动战'
+		reason: wgULS('页面移动战', '頁面移動戰')
 	},
 	'pp-move-vandalism': {
 		move: 'sysop',
-		reason: '移动破坏'
+		reason: wgULS('移动破坏', '移動破壞')
 	},
 	'pp-move-indef': {
 		move: 'sysop',
 		moveexpiry: 'infinity',
-		reason: '高风险页面'
+		reason: wgULS('高风险页面', '高風險頁面')
 	},
 	'unprotect': {
 		edit: 'all',
@@ -823,211 +769,62 @@ Twinkle.protect.protectionPresetsInfo = wgULS({
 	},
 	'pp-create-repeat': {
 		create: 'autoconfirmed',
-		reason: '多次重复创建'
+		reason: wgULS('多次重复创建', '多次重複建立')
 	},
 	'pp-create-vandalism': {
 		create: 'autoconfirmed',
-		reason: '被IP用户或新用户破坏'
+		reason: wgULS('被IP用户或新用户破坏', '被IP使用者或新使用者破壞')
 	},
 	'pp-create-userpage': {
 		create: 'sysop',
 		createexpiry: 'infinity',
-		reason: '被永久封禁的用户页'
+		reason: wgULS('被永久封禁的用户页', '被永久封禁的使用者頁面')
 	}
-}, {
-	'pp-protected': {
-		edit: 'sysop',
-		move: 'sysop',
-		reason: null
-	},
-	'pp-dispute': {
-		edit: 'sysop',
-		move: 'sysop',
-		reason: '編輯戰'
-	},
-	'pp-vandalism': {
-		edit: 'sysop',
-		move: 'sysop',
-		reason: '被自動確認用戶破壞'
-	},
-	'pp-template': {
-		edit: 'templateeditor',
-		editexpiry: 'infinity',
-		move: 'templateeditor',
-		moveexpiry: 'infinity',
-		reason: '高風險模板',
-		template: 'noop'
-	},
-	'pp-userpage': {
-		edit: 'sysop',
-		editexpiry: 'infinity',
-		move: 'sysop',
-		moveexpiry: 'infinity',
-		reason: '被永久封禁的用戶頁',
-		template: 'noop'
-	},
-	'pp-usertalk': {
-		edit: 'sysop',
-		move: 'sysop',
-		reason: '已封禁用戶濫用其討論頁'
-	},
-	'pp-semi-vandalism': {
-		edit: 'autoconfirmed',
-		reason: '被IP用戶或新用戶破壞',
-		template: 'pp-vandalism'
-	},
-	'pp-semi-blp': {
-		edit: 'autoconfirmed',
-		reason: 'IP用戶或新用戶違反生者傳記方針'
-	},
-	'pp-semi-usertalk': {
-		edit: 'autoconfirmed',
-		move: 'sysop',
-		reason: '已封禁用戶濫用其討論頁'
-	},
-	'pp-semi-template': {  // removed for now
-		edit: 'autoconfirmed',
-		move: 'sysop',
-		reason: '高風險模板',
-		template: 'noop'
-	},
-	'pp-semi-sock': {
-		edit: 'autoconfirmed',
-		reason: '持續的傀儡破壞'
-	},
-	'pp-semi-protected': {
-		edit: 'autoconfirmed',
-		reason: null,
-		template: 'pp-protected'
-	},
-	'pp-move': {
-		move: 'sysop',
-		reason: null
-	},
-	'pp-move-dispute': {
-		move: 'sysop',
-		reason: '頁面移動戰'
-	},
-	'pp-move-vandalism': {
-		move: 'sysop',
-		reason: '移動破壞'
-	},
-	'pp-move-indef': {
-		move: 'sysop',
-		moveexpiry: 'infinity',
-		reason: '高風險頁面'
-	},
-	'unprotect': {
-		edit: 'all',
-		move: 'all',
-		create: 'all',
-		reason: null,
-		template: 'none'
-	},
-	'pp-create': {
-		create: 'autoconfirmed',
-		reason: null
-	},
-	'pp-create-repeat': {
-		create: 'autoconfirmed',
-		reason: '多次重複建立'
-	},
-	'pp-create-vandalism': {
-		create: 'autoconfirmed',
-		reason: '被IP用戶或新用戶破壞'
-	},
-	'pp-create-userpage': {
-		create: 'sysop',
-		createexpiry: 'infinity',
-		reason: '被永久封禁的用戶頁'
-	}
-});
+};
 
-Twinkle.protect.protectionTags = wgULS([
+Twinkle.protect.protectionTags = [
 	{
-		label: '无（移除现有模板）',
+		label: wgULS('无（移除现有模板）', '無（移除現有模板）'),
 		value: 'none'
 	},
 	{
-		label: '无（不移除现有模板）',
+		label: wgULS('无（不移除现有模板）', '無（不移除現有模板）'),
 		value: 'noop'
 	},
 	{
-		label: '全保护模板',
+		label: wgULS('全保护模板', '全保護模板'),
 		list: [
-			{ label: '{{pp-dispute}}: 争议', value: 'pp-dispute', selected: true },
-			{ label: '{{pp-usertalk}}: 封禁的用户', value: 'pp-usertalk' }
+			{ label: '{{pp-dispute}}: ' + wgULS('争议', '爭議'), value: 'pp-dispute', selected: true },
+			{ label: '{{pp-usertalk}}: ' + wgULS('封禁的用户讨论页', '封禁的使用者討論頁'), value: 'pp-usertalk' }
 		]
 	},
 	{
-		label: '全、半保护模板',
+		label: '通用模板',
 		list: [
-			{ label: '{{pp-vandalism}}: 破坏', value: 'pp-vandalism' },
-			{ label: '{{pp-template}}: 高风险模板', value: 'pp-template' },
-			{ label: '{{pp-protected}}: 常规', value: 'pp-protected' }
+			{ label: '{{pp-vandalism}}: ' + wgULS('破坏', '破壞'), value: 'pp-vandalism' },
+			{ label: '{{pp-template}}: ' + wgULS('高风险模板', '高風險模板'), value: 'pp-template' },
+			{ label: '{{pp-protected}}: ' + wgULS('常规', '常規'), value: 'pp-protected' }
 		]
 	},
 	{
-		label: '半保护模板',
+		label: wgULS('半保护模板', '半保護模板'),
 		list: [
-			{ label: '{{pp-semi-usertalk}}: 封禁的用户', value: 'pp-semi-usertalk' },
-			{ label: '{{pp-semi-sock}}: 傀儡', value: 'pp-semi-sock' },
-			{ label: '{{pp-semi-blp}}: 生者传记', value: 'pp-semi-blp' },
-			{ label: '{{pp-semi-indef}}: 长期', value: 'pp-semi-indef' }
+			{ label: '{{pp-semi-usertalk}}: ' + wgULS('封禁的用户', '封禁的使用者'), value: 'pp-semi-usertalk' },
+			{ label: '{{pp-semi-sock}}: ' + '傀儡', value: 'pp-semi-sock' },
+			{ label: '{{pp-semi-blp}}: ' + wgULS('生者传记', '生者傳記'), value: 'pp-semi-blp' },
+			{ label: '{{pp-semi-indef}}: ' + wgULS('长期', '長期'), value: 'pp-semi-indef' }
 		]
 	},
 	{
-		label: '移动保护模板',
+		label: wgULS('移动保护模板', '移動保護模板'),
 		list: [
-			{ label: '{{pp-move-dispute}}: 争议', value: 'pp-move-dispute' },
-			{ label: '{{pp-move-vandalism}}: 破坏', value: 'pp-move-vandalism' },
-			{ label: '{{pp-move-indef}}: 长期', value: 'pp-move-indef' },
-			{ label: '{{pp-move}}: 常规', value: 'pp-move' }
-		]
-	}
-], [
-	{
-		label: '無（移除現有模板）',
-		value: 'none'
-	},
-	{
-		label: '無（不移除現有模板）',
-		value: 'noop'
-	},
-	{
-		label: '全保護模板',
-		list: [
-			{ label: '{{pp-dispute}}: 爭議', value: 'pp-dispute', selected: true },
-			{ label: '{{pp-usertalk}}: 封禁的用戶', value: 'pp-usertalk' }
-		]
-	},
-	{
-		label: '全、半保護模板',
-		list: [
-			{ label: '{{pp-vandalism}}: 破壞', value: 'pp-vandalism' },
-			{ label: '{{pp-template}}: 高風險模板', value: 'pp-template' },
-			{ label: '{{pp-protected}}: 常規', value: 'pp-protected' }
-		]
-	},
-	{
-		label: '半保護模板',
-		list: [
-			{ label: '{{pp-semi-usertalk}}: 封禁的用戶', value: 'pp-semi-usertalk' },
-			{ label: '{{pp-semi-sock}}: 傀儡', value: 'pp-semi-sock' },
-			{ label: '{{pp-semi-blp}}: 生者傳記', value: 'pp-semi-blp' },
-			{ label: '{{pp-semi-indef}}: 長期', value: 'pp-semi-indef' }
-		]
-	},
-	{
-		label: '移動保護模板',
-		list: [
-			{ label: '{{pp-move-dispute}}: 爭議', value: 'pp-move-dispute' },
-			{ label: '{{pp-move-vandalism}}: 破壞', value: 'pp-move-vandalism' },
-			{ label: '{{pp-move-indef}}: 長期', value: 'pp-move-indef' },
-			{ label: '{{pp-move}}: 常規', value: 'pp-move' }
+			{ label: '{{pp-move-dispute}}: ' + wgULS('争议', '爭議'), value: 'pp-move-dispute' },
+			{ label: '{{pp-move-vandalism}}: ' + wgULS('破坏', '破壞'), value: 'pp-move-vandalism' },
+			{ label: '{{pp-move-indef}}: ' + wgULS('长期', '長期'), value: 'pp-move-indef' },
+			{ label: '{{pp-move}}: ' + wgULS('常规', '常規'), value: 'pp-move' }
 		]
 	}
-]);
+];
 
 Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePreset(e) {
 	var form = e.target.form;
