@@ -1454,6 +1454,9 @@ Twinkle.protect.formatProtectionDescription = function(protectionLevels) {
 				case 'autoconfirmed':
 					level = wgULS('仅允许自动确认用户', '僅允許自動確認使用者');
 					break;
+				case 'templateeditor':
+					level = wgULS('仅模板编辑员和管理员', '僅模板編輯員和管理員');
+					break;
 				case 'sysop':
 					level = wgULS('仅管理员', '僅管理員');
 					break;
