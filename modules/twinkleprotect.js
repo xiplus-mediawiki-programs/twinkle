@@ -94,6 +94,15 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 	Twinkle.protect.fetchProtectionLevel();
 };
 
+
+// Customizable namespace and FlaggedRevs settings
+// In theory it'd be nice to have restrictionlevels defined here,
+// but those are only available via a siteinfo query
+
+// Limit template editor; a Twinkle restriction, not a site setting
+var isTemplate = mw.config.get('wgNamespaceNumber') === 10 || mw.config.get('wgNamespaceNumber') === 828;
+
+
 // Contains the current protection level in an object
 // Once filled, it will look something like:
 // { edit: { level: "sysop", expiry: <some date>, cascade: true }, ... }
@@ -197,7 +206,6 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 	var field_preset;
 	var field1;
 	var field2;
-	var isTemplate = mw.config.get('wgNamespaceNumber') === 10 || mw.config.get('wgNamespaceNumber') === 828;
 
 	switch (e.target.values) {
 		case 'protect':
@@ -207,11 +215,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				name: 'category',
 				label: wgULS('选择默认：', '選擇預設：'),
 				event: Twinkle.protect.callback.changePreset,
-				list: mw.config.get('wgArticleId') ?
-					Twinkle.protect.protectionTypesAdmin.filter(function(v) {
-						return isTemplate || (v.label !== '模板保护' && v.label !== '模板保護');
-					}) :
-					Twinkle.protect.protectionTypesCreate
+				list: mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypesAdmin : Twinkle.protect.protectionTypesCreate
 			});
 
 			field2 = new Morebits.quickForm.element({ type: 'field', label: wgULS('保护选项', '保護選項'), name: 'field2' });
@@ -231,34 +235,15 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						}
 					]
 				});
-				var editlevel = field2.append({
+				field2.append({
 					type: 'select',
 					name: 'editlevel',
 					label: wgULS('编辑权限：', '編輯權限：'),
-					event: Twinkle.protect.formevents.editlevel
-				});
-				editlevel.append({
-					type: 'option',
-					label: wgULS('（站点默认）', '（站點預設）'),
-					value: 'all'
-				});
-				editlevel.append({
-					type: 'option',
-					label: wgULS('仅允许自动确认用户', '僅允許自動確認使用者'),
-					value: 'autoconfirmed'
-				});
-				if (isTemplate) {
-					editlevel.append({
-						type: 'option',
-						label: wgULS('仅模板编辑员和管理员', '僅模板編輯員和管理員'),
-						value: 'templateeditor'
-					});
-				}
-				editlevel.append({
-					type: 'option',
-					label: wgULS('仅管理员', '僅管理員'),
-					value: 'sysop',
-					selected: true
+					event: Twinkle.protect.formevents.editlevel,
+					list: Twinkle.protect.protectionLevels.filter(function(level) {
+						// Filter TE outside of templates and modules
+						return isTemplate || level.value !== 'templateeditor';
+					})
 				});
 				field2.append({
 					type: 'select',
@@ -270,38 +255,8 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						}
 						$('input[name=small]', $(e.target).closest('form'))[0].checked = e.target.selectedIndex >= 8; // 1 month
 					},
-					// default expiry selection is conditionally set in Twinkle.protect.callback.changePreset
-					list: wgULS([
-						{ label: '1小时', value: '1 hour' },
-						{ label: '2小时', value: '2 hours' },
-						{ label: '3小时', value: '3 hours' },
-						{ label: '6小时', value: '6 hours' },
-						{ label: '1日', value: '1 day' },
-						{ label: '3日', value: '3 days' },
-						{ label: '1周', value: '1 week' },
-						{ label: '2周', value: '2 weeks' },
-						{ label: '1月', value: '1 month' },
-						{ label: '3月', value: '3 months' },
-						{ label: '6月', value: '6 months' },
-						{ label: '1年', value: '1 year' },
-						{ label: '无限期', value: 'infinity' },
-						{ label: '自定义…', value: 'custom' }
-					], [
-						{ label: '1小時', value: '1 hour' },
-						{ label: '2小時', value: '2 hours' },
-						{ label: '3小時', value: '3 hours' },
-						{ label: '6小時', value: '6 hours' },
-						{ label: '1日', value: '1 day' },
-						{ label: '3日', value: '3 days' },
-						{ label: '1周', value: '1 week' },
-						{ label: '2周', value: '2 weeks' },
-						{ label: '1月', value: '1 month' },
-						{ label: '3月', value: '3 months' },
-						{ label: '6月', value: '6 months' },
-						{ label: '1年', value: '1 year' },
-						{ label: '無限期', value: 'infinity' },
-						{ label: '自訂…', value: 'custom' }
-					])
+					// default expiry selection (2 days) is conditionally set in Twinkle.protect.callback.changePreset
+					list: Twinkle.protect.protectionLengths
 				});
 				field2.append({
 					type: 'checkbox',
@@ -315,34 +270,15 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						}
 					]
 				});
-				var movelevel = field2.append({
+				field2.append({
 					type: 'select',
 					name: 'movelevel',
 					label: wgULS('移动权限：', '移動權限：'),
-					event: Twinkle.protect.formevents.movelevel
-				});
-				movelevel.append({
-					type: 'option',
-					label: wgULS('（站点默认）', '（站點預設）'),
-					value: 'all'
-				});
-				movelevel.append({
-					type: 'option',
-					label: wgULS('仅允许自动确认用户', '僅允許自動確認使用者'),
-					value: 'autoconfirmed'
-				});
-				if (isTemplate) {
-					movelevel.append({
-						type: 'option',
-						label: wgULS('仅模板编辑员和管理员', '僅模板編輯員和管理員'),
-						value: 'templateeditor'
-					});
-				}
-				movelevel.append({
-					type: 'option',
-					label: wgULS('仅管理员', '僅管理員'),
-					value: 'sysop',
-					selected: true
+					event: Twinkle.protect.formevents.movelevel,
+					list: Twinkle.protect.protectionLevels.filter(function(level) {
+						// Autoconfirmed is required for a move, redundant
+						return isTemplate || level.value !== 'templateeditor';
+					})
 				});
 				field2.append({
 					type: 'select',
@@ -353,68 +289,19 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							Twinkle.protect.doCustomExpiry(e.target);
 						}
 					},
-					// default expiry selection is conditionally set in Twinkle.protect.callback.changePreset
-					list: wgULS([
-						{ label: '1小时', value: '1 hour' },
-						{ label: '2小时', value: '2 hours' },
-						{ label: '3小时', value: '3 hours' },
-						{ label: '6小时', value: '6 hours' },
-						{ label: '1日', value: '1 day' },
-						{ label: '3日', value: '3 days' },
-						{ label: '1周', value: '1 week' },
-						{ label: '2周', value: '2 weeks' },
-						{ label: '1月', value: '1 month' },
-						{ label: '3月', value: '3 months' },
-						{ label: '6月', value: '6 months' },
-						{ label: '1年', value: '1 year' },
-						{ label: '无限期', value: 'infinity' },
-						{ label: '自定义…', value: 'custom' }
-					], [
-						{ label: '1小時', value: '1 hour' },
-						{ label: '2小時', value: '2 hours' },
-						{ label: '3小時', value: '3 hours' },
-						{ label: '6小時', value: '6 hours' },
-						{ label: '1日', value: '1 day' },
-						{ label: '3日', value: '3 days' },
-						{ label: '1周', value: '1 week' },
-						{ label: '2周', value: '2 weeks' },
-						{ label: '1月', value: '1 month' },
-						{ label: '3月', value: '3 months' },
-						{ label: '6月', value: '6 months' },
-						{ label: '1年', value: '1 year' },
-						{ label: '無限期', value: 'infinity' },
-						{ label: '自訂…', value: 'custom' }
-					])
+					// default expiry selection (2 days) is conditionally set in Twinkle.protect.callback.changePreset
+					list: Twinkle.protect.protectionLengths
 				});
 			} else {  // for non-existing pages
-				var createlevel = field2.append({
+				field2.append({
 					type: 'select',
 					name: 'createlevel',
 					label: wgULS('创建权限：', '建立權限：'),
-					event: Twinkle.protect.formevents.createlevel
-				});
-				createlevel.append({
-					type: 'option',
-					label: '全部',
-					value: 'all'
-				});
-				createlevel.append({
-					type: 'option',
-					label: wgULS('仅允许自动确认用户', '僅允許自動確認使用者'),
-					value: 'autoconfirmed'
-				});
-				if (isTemplate) {
-					createlevel.append({
-						type: 'option',
-						label: wgULS('仅模板编辑员和管理员', '僅模板編輯員和管理員'),
-						value: 'templateeditor'
-					});
-				}
-				createlevel.append({
-					type: 'option',
-					label: wgULS('仅管理员', '僅管理員'),
-					value: 'sysop',
-					selected: true
+					event: Twinkle.protect.formevents.createlevel,
+					list: Twinkle.protect.protectionLevels.filter(function(level) {
+						// Filter TE always, and autoconfirmed in mainspace, redundant since WP:ACPERM
+						return level.value !== 'templateeditor';
+					})
 				});
 				field2.append({
 					type: 'select',
@@ -425,37 +312,8 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 							Twinkle.protect.doCustomExpiry(e.target);
 						}
 					},
-					list: wgULS([
-						{ label: '1小时', value: '1 hour' },
-						{ label: '2小时', value: '2 hours' },
-						{ label: '3小时', value: '3 hours' },
-						{ label: '6小时', value: '6 hours' },
-						{ label: '1日', value: '1 day' },
-						{ label: '3日', value: '3 days' },
-						{ label: '1周', value: '1 week' },
-						{ label: '2周', value: '2 weeks' },
-						{ label: '1月', value: '1 month' },
-						{ label: '3月', value: '3 months' },
-						{ label: '6月', value: '6 months' },
-						{ label: '1年', selected: true, value: '1 year' },
-						{ label: '无限期', value: 'infinity' },
-						{ label: '自定义…', value: 'custom' }
-					], [
-						{ label: '1小時', value: '1 hour' },
-						{ label: '2小時', value: '2 hours' },
-						{ label: '3小時', value: '3 hours' },
-						{ label: '6小時', value: '6 hours' },
-						{ label: '1日', value: '1 day' },
-						{ label: '3日', value: '3 days' },
-						{ label: '1周', value: '1 week' },
-						{ label: '2周', value: '2 weeks' },
-						{ label: '1月', value: '1 month' },
-						{ label: '3月', value: '3 months' },
-						{ label: '6月', value: '6 months' },
-						{ label: '1年', selected: true, value: '1 year' },
-						{ label: '無限期', value: 'infinity' },
-						{ label: '自訂…', value: 'custom' }
-					])
+					// default expiry selection (indefinite) is conditionally set in Twinkle.protect.callback.changePreset
+					list: Twinkle.protect.protectionLengths
 				});
 			}
 			field2.append({
@@ -582,6 +440,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 	Twinkle.protect.callback.showLogAndCurrentProtectInfo();
 };
 
+// NOTE: This function is used by batchprotect as well
 Twinkle.protect.formevents = {
 	editmodify: function twinkleprotectFormEditmodifyEvent(e) {
 		e.target.form.editlevel.disabled = !e.target.checked;
@@ -628,6 +487,33 @@ Twinkle.protect.doCustomExpiry = function twinkleprotectDoCustomExpiry(target) {
 	}
 };
 
+// NOTE: This list is used by batchprotect as well
+Twinkle.protect.protectionLevels = [
+	{ label: '全部', value: 'all' },
+	{ label: wgULS('仅允许自动确认用户', '僅允許自動確認使用者'), value: 'autoconfirmed' },
+	{ label: wgULS('仅模板编辑员和管理员', '僅模板編輯員和管理員'), value: 'templateeditor' },
+	{ label: wgULS('仅管理员', '僅管理員'), value: 'sysop', selected: true }
+];
+
+// default expiry selection is conditionally set in Twinkle.protect.callback.changePreset
+// NOTE: This list is used by batchprotect as well
+Twinkle.protect.protectionLengths = [
+	{ label: wgULS('1小时', '1小時'), value: '1 hour' },
+	{ label: wgULS('2小时', '2小時'), value: '2 hours' },
+	{ label: wgULS('3小时', '3小時'), value: '3 hours' },
+	{ label: wgULS('6小时', '6小時'), value: '6 hours' },
+	{ label: '1日', value: '1 day' },
+	{ label: '3日', value: '3 days' },
+	{ label: wgULS('1周', '1週'), value: '1 week' },
+	{ label: wgULS('2周', '2週'), value: '2 weeks' },
+	{ label: '1月', value: '1 month' },
+	{ label: '3月', value: '3 months' },
+	{ label: '6月', value: '6 months' },
+	{ label: '1年', value: '1 year' },
+	{ label: wgULS('无限期', '無限期'), value: 'infinity' },
+	{ label: wgULS('自定义…', '自訂…'), value: 'custom' }
+];
+
 Twinkle.protect.protectionTypesAdmin = [
 	{ label: wgULS('解除保护', '解除保護'), value: 'unprotect' },
 	{
@@ -666,7 +552,10 @@ Twinkle.protect.protectionTypesAdmin = [
 			{ label: wgULS('高风险页面（移动）', '高風險頁面（移動）'), value: 'pp-move-indef' }
 		]
 	}
-];
+].filter(function(type) {
+	// Filter for templates
+	return isTemplate || (type.label !== '模板保护' && type.label !== '模板保護');
+});
 
 Twinkle.protect.protectionTypesCreateOnly = [
 	{
