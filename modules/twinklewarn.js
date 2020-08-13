@@ -252,11 +252,20 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		}
 	}
 
+	var init = function() {
+		// We must init the first choice (General Note);
+		var evt = document.createEvent('Event');
+		evt.initEvent('change', true, true);
+		result.main_group.dispatchEvent(evt);
+	};
 
-	// We must init the first choice (General Note);
-	var evt = document.createEvent('Event');
-	evt.initEvent('change', true, true);
-	result.main_group.dispatchEvent(evt);
+	Morebits.wiki.flow.check('User_talk:' + Morebits.wiki.flow.relevantUserName(), function () {
+		Twinkle.warn.isFlow = true;
+		init();
+	}, function () {
+		Twinkle.warn.isFlow = false;
+		init();
+	});
 };
 
 // This is all the messages that might be dispatched by the code
@@ -2044,7 +2053,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 			if (Twinkle.warn.talkpageObj) {
 				autolevelProc();
 			} else {
-				Morebits.wiki.flow.check('User_talk:' + Morebits.wiki.flow.relevantUserName(), function () {
+				if (Twinkle.warn.isFlow) {
 					var $noTalkPageNode = $('<strong/>', {
 						'text': wgULS('结构式讨论（Flow）不支持自动选择警告层级，请手动选择层级。', '結構式討論（Flow）不支援自動選擇警告層級，請手動選擇層級。'),
 						'id': 'twinkle-warn-autolevel-message',
@@ -2054,7 +2063,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 					// If a preview was opened while in a different mode, close it
 					// Should nullify the need to catch the error in preview callback
 					e.target.root.previewer.closePreview();
-				}, function () {
+				} else {
 					var usertalk_page = new Morebits.wiki.page('User_talk:' + Morebits.wiki.flow.relevantUserName(), wgULS('加载上次警告', '載入上次警告'));
 					usertalk_page.setFollowRedirect(true, false);
 					usertalk_page.load(function(pageobj) {
@@ -2074,7 +2083,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 						// Should nullify the need to catch the error in preview callback
 						e.target.root.previewer.closePreview();
 					});
-				});
+				}
 			}
 			break;
 		default:
@@ -2212,7 +2221,7 @@ Twinkle.warn.callbacks = {
 		templatetext = Twinkle.warn.callbacks.getWarningWikitext(templatename, linkedarticle,
 			input.reason, input.main_group === 'custom');
 
-		form.previewer.beginRender(templatetext, 'User_talk:' + Morebits.wiki.flow.relevantUserName()); // Force wikitext/correct username
+		form.previewer.beginRender(templatetext, 'User_talk:' + Morebits.wiki.flow.relevantUserName() + (Twinkle.warn.isFlow ? '/Wikitext' : '')); // Force wikitext/correct username
 	},
 	// Just a pass-through unless the autolevel option was selected
 	preview: function(form) {
@@ -2615,16 +2624,16 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
 	Morebits.wiki.actionCompleted.notice = wgULS('警告完成，将在几秒后刷新', '警告完成，將在幾秒後重新整理');
 
-	Morebits.wiki.flow.check(userTalkPage, function () {
+	if (Twinkle.warn.isFlow) {
 		var flow_page = new Morebits.wiki.flow(userTalkPage, wgULS('用户Flow讨论页留言', '使用者Flow討論頁留言'));
 		flow_page.setCallbackParameters(params);
 		Twinkle.warn.callbacks.main_flow(flow_page);
-	}, function () {
+	} else {
 		var wikipedia_page = new Morebits.wiki.page(userTalkPage, wgULS('用户讨论页修改', '使用者討論頁修改'));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.setFollowRedirect(true, false);
 		wikipedia_page.load(Twinkle.warn.callbacks.main);
-	});
+	}
 };
 
 Twinkle.addInitCallback(Twinkle.warn, 'warn');
