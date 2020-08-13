@@ -366,7 +366,7 @@ Twinkle.welcome.callbacks = {
 
 		// abort if mode is auto and form is not empty
 		if (pageobj.exists() && params.mode === 'auto') {
-			Morebits.status.info(wgULS('警告', '警告'), wgULS('用户讨论页不是空的，略过自动欢迎', '使用者討論頁不是空的，略過自動歡迎'));
+			Morebits.status.info('警告', wgULS('用户讨论页不是空的，略过自动欢迎', '使用者討論頁不是空的，略過自動歡迎'));
 			Morebits.wiki.actionCompleted.event();
 			return;
 		}

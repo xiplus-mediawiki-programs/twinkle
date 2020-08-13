@@ -566,7 +566,7 @@ Twinkle.config.sections = [
 			},
 			{
 				name: 'customFileTagList',
-				label: wgULS('自定义条目维护标记', '自訂檔案維護標記'),
+				label: wgULS('自定义文件维护标记', '自訂檔案維護標記'),
 				helptip: wgULS('这些会出现在列表的末尾。', '這些會出現在列表的末尾。'),
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
@@ -574,7 +574,7 @@ Twinkle.config.sections = [
 			},
 			{
 				name: 'customRedirectTagList',
-				label: wgULS('自定义条目维护标记', '自訂重新導向維護標記'),
+				label: wgULS('自定义重定向维护标记', '自訂重新導向維護標記'),
 				helptip: wgULS('这些会出现在列表的末尾。', '這些會出現在列表的末尾。'),
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
