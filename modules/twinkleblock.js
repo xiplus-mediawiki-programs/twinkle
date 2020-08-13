@@ -131,7 +131,7 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 		action: 'query',
 		list: 'blocks|users|logevents',
 		letype: 'block',
-		lelimit: 1,
+		lelimit: 2,
 		ususers: userName,
 		usprop: 'groupmemberships',
 		letitle: 'User:' + userName
@@ -165,8 +165,12 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 			}
 
 			Twinkle.block.hasBlockLog = !!data.query.logevents.length;
-			// Used later to check if block status changed while filling out the form
+			// Used later to check if block status changed while filling out the form and display block info in window
 			Twinkle.block.blockLogId = Twinkle.block.hasBlockLog ? data.query.logevents[0].logid : false;
+			// Only use block or reblock log
+			Twinkle.block.recentBlockLog = data.query.logevents.length >= 1 && data.query.logevents[0].action !== 'unblock'
+				? data.query.logevents[0]
+				: data.query.logevents.length >= 2 ? data.query.logevents[1] : null;
 
 			if (typeof fn === 'function') {
 				return fn();
@@ -233,8 +237,8 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		});
 
 		field_block_options = new Morebits.quickForm.element({ type: 'field', label: wgULS('封禁选项', '封鎖選項'), name: 'field_block_options' });
-		field_block_options.append({ type: 'div', name: 'hasblocklog', label: ' ' });
 		field_block_options.append({ type: 'div', name: 'currentblock', label: ' ' });
+		field_block_options.append({ type: 'div', name: 'hasblocklog', label: ' ' });
 		field_block_options.append({
 			type: 'select',
 			name: 'expiry_preset',
@@ -670,7 +674,17 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		var $blockloglink = $('<a target="_blank" href="' + mw.util.getUrl('Special:Log', {action: 'view', page: Morebits.wiki.flow.relevantUserName(true), type: 'block'}) + '">' + wgULS('封禁日志', '封鎖日誌') + '</a>)');
 
 		Morebits.status.init($('div[name="hasblocklog"] span').last()[0]);
-		Morebits.status.warn(wgULS('此用户曾在过去被封禁', '此使用者曾在過去被封鎖'), $blockloglink[0]);
+		Morebits.status.warn(
+			Twinkle.block.currentBlockInfo
+				? wgULS('封禁详情', '封鎖詳情')
+				: [
+					wgULS('此用户曾在', '此使用者曾在'),
+					$('<b>' + new Morebits.date(Twinkle.block.recentBlockLog.timestamp).calendar('utc') + '</b>')[0],
+					'被' + Twinkle.block.recentBlockLog.user + wgULS('封禁', '封鎖'),
+					$('<b>' + Morebits.string.formatTime(Twinkle.block.recentBlockLog.params.duration) + '</b>')[0]
+				],
+			$blockloglink[0]
+		);
 	}
 
 	if (Twinkle.block.currentBlockInfo) {

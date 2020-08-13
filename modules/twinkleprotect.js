@@ -98,6 +98,7 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 // Once filled, it will look something like:
 // { edit: { level: "sysop", expiry: <some date>, cascade: true }, ... }
 Twinkle.protect.currentProtectionLevels = {};
+Twinkle.protect.previousProtectionLevels = {};
 
 Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLevel() {
 
@@ -118,6 +119,7 @@ Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLev
 		var pageid = protectData.query.pageids[0];
 		var page = protectData.query.pages[pageid];
 		var current = {};
+		var previous = {};
 
 		$.each(page.protection, function(index, protection) {
 			if (protection.type !== 'aft') {
@@ -129,9 +131,27 @@ Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLev
 			}
 		});
 
+		// Only use the log except unprotect
+		Twinkle.protect.previousProtectionLog = protectData.query.logevents.length >= 1 && protectData.query.logevents[0].action !== 'unprotect'
+			? protectData.query.logevents[0]
+			: protectData.query.logevents.length >= 2 ? protectData.query.logevents[1] : null;
+
+		if (Twinkle.protect.previousProtectionLog) {
+			$.each(Twinkle.protect.previousProtectionLog.params.details, function(index, protection) {
+				if (protection.type !== 'aft') {
+					previous[protection.type] = {
+						level: protection.level,
+						expiry: protection.expiry,
+						cascade: protection.cascade === ''
+					};
+				}
+			});
+		}
+
 		// show the protection level and log info
 		Twinkle.protect.hasProtectLog = !!protectData.query.logevents.length;
 		Twinkle.protect.currentProtectionLevels = current;
+		Twinkle.protect.previousProtectionLevels = previous;
 		Twinkle.protect.callback.showLogAndCurrentProtectInfo();
 	});
 };
@@ -151,7 +171,13 @@ Twinkle.protect.callback.showLogAndCurrentProtectInfo = function twinkleprotectC
 
 		Morebits.status.init($('div[name="hasprotectlog"] span')[0]);
 		Morebits.status.warn(
-			currentlyProtected ? wgULS('早前保护', '早前保護') : wgULS('此页面曾在过去被保护', '此頁面曾在過去被保護'),
+			currentlyProtected
+				? wgULS('先前保护', '先前保護')
+				: [
+					wgULS('此页面曾在', '此頁面曾在'),
+					$('<b>' + new Morebits.date(Twinkle.protect.previousProtectionLog.timestamp).calendar('utc') + '</b>')[0],
+					'被' + Twinkle.protect.previousProtectionLog.user + wgULS('保护', '保護') + '：'
+				].concat(Twinkle.protect.formatProtectionDescription(Twinkle.protect.previousProtectionLevels)),
 			$linkMarkup[0]
 		);
 	}
@@ -159,22 +185,9 @@ Twinkle.protect.callback.showLogAndCurrentProtectInfo = function twinkleprotectC
 	Morebits.status.init($('div[name="currentprot"] span')[0]);
 	var protectionNode = [], statusLevel = 'info';
 
+	protectionNode = Twinkle.protect.formatProtectionDescription(Twinkle.protect.currentProtectionLevels);
 	if (currentlyProtected) {
-		$.each(Twinkle.protect.currentProtectionLevels, function(type, settings) {
-			var label = Morebits.string.toUpperCaseFirstChar(type);
-			protectionNode.push($('<b>' + label + ': ' + settings.level + '</b>')[0]);
-			if (settings.expiry === 'infinity') {
-				protectionNode.push(wgULS('（无限期）', '（無限期）'));
-			} else {
-				protectionNode.push(wgULS('（过期：', '（過期：') + new Date(settings.expiry).toUTCString() + ') ');
-			}
-			if (settings.cascade) {
-				protectionNode.push(wgULS('（连锁）', '（連鎖）'));
-			}
-		});
 		statusLevel = 'warn';
-	} else {
-		protectionNode.push($('<b>' + wgULS('无保护', '無保護') + '</b>')[0]);
 	}
 
 	Morebits.status[statusLevel](wgULS('当前保护等级', '目前保護等級'), protectionNode);
@@ -1414,6 +1427,55 @@ Twinkle.protect.callbacks = {
 		rppPage.setPageText(text);
 		rppPage.save();
 	}
+};
+
+Twinkle.protect.formatProtectionDescription = function(protectionLevels) {
+	var protectionNode = [];
+
+	if (!$.isEmptyObject(protectionLevels)) {
+		$.each(protectionLevels, function(type, settings) {
+			var label;
+			switch (type) {
+				case 'edit':
+					label = wgULS('编辑', '編輯');
+					break;
+				case 'move':
+					label = wgULS('移动', '移動');
+					break;
+				case 'create':
+					label = wgULS('创建', '建立');
+					break;
+				default:
+					label = type;
+					break;
+			}
+			var level;
+			switch (settings.level) {
+				case 'autoconfirmed':
+					level = wgULS('仅允许自动确认用户', '僅允許自動確認使用者');
+					break;
+				case 'sysop':
+					level = wgULS('仅管理员', '僅管理員');
+					break;
+				default:
+					level = settings.level;
+					break;
+			}
+			protectionNode.push($('<b>' + label + '：' + level + '</b>')[0]);
+			if (Morebits.string.isInfinity(settings.expiry)) {
+				protectionNode.push(wgULS('（无限期）', '（無限期）'));
+			} else {
+				protectionNode.push(wgULS('（过期：', '（過期：') + new Morebits.date(settings.expiry).calendar('utc') + '）');
+			}
+			if (settings.cascade) {
+				protectionNode.push(wgULS('（连锁）', '（連鎖）'));
+			}
+		});
+	} else {
+		protectionNode.push($('<b>' + wgULS('无保护', '無保護') + '</b>')[0]);
+	}
+
+	return protectionNode;
 };
 
 Twinkle.addInitCallback(Twinkle.protect, 'protect');
