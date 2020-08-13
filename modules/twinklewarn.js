@@ -119,7 +119,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	var dialog;
 	Twinkle.warn.dialog = new Morebits.simpleWindow(600, 440);
 	dialog = Twinkle.warn.dialog;
-	dialog.setTitle(wgULS('警告、通知用户', '警告、通知使用者'));
+	dialog.setTitle(wgULS('警告、提醒用户', '警告、提醒使用者'));
 	dialog.setScriptName('Twinkle');
 	dialog.addFooterLink(wgULS('选择警告级别', '選擇警告級別'), 'WP:WARN');
 	dialog.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#warn');
@@ -127,7 +127,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	var form = new Morebits.quickForm(Twinkle.warn.callback.evaluate);
 	var main_select = form.append({
 		type: 'field',
-		label: wgULS('选择要发送的警告或通知类型', '選擇要傳送的警告或通知類別'),
+		label: wgULS('选择要发送的警告或提醒类型', '選擇要傳送的警告或提醒類別'),
 		tooltip: wgULS('首先选择一组，再选择具体的警告模板。', '首先選擇一組，再選擇具體的警告模板。')
 	});
 
@@ -140,15 +140,15 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 
 	var defaultGroup = parseInt(Twinkle.getPref('defaultWarningGroup'), 10);
 	main_group.append({ type: 'option', label: wgULS('自动选择层级（1-4）', '自動選擇層級（1-4）'), value: 'autolevel', selected: defaultGroup === 11 });
-	main_group.append({ type: 'option', label: wgULS('层级1', '層級1'), value: 'level1', selected: defaultGroup === 1 });
-	main_group.append({ type: 'option', label: wgULS('层级2', '層級2'), value: 'level2', selected: defaultGroup === 2 });
-	main_group.append({ type: 'option', label: wgULS('层级3', '層級3'), value: 'level3', selected: defaultGroup === 3 });
-	main_group.append({ type: 'option', label: wgULS('层级4', '層級4'), value: 'level4', selected: defaultGroup === 4 });
-	main_group.append({ type: 'option', label: wgULS('层级4im', '層級4im'), value: 'level4im', selected: defaultGroup === 5 });
+	main_group.append({ type: 'option', label: '1：提醒', value: 'level1', selected: defaultGroup === 1 });
+	main_group.append({ type: 'option', label: '2：注意', value: 'level2', selected: defaultGroup === 2 });
+	main_group.append({ type: 'option', label: '3：警告', value: 'level3', selected: defaultGroup === 3 });
+	main_group.append({ type: 'option', label: wgULS('4：最后警告', '4：最後警告'), value: 'level4', selected: defaultGroup === 4 });
+	main_group.append({ type: 'option', label: '4im：唯一警告', value: 'level4im', selected: defaultGroup === 5 });
 	if (Twinkle.getPref('combinedSingletMenus')) {
 		main_group.append({ type: 'option', label: wgULS('单层级消息', '單層級訊息'), value: 'singlecombined', selected: defaultGroup === 6 || defaultGroup === 7 });
 	} else {
-		main_group.append({ type: 'option', label: wgULS('单层级通知', '單層級通知'), value: 'singlenotice', selected: defaultGroup === 6 });
+		main_group.append({ type: 'option', label: wgULS('单层级提醒', '單層級提醒'), value: 'singlenotice', selected: defaultGroup === 6 });
 		main_group.append({ type: 'option', label: wgULS('单层级警告', '單層級警告'), value: 'singlewarn', selected: defaultGroup === 7 });
 	}
 	if (Twinkle.getPref('customWarningList').length) {
@@ -271,227 +271,227 @@ Twinkle.warn.messages = wgULS({
 			'uw-vandalism': {
 				level1: {
 					'label': '明显的破坏',
-					'summary': '层级1：明显破坏'
+					'summary': '提醒：明显破坏'
 				},
 				level2: {
 					'label': '明显的破坏',
-					'summary': '层级2：明显破坏'
+					'summary': '注意：明显破坏'
 				},
 				level3: {
 					'label': '恶意破坏',
-					'summary': '层级3：恶意破坏'
+					'summary': '警告：恶意破坏'
 				},
 				level4: {
 					'label': '恶意破坏',
-					'summary': '层级4：恶意破坏'
+					'summary': '最后警告：恶意破坏'
 				},
 				level4im: {
 					'label': '恶意破坏',
-					'summary': '层级4im：恶意破坏'
+					'summary': '唯一警告：恶意破坏'
 				}
 			},
 			'uw-test': {
 				level1: {
 					'label': '进行编辑测试而未及时清理',
-					'summary': '层级1：进行编辑测试而未及时清理'
+					'summary': '提醒：进行编辑测试而未及时清理'
 				},
 				level2: {
 					'label': '进行损毁性的编辑测试',
-					'summary': '层级2：进行编辑测试'
+					'summary': '注意：进行编辑测试'
 				},
 				level3: {
 					'label': '编辑测试',
-					'summary': '层级3：编辑测试'
+					'summary': '警告：编辑测试'
 				},
 				level4: {
 					'label': '编辑测试',
-					'summary': '层级4：编辑测试'
+					'summary': '最后警告：编辑测试'
 				}
 			},
 			'uw-delete': {
 				level1: {
 					'label': '不恰当地移除页面内容、模板或资料',
-					'summary': '层级1：不恰当地移除页面内容、模板或资料'
+					'summary': '提醒：不恰当地移除页面内容、模板或资料'
 				},
 				level2: {
 					'label': '不恰当地移除页面内容、模板或资料',
-					'summary': '层级2：不恰当地移除页面内容、模板或资料'
+					'summary': '注意：不恰当地移除页面内容、模板或资料'
 				},
 				level3: {
 					'label': '不恰当地移除页面内容、模板或资料',
-					'summary': '层级3：不恰当地移除页面内容、模板或资料'
+					'summary': '警告：不恰当地移除页面内容、模板或资料'
 				},
 				level4: {
 					'label': '移除页面、移除内容或模板',
-					'summary': '层级4：移除页面、移除内容或模板'
+					'summary': '最后警告：移除页面、移除内容或模板'
 				},
 				level4im: {
 					'label': '移除页面内容、模板或资料',
-					'summary': '层级4im：移除页面内容、模板或资料'
+					'summary': '唯一警告：移除页面内容、模板或资料'
 				}
 			},
 			'uw-redirect': {
 				level1: {
 					'label': '创建破坏性的重定向',
-					'summary': '层级1：创建破坏性的重定向'
+					'summary': '提醒：创建破坏性的重定向'
 				},
 				level2: {
 					'label': '创建恶意重定向',
-					'summary': '层级2：创建恶意重定向'
+					'summary': '注意：创建恶意重定向'
 				},
 				level3: {
 					'label': '创建恶意重定向',
-					'summary': '层级3：创建恶意重定向'
+					'summary': '警告：创建恶意重定向'
 				},
 				level4: {
 					'label': '创建恶意重定向',
-					'summary': '层级4：创建恶意重定向'
+					'summary': '最后警告：创建恶意重定向'
 				},
 				level4im: {
 					'label': '创建恶意重定向',
-					'summary': '层级4im：创建恶意重定向'
+					'summary': '唯一警告：创建恶意重定向'
 				}
 			},
 			'uw-tdel': {
 				level1: {
 					'label': '在问题仍未解决的情况下移除维护性模板',
-					'summary': '层级1：移除维护性模板'
+					'summary': '提醒：移除维护性模板'
 				},
 				level2: {
 					'label': '在问题仍未解决的情况下移除维护性模板',
-					'summary': '层级2：移除维护性模板'
+					'summary': '注意：移除维护性模板'
 				},
 				level3: {
 					'label': '移除维护性模板',
-					'summary': '层级3：移除维护性模板'
+					'summary': '警告：移除维护性模板'
 				},
 				level4: {
 					'label': '移除维护性模板',
-					'summary': '层级4：移除维护性模板'
+					'summary': '最后警告：移除维护性模板'
 				}
 			},
 			'uw-joke': {
 				level1: {
 					'label': '在百科全书内容中加入玩笑',
-					'summary': '层级1：加入不当玩笑'
+					'summary': '提醒：加入不当玩笑'
 				},
 				level2: {
 					'label': '在百科全书内容中加入玩笑',
-					'summary': '层级2：加入不当玩笑'
+					'summary': '注意：加入不当玩笑'
 				},
 				level3: {
 					'label': '在百科全书内容中加入不当玩笑',
-					'summary': '层级3：在百科全书内容中加入不当玩笑'
+					'summary': '警告：在百科全书内容中加入不当玩笑'
 				},
 				level4: {
 					'label': '在百科全书内容中加入不当玩笑',
-					'summary': '层级4：在百科全书内容中加入不当玩笑'
+					'summary': '最后警告：在百科全书内容中加入不当玩笑'
 				},
 				level4im: {
 					'label': '加入不当玩笑',
-					'summary': '层级4im：加入不当玩笑'
+					'summary': '唯一警告：加入不当玩笑'
 				}
 			},
 			'uw-create': {
 				level1: {
 					'label': '创建不当页面',
-					'summary': '层级1：创建不当页面'
+					'summary': '提醒：创建不当页面'
 				},
 				level2: {
 					'label': '创建不当页面',
-					'summary': '层级2：创建不当页面'
+					'summary': '注意：创建不当页面'
 				},
 				level3: {
 					'label': '创建不当页面',
-					'summary': '层级3：创建不当页面'
+					'summary': '警告：创建不当页面'
 				},
 				level4: {
 					'label': '创建不当页面',
-					'summary': '层级4：创建不当页面'
+					'summary': '最后警告：创建不当页面'
 				},
 				level4im: {
 					'label': '创建不当页面',
-					'summary': '层级4im：创建不当页面'
+					'summary': '唯一警告：创建不当页面'
 				}
 			},
 			'uw-upload': {
 				level1: {
 					'label': '上传不当图像',
-					'summary': '层级1：上传不当图像'
+					'summary': '提醒：上传不当图像'
 				},
 				level2: {
 					'label': '上传不当图像',
-					'summary': '层级2：上传不当图像'
+					'summary': '注意：上传不当图像'
 				},
 				level3: {
 					'label': '上传不当图像',
-					'summary': '层级3：上传不当图像'
+					'summary': '警告：上传不当图像'
 				},
 				level4: {
 					'label': '上传不当图像',
-					'summary': '层级4：上传不当图像'
+					'summary': '最后警告：上传不当图像'
 				},
 				level4im: {
 					'label': '上传不当图像',
-					'summary': '层级4im：上传不当图像'
+					'summary': '唯一警告：上传不当图像'
 				}
 			},
 			'uw-image': {
 				level1: {
 					'label': '在页面中加入不当图片',
-					'summary': '层级1：在页面中加入不当图片'
+					'summary': '提醒：在页面中加入不当图片'
 				},
 				level2: {
 					'label': '在页面中加入不当图片',
-					'summary': '层级2：在页面中加入不当图片'
+					'summary': '注意：在页面中加入不当图片'
 				},
 				level3: {
 					'label': '在页面中加入不当图片',
-					'summary': '层级3：在页面中加入不当图片'
+					'summary': '警告：在页面中加入不当图片'
 				},
 				level4: {
 					'label': '在页面中加入不当图片',
-					'summary': '层级4：在页面中加入不当图片'
+					'summary': '最后警告：在页面中加入不当图片'
 				},
 				level4im: {
 					'label': '加入不恰当的图片',
-					'summary': '层级4im：加入不恰当的图片'
+					'summary': '唯一警告：加入不恰当的图片'
 				}
 			},
 			'uw-nor': {
 				level1: {
 					'label': '在条目中加入原创研究',
-					'summary': '层级1：在条目中加入原创研究'
+					'summary': '提醒：在条目中加入原创研究'
 				},
 				level2: {
 					'label': '在条目中加入原创研究',
-					'summary': '层级2：在条目中加入原创研究'
+					'summary': '注意：在条目中加入原创研究'
 				},
 				level3: {
 					'label': '在条目中加入原创研究',
-					'summary': '层级3：在条目中加入原创研究'
+					'summary': '警告：在条目中加入原创研究'
 				}
 			},
 			'uw-politicalbias': {
 				level1: {
 					'label': '违反两岸用语方针',
-					'summary': '层级1：违反两岸用语方针'
+					'summary': '提醒：违反两岸用语方针'
 				},
 				level2: {
 					'label': '违反两岸用语方针',
-					'summary': '层级2：违反两岸用语方针'
+					'summary': '注意：违反两岸用语方针'
 				},
 				level3: {
 					'label': '违反两岸用语方针',
-					'summary': '层级3：违反两岸用语方针'
+					'summary': '警告：违反两岸用语方针'
 				},
 				level4: {
 					'label': '违反两岸用语方针',
-					'summary': '层级4：违反两岸用语方针'
+					'summary': '最后警告：违反两岸用语方针'
 				},
 				level4im: {
 					'label': '违反两岸用语方针',
-					'summary': '层级4im：违反两岸用语方针'
+					'summary': '唯一警告：违反两岸用语方针'
 				}
 			}
 		},
@@ -499,59 +499,59 @@ Twinkle.warn.messages = wgULS({
 			'uw-spam': {
 				level1: {
 					'label': '增加不合适的外部链接',
-					'summary': '层级1：增加不合适的外部链接'
+					'summary': '提醒：增加不合适的外部链接'
 				},
 				level2: {
 					'label': '增加垃圾链接',
-					'summary': '层级2：增加垃圾链接'
+					'summary': '注意：增加垃圾链接'
 				},
 				level3: {
 					'label': '增加垃圾链接',
-					'summary': '层级3：增加垃圾链接'
+					'summary': '警告：增加垃圾链接'
 				},
 				level4: {
 					'label': '增加垃圾链接',
-					'summary': '层级4：增加垃圾链接'
+					'summary': '最后警告：增加垃圾链接'
 				},
 				level4im: {
 					'label': '增加垃圾连结',
-					'summary': '层级4im：增加垃圾连结'
+					'summary': '唯一警告：增加垃圾连结'
 				}
 			},
 			'uw-advert': {
 				level1: {
 					'label': '利用维基百科来发布广告或推广',
-					'summary': '层级1：利用维基百科来发布广告或推广'
+					'summary': '提醒：利用维基百科来发布广告或推广'
 				},
 				level2: {
 					'label': '利用维基百科来发布广告或推广',
-					'summary': '层级2：利用维基百科来发布广告或推广'
+					'summary': '注意：利用维基百科来发布广告或推广'
 				},
 				level3: {
 					'label': '利用维基百科来发布广告或推广',
-					'summary': '层级3：利用维基百科来发布广告或推广'
+					'summary': '警告：利用维基百科来发布广告或推广'
 				},
 				level4: {
 					'label': '利用维基百科来发布广告或推广',
-					'summary': '层级4：利用维基百科来发布广告或推广'
+					'summary': '最后警告：利用维基百科来发布广告或推广'
 				}
 			},
 			'uw-npov': {
 				level1: {
 					'label': '不遵守中立的观点方针',
-					'summary': '层级1：不遵守中立的观点方针'
+					'summary': '提醒：不遵守中立的观点方针'
 				},
 				level2: {
 					'label': '不遵守中立的观点方针',
-					'summary': '层级2：不遵守中立的观点方针'
+					'summary': '注意：不遵守中立的观点方针'
 				},
 				level3: {
 					'label': '违反中立的观点方针',
-					'summary': '层级3：违反中立的观点方针'
+					'summary': '警告：违反中立的观点方针'
 				},
 				level4: {
 					'label': '违反中立的观点方针',
-					'summary': '层级4：违反中立的观点方针'
+					'summary': '最后警告：违反中立的观点方针'
 				}
 			}
 		},
@@ -559,73 +559,73 @@ Twinkle.warn.messages = wgULS({
 			'uw-unsourced': {
 				level1: {
 					'label': '加入没有可靠来源佐证的内容',
-					'summary': '层级1：加入没有可靠来源佐证的内容'
+					'summary': '提醒：加入没有可靠来源佐证的内容'
 				},
 				level2: {
 					'label': '加入没有可靠来源佐证的内容',
-					'summary': '层级2：加入没有可靠来源佐证的内容'
+					'summary': '注意：加入没有可靠来源佐证的内容'
 				},
 				level3: {
 					'label': '加入没有可靠来源佐证的内容',
-					'summary': '层级3：加入没有可靠来源佐证的内容'
+					'summary': '警告：加入没有可靠来源佐证的内容'
 				}
 			},
 			'uw-error': {
 				level1: {
 					'label': '故意加入不实内容',
-					'summary': '层级1：故意加入不实内容'
+					'summary': '提醒：故意加入不实内容'
 				},
 				level2: {
 					'label': '故意加入不实内容',
-					'summary': '层级2：故意加入不实内容'
+					'summary': '注意：故意加入不实内容'
 				},
 				level3: {
 					'label': '故意加入不实内容',
-					'summary': '层级3：故意加入不实内容'
+					'summary': '警告：故意加入不实内容'
 				}
 			},
 			'uw-biog': {
 				level1: {
 					'label': '在生者传记中加入没有可靠来源佐证而且可能引发争议的内容',
-					'summary': '层级1：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
+					'summary': '提醒：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
 				},
 				level2: {
 					'label': '在生者传记中加入没有可靠来源佐证而且可能引发争议的内容',
-					'summary': '层级2：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
+					'summary': '注意：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
 				},
 				level3: {
 					'label': '在生者传记中加入没有可靠来源佐证而且带有争议的内容',
-					'summary': '层级3：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
+					'summary': '警告：在生者传记中加入没有可靠来源佐证而且可能引发争议的内容'
 				},
 				level4: {
 					'label': '加入有关在生人物而又缺乏来源的资料',
-					'summary': '层级4：加入有关在生人物而又缺乏来源的资料'
+					'summary': '最后警告：加入有关在生人物而又缺乏来源的资料'
 				},
 				level4im: {
 					'label': '加入有关在生人物而又缺乏来源的资料',
-					'summary': '层级4im：加入有关在生人物而又缺乏来源的资料'
+					'summary': '唯一警告：加入有关在生人物而又缺乏来源的资料'
 				}
 			},
 			'uw-defamatory': {
 				level1: {
 					'label': '加入诽谤内容',
-					'summary': '层级1：加入诽谤内容'
+					'summary': '提醒：加入诽谤内容'
 				},
 				level2: {
 					'label': '加入诽谤内容',
-					'summary': '层级2：加入诽谤内容'
+					'summary': '注意：加入诽谤内容'
 				},
 				level3: {
 					'label': '加入诽谤内容',
-					'summary': '层级3：加入诽谤内容'
+					'summary': '警告：加入诽谤内容'
 				},
 				level4: {
 					'label': '加入诽谤内容',
-					'summary': '层级4：加入诽谤内容'
+					'summary': '最后警告：加入诽谤内容'
 				},
 				level4im: {
 					'label': '加入诽谤内容',
-					'summary': '层级4im：加入诽谤内容'
+					'summary': '唯一警告：加入诽谤内容'
 				}
 			}
 		},
@@ -633,15 +633,15 @@ Twinkle.warn.messages = wgULS({
 			'uw-roughtranslation': {
 				level1: {
 					'label': '您翻译的质量有待改善',
-					'summary': '层级1：您翻译的质量有待改善'
+					'summary': '提醒：您翻译的质量有待改善'
 				},
 				level2: {
 					'label': '粗劣翻译',
-					'summary': '层级2：粗劣翻译'
+					'summary': '注意：粗劣翻译'
 				},
 				level3: {
 					'label': '粗劣翻译',
-					'summary': '层级3：粗劣翻译'
+					'summary': '警告：粗劣翻译'
 				}
 			}
 		},
@@ -649,137 +649,137 @@ Twinkle.warn.messages = wgULS({
 			'uw-notcensored': {
 				level1: {
 					'label': '因为“内容使人反感”而删除条目内容',
-					'summary': '层级1：审查条目内容'
+					'summary': '提醒：审查条目内容'
 				},
 				level2: {
 					'label': '内容审查',
-					'summary': '层级2：内容审查'
+					'summary': '注意：内容审查'
 				},
 				level3: {
 					'label': '审查内容',
-					'summary': '层级3：审查内容'
+					'summary': '警告：审查内容'
 				}
 			},
 			'uw-mos': {
 				level1: {
 					'label': '不恰当的条目格式、日期、语言等',
-					'summary': '层级1：不恰当的条目格式、日期、语言等'
+					'summary': '提醒：不恰当的条目格式、日期、语言等'
 				},
 				level2: {
 					'label': '不恰当的条目格式、日期、语言等',
-					'summary': '层级2：不恰当的条目格式、日期、语言等'
+					'summary': '注意：不恰当的条目格式、日期、语言等'
 				},
 				level3: {
 					'label': '违反格式、日期、语言等规定',
-					'summary': '层级3：违反格式、日期、语言等规定'
+					'summary': '警告：违反格式、日期、语言等规定'
 				},
 				level4: {
 					'label': '违反格式、日期、语言等相关规定',
-					'summary': '层级4：违反格式、日期、语言等相关规定'
+					'summary': '最后警告：违反格式、日期、语言等相关规定'
 				}
 			},
 			'uw-move': {
 				level1: {
 					'label': '无故移动条目/新名称不符合命名规范',
-					'summary': '层级1：不恰当地移动页面'
+					'summary': '提醒：不恰当地移动页面'
 				},
 				level2: {
 					'label': '把页面移动到不恰当、违反命名常规或违反共识的标题',
-					'summary': '层级2：不恰当地移动页面'
+					'summary': '注意：不恰当地移动页面'
 				},
 				level3: {
 					'label': '不恰当地移动页面',
-					'summary': '层级3：不恰当地移动页面'
+					'summary': '警告：不恰当地移动页面'
 				},
 				level4: {
 					'label': '不恰当地移动页面',
-					'summary': '层级4：不恰当地移动页面'
+					'summary': '最后警告：不恰当地移动页面'
 				},
 				level4im: {
 					'label': '不恰当地移动页面',
-					'summary': '层级4im：不恰当地移动页面'
+					'summary': '唯一警告：不恰当地移动页面'
 				}
 			},
 			'uw-cd': {
 				level1: {
 					'label': '清空讨论页',
-					'summary': '层级1：清空讨论页'
+					'summary': '提醒：清空讨论页'
 				},
 				level2: {
 					'label': '清空讨论页',
-					'summary': '层级2：清空讨论页'
+					'summary': '注意：清空讨论页'
 				},
 				level3: {
 					'label': '清空讨论页',
-					'summary': '层级3：清空讨论页'
+					'summary': '警告：清空讨论页'
 				}
 			},
 			'uw-chat': {
 				level1: {
 					'label': '在讨论页发表与改善条目无关的内容',
-					'summary': '层级1：在讨论页发表与改善条目无关的内容'
+					'summary': '提醒：在讨论页发表与改善条目无关的内容'
 				},
 				level2: {
 					'label': '在讨论页发表与改善条目无关的内容',
-					'summary': '层级2：在讨论页发表与改善条目无关的内容'
+					'summary': '注意：在讨论页发表与改善条目无关的内容'
 				},
 				level3: {
 					'label': '在讨论页发表无关内容',
-					'summary': '层级3：在讨论页发表无关内容'
+					'summary': '警告：在讨论页发表无关内容'
 				},
 				level4: {
 					'label': '在讨论页进行不当讨论',
-					'summary': '层级4：在讨论页进行不当讨论'
+					'summary': '最后警告：在讨论页进行不当讨论'
 				}
 			},
 			'uw-tpv': {
 				level1: {
 					'label': '修改他人留言',
-					'summary': '层级1：修改他人留言'
+					'summary': '提醒：修改他人留言'
 				},
 				level2: {
 					'label': '修改他人留言',
-					'summary': '层级2：修改他人留言'
+					'summary': '注意：修改他人留言'
 				},
 				level3: {
 					'label': '修改他人留言',
-					'summary': '层级3：修改他人留言'
+					'summary': '警告：修改他人留言'
 				}
 			},
 			'uw-afd': {
 				level1: {
 					'label': '移除{{afd}}（页面存废讨论）模板',
-					'summary': '层级1：移除{{afd}}（页面存废讨论）模板'
+					'summary': '提醒：移除{{afd}}（页面存废讨论）模板'
 				},
 				level2: {
 					'label': '移除{{afd}}（页面存废讨论）模板',
-					'summary': '层级2：移除{{afd}}（页面存废讨论）模板'
+					'summary': '注意：移除{{afd}}（页面存废讨论）模板'
 				},
 				level3: {
 					'label': '移除{{afd}}（页面存废讨论）模板',
-					'summary': '层级3：移除{{afd}}（页面存废讨论）模板'
+					'summary': '警告：移除{{afd}}（页面存废讨论）模板'
 				},
 				level4: {
 					'label': '移除{{afd}}模板',
-					'summary': '层级4：移除{{afd}}模板'
+					'summary': '最后警告：移除{{afd}}模板'
 				}
 			},
 			'uw-speedy': {
 				level1: {
 					'label': '移除{{delete}}（快速删除）模板',
-					'summary': '层级1：移除{{delete}}（快速删除）模板'
+					'summary': '提醒：移除{{delete}}（快速删除）模板'
 				},
 				level2: {
 					'label': '移除{{delete}}（快速删除）模板',
-					'summary': '层级2：移除{{delete}}（快速删除）模板'
+					'summary': '注意：移除{{delete}}（快速删除）模板'
 				},
 				level3: {
 					'label': '移除{{delete}}（快速删除）模板',
-					'summary': '层级3：移除{{delete}}（快速删除）模板'
+					'summary': '警告：移除{{delete}}（快速删除）模板'
 				},
 				level4: {
 					'label': '移除{{delete}}模板',
-					'summary': '层级4：移除{{delete}}模板'
+					'summary': '最后警告：移除{{delete}}模板'
 				}
 			}
 		},
@@ -787,73 +787,73 @@ Twinkle.warn.messages = wgULS({
 			'uw-npa': {
 				level1: {
 					'label': '针对用户的人身攻击',
-					'summary': '层级1：针对用户的人身攻击'
+					'summary': '提醒：针对用户的人身攻击'
 				},
 				level2: {
 					'label': '针对用户的人身攻击',
-					'summary': '层级2：针对用户的人身攻击'
+					'summary': '注意：针对用户的人身攻击'
 				},
 				level3: {
 					'label': '针对用户的人身攻击',
-					'summary': '层级3：针对用户的人身攻击'
+					'summary': '警告：针对用户的人身攻击'
 				},
 				level4: {
 					'label': '针对用户的人身攻击',
-					'summary': '层级4：针对用户的人身攻击'
+					'summary': '最后警告：针对用户的人身攻击'
 				},
 				level4im: {
 					'label': '针对用户的人身攻击',
-					'summary': '层级4im：针对用户的人身攻击'
+					'summary': '唯一警告：针对用户的人身攻击'
 				}
 			},
 			'uw-agf': {
 				level1: {
 					'label': '没有假定善意',
-					'summary': '层级1：没有假定善意'
+					'summary': '提醒：没有假定善意'
 				},
 				level2: {
 					'label': '没有假定善意',
-					'summary': '层级2：没有假定善意'
+					'summary': '注意：没有假定善意'
 				},
 				level3: {
 					'label': '没有假定善意',
-					'summary': '层级3：没有假定善意'
+					'summary': '警告：没有假定善意'
 				}
 			},
 			'uw-own': {
 				level1: {
 					'label': '主张条目所有权',
-					'summary': '层级1：主张条目所有权'
+					'summary': '提醒：主张条目所有权'
 				},
 				level2: {
 					'label': '主张条目的所有权',
-					'summary': '层级2：主张条目的所有权'
+					'summary': '注意：主张条目的所有权'
 				},
 				level3: {
 					'label': '主张条目的所有权',
-					'summary': '层级3：主张条目的所有权'
+					'summary': '警告：主张条目的所有权'
 				}
 			},
 			'uw-tempabuse': {
 				level1: {
 					'label': '不当使用警告或封禁模板',
-					'summary': '层级1：不当使用警告或封禁模板'
+					'summary': '提醒：不当使用警告或封禁模板'
 				},
 				level2: {
 					'label': '不当使用警告或封禁模板',
-					'summary': '层级2：不当使用警告或封禁模板'
+					'summary': '注意：不当使用警告或封禁模板'
 				},
 				level3: {
 					'label': '不当使用警告或封禁模板',
-					'summary': '层级3：不当使用警告或封禁模板'
+					'summary': '警告：不当使用警告或封禁模板'
 				},
 				level4: {
 					'label': '不当使用警告或封禁模板',
-					'summary': '层级4：不当使用警告或封禁模板'
+					'summary': '最后警告：不当使用警告或封禁模板'
 				},
 				level4im: {
 					'label': '不当使用警告或封禁模板',
-					'summary': '层级4im：不当使用警告或封禁模板'
+					'summary': '唯一警告：不当使用警告或封禁模板'
 				}
 			}
 		}
@@ -862,224 +862,224 @@ Twinkle.warn.messages = wgULS({
 	singlenotice: {
 		'uw-2redirect': {
 			label: '在移动页面后应该修复双重重定向',
-			summary: '单层级通知：在移动页面后应该修复双重重定向'
+			summary: '提醒：在移动页面后应该修复双重重定向'
 		},
 		'uw-aiv': {
 			label: '举报的并不是破坏者，或者举报破坏前未进行警告',
-			summary: '单层级通知：不恰当地举报破坏'
+			summary: '提醒：不恰当地举报破坏'
 		},
 		'uw-articlesig': {
 			label: '在条目中签名',
-			summary: '单层级通知：在条目中签名'
+			summary: '提醒：在条目中签名'
 		},
 		'uw-autobiography': {
 			label: '建立自传',
-			summary: '单层级通知：建立自传'
+			summary: '提醒：建立自传'
 		},
 		'uw-badcat': {
 			label: '加入错误的页面分类',
-			summary: '单层级通知：加入错误的页面分类'
+			summary: '提醒：加入错误的页面分类'
 		},
 		'uw-bite': {
 			label: '伤害新手',
-			summary: '单层级通知：伤害新手'
+			summary: '提醒：伤害新手'
 		},
 		'uw-booktitle': {
 			label: '没有使用书名号来标示书籍、电影、音乐专辑等',
-			summary: '单层级通知：没有使用书名号来标示书籍、电影、音乐专辑等'
+			summary: '提醒：没有使用书名号来标示书籍、电影、音乐专辑等'
 		},
 		'uw-c&pmove': {
 			label: '剪贴移动',
-			summary: '单层级通知：剪贴移动'
+			summary: '提醒：剪贴移动'
 		},
 		'uw-chinese': {
 			label: '不是以中文进行沟通',
-			summary: '单层级通知：不是以中文进行沟通'
+			summary: '提醒：不是以中文进行沟通'
 		},
 		'uw-coi': {
 			label: '利益冲突',
-			summary: '单层级通知：利益冲突'
+			summary: '提醒：利益冲突'
 		},
 		'uw-concovid19': {
 			label: '违反COVID-19条目共识',
-			summary: '单层级通知：违反COVID-19条目共识'
+			summary: '提醒：违反COVID-19条目共识'
 		},
 		'uw-copyright-friendly': {
 			label: '初次加入侵犯版权的内容',
-			summary: '单层级通知：初次加入侵犯版权的内容'
+			summary: '提醒：初次加入侵犯版权的内容'
 		},
 		'uw-copyviorewrite': {
 			label: '在侵权页面直接重写条目',
-			summary: '单层级通知：在侵权页面直接重写条目'
+			summary: '提醒：在侵权页面直接重写条目'
 		},
 		'uw-crystal': {
 			label: '加入臆测或未确认的讯息',
-			summary: '单层级通知：加入臆测或未确认的讯息'
+			summary: '提醒：加入臆测或未确认的讯息'
 		},
 		'uw-csd': {
 			label: '快速删除理由不当',
-			summary: '单层级通知：快速删除理由不当'
+			summary: '提醒：快速删除理由不当'
 		},
 		'uw-dab': {
 			label: '消歧义页格式错误',
-			summary: '单层级通知：消歧义页格式错误'
+			summary: '提醒：消歧义页格式错误'
 		},
 		'uw-editsummary': {
 			label: '没有使用编辑摘要',
-			summary: '单层级通知：没有使用编辑摘要'
+			summary: '提醒：没有使用编辑摘要'
 		},
 		'uw-hangon': {
 			label: '没有在讨论页说明暂缓快速删除理由',
-			summary: '单层级通知：没有在讨论页说明暂缓快速删除理由'
+			summary: '提醒：没有在讨论页说明暂缓快速删除理由'
 		},
 		'uw-lang': {
 			label: '不必要地将文字换成简体或繁体中文',
-			summary: '单层级通知：不必要地将文字换成简体或繁体中文'
+			summary: '提醒：不必要地将文字换成简体或繁体中文'
 		},
 		'uw-langmove': {
 			label: '不必要地将标题换成简体或繁体中文',
-			summary: '单层级通知：不必要地将标题换成简体或繁体中文'
+			summary: '提醒：不必要地将标题换成简体或繁体中文'
 		},
 		'uw-linking': {
 			label: '过度加入红字连结或重复蓝字连结',
-			summary: '单层级通知：过度加入红字连结或重复蓝字连结'
+			summary: '提醒：过度加入红字连结或重复蓝字连结'
 		},
 		'uw-minor': {
 			label: '不适当地使用小修改选项',
-			summary: '单层级通知：不适当地使用小修改选项'
+			summary: '提醒：不适当地使用小修改选项'
 		},
 		'uw-notaiv': {
 			label: '向“当前的破坏”中报告的是用户纷争而不是破坏',
-			summary: '单层级通知：向“当前的破坏”中报告的是用户纷争而不是破坏'
+			summary: '提醒：向“当前的破坏”中报告的是用户纷争而不是破坏'
 		},
 		'uw-notvote': {
 			label: '我们以共识处事，而不仅仅是投票',
-			summary: '单层级通知：我们以共识处事，而不仅仅是投票'
+			summary: '提醒：我们以共识处事，而不仅仅是投票'
 		},
 		'uw-preview': {
 			label: '请使用预览按钮来避免不必要的错误',
-			summary: '单层级通知：请使用预览按钮来避免不必要的错误'
+			summary: '提醒：请使用预览按钮来避免不必要的错误'
 		},
 		'uw-sandbox': {
 			label: '移除沙盒的置顶模板{{sandbox}}',
-			summary: '单层级通知：移除沙盒的置顶模板{{sandbox}}'
+			summary: '提醒：移除沙盒的置顶模板{{sandbox}}'
 		},
 		'uw-selfrevert': {
 			label: '感谢您自行回退自己的测试，以后不要再这样做了',
-			summary: '单层级通知：回退个人的测试'
+			summary: '提醒：回退个人的测试'
 		},
 		'uw-subst': {
 			label: '谨记要替代模板（subst）',
-			summary: '单层级通知：谨记要替代模板'
+			summary: '提醒：谨记要替代模板'
 		},
 		'uw-talkinarticle': {
 			label: '在条目页中留下意见',
-			summary: '单层级通知：在条目页中留下意见'
+			summary: '提醒：在条目页中留下意见'
 		},
 		'uw-tilde': {
 			label: '没有在讨论页上签名',
-			summary: '单层级通知：没有在讨论页上签名'
+			summary: '提醒：没有在讨论页上签名'
 		},
 		'uw-translated': {
 			label: '翻译条目未标注原作者',
-			summary: '单层级通知：翻译条目未标注原作者'
+			summary: '提醒：翻译条目未标注原作者'
 		},
 		'uw-uaa': {
 			label: '向需要管理员注意的用户名报告的用户名称并不违反方针',
-			summary: '单层级通知：向需要管理员注意的用户名报告的用户名称并不违反方针'
+			summary: '提醒：向需要管理员注意的用户名报告的用户名称并不违反方针'
 		},
 		'uw-warn': {
 			label: '警告破坏用户',
-			summary: '单层级通知：警告破坏用户'
+			summary: '提醒：警告破坏用户'
 		},
 		'uw-mosiw': {
 			label: '不要使用跨语言链接',
-			summary: '单层级通知：不要使用跨语言链接'
+			summary: '提醒：不要使用跨语言链接'
 		},
 		'uw-badtwinkle': {
 			label: '不恰当地使用Twinkle警告别人',
-			summary: '单层级通知：不恰当地使用Twinkle警告别人'
+			summary: '提醒：不恰当地使用Twinkle警告别人'
 		}
 	},
 
 	singlewarn: {
 		'uw-3rr': {
 			label: '用户潜在违反回退不过三原则的可能性',
-			summary: '单层级警告：用户潜在违反回退不过三原则的可能性'
+			summary: '警告：用户潜在违反回退不过三原则的可能性'
 		},
 		'uw-attack': {
 			label: '建立人身攻击页面',
-			summary: '单层级警告：建立人身攻击页面',
+			summary: '警告：建立人身攻击页面',
 			suppressArticleInSummary: true
 		},
 		'uw-bv': {
 			label: '公然地破坏',
-			summary: '单层级警告：公然地破坏'
+			summary: '警告：公然地破坏'
 		},
 		'uw-canvass': {
 			label: '不恰当地拉票',
-			summary: '单层级警告：不恰当地拉票'
+			summary: '警告：不恰当地拉票'
 		},
 		'uw-copyright': {
 			label: '侵犯版权',
-			summary: '单层级警告：侵犯版权'
+			summary: '警告：侵犯版权'
 		},
 		'uw-copyright-link': {
 			label: '连结到有版权的材料',
-			summary: '单层级警告：连结到有版权的材料'
+			summary: '警告：连结到有版权的材料'
 		},
 		'uw-fakesource': {
 			label: '虚构资料来源或引文',
-			summary: '单层级警告：虚构资料来源或引文'
+			summary: '警告：虚构资料来源或引文'
 		},
 		'uw-hoax': {
 			label: '建立恶作剧',
-			summary: '单层级警告：建立恶作剧'
+			summary: '警告：建立恶作剧'
 		},
 		'uw-incompletecite': {
 			label: '列出的资料来源欠缺若干详情而不易查找',
-			summary: '单层级警告：列出的资料来源欠缺若干详情而不易查找'
+			summary: '警告：列出的资料来源欠缺若干详情而不易查找'
 		},
 		'uw-legal': {
 			label: '诉诸法律威胁',
-			summary: '单层级警告：诉诸法律威胁'
+			summary: '警告：诉诸法律威胁'
 		},
 		'uw-longterm': {
 			label: '长期的破坏',
-			summary: '单层级警告：长期的破坏'
+			summary: '警告：长期的破坏'
 		},
 		'uw-multipleIPs': {
 			label: '使用多个IP地址进行破坏',
-			summary: '单层级警告：使用多个IP地址进行破坏'
+			summary: '警告：使用多个IP地址进行破坏'
 		},
 		'uw-npov-tvd': {
 			label: '在剧集条目中加入奸角等非中立描述',
-			summary: '单层级警告：在剧集条目中加入奸角等非中立描述'
+			summary: '警告：在剧集条目中加入奸角等非中立描述'
 		},
 		'uw-pinfo': {
 			label: '张贴他人隐私',
-			summary: '单层级警告：张贴他人隐私'
+			summary: '警告：张贴他人隐私'
 		},
 		'uw-upv': {
 			label: '破坏他人用户页',
-			summary: '单层级警告：破坏他人用户页'
+			summary: '警告：破坏他人用户页'
 		},
 		'uw-selfinventedname': {
 			label: '不适当地自创新名词、新译名',
-			summary: '单层级警告：不适当地自创新名词、新译名'
+			summary: '警告：不适当地自创新名词、新译名'
 		},
 		'uw-substub': {
 			label: '创建小小作品',
-			summary: '单层级警告：创建小小作品'
+			summary: '警告：创建小小作品'
 		},
 		'uw-username': {
 			label: '使用不恰当的用户名',
-			summary: '单层级警告：使用不恰当的用户名',
+			summary: '警告：使用不恰当的用户名',
 			suppressArticleInSummary: true
 		},
 		'uw-wrongsummary': {
 			label: '在编辑摘要制造不适当的内容',
-			summary: '单层级警告：在编辑摘要制造不适当的内容'
+			summary: '警告：在编辑摘要制造不适当的内容'
 		}
 	}
 }, {
@@ -1088,227 +1088,227 @@ Twinkle.warn.messages = wgULS({
 			'uw-vandalism': {
 				level1: {
 					'label': '明顯的破壞',
-					'summary': '層級1：明顯破壞'
+					'summary': '提醒：明顯破壞'
 				},
 				level2: {
 					'label': '明顯的破壞',
-					'summary': '層級2：明顯破壞'
+					'summary': '注意：明顯破壞'
 				},
 				level3: {
 					'label': '惡意破壞',
-					'summary': '層級3：惡意破壞'
+					'summary': '警告：惡意破壞'
 				},
 				level4: {
 					'label': '惡意破壞',
-					'summary': '層級4：惡意破壞'
+					'summary': '最後警告：惡意破壞'
 				},
 				level4im: {
 					'label': '惡意破壞',
-					'summary': '層級4im：惡意破壞'
+					'summary': '唯一警告：惡意破壞'
 				}
 			},
 			'uw-test': {
 				level1: {
 					'label': '進行編輯測試而未及時清理',
-					'summary': '層級1：進行編輯測試而未及時清理'
+					'summary': '提醒：進行編輯測試而未及時清理'
 				},
 				level2: {
 					'label': '進行損毀性的編輯測試',
-					'summary': '層級2：進行編輯測試'
+					'summary': '注意：進行編輯測試'
 				},
 				level3: {
 					'label': '編輯測試',
-					'summary': '層級3：編輯測試'
+					'summary': '警告：編輯測試'
 				},
 				level4: {
 					'label': '編輯測試',
-					'summary': '層級4：編輯測試'
+					'summary': '最後警告：編輯測試'
 				}
 			},
 			'uw-delete': {
 				level1: {
 					'label': '不恰當地移除頁面內容、模板或資料',
-					'summary': '層級1：不恰當地移除頁面內容、模板或資料'
+					'summary': '提醒：不恰當地移除頁面內容、模板或資料'
 				},
 				level2: {
 					'label': '不恰當地移除頁面內容、模板或資料',
-					'summary': '層級2：不恰當地移除頁面內容、模板或資料'
+					'summary': '注意：不恰當地移除頁面內容、模板或資料'
 				},
 				level3: {
 					'label': '不恰當地移除頁面內容、模板或資料',
-					'summary': '層級3：不恰當地移除頁面內容、模板或資料'
+					'summary': '警告：不恰當地移除頁面內容、模板或資料'
 				},
 				level4: {
 					'label': '移除頁面、移除內容或模板',
-					'summary': '層級4：移除頁面、移除內容或模板'
+					'summary': '最後警告：移除頁面、移除內容或模板'
 				},
 				level4im: {
 					'label': '移除頁面內容、模板或資料',
-					'summary': '層級4im：移除頁面內容、模板或資料'
+					'summary': '唯一警告：移除頁面內容、模板或資料'
 				}
 			},
 			'uw-redirect': {
 				level1: {
 					'label': '建立破壞性的重定向',
-					'summary': '層級1：建立破壞性的重定向'
+					'summary': '提醒：建立破壞性的重定向'
 				},
 				level2: {
 					'label': '建立惡意重定向',
-					'summary': '層級2：建立惡意重定向'
+					'summary': '注意：建立惡意重定向'
 				},
 				level3: {
 					'label': '建立惡意重定向',
-					'summary': '層級3：建立惡意重定向'
+					'summary': '警告：建立惡意重定向'
 				},
 				level4: {
 					'label': '建立惡意重定向',
-					'summary': '層級4：建立惡意重定向'
+					'summary': '最後警告：建立惡意重定向'
 				},
 				level4im: {
 					'label': '建立惡意重定向',
-					'summary': '層級4im：建立惡意重定向'
+					'summary': '唯一警告：建立惡意重定向'
 				}
 			},
 			'uw-tdel': {
 				level1: {
 					'label': '在問題仍未解決的情況下移除維護性模板',
-					'summary': '層級1：移除維護性模板'
+					'summary': '提醒：移除維護性模板'
 				},
 				level2: {
 					'label': '在問題仍未解決的情況下移除維護性模板',
-					'summary': '層級2：移除維護性模板'
+					'summary': '注意：移除維護性模板'
 				},
 				level3: {
 					'label': '移除維護性模板',
-					'summary': '層級3：移除維護性模板'
+					'summary': '警告：移除維護性模板'
 				},
 				level4: {
 					'label': '移除維護性模板',
-					'summary': '層級4：移除維護性模板'
+					'summary': '最後警告：移除維護性模板'
 				}
 			},
 			'uw-joke': {
 				level1: {
 					'label': '在百科全書內容中加入玩笑',
-					'summary': '層級1：加入不當玩笑'
+					'summary': '提醒：加入不當玩笑'
 				},
 				level2: {
 					'label': '在百科全書內容中加入玩笑',
-					'summary': '層級2：加入不當玩笑'
+					'summary': '注意：加入不當玩笑'
 				},
 				level3: {
 					'label': '在百科全書內容中加入不當玩笑',
-					'summary': '層級3：在百科全書內容中加入不當玩笑'
+					'summary': '警告：在百科全書內容中加入不當玩笑'
 				},
 				level4: {
 					'label': '在百科全書內容中加入不當玩笑',
-					'summary': '層級4：在百科全書內容中加入不當玩笑'
+					'summary': '最後警告：在百科全書內容中加入不當玩笑'
 				},
 				level4im: {
 					'label': '加入不當玩笑',
-					'summary': '層級4im：加入不當玩笑'
+					'summary': '唯一警告：加入不當玩笑'
 				}
 			},
 			'uw-create': {
 				level1: {
 					'label': '建立不當頁面',
-					'summary': '層級1：建立不當頁面'
+					'summary': '提醒：建立不當頁面'
 				},
 				level2: {
 					'label': '建立不當頁面',
-					'summary': '層級2：建立不當頁面'
+					'summary': '注意：建立不當頁面'
 				},
 				level3: {
 					'label': '建立不當頁面',
-					'summary': '層級3：建立不當頁面'
+					'summary': '警告：建立不當頁面'
 				},
 				level4: {
 					'label': '建立不當頁面',
-					'summary': '層級4：建立不當頁面'
+					'summary': '最後警告：建立不當頁面'
 				},
 				level4im: {
 					'label': '建立不當頁面',
-					'summary': '層級4im：建立不當頁面'
+					'summary': '唯一警告：建立不當頁面'
 				}
 			},
 			'uw-upload': {
 				level1: {
 					'label': '上傳不當圖像',
-					'summary': '層級1：上傳不當圖像'
+					'summary': '提醒：上傳不當圖像'
 				},
 				level2: {
 					'label': '上傳不當圖像',
-					'summary': '層級2：上傳不當圖像'
+					'summary': '注意：上傳不當圖像'
 				},
 				level3: {
 					'label': '上傳不當圖像',
-					'summary': '層級3：上傳不當圖像'
+					'summary': '警告：上傳不當圖像'
 				},
 				level4: {
 					'label': '上傳不當圖像',
-					'summary': '層級4：上傳不當圖像'
+					'summary': '最後警告：上傳不當圖像'
 				},
 				level4im: {
 					'label': '上傳不當圖像',
-					'summary': '層級4im：上傳不當圖像'
+					'summary': '唯一警告：上傳不當圖像'
 				}
 			},
 			'uw-image': {
 				level1: {
 					'label': '在頁面中加入不當圖片',
-					'summary': '層級1：在頁面中加入不當圖片'
+					'summary': '提醒：在頁面中加入不當圖片'
 				},
 				level2: {
 					'label': '在頁面中加入不當圖片',
-					'summary': '層級2：在頁面中加入不當圖片'
+					'summary': '注意：在頁面中加入不當圖片'
 				},
 				level3: {
 					'label': '在頁面中加入不當圖片',
-					'summary': '層級3：在頁面中加入不當圖片'
+					'summary': '警告：在頁面中加入不當圖片'
 				},
 				level4: {
 					'label': '在頁面中加入不當圖片',
-					'summary': '層級4：在頁面中加入不當圖片'
+					'summary': '最後警告：在頁面中加入不當圖片'
 				},
 				level4im: {
 					'label': '加入不恰當的圖片',
-					'summary': '層級4im：加入不恰當的圖片'
+					'summary': '唯一警告：加入不恰當的圖片'
 				}
 			},
 			'uw-nor': {
 				level1: {
 					'label': '在條目中加入原創研究',
-					'summary': '層級1：在條目中加入原創研究'
+					'summary': '提醒：在條目中加入原創研究'
 				},
 				level2: {
 					'label': '在條目中加入原創研究',
-					'summary': '層級2：在條目中加入原創研究'
+					'summary': '注意：在條目中加入原創研究'
 				},
 				level3: {
 					'label': '在條目中加入原創研究',
-					'summary': '層級3：在條目中加入原創研究'
+					'summary': '警告：在條目中加入原創研究'
 				}
 			},
 			'uw-politicalbias': {
 				level1: {
 					'label': '違反兩岸用語方針',
-					'summary': '層級1：違反兩岸用語方針'
+					'summary': '提醒：違反兩岸用語方針'
 				},
 				level2: {
 					'label': '違反兩岸用語方針',
-					'summary': '層級2：違反兩岸用語方針'
+					'summary': '注意：違反兩岸用語方針'
 				},
 				level3: {
 					'label': '違反兩岸用語方針',
-					'summary': '層級3：違反兩岸用語方針'
+					'summary': '警告：違反兩岸用語方針'
 				},
 				level4: {
 					'label': '違反兩岸用語方針',
-					'summary': '層級4：違反兩岸用語方針'
+					'summary': '最後警告：違反兩岸用語方針'
 				},
 				level4im: {
 					'label': '違反兩岸用語方針',
-					'summary': '層級4im：違反兩岸用語方針'
+					'summary': '唯一警告：違反兩岸用語方針'
 				}
 			}
 		},
@@ -1316,59 +1316,59 @@ Twinkle.warn.messages = wgULS({
 			'uw-spam': {
 				level1: {
 					'label': '增加不合適的外部連結',
-					'summary': '層級1：增加不合適的外部連結'
+					'summary': '提醒：增加不合適的外部連結'
 				},
 				level2: {
 					'label': '增加垃圾連結',
-					'summary': '層級2：增加垃圾連結'
+					'summary': '注意：增加垃圾連結'
 				},
 				level3: {
 					'label': '增加垃圾連結',
-					'summary': '層級3：增加垃圾連結'
+					'summary': '警告：增加垃圾連結'
 				},
 				level4: {
 					'label': '增加垃圾連結',
-					'summary': '層級4：增加垃圾連結'
+					'summary': '最後警告：增加垃圾連結'
 				},
 				level4im: {
 					'label': '增加垃圾連結',
-					'summary': '層級4im：增加垃圾連結'
+					'summary': '唯一警告：增加垃圾連結'
 				}
 			},
 			'uw-advert': {
 				level1: {
 					'label': '利用維基百科來發布廣告或推廣',
-					'summary': '層級1：利用維基百科來發布廣告或推廣'
+					'summary': '提醒：利用維基百科來發布廣告或推廣'
 				},
 				level2: {
 					'label': '利用維基百科來發布廣告或推廣',
-					'summary': '層級2：利用維基百科來發布廣告或推廣'
+					'summary': '注意：利用維基百科來發布廣告或推廣'
 				},
 				level3: {
 					'label': '利用維基百科來發布廣告或推廣',
-					'summary': '層級3：利用維基百科來發布廣告或推廣'
+					'summary': '警告：利用維基百科來發布廣告或推廣'
 				},
 				level4: {
 					'label': '利用維基百科來發布廣告或推廣',
-					'summary': '層級4：利用維基百科來發布廣告或推廣'
+					'summary': '最後警告：利用維基百科來發布廣告或推廣'
 				}
 			},
 			'uw-npov': {
 				level1: {
 					'label': '不遵守中立的觀點方針',
-					'summary': '層級1：不遵守中立的觀點方針'
+					'summary': '提醒：不遵守中立的觀點方針'
 				},
 				level2: {
 					'label': '不遵守中立的觀點方針',
-					'summary': '層級2：不遵守中立的觀點方針'
+					'summary': '注意：不遵守中立的觀點方針'
 				},
 				level3: {
 					'label': '違反中立的觀點方針',
-					'summary': '層級3：違反中立的觀點方針'
+					'summary': '警告：違反中立的觀點方針'
 				},
 				level4: {
 					'label': '違反中立的觀點方針',
-					'summary': '層級4：違反中立的觀點方針'
+					'summary': '最後警告：違反中立的觀點方針'
 				}
 			}
 		},
@@ -1376,73 +1376,73 @@ Twinkle.warn.messages = wgULS({
 			'uw-unsourced': {
 				level1: {
 					'label': '加入沒有可靠來源佐證的內容',
-					'summary': '層級1：加入沒有可靠來源佐證的內容'
+					'summary': '提醒：加入沒有可靠來源佐證的內容'
 				},
 				level2: {
 					'label': '加入沒有可靠來源佐證的內容',
-					'summary': '層級2：加入沒有可靠來源佐證的內容'
+					'summary': '注意：加入沒有可靠來源佐證的內容'
 				},
 				level3: {
 					'label': '加入沒有可靠來源佐證的內容',
-					'summary': '層級3：加入沒有可靠來源佐證的內容'
+					'summary': '警告：加入沒有可靠來源佐證的內容'
 				}
 			},
 			'uw-error': {
 				level1: {
 					'label': '故意加入不實內容',
-					'summary': '層級1：故意加入不實內容'
+					'summary': '提醒：故意加入不實內容'
 				},
 				level2: {
 					'label': '故意加入不實內容',
-					'summary': '層級2：故意加入不實內容'
+					'summary': '注意：故意加入不實內容'
 				},
 				level3: {
 					'label': '故意加入不實內容',
-					'summary': '層級3：故意加入不實內容'
+					'summary': '警告：故意加入不實內容'
 				}
 			},
 			'uw-biog': {
 				level1: {
 					'label': '在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容',
-					'summary': '層級1：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
+					'summary': '提醒：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
 				},
 				level2: {
 					'label': '在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容',
-					'summary': '層級2：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
+					'summary': '注意：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
 				},
 				level3: {
 					'label': '在生者傳記中加入沒有可靠來源佐證而且帶有爭議的內容',
-					'summary': '層級3：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
+					'summary': '警告：在生者傳記中加入沒有可靠來源佐證而且可能引發爭議的內容'
 				},
 				level4: {
 					'label': '加入有關在生人物而又缺乏來源的資料',
-					'summary': '層級4：加入有關在生人物而又缺乏來源的資料'
+					'summary': '最後警告：加入有關在生人物而又缺乏來源的資料'
 				},
 				level4im: {
 					'label': '加入有關在生人物而又缺乏來源的資料',
-					'summary': '層級4im：加入有關在生人物而又缺乏來源的資料'
+					'summary': '唯一警告：加入有關在生人物而又缺乏來源的資料'
 				}
 			},
 			'uw-defamatory': {
 				level1: {
 					'label': '加入誹謗內容',
-					'summary': '層級1：加入誹謗內容'
+					'summary': '提醒：加入誹謗內容'
 				},
 				level2: {
 					'label': '加入誹謗內容',
-					'summary': '層級2：加入誹謗內容'
+					'summary': '注意：加入誹謗內容'
 				},
 				level3: {
 					'label': '加入誹謗內容',
-					'summary': '層級3：加入誹謗內容'
+					'summary': '警告：加入誹謗內容'
 				},
 				level4: {
 					'label': '加入誹謗內容',
-					'summary': '層級4：加入誹謗內容'
+					'summary': '最後警告：加入誹謗內容'
 				},
 				level4im: {
 					'label': '加入誹謗內容',
-					'summary': '層級4im：加入誹謗內容'
+					'summary': '唯一警告：加入誹謗內容'
 				}
 			}
 		},
@@ -1450,15 +1450,15 @@ Twinkle.warn.messages = wgULS({
 			'uw-roughtranslation': {
 				level1: {
 					'label': '您翻譯的質量有待改善',
-					'summary': '層級1：您翻譯的質量有待改善'
+					'summary': '提醒：您翻譯的質量有待改善'
 				},
 				level2: {
 					'label': '粗劣翻譯',
-					'summary': '層級2：粗劣翻譯'
+					'summary': '注意：粗劣翻譯'
 				},
 				level3: {
 					'label': '粗劣翻譯',
-					'summary': '層級3：粗劣翻譯'
+					'summary': '警告：粗劣翻譯'
 				}
 			}
 		},
@@ -1466,137 +1466,137 @@ Twinkle.warn.messages = wgULS({
 			'uw-notcensored': {
 				level1: {
 					'label': '因為「內容使人反感」而刪除條目內容',
-					'summary': '層級1：審查條目內容'
+					'summary': '提醒：審查條目內容'
 				},
 				level2: {
 					'label': '內容審查',
-					'summary': '層級2：內容審查'
+					'summary': '注意：內容審查'
 				},
 				level3: {
 					'label': '審查內容',
-					'summary': '層級3：審查內容'
+					'summary': '警告：審查內容'
 				}
 			},
 			'uw-mos': {
 				level1: {
 					'label': '不恰當的條目格式、日期、語言等',
-					'summary': '層級1：不恰當的條目格式、日期、語言等'
+					'summary': '提醒：不恰當的條目格式、日期、語言等'
 				},
 				level2: {
 					'label': '不恰當的條目格式、日期、語言等',
-					'summary': '層級2：不恰當的條目格式、日期、語言等'
+					'summary': '注意：不恰當的條目格式、日期、語言等'
 				},
 				level3: {
 					'label': '違反格式、日期、語言等規定',
-					'summary': '層級3：違反格式、日期、語言等規定'
+					'summary': '警告：違反格式、日期、語言等規定'
 				},
 				level4: {
 					'label': '違反格式、日期、語言等相關規定',
-					'summary': '層級4：違反格式、日期、語言等相關規定'
+					'summary': '最後警告：違反格式、日期、語言等相關規定'
 				}
 			},
 			'uw-move': {
 				level1: {
 					'label': '無故移動條目/新名稱不符合命名規範',
-					'summary': '層級1：不恰當地移動頁面'
+					'summary': '提醒：不恰當地移動頁面'
 				},
 				level2: {
 					'label': '把頁面移動到不恰當、違反命名常規或違反共識的標題',
-					'summary': '層級2：不恰當地移動頁面'
+					'summary': '注意：不恰當地移動頁面'
 				},
 				level3: {
 					'label': '不恰當地移動頁面',
-					'summary': '層級3：不恰當地移動頁面'
+					'summary': '警告：不恰當地移動頁面'
 				},
 				level4: {
 					'label': '不恰當地移動頁面',
-					'summary': '層級4：不恰當地移動頁面'
+					'summary': '最後警告：不恰當地移動頁面'
 				},
 				level4im: {
 					'label': '不恰當地移動頁面',
-					'summary': '層級4im：不恰當地移動頁面'
+					'summary': '唯一警告：不恰當地移動頁面'
 				}
 			},
 			'uw-cd': {
 				level1: {
 					'label': '清空討論頁',
-					'summary': '層級1：清空討論頁'
+					'summary': '提醒：清空討論頁'
 				},
 				level2: {
 					'label': '清空討論頁',
-					'summary': '層級2：清空討論頁'
+					'summary': '注意：清空討論頁'
 				},
 				level3: {
 					'label': '清空討論頁',
-					'summary': '層級3：清空討論頁'
+					'summary': '警告：清空討論頁'
 				}
 			},
 			'uw-chat': {
 				level1: {
 					'label': '在討論頁發表與改善條目無關的內容',
-					'summary': '層級1：在討論頁發表與改善條目無關的內容'
+					'summary': '提醒：在討論頁發表與改善條目無關的內容'
 				},
 				level2: {
 					'label': '在討論頁發表與改善條目無關的內容',
-					'summary': '層級2：在討論頁發表與改善條目無關的內容'
+					'summary': '注意：在討論頁發表與改善條目無關的內容'
 				},
 				level3: {
 					'label': '在討論頁發表無關內容',
-					'summary': '層級3：在討論頁發表無關內容'
+					'summary': '警告：在討論頁發表無關內容'
 				},
 				level4: {
 					'label': '在討論頁進行不當討論',
-					'summary': '層級4：在討論頁進行不當討論'
+					'summary': '最後警告：在討論頁進行不當討論'
 				}
 			},
 			'uw-tpv': {
 				level1: {
 					'label': '修改他人留言',
-					'summary': '層級1：修改他人留言'
+					'summary': '提醒：修改他人留言'
 				},
 				level2: {
 					'label': '修改他人留言',
-					'summary': '層級2：修改他人留言'
+					'summary': '注意：修改他人留言'
 				},
 				level3: {
 					'label': '修改他人留言',
-					'summary': '層級3：修改他人留言'
+					'summary': '警告：修改他人留言'
 				}
 			},
 			'uw-afd': {
 				level1: {
 					'label': '移除{{afd}}（頁面存廢討論）模板',
-					'summary': '層級1：移除{{afd}}（頁面存廢討論）模板'
+					'summary': '提醒：移除{{afd}}（頁面存廢討論）模板'
 				},
 				level2: {
 					'label': '移除{{afd}}（頁面存廢討論）模板',
-					'summary': '層級2：移除{{afd}}（頁面存廢討論）模板'
+					'summary': '注意：移除{{afd}}（頁面存廢討論）模板'
 				},
 				level3: {
 					'label': '移除{{afd}}（頁面存廢討論）模板',
-					'summary': '層級3：移除{{afd}}（頁面存廢討論）模板'
+					'summary': '警告：移除{{afd}}（頁面存廢討論）模板'
 				},
 				level4: {
 					'label': '移除{{afd}}模板',
-					'summary': '層級4：移除{{afd}}模板'
+					'summary': '最後警告：移除{{afd}}模板'
 				}
 			},
 			'uw-speedy': {
 				level1: {
 					'label': '移除{{delete}}（快速刪除）模板',
-					'summary': '層級1：移除{{delete}}（快速刪除）模板'
+					'summary': '提醒：移除{{delete}}（快速刪除）模板'
 				},
 				level2: {
 					'label': '移除{{delete}}（快速刪除）模板',
-					'summary': '層級2：移除{{delete}}（快速刪除）模板'
+					'summary': '注意：移除{{delete}}（快速刪除）模板'
 				},
 				level3: {
 					'label': '移除{{delete}}（快速刪除）模板',
-					'summary': '層級3：移除{{delete}}（快速刪除）模板'
+					'summary': '警告：移除{{delete}}（快速刪除）模板'
 				},
 				level4: {
 					'label': '移除{{delete}}模板',
-					'summary': '層級4：移除{{delete}}模板'
+					'summary': '最後警告：移除{{delete}}模板'
 				}
 			}
 		},
@@ -1604,73 +1604,73 @@ Twinkle.warn.messages = wgULS({
 			'uw-npa': {
 				level1: {
 					'label': '針對用戶的人身攻擊',
-					'summary': '層級1：針對用戶的人身攻擊'
+					'summary': '提醒：針對用戶的人身攻擊'
 				},
 				level2: {
 					'label': '針對用戶的人身攻擊',
-					'summary': '層級2：針對用戶的人身攻擊'
+					'summary': '注意：針對用戶的人身攻擊'
 				},
 				level3: {
 					'label': '針對用戶的人身攻擊',
-					'summary': '層級3：針對用戶的人身攻擊'
+					'summary': '警告：針對用戶的人身攻擊'
 				},
 				level4: {
 					'label': '針對用戶的人身攻擊',
-					'summary': '層級4：針對用戶的人身攻擊'
+					'summary': '最後警告：針對用戶的人身攻擊'
 				},
 				level4im: {
 					'label': '針對用戶的人身攻擊',
-					'summary': '層級4im：針對用戶的人身攻擊'
+					'summary': '唯一警告：針對用戶的人身攻擊'
 				}
 			},
 			'uw-agf': {
 				level1: {
 					'label': '沒有假定善意',
-					'summary': '層級1：沒有假定善意'
+					'summary': '提醒：沒有假定善意'
 				},
 				level2: {
 					'label': '沒有假定善意',
-					'summary': '層級2：沒有假定善意'
+					'summary': '注意：沒有假定善意'
 				},
 				level3: {
 					'label': '沒有假定善意',
-					'summary': '層級3：沒有假定善意'
+					'summary': '警告：沒有假定善意'
 				}
 			},
 			'uw-own': {
 				level1: {
 					'label': '主張條目所有權',
-					'summary': '層級1：主張條目所有權'
+					'summary': '提醒：主張條目所有權'
 				},
 				level2: {
 					'label': '主張條目的所有權',
-					'summary': '層級2：主張條目的所有權'
+					'summary': '注意：主張條目的所有權'
 				},
 				level3: {
 					'label': '主張條目的所有權',
-					'summary': '層級3：主張條目的所有權'
+					'summary': '警告：主張條目的所有權'
 				}
 			},
 			'uw-tempabuse': {
 				level1: {
 					'label': '不當使用警告或封禁模板',
-					'summary': '層級1：不當使用警告或封禁模板'
+					'summary': '提醒：不當使用警告或封禁模板'
 				},
 				level2: {
 					'label': '不當使用警告或封禁模板',
-					'summary': '層級2：不當使用警告或封禁模板'
+					'summary': '注意：不當使用警告或封禁模板'
 				},
 				level3: {
 					'label': '不當使用警告或封禁模板',
-					'summary': '層級3：不當使用警告或封禁模板'
+					'summary': '警告：不當使用警告或封禁模板'
 				},
 				level4: {
 					'label': '不當使用警告或封禁模板',
-					'summary': '層級4：不當使用警告或封禁模板'
+					'summary': '最後警告：不當使用警告或封禁模板'
 				},
 				level4im: {
 					'label': '不當使用警告或封禁模板',
-					'summary': '層級4im：不當使用警告或封禁模板'
+					'summary': '唯一警告：不當使用警告或封禁模板'
 				}
 			}
 		}
@@ -1679,224 +1679,224 @@ Twinkle.warn.messages = wgULS({
 	singlenotice: {
 		'uw-2redirect': {
 			label: '在移動頁面後應該修復雙重重定向',
-			summary: '單層級通知：在移動頁面後應該修復雙重重定向'
+			summary: '提醒：在移動頁面後應該修復雙重重定向'
 		},
 		'uw-aiv': {
 			label: '舉報的並不是破壞者，或者舉報破壞前未進行警告',
-			summary: '單層級通知：不恰當地舉報破壞'
+			summary: '提醒：不恰當地舉報破壞'
 		},
 		'uw-articlesig': {
 			label: '在條目中簽名',
-			summary: '單層級通知：在條目中簽名'
+			summary: '提醒：在條目中簽名'
 		},
 		'uw-autobiography': {
 			label: '建立自傳',
-			summary: '單層級通知：建立自傳'
+			summary: '提醒：建立自傳'
 		},
 		'uw-badcat': {
 			label: '加入錯誤的頁面分類',
-			summary: '單層級通知：加入錯誤的頁面分類'
+			summary: '提醒：加入錯誤的頁面分類'
 		},
 		'uw-bite': {
 			label: '傷害新手',
-			summary: '單層級通知：傷害新手'
+			summary: '提醒：傷害新手'
 		},
 		'uw-booktitle': {
 			label: '沒有使用書名號來標示書籍、電影、音樂專輯等',
-			summary: '單層級通知：沒有使用書名號來標示書籍、電影、音樂專輯等'
+			summary: '提醒：沒有使用書名號來標示書籍、電影、音樂專輯等'
 		},
 		'uw-c&pmove': {
 			label: '剪貼移動',
-			summary: '單層級通知：剪貼移動'
+			summary: '提醒：剪貼移動'
 		},
 		'uw-chinese': {
 			label: '不是以中文進行溝通',
-			summary: '單層級通知：不是以中文進行溝通'
+			summary: '提醒：不是以中文進行溝通'
 		},
 		'uw-coi': {
 			label: '利益衝突',
-			summary: '單層級通知：利益衝突'
+			summary: '提醒：利益衝突'
 		},
 		'uw-concovid19': {
 			label: '違反COVID-19條目共識',
-			summary: '單層級通知：違反COVID-19條目共識'
+			summary: '提醒：違反COVID-19條目共識'
 		},
 		'uw-copyright-friendly': {
 			label: '初次加入侵犯版權的內容',
-			summary: '單層級通知：初次加入侵犯版權的內容'
+			summary: '提醒：初次加入侵犯版權的內容'
 		},
 		'uw-copyviorewrite': {
 			label: '在侵權頁面直接重寫條目',
-			summary: '單層級通知：在侵權頁面直接重寫條目'
+			summary: '提醒：在侵權頁面直接重寫條目'
 		},
 		'uw-crystal': {
 			label: '加入臆測或未確認的訊息',
-			summary: '單層級通知：加入臆測或未確認的訊息'
+			summary: '提醒：加入臆測或未確認的訊息'
 		},
 		'uw-csd': {
 			label: '快速刪除理由不當',
-			summary: '單層級通知：快速刪除理由不當'
+			summary: '提醒：快速刪除理由不當'
 		},
 		'uw-dab': {
 			label: '消歧義頁格式錯誤',
-			summary: '單層級通知：消歧義頁格式錯誤'
+			summary: '提醒：消歧義頁格式錯誤'
 		},
 		'uw-editsummary': {
 			label: '沒有使用編輯摘要',
-			summary: '單層級通知：沒有使用編輯摘要'
+			summary: '提醒：沒有使用編輯摘要'
 		},
 		'uw-hangon': {
 			label: '沒有在討論頁說明暫緩快速刪除理由',
-			summary: '單層級通知：沒有在討論頁說明暫緩快速刪除理由'
+			summary: '提醒：沒有在討論頁說明暫緩快速刪除理由'
 		},
 		'uw-lang': {
 			label: '不必要地將文字換成簡體或繁體中文',
-			summary: '單層級通知：不必要地將文字換成簡體或繁體中文'
+			summary: '提醒：不必要地將文字換成簡體或繁體中文'
 		},
 		'uw-langmove': {
 			label: '不必要地將標題換成簡體或繁體中文',
-			summary: '單層級通知：不必要地將標題換成簡體或繁體中文'
+			summary: '提醒：不必要地將標題換成簡體或繁體中文'
 		},
 		'uw-linking': {
 			label: '過度加入紅字連結或重複藍字連結',
-			summary: '單層級通知：過度加入紅字連結或重複藍字連結'
+			summary: '提醒：過度加入紅字連結或重複藍字連結'
 		},
 		'uw-minor': {
 			label: '不適當地使用小修改選項',
-			summary: '單層級通知：不適當地使用小修改選項'
+			summary: '提醒：不適當地使用小修改選項'
 		},
 		'uw-notaiv': {
 			label: '向「當前的破壞」中報告的是用戶紛爭而不是破壞',
-			summary: '單層級通知：向「當前的破壞」中報告的是用戶紛爭而不是破壞'
+			summary: '提醒：向「當前的破壞」中報告的是用戶紛爭而不是破壞'
 		},
 		'uw-notvote': {
 			label: '我們以共識處事，而不僅僅是投票',
-			summary: '單層級通知：我們以共識處事，而不僅僅是投票'
+			summary: '提醒：我們以共識處事，而不僅僅是投票'
 		},
 		'uw-preview': {
 			label: '請使用預覽按鈕來避免不必要的錯誤',
-			summary: '單層級通知：請使用預覽按鈕來避免不必要的錯誤'
+			summary: '提醒：請使用預覽按鈕來避免不必要的錯誤'
 		},
 		'uw-sandbox': {
 			label: '移除沙盒的置頂模板{{sandbox}}',
-			summary: '單層級通知：移除沙盒的置頂模板{{sandbox}}'
+			summary: '提醒：移除沙盒的置頂模板{{sandbox}}'
 		},
 		'uw-selfrevert': {
 			label: '感謝您自行回退自己的測試，以後不要再這樣做了',
-			summary: '單層級通知：回退個人的測試'
+			summary: '提醒：回退個人的測試'
 		},
 		'uw-subst': {
 			label: '謹記要替代模板（subst）',
-			summary: '單層級通知：謹記要替代模板'
+			summary: '提醒：謹記要替代模板'
 		},
 		'uw-talkinarticle': {
 			label: '在條目頁中留下意見',
-			summary: '單層級通知：在條目頁中留下意見'
+			summary: '提醒：在條目頁中留下意見'
 		},
 		'uw-tilde': {
 			label: '沒有在討論頁上簽名',
-			summary: '單層級通知：沒有在討論頁上簽名'
+			summary: '提醒：沒有在討論頁上簽名'
 		},
 		'uw-translated': {
 			label: '翻譯條目未標註原作者',
-			summary: '單層級通知：翻譯條目未標註原作者'
+			summary: '提醒：翻譯條目未標註原作者'
 		},
 		'uw-uaa': {
 			label: '向需要管理員注意的用戶名報告的用戶名稱並不違反方針',
-			summary: '單層級通知：向需要管理員注意的用戶名報告的用戶名稱並不違反方針'
+			summary: '提醒：向需要管理員注意的用戶名報告的用戶名稱並不違反方針'
 		},
 		'uw-warn': {
 			label: '警告破壞用戶',
-			summary: '單層級通知：警告破壞用戶'
+			summary: '提醒：警告破壞用戶'
 		},
 		'uw-mosiw': {
 			label: '不要使用跨語言連結',
-			summary: '單層級通知：不要使用跨語言連結'
+			summary: '提醒：不要使用跨語言連結'
 		},
 		'uw-badtwinkle': {
 			label: '不恰當地使用Twinkle警告別人',
-			summary: '單層級通知：不恰當地使用Twinkle警告別人'
+			summary: '提醒：不恰當地使用Twinkle警告別人'
 		}
 	},
 
 	singlewarn: {
 		'uw-3rr': {
 			label: '用戶潛在違反回退不過三原則的可能性',
-			summary: '單層級警告：用戶潛在違反回退不過三原則的可能性'
+			summary: '警告：用戶潛在違反回退不過三原則的可能性'
 		},
 		'uw-attack': {
 			label: '建立人身攻擊頁面',
-			summary: '單層級警告：建立人身攻擊頁面',
+			summary: '警告：建立人身攻擊頁面',
 			suppressArticleInSummary: true
 		},
 		'uw-bv': {
 			label: '公然地破壞',
-			summary: '單層級警告：公然地破壞'
+			summary: '警告：公然地破壞'
 		},
 		'uw-canvass': {
 			label: '不恰當地拉票',
-			summary: '單層級警告：不恰當地拉票'
+			summary: '警告：不恰當地拉票'
 		},
 		'uw-copyright': {
 			label: '侵犯版權',
-			summary: '單層級警告：侵犯版權'
+			summary: '警告：侵犯版權'
 		},
 		'uw-copyright-link': {
 			label: '連結到有版權的材料',
-			summary: '單層級警告：連結到有版權的材料'
+			summary: '警告：連結到有版權的材料'
 		},
 		'uw-fakesource': {
 			label: '虛構資料來源或引文',
-			summary: '單層級警告：虛構資料來源或引文'
+			summary: '警告：虛構資料來源或引文'
 		},
 		'uw-hoax': {
 			label: '建立惡作劇',
-			summary: '單層級警告：建立惡作劇'
+			summary: '警告：建立惡作劇'
 		},
 		'uw-incompletecite': {
 			label: '列出的資料來源欠缺若干詳情而不易查找',
-			summary: '單層級警告：列出的資料來源欠缺若干詳情而不易查找'
+			summary: '警告：列出的資料來源欠缺若干詳情而不易查找'
 		},
 		'uw-legal': {
 			label: '訴諸法律威脅',
-			summary: '單層級警告：訴諸法律威脅'
+			summary: '警告：訴諸法律威脅'
 		},
 		'uw-longterm': {
 			label: '長期的破壞',
-			summary: '單層級警告：長期的破壞'
+			summary: '警告：長期的破壞'
 		},
 		'uw-multipleIPs': {
 			label: '使用多個IP地址進行破壞',
-			summary: '單層級警告：使用多個IP地址進行破壞'
+			summary: '警告：使用多個IP地址進行破壞'
 		},
 		'uw-npov-tvd': {
 			label: '在劇集條目中加入奸角等非中立描述',
-			summary: '單層級警告：在劇集條目中加入奸角等非中立描述'
+			summary: '警告：在劇集條目中加入奸角等非中立描述'
 		},
 		'uw-pinfo': {
 			label: '張貼他人隱私',
-			summary: '單層級警告：張貼他人隱私'
+			summary: '警告：張貼他人隱私'
 		},
 		'uw-upv': {
 			label: '破壞他人用戶頁',
-			summary: '單層級警告：破壞他人用戶頁'
+			summary: '警告：破壞他人用戶頁'
 		},
 		'uw-selfinventedname': {
 			label: '不適當地自創新名詞、新譯名',
-			summary: '單層級警告：不適當地自創新名詞、新譯名'
+			summary: '警告：不適當地自創新名詞、新譯名'
 		},
 		'uw-substub': {
 			label: '建立小小作品',
-			summary: '單層級警告：建立小小作品'
+			summary: '警告：建立小小作品'
 		},
 		'uw-username': {
 			label: '使用不恰當的用戶名',
-			summary: '單層級警告：使用不恰當的用戶名',
+			summary: '警告：使用不恰當的用戶名',
 			suppressArticleInSummary: true
 		},
 		'uw-wrongsummary': {
 			label: '在編輯摘要製造不適當的內容',
-			summary: '單層級警告：在編輯摘要製造不適當的內容'
+			summary: '警告：在編輯摘要製造不適當的內容'
 		}
 	}
 });
@@ -2408,11 +2408,6 @@ Twinkle.warn.callbacks = {
 			}
 		}
 
-		// messageData contains full-levels data for multi-level warnings
-		if (params.main_group in messageData) {
-			messageData = messageData[params.main_group];
-		}
-
 		latest.date.add(1, 'minute'); // after long debate, one minute is max
 
 		if (latest.date.isAfter(now)) {
@@ -2474,10 +2469,10 @@ Twinkle.warn.callbacks = {
 					}
 					// falls through
 				default:
-					prefix = '提示';
+					prefix = '提醒';
 					break;
 			}
-			return prefix + ': ' + Morebits.string.toUpperCaseFirstChar(messageData.label);
+			return prefix + '：' + Morebits.string.toUpperCaseFirstChar(messageData.label);
 		};
 
 		var summary;
@@ -2523,42 +2518,58 @@ Twinkle.warn.callbacks = {
 		var params = flowobj.getCallbackParameters();
 		var messageData = params.messageData;
 
-		// messageData contains full-levels data for multi-level warnings
-		if (params.main_group in messageData) {
-			messageData = messageData[params.main_group];
-		}
+		// build the edit summary
+		// Function to handle generation of summary prefix for custom templates
+		var customProcess = function(template) {
+			template = template.split('|')[0];
+			var prefix;
+			switch (template.substr(-1)) {
+				case '1':
+					prefix = '提醒';
+					break;
+				case '2':
+					prefix = '注意';
+					break;
+				case '3':
+					prefix = '警告';
+					break;
+				case '4':
+					prefix = wgULS('最后警告', '最後警告');
+					break;
+				case 'm':
+					if (template.substr(-3) === '4im') {
+						prefix = '唯一警告';
+						break;
+					}
+					// falls through
+				default:
+					prefix = '提醒';
+					break;
+			}
+			return prefix + '：' + Morebits.string.toUpperCaseFirstChar(messageData.label);
+		};
 
 		var topic;
 		if (messageData.heading) {
 			topic = messageData.heading;
 		} else {
-			var summary;
-			switch (params.sub_group.substr(-1)) {
-				case '1':
-					summary = '提醒';
-					break;
-				case '2':
-					summary = '注意';
-					break;
-				case '3':
-					summary = '警告';
-					break;
-				case '4':
-					summary = wgULS('最后警告', '最後警告');
-					break;
-				case 'm':
-					if (params.sub_group.substr(-3) === '4im') {
-						summary = '唯一警告';
-						break;
-					}
-					summary = '提示';
-					break;
-				default:
-					summary = '提示';
-					break;
+			// Normalize kitchensink to the 1-4im style
+			if (params.main_group === 'kitchensink' && !/^D+$/.test(params.sub_group)) {
+				var sub = params.sub_group.substr(-1);
+				if (sub === 'm') {
+					sub = params.sub_group.substr(-3);
+				}
+				// Don't overwrite uw-3rr, technically unnecessary
+				if (/\d/.test(sub)) {
+					params.main_group = 'level' + sub;
+				}
 			}
-			// 因为Flow讨论串自带时间，所以不需要再另外标注
-			topic = summary + ' (' + Morebits.string.toUpperCaseFirstChar(messageData.label) + ')';
+			// singlet || level1-4im, no need to /^\D+$/.test(params.main_group)
+			topic = messageData.summary || (messageData[params.main_group] && messageData[params.main_group].summary);
+			// Not in Twinkle.warn.messages, assume custom template
+			if (!topic) {
+				topic = customProcess(params.sub_group);
+			}
 		}
 
 		var content = Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
