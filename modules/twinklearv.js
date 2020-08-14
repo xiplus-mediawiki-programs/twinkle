@@ -797,7 +797,7 @@ Twinkle.arv.processSock = function(params) {
 	// notify all user accounts if requested
 	if (params.notify) {
 
-		var notifyEditSummary = wgULS('通知用户查核请求。', '通知使用者查核請求。') + Twinkle.getPref('summaryAd');
+		var notifyEditSummary = wgULS('通知用户查核请求', '通知使用者查核請求') + Twinkle.getPref('summaryAd');
 		var notifyText = '\n\n{{subst:socksuspectnotice|1=' + params.uid + '}}';
 
 		var notify = function (username, taskname, callback) {
