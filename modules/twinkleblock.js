@@ -1275,13 +1275,11 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		if (!blockoptions.reason) {
 			return alert(wgULS('请提供封禁理由！', '請提供封鎖理由！'));
 		}
-		blockoptions.reason += Twinkle.getPref('blockSummaryAd');
 
 		Morebits.simpleWindow.setButtonsEnabled(false);
 		Morebits.status.init(e.target);
 		var statusElement = new Morebits.status(wgULS('执行封禁', '執行封鎖'));
 		blockoptions.action = 'block';
-		blockoptions.tags = Twinkle.getPref('revisionTags');
 		blockoptions.user = Morebits.wiki.flow.relevantUserName(true);
 
 		// boolean-flipped options
@@ -1366,7 +1364,9 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				}
 				blockoptions.reblock = 1; // Writing over a block will fail otherwise
 			}
+
 			// execute block
+			blockoptions.tags = Twinkle.changeTags;
 			blockoptions.token = mw.user.tokens.get('csrfToken');
 			var mbApi = new Morebits.wiki.api(wgULS('执行封禁', '執行封鎖'), blockoptions, function() {
 				statusElement.info('完成');
@@ -1396,15 +1396,14 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		if (!unblockoptions.reason) {
 			return alert(wgULS('请提供解除封禁理由！', '請提供解除封鎖理由！'));
 		}
-		unblockoptions.reason += Twinkle.getPref('blockSummaryAd');
 
 		Morebits.simpleWindow.setButtonsEnabled(false);
 		Morebits.status.init(e.target);
 		var unblockStatusElement = new Morebits.status(wgULS('执行解除封禁', '執行解除封鎖'));
 		unblockoptions.action = 'unblock';
-		unblockoptions.tags = Twinkle.getPref('revisionTags');
 		unblockoptions.user = Morebits.wiki.flow.relevantUserName(true);
 		// execute unblock
+		unblockoptions.tags = Twinkle.changeTags;
 		unblockoptions.token = mw.user.tokens.get('csrfToken');
 		var unblockMbApi = new Morebits.wiki.api(wgULS('执行解除封禁', '執行解除封鎖'), unblockoptions, function() {
 			unblockStatusElement.info('完成');
@@ -1439,8 +1438,8 @@ Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pa
 				return alert(wgULS('未知的用户页模板！', '未知的使用者頁面模板！'));
 		}
 		pageobj.setPageText(pagetext);
-		pageobj.setEditSummary(wgULS('标记被永久封禁的用户页', '標記被永久封鎖的使用者頁面') + Twinkle.getPref('summaryAd'));
-		pageobj.setTags(Twinkle.getPref('revisionTags'));
+		pageobj.setEditSummary(wgULS('标记被永久封禁的用户页', '標記被永久封鎖的使用者頁面'));
+		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.save(function() {
 			Morebits.status.info(wgULS('标记用户页', '標記使用者頁面'), '完成');
 			pageobj.load(Twinkle.block.callback.protectuserpage);
@@ -1460,8 +1459,8 @@ Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUse
 		} else {
 			pageobj.setCreateProtection('sysop', 'indefinite');
 		}
-		pageobj.setEditSummary(wgULS('被永久封禁的用户页', '被永久封鎖的使用者頁面') + Twinkle.getPref('protectionSummaryAd'));
-		pageobj.setTags(Twinkle.getPref('revisionTags'));
+		pageobj.setEditSummary(wgULS('被永久封禁的用户页', '被永久封鎖的使用者頁面'));
+		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.protect(function() {
 			Morebits.status.info(wgULS('保护用户页', '保護使用者頁面'), pageobj.exists() ? wgULS('已全保护', '已全保護') : wgULS('已白纸保护', '已白紙保護'));
 		});
@@ -1642,11 +1641,10 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 	if (messageData.suppressArticleInSummary !== true && params.article) {
 		summary += wgULS('，于[[', '，於[[') + params.article + ']]';
 	}
-	summary += Twinkle.getPref('summaryAd');
 
 	pageobj.setPageText(text);
 	pageobj.setEditSummary(summary);
-	pageobj.setTags(Twinkle.getPref('revisionTags'));
+	pageobj.setChangeTags(Twinkle.changeTags);
 	pageobj.setWatchlist(Twinkle.getPref('watchWarnings'));
 	pageobj.save();
 };

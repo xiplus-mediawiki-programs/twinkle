@@ -1888,6 +1888,13 @@ Morebits.wiki.api = function(currentAction, query, onSuccess, statusElement, onE
 	} else if (['xml', 'json'].indexOf(query.format) === -1) {
 		this.statelem.error('Invalid API format: only xml and json are supported.');
 	}
+
+	// Ignore tags for queries and most common unsupported actions, produces warnings
+	if (query.action && ['query', 'review', 'stabilize', 'pagetriageaction', 'watch'].indexOf(query.action) !== -1) {
+		delete query.tags;
+	} else if (!query.tags && morebitsWikiChangeTag) {
+		query.tags = morebitsWikiChangeTag;
+	}
 };
 
 Morebits.wiki.api.prototype = {
@@ -2047,6 +2054,11 @@ Morebits.wiki.api.setApiUserAgent = function(ua) {
 	morebitsWikiApiUserAgent = (ua ? ua + ' ' : '') + 'morebits.js~zh ([[w:zh:WT:TW]])';
 };
 
+// Default change/revision tag applied to Morebits actions when no other tags are specified
+// Off by default per [[Special:Permalink/970618849#Adding tags to Twinkle edits and actions]]
+var morebitsWikiChangeTag = '';
+
+
 /** Get a new CSRF token on encountering token errors */
 Morebits.wiki.api.getToken = function() {
 	var tokenApi = new Morebits.wiki.api(wgULS('获取令牌', '取得權杖'), {
@@ -2200,7 +2212,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		pageName: pageName,
 		pageExists: false,
 		editSummary: null,
-		tags: '',
+		changeTags: null,
 		callbackParameters: null,
 		statusElement: new Morebits.status(currentAction),
 
@@ -2386,12 +2398,15 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		var query = {
 			action: 'edit',
-			tags: ctx.tags,
 			title: ctx.pageName,
 			summary: ctx.editSummary,
 			token: canUseMwUserToken ? mw.user.tokens.get('csrfToken') : ctx.csrfToken,
 			watchlist: ctx.watchlistOption
 		};
+
+		if (ctx.changeTags) {
+			query.tags = ctx.changeTags;
+		}
 
 		if (typeof ctx.pageSection === 'number') {
 			query.section = ctx.pageSection;
@@ -2528,9 +2543,17 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		ctx.editSummary = summary;
 	};
 
-	this.setTags = function(tags) {
-		ctx.tags = tags;
+	/**
+	 * Set any custom tag(s) to be applied to the API action
+	 * A number of actions don't support it, most notably watch, review
+	 * and stabilize (T247721), and pagetriageaction (T252980)
+	 *
+	 * @param {string|string[]} tags - String or array of tag(s)
+	 */
+	this.setChangeTags = function(tags) {
+		ctx.changeTags = tags;
 	};
+
 
 	/**
 	 * @param {string} createOption - can take the following four values:
@@ -3471,6 +3494,10 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			'reason': ctx.editSummary,
 			'watchlist': ctx.watchlistOption
 		};
+		if (ctx.changeTags) {
+			query.tags = ctx.changeTags;
+		}
+
 		if (ctx.moveTalkPage) {
 			query.movetalk = 'true';
 		}
@@ -3515,6 +3542,9 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			}
 
 			query.token = token;
+		}
+		if (ctx.changeTags) {
+			query.tags = ctx.changeTags;
 		}
 
 		var patrolStat = new Morebits.status(wgULS('标记页面为已巡查', '標記頁面為已巡查'));
@@ -3562,12 +3592,15 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		var query = {
 			'action': 'delete',
-			'tags': ctx.tags,
 			'title': pageTitle,
 			'token': token,
 			'reason': ctx.editSummary,
 			'watchlist': ctx.watchlistOption
 		};
+		if (ctx.changeTags) {
+			query.tags = ctx.changeTags;
+		}
+
 
 		ctx.deleteProcessApi = new Morebits.wiki.api(wgULS('删除页面…', '刪除頁面…'), query, ctx.onDeleteSuccess, ctx.statusElement, fnProcessDeleteError);
 		ctx.deleteProcessApi.setParent(this);
@@ -3642,6 +3675,10 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			'reason': ctx.editSummary,
 			'watchlist': ctx.watchlistOption
 		};
+		if (ctx.changeTags) {
+			query.tags = ctx.changeTags;
+		}
+
 
 		ctx.undeleteProcessApi = new Morebits.wiki.api(wgULS('取消删除…', '取消刪除…'), query, ctx.onUndeleteSuccess, ctx.statusElement, fnProcessUndeleteError);
 		ctx.undeleteProcessApi.setParent(this);
@@ -3733,7 +3770,6 @@ Morebits.wiki.page = function(pageName, currentAction) {
 
 		var query = {
 			action: 'protect',
-			tags: ctx.tags,
 			title: pageTitle,
 			token: token,
 			protections: protections.join('|'),
@@ -3741,6 +3777,11 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			reason: ctx.editSummary,
 			watchlist: ctx.watchlistOption
 		};
+		// Only shows up in logs, not page history [[phab:T259983]]
+		if (ctx.changeTags) {
+			query.tags = ctx.changeTags;
+		}
+
 		if (ctx.protectCascade) {
 			query.cascade = 'true';
 		}
@@ -3782,6 +3823,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			token: token,
 			protectlevel: ctx.flaggedRevs.level,
 			expiry: ctx.flaggedRevs.expiry,
+			// tags: ctx.changeTags, // flaggedrevs tag support: [[phab:T247721]]
 			reason: ctx.editSummary
 		};
 		// [[phab:T247915]]
@@ -4564,6 +4606,7 @@ Morebits.userspaceLogger = function(logPageName) {
 	}
 	this.initialText = '';
 	this.headerLevel = 3;
+	this.changeTags = '';
 
 	this.log = function(logText, summaryText) {
 		if (!logText) {
@@ -4583,6 +4626,7 @@ Morebits.userspaceLogger = function(logPageName) {
 
 			pageobj.setPageText(text + '\n' + logText);
 			pageobj.setEditSummary(summaryText);
+			pageobj.setChangeTags(this.changeTags);
 			pageobj.setCreateOption('recreate');
 			pageobj.save();
 		}.bind(this));

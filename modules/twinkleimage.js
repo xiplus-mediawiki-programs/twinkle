@@ -257,9 +257,9 @@ Twinkle.image.callbacks = {
 		} else {
 			editSummary += '[[WP:CSD#' + params.normalized.toUpperCase() + '|CSD ' + params.normalized.toUpperCase() + ']]';
 		}
-		editSummary += '）' + Twinkle.getPref('summaryAd');
+		editSummary += '）';
 		pageobj.setEditSummary(editSummary);
-		pageobj.setTags(Twinkle.getPref('revisionTags'));
+		pageobj.setChangeTags(Twinkle.changeTags);
 
 		switch (Twinkle.getPref('deliWatchPage')) {
 			case 'yes':
@@ -293,8 +293,8 @@ Twinkle.image.callbacks = {
 				var usertalkpage = new Morebits.wiki.page(talkPageName, wgULS('通知上传者（', '通知上傳者（') + initialContrib + '）');
 				var notifytext = '\n{{subst:Di-' + params.templatename + '-notice|1=' + Morebits.pageNameNorm + '}}--~~~~';
 				usertalkpage.setAppendText(notifytext);
-				usertalkpage.setEditSummary(wgULS('通知：文件[[', '通知：檔案[[') + Morebits.pageNameNorm + wgULS(']]快速删除提名', ']]快速刪除提名') + Twinkle.getPref('summaryAd'));
-				usertalkpage.setTags(Twinkle.getPref('revisionTags'));
+				usertalkpage.setEditSummary(wgULS('通知：文件[[', '通知：檔案[[') + Morebits.pageNameNorm + wgULS(']]快速删除提名', ']]快速刪除提名'));
+				usertalkpage.setChangeTags(Twinkle.changeTags);
 				usertalkpage.setCreateOption('recreate');
 				switch (Twinkle.getPref('deliWatchUser')) {
 					case 'yes':
@@ -323,8 +323,8 @@ Twinkle.image.callbacks = {
 		// var params = pageobj.getCallbackParameters();
 
 		pageobj.setPageText(text + '\n* [[:' + Morebits.pageNameNorm + ']]--~~~~');
-		pageobj.setEditSummary(wgULS('添加[[', '加入[[') + Morebits.pageNameNorm + ']]' + Twinkle.getPref('summaryAd'));
-		pageobj.setTags(Twinkle.getPref('revisionTags'));
+		pageobj.setEditSummary(wgULS('添加[[', '加入[[') + Morebits.pageNameNorm + ']]');
+		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('recreate');
 		pageobj.save();
 	}

@@ -342,8 +342,8 @@ Twinkle.talkback.evaluate = function(e) {
 
 		var talkpage = new Morebits.wiki.page(fullUserTalkPageName, wgULS('添加回复通告', '加入回覆通告'));
 
-		talkpage.setEditSummary(editSummary + Twinkle.getPref('summaryAd'));
-		talkpage.setTags(Twinkle.getPref('revisionTags'));
+		talkpage.setEditSummary(editSummary);
+		talkpage.setChangeTags(Twinkle.changeTags);
 		talkpage.setAppendText(text);
 		talkpage.setCreateOption('recreate');
 		talkpage.setMinorEdit(Twinkle.getPref('markTalkbackAsMinor'));

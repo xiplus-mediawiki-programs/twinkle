@@ -967,10 +967,10 @@ Twinkle.speedy.callbacks = {
 					var mbApi = new Morebits.wiki.api('颁发荣誉', {
 						action: 'block',
 						user: mw.config.get('wgUserName'),
-						reason: '试图[[Wikipedia:不要删除首页|像User:燃玉那样创造奇迹]]' + Twinkle.getPref('deletionSummaryAd'),
+						reason: '试图[[Wikipedia:不要删除首页|像User:燃玉那样创造奇迹]]',
 						allowusertalk: true,
 						expiry: '31 hours',
-						tags: Twinkle.getPref('revisionTags'),
+						tags: Twinkle.changeTags,
 						token: token
 					}, function() {
 						statusElement.info(wgULS('请记得阅读[[Wikipedia:不要删除主页]]。', '請記得閱讀[[Wikipedia:不要刪除首頁]]。'));
@@ -987,8 +987,8 @@ Twinkle.speedy.callbacks = {
 				}
 
 				var deleteMain = function() {
-					thispage.setEditSummary(reason + Twinkle.getPref('deletionSummaryAd'));
-					thispage.setTags(Twinkle.getPref('revisionTags'));
+					thispage.setEditSummary(reason);
+					thispage.setChangeTags(Twinkle.changeTags);
 					thispage.deletePage(function() {
 						thispage.getStatusElement().info('完成');
 						Twinkle.speedy.callbacks.sysop.deleteTalk(params);
@@ -1015,8 +1015,8 @@ Twinkle.speedy.callbacks = {
 					params.normalized !== 'o1' &&
 					document.getElementById('ca-talk').className !== 'new') {
 				var talkpage = new Morebits.wiki.page(Morebits.wikipedia.namespaces[mw.config.get('wgNamespaceNumber') + 1] + ':' + mw.config.get('wgTitle'), wgULS('删除讨论页', '刪除討論頁'));
-				talkpage.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 已删除页面“' + Morebits.pageNameNorm + '”的讨论页' + Twinkle.getPref('deletionSummaryAd'));
-				talkpage.setTags(Twinkle.getPref('revisionTags'));
+				talkpage.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 已删除页面“' + Morebits.pageNameNorm + '”的讨论页');
+				talkpage.setChangeTags(Twinkle.changeTags);
 				talkpage.deletePage();
 				// this is ugly, but because of the architecture of wiki.api, it is needed
 				// (otherwise success/failure messages for the previous action would be suppressed)
@@ -1176,8 +1176,8 @@ Twinkle.speedy.callbacks = {
 			$snapshot.each(function(key, value) {
 				var title = $(value).attr('title');
 				var page = new Morebits.wiki.page(title, wgULS('删除重定向 "', '刪除重新導向 "') + title + '"');
-				page.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 重定向到已删除页面“' + Morebits.pageNameNorm + '”' + Twinkle.getPref('deletionSummaryAd'));
-				page.setTags(Twinkle.getPref('revisionTags'));
+				page.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 重定向到已删除页面“' + Morebits.pageNameNorm + '”');
+				page.setChangeTags(Twinkle.changeTags);
 				page.deletePage(onsuccess);
 			});
 		}
@@ -1276,8 +1276,8 @@ Twinkle.speedy.callbacks = {
 
 
 			pageobj.setPageText(text);
-			pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
-			pageobj.setTags(Twinkle.getPref('revisionTags'));
+			pageobj.setEditSummary(editsummary);
+			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setWatchlist(params.watch);
 			if (params.scribunto) {
 				pageobj.setCreateOption('recreate'); // Module /doc might not exist
@@ -1340,8 +1340,8 @@ Twinkle.speedy.callbacks = {
 							editsummary += '快速删除提名';
 
 							usertalkpage.setAppendText(notifytext);
-							usertalkpage.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
-							usertalkpage.setTags(Twinkle.getPref('revisionTags'));
+							usertalkpage.setEditSummary(editsummary);
+							usertalkpage.setChangeTags(Twinkle.changeTags);
 							usertalkpage.setCreateOption('recreate');
 							usertalkpage.setFollowRedirect(true, false);
 							usertalkpage.append();
@@ -1400,7 +1400,7 @@ Twinkle.speedy.callbacks = {
 			}
 			appendText += ' ~~~~~\n';
 
-			usl.log(appendText, wgULS('记录对[[', '記錄對[[') + Morebits.pageNameNorm + wgULS(']]的快速删除提名', ']]的快速刪除提名') + Twinkle.getPref('summaryAd'));
+			usl.log(appendText, wgULS('记录对[[', '記錄對[[') + Morebits.pageNameNorm + wgULS(']]的快速删除提名', ']]的快速刪除提名'));
 		}
 	}
 };

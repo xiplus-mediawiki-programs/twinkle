@@ -102,8 +102,8 @@ Twinkle.copyvio.callbacks = {
 				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, wgULS('通知页面创建者（' + initialContrib + '）', '通知頁面建立者（' + initialContrib + '）'));
 				var notifytext = '\n{{subst:CopyvioNotice|' + mw.config.get('wgPageName') + '}}';
 				usertalkpage.setAppendText(notifytext);
-				usertalkpage.setEditSummary(wgULS('通知：页面[[', '通知：頁面[[') + mw.config.get('wgPageName') + wgULS(']]疑似侵犯版权', ']]疑似侵犯版權') + Twinkle.getPref('summaryAd'));
-				usertalkpage.setTags(Twinkle.getPref('revisionTags'));
+				usertalkpage.setEditSummary(wgULS('通知：页面[[', '通知：頁面[[') + mw.config.get('wgPageName') + wgULS(']]疑似侵犯版权', ']]疑似侵犯版權'));
+				usertalkpage.setChangeTags(Twinkle.changeTags);
 				usertalkpage.setCreateOption('recreate');
 				switch (Twinkle.getPref('copyvioWatchUser')) {
 					case 'yes':
@@ -131,8 +131,8 @@ Twinkle.copyvio.callbacks = {
 		}
 
 		pageobj.setPageText(tag);
-		pageobj.setEditSummary(wgULS('本页面疑似侵犯版权', '本頁面疑似侵犯版權') + Twinkle.getPref('summaryAd'));
-		pageobj.setTags(Twinkle.getPref('revisionTags'));
+		pageobj.setEditSummary(wgULS('本页面疑似侵犯版权', '本頁面疑似侵犯版權'));
+		pageobj.setChangeTags(Twinkle.changeTags);
 		switch (Twinkle.getPref('copyvioWatchPage')) {
 			case 'yes':
 				pageobj.setWatchlist(true);
@@ -165,8 +165,8 @@ Twinkle.copyvio.callbacks = {
 
 		output += '\n{{subst:CopyvioVFDRecord|' + mw.config.get('wgPageName') + '}}';
 		pageobj.setAppendText(output);
-		pageobj.setEditSummary(wgULS('添加[[', '加入[[') + mw.config.get('wgPageName') + ']]' + Twinkle.getPref('summaryAd'));
-		pageobj.setTags(Twinkle.getPref('revisionTags'));
+		pageobj.setEditSummary(wgULS('添加[[', '加入[[') + mw.config.get('wgPageName') + ']]');
+		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
 	}
