@@ -591,6 +591,7 @@ Twinkle.tag.article.tagList = wgULS({
 	'清理和维护模板': {
 		'常规清理': [
 			{ tag: 'Cleanup', description: '可能需要进行清理，以符合维基百科的质量标准' },
+			{ tag: 'Cleanup rewrite', description: '不符合维基百科的质量标准，需要完全重写' },
 			{ tag: 'Cleanup-jargon', description: '包含过多行话或专业术语，可能需要简化或提出进一步解释' },
 			{ tag: 'Copy edit', description: '需要编修，以确保文法、用词、语气、格式、标点等使用恰当' }
 		],
@@ -693,6 +694,7 @@ Twinkle.tag.article.tagList = wgULS({
 	'清理和維護模板': {
 		'常規清理': [
 			{ tag: 'Cleanup', description: '可能需要進行清理，以符合維基百科的質量標準' },
+			{ tag: 'Cleanup rewrite', description: '不符合維基百科的質量標準，需要完全重寫' },
 			{ tag: 'Cleanup-jargon', description: '包含過多行話或專業術語，可能需要簡化或提出進一步解釋' },
 			{ tag: 'Copy edit', description: '需要編修，以確保文法、用詞、語氣、格式、標點等使用恰當' }
 		],
