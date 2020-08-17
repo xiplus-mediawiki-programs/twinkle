@@ -101,17 +101,29 @@ print('modules/friendlytag.js')
 with open(os.path.join(basedir, 'modules/friendlytag.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
-articleTags = findBetween(jstext, 'Twinkle.tag.article.tags = wgULS', 'Twinkle.tag.article.tagCategories = wgULS')
-matches = re.findall(r"'(.+?)': '", articleTags)
+articleTags = findBetween(jstext, 'Twinkle.tag.article.tagList = wgULS', 'Twinkle.tag.redirectList = wgULS')
+matches = re.findall(r"tag: '(.+?)',", articleTags)
 for match in matches:
     templates.add(normalizeTitle(match))
     print('\t', normalizeTitle(match))
 
-articleTags = findBetween(jstext, 'Twinkle.tag.frequentList = wgULS', 'Twinkle.tag.callbacks = {')
+articleTags = findBetween(jstext, 'Twinkle.tag.file.licenseList = wgULS', 'Twinkle.tag.callbacks = {')
 matches = re.findall(r"{{(.+?)}}", articleTags)
 for match in matches:
     if re.search(r'重定向$', match):
         continue
+    templates.add(normalizeTitle(match))
+    print('\t', normalizeTitle(match))
+
+
+# modules/friendlywelcome.js
+print('modules/friendlywelcome.js')
+with open(os.path.join(basedir, 'modules/friendlywelcome.js'), 'r', encoding='utf8') as f:
+    jstext = f.read()
+
+tags = findBetween(jstext, 'Twinkle.welcome.templates = wgULS', 'Twinkle.welcome.getTemplateWikitext = ')
+matches = re.findall(r"\n\t{3}'(.+?)': {", tags)
+for match in matches:
     templates.add(normalizeTitle(match))
     print('\t', normalizeTitle(match))
 
@@ -151,7 +163,7 @@ print('modules/twinkleprotect.js')
 with open(os.path.join(basedir, 'modules/twinkleprotect.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
-blockPresetsInfo = findBetween(jstext, 'Twinkle.protect.protectionTypesAdmin = wgULS([', 'Twinkle.protect.protectionTypes = ')
+blockPresetsInfo = findBetween(jstext, 'Twinkle.protect.protectionTypesAdmin = [', 'Twinkle.protect.protectionPresetsInfo = {')
 
 matches = re.findall(r", value: '([^\n]+?)'", blockPresetsInfo)
 for match in matches:
@@ -198,6 +210,8 @@ WHITELIST = set([
     'Template:No talkback',
     # tag
     'Template:Multiple issues',
+	# warn
+	'Template:Uw-generic',
 ])
 # non-exists or can't mark templates
 BLACKLIST = set([
