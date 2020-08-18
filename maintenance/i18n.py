@@ -114,7 +114,12 @@ for filename in filenames:
     else:
         data['uselang'] = 'zh-cn'
     r = requests.post('https://zh.wikipedia.org/w/api.php', data=data)
-    result = r.json()
+    try:
+        result = r.json()
+    except Exception as e:
+        print(e)
+        print(r.text)
+        continue
     result = result['parse']['text']['*']
     matches = re.findall(r'<div id="text(\d+)">(.+?)</div>', result)
     for match in matches:
