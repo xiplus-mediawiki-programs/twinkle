@@ -167,17 +167,10 @@ Twinkle.tag.callback = function friendlytagCallback() {
 		case 'file':
 			Window.setTitle(wgULS('文件维护标记', '檔案維護標記'));
 
-			form.append({ type: 'header', label: wgULS('著作权和来源问题标签', '著作權和來源問題標籤') });
-			form.append({ type: 'checkbox', name: 'tags', list: Twinkle.tag.file.licenseList });
-
-			form.append({ type: 'header', label: wgULS('维基共享资源相关标签', '維基共享資源相關標籤') });
-			form.append({ type: 'checkbox', name: 'tags', list: Twinkle.tag.file.commonsList });
-
-			form.append({ type: 'header', label: wgULS('清理标签', '清理標籤') });
-			form.append({ type: 'checkbox', name: 'tags', list: Twinkle.tag.file.cleanupList });
-
-			form.append({ type: 'header', label: wgULS('文件取代标签', '檔案取代標籤') });
-			form.append({ type: 'checkbox', name: 'tags', list: Twinkle.tag.file.replacementList });
+			$.each(Twinkle.tag.fileList, function(groupName, group) {
+				form.append({ type: 'header', label: groupName });
+				form.append({ type: 'checkbox', name: 'tags', list: group });
+			});
 
 			if (Twinkle.getPref('customFileTagList').length) {
 				form.append({ type: 'header', label: wgULS('自定义模板', '自訂模板') });
@@ -936,148 +929,82 @@ Twinkle.tag.redirectList = wgULS({
 
 // maintenance tags for FILES start here
 
-Twinkle.tag.file = {};
+Twinkle.tag.fileList = {};
 
-Twinkle.tag.file.licenseList = wgULS([
-	{ label: '{{Non-free reduce}}：非低分辨率的合理使用图像（或过长的音频剪辑等）', value: 'Non-free reduce' }
-], [
-	{ label: '{{Non-free reduce}}：非低解析度的合理使用圖像（或過長的音頻剪輯等）', value: 'Non-free reduce' }
-]);
+Twinkle.tag.fileList[wgULS('著作权和来源问题标签', '著作權和來源問題標籤')] = [
+	{ label: '{{Non-free reduce}}：' + wgULS('非低分辨率的合理使用图像（或过长的音频剪辑等）', '非低解析度的合理使用圖像（或過長的音頻剪輯等）'), value: 'Non-free reduce' }
+];
 
-Twinkle.tag.file.commonsList = wgULS([
-	{ label: '{{Copy to Wikimedia Commons}}：自由版权文件应该被移动至维基共享资源', value: 'Copy to Wikimedia Commons' },
+Twinkle.tag.fileList[wgULS('维基共享资源相关标签', '維基共享資源相關標籤')] = [
+	{ label: '{{Copy to Wikimedia Commons}}：' + wgULS('自由著作权文件应该被移动至维基共享资源', '自由版權檔案應該被移動至維基共享資源'), value: 'Copy to Wikimedia Commons' },
 	{
-		label: '{{Do not move to Commons}}：不要移动至维基共享资源',
+		label: '{{Do not move to Commons}}：' + wgULS('不要移动至维基共享资源', '不要移動至維基共享資源'),
 		value: 'Do not move to Commons_reason',
 		subgroup: {
 			type: 'input',
 			name: 'DoNotMoveToCommons',
 			label: '原因：',
-			tooltip: '输入不应该将该图像移动到维基共享资源的原因（必填）'
+			tooltip: wgULS('输入不应该将该图像移动到维基共享资源的原因（必填）。', '輸入不應該將該圖像移動到維基共享資源的原因（必填）。')
 		}
 	},
 	{
-		label: '{{Keep local}}：请求在本地保留维基共享资源的文件副本',
+		label: '{{Keep local}}：' + wgULS('请求在本地保留维基共享资源的文件副本', '請求在本地保留維基共享資源的檔案副本'),
 		value: 'Keep local',
 		subgroup: [
 			{
 				type: 'input',
 				name: 'keeplocalName',
-				label: '共享资源的不同图像名称：',
-				tooltip: '输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀'
+				label: wgULS('共享资源的不同图像名称：', '共享資源的不同圖像名稱：'),
+				tooltip: wgULS('输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀', '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首')
 			},
 			{
 				type: 'input',
 				name: 'keeplocalReason',
 				label: '原因：',
-				tooltip: '输入请求在本地保留文件副本的原因（可选）'
+				tooltip: wgULS('输入请求在本地保留文件副本的原因（可选）：', '輸入請求在本地保留檔案副本的原因（可選）：')
 			}
 		]
 	},
 	{
-		label: '{{Now Commons}}：文件已被复制到维基共享资源（CSD F7）',
+		label: '{{Now Commons}}：' + wgULS('文件已被复制到维基共享资源（CSD F7）', '檔案已被複製到維基共享資源（CSD F7）'),
 		value: 'Now Commons',
 		subgroup: {
 			type: 'input',
 			name: 'nowcommonsName',
-			label: '共享资源的不同图像名称：',
-			tooltip: '输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀'
+			label: wgULS('共享资源的不同图像名称：', '共享資源的不同圖像名稱：'),
+			tooltip: wgULS('输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀', '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首')
 		}
 	}
-], [
-	{ label: '{{Copy to Wikimedia Commons}}：自由版權檔案應該被移動至維基共享資源', value: 'Copy to Wikimedia Commons' },
-	{
-		label: '{{Do not move to Commons}}：不要移動至維基共享資源',
-		value: 'Do not move to Commons_reason',
-		subgroup: {
-			type: 'input',
-			name: 'DoNotMoveToCommons',
-			label: '原因：',
-			tooltip: '輸入不應該將該圖像移動到維基共享資源的原因（必填）。'
-		}
-	},
-	{
-		label: '{{Keep local}}：請求在本地保留維基共享資源的檔案副本',
-		value: 'Keep local',
-		subgroup: [
-			{
-				type: 'input',
-				name: 'keeplocalName',
-				label: '共享資源的不同圖像名稱：',
-				tooltip: '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首'
-			},
-			{
-				type: 'input',
-				name: 'keeplocalReason',
-				label: '原因：',
-				tooltip: '輸入請求在本地保留檔案副本的原因（可選）：'
-			}
-		]
-	},
-	{
-		label: '{{Now Commons}}：檔案已被複製到維基共享資源（CSD F7）',
-		value: 'Now Commons',
-		subgroup: {
-			type: 'input',
-			name: 'nowcommonsName',
-			label: '共享資源的不同圖像名稱：',
-			tooltip: '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首'
-		}
-	}
-]);
+];
 
-Twinkle.tag.file.cleanupList = wgULS([
-	{ label: '{{Imagewatermark}}：图像包含了水印', value: 'Imagewatermark' },
+Twinkle.tag.fileList[wgULS('清理标签', '清理標籤')] = [
+	{ label: '{{Imagewatermark}}：' + wgULS('图像包含了水印', '圖像包含了浮水印'), value: 'Imagewatermark' },
 	{
-		label: '{{Rename media}}：文件应该根据文件名称指引被重命名',
+		label: '{{Rename media}}：' + wgULS('文件应该根据文件名称指引被重命名', '檔案應該根據檔案名稱指引被重新命名'),
 		value: 'Rename media',
 		subgroup: [
 			{
 				type: 'input',
 				name: 'renamemediaNewname',
-				label: '新名称：',
-				tooltip: '输入图像的新名称（可选）'
+				label: wgULS('新名称：', '新名稱：'),
+				tooltip: wgULS('输入图像的新名称（可选）', '輸入圖像的新名稱（可選）')
 			},
 			{
 				type: 'input',
 				name: 'renamemediaReason',
 				label: '原因：',
-				tooltip: '输入重命名的原因（可选）'
+				tooltip: wgULS('输入重命名的原因（可选）', '輸入重新命名的原因（可選）')
 			}
 		]
 	},
-	{ label: '{{Should be SVG}}：PNG、GIF、JPEG文件应该重制成矢量图形', value: 'Should be SVG' }
-], [
-	{ label: '{{Imagewatermark}}：圖像包含了浮水印', value: 'Imagewatermark' },
-	{
-		label: '{{Rename media}}：檔案應該根據檔案名稱指引被重新命名',
-		value: 'Rename media',
-		subgroup: [
-			{
-				type: 'input',
-				name: 'renamemediaNewname',
-				label: '新名稱：',
-				tooltip: '輸入圖像的新名稱（可選）'
-			},
-			{
-				type: 'input',
-				name: 'renamemediaReason',
-				label: '原因：',
-				tooltip: '輸入重新命名的原因（可選）'
-			}
-		]
-	},
-	{ label: '{{Should be SVG}}：PNG、GIF、JPEG檔案應該重製成向量圖形', value: 'Should be SVG' }
-]);
+	{ label: '{{Should be SVG}}：' + wgULS('PNG、GIF、JPEG文件应该重制成矢量图形', 'PNG、GIF、JPEG檔案應該重製成向量圖形'), value: 'Should be SVG' }
+];
 
-Twinkle.tag.file.replacementList = wgULS([
-	{ label: '{{Obsolete}}：有新版本可用的过时文件', value: 'Obsolete' },
-	{ label: '{{Vector version available}}：有矢量图形可用的非矢量图形文件', value: 'Vector version available' }
-], [
-	{ label: '{{Obsolete}}：有新版本可用的過時檔案', value: 'Obsolete' },
-	{ label: '{{Vector version available}}：有向量圖形可用的非向量圖形檔案', value: 'Vector version available' }
-]);
-Twinkle.tag.file.replacementList.forEach(function(el) {
+Twinkle.tag.fileList[wgULS('文件取代标签', '檔案取代標籤')] = [
+	{ label: '{{Obsolete}}：' + wgULS('有新版本可用的过时文件', '有新版本可用的過時檔案'), value: 'Obsolete' },
+	{ label: '{{Vector version available}}：' + wgULS('有矢量图形可用的非矢量图形文件', '有向量圖形可用的非向量圖形檔案'), value: 'Vector version available' }
+];
+Twinkle.tag.fileList[wgULS('文件取代标签', '檔案取代標籤')].forEach(function(el) {
 	el.subgroup = {
 		type: 'input',
 		label: wgULS('替换的文件：', '替換的檔案：'),
