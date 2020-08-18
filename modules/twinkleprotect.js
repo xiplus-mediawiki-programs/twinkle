@@ -706,7 +706,9 @@ Twinkle.protect.protectionPresetsInfo = {
 	},
 	'pp-template': {
 		edit: 'templateeditor',
+		editexpiry: 'infinity',
 		move: 'templateeditor',
+		moveexpiry: 'infinity',
 		reason: wgULS('高风险模板', '高風險模板'),
 		template: 'noop'
 	},
@@ -739,7 +741,9 @@ Twinkle.protect.protectionPresetsInfo = {
 	},
 	'pp-semi-template': {  // removed for now
 		edit: 'autoconfirmed',
+		editexpiry: 'infinity',
 		move: 'autoconfirmed',
+		moveexpiry: 'infinity',
 		reason: wgULS('高风险模板', '高風險模板'),
 		template: 'noop'
 	},
@@ -904,7 +908,6 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 
 			if (/template/.test(form.category.value)) {
 				form.noinclude.checked = true;
-				form.editexpiry.value = form.moveexpiry.value = 'infinity';
 			} else if (mw.config.get('wgNamespaceNumber') !== 10) {
 				form.noinclude.checked = false;
 			}
