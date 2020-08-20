@@ -688,6 +688,8 @@ Twinkle.protect.protectionTypesCreate = [
 ].concat(Twinkle.protect.protectionTypesCreateOnly);
 
 // NOTICE: keep this synched with [[MediaWiki:Protect-dropdown]]
+// Also note: stabilize = Pending Changes level
+// expiry will override any defaults
 Twinkle.protect.protectionPresetsInfo = {
 	'pp-protected': {
 		edit: 'sysop',
@@ -706,17 +708,15 @@ Twinkle.protect.protectionPresetsInfo = {
 	},
 	'pp-template': {
 		edit: 'templateeditor',
-		editexpiry: 'infinity',
 		move: 'templateeditor',
-		moveexpiry: 'infinity',
+		expiry: 'infinity',
 		reason: wgULS('高风险模板', '高風險模板'),
 		template: 'noop'
 	},
 	'pp-userpage': {
 		edit: 'sysop',
-		editexpiry: 'infinity',
 		move: 'sysop',
-		moveexpiry: 'infinity',
+		expiry: 'infinity',
 		reason: wgULS('被永久封禁的用户页', '被永久封禁的使用者頁'),
 		template: 'noop'
 	},
@@ -736,14 +736,11 @@ Twinkle.protect.protectionPresetsInfo = {
 	},
 	'pp-semi-usertalk': {
 		edit: 'autoconfirmed',
-		move: 'autoconfirmed',
 		reason: wgULS('被封禁用户滥用其讨论页', '被封禁使用者濫用其討論頁')
 	},
 	'pp-semi-template': {  // removed for now
 		edit: 'autoconfirmed',
-		editexpiry: 'infinity',
-		move: 'autoconfirmed',
-		moveexpiry: 'infinity',
+		expiry: 'infinity',
 		reason: wgULS('高风险模板', '高風險模板'),
 		template: 'noop'
 	},
@@ -770,7 +767,7 @@ Twinkle.protect.protectionPresetsInfo = {
 	},
 	'pp-move-indef': {
 		move: 'sysop',
-		moveexpiry: 'infinity',
+		expiry: 'infinity',
 		reason: wgULS('高风险页面', '高風險頁面')
 	},
 	'unprotect': {
@@ -794,7 +791,7 @@ Twinkle.protect.protectionPresetsInfo = {
 	},
 	'pp-create-userpage': {
 		create: 'sysop',
-		createexpiry: 'infinity',
+		expiry: 'infinity',
 		reason: wgULS('被永久封禁的用户页', '被永久封禁的使用者頁面')
 	}
 };
@@ -865,8 +862,6 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 				Twinkle.protect.formevents.editmodify({ target: form.editmodify });
 				form.editlevel.value = item.edit;
 				Twinkle.protect.formevents.editlevel({ target: form.editlevel });
-
-				form.editexpiry.value = item.editexpiry || '1 week';
 			} else {
 				form.editmodify.checked = false;
 				Twinkle.protect.formevents.editmodify({ target: form.editmodify });
@@ -877,17 +872,19 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 				Twinkle.protect.formevents.movemodify({ target: form.movemodify });
 				form.movelevel.value = item.move;
 				Twinkle.protect.formevents.movelevel({ target: form.movelevel });
-				form.moveexpiry.value = item.moveexpiry || '1 week';
 			} else {
 				form.movemodify.checked = false;
 				Twinkle.protect.formevents.movemodify({ target: form.movemodify });
 			}
+
+			form.editexpiry.value = form.moveexpiry.value = item.expiry || '1 week';
 		} else {
 			if (item.create) {
 				form.createlevel.value = item.create;
 				Twinkle.protect.formevents.createlevel({ target: form.createlevel });
 				form.createexpiry.value = item.createexpiry || '1 week';
 			}
+			form.createexpiry.value = item.expiry || '1 week';
 		}
 
 		var reasonField = actiontype === 'protect' ? form.protectReason : form.reason;
