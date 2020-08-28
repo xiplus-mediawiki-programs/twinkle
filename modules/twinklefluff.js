@@ -1,6 +1,5 @@
 // <nowiki>
 
-
 (function($) {
 
 
@@ -91,14 +90,16 @@ Twinkle.fluff.linkBuilder = {
 	},
 
 	/**
-	 * @param {string} vandal - Username of the editor being reverted (required)
-	 * Provide a falsey value if the username is hidden
+	 * @param {string} [vandal=null] - Username of the editor being reverted
+	 * Provide a falsey value if the username is hidden, defaults to null
 	 * @param {boolean} inline - True to create two links in a span, false
 	 * to create three links in a div (optional)
 	 * @param {number|string} [rev=wgCurRevisionId] - Revision ID being reverted (optional)
 	 * @param {string} [page=wgPageName] - Page being reverted (optional)
 	 */
 	rollbackLinks: function(vandal, inline, rev, page) {
+		vandal = vandal || null;
+
 		var elem = inline ? 'span' : 'div';
 		var revNode = document.createElement(elem);
 
@@ -377,7 +378,7 @@ Twinkle.fluff.revert = function revertPage(type, vandal, rev, page) {
 
 	var params = {
 		type: type,
-		user: vandal || Twinkle.fluff.hiddenName,
+		user: vandal,
 		userHidden: !vandal, // Keep track of whether the username was hidden
 		pagename: pagename,
 		revid: revid,
@@ -509,19 +510,22 @@ Twinkle.fluff.callbacks = {
 			Morebits.status.error(wgULS('错误', '錯誤'), wgULS([ '从服务器获取的最新修订版本ID ', Morebits.htmlNode('strong', lastrevid), ' 小于目前所显示的修订版本ID。这可能意味着当前修订版本已被删除、服务器延迟、或抓取到了坏掉的信息。取消。' ], [ '從伺服器取得的最新修訂版本ID ', Morebits.htmlNode('strong', lastrevid), ' 小於目前所顯示的修訂版本ID。這可能意味著當前修訂版本已被刪除、伺服器延遲、或擷取到了壞掉的資訊。取消。' ]));
 			return;
 		}
+
+		// Used for user-facing alerts, messages, etc., not edits or summaries
+		var userNorm = params.user || Twinkle.fluff.hiddenName;
 		var index = 1;
 		if (params.revid !== lastrevid) {
 			Morebits.status.warn('警告', wgULS([ '最新修订版本 ', Morebits.htmlNode('strong', lastrevid), ' 与我们的修订版本 ', Morebits.htmlNode('strong', params.revid), '不同' ], [ '最新修訂版本 ', Morebits.htmlNode('strong', lastrevid), ' 與我們的修訂版本 ', Morebits.htmlNode('strong', params.revid), ' 不同' ]));
 			if (lastuser === params.user) {
 				switch (params.type) {
 					case 'vand':
-						Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，因我们假定破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，因我們假定破壞，繼續回退操作。' ]));
+						Morebits.status.info(wgULS('信息', '資訊'), [ wgULS('最新修订版本由 ', '最新修訂版本由 '), Morebits.htmlNode('strong', userNorm), wgULS(' 做出，因我们假定破坏，继续回退操作。', ' 做出，因我們假定破壞，繼續回退操作。') ]);
 						break;
 					case 'agf':
-						Morebits.status.warn('警告', wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，因我们假定善意，取消回退操作，因为问题可能已被修复。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，因我們假定善意，取消回退操作，因為問題可能已被修復。' ]));
+						Morebits.status.warn('警告', [ wgULS('最新修订版本由 ', '最新修訂版本由 '), Morebits.htmlNode('strong', userNorm), wgULS(' 做出，因我们假定善意，取消回退操作，因为问题可能已被修复。', ' 做出，因我們假定善意，取消回退操作，因為問題可能已被修復。') ]);
 						return;
 					default:
-						Morebits.status.warn('提示', wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，但我们还是不回退了。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', params.user), ' 做出，但我們還是不回退了。' ]));
+						Morebits.status.warn('提示', [ wgULS('最新修订版本由 ', '最新修訂版本由 '), Morebits.htmlNode('strong', userNorm), wgULS(' 做出，但我们还是不回退了。', ' 做出，但我們還是不回退了。') ]);
 						return;
 				}
 			} else if (params.type === 'vand' &&
@@ -536,30 +540,36 @@ Twinkle.fluff.callbacks = {
 				return;
 			}
 
+		} else {
+			// Expected revision is the same, so the users must match;
+			// this allows sysops to know whether the users are the same
+			params.user = lastuser;
+			userNorm = params.user || Twinkle.fluff.hiddenName;
 		}
 
 		if (Twinkle.fluff.trustedBots.indexOf(params.user) !== -1) {
 			switch (params.type) {
 				case 'vand':
-					Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行破坏回退，这是一个可信的机器人，我们假定您要回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行破壞回退，這是一個可信的機器人，我們假定您要回退前一個修訂版本。' ]));
+					Morebits.status.info(wgULS('信息', '資訊'), [ wgULS('将对 ', '將對 '), Morebits.htmlNode('strong', userNorm), wgULS(' 执行破坏回退，这是一个可信的机器人，我们假定您要回退前一个修订版本。', ' 執行破壞回退，這是一個可信的機器人，我們假定您要回退前一個修訂版本。') ]);
 					index = 2;
 					params.user = revs[1].getAttribute('user');
 					params.userHidden = revs[1].getAttribute('userhidden') === '';
 					break;
 				case 'agf':
-					Morebits.status.warn('提示', wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行善意回退，但这是一个可信的机器人，取消回退操作。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行善意回退，但這是一個可信的機器人，取消回退操作。' ]));
+					Morebits.status.warn('提示', [ wgULS('将对 ', '將對 '), Morebits.htmlNode('strong', userNorm), wgULS(' 执行善意回退，但这是一个可信的机器人，取消回退操作。', ' 執行善意回退，但這是一個可信的機器人，取消回退操作。') ]);
 					return;
 				case 'norm':
 				/* falls through */
 				default:
-					var cont = confirm(wgULS('选择了常规回退，但最新修改是由一个可信的机器人（' + params.user + '）做出的。您是否想回退前一个修订版本？', '選擇了常規回退，但最新修改是由一個可信的機器人（' + params.user + '）做出的。您是否想回退前一個修訂版本？'));
+					var cont = confirm(wgULS('选择了常规回退，但最新修改是由一个可信的机器人（', '選擇了常規回退，但最新修改是由一個可信的機器人（') + userNorm + wgULS('）做出的。您是否想回退前一个修订版本？', '）做出的。您是否想回退前一個修訂版本？'));
 					if (cont) {
-						Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行常规回退，这是一个可信的机器人，基于确认，我们将回退前一个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行常規回退，這是一個可信的機器人，基於確認，我們將回退前一個修訂版本。' ]));
+						Morebits.status.info(wgULS('信息', '資訊'), [ wgULS('将对 ', '將對 '), Morebits.htmlNode('strong', userNorm), wgULS(' 执行常规回退，这是一个可信的机器人，基于确认，我们将回退前一个修订版本。', ' 執行常規回退，這是一個可信的機器人，基於確認，我們將回退前一個修訂版本。') ]);
 						index = 2;
 						params.user = revs[1].getAttribute('user');
 						params.userHidden = revs[1].getAttribute('userhidden') === '';
+						userNorm = params.user || Twinkle.fluff.hiddenName;
 					} else {
-						Morebits.status.warn('提示', wgULS([ '将对 ', Morebits.htmlNode('strong', params.user), ' 执行常规回退，这是一个可信的机器人，基于确认，我们仍将回退这个修订版本。' ], [ '將對 ', Morebits.htmlNode('strong', params.user), ' 執行常規回退，這是一個可信的機器人，基於確認，我們仍將回退這個修訂版本。' ]));
+						Morebits.status.warn('提示', [ wgULS('将对 ', '將對 '), Morebits.htmlNode('strong', userNorm), wgULS(' 执行常规回退，这是一个可信的机器人，基于确认，我们仍将回退这个修订版本。', ' 執行常規回退，這是一個可信的機器人，基於確認，我們仍將回退這個修訂版本。') ]);
 					}
 					break;
 			}
@@ -576,7 +586,7 @@ Twinkle.fluff.callbacks = {
 		}
 
 		if (!found) {
-			statelem.error(wgULS([ '未找到之前的修订版本，可能 ', Morebits.htmlNode('strong', params.user), ' 是唯一贡献者，或这个用户连续做出了超过 ' + mw.language.convertNumber(Twinkle.getPref('revertMaxRevisions')) + ' 次编辑。' ], [ '未找到之前的修訂版本，可能 ', Morebits.htmlNode('strong', params.user), ' 是唯一貢獻者，或這個用戶連續做出了超過 ' + mw.language.convertNumber(Twinkle.getPref('revertMaxRevisions')) + ' 次編輯。' ]));
+			statelem.error([ wgULS('未找到之前的修订版本，可能 ', '未找到之前的修訂版本，可能 '), Morebits.htmlNode('strong', userNorm), wgULS(' 是唯一贡献者，或这个用户连续做出了超过 ', ' 是唯一貢獻者，或這個用戶連續做出了超過 ') + mw.language.convertNumber(Twinkle.getPref('revertMaxRevisions')) + wgULS(' 次编辑。', ' 次編輯。') ]);
 			return;
 		}
 
@@ -588,7 +598,7 @@ Twinkle.fluff.callbacks = {
 		var good_revision = revs[found];
 		var userHasAlreadyConfirmedAction = false;
 		if (params.type !== 'vand' && count > 1) {
-			if (!confirm(wgULS(params.user + ' 连续做出了 ' + mw.language.convertNumber(count) + ' 次编辑，是否要回退所有这些？', params.user + ' 連續做出了 ' + mw.language.convertNumber(count) + ' 次編輯，是否要回退所有這些？'))) {
+			if (!confirm(userNorm + wgULS(' 连续做出了 ', ' 連續做出了 ') + mw.language.convertNumber(count) + wgULS(' 次编辑，是否要回退所有这些？', ' 次編輯，是否要回退所有這些？'))) {
 				Morebits.status.info('提示', wgULS('用户取消操作', '使用者取消操作'));
 				return;
 			}
@@ -601,7 +611,7 @@ Twinkle.fluff.callbacks = {
 		params.gooduser = good_revision.getAttribute('user');
 		params.gooduserHidden = good_revision.getAttribute('userhidden') === '';
 
-		statelem.status([ Morebits.htmlNode('strong', mw.language.convertNumber(count)), wgULS(' 个修订版本之前由 ', ' 個修訂版本之前由 '), Morebits.htmlNode('strong', params.gooduser), wgULS(' 做出的修订版本 ', ' 做出的修訂版本 '), Morebits.htmlNode('strong', params.goodid) ]);
+		statelem.status([ Morebits.htmlNode('strong', mw.language.convertNumber(count)), wgULS(' 个修订版本之前由 ', ' 個修訂版本之前由 '), Morebits.htmlNode('strong', params.gooduserHidden ? Twinkle.fluff.hiddenName : params.gooduser), wgULS(' 做出的修订版本 ', ' 做出的修訂版本 '), Morebits.htmlNode('strong', params.goodid) ]);
 
 		var summary, extra_summary;
 		switch (params.type) {
