@@ -1778,7 +1778,9 @@ Morebits.wiki = {};
  * @returns {boolean}
  */
 Morebits.wiki.isPageRedirect = function wikipediaIsPageRedirect() {
-	return !!(mw.config.get('wgIsRedirect') || document.getElementById('softredirect'));
+	return !!(mw.config.get('wgIsRedirect') || document.getElementById('softredirect')
+		|| document.getElementsByClassName('box-Rfd')
+		|| document.getElementsByClassName('box-Redirect_category_shell'));
 };
 
 
