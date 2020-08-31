@@ -703,18 +703,18 @@ Twinkle.xfd.callbacks = {
 
 		if (params.xfdcat === 'fwdcsd') {
 			if (params.reason) {
-				appendText += "'''原刪除理據'''：" + Morebits.string.formatReasonText(params.reason);
+				appendText += "'''原刪除理據'''：" + Morebits.string.formatReasonForLog(params.reason);
 			}
 			if (params.fwdcsdreason) {
-				appendText += "'''轉交理據'''：" + Morebits.string.formatReasonText(params.fwdcsdreason);
+				appendText += "'''轉交理據'''：" + Morebits.string.formatReasonForLog(params.fwdcsdreason);
 			}
 		} else if (params.xfdcat === 'merge') {
 			appendText += '[[:' + params.mergeinto + ']]';
 			if (params.reason) {
-				appendText += "'''理據'''：" + Morebits.string.formatReasonText(params.reason);
+				appendText += "'''理據'''：" + Morebits.string.formatReasonForLog(params.reason);
 			}
 		} else {
-			appendText += params.reason ? "'''理據'''：" + Morebits.string.formatReasonText(params.reason) : '';
+			appendText += params.reason ? "'''理據'''：" + Morebits.string.formatReasonForLog(params.reason) : '';
 		}
 
 		if (initialContrib) {
