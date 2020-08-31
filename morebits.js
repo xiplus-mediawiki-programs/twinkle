@@ -4229,7 +4229,8 @@ Morebits.wiki.preview = function(previewbox) {
 			prop: 'text',
 			pst: 'true',  // PST = pre-save transform; this makes substitution work properly
 			text: wikitext,
-			title: pageTitle || pageName
+			title: pageTitle || pageName,
+			disablelimitreport: true
 		};
 		var renderApi = new Morebits.wiki.api(wgULS('加载中…', '載入中…'), query, fnRenderSuccess, new Morebits.status(wgULS('预览', '預覽')));
 		renderApi.post();
