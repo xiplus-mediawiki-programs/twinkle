@@ -3667,10 +3667,17 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		var errorCode = ctx.undeleteProcessApi.getErrorCode();
 
 		// check for "Database query error"
-		if (errorCode === 'internal_api_error_DBQueryError' && ctx.retries++ < ctx.maxRetries) {
-			ctx.statusElement.info(wgULS('数据库查询错误，重试', '資料庫查詢錯誤，重試'));
-			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
-			ctx.undeleteProcessApi.post(); // give it another go!
+		if (errorCode === 'internal_api_error_DBQueryError') {
+			if (ctx.retries++ < ctx.maxRetries) {
+				ctx.statusElement.info(wgULS('数据库查询错误，重试', '資料庫查詢錯誤，重試'));
+				--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
+				ctx.undeleteProcessApi.post(); // give it another go!
+			} else {
+				ctx.statusElement.info(wgULS('持续的数据库查询错误，重新加载页面并重试', '持續的資料庫查詢錯誤，重新載入頁面並重試'));
+				if (ctx.onUndeleteFailure) {
+					ctx.onUndeleteFailure.call(this, ctx.undeleteProcessApi);  // invoke callback
+				}
+			}
 		} else if (errorCode === 'cantundelete') {
 			ctx.statusElement.error(wgULS('不能取消删除页面，因没有版本供取消删除或已被取消删除', '不能取消刪除頁面，因沒有版本供取消刪除或已被取消刪除'));
 			if (ctx.onUndeleteFailure) {
