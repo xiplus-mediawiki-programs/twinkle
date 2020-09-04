@@ -847,7 +847,7 @@ Twinkle.tag.redirectList = wgULS({
 				}
 			]
 		},
-		{ tag: '快捷方式重定向', description: '维基百科快捷方式' }
+		{ tag: '捷徑重定向', description: '维基百科快捷方式' }
 	],
 	'鲜用模板': [
 		{ tag: '词组重定向', description: '将词组/词组/成语指向切题的条目及恰当章节' },
@@ -914,7 +914,7 @@ Twinkle.tag.redirectList = wgULS({
 				}
 			]
 		},
-		{ tag: '快捷方式重定向', description: '維基百科快捷方式' }
+		{ tag: '捷徑重定向', description: '維基百科快捷方式' }
 	],
 	'鮮用模板': [
 		{ tag: '詞組重定向', description: '將詞組/詞組/成語指向切題的條目及恰當章節' },
