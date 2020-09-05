@@ -699,22 +699,19 @@ Twinkle.xfd.callbacks = {
 		if (mw.config.get('wgNamespaceNumber') === 6) {
 			appendText += '（[{{fullurl:Special:Log|page=' + mw.util.wikiUrlencode(mw.config.get('wgPageName')) + '}} ' + wgULS('日志', '日誌') + ']）';
 		}
-		appendText += '：' + xfdCatName + '。';
-
-		if (params.xfdcat === 'fwdcsd') {
-			if (params.reason) {
-				appendText += "'''原刪除理據'''：" + Morebits.string.formatReasonForLog(params.reason);
-			}
-			if (params.fwdcsdreason) {
-				appendText += "'''轉交理據'''：" + Morebits.string.formatReasonForLog(params.fwdcsdreason);
-			}
-		} else if (params.xfdcat === 'merge') {
+		appendText += '：' + xfdCatName;
+		if (params.xfdcat === 'merge') {
 			appendText += '[[:' + params.mergeinto + ']]';
-			if (params.reason) {
-				appendText += "'''理據'''：" + Morebits.string.formatReasonForLog(params.reason);
-			}
-		} else {
-			appendText += params.reason ? "'''理據'''：" + Morebits.string.formatReasonForLog(params.reason) : '';
+		}
+		appendText += '。';
+
+		if (params.reason) {
+			appendText += "'''" + (params.xfdcat === 'fwdcsd' ? wgULS('原删除理据', '原刪除理據') : wgULS('理据', '理據')) + "'''：" + Morebits.string.formatReasonForLog(params.reason);
+			appendText = Morebits.string.appendPunctuation(appendText);
+		}
+		if (params.fwdcsdreason) {
+			appendText += "'''" + (params.xfdcat === 'fwdcsd' ? wgULS('转交理据', '轉交理據') : wgULS('理据', '理據')) + "'''：" + Morebits.string.formatReasonForLog(params.fwdcsdreason);
+			appendText = Morebits.string.appendPunctuation(appendText);
 		}
 
 		if (initialContrib) {
