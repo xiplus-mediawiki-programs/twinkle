@@ -989,6 +989,7 @@ Twinkle.speedy.callbacks = {
 				var deleteMain = function() {
 					thispage.setEditSummary(reason);
 					thispage.setChangeTags(Twinkle.changeTags);
+					thispage.setWatchlist(params.watch);
 					thispage.deletePage(function() {
 						thispage.getStatusElement().info('完成');
 						Twinkle.speedy.callbacks.sysop.deleteTalk(params);
