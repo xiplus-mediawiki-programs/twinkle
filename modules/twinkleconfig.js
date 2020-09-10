@@ -218,7 +218,7 @@ Twinkle.config.sections = [
 			// The watchlist setting of the page tagged for deletion. Either "yes", "no", or "default". Default is "default" (Duh).
 			{
 				name: 'deliWatchPage',
-				label: wgULS('标记图片时添加到监视列表', '標記圖片時加入到監視清單'),
+				label: wgULS('标记图片时加入到监视列表', '標記圖片時加入到監視清單'),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
 			},
@@ -227,7 +227,7 @@ Twinkle.config.sections = [
 			// The watchlist setting of the user talk page if a notification is placed. Either "yes", "no", or "default". Default is "default" (Duh).
 			{
 				name: 'deliWatchUser',
-				label: wgULS('标记图片时添加创建者讨论页到监视列表', '標記圖片時加入建立者討論頁到監視清單'),
+				label: wgULS('标记图片时加入创建者讨论页到监视列表', '標記圖片時加入建立者討論頁到監視清單'),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
 			}
@@ -286,7 +286,7 @@ Twinkle.config.sections = [
 			// What types of actions that should result in forced addition to watchlist
 			{
 				name: 'watchRevertedPages',
-				label: wgULS('把这些类型的回退添加到监视列表', '把這些類別的回退加入到監視清單'),
+				label: wgULS('把这些类型的回退加入到监视列表', '把這些類別的回退加入到監視清單'),
 				type: 'set',
 				setValues: wgULS({ agf: '善意回退', norm: '常规回退', vand: '破坏回退', torev: '“恢复此版本”' }, { agf: '善意回退', norm: '常規回退', vand: '破壞回退', torev: '「恢復此版本」' })
 			},
@@ -353,7 +353,7 @@ Twinkle.config.sections = [
 			// Whether to add speedy tagged pages to watchlist
 			{
 				name: 'watchSpeedyPages',
-				label: wgULS('将以下理由添加到监视列表', '將以下理由加入到監視清單'),
+				label: wgULS('将以下理由加入到监视列表', '將以下理由加入到監視清單'),
 				type: 'set',
 				setValues: Twinkle.config.commonSets.csdCriteria,
 				setDisplayOrder: Twinkle.config.commonSets.csdCriteriaDisplayOrder
@@ -384,7 +384,7 @@ Twinkle.config.sections = [
 			{
 				name: 'welcomeUserOnSpeedyDeletionNotification',
 				label: wgULS('在使用以下理由时欢迎页面创建者', '在使用以下理由時歡迎頁面建立者'),
-				helptip: wgULS('欢迎模板仅在用户被通知时添加，使用的模板是{{firstarticle}}。', '歡迎模板僅在使用者被通知時加入，使用的模板是{{firstarticle}}。'),
+				helptip: wgULS('欢迎模板仅在用户被通知时加入，使用的模板是{{firstarticle}}。', '歡迎模板僅在使用者被通知時加入，使用的模板是{{firstarticle}}。'),
 				type: 'set',
 				setValues: Twinkle.config.commonSets.csdCriteriaNotification,
 				setDisplayOrder: Twinkle.config.commonSets.csdCriteriaNotificationDisplayOrder
@@ -488,12 +488,12 @@ Twinkle.config.sections = [
 		preferences: [
 			{
 				name: 'watchTaggedPages',
-				label: wgULS('标记时添加到监视列表', '標記時加入到監視清單'),
+				label: wgULS('标记时加入到监视列表', '標記時加入到監視清單'),
 				type: 'boolean'
 			},
 			{
 				name: 'watchMergeDiscussions',
-				label: wgULS('添加合并讨论时监视讨论页', '加入合併討論時監視討論頁'),
+				label: wgULS('加入合并讨论时监视讨论页', '加入合併討論時監視討論頁'),
 				type: 'boolean'
 			},
 			{
@@ -549,7 +549,7 @@ Twinkle.config.sections = [
 		preferences: [
 			{
 				name: 'watchStubbedPages',
-				label: wgULS('标记时添加到监视列表', '標記時加入到監視清單'),
+				label: wgULS('标记时加入到监视列表', '標記時加入到監視清單'),
 				type: 'boolean'
 			},
 			{
@@ -589,7 +589,7 @@ Twinkle.config.sections = [
 			},
 			{
 				name: 'insertTalkbackSignature',
-				label: wgULS('回复时添加签名', '回覆時加入簽名'),
+				label: wgULS('回复时加入签名', '回覆時加入簽名'),
 				helptip: wgULS('Flow页除外。', 'Flow頁除外。'),
 				type: 'boolean'
 			},
@@ -668,7 +668,7 @@ Twinkle.config.sections = [
 			// if true, watch the page which has been dispatched an warning or notice, if false, default applies
 			{
 				name: 'watchWarnings',
-				label: wgULS('警告时添加用户讨论页到监视列表', '警告時加入使用者討論頁到監視清單'),
+				label: wgULS('警告时加入用户讨论页到监视列表', '警告時加入使用者討論頁到監視清單'),
 				helptip: wgULS('注意：如果对方使用Flow，对应讨论串总会加到监视列表中。', '注意：如果對方使用Flow，對應討論串總會加到監視清單中。'),
 				type: 'boolean'
 			},
@@ -684,7 +684,7 @@ Twinkle.config.sections = [
 			{
 				name: 'customWarningList',
 				label: wgULS('自定义警告模板', '自訂警告模板'),
-				helptip: wgULS('您可以添加模板或用户子页面。自定义警告会出现在警告对话框中“自定义警告”一节。', '您可以加入模板或使用者子頁面。自訂警告會出現在警告對話方塊中「自訂警告」一節。'),
+				helptip: wgULS('您可以加入模板或用户子页面。自定义警告会出现在警告对话框中“自定义警告”一节。', '您可以加入模板或使用者子頁面。自訂警告會出現在警告對話方塊中「自訂警告」一節。'),
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
 				customListLabelTitle: wgULS('显示的文字（和编辑摘要）', '顯示的文字（和編輯摘要）')
@@ -698,7 +698,7 @@ Twinkle.config.sections = [
 			{
 				name: 'customBlockReasonList',
 				label: wgULS('自定义封禁理由', '自訂封鎖理由'),
-				helptip: wgULS('您可以添加常用的封禁理由。自定义的封禁理由会出现在一般的封禁理由下方。', '您可以加入常用的封鎖理由。自訂的封鎖理由會出現在一般的封鎖理由下方。'),
+				helptip: wgULS('您可以加入常用的封禁理由。自定义的封禁理由会出现在一般的封禁理由下方。', '您可以加入常用的封鎖理由。自訂的封鎖理由會出現在一般的封鎖理由下方。'),
 				type: 'customList',
 				customListValueTitle: wgULS('使用封禁模板（默认为 uw-block1）', '使用封鎖模板（預設為 uw-block1）'),
 				customListLabelTitle: wgULS('“由于…您已被封禁”及封禁日志理由', '「由於…您已被封鎖」及封鎖日誌理由')
@@ -716,7 +716,7 @@ Twinkle.config.sections = [
 			},
 			{
 				name: 'watchWelcomes',
-				label: wgULS('在欢迎时将用户讨论页添加监视列表', '在歡迎時將使用者討論頁加入監視清單'),
+				label: wgULS('在欢迎时将用户讨论页加入监视列表', '在歡迎時將使用者討論頁加入監視清單'),
 				helptip: wgULS('您将可以关注新手如何与他人协作，并能够适时地提供帮助。', '您將可以關注新手如何與他人協作，並能夠適時地提供幫助。'),
 				type: 'boolean'
 			},
@@ -738,13 +738,13 @@ Twinkle.config.sections = [
 			{
 				name: 'quickWelcomeTemplate',
 				label: wgULS('自动欢迎时所使用的模板', '自動歡迎時所使用的模板'),
-				helptip: wgULS('输入欢迎模板的名称，不包含大括号，将会添加给定的条目链接。', '輸入歡迎模板的名稱，不包含大括號，將會加入給定的條目連結。'),
+				helptip: wgULS('输入欢迎模板的名称，不包含大括号，将会加入给定的条目链接。', '輸入歡迎模板的名稱，不包含大括號，將會加入給定的條目連結。'),
 				type: 'string'
 			},
 			{
 				name: 'customWelcomeList',
 				label: wgULS('自定义欢迎模板', '自訂歡迎模板'),
-				helptip: wgULS('您可以添加其他欢迎模板，或是欢迎模板的用户子页面（以User:开头）。别忘了这些模板会在用户讨论页上替换引用。', '您可以加入其他歡迎模板，或是歡迎模板的使用者子頁面（以User:開頭）。別忘了這些模板會在使用者討論頁上替換引用。'),
+				helptip: wgULS('您可以加入其他欢迎模板，或是欢迎模板的用户子页面（以User:开头）。别忘了这些模板会在用户讨论页上替换引用。', '您可以加入其他歡迎模板，或是歡迎模板的使用者子頁面（以User:開頭）。別忘了這些模板會在使用者討論頁上替換引用。'),
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
 				customListLabelTitle: wgULS('显示的文字', '顯示的文字')
@@ -786,7 +786,7 @@ Twinkle.config.sections = [
 			// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 			{
 				name: 'xfdWatchPage',
-				label: wgULS('添加提名的页面到监视列表', '加入提名的頁面到監視清單'),
+				label: wgULS('加入提名的页面到监视列表', '加入提名的頁面到監視清單'),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
 			},
@@ -797,7 +797,7 @@ Twinkle.config.sections = [
 			// Either "yes" (add to watchlist), "no" (don't add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 			{
 				name: 'xfdWatchDiscussion',
-				label: wgULS('添加存废讨论页到监视列表', '加入存廢討論頁到監視清單'),
+				label: wgULS('加入存废讨论页到监视列表', '加入存廢討論頁到監視清單'),
 				helptip: wgULS('当日的页面。', '當日的頁面。'),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
@@ -808,7 +808,7 @@ Twinkle.config.sections = [
 			// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 			{
 				name: 'xfdWatchUser',
-				label: wgULS('添加创建者讨论页到监视列表（在通知时）', '加入建立者討論頁到監視清單（在通知時）'),
+				label: wgULS('加入创建者讨论页到监视列表（在通知时）', '加入建立者討論頁到監視清單（在通知時）'),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
 			},
@@ -884,7 +884,7 @@ Twinkle.config.sections = [
 		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 			{
 				name: 'copyvioWatchPage',
-				label: wgULS('添加提报的页面到监视列表', '加入提報的頁面到監視清單'),
+				label: wgULS('加入提报的页面到监视列表', '加入提報的頁面到監視清單'),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
 			},
@@ -894,7 +894,7 @@ Twinkle.config.sections = [
 			// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 			{
 				name: 'copyvioWatchUser',
-				label: wgULS('添加创建者讨论页到监视列表（在通知时）', '加入建立者討論頁到監視清單（在通知時）'),
+				label: wgULS('加入创建者讨论页到监视列表（在通知时）', '加入建立者討論頁到監視清單（在通知時）'),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
 			},

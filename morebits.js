@@ -4638,7 +4638,7 @@ Morebits.userspaceLogger = function(logPageName) {
 			return;
 		}
 		var page = new Morebits.wiki.page('User:' + mw.config.get('wgUserName') + '/' + logPageName,
-			wgULS('将项目添加到用户空间日志', '將項目加入到使用者空間日誌')); // make this '... to ' + logPageName ?
+			wgULS('将项目加入到用户空间日志', '將項目加入到使用者空間日誌')); // make this '... to ' + logPageName ?
 		return page.load(function(pageobj) {
 			// add blurb if log page doesn't exist or is blank
 			var text = pageobj.getPageText() || this.initialText;

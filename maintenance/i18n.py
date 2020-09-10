@@ -36,7 +36,6 @@ noteTA = '''{{NoteTA
 |G1=IT
 |G2=MediaWiki
 }}
--{H|zh-hans:添加;zh-hant:加入}-
 -{H|zh-hans:帮助;zh-hant:說明}-
 -{H|zh-hans:周;zh-hant:週}-
 -{H|zh-hans:批复;zh-hant:批復}-
@@ -66,6 +65,7 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:说明;zh-hant:說明}-
 -{H|zh-hans:Twinkle帮助;zh-hant:Twinkle說明}-
 -{H|zh-hans:公用IP;zh-hant:公共IP}-
+-{H|zh-hans:监视;zh-hant:監視}-
 '''
 
 

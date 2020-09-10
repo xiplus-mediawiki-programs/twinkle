@@ -220,7 +220,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				label: wgULS('如可能，通知创建者', '如可能，通知建立者'),
 				value: 'notify',
 				name: 'notify',
-				tooltip: wgULS('一个通知模板将会被添加创建者的讨论页，如果您启用了该理据的通知。', '一個通知模板將會被加入建立者的討論頁，如果您啟用了該理據的通知。'),
+				tooltip: wgULS('一个通知模板将会被加入创建者的讨论页，如果您启用了该理据的通知。', '一個通知模板將會被加入建立者的討論頁，如果您啟用了該理據的通知。'),
 				checked: !Morebits.userIsSysop || !(Twinkle.speedy.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete')),
 				event: function(event) {
 					event.stopPropagation();
@@ -1200,20 +1200,20 @@ Twinkle.speedy.callbacks = {
 
 			// check for existing deletion tags
 			var textNoSd = text.replace(/\{\{\s*(db(-\w*)?|d|delete|deletebecause|speedy|csd|速刪|速删|快删|快刪)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, '');
-			if (text !== textNoSd && !confirm(wgULS('在页面上找到快速删除模板，要移除并添加新的吗？', '在頁面上找到快速刪除模板，要移除並加入新的嗎？'))) {
+			if (text !== textNoSd && !confirm(wgULS('在页面上找到快速删除模板，要移除并加入新的吗？', '在頁面上找到快速刪除模板，要移除並加入新的嗎？'))) {
 				statelem.error(wgULS('快速删除模板已被置于页面中。', '快速刪除模板已被置於頁面中。'));
 				return;
 			}
 			text = textNoSd;
 
 			var copyvio = /(?:\{\{\s*(copyvio|侵权|侵權)[^{}]*?\}\})/i.exec(text);
-			if (copyvio && !confirm(wgULS('著作权验证模板已被置于页面中，您是否仍想添加一个快速删除模板？', '著作權驗證模板已被置於頁面中，您是否仍想加入一個快速刪除模板？'))) {
+			if (copyvio && !confirm(wgULS('著作权验证模板已被置于页面中，您是否仍想加入一个快速删除模板？', '著作權驗證模板已被置於頁面中，您是否仍想加入一個快速刪除模板？'))) {
 				statelem.error(wgULS('页面中已有著作权验证模板。', '頁面中已有著作權驗證模板。'));
 				return;
 			}
 
 			var xfd = /(?:\{\{([rsaiftcmv]fd|md1|proposed deletion)[^{}]*?\}\})/i.exec(text);
-			if (xfd && !confirm(wgULS('删除相关模板{{' + xfd[1] + '}}已被置于页面中，您是否仍想添加一个快速删除模板？', '刪除相關模板{{' + xfd[1] + '}}已被置於頁面中，您是否仍想加入一個快速刪除模板？'))) {
+			if (xfd && !confirm(wgULS('删除相关模板{{' + xfd[1] + '}}已被置于页面中，您是否仍想加入一个快速删除模板？', '刪除相關模板{{' + xfd[1] + '}}已被置於頁面中，您是否仍想加入一個快速刪除模板？'))) {
 				statelem.error(wgULS('页面已被提交至存废讨论。', '頁面已被提交至存廢討論。'));
 				return;
 			}
@@ -1288,7 +1288,7 @@ Twinkle.speedy.callbacks = {
 						titles: mw.config.get('wgPageName'),
 						token: mw.user.tokens.get('watchToken')
 					};
-					new Morebits.wiki.api(wgULS('将模块添加到监视列表', '將模組加入到監視清單'), watch_query).post();
+					new Morebits.wiki.api(wgULS('将模块加入到监视列表', '將模組加入到監視清單'), watch_query).post();
 				}
 			}
 			pageobj.save(Twinkle.speedy.callbacks.user.tagComplete);

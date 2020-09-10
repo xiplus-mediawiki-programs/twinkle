@@ -1129,7 +1129,7 @@ Twinkle.protect.callbacks = {
 				var wikipage = new Morebits.wikitext.page(text);
 				text = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
 			}
-			summary = wgULS('添加{{', '加入{{') + params.tag + '}}';
+			summary = '加入{{' + params.tag + '}}';
 		}
 
 		return {
@@ -1217,7 +1217,7 @@ Twinkle.protect.callbacks = {
 			statusElement.error([wgULS('无法在WP:RFPP上找到相关定位点标记，要修复此问题，请参见', '無法在WP:RFPP上找到相關定位點標記，要修復此問題，請參見'), linknode, '。']);
 			return;
 		}
-		statusElement.status(wgULS('添加新提名…', '加入新提名…'));
+		statusElement.status('加入新提名…');
 		rppPage.setEditSummary('/* ' + Morebits.pageNameNorm + ' */ ' + wgULS('请求对', '請求對') + '[[' + Morebits.pageNameNorm + ']]' + params.typename);
 		rppPage.setChangeTags(Twinkle.changeTags);
 		rppPage.setPageText(text);

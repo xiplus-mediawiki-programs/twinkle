@@ -53,7 +53,7 @@ Twinkle.unlink.callback = function(presetReason) {
 		style: 'margin-bottom: 0.5em',
 		label: [
 			wgULS('这个工具可以取消所有指向该页的链接（“链入”）', '這個工具可以取消所有指向該頁的連結（「連入」）') +
-				(mw.config.get('wgNamespaceNumber') === 6 ? wgULS('，和/或通过添加<!-- -->注释标记隐藏所有对此文件的使用', '，和/或通過加入<!-- -->注釋標記隱藏所有對此檔案的使用') : '') +
+				(mw.config.get('wgNamespaceNumber') === 6 ? wgULS('，和/或通过加入<!-- -->注释标记隐藏所有对此文件的使用', '，和/或通過加入<!-- -->注釋標記隱藏所有對此檔案的使用') : '') +
 				'。比如，',
 			node1,
 			wgULS('将会变成', '將會變成'),

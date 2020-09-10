@@ -68,7 +68,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 				checked: Twinkle.getPref('defaultToPartialBlocks')
 			},
 			{
-				label: wgULS('添加封禁模板到用户讨论页', '加入封鎖模板到使用者討論頁'),
+				label: wgULS('加入封禁模板到用户讨论页', '加入封鎖模板到使用者討論頁'),
 				value: 'template',
 				tooltip: wgULS('如果执行封禁的管理员忘记发出封禁模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。勾选部分封禁以使用部分封禁模板。', '如果執行封鎖的管理員忘記發出封鎖模板，或你封鎖了使用者而沒有給其發出模板，則你可以用此來發出合適的模板。勾選部分封鎖以使用部分封鎖模板。'),
 				checked: true
@@ -954,7 +954,7 @@ Twinkle.block.blockGroups = [
 			{ label: wgULS('[[WP:VAN#LANG|繁简破坏]]', '[[WP:VAN#LANG|繁簡破壞]]'), value: 'uw-block1' },
 			{ label: wgULS('跨维基项目破坏', '跨維基項目破壞'), value: 'uw-block1', forRegisteredOnly: true },
 			{ label: wgULS('[[WP:VOA|纯粹破坏]]', '[[WP:VOA|純粹破壞]]'), value: 'uw-block3', forRegisteredOnly: true },
-			{ label: wgULS('不断添加[[Wikipedia:垃圾内容|垃圾链接]]', '不斷加入[[Wikipedia:垃圾內容|垃圾連結]]'), value: 'uw-sblock' },
+			{ label: wgULS('不断加入[[Wikipedia:垃圾内容|垃圾链接]]', '不斷加入[[Wikipedia:垃圾內容|垃圾連結]]'), value: 'uw-sblock' },
 			{ label: wgULS('[[WP:SOAP|散发广告/宣传]]', '[[WP:SOAP|散發廣告/宣傳]]'), value: 'uw-block1' },
 			{ label: wgULS('仅[[WP:SOAP|散发广告/宣传]]', '僅[[WP:SOAP|散發廣告/宣傳]]'), value: 'uw-block3', forRegisteredOnly: true },
 			{ label: wgULS('违反[[WP:3RR|回退不过三原则]]', '違反[[WP:3RR|回退不過三原則]]'), value: 'uw-3block' },
@@ -970,7 +970,7 @@ Twinkle.block.blockGroups = [
 			{ label: wgULS('屡次增加不实资料', '屢次增加不實資料'), value: 'uw-block1' },
 			{ label: wgULS('在条目中增加无意义文字', '在條目中增加無意義文字'), value: 'uw-block1' },
 			{ label: wgULS('无故删除条目内容', '無故刪除條目內容'), value: 'uw-dblock' },
-			{ label: wgULS('多次添加[[WP:COPYVIO|侵犯著作权]]的内容', '多次加入[[WP:COPYVIO|侵犯著作權]]的內容'), value: 'uw-block1' },
+			{ label: wgULS('多次加入[[WP:COPYVIO|侵犯著作权]]的内容', '多次加入[[WP:COPYVIO|侵犯著作權]]的內容'), value: 'uw-block1' },
 			{ label: wgULS('机器人发生故障并必须紧急停止', '機器人發生故障並必須緊急停止'), value: 'Bot block message', forRegisteredOnly: true }
 			// { label: wgULS('剥夺编辑讨论页权限', '剝奪編輯討論頁權限'), value: '' }
 		]
@@ -1469,7 +1469,7 @@ Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUse
 
 Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTemplate(formData) {
 	if (Morebits.isIPRange(Morebits.wiki.flow.relevantUserName(true))) {
-		new Morebits.status(wgULS('信息', '資訊'), wgULS('由于封禁目标为IP段，添加封禁模板已略过', '由於封鎖目標為IP段，加入封鎖模板已略過'), 'warn');
+		new Morebits.status(wgULS('信息', '資訊'), wgULS('由于封禁目标为IP段，加入封禁模板已略过', '由於封鎖目標為IP段，加入封鎖模板已略過'), 'warn');
 		return;
 	}
 

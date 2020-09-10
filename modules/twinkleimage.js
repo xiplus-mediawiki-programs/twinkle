@@ -191,7 +191,7 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 	Morebits.wiki.actionCompleted.notice = wgULS('标记完成', '標記完成');
 
 	// Tagging image
-	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('添加删除标记', '加入刪除標記'));
+	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('加入删除标记', '加入刪除標記'));
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.image.callbacks.taggingImage);
 
@@ -222,7 +222,7 @@ Twinkle.image.callbacks = {
 		text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, '');
 		// Adding discussion
 		if (params.type !== 'orphaned fair use') {
-			var wikipedia_page = new Morebits.wiki.page('Wikipedia:檔案存廢討論/快速刪除提報', wgULS('添加快速删除记录项', '加入快速刪除記錄項'));
+			var wikipedia_page = new Morebits.wiki.page('Wikipedia:檔案存廢討論/快速刪除提報', wgULS('加入快速删除记录项', '加入快速刪除記錄項'));
 			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.image.callbacks.imageList);
@@ -323,7 +323,7 @@ Twinkle.image.callbacks = {
 		// var params = pageobj.getCallbackParameters();
 
 		pageobj.setPageText(text + '\n* [[:' + Morebits.pageNameNorm + ']]--~~~~');
-		pageobj.setEditSummary(wgULS('添加[[', '加入[[') + Morebits.pageNameNorm + ']]');
+		pageobj.setEditSummary('加入[[' + Morebits.pageNameNorm + ']]');
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('recreate');
 		pageobj.save();
