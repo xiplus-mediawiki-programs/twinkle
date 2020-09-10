@@ -636,8 +636,8 @@ Twinkle.arv.callback.evaluate = function(e) {
 				}
 				aivPage.setPageSection(0);
 				aivPage.getStatusElement().status(wgULS('添加新报告…', '加入新報告…'));
-				aivPage.setEditSummary(summary + Twinkle.getPref('summaryAd'));
-				aivPage.setTags(Twinkle.getPref('revisionTags'));
+				aivPage.setEditSummary(summary);
+				aivPage.setChangeTags(Twinkle.changeTags);
 				aivPage.setAppendText(header + reason);
 				aivPage.append();
 			});
@@ -686,8 +686,8 @@ Twinkle.arv.callback.evaluate = function(e) {
 				}
 				ewipPage.setPageSection(0);
 				ewipPage.getStatusElement().status(wgULS('添加新报告…', '加入新報告…'));
-				ewipPage.setEditSummary(summary + Twinkle.getPref('summaryAd'));
-				ewipPage.setTags(Twinkle.getPref('revisionTags'));
+				ewipPage.setEditSummary(summary);
+				ewipPage.setChangeTags(Twinkle.changeTags);
 				ewipPage.setAppendText(header + reason);
 				ewipPage.append();
 			});
@@ -755,8 +755,8 @@ Twinkle.arv.callback.evaluate = function(e) {
 					return;
 				}
 				uaaPage.getStatusElement().status(wgULS('添加新报告…', '加入新報告…'));
-				uaaPage.setEditSummary(wgULS('新提报', '新提報') + Twinkle.getPref('summaryAd'));
-				uaaPage.setTags(Twinkle.getPref('revisionTags'));
+				uaaPage.setEditSummary(wgULS('新提报', '新提報'));
+				uaaPage.setChangeTags(Twinkle.changeTags);
 				uaaPage.setAppendText('\n' + reason);
 				uaaPage.append();
 			});
@@ -797,7 +797,7 @@ Twinkle.arv.processSock = function(params) {
 	// notify all user accounts if requested
 	if (params.notify) {
 
-		var notifyEditSummary = wgULS('通知用户查核请求', '通知使用者查核請求') + Twinkle.getPref('summaryAd');
+		var notifyEditSummary = wgULS('通知用户查核请求', '通知使用者查核請求');
 		var notifyText = '\n\n{{subst:socksuspectnotice|1=' + params.uid + '}}';
 
 		var notify = function (username, taskname, callback) {
@@ -810,7 +810,7 @@ Twinkle.arv.processSock = function(params) {
 				var talkpage = new Morebits.wiki.page('User talk:' + username, '通知' + (taskname || wgULS('主账户', '主帳號')));
 				talkpage.setFollowRedirect(true);
 				talkpage.setEditSummary(notifyEditSummary);
-				talkpage.setTags(Twinkle.getPref('revisionTags'));
+				talkpage.setChangeTags(Twinkle.changeTags);
 				talkpage.setAppendText(notifyText);
 				talkpage.append(callback);
 			});
@@ -859,8 +859,8 @@ Twinkle.arv.processSock = function(params) {
 
 	var spiPage = new Morebits.wiki.page(reportpage, wgULS('抓取讨论页面', '抓取討論頁面'));
 	spiPage.setFollowRedirect(true);
-	spiPage.setEditSummary(wgULS('报告', '報告') + '[[Special:Contributions/' + params.uid + '|' + params.uid + ']]。' + Twinkle.getPref('summaryAd'));
-	spiPage.setTags(Twinkle.getPref('revisionTags'));
+	spiPage.setEditSummary(wgULS('报告', '報告') + '[[Special:Contributions/' + params.uid + '|' + params.uid + ']]。');
+	spiPage.setChangeTags(Twinkle.changeTags);
 	spiPage.setAppendText(text);
 	spiPage.append();
 

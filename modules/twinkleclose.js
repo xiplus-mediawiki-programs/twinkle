@@ -663,8 +663,8 @@ Twinkle.close.callbacks = {
 					page.getStatusElement().warn(wgULS('没有执行删除', '沒有執行刪除'));
 					Twinkle.close.callbacks.talkend(params);
 				} else {
-					page.setEditSummary(reason + Twinkle.getPref('deletionSummaryAd'));
-					page.setTags(Twinkle.getPref('revisionTags'));
+					page.setEditSummary(reason);
+					page.setChangeTags(Twinkle.changeTags);
 					page.deletePage(function() {
 						page.getStatusElement().info('完成');
 						Twinkle.close.callbacks.talkend(params);
@@ -672,8 +672,8 @@ Twinkle.close.callbacks = {
 				}
 			});
 		} else {
-			page.setEditSummary(wgULS('存废讨论通过：[[', '存廢討論通過：[[') + mw.config.get('wgPageName') + '#' + params.title + ']]' + Twinkle.getPref('deletionSummaryAd'));
-			page.setTags(Twinkle.getPref('revisionTags'));
+			page.setEditSummary(wgULS('存废讨论通过：[[', '存廢討論通過：[[') + mw.config.get('wgPageName') + '#' + params.title + ']]');
+			page.setChangeTags(Twinkle.changeTags);
 			page.deletePage(function() {
 				page.getStatusElement().info('完成');
 				Twinkle.close.callbacks.talkend(params);
@@ -721,8 +721,8 @@ Twinkle.close.callbacks = {
 		redirectDeleter.setPageList(pages);
 		redirectDeleter.run(function(pageName) {
 			var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('正在删除 ', '正在刪除 ') + pageName);
-			wikipedia_page.setEditSummary('[[WP:CSD#G15|G15]]: ' + wgULS('指向已删页面“', '指向已刪頁面「') + apiobj.params.title + wgULS('”的重定向', '」的重新導向') + Twinkle.getPref('deletionSummaryAd'));
-			wikipedia_page.setTags(Twinkle.getPref('revisionTags'));
+			wikipedia_page.setEditSummary('[[WP:CSD#G15|G15]]: ' + wgULS('指向已删页面“', '指向已刪頁面「') + apiobj.params.title + wgULS('”的重定向', '」的重新導向'));
+			wikipedia_page.setChangeTags(Twinkle.changeTags);
 			wikipedia_page.deletePage(redirectDeleter.workerSuccess, redirectDeleter.workerFailure);
 		});
 	},
@@ -736,8 +736,8 @@ Twinkle.close.callbacks = {
 		}
 
 		var page = new Morebits.wiki.page(apiobj.params.talkPage, wgULS('正在删除页面 ', '正在刪除頁面 ') + apiobj.params.title + wgULS(' 的讨论页', ' 的討論頁'));
-		page.setEditSummary('[[WP:CSD#G15|G15]]: ' + wgULS('已删页面“', '已刪頁面「') + apiobj.params.title + wgULS('”的[[Wikipedia:讨论页|讨论页]]', '」的[[Wikipedia:討論頁|討論頁]]') + Twinkle.getPref('deletionSummaryAd'));
-		page.setTags(Twinkle.getPref('revisionTags'));
+		page.setEditSummary('[[WP:CSD#G15|G15]]: ' + wgULS('已删页面“', '已刪頁面「') + apiobj.params.title + wgULS('”的[[Wikipedia:讨论页|讨论页]]', '」的[[Wikipedia:討論頁|討論頁]]'));
+		page.setChangeTags(Twinkle.changeTags);
 		page.deletePage();
 	},
 	keep: function (pageobj) {
@@ -757,8 +757,8 @@ Twinkle.close.callbacks = {
 			var talkpage = new Morebits.wiki.page(talkpagetitle.toString(), wgULS('标记讨论页', '標記討論頁'));
 			var vfdkept = '{{Old vfd multi|' + mw.config.get('wgPageName').split('/').slice(2).join('/') + '|' + params.messageData.label + '}}\n';
 			talkpage.setPrependText(vfdkept);
-			talkpage.setEditSummary('[[' + mw.config.get('wgPageName') + '#' + params.title + ']]：' + params.messageData.label + Twinkle.getPref('summaryAd'));
-			talkpage.setTags(Twinkle.getPref('revisionTags'));
+			talkpage.setEditSummary('[[' + mw.config.get('wgPageName') + '#' + params.title + ']]：' + params.messageData.label);
+			talkpage.setChangeTags(Twinkle.changeTags);
 			talkpage.setCreateOption('recreate');
 			talkpage.prepend();
 		}
@@ -777,8 +777,8 @@ Twinkle.close.callbacks = {
 		var editsummary = wgULS('存废讨论关闭：[[', '存廢討論關閉：[[') + mw.config.get('wgPageName') + '#' + params.title + ']]';
 
 		pageobj.setPageText(newtext);
-		pageobj.setEditSummary(editsummary + Twinkle.getPref('summaryAd'));
-		pageobj.setTags(Twinkle.getPref('revisionTags'));
+		pageobj.setEditSummary(editsummary);
+		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(Twinkle.close.callbacks.keepComplete);
 	},
@@ -835,8 +835,8 @@ Twinkle.close.callbacks = {
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label + Twinkle.getPref('summaryAd'));
-		pageobj.setTags(Twinkle.getPref('revisionTags'));
+		pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label);
+		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(Twinkle.close.callbacks.disableLink);
 	},

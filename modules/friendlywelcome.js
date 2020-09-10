@@ -385,7 +385,8 @@ Twinkle.welcome.callbacks = {
 
 		var summaryText = wgULS('欢迎来到维基百科！', '歡迎來到維基百科！');
 		pageobj.setPageText(text);
-		pageobj.setEditSummary(summaryText + Twinkle.getPref('summaryAd'));
+		pageobj.setEditSummary(summaryText);
+		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setWatchlist(Twinkle.getPref('watchWelcomes'));
 		pageobj.setCreateOption('recreate');
 		pageobj.save();

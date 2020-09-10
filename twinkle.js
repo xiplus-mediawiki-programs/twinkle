@@ -32,10 +32,14 @@ window.Twinkle = Twinkle;  // allow global access
  * Twinkle-specific data shared by multiple modules
  * Likely customized per installation
  */
-// Various hatnote templates, used when tagging (csd/xfd/tag/prod/protect) to
-// ensure MOS:ORDER
-Twinkle.hatnoteRegex = '(?:Short[ _]description)|(?:Rellink|Hatnote|HAT)|(?:Main|细节|細節|Main[ _]articles|主条目|主條目|Hurricane[ _]main|条目|條目|主|頁面|页面|主頁面|主页面|主頁|主页|主題目|主题目|Main[ _]article|AP)|(?:Wrongtitle|Correct[ _]title)|(?:主条目消歧义|主條目消歧義|消歧义链接|消歧義鏈接|消歧義連結|消连|消連|消歧义连结|DisambLink|Noteref|Dablink)|(?:Distinguish|不是|Not|提示|混淆|分別|分别|區別|区别|本条目的主题不是|本條目的主題不是|本条目主题不是|本條目主題不是|条目主题不是|條目主題不是|主题不是|主題不是|Confused|区分|區分|Confusion|Confuse|RedirectNOT|Misspelling)|(?:Distinguish2|SelfDistinguish|Not2|不是2)|(?:For)|(?:Details|Further|See|另见|另見|More|相關條目|相关条目|Detail|见|見|更多资料|更多資料|Further[ _]information|更多资讯|更多資訊|More[ _]information|更多信息)|(?:Selfref)|(?:About|Otheruses4|关于|關於)|(?:Other[ _]uses|Otheruse|条目消歧义|條目消歧義|他用|Otheruses)|(?:Other[ _]uses list|Otheruselist|主條目消歧義列表|主条目消歧义列表|Otheruseslist|Aboutlist|About[ _]list|Otheruses[ _]list)|(?:Redirect|重定向至此|Redirects[ _]here|Redirect[ _]to)|(?:Redirect2|主條目消歧義2|主条目消歧义2|Redir|重定向至此2)|(?:Redirect3)|(?:Redirect4)|(?:Redirect-distinguish)|(?:Redirect-synonym)|(?:Redirect-multi)|(?:See[ _]Wiktionary|Seewikt)|(?:Seealso|参看|參看|See[ _]also|参见|參見|Also)|(?:See[ _]also2|Seealso2|不轉換參見|不转换参见)|(?:Other[ _]places)|(?:Contrast|對比|对比)';
+// Custom change tag(s) to be applied to all Twinkle actions, create at Special:Tags
+Twinkle.changeTags = 'Twinkle';
+// Available for actions that don't (yet) support tags
+// currently: FlaggedRevs and PageTriage
+Twinkle.summaryAd = ' ([[WP:TW|TW]])';
 
+// Various hatnote templates, used when tagging (csd/xfd/tag/prod/protect) to ensure [[w:en:MOS:ORDER]]
+Twinkle.hatnoteRegex = '(?:Short[ _]description)|(?:Rellink|Hatnote|HAT)|(?:Main|细节|細節|Main[ _]articles|主条目|主條目|Hurricane[ _]main|条目|條目|主|頁面|页面|主頁面|主页面|主頁|主页|主題目|主题目|Main[ _]article|AP)|(?:Wrongtitle|Correct[ _]title)|(?:主条目消歧义|主條目消歧義|消歧义链接|消歧義鏈接|消歧義連結|消连|消連|消歧义连结|DisambLink|Noteref|Dablink)|(?:Distinguish|不是|Not|提示|混淆|分別|分别|區別|区别|本条目的主题不是|本條目的主題不是|本条目主题不是|本條目主題不是|条目主题不是|條目主題不是|主题不是|主題不是|Confused|区分|區分|Confusion|Confuse|RedirectNOT|Misspelling)|(?:Distinguish2|SelfDistinguish|Not2|不是2)|(?:For)|(?:Details|Further|See|另见|另見|More|相關條目|相关条目|Detail|见|見|更多资料|更多資料|Further[ _]information|更多资讯|更多資訊|More[ _]information|更多信息)|(?:Selfref)|(?:About|Otheruses4|关于|關於)|(?:Other[ _]uses|Otheruse|条目消歧义|條目消歧義|他用|Otheruses)|(?:Other[ _]uses list|Otheruselist|主條目消歧義列表|主条目消歧义列表|Otheruseslist|Aboutlist|About[ _]list|Otheruses[ _]list)|(?:Redirect|重定向至此|Redirects[ _]here|Redirect[ _]to)|(?:Redirect2|主條目消歧義2|主条目消歧义2|Redir|重定向至此2)|(?:Redirect3)|(?:Redirect4)|(?:Redirect-distinguish)|(?:Redirect-synonym)|(?:Redirect-multi)|(?:See[ _]Wiktionary|Seewikt)|(?:Seealso|参看|參看|See[ _]also|参见|參見|Also)|(?:See[ _]also2|Seealso2|不轉換參見|不转换参见)|(?:Other[ _]places)|(?:Contrast|對比|对比)';
 
 Twinkle.initCallbacks = [];
 /**
@@ -59,10 +63,6 @@ Twinkle.defaultConfig = {};
  */
 Twinkle.defaultConfig = {
 	// General
-	summaryAd: ' ([[WP:TW|TW]])',
-	deletionSummaryAd: ' ([[WP:TW|TW]])',
-	protectionSummaryAd: ' ([[WP:TW|TW]])',
-	blockSummaryAd: ' ([[WP:TW|TW]])',
 	userTalkPageMode: 'tab',
 	dialogLargeFont: false,
 	disabledModules: [],
@@ -145,13 +145,17 @@ Twinkle.defaultConfig = {
 	revertMaxRevisions: 50, // intentionally limited
 	batchMax: 5000,
 	batchChunks: 50,
-	revisionTags: 'Twinkle',
 	configPage: 'Wikipedia:Twinkle/参数设置',
 	projectNamespaceName: mw.config.get('wgFormattedNamespaces')[4],
 	sandboxPage: 'Wikipedia:沙盒',
 
-	// Formerly defaultConfig.friendly:
+	// Deprecated options, as a fallback for add-on scripts/modules
+	summaryAd: ' ([[WP:TW|TW]])',
+	deletionSummaryAd: ' ([[WP:TW|TW]])',
+	protectionSummaryAd: ' ([[WP:TW|TW]])',
+	blockSummaryAd: ' ([[WP:TW|TW]])',
 
+	// Formerly defaultConfig.friendly:
 	// Tag
 	groupByDefault: true,
 	watchTaggedPages: false,
@@ -218,11 +222,6 @@ switch (mw.config.get('skin')) {
 
 
 Twinkle.getPref = function twinkleGetPref(name) {
-	// Temporarily disable summaryAd
-	if ($.inArray(name, ['summaryAd', 'deletionSummaryAd', 'protectionSummaryAd', 'blockSummaryAd']) !== -1) {
-		return '';
-	}
-
 	if (typeof Twinkle.prefs === 'object' && Twinkle.prefs[name] !== undefined) {
 		return Twinkle.prefs[name];
 	}

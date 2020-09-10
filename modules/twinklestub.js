@@ -424,7 +424,7 @@ Twinkle.stub.callbacks = {
 		totalTags = tags.length;
 		$.each(tags, addTag);
 
-		summaryText += wgULS('标记到', '標記到') + Twinkle.stub.mode + Twinkle.getPref('summaryAd');
+		summaryText += wgULS('标记到', '標記到') + Twinkle.stub.mode;
 
 		pageobj.setPageText(pageText);
 		pageobj.setEditSummary(summaryText);

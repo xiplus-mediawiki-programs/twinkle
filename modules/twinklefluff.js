@@ -469,8 +469,8 @@ Twinkle.fluff.callbacks = {
 		var query = {
 			'action': 'edit',
 			'title': mw.config.get('wgPageName'),
-			'tags': Twinkle.getPref('revisionTags'),
 			'summary': summary,
+			'tags': Twinkle.changeTags,
 			'token': csrftoken,
 			'undo': lastrevid,
 			'undoafter': revertToRevID,
@@ -487,7 +487,6 @@ Twinkle.fluff.callbacks = {
 		var wikipedia_api = new Morebits.wiki.api(wgULS('保存回退内容', '儲存回退內容'), query, Twinkle.fluff.callbacks.complete, apiobj.statelem);
 		wikipedia_api.params = apiobj.params;
 		wikipedia_api.post();
-
 	},
 	main: function(apiobj) {
 		var xmlDoc = apiobj.responseXML;
@@ -673,8 +672,8 @@ Twinkle.fluff.callbacks = {
 		var query = {
 			'action': 'edit',
 			'title': params.pagename,
-			'tags': Twinkle.getPref('revisionTags'),
 			'summary': summary,
+			'tags': Twinkle.changeTags,
 			'token': csrftoken,
 			'undo': lastrevid,
 			'undoafter': params.goodid,
@@ -753,7 +752,6 @@ Twinkle.fluff.formatSummary = function(builtInString, userName, customString) {
 	if (customString) {
 		result += '：' + Morebits.string.toUpperCaseFirstChar(customString);
 	}
-	result += Twinkle.getPref('summaryAd');
 
 	// find number of UTF-8 bytes the resulting string takes up, and possibly add
 	// a contributions or contributions+talk link if it doesn't push the edit summary

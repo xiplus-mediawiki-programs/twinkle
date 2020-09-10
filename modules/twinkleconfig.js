@@ -147,45 +147,6 @@ Twinkle.config.sections = [
 	{
 		title: wgULS('常规', '常規'),
 		preferences: [
-		// TwinkleConfig.summaryAd (string)
-		// Text to be appended to the edit summary of edits made using Twinkle
-		/* {
-			name: "summaryAd",
-			label: wgULS("编辑摘要后缀", "編輯摘要後綴"),
-			helptip: wgULS("应当由一个空格开头，并尽可能短。", "應當由一個空格開頭，並盡可能短。"),
-			type: "string"
-		},
-
-		// TwinkleConfig.deletionSummaryAd (string)
-		// Text to be appended to the edit summary of deletions made using Twinkle
-		{
-			name: "deletionSummaryAd",
-			label: wgULS("删除摘要后缀", "刪除摘要後綴"),
-			helptip: wgULS("通常和编辑摘要后缀一样。", "通常和編輯摘要後綴一樣。"),
-			adminOnly: true,
-			type: "string"
-		},
-
-		// TwinkleConfig.protectionSummaryAd (string)
-		// Text to be appended to the edit summary of page protections made using Twinkle
-		{
-			name: "protectionSummaryAd",
-			label: wgULS("保护摘要后缀", "保護摘要後綴"),
-			helptip: wgULS("通常和编辑摘要后缀一样。", "通常和編輯摘要後綴一樣。"),
-			adminOnly: true,
-			type: "string"
-		},
-
-		// TwinkleConfig.blockSummaryAd (string)
-		// Text to be appended to the edit summary of block made using Twinkle
-		{
-			name: "blockSummaryAd",
-			label: wgULS("封禁摘要后缀", "封禁摘要後綴"),
-			helptip: wgULS("通常和编辑摘要后缀一样。", "通常和編輯摘要後綴一樣。"),
-			adminOnly: true,
-			type: "string"
-		}, */
-
 			// TwinkleConfig.userTalkPageMode may take arguments:
 			// 'window': open a new window, remember the opened window
 			// 'tab': opens in a new tab, if possible.
@@ -1787,7 +1748,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 
 	pageobj.setPageText(text);
 	pageobj.setEditSummary(wgULS('保存Twinkle参数设置：来自[[' + Morebits.pageNameNorm + ']]的自动编辑', '儲存Twinkle偏好設定：來自[[' + Morebits.pageNameNorm + ']]的自動編輯'));
-	pageobj.setTags(Twinkle.getPref('revisionTags'));
+	pageobj.setChangeTags(Twinkle.changeTags);
 	pageobj.setCreateOption('recreate');
 	pageobj.save(Twinkle.config.saveSuccess);
 };
