@@ -333,14 +333,14 @@ Twinkle.talkback.evaluate = function(e) {
 		var data = Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message);
 		var title = data[1], content = data[2];
 
-		var flowpage = new Morebits.wiki.flow(fullUserTalkPageName, wgULS('添加回复通告', '加入回覆通告'));
+		var flowpage = new Morebits.wiki.flow(fullUserTalkPageName, wgULS('加入回复通告', '加入回覆通告'));
 		flowpage.setTopic(title);
 		flowpage.setContent(content);
 		flowpage.newTopic();
 	}, function () {
 		var text = '\n\n' + Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message)[0];
 
-		var talkpage = new Morebits.wiki.page(fullUserTalkPageName, wgULS('添加回复通告', '加入回覆通告'));
+		var talkpage = new Morebits.wiki.page(fullUserTalkPageName, wgULS('加入回复通告', '加入回覆通告'));
 
 		talkpage.setEditSummary(editSummary);
 		talkpage.setChangeTags(Twinkle.changeTags);

@@ -146,7 +146,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 						label: wgULS('如可能，合并入{{multiple issues}}', '如可能，合併入{{multiple issues}}'),
 						value: 'group',
 						name: 'group',
-						tooltip: wgULS('如果添加{{multiple issues}}支持的三个以上的模板，所有支持的模板都会被合并入{{multiple issues}}模板中。',
+						tooltip: wgULS('如果加入{{multiple issues}}支持的三个以上的模板，所有支持的模板都会被合并入{{multiple issues}}模板中。',
 							'如果加入{{multiple issues}}支援的三個以上的模板，所有支援的模板都會被合併入{{multiple issues}}模板中。'),
 						checked: Twinkle.getPref('groupByDefault')
 					}
@@ -1054,7 +1054,7 @@ Twinkle.tag.callbacks = {
 			var addedTags = params.tags.map(makeTemplateLink);
 			var removedTags = params.tagsToRemove.map(makeTemplateLink);
 			if (addedTags.length) {
-				summaryText = wgULS('添加', '加入') + makeSentence(addedTags);
+				summaryText = '加入' + makeSentence(addedTags);
 				summaryText += removedTags.length ? '並移除' + makeSentence(removedTags) : '';
 			} else {
 				summaryText = '移除' + makeSentence(removedTags);
@@ -1308,7 +1308,7 @@ Twinkle.tag.callbacks = {
 			// regex check for preexistence of tag can be skipped if in canRemove mode
 			if (Twinkle.tag.canRemove || !tagRe.exec(pageText)) {
 				if (tag === 'Notability' && (mw.config.get('wgNamespaceNumber') === 0 || confirm(wgULS('该页面不是条目，您仍要提报到关注度提报吗？', '該頁面不是條目，您仍要提報到關注度提報嗎？')))) {
-					var wikipedia_page = new Morebits.wiki.page('Wikipedia:关注度/提报', wgULS('添加关注度记录项', '加入關注度記錄項'));
+					var wikipedia_page = new Morebits.wiki.page('Wikipedia:关注度/提报', wgULS('加入关注度记录项', '加入關注度記錄項'));
 					wikipedia_page.setFollowRedirect(true);
 					wikipedia_page.setCallbackParameters(params);
 					wikipedia_page.load(Twinkle.tag.callbacks.notabilityList);
@@ -1343,7 +1343,7 @@ Twinkle.tag.callbacks = {
 		var miTest = /\{\{(multiple ?issues|article ?issues|mi|ai|issues|多個問題|多个问题|問題條目|问题条目|數個問題|数个问题)\s*\|[^}]+\{/im.exec(pageText);
 
 		if (miTest && groupableTags.length > 0) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加支持的标记入已存在的{{multiple issues}}', '加入支援的標記入已存在的{{multiple issues}}'));
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('加入支持的标记入已存在的{{multiple issues}}', '加入支援的標記入已存在的{{multiple issues}}'));
 
 			tagText = '';
 			$.each(groupableTags, addTag);
@@ -1355,7 +1355,7 @@ Twinkle.tag.callbacks = {
 			addUngroupedTags();
 
 		} else if (params.group && !miTest && (groupableExistingTags.length + groupableTags.length) >= 2) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加支持的标记入{{multiple issues}}', '加入支援的標記入{{multiple issues}}'));
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('加入支持的标记入{{multiple issues}}', '加入支援的標記入{{multiple issues}}'));
 
 			tagText += '{{Multiple issues|\n';
 
@@ -1429,7 +1429,7 @@ Twinkle.tag.callbacks = {
 		// var params = pageobj.getCallbackParameters();
 
 		pageobj.setAppendText('\n{{subst:Fameitem|title=' + Morebits.pageNameNorm + '}}');
-		pageobj.setEditSummary(wgULS('添加', '加入') + '[[' + Morebits.pageNameNorm + ']]');
+		pageobj.setEditSummary('加入' + '[[' + Morebits.pageNameNorm + ']]');
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
@@ -1438,7 +1438,7 @@ Twinkle.tag.callbacks = {
 	redirect: function redirect(pageobj) {
 		var params = pageobj.getCallbackParameters(),
 			pageText = pageobj.getPageText(),
-			tagRe, tagText = '', summaryText = wgULS('添加', '加入'),
+			tagRe, tagText = '', summaryText = '加入',
 			tags = [], i;
 
 		for (i = 0; i < params.tags.length; i++) {
@@ -1526,7 +1526,7 @@ Twinkle.tag.callbacks = {
 	file: function friendlytagCallbacksFile(pageobj) {
 		var text = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
-		var summary = wgULS('添加', '加入');
+		var summary = '加入';
 
 		// Add maintenance tags
 		if (params.tags.length) {

@@ -164,7 +164,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		label: wgULS('页面链接', '頁面連結'),
 		value: mw.util.getParamValue('vanarticle') || '',
 		size: 50,
-		tooltip: wgULS('给模板中添加一页面链接，可留空。', '給模板中加入一頁面連結，可留空。'),
+		tooltip: wgULS('给模板中加入一页面链接，可留空。', '給模板中加入一頁面連結，可留空。'),
 		placeholder: wgULS('仅限一个，勿使用网址、[[ ]]，可使用Special:Diff', '僅限一個，勿使用網址、[[ ]]，可使用Special:Diff')
 	});
 
@@ -2449,7 +2449,7 @@ Twinkle.warn.callbacks = {
 			params.reason, params.main_group === 'custom');
 
 		if (Twinkle.getPref('showSharedIPNotice') && mw.util.isIPAddress(mw.config.get('wgTitle'))) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('添加共享IP说明', '加入共享IP說明'));
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('加入共享IP说明', '加入共享IP說明'));
 			text += '\n{{subst:SharedIPAdvice}}';
 		}
 
