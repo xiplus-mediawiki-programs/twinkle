@@ -358,10 +358,10 @@ Twinkle.tag.updateSortOrder = function(e) {
 						tooltip: wgULS('如指定多个条目，请用管道符分隔：条目甲|条目乙', '如指定多個條目，請用管道符分隔：條目甲|條目乙')
 					},
 					{
-						name: 'mergeTagOther',
 						type: 'checkbox',
 						list: [
 							{
+								name: 'mergeTagOther',
 								label: '用{{' + otherTagName + wgULS('}}标记其他条目', '}}標記其他條目'),
 								checked: true,
 								tooltip: wgULS('仅在只输入了一个条目名时可用', '僅在只輸入了一個條目名時可用')
