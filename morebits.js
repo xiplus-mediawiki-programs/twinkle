@@ -3848,12 +3848,9 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			protectlevel: ctx.flaggedRevs.level,
 			expiry: ctx.flaggedRevs.expiry,
 			// tags: ctx.changeTags, // flaggedrevs tag support: [[phab:T247721]]
-			reason: ctx.editSummary
+			reason: ctx.editSummary,
+			watchlist: ctx.watchlistOption
 		};
-		// [[phab:T247915]]
-		if (ctx.watchlistOption === 'watch') {
-			query.watchlist = 'true';
-		}
 
 		ctx.stabilizeProcessApi = new Morebits.wiki.api('配置stabilization设定…', query, ctx.onStabilizeSuccess, ctx.statusElement, ctx.onStabilizeFailure);
 		ctx.stabilizeProcessApi.setParent(this);
