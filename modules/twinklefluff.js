@@ -568,7 +568,7 @@ Twinkle.fluff.callbacks = {
 				case 'norm':
 				/* falls through */
 				default:
-					var cont = confirm(wgULS('选择了常规回退，但最新修改是由一个可信的机器人（', '選擇了常規回退，但最新修改是由一個可信的機器人（') + userNorm + wgULS('）做出的。您是否想回退前一个修订版本？', '）做出的。您是否想回退前一個修訂版本？'));
+					var cont = confirm(wgULS('选择了常规回退，但最新修改是由一个可信的机器人（', '選擇了常規回退，但最新修改是由一個可信的機器人（') + userNorm + wgULS('）做出的。确定以回退前一个修订版本，取消以回退机器人的修改', '）做出的。確定以回退前一個修訂版本，取消以回退機器人的修改'));
 					if (cont) {
 						Morebits.status.info(wgULS('信息', '資訊'), [ wgULS('将对 ', '將對 '), Morebits.htmlNode('strong', userNorm), wgULS(' 执行常规回退，这是一个可信的机器人，基于确认，我们将回退前一个修订版本。', ' 執行常規回退，這是一個可信的機器人，基於確認，我們將回退前一個修訂版本。') ]);
 						index = 2;
