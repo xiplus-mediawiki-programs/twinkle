@@ -121,6 +121,7 @@ Twinkle.config.commonSets = {
  *
  * {
  *   title: <human-readable section title>,
+ *   module: <name of the associated module, used to link to sections>,
  *   adminOnly: <true for admin-only sections>,
  *   hidden: <true for advanced preferences that rarely need to be changed - they can still be modified by manually editing twinkleoptions.js>,
  *   preferences: [
@@ -146,6 +147,7 @@ Twinkle.config.commonSets = {
 Twinkle.config.sections = [
 	{
 		title: wgULS('常规', '常規'),
+		module: 'general',
 		preferences: [
 			// TwinkleConfig.userTalkPageMode may take arguments:
 			// 'window': open a new window, remember the opened window
@@ -191,6 +193,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('封禁用户', '封鎖使用者'),
+		module: 'block',
 		adminOnly: true,
 		preferences: [
 			// TwinkleConfig.defaultToPartialBlocks (boolean)
@@ -205,6 +208,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('图片删除', '圖片刪除'),
+		module: 'image',
 		preferences: [
 		// TwinkleConfig.notifyUserOnDeli (boolean)
 		// If the user should be notified after placing a file deletion tag
@@ -236,6 +240,7 @@ Twinkle.config.sections = [
 
 	{
 		title: '回退',  // twinklefluff module
+		module: 'fluff',
 		preferences: [
 		// TwinkleConfig.autoMenuAfterRollback (bool)
 		// Option to automatically open the warning menu if the user talk page is opened post-reversion
@@ -330,6 +335,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('共享IP标记', '共享IP標記'),
+		module: 'shared',
 		preferences: [
 			{
 				name: 'markSharedIPAsMinor',
@@ -341,6 +347,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('快速删除', '快速刪除'),
+		module: 'speedy',
 		preferences: [
 			{
 				name: 'speedySelectionStyle',
@@ -485,6 +492,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('标记', '標記'),
+		module: 'tag',
 		preferences: [
 			{
 				name: 'watchTaggedPages',
@@ -546,6 +554,7 @@ Twinkle.config.sections = [
 
 	{
 		title: '小作品',
+		module: 'stub',
 		preferences: [
 			{
 				name: 'watchStubbedPages',
@@ -581,6 +590,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('回复', '回覆'),
+		module: 'talkback',
 		preferences: [
 			{
 				name: 'markTalkbackAsMinor',
@@ -608,6 +618,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('反链', '反鏈'),
+		module: 'unlink',
 		preferences: [
 		// TwinkleConfig.unlinkNamespaces (array)
 		// In what namespaces unlink should happen, default in 0 (article) and 100 (portal)
@@ -623,6 +634,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('警告用户', '警告使用者'),
+		module: 'warn',
 		preferences: [
 		// TwinkleConfig.defaultWarningGroup (int)
 		// if true, watch the page which has been dispatched an warning or notice, if false, default applies
@@ -694,6 +706,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('封禁', '封鎖'),
+		module: 'block',
 		preferences: [
 			{
 				name: 'customBlockReasonList',
@@ -708,6 +721,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('欢迎用户', '歡迎使用者'),
+		module: 'welcome',
 		preferences: [
 			{
 				name: 'topWelcomes',
@@ -760,6 +774,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('存废讨论', '存廢討論'),
+		module: 'xfd',
 		preferences: [
 			{
 				name: 'logXfdNominations',
@@ -878,6 +893,7 @@ Twinkle.config.sections = [
 
 	{
 		title: wgULS('侵犯著作权', '侵犯著作權'),
+		module: 'copyvio',
 		preferences: [
 		// TwinkleConfig.copyvioWatchPage (string)
 		// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't
@@ -1023,8 +1039,6 @@ Twinkle.config.init = function twinkleconfigInit() {
 		toctable.appendChild(tocul);
 		contentdiv.appendChild(toctable);
 
-		var tocnumber = 1;
-
 		var contentform = document.createElement('form');
 		contentform.setAttribute('action', 'javascript:void(0)');  // was #tw-save - changed to void(0) to work around Chrome issue
 		contentform.addEventListener('submit', Twinkle.config.save, true);
@@ -1043,7 +1057,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 			var tocli = document.createElement('li');
 			tocli.className = 'toclevel-1';
 			var toca = document.createElement('a');
-			toca.setAttribute('href', '#twinkle-config-section-' + tocnumber.toString());
+			toca.setAttribute('href', '#' + section.module);
 			toca.appendChild(document.createTextNode(section.title));
 			tocli.appendChild(toca);
 			tocul.appendChild(tocli);
@@ -1054,7 +1068,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 			var heading = document.createElement('h4');
 			heading.style.borderBottom = '1px solid gray';
 			heading.style.marginTop = '0.2em';
-			heading.id = 'twinkle-config-section-' + (tocnumber++).toString();
+			heading.id = section.module;
 			heading.appendChild(document.createTextNode(section.title));
 			cell.appendChild(heading);
 			row.appendChild(cell);
