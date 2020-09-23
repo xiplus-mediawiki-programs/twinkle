@@ -1158,8 +1158,8 @@ Twinkle.block.callback.change_template = function twinkleblockcallbackChangeTemp
 			form.expiry.value = Twinkle.block.prev_template_expiry;
 		}
 		Morebits.quickForm.setElementVisibility(form.notalk.parentNode, !settings.nonstandard);
-		Morebits.quickForm.setElementVisibility(form.noemail_template.parentNode, $(form).find('[name=actiontype][value=partial]').is(':checked') && !$(form).find('[name=actiontype][value=block]').is(':checked'));
-		Morebits.quickForm.setElementVisibility(form.nocreate_template.parentNode, $(form).find('[name=actiontype][value=partial]').is(':checked') && !$(form).find('[name=actiontype][value=block]').is(':checked'));
+		// Morebits.quickForm.setElementVisibility(form.noemail_template.parentNode, $(form).find('[name=actiontype][value=partial]').is(':checked') && !$(form).find('[name=actiontype][value=block]').is(':checked'));
+		// Morebits.quickForm.setElementVisibility(form.nocreate_template.parentNode, $(form).find('[name=actiontype][value=partial]').is(':checked') && !$(form).find('[name=actiontype][value=block]').is(':checked'));
 	} else {
 		Morebits.quickForm.setElementVisibility(
 			form.blank_duration.parentNode,
@@ -1203,8 +1203,8 @@ Twinkle.block.callback.preview = function twinkleblockcallbackPreview(form) {
 		partial: $(form).find('[name=actiontype][value=partial]').is(':checked'),
 		pagerestrictions: $(form.pagerestrictions).val() || [],
 		namespacerestrictions: $(form.namespacerestrictions).val() || [],
-		noemail: form.noemail.checked || (form.noemail_template ? form.noemail_template.checked : false),
-		nocreate: form.nocreate.checked || (form.nocreate_template ? form.nocreate_template.checked : false),
+		// noemail: form.noemail.checked || (form.noemail_template ? form.noemail_template.checked : false),
+		// nocreate: form.nocreate.checked || (form.nocreate_template ? form.nocreate_template.checked : false),
 		area: form.area.value
 	};
 
@@ -1479,8 +1479,8 @@ Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTempla
 		messageData: Twinkle.block.blockPresetsInfo[formData.template],
 		reason: Twinkle.block.field_template_options.block_reason,
 		disabletalk: Twinkle.block.field_template_options.notalk,
-		noemail: Twinkle.block.field_template_options.noemail_template,
-		nocreate: Twinkle.block.field_template_options.nocreate_template
+		// noemail: Twinkle.block.field_template_options.noemail_template,
+		// nocreate: Twinkle.block.field_template_options.nocreate_template
 	});
 	params.template = params.template.split(':', 1)[0];
 
