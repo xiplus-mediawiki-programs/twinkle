@@ -3355,43 +3355,47 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			purgeApi.post();
 
 		// check for network or server error
-		} else if (errorCode === 'undefined' && ctx.retries++ < ctx.maxRetries) {
+		} else if ((errorCode === null || errorCode === undefined) && ctx.retries++ < ctx.maxRetries) {
 
 			// the error might be transient, so try again
-			ctx.statusElement.info(wgULS('保存失败，重试', '儲存失敗，重試'));
+			ctx.statusElement.info(wgULS('保存失败，在2秒后重试…', '儲存失敗，在2秒後重試…'));
 			--Morebits.wiki.numberOfActionsLeft;  // allow for normal completion if retry succeeds
-			ctx.saveApi.post(); // give it another go!
+
+			// wait for sometime for client to regain connnectivity
+			sleep(2000).then(function() {
+				ctx.saveApi.post(); // give it another go!
+			});
 
 		// hard error, give up
 		} else {
 
-			// non-admin attempting to edit a protected page - this gives a friendlier message than the default
-			if (errorCode === 'protectedpage') {
-				ctx.statusElement.error(wgULS('不能保存修改：页面被全保护', '不能儲存修改：頁面被全保護'));
-			// check for absuefilter hits: disallowed or warning
-			} else if (errorCode.indexOf('abusefilter') === 0) {
-				var desc = $(ctx.saveApi.getXML()).find('abusefilter').attr('description');
-				if (errorCode === 'abusefilter-disallowed') {
-					ctx.statusElement.error(wgULS('编辑被防滥用过滤器规则“' + desc + '”阻止。如果您认为您的该次编辑是有意义的，请至 Wikipedia:防滥用过滤器/错误报告 提报。',
-						'編輯被防濫用過濾器規則「' + desc + '」阻止。如果您認為您的該次編輯是有意義的，請至 Wikipedia:防濫用過濾器/錯誤報告 提報。'));
-				} else if (errorCode === 'abusefilter-warning') {
-					ctx.statusElement.error(wgULS('编辑被防滥用过滤器规则“' + desc + '”警告，如果您仍希望做出该编辑，请尝试重新提交，根据过滤器的设置您可能可以作出此编辑。',
-						'編輯被防濫用過濾器規則「' + desc + '」警告，如果您仍希望做出該編輯，請嘗試重新提交，根據過濾器的設定您可能可以作出此編輯。'));
+			switch (errorCode) {
+
+				case 'protectedpage':
+					// non-admin attempting to edit a protected page - this gives a friendlier message than the default
+					ctx.statusElement.error(wgULS('不能保存修改：页面被全保护', '不能儲存修改：頁面被全保護'));
+					break;
+
+				case 'abusefilter-disallowed':
+					ctx.statusElement.error(wgULS('编辑被防滥用过滤器规则“', '編輯被防濫用過濾器規則「') + $(ctx.saveApi.getXML()).find('abusefilter').attr('description') + wgULS('”阻止。如果您认为您的该次编辑是有意义的，请至 Wikipedia:防滥用过滤器/错误报告 提报。', '」阻止。如果您認為您的該次編輯是有意義的，請至 Wikipedia:防濫用過濾器/錯誤報告 提報。'));
+					break;
+
+				case 'abusefilter-warning':
+					ctx.statusElement.error([ wgULS('编辑被防滥用过滤器规则“', '編輯被防濫用過濾器規則「'), $(ctx.saveApi.getXML()).find('abusefilter').attr('description'), wgULS('”警告，如果您仍希望做出该编辑，请尝试重新提交，根据过滤器的设置您可能可以作出此编辑。', '」警告，如果您仍希望做出該編輯，請嘗試重新提交，根據過濾器的設定您可能可以作出此編輯。') ]);
 					// We should provide the user with a way to automatically retry the action if they so choose -
 					// I can't see how to do this without creating a UI dependency on Morebits.wiki.page though -- TTO
-				} else { // shouldn't happen but...
-					ctx.statusElement.error(wgULS('编辑被防滥用过滤器阻止。如果您认为您的该次编辑是有意义的，请至 Wikipedia:防滥用过滤器/错误报告 提报。',
-						'編輯被防濫用過濾器阻止。如果您認為您的該次編輯是有意義的，請至 Wikipedia:防濫用過濾器/錯誤報告 提報。'));
-				}
-			// check for blacklist hits
-			} else if (errorCode === 'spamblacklist') {
-				// .find('matches') returns an array in case multiple items are blacklisted, we only return the first
-				var spam = $(ctx.saveApi.getXML()).find('spamblacklist').find('matches').children()[0].textContent;
-				ctx.statusElement.error(wgULS('不能保存页面，因URL ' + spam + ' 在垃圾黑名单中。',
-					'不能儲存頁面，因URL ' + spam + ' 在垃圾黑名單中。'));
-			} else {
-				ctx.statusElement.error(wgULS('不能保存修改：', '不能儲存修改：') + ctx.saveApi.getErrorText());
+					break;
+
+				case 'spamblacklist':
+					// .find('matches') returns an array in case multiple items are blacklisted, we only return the first
+					var spam = $(ctx.saveApi.getXML()).find('spamblacklist').find('matches').children()[0].textContent;
+					ctx.statusElement.error(wgULS('不能保存页面，因URL ', '不能儲存頁面，因URL ') + spam + wgULS(' 在垃圾链接黑名单中。', ' 在垃圾連結黑名單中。'));
+					break;
+
+				default:
+					ctx.statusElement.error(wgULS('不能保存修改：', '不能儲存修改：') + ctx.saveApi.getErrorText());
 			}
+
 			ctx.editMode = 'all';  // cancel append/prepend/revert modes
 			if (ctx.onSaveFailure) {
 				ctx.onSaveFailure(this);  // invoke callback
@@ -3852,6 +3856,13 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		ctx.stabilizeProcessApi.setParent(this);
 		ctx.stabilizeProcessApi.post();
 	};
+
+	var sleep = function(milliseconds) {
+		var deferred = $.Deferred();
+		setTimeout(deferred.resolve, milliseconds);
+		return deferred;
+	};
+
 }; // end Morebits.wiki.page
 
 /* Morebits.wiki.page TODO: (XXX)
