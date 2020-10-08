@@ -41,6 +41,9 @@ Twinkle.close = function twinkleclose() {
 
 	titles.each(function(key, current) {
 		var headlinehref = $(current).find('.mw-headline a').attr('href');
+		if (headlinehref === undefined) {
+			return;
+		}
 		var title = null;
 		if (headlinehref.indexOf('redlink=1') !== -1) {
 			title = headlinehref.slice(19, -22);
