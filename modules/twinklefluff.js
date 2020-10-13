@@ -539,7 +539,7 @@ Twinkle.fluff.callbacks = {
 					// Okay to test on user since it will either fail or sysop will correctly access it
 					// Besides, none of the trusted bots are going to be revdel'd
 					Twinkle.fluff.trustedBots.indexOf(top.getAttribute('user')) !== -1 && revs.length > 1 &&
-					revs[1].getAttribute('pageId') === params.revid) {
+					revs[1].getAttribute('revid') === params.revid) {
 				Morebits.status.info(wgULS('信息', '資訊'), wgULS([ '最新修订版本由 ', Morebits.htmlNode('strong', lastuser), '，一个可信的机器人做出，但之前的版本被认为是破坏，继续回退操作。' ], [ '最新修訂版本由 ', Morebits.htmlNode('strong', lastuser), '，一個可信的機器人做出，但之前的版本被認為是破壞，繼續回退操作。' ]));
 				index = 2;
 			} else {
