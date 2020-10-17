@@ -6,7 +6,9 @@ use warnings;
 
 use English qw(-no_match_vars);
 use utf8;
+use Cwd qw(cwd abs_path);
 use FindBin qw($Bin);
+use File::Spec::Functions qw(rel2abs abs2rel);
 use Getopt::Long;
 use Term::ANSIColor;
 
@@ -15,6 +17,11 @@ use Git::Repository;
 use MediaWiki::API;
 use File::Slurper qw(read_text write_text);
 
+# Save original directory, for relative paths of files
+my $origDir = cwd();
+# Move to top of repository
+# Could do with git rev-parse --show-toplevel, but this is fine
+chdir "$Bin/../" or die "$ERRNO\n";
 
 # Default config values, mode is intentionally absent
 my %conf = (
@@ -27,8 +34,8 @@ my %conf = (
            );
 
 my $rc = '.twinklerc';
-# Check script directory and ~ (home) for config file, preferring the former
-my @dotLocales = map { $_.q{/}.$rc } ($Bin, $ENV{HOME});
+# Check repo directory and ~ (home) for config file, preferring the former
+my @dotLocales = map { $_.q{/}.$rc } (cwd(), $ENV{HOME});
 foreach my $dot (@dotLocales) {
   if (-e -f -r $dot) {
     # Preserve default options if not present in twinklerc
@@ -51,7 +58,7 @@ if (scalar @status) {
 }
 
 # Make sure we know what we're doing before doing it
-# Checks for required parameters, returns list of files (@ARGV or --all)
+# Checks for required parameters, returns list of files (from @ARGV or --all)
 my @files = forReal();
 
 # Open API and log in before anything else
@@ -74,7 +81,7 @@ if (@files) {
     if ($page =~ /^twinkle/) {
       $page =~ s/^twinkle\b/Twinkle/; # twinkle.js, etc. files are capitalized on-wiki
     } else {
-      $page =~ s/\w+\///;       # Remove directories (modules/, select2/)
+      $page =~ s/\w+\///;       # Remove directories (modules/, lib/)
     }
     $page = $conf{base}.$page; # base set to MediaWiki:Gadget- for deploy in &forReal
 
@@ -153,7 +160,12 @@ if ($conf{mode} eq 'deploy') {
     $wikiGadgetDef .= $wg[$_]."\n";
   }
 
+<<<<<<< HEAD:sync.pl
   my $localGadgetDef = read_text('Gadget.md');
+=======
+  my $gadgetFile = 'gadget.txt';
+  my $localGadgetDef = read_text($gadgetFile);
+>>>>>>> 474daec... Create dev folder, move dev scripts and docs there (#1142):dev/sync.pl
   if ($wikiGadgetDef eq $localGadgetDef) {
     print "Gadget up-to-date\n";
   } else {
@@ -164,8 +176,6 @@ if ($conf{mode} eq 'deploy') {
 
 ### SUBROUTINES
 # Check that everything is in order
-# Data::Dumper is simpler but the output is ugly, and this ain't worth another
-# dependency
 sub forReal {
   my @meaningful = qw (mode lang family);
   push @meaningful, 'base' if $conf{mode} ne 'deploy';
@@ -194,12 +204,18 @@ sub forReal {
   } else {
     # Confirm files are valid
     my %checkFiles = map { $_ => 1 } @allFiles;
-    foreach my $arg (@ARGV) {
-      if (!$checkFiles{$arg}) {
-        print colored ['yellow'], "$arg not defined as part of the gadget, skipping\n";
+    foreach my $file (@ARGV) {
+      # Adjust path for being run from anywhere to main repo directory
+      # 1. Make path absolute, relative to the directory from which the script was run
+      # 2. Clean it up (../, etc.)
+      # 3. Make it relative again
+      $file = abs2rel(abs_path(rel2abs($file, $origDir)));
+
+      if (!$checkFiles{$file}) {
+        print colored ['yellow'], "$file not defined as part of the gadget, skipping\n";
         next;
       }
-      push @inputs, $arg;
+      push @inputs, $file;
     }
 
     if (!@inputs) {
@@ -417,8 +433,8 @@ twinkle.js
   twinkle-pagestyles.css
   morebits.js
   morebits.css
-  select2/select2.min.js
-  select2/select2.min.css
+  lib/select2.min.js
+  lib/select2.min.css
   modules/twinkleconfig.js
   modules/twinklearv.js
   modules/twinklebatchdelete.js
