@@ -1081,16 +1081,13 @@ Twinkle.tag.callbacks = {
 				// special functions for merge tags
 				if (params.mergeReason) {
 					// post the rationale on the talk page (only operates in main namespace)
-					var talkpageText = '\n\n== 请求与[[' + params.nonDiscussArticle + ']]合并 ==\n\n';
-					talkpageText += params.mergeReason.trim() + '--~~~~';
 					var talkpage = new Morebits.wiki.page('Talk:' + params.discussArticle, wgULS('将理由贴进讨论页', '將理由貼進討論頁'));
-					talkpage.setAppendText(talkpageText);
-					talkpage.setEditSummary(wgULS('请求将[[', '請求將[[') + params.nonDiscussArticle + ']]' +
-						wgULS('与', '與') + '[[' + params.discussArticle + wgULS(']]合并', ']]合併'));
+					talkpage.setNewSectionText(params.mergeReason.trim() + ' ~~~~');
+					talkpage.setNewSectionTitle('请求与[[' + params.nonDiscussArticle + ']]合并');
 					talkpage.setChangeTags(Twinkle.changeTags);
 					talkpage.setWatchlist(Twinkle.getPref('watchMergeDiscussions'));
 					talkpage.setCreateOption('recreate');
-					talkpage.append();
+					talkpage.newSection();
 				}
 				if (params.mergeTagOther) {
 					// tag the target page if requested
