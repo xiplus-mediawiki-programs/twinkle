@@ -656,7 +656,10 @@ Twinkle.fluff.callbacks = {
 				break;
 		}
 
-		if (Twinkle.getPref('confirmOnFluff') && !userHasAlreadyConfirmedAction && !confirm(wgULS('回退页面：您确定吗？', '回退頁面：您確定嗎？'))) {
+		if ((Twinkle.getPref('confirmOnFluff') ||
+			// Mobile user agent taken from [[en:MediaWiki:Gadget-confirmationRollback-mobile.js]]
+			(Twinkle.getPref('confirmOnMobileFluff') && /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|Opera Mini/i.test(navigator.userAgent))) &&
+			!userHasAlreadyConfirmedAction && !confirm(wgULS('回退页面：您确定吗？', '回退頁面：您確定嗎？'))) {
 			statelem.error(wgULS('用户取消操作。', '使用者取消操作。'));
 			return;
 		}

@@ -81,6 +81,7 @@ Twinkle.defaultConfig = {
 	watchRevertedPages: [ ],
 	offerReasonOnNormalRevert: true,
 	confirmOnFluff: false,
+	confirmOnMobileFluff: true,
 	showRollbackLinks: [ 'diff', 'others' ],
 	customRevertSummary: [],
 

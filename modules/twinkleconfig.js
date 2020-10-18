@@ -307,8 +307,15 @@ Twinkle.config.sections = [
 
 			{
 				name: 'confirmOnFluff',
-				label: wgULS('回退前要求确认', '回退前要求確認'),
-				helptip: wgULS('给那些手持移动设备的用户，或者意志不坚定的。', '給那些手持行動裝置的使用者，或者意志不堅定的。'),
+				label: wgULS('回退前要求确认（所有设备）', '回退前要求確認（所有裝置）'),
+				helptip: wgULS('对于使用移动设备的用户，或者意志不坚定的。', '對於使用行動裝置的使用者，或者意志不堅定的。'),
+				type: 'boolean'
+			},
+
+			{
+				name: 'confirmOnMobileFluff',
+				label: wgULS('回退前要求确认（仅移动设备）', '回退前要求確認（僅行動裝置）'),
+				helptip: wgULS('避免在移动设备意外执行回退。', '避免在行動裝置意外執行回退。'),
 				type: 'boolean'
 			},
 
