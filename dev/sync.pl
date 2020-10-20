@@ -160,12 +160,8 @@ if ($conf{mode} eq 'deploy') {
     $wikiGadgetDef .= $wg[$_]."\n";
   }
 
-<<<<<<< HEAD:sync.pl
-  my $localGadgetDef = read_text('Gadget.md');
-=======
   my $gadgetFile = 'gadget.txt';
   my $localGadgetDef = read_text($gadgetFile);
->>>>>>> 474daec... Create dev folder, move dev scripts and docs there (#1142):dev/sync.pl
   if ($wikiGadgetDef eq $localGadgetDef) {
     print "Gadget up-to-date\n";
   } else {
