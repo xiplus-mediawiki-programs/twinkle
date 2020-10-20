@@ -1,5 +1,4 @@
-Twinkle
-=======
+# Twinkle ![Linter](https://github.com/Xi-Plus/twinkle/workflows/Linter/badge.svg)
 
 Twinkle是维基人用于快速执行常见维护工作（如提交删除候选及清理破坏）的JavaScript库和应用程式。
 
