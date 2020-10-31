@@ -615,7 +615,7 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 	var resultData = $(e.target).data('resultData');
 	var messageData = $(e.target.sub_group).find('option[value="' + code + '"]').data('messageData');
 	var noop = e.target.noop.checked;
-	var talkpage = e.target.talkpage.checked;
+	var talkpage = e.target.talkpage && e.target.talkpage.checked;
 	var redirects = e.target.redirects.checked;
 	var params = {
 		title: resultData.title,
