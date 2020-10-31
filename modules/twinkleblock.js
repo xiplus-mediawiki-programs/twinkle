@@ -1650,7 +1650,7 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 
 	// build the edit summary
 	var summary = wgULS('封禁通知：', '封鎖通知：');
-	summary += messageData.summary || params.reason;
+	summary += messageData.summary || messageData.reason || params.reason;
 	if (messageData.suppressArticleInSummary !== true && params.article) {
 		summary += wgULS('，于[[', '，於[[') + params.article + ']]';
 	}
