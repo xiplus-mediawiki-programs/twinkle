@@ -1448,6 +1448,7 @@ Twinkle.speedy.callbacks = {
 			}
 			appendText += ' ~~~~~\n';
 
+			usl.changeTags = Twinkle.changeTags;
 			usl.log(appendText, wgULS('记录对[[', '記錄對[[') + Morebits.pageNameNorm + wgULS(']]的快速删除提名', ']]的快速刪除提名'));
 		}
 	}

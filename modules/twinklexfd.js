@@ -718,6 +718,7 @@ Twinkle.xfd.callbacks = {
 			appendText += '；通知{{user|' + initialContrib + '}}';
 		}
 		appendText += ' ~~~~~\n';
+		usl.changeTags = Twinkle.changeTags;
 		usl.log(appendText, editsummary);
 	}
 };
