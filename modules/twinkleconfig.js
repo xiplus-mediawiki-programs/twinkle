@@ -831,7 +831,7 @@ Twinkle.config.sections = [
 			{
 				name: 'logXfdNominations',
 				label: wgULS('在用户空间中记录所有存废讨论提名', '在使用者空間中記錄所有存廢討論提名'),
-				helptip: wgULS('该日志供您追踪所有透过Twinkle提交的存废讨论', '該日誌供您追蹤所有透過Twinkle提交的存廢討論'),
+				helptip: wgULS('该日志供您追踪所有通过Twinkle提交的存废讨论', '該日誌供您追蹤所有透過Twinkle提交的存廢討論'),
 				type: 'boolean'
 			},
 			{
@@ -913,6 +913,13 @@ Twinkle.config.sections = [
 				type: 'string'
 			},
 
+		]
+	},
+
+	{
+		title: wgULS('关闭存废讨论', '關閉存廢討論'),
+		module: 'close',
+		preferences: [
 			{
 				name: 'XfdClose',
 				label: wgULS('在存废讨论显示关闭讨论按钮', '在存廢討論顯示關閉討論按鈕'),

@@ -429,6 +429,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 	var Window = new Morebits.simpleWindow(400, 200);
 	Window.setTitle(wgULS('关闭存废讨论', '關閉存廢討論') + ' \u00B7 ' + title);
 	Window.setScriptName('Twinkle');
+	Window.addFooterLink(wgULS('存废讨论设置', '存廢討論設定'), 'WP:TWPREF#close');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#close');
 
 	var form = new Morebits.quickForm(Twinkle.close.callback.evaluate);
@@ -444,7 +445,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 		type: 'input',
 		name: 'sdreason',
 		label: wgULS('速删理由：', '速刪理由：'),
-		tooltip: wgULS('用于删除日誌，使用{{delete}}的参数格式，例如 A1 或 A1|G1', '用於刪除日誌，使用{{delete}}的參數格式，例如 A1 或 A1|G1'),
+		tooltip: wgULS('用于删除日志，使用{{delete}}的参数格式，例如 A1 或 A1|G1', '用於刪除日誌，使用{{delete}}的參數格式，例如 A1 或 A1|G1'),
 		hidden: true
 	});
 

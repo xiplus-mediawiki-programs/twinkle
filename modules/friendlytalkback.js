@@ -31,6 +31,7 @@ Twinkle.talkback.callback = function() {
 	Window.setTitle(wgULS('回复通告', '回覆通告'));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(wgULS('关于{{talkback}}', '關於{{talkback}}'), 'Template:Talkback');
+	Window.addFooterLink(wgULS('通告设置', '通告設定'), 'WP:TWPREF#talkback');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#talkback');
 
 	var form = new Morebits.quickForm(Twinkle.talkback.evaluate);

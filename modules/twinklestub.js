@@ -32,6 +32,8 @@ Twinkle.stub.callback = function friendlytagCallback() {
 	var Window = new Morebits.simpleWindow(630, Twinkle.stub.mode === 'article' ? 450 : 400);
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink('小作品說明', 'Wikipedia:小作品');
+	Window.addFooterLink(wgULS('小作品设置', '小作品設定'), 'WP:TWPREF#stub');
+	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#stub');
 
 	var form = new Morebits.quickForm(Twinkle.stub.callback.evaluate);
 
@@ -61,7 +63,7 @@ Twinkle.stub.callback = function friendlytagCallback() {
 				tooltip: wgULS('您可以在Twinkle参数设置（WP:TWPREFS）中更改此项。', '您可以在Twinkle偏好設定（WP:TWPREFS）中更改此項。'),
 				event: Twinkle.stub.updateSortOrder,
 				list: [
-					{ type: 'option', value: 'cat', label: wgULS('按类别', '按類別'), selected: Twinkle.getPref('stubArticleSortOrder') === 'cat' },
+					{ type: 'option', value: 'cat', label: wgULS('按类型', '按類別'), selected: Twinkle.getPref('stubArticleSortOrder') === 'cat' },
 					{ type: 'option', value: 'alpha', label: '按字母', selected: Twinkle.getPref('stubArticleSortOrder') === 'alpha' }
 				]
 			});
@@ -385,7 +387,7 @@ Twinkle.stub.article.tagCategories = wgULS({
 Twinkle.stub.callbacks = {
 	main: function(pageobj) {
 		var params = pageobj.getCallbackParameters(),
-			tagRe, summaryText = wgULS('添加', '加入'),
+			tagRe, summaryText = '加入',
 			tags = [], groupableTags = [], i, totalTags;
 
 		// Remove tags that become superfluous with this action
