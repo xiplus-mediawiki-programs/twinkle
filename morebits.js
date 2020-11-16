@@ -1494,26 +1494,21 @@ Morebits.unbinder.getCallback = function UnbinderGetCallback(self) {
  */
 Morebits.date = function() {
 	var args = Array.prototype.slice.call(arguments);
-
-	// Date.parse implementations vary too much between browsers, and
-	// MediaWiki's format is too non-standard, so we just convert MW
-	// timestamps to ISO-8601. A paren-wrapped 'UTC' messes everyone up,
-	// and the comma after the time is only okay in modern Firefox. After
-	// this first replace, Chrome and Firefox are content. The second
-	// replace is mainly for Safari, which basically *only* accepts the
-	// simplified ECMA-262 implementation of ISO-8601.
-	if (typeof args[0] === 'string') {
-		args[0] = args[0].replace(/(\d\d:\d\d),/, '$1').replace(/\(UTC\)/, 'UTC');
-		// Safari is particular about timezone offsets, so this is intentionally specific
-		args[0] = args[0].replace(/(\d\d:\d\d) (\d{1,2}) ([A-Z][a-z]+) (\d{4}) UTC$/, function(match, time, date, monthname, year) {
-			// zero-pad date
-			if (date < 10) {
-				date = '0' + date;
-			}
-			return [year, mw.config.get('wgMonthNames').indexOf(monthname), date].join('-') + 'T' + time + 'Z';
-		});
-	}
 	this._d = new (Function.prototype.bind.apply(Date, [Date].concat(args)));
+
+	if (!this.isValid()) {
+		if (args.length === 1 && typeof args[0] === 'string') {
+			// Check if it's a MediaWiki signature timestamp (which the native Date cannot parse directly)
+			var dateParts = Morebits.date.localeData.signatureTimestampFormat(args[0]);
+			if (dateParts) {
+				this._d = new Date(Date.UTC.apply(null, dateParts));
+			}
+		}
+	}
+	// Still no?
+	if (!this.isValid()) {
+		mw.log.warn(wgULS('无效的Morebits.date初始化：', '無效的Morebits.date初始化：'), args);
+	}
 };
 
 Morebits.date.localeData = {
@@ -1528,6 +1523,15 @@ Morebits.date.localeData = {
 		thisWeek: 'ddddA hh:mm',
 		pastWeek: '[上]ddddA hh:mm',
 		other: 'YYYY-MM-DD'
+	},
+	signatureTimestampFormat: function (str) {
+		var rgx = /(\d{4})年(\d{1,2})月(\d{1,2})日 \((?:.)\) (\d{2}):(\d{2}) \(UTC\)/;
+		var match = rgx.exec(str);
+		if (!match) {
+			return null;
+		}
+		// ..... year ... month .. date ... hour .... minute
+		return [match[1], match[2], match[3], match[4], match[5]];
 	}
 };
 
@@ -1625,6 +1629,9 @@ $.extend(Morebits.date.prototype, {
 	 * @returns {string}
 	 */
 	format: function(formatstr, zone) {
+		if (!this.isValid()) {
+			return wgULS('无效日期', '無效日期'); // Put the truth out, preferable to "NaNNaNNan NaN:NaN" or whatever
+		}
 		var udate = this;
 		// create a new date object that will contain the date to display as system time
 		if (zone === 'utc') {
