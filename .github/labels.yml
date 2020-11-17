@@ -10,16 +10,14 @@
 "Module: batch":
   - modules/twinklebatchundelete.js
   - modules/twinklebatchdelete.js
-  - modules/twinklebatchprotect.js
 "Module: block":
   - modules/twinkleblock.js
 "Module: config":
   - modules/twinkleconfig.js
+"Module: copyvio":
+  - modules/twinklecopyvio.js
 "Module: fluff":
   - modules/twinklefluff.js
-"Module: prod":
-  - modules/twinkleprod.js
-  - modules/twinkledeprod.js
 "Module: protect":
   - modules/twinkleprotect.js
 "Module: speedy":
@@ -42,8 +40,6 @@ Docs:
   - ./dev/*.md
 Gadget:
   - gadget.txt
-Tests:
-  - dev/patch-test.js
 dependencies:
   - package.json
   - package-lock.json
