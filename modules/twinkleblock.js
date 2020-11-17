@@ -1165,8 +1165,8 @@ Twinkle.block.callback.change_template = function twinkleblockcallbackChangeTemp
 		}
 		Morebits.quickForm.setElementVisibility(form.notalk.parentNode, !settings.nonstandard);
 		// Partial
-		Morebits.quickForm.setElementVisibility(form.noemail_template.parentNode, partialBox);
-		Morebits.quickForm.setElementVisibility(form.nocreate_template.parentNode, partialBox);
+		// Morebits.quickForm.setElementVisibility(form.noemail_template.parentNode, partialBox);
+		// Morebits.quickForm.setElementVisibility(form.nocreate_template.parentNode, partialBox);
 	} else if (templateBox) { // Only present if block && template forms both visible
 		Morebits.quickForm.setElementVisibility(
 			form.blank_duration.parentNode,
@@ -1177,6 +1177,7 @@ Twinkle.block.callback.change_template = function twinkleblockcallbackChangeTemp
 	// Only particularly relevant if template form is present
 	Morebits.quickForm.setElementVisibility(form.article.parentNode, settings && !!settings.pageParam);
 	Morebits.quickForm.setElementVisibility(form.block_reason.parentNode, settings && !!settings.reasonParam);
+	form.block_reason.value = settings.reason || '';
 
 	// Partial block
 	Morebits.quickForm.setElementVisibility(form.area.parentNode, partialBox && !blockBox);
