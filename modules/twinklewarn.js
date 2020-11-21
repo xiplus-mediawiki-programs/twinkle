@@ -2434,33 +2434,6 @@ Twinkle.warn.callbacks = {
 			}
 		}
 
-		var dateHeaderRegex = now.monthHeaderRegex(), dateHeaderRegexLast, dateHeaderRegexResult;
-		while ((dateHeaderRegexLast = dateHeaderRegex.exec(text)) !== null) {
-			dateHeaderRegexResult = dateHeaderRegexLast;
-		}
-		// If dateHeaderRegexResult is null then lastHeaderIndex is never checked. If it is not null but
-		// \n== is not found, then the date header must be at the very start of the page. lastIndexOf
-		// returns -1 in this case, so lastHeaderIndex gets set to 0 as desired.
-		var lastHeaderIndex = text.lastIndexOf('\n==') + 1;
-
-		if (text.length > 0) {
-			text += '\n\n';
-		}
-
-		if (messageData.heading) {
-			text += '== ' + messageData.heading + ' ==\n';
-		} else if (!dateHeaderRegexResult || dateHeaderRegexResult.index !== lastHeaderIndex) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('未找到当月标题，将创建新的', '未找到當月標題，將建立新的'));
-			text += now.monthHeader() + '\n';
-		}
-		text += Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
-			params.reason, params.main_group === 'custom');
-
-		if (Twinkle.getPref('showSharedIPNotice') && mw.util.isIPAddress(mw.config.get('wgTitle'))) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('加入共享IP说明', '加入共享IP說明'));
-			text += '\n{{subst:SharedIPAdvice}}';
-		}
-
 		// build the edit summary
 		// Function to handle generation of summary prefix for custom templates
 		var customProcess = function(template) {
@@ -2524,11 +2497,49 @@ Twinkle.warn.callbacks = {
 			}
 		}
 
-		pageobj.setPageText(text);
 		pageobj.setEditSummary(summary);
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setWatchlist(Twinkle.getPref('watchWarnings'));
-		pageobj.save();
+
+
+		// Get actual warning text
+		var warningText = Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
+			params.reason, params.main_group === 'custom');
+		if (Twinkle.getPref('showSharedIPNotice') && mw.util.isIPAddress(mw.config.get('wgTitle'))) {
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('加入共享IP说明', '加入共享IP說明'));
+			warningText += '\n{{subst:SharedIPAdvice}}';
+		}
+
+		var sectionExists = false, sectionNumber = 0;
+		// Only check sections if there are sections or there's a chance we won't create our own
+		if (!messageData.heading && text.length) {
+			// Get all L2 sections
+			var sections = text.match(/^(==)[^=].+\1/gm);
+			if (sections.length !== 0) {
+				// Find the index of the section header in question
+				var dateHeaderRegex = now.monthHeaderRegex();
+				sectionNumber = 0;
+				// Find this month's section, preferring the bottom-most
+				sectionExists = sections.reverse().some(function(sec, idx) {
+					return dateHeaderRegex.test(sec) && (sectionNumber = sections.length - 1 - idx);
+				});
+			}
+		}
+
+		if (sectionExists) { // append to existing section
+			pageobj.setPageSection(sectionNumber + 1);
+			pageobj.setAppendText('\n\n' + warningText);
+			pageobj.append();
+		} else {
+			if (messageData.heading) { // create new section
+				pageobj.setNewSectionTitle(messageData.heading);
+			} else {
+				Morebits.status.info(wgULS('信息', '資訊'), wgULS('未找到当月的二级标题，将创建新的', '未找到當月的二級標題，將建立新的'));
+				pageobj.setNewSectionTitle(now.monthHeader());
+			}
+			pageobj.setNewSectionText(warningText);
+			pageobj.newSection();
+		}
 	},
 	main_flow: function (flowobj) {
 		var params = flowobj.getCallbackParameters();
