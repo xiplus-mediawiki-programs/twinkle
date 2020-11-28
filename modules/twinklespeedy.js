@@ -1639,7 +1639,7 @@ Twinkle.speedy.callback.evaluateSysop = function twinklespeedyCallbackEvaluateSy
 	var watchPage, promptForSummary;
 	normalizeds.forEach(function(norm) {
 		if (Twinkle.getPref('watchSpeedyPages').indexOf(norm) !== -1) {
-			watchPage = true;
+			watchPage = Twinkle.getPref('watchSpeedyExpiry');
 		}
 		if (Twinkle.getPref('promptForSpeedyDeletionSummary').indexOf(norm) !== -1) {
 			promptForSummary = true;
@@ -1690,7 +1690,7 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 	var watchPage = false;
 	$.each(normalizeds, function(index, norm) {
 		if (Twinkle.getPref('watchSpeedyPages').indexOf(norm) !== -1) {
-			watchPage = true;
+			watchPage = Twinkle.getPref('watchSpeedyExpiry');
 			return false;  // break
 		}
 	});

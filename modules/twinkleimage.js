@@ -260,18 +260,7 @@ Twinkle.image.callbacks = {
 		editSummary += '）';
 		pageobj.setEditSummary(editSummary);
 		pageobj.setChangeTags(Twinkle.changeTags);
-
-		switch (Twinkle.getPref('deliWatchPage')) {
-			case 'yes':
-				pageobj.setWatchlist(true);
-				break;
-			case 'no':
-				pageobj.setWatchlistFromPreferences(false);
-				break;
-			default:
-				pageobj.setWatchlistFromPreferences(true);
-				break;
-		}
+		pageobj.setWatchlist(Twinkle.getPref('deliWatchPage'));
 		pageobj.setCreateOption('nocreate');
 		pageobj.save();
 	},
@@ -296,17 +285,7 @@ Twinkle.image.callbacks = {
 				usertalkpage.setEditSummary(wgULS('通知：文件[[', '通知：檔案[[') + Morebits.pageNameNorm + wgULS(']]快速删除提名', ']]快速刪除提名'));
 				usertalkpage.setChangeTags(Twinkle.changeTags);
 				usertalkpage.setCreateOption('recreate');
-				switch (Twinkle.getPref('deliWatchUser')) {
-					case 'yes':
-						usertalkpage.setWatchlist(true);
-						break;
-					case 'no':
-						usertalkpage.setWatchlistFromPreferences(false);
-						break;
-					default:
-						usertalkpage.setWatchlistFromPreferences(true);
-						break;
-				}
+				usertalkpage.setWatchlist(Twinkle.getPref('deliWatchUser'));
 				usertalkpage.setFollowRedirect(true, false);
 				usertalkpage.append();
 			});

@@ -2262,6 +2262,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 		followRedirect: false,
 		followCrossNsRedirect: true,
 		watchlistOption: 'nochange',
+		watchlistExpiry: null,
 		creator: null,
 		timestamp: null,
 
@@ -2442,9 +2443,12 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			token: canUseMwUserToken ? mw.user.tokens.get('csrfToken') : ctx.csrfToken,
 			watchlist: ctx.watchlistOption
 		};
-
 		if (ctx.changeTags) {
 			query.tags = ctx.changeTags;
+		}
+
+		if (ctx.watchlistExpiry) {
+			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 
 		if (typeof ctx.pageSection === 'number') {
@@ -2692,23 +2696,47 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	};
 
 	/**
-	 * @param {boolean} watchlistOption
-	 *     True  - page will be added to the user's watchlist when save() is called
-	 *     False - watchlist status of the page will not be changed (default)
+	 * @param {boolean|string} [watchlistOption=false] -
+	 * Basically a mix of MW API and Twinkley options available pre-expiry:
+	 * - `true`|`'yes'`: page will be added to the user's watchlist when the action is called
+	 * - `false`|`'no'`: watchlist status of the page will not be changed.
+	 * - `'default'`|`'preferences'`: watchlist status of the page will
+         * be set based on the user's preference settings when the action is
+         * called.  Ignores ability of default + expiry.
+	 * - `'unwatch'`: explicitly unwatch the page
+	 * - {string|number}: watch page until the specified time (relative or absolute datestring)
 	 */
 	this.setWatchlist = function(watchlistOption) {
-		if (watchlistOption) {
-			ctx.watchlistOption = 'watch';
-		} else {
+		if (!watchlistOption || watchlistOption === 'no') {
 			ctx.watchlistOption = 'nochange';
+		} else if (watchlistOption === 'default' || watchlistOption === 'preferences') {
+			ctx.watchlistOption = 'preferences';
+		} else if (watchlistOption === 'unwatch') {
+			ctx.watchlistOption = 'unwatch';
+		} else {
+			ctx.watchlistOption = 'watch';
+			if (typeof watchlistOption === 'number' || (typeof watchlistOption === 'string' && watchlistOption !== 'yes')) {
+				ctx.watchlistExpiry = watchlistOption;
+			}
 		}
 	};
 
 	/**
-	 * @param {boolean} watchlistOption
-	 *     True  - page watchlist status will be set based on the user's
-	 *             preference settings when save() is called.
-	 *     False - watchlist status of the page will not be changed (default)
+	 * Set an expiry. setWatchlist can handle this by itself if passed a
+	 * string, so this is here largely for completeness and compatibility.
+	 *
+	 * @param {string} watchlistExpiry
+	 * */
+	this.setWatchlistExpiry = function(watchlistExpiry) {
+		ctx.watchlistExpiry = watchlistExpiry;
+	};
+
+	/**
+	 * @deprecated Use setWatchlist.
+	 * @param {boolean} [watchlistOption=false] -
+	 * - `True`: page watchlist status will be set based on the user's
+	 * preference settings when `save()` is called.
+	 * - `False`: watchlist status of the page will not be changed.
 	 *
 	 *    Watchlist notes:
 	 *       1. The MediaWiki API value of 'unwatch', which explicitly removes the page from the
@@ -2721,6 +2749,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 	 *          that accept a string value of 'default'.
 	 */
 	this.setWatchlistFromPreferences = function(watchlistOption) {
+		console.warn('NOTE: Morebits.wiki.page.setWatchlistFromPreferences was deprecated December 2020, please use setWatchlist'); // eslint-disable-line no-console
 		if (watchlistOption) {
 			ctx.watchlistOption = 'preferences';
 		} else {
@@ -3587,6 +3616,9 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.tags = ctx.changeTags;
 		}
 
+		if (ctx.watchlistExpiry) {
+			query.watchlistexpiry = ctx.watchlistExpiry;
+		}
 		if (ctx.moveTalkPage) {
 			query.movetalk = 'true';
 		}
@@ -3690,6 +3722,9 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.tags = ctx.changeTags;
 		}
 
+		if (ctx.watchlistExpiry) {
+			query.watchlistexpiry = ctx.watchlistExpiry;
+		}
 
 		ctx.deleteProcessApi = new Morebits.wiki.api(wgULS('删除页面…', '刪除頁面…'), query, ctx.onDeleteSuccess, ctx.statusElement, fnProcessDeleteError);
 		ctx.deleteProcessApi.setParent(this);
@@ -3768,6 +3803,9 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.tags = ctx.changeTags;
 		}
 
+		if (ctx.watchlistExpiry) {
+			query.watchlistexpiry = ctx.watchlistExpiry;
+		}
 
 		ctx.undeleteProcessApi = new Morebits.wiki.api(wgULS('取消删除…', '取消刪除…'), query, ctx.onUndeleteSuccess, ctx.statusElement, fnProcessUndeleteError);
 		ctx.undeleteProcessApi.setParent(this);
@@ -3878,6 +3916,9 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			query.tags = ctx.changeTags;
 		}
 
+		if (ctx.watchlistExpiry) {
+			query.watchlistexpiry = ctx.watchlistExpiry;
+		}
 		if (ctx.protectCascade) {
 			query.cascade = 'true';
 		}
@@ -3921,7 +3962,7 @@ Morebits.wiki.page = function(pageName, currentAction) {
 			expiry: ctx.flaggedRevs.expiry,
 			// tags: ctx.changeTags, // flaggedrevs tag support: [[phab:T247721]]
 			reason: ctx.editSummary,
-			watchlist: ctx.watchlistOption
+			watchlist: ctx.watchlistOption // Doesn't support watchlist expiry [[phab:T263336]]
 		};
 
 		ctx.stabilizeProcessApi = new Morebits.wiki.api('配置stabilization设定…', query, ctx.onStabilizeSuccess, ctx.statusElement, ctx.onStabilizeFailure);

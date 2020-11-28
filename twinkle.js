@@ -78,7 +78,8 @@ Twinkle.defaultConfig = {
 	openTalkPageOnAutoRevert: false,
 	rollbackInPlace: false,
 	markRevertedPagesAsMinor: [ 'vand' ],
-	watchRevertedPages: [ ],
+	watchRevertedPages: [ 'agf', 'norm', 'vand', 'torev' ],
+	watchRevertedExpiry: 'yes',
 	offerReasonOnNormalRevert: true,
 	confirmOnFluff: false,
 	confirmOnMobileFluff: true,
@@ -93,6 +94,7 @@ Twinkle.defaultConfig = {
 	// CSD
 	speedySelectionStyle: 'buttonClick',
 	watchSpeedyPages: [ ],
+	watchSpeedyExpiry: 'yes',
 	markSpeedyPagesAsPatrolled: true,
 
 	// these next two should probably be identical by default
@@ -117,7 +119,7 @@ Twinkle.defaultConfig = {
 	defaultWarningGroup: '1',
 	combinedSingletMenus: false,
 	showSharedIPNotice: true,
-	watchWarnings: false,
+	watchWarnings: 'yes',
 	oldSelect: false,
 	customWarningList: [],
 	autoMenuAfterRollback: false,
@@ -137,8 +139,8 @@ Twinkle.defaultConfig = {
 	XfdClose: Morebits.userIsSysop ? 'all' : 'hide',
 
 	// Copyvio
-	copyvioWatchPage: 'default',
-	copyvioWatchUser: 'default',
+	copyvioWatchPage: 'yes',
+	copyvioWatchUser: 'yes',
 	markCopyvioPagesAsPatrolled: true,
 
 	// Hidden preferences
@@ -159,8 +161,8 @@ Twinkle.defaultConfig = {
 	// Formerly defaultConfig.friendly:
 	// Tag
 	groupByDefault: true,
-	watchTaggedPages: false,
-	watchMergeDiscussions: false,
+	watchTaggedPages: 'yes',
+	watchMergeDiscussions: 'yes',
 	markTaggedPagesAsMinor: false,
 	markTaggedPagesAsPatrolled: true,
 	tagArticleSortOrder: 'cat',
@@ -177,7 +179,7 @@ Twinkle.defaultConfig = {
 
 	// Welcome
 	topWelcomes: false,
-	watchWelcomes: true,
+	watchWelcomes: 'yes',
 	welcomeHeading: wgULS('欢迎', '歡迎'),
 	insertHeadings: true,
 	insertUsername: true,

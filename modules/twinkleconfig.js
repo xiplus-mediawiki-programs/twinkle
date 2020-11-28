@@ -21,11 +21,15 @@
 
 Twinkle.config = {};
 
-Twinkle.config.watchlistEnums = wgULS({
-	yes: '添加到监视列表', no: '不添加到监视列表', 'default': '遵守站点设置'
-}, {
-	yes: '加入到監視清單', no: '不加入到監視清單', 'default': '遵守站點設定'
-});
+Twinkle.config.watchlistEnums = {
+	yes: wgULS('永久加入到监视列表', '永久加入到監視清單'),
+	no: wgULS('不加入到监视列表', '不加入到監視清單'),
+	'default': wgULS('遵守站点设置', '遵守站點設定'),
+	'1 week': wgULS('加入到监视列表1周', '加入到監視清單1週'),
+	'1 month': wgULS('加入到监视列表1个月', '加入到監視清單1個月'),
+	'3 months': wgULS('加入到监视列表3个月', '加入到監視清單3個月'),
+	'6 months': wgULS('加入到监视列表6个月', '加入到監視清單6個月')
+};
 
 Twinkle.config.commonSets = {
 	csdCriteria: {
@@ -219,7 +223,7 @@ Twinkle.config.sections = [
 			},
 
 			// TwinkleConfig.deliWatchPage (string)
-			// The watchlist setting of the page tagged for deletion. Either "yes", "no", or "default". Default is "default" (Duh).
+			// The watchlist setting of the page tagged for deletion.
 			{
 				name: 'deliWatchPage',
 				label: wgULS('标记图片时加入到监视列表', '標記圖片時加入到監視清單'),
@@ -228,7 +232,7 @@ Twinkle.config.sections = [
 			},
 
 			// TwinkleConfig.deliWatchUser (string)
-			// The watchlist setting of the user talk page if a notification is placed. Either "yes", "no", or "default". Default is "default" (Duh).
+			// The watchlist setting of the user talk page if a notification is placed.
 			{
 				name: 'deliWatchUser',
 				label: wgULS('标记图片时加入创建者讨论页到监视列表', '標記圖片時加入建立者討論頁到監視清單'),
@@ -294,6 +298,14 @@ Twinkle.config.sections = [
 				label: wgULS('把这些类型的回退加入到监视列表', '把這些類別的回退加入到監視清單'),
 				type: 'set',
 				setValues: wgULS({ agf: '善意回退', norm: '常规回退', vand: '破坏回退', torev: '“恢复此版本”' }, { agf: '善意回退', norm: '常規回退', vand: '破壞回退', torev: '「恢復此版本」' })
+			},
+			// TwinkleConfig.watchRevertedExpiry
+			// If any of the above items are selected, whether to expire the watch
+			{
+				name: 'watchRevertedExpiry',
+				label: wgULS('当回退页面时，加入到监视列表的期限', '當回退頁面時，加入到監視清單的期限'),
+				type: 'enum',
+				enumValues: Twinkle.config.watchlistEnums
 			},
 
 			// TwinkleConfig.offerReasonOnNormalRevert (boolean)
@@ -371,6 +383,14 @@ Twinkle.config.sections = [
 				type: 'set',
 				setValues: Twinkle.config.commonSets.csdCriteria,
 				setDisplayOrder: Twinkle.config.commonSets.csdCriteriaDisplayOrder
+			},
+			// TwinkleConfig.watchSpeedyExpiry
+			// If any of the above items are selected, whether to expire the watch
+			{
+				name: 'watchSpeedyExpiry',
+				label: wgULS('当标记页面时，加入到监视列表的期限', '當標記頁面時，加入到監視清單的期限'),
+				type: 'enum',
+				enumValues: Twinkle.config.watchlistEnums
 			},
 
 			// TwinkleConfig.markSpeedyPagesAsPatrolled (boolean)
@@ -504,12 +524,14 @@ Twinkle.config.sections = [
 			{
 				name: 'watchTaggedPages',
 				label: wgULS('标记时加入到监视列表', '標記時加入到監視清單'),
-				type: 'boolean'
+				type: 'enum',
+				enumValues: Twinkle.config.watchlistEnums
 			},
 			{
 				name: 'watchMergeDiscussions',
 				label: wgULS('加入合并讨论时监视讨论页', '加入合併討論時監視討論頁'),
-				type: 'boolean'
+				type: 'enum',
+				enumValues: Twinkle.config.watchlistEnums
 			},
 			{
 				name: 'markTaggedPagesAsMinor',
@@ -683,13 +705,14 @@ Twinkle.config.sections = [
 				type: 'boolean'
 			},
 
-			// TwinkleConfig.watchWarnings (boolean)
-			// if true, watch the page which has been dispatched an warning or notice, if false, default applies
+			// TwinkleConfig.watchWarnings (string)
+			// Watchlist setting for the page which has been dispatched an warning or notice
 			{
 				name: 'watchWarnings',
 				label: wgULS('警告时加入用户讨论页到监视列表', '警告時加入使用者討論頁到監視清單'),
 				helptip: wgULS('注意：如果对方使用Flow，对应讨论串总会加到监视列表中。', '注意：如果對方使用Flow，對應討論串總會加到監視清單中。'),
-				type: 'boolean'
+				type: 'enum',
+				enumValues: Twinkle.config.watchlistEnums
 			},
 
 			// TwinkleConfig.oldSelect (boolean)
@@ -739,7 +762,8 @@ Twinkle.config.sections = [
 				name: 'watchWelcomes',
 				label: wgULS('在欢迎时将用户讨论页加入监视列表', '在歡迎時將使用者討論頁加入監視清單'),
 				helptip: wgULS('您将可以关注新手如何与他人协作，并能够适时地提供帮助。', '您將可以關注新手如何與他人協作，並能夠適時地提供幫助。'),
-				type: 'boolean'
+				type: 'enum',
+				enumValues: Twinkle.config.watchlistEnums
 			},
 			/*
 			{
@@ -804,8 +828,7 @@ Twinkle.config.sections = [
 			},
 
 			// TwinkleConfig.xfdWatchPage (string)
-			// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't
-			// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
+			// The watchlist setting of the page being nominated for XfD.
 			{
 				name: 'xfdWatchPage',
 				label: wgULS('加入提名的页面到监视列表', '加入提名的頁面到監視清單'),
@@ -816,7 +839,6 @@ Twinkle.config.sections = [
 			// TwinkleConfig.xfdWatchDiscussion (string)
 			// The watchlist setting of the newly created XfD page (for those processes that create discussion pages for each nomination),
 			// or the list page for the other processes.
-			// Either "yes" (add to watchlist), "no" (don't add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
 			{
 				name: 'xfdWatchDiscussion',
 				label: wgULS('加入存废讨论页到监视列表', '加入存廢討論頁到監視清單'),
@@ -826,8 +848,7 @@ Twinkle.config.sections = [
 			},
 
 			// TwinkleConfig.xfdWatchUser (string)
-			// The watchlist setting of the user if he receives a notification. Either "yes" (add to watchlist), "no" (don't
-			// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
+			// The watchlist setting of the user talk page if they receive a notification.
 			{
 				name: 'xfdWatchUser',
 				label: wgULS('加入创建者讨论页到监视列表（在通知时）', '加入建立者討論頁到監視清單（在通知時）'),
@@ -835,8 +856,6 @@ Twinkle.config.sections = [
 				enumValues: Twinkle.config.watchlistEnums
 			},
 
-			// TwinkleConfig.markXfdPagesAsPatrolled (boolean)
-			// If, when applying xfd template to page, to mark the page as patrolled (if the page was reached from NewPages)
 			{
 				name: 'markXfdPagesAsPatrolled',
 				label: wgULS('标记时标记页面为已巡查（如可能）', '標記時標記頁面為已巡查（如可能）'),
@@ -902,9 +921,8 @@ Twinkle.config.sections = [
 		title: wgULS('侵犯著作权', '侵犯著作權'),
 		module: 'copyvio',
 		preferences: [
-		// TwinkleConfig.copyvioWatchPage (string)
-		// The watchlist setting of the page being nominated for XfD. Either "yes" (add to watchlist), "no" (don't
-		// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
+			// TwinkleConfig.copyvioWatchPage (string)
+			// The watchlist setting of the page being nominated for XfD.
 			{
 				name: 'copyvioWatchPage',
 				label: wgULS('加入提报的页面到监视列表', '加入提報的頁面到監視清單'),
@@ -913,8 +931,7 @@ Twinkle.config.sections = [
 			},
 
 			// TwinkleConfig.copyvioWatchUser (string)
-			// The watchlist setting of the user if he receives a notification. Either "yes" (add to watchlist), "no" (don't
-			// add to watchlist), or "default" (use setting from preferences). Default is "default" (duh).
+			// The watchlist setting of the user if he receives a notification.
 			{
 				name: 'copyvioWatchUser',
 				label: wgULS('加入创建者讨论页到监视列表（在通知时）', '加入建立者討論頁到監視清單（在通知時）'),
@@ -1097,7 +1114,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 				}
 				cell = document.createElement('td');
 
-				var label, input;
+				var label, input, gotPref = Twinkle.getPref(pref.name);
 				switch (pref.type) {
 
 					case 'boolean':  // create a checkbox
@@ -1108,7 +1125,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 						input.setAttribute('type', 'checkbox');
 						input.setAttribute('id', pref.name);
 						input.setAttribute('name', pref.name);
-						if (Twinkle.getPref(pref.name) === true) {
+						if (gotPref === true) {
 							input.setAttribute('checked', 'checked');
 						}
 						label.appendChild(input);
@@ -1139,8 +1156,8 @@ Twinkle.config.init = function twinkleconfigInit() {
 							input.setAttribute('type', 'number');
 							input.setAttribute('step', '1');  // integers only
 						}
-						if (Twinkle.getPref(pref.name)) {
-							input.setAttribute('value', Twinkle.getPref(pref.name));
+						if (gotPref) {
+							input.setAttribute('value', gotPref);
 						}
 						cell.appendChild(input);
 						break;
@@ -1165,7 +1182,12 @@ Twinkle.config.init = function twinkleconfigInit() {
 						$.each(pref.enumValues, function(enumvalue, enumdisplay) {
 							var option = document.createElement('option');
 							option.setAttribute('value', enumvalue);
-							if (Twinkle.getPref(pref.name) === enumvalue) {
+							if ((gotPref === enumvalue) ||
+								// Hack to convert old boolean watchlist prefs
+								// to corresponding enums (added in v2.1)
+								(typeof gotPref === 'boolean' &&
+								((gotPref && enumvalue === 'yes') ||
+								(!gotPref && enumvalue === 'no')))) {
 								option.setAttribute('selected', 'selected');
 							}
 							option.appendChild(document.createTextNode(enumdisplay));
@@ -1191,12 +1213,12 @@ Twinkle.config.init = function twinkleconfigInit() {
 							check.setAttribute('type', 'checkbox');
 							check.setAttribute('id', pref.name + '_' + itemkey);
 							check.setAttribute('name', pref.name + '_' + itemkey);
-							if (Twinkle.getPref(pref.name) && Twinkle.getPref(pref.name).indexOf(itemkey) !== -1) {
+							if (gotPref && gotPref.indexOf(itemkey) !== -1) {
 								check.setAttribute('checked', 'checked');
 							}
 							// cater for legacy integer array values for unlinkNamespaces (this can be removed a few years down the track...)
 							if (pref.name === 'unlinkNamespaces') {
-								if (Twinkle.getPref(pref.name) && Twinkle.getPref(pref.name).indexOf(parseInt(itemkey, 10)) !== -1) {
+								if (gotPref && gotPref.indexOf(parseInt(itemkey, 10)) !== -1) {
 									check.setAttribute('checked', 'checked');
 								}
 							}
@@ -1236,7 +1258,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 						button.addEventListener('click', Twinkle.config.listDialog.display, false);
 						// use jQuery data on the button to store the current config value
 						$(button).data({
-							value: Twinkle.getPref(pref.name),
+							value: gotPref,
 							pref: pref
 						});
 						button.appendChild(document.createTextNode(wgULS('编辑项目', '編輯項目')));
@@ -1636,7 +1658,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 
 	// this is the object which gets serialized into JSON; only
 	// preferences that this script knows about are kept
-	var newConfig = {optionsVersion: 2};
+	var newConfig = {optionsVersion: 2.1};
 
 	// a comparison function is needed later on
 	// it is just enough for our purposes (i.e. comparing strings, numbers, booleans,
