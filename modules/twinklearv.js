@@ -102,7 +102,7 @@ Twinkle.arv.callback = function (uid, isIP) {
 	var query = {
 		action: 'query',
 		list: 'blocks',
-		bkprop: 'range',
+		bkprop: 'range|flags',
 		format: 'json'
 	};
 	if (isIP) {
@@ -114,9 +114,12 @@ Twinkle.arv.callback = function (uid, isIP) {
 		var blocklist = apiobj.getResponse().query.blocks;
 		if (blocklist.length) {
 			var block = blocklist[0];
-			var message = (isIP ? wgULS('此IP地址', '此IP位址') : wgULS('此账户', '此帳號')) + wgULS('已经被', '已經被');
+			var message = (isIP ? wgULS('此IP地址', '此IP位址') : wgULS('此账户', '此帳號')) + wgULS('已经被', '已經被') + (block.partial ? '部分' : '');
 			// Start and end differ, range blocked
 			message += block.rangestart !== block.rangeend ? wgULS('段封禁。', '段封鎖。') : wgULS('封禁。', '封鎖。');
+			if (block.partial) {
+				$('#twinkle-arv-blockwarning').css('color', 'black'); // Less severe
+			}
 			$('#twinkle-arv-blockwarning').text(message);
 		}
 	}).post();
