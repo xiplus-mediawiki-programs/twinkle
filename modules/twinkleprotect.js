@@ -120,13 +120,14 @@ Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLev
 		letype: 'protect',
 		letitle: mw.config.get('wgPageName'),
 		prop: 'info',
-		inprop: 'protection',
+		inprop: 'protection|watched',
 		titles: mw.config.get('wgPageName')
 	});
 
 	$.when.apply($, [protectDeferred]).done(function(protectData) {
 		var pageid = protectData.query.pageids[0];
 		var page = protectData.query.pages[pageid];
+		Twinkle.protect.isWatched = page.watched === ''; // Dumb kludge to ensure we don't overwrite indefinite watching with expiry
 		var current = {};
 		var previous = {};
 
@@ -897,6 +898,9 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 							return;
 						}
 					}
+					if (!Twinkle.protect.isWatched) {
+						thispage.setWatchlist(Twinkle.getPref('watchProtectedPages'));
+					}
 				} else {
 					thispage.setCreateProtection(input.createlevel, input.createexpiry);
 					thispage.setWatchlist(false);
@@ -917,7 +921,6 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				}
 
 				thispage.setChangeTags(Twinkle.changeTags);
-				thispage.setWatchlist(Twinkle.getPref('watchProtectedPages'));
 				thispage.protect(next);
 			};
 
@@ -1148,7 +1151,9 @@ Twinkle.protect.callbacks = {
 
 		protectedPage.setEditSummary(newVersion.summary);
 		protectedPage.setChangeTags(Twinkle.changeTags);
-		protectedPage.setWatchlist(Twinkle.getPref('watchPPTaggedPages'));
+		if (!Twinkle.protect.isWatched) {
+			protectedPage.setWatchlist(Twinkle.getPref('watchPPTaggedPages'));
+		}
 		protectedPage.setPageText(newVersion.text);
 		protectedPage.setCreateOption('nocreate');
 		protectedPage.suppressProtectWarning(); // no need to let admins know they are editing through protection
