@@ -332,12 +332,26 @@ Twinkle.tag.updateSortOrder = function(e) {
 				};
 				break;
 			case 'Expert needed':
-				checkbox.subgroup = {
-					name: 'expert',
-					type: 'input',
-					label: wgULS('哪个领域的专家：', '哪個領域的專家：'),
-					tooltip: wgULS('可选，可参考 Category:需要专业人士关注的页面 使用现存的分类。', '可選，可參考 Category:需要專業人士關注的頁面 使用現存的分類。')
-				};
+				checkbox.subgroup = [
+					{
+						name: 'expert',
+						type: 'input',
+						label: wgULS('哪个领域的专家（必填）：', '哪個領域的專家（必填）：'),
+						tooltip: wgULS('必填，可参考 Category:需要专业人士关注的页面 使用现存的分类。', '必填，可參考 Category:需要專業人士關注的頁面 使用現存的分類。')
+					},
+					{
+						name: 'expert2',
+						type: 'input',
+						label: wgULS('哪个领域的专家：', '哪個領域的專家：'),
+						tooltip: wgULS('可选，可参考 Category:需要专业人士关注的页面 使用现存的分类。', '可選，可參考 Category:需要專業人士關注的頁面 使用現存的分類。')
+					},
+					{
+						name: 'expert3',
+						type: 'input',
+						label: wgULS('哪个领域的专家：', '哪個領域的專家：'),
+						tooltip: wgULS('可选，可参考 Category:需要专业人士关注的页面 使用现存的分类。', '可選，可參考 Category:需要專業人士關注的頁面 使用現存的分類。')
+					}
+				];
 				break;
 			case 'Merge':
 			case 'Merge from':
@@ -627,7 +641,7 @@ Twinkle.tag.article.tagList = wgULS({
 			{ tag: 'Unencyclopedic', description: '可能不适合写入百科全书' }
 		],
 		'信息和细节': [
-			{ tag: 'Expert needed', description: '需要精通或熟悉本主题的专业人士参与及协助编辑' },
+			{ tag: 'Expert needed', description: '需要精通或熟悉本主题的专业人士（专家）参与及协助编辑' },
 			{ tag: 'Overly detailed', description: '包含太多过度细节内容' },
 			{ tag: 'Trivia', description: '应避免有陈列杂项、琐碎资料的部分' }
 		],
@@ -731,7 +745,7 @@ Twinkle.tag.article.tagList = wgULS({
 			{ tag: 'Unencyclopedic', description: '可能不適合寫入百科全書' }
 		],
 		'資訊和細節': [
-			{ tag: 'Expert needed', description: '需要精通或熟悉本主題的專業人士參與及協助編輯' },
+			{ tag: 'Expert needed', description: '需要精通或熟悉本主題的專業人士（專家）參與及協助編輯' },
 			{ tag: 'Overly detailed', description: '包含太多過度細節內容' },
 			{ tag: 'Trivia', description: '應避免有陳列雜項、瑣碎資料的部分' }
 		],
@@ -1229,8 +1243,12 @@ Twinkle.tag.callbacks = {
 						currentTag += '|1=' + params.expandLanguage;
 						break;
 					case 'Expert needed':
-						if (params.expert) {
-							currentTag += '|subject=' + params.expert;
+						currentTag += '|subject=' + params.expert;
+						if (params.expert2) {
+							currentTag += '|subject2=' + params.expert2;
+						}
+						if (params.expert3) {
+							currentTag += '|subject3=' + params.expert3;
 						}
 						break;
 					case 'Merge':
@@ -1668,6 +1686,9 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 				return;
 			}
 			if (checkParameter('Missing information', 'missingInformation', wgULS('缺少的内容', '缺少的內容'))) {
+				return;
+			}
+			if (checkParameter('Expert needed', 'expert', wgULS('专家领域', '專家領域'))) {
 				return;
 			}
 			break;
