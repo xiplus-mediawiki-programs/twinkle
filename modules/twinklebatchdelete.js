@@ -531,7 +531,7 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 			delete_talk: delete_talk,
 			delete_redirects: delete_redirects,
 			unlink_page: unlink_page,
-			unlink_file: unlink_file && /^(File|Image):/i.test(pageName),
+			unlink_file: unlink_file && new RegExp('^' + Morebits.namespaceRegex(6) + ':', 'i').test(pageName),
 			reason: reason,
 			pageDeleter: pageDeleter
 		};
@@ -756,7 +756,7 @@ Twinkle.batchdelete.callbacks = {
 			return;
 		}
 
-		var image = params.page.replace(/^(?:Image|File):/, '');
+		var image = params.page.replace(new RegExp('^' + Morebits.namespaceRegex(6) + ':'), '');
 		var text;
 		if (params.title in Twinkle.batchdelete.unlinkCache) {
 			text = Twinkle.batchdelete.unlinkCache[params.title];
