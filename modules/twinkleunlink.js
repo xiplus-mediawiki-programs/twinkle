@@ -36,29 +36,40 @@ Twinkle.unlink.getChecked2 = function twinkleunlinkGetChecked2(nodelist) {
 
 // the parameter is used when invoking unlink from admin speedy
 Twinkle.unlink.callback = function(presetReason) {
+	var fileSpace = mw.config.get('wgNamespaceNumber') === 6;
+
 	var Window = new Morebits.simpleWindow(600, 440);
-	Window.setTitle(wgULS('取消链入', '取消連入') + (mw.config.get('wgNamespaceNumber') === 6 ? wgULS('和文件使用', '和檔案使用') : ''));
+	Window.setTitle(wgULS('取消链入', '取消連入') + (fileSpace ? wgULS('和文件使用', '和檔案使用') : ''));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#unlink');
 
 	var form = new Morebits.quickForm(Twinkle.unlink.callback.evaluate);
 
-	// prepend some basic documentation
-	var node1 = Morebits.htmlNode('code', '[[' + Morebits.pageNameNorm + wgULS('|链接文字]]', '|連結文字]]'));
-	var node2 = Morebits.htmlNode('code', wgULS('链接文字', '連結文字'));
-	node1.style.fontFamily = node2.style.fontFamily = 'monospace';
-	node1.style.fontStyle = node2.style.fontStyle = 'normal';
+	// prepend some documentation: files are commented out, while any
+	// display text is preserved for links (otherwise the link itself is used)
+	var linkTextBefore = Morebits.htmlNode('code', '[[' + (fileSpace ? ':' : '') + Morebits.pageNameNorm + wgULS('|链接文字]]', '|連結文字]]'));
+	var linkTextAfter = Morebits.htmlNode('code', wgULS('链接文字', '連結文字'));
+	var linkPlainBefore = Morebits.htmlNode('code', '[[' + Morebits.pageNameNorm + ']]');
+	var linkPlainAfter;
+	if (fileSpace) {
+		linkPlainAfter = Morebits.htmlNode('code', '<!-- [[' + Morebits.pageNameNorm + ']] -->');
+	} else {
+		linkPlainAfter = Morebits.htmlNode('code', Morebits.pageNameNorm);
+	}
+	[linkTextBefore, linkTextAfter, linkPlainBefore, linkPlainAfter].forEach(function(node) {
+		node.style.fontFamily = 'monospace';
+		node.style.fontStyle = 'normal';
+	});
+
 	form.append({
 		type: 'div',
 		style: 'margin-bottom: 0.5em',
 		label: [
 			wgULS('这个工具可以取消所有指向该页的链接（“链入”）', '這個工具可以取消所有指向該頁的連結（「連入」）') +
-				(mw.config.get('wgNamespaceNumber') === 6 ? wgULS('，和/或通过加入<!-- -->注释标记隐藏所有对此文件的使用', '，和/或通過加入<!-- -->注釋標記隱藏所有對此檔案的使用') : '') +
-				'。比如，',
-			node1,
-			wgULS('将会变成', '將會變成'),
-			node2,
-			wgULS('。请小心使用。', '。請小心使用。')
+				(fileSpace ? wgULS('，或通过加入<!-- -->注释标记隐藏所有对此文件的使用', '，或透過加入<!-- -->注釋標記隱藏所有對此檔案的使用') : '') +
+				'。例如：',
+			linkTextBefore, wgULS('将会变成', '將會變成'), linkTextAfter, '，',
+			linkPlainBefore, wgULS('将会变成', '將會變成'), linkPlainAfter, wgULS('。请小心使用。', '。請小心使用。')
 		]
 	});
 
@@ -70,19 +81,20 @@ Twinkle.unlink.callback = function(presetReason) {
 		size: 60
 	});
 
-	var query;
-	if (mw.config.get('wgNamespaceNumber') === 6) {  // File:
-		query = {
-			action: 'query',
-			list: [ 'backlinks', 'imageusage' ],
-			bltitle: Morebits.pageNameNorm,
-			iutitle: Morebits.pageNameNorm,
-			bllimit: Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
-			iulimit: Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
-			blnamespace: Twinkle.getPref('unlinkNamespaces'),
-			iunamespace: Twinkle.getPref('unlinkNamespaces'),
-			rawcontinue: true
-		};
+	var query = {
+		action: 'query',
+		list: 'backlinks',
+		bltitle: mw.config.get('wgPageName'),
+		bllimit: 'max', // 500 is max for normal users, 5000 for bots and sysops
+		blnamespace: Twinkle.getPref('unlinkNamespaces'),
+		rawcontinue: true,
+		format: 'json'
+	};
+	if (fileSpace) {
+		query.list += '|imageusage';
+		query.iutitle = query.bltitle;
+		query.iulimit = query.bllimit;
+		query.iunamespace = query.blnamespace;
 	} else {
 		query = {
 			action: 'query',
@@ -95,7 +107,7 @@ Twinkle.unlink.callback = function(presetReason) {
 		};
 	}
 	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取链入', '抓取連入'), query, Twinkle.unlink.callbacks.display.backlinks);
-	wikipedia_api.params = { form: form, Window: Window, image: mw.config.get('wgNamespaceNumber') === 6 };
+	wikipedia_api.params = { form: form, Window: Window, image: fileSpace };
 	wikipedia_api.post();
 
 	var root = document.createElement('div');
