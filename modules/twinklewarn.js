@@ -1065,6 +1065,10 @@ Twinkle.warn.messages = wgULS({
 			label: '在剧集条目中加入奸角等非中立描述',
 			summary: '警告：在剧集条目中加入奸角等非中立描述'
 		},
+		'uw-owntalk': {
+			label: '匿名用户移除自己讨论页上7日内的讨论',
+			summary: '警告：匿名用户移除自己讨论页上7日内的讨论'
+		},
 		'uw-pinfo': {
 			label: '张贴他人隐私',
 			summary: '警告：张贴他人隐私'
@@ -1881,6 +1885,10 @@ Twinkle.warn.messages = wgULS({
 		'uw-npov-tvd': {
 			label: '在劇集條目中加入奸角等非中立描述',
 			summary: '警告：在劇集條目中加入奸角等非中立描述'
+		},
+		'uw-owntalk': {
+			label: '匿名使用者移除自己討論頁上7日內的討論',
+			summary: '警告：匿名使用者移除自己討論頁上7日內的討論'
 		},
 		'uw-pinfo': {
 			label: '張貼他人隱私',
