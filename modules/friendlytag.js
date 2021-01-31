@@ -14,7 +14,7 @@
 
 Twinkle.tag = function friendlytag() {
 	// redirect tagging
-	if (Morebits.wiki.isPageRedirect()) {
+	if (Morebits.isPageRedirect()) {
 		Twinkle.tag.mode = wgULS('重定向', '重新導向');
 		Twinkle.tag.modeEn = 'redirect';
 		Twinkle.addPortletLink(Twinkle.tag.callback, wgULS('标记', '標記'), 'friendly-tag', wgULS('标记重定向', '標記重新導向'));

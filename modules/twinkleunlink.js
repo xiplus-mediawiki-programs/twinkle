@@ -162,7 +162,7 @@ Twinkle.unlink.callbacks = {
 					apiobj.params.form.append({ type: 'header', label: wgULS('文件使用', '檔案使用') });
 					namespaces = [];
 					$.each(Twinkle.getPref('unlinkNamespaces'), function(k, v) {
-						namespaces.push(Morebits.wikipedia.namespacesFriendly[v]);
+						namespaces.push(v === '0' ? wgULS('（条目）', '（條目）') : mw.config.get('wgFormattedNamespaces')[v]);
 					});
 					apiobj.params.form.append({
 						type: 'div',
@@ -209,7 +209,7 @@ Twinkle.unlink.callbacks = {
 				apiobj.params.form.append({ type: 'header', label: 'Backlinks' });
 				namespaces = [];
 				$.each(Twinkle.getPref('unlinkNamespaces'), function(k, v) {
-					namespaces.push(Morebits.wikipedia.namespacesFriendly[v]);
+					namespaces.push(v === '0' ? wgULS('（条目）', '（條目）') : mw.config.get('wgFormattedNamespaces')[v]);
 				});
 				apiobj.params.form.append({
 					type: 'div',
