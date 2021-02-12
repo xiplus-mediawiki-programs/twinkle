@@ -16,7 +16,7 @@
 
 Twinkle.stub = function friendlytag() {
 	// redirect tagging
-	if (Morebits.wiki.isPageRedirect()) {
+	if (Morebits.isPageRedirect()) {
 		Twinkle.stub.mode = '重定向';
 	// file tagging
 	} else if (mw.config.get('wgNamespaceNumber') === 6 && !document.getElementById('mw-sharedupload') && document.getElementById('mw-imagepage-section-filehistory')) {

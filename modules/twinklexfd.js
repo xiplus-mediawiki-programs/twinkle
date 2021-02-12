@@ -19,7 +19,7 @@ Twinkle.xfd = function twinklexfd() {
 	// * non-existent pages
 	// * files on Commons, whether there is a local page or not (unneeded local pages of files on Commons are eligible for CSD F2)
 	// * file pages without actual files (these are eligible for CSD G8)
-	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageContentModel') === 'flow-board' || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.wiki.isPageRedirect())))) {
+	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageContentModel') === 'flow-board' || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.isPageRedirect())))) {
 		return;
 	}
 	Twinkle.addPortletLink(Twinkle.xfd.callback, wgULS('提删', '提刪'), 'tw-xfd', wgULS('提交删除讨论', '提交刪除討論'));
@@ -260,7 +260,7 @@ Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdC
 Twinkle.xfd.callbacks = {
 	afd: {
 		main: function(pageobj) {
-			// this is coming in from lookupCreator...!
+			// this is coming in from lookupCreation...!
 			var params = pageobj.getCallbackParameters();
 
 			// Adding discussion
@@ -335,7 +335,7 @@ Twinkle.xfd.callbacks = {
 				default:
 					break;
 			}
-			if (Morebits.wiki.isPageRedirect()) {
+			if (Morebits.isPageRedirect()) {
 				tag += '|r';
 			}
 			tag += '|date={{subst:#time:Y/m/d}}}}';
@@ -481,13 +481,13 @@ Twinkle.xfd.callbacks = {
 			if (mw.config.get('wgPageContentModel') !== 'Scribunto') {
 				wikipedia_page.setLookupNonRedirectCreator(true); // Look for author of first non-redirect revision
 			}
-			wikipedia_page.lookupCreator(Twinkle.xfd.callbacks.afd.main);
+			wikipedia_page.lookupCreation(Twinkle.xfd.callbacks.afd.main);
 		}
 	},
 
 	ffd: {
 		main: function(pageobj) {
-			// this is coming in from lookupCreator...!
+			// this is coming in from lookupCreation...!
 			var params = pageobj.getCallbackParameters();
 			var initialContrib = pageobj.getCreator();
 			params.uploader = initialContrib;
@@ -578,7 +578,7 @@ Twinkle.xfd.callbacks = {
 			var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
 			wikipedia_page.setCallbackParameters(pageobj.getCallbackParameters());
 			wikipedia_page.setLookupNonRedirectCreator(true); // Look for author of first non-redirect revision
-			wikipedia_page.lookupCreator(Twinkle.xfd.callbacks.ffd.main);
+			wikipedia_page.lookupCreation(Twinkle.xfd.callbacks.ffd.main);
 		}
 	},
 	addToLog: function(params, initialContrib) {

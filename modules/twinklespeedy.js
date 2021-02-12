@@ -1062,7 +1062,7 @@ Twinkle.speedy.callbacks = {
 					params.normalized !== 'f7' &&
 					params.normalized !== 'o1' &&
 					document.getElementById('ca-talk').className !== 'new') {
-				var talkpage = new Morebits.wiki.page(Morebits.wikipedia.namespaces[mw.config.get('wgNamespaceNumber') + 1] + ':' + mw.config.get('wgTitle'), wgULS('删除讨论页', '刪除討論頁'));
+				var talkpage = new Morebits.wiki.page(mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceNumber') + 1] + ':' + mw.config.get('wgTitle'), wgULS('删除讨论页', '刪除討論頁'));
 				talkpage.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 已删除页面“' + Morebits.pageNameNorm + '”的讨论页');
 				talkpage.setChangeTags(Twinkle.changeTags);
 				talkpage.deletePage();
@@ -1402,7 +1402,7 @@ Twinkle.speedy.callbacks = {
 					}
 				};
 				var thispage = new Morebits.wiki.page(Morebits.pageNameNorm);
-				thispage.lookupCreator(callback);
+				thispage.lookupCreation(callback);
 			// or, if not notifying, add this nomination to the user's userspace log without the initial contributor's name
 			} else if (params.lognomination) {
 				Twinkle.speedy.callbacks.user.addToLog(params, null);
