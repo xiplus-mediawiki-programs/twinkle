@@ -66,6 +66,6 @@ QUnit.test('Formats', assert => {
 QUnit.test('Calendar', assert => {
 	assert.strictEqual(date.calendar('utc'), '2020-11-07', 'Old calendar');
 	assert.strictEqual(date.calendar(600), '2020-11-08', 'Old non-UTC');
-	assert.strictEqual(new Morebits.date(now).calendar('utc'), '今天上午 ' + new Morebits.date(now).format('hh:mm', 'utc'), 'New calendar');
-	assert.strictEqual(new Morebits.date(now).subtract(1, 'day').calendar('utc'), '昨天上午 ' + new Morebits.date(now).format('hh:mm', 'utc'), 'Close calendar');
+	assert.strictEqual(new Morebits.date(now).calendar('utc'), '今天' + new Morebits.date(now).format('A hh:mm', 'utc'), 'New calendar');
+	assert.strictEqual(new Morebits.date(now).subtract(1, 'day').calendar('utc'), '昨天' + new Morebits.date(now).format('A hh:mm', 'utc'), 'Close calendar');
 });
