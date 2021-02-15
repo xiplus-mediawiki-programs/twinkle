@@ -68,6 +68,10 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:监视;zh-hant:監視}-
 '''
 
+headers = {
+    'user-agent': 'Twinkle i18n script [[User:Xiplus]]'
+}
+
 
 def escapeWikitextMatch(text):
     return '&#{};'.format(ord(text[0]))
@@ -113,7 +117,7 @@ for filename in filenames:
         data['uselang'] = 'zh-tw'
     else:
         data['uselang'] = 'zh-cn'
-    r = requests.post('https://zh.wikipedia.org/w/api.php', data=data)
+    r = requests.post('https://zh.wikipedia.org/w/api.php', data=data, headers=headers)
     try:
         result = r.json()
     except Exception as e:
