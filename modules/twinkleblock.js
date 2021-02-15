@@ -1617,32 +1617,36 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 };
 
 Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
-	var text = pageobj.getPageText(),
-		params = pageobj.getCallbackParameters(),
+	var params = pageobj.getCallbackParameters(),
+		date = new Morebits.date(pageobj.getLoadTime()),
 		messageData = params.messageData,
-		date = new Morebits.date(pageobj.getLoadTime());
-
-	var dateHeaderRegex = date.monthHeaderRegex(), dateHeaderRegexLast, dateHeaderRegexResult;
-	while ((dateHeaderRegexLast = dateHeaderRegex.exec(text)) !== null) {
-		dateHeaderRegexResult = dateHeaderRegexLast;
-	}
-	// If dateHeaderRegexResult is null then lastHeaderIndex is never checked. If it is not null but
-	// \n== is not found, then the date header must be at the very start of the page. lastIndexOf
-	// returns -1 in this case, so lastHeaderIndex gets set to 0 as desired.
-	var lastHeaderIndex = text.lastIndexOf('\n==') + 1;
-
-	if (text.length > 0) {
-		text += '\n\n';
-	}
+		text;
 
 	params.indefinite = Morebits.string.isInfinity(params.expiry);
 
 	if (Twinkle.getPref('blankTalkpageOnIndefBlock') && params.template !== 'uw-lblock' && params.indefinite) {
 		Morebits.status.info(wgULS('信息', '資訊'), wgULS('根据参数设置清空讨论页并为日期创建新2级标题', '根據偏好設定清空討論頁並為日期建立新2級標題'));
 		text = date.monthHeader() + '\n';
-	} else if (!dateHeaderRegexResult || dateHeaderRegexResult.index !== lastHeaderIndex) {
-		Morebits.status.info(wgULS('信息', '資訊'), wgULS('未找到当月标题，将创建新的', '未找到當月標題，將建立新的'));
-		text += date.monthHeader() + '\n';
+	} else {
+		text = pageobj.getPageText();
+
+		var dateHeaderRegex = date.monthHeaderRegex(), dateHeaderRegexLast, dateHeaderRegexResult;
+		while ((dateHeaderRegexLast = dateHeaderRegex.exec(text)) !== null) {
+			dateHeaderRegexResult = dateHeaderRegexLast;
+		}
+		// If dateHeaderRegexResult is null then lastHeaderIndex is never checked. If it is not null but
+		// \n== is not found, then the date header must be at the very start of the page. lastIndexOf
+		// returns -1 in this case, so lastHeaderIndex gets set to 0 as desired.
+		var lastHeaderIndex = text.lastIndexOf('\n==') + 1;
+
+		if (text.length > 0) {
+			text += '\n\n';
+		}
+
+		if (!dateHeaderRegexResult || dateHeaderRegexResult.index !== lastHeaderIndex) {
+			Morebits.status.info(wgULS('信息', '資訊'), wgULS('未找到当月的二级标题，将创建新的', '未找到當月的二級標題，將建立新的'));
+			text += date.monthHeader() + '\n';
+		}
 	}
 
 	params.expiry = typeof params.template_expiry !== 'undefined' ? params.template_expiry : params.expiry;
