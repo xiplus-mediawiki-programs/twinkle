@@ -120,7 +120,7 @@ Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLev
 		letype: 'protect',
 		letitle: mw.config.get('wgPageName'),
 		prop: 'info',
-		inprop: 'protection',
+		inprop: 'protection|watched',
 		titles: mw.config.get('wgPageName')
 	});
 
@@ -129,6 +129,9 @@ Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLev
 		var page = protectData.query.pages[pageid];
 		var current = {};
 		var previous = {};
+
+		// Save requested page's watched status for later in case needed when filing request
+		Twinkle.protect.watched = page.watchlistexpiry || page.watched === '';
 
 		$.each(page.protection, function(index, protection) {
 			if (protection.type !== 'aft') {
@@ -1227,7 +1230,7 @@ Twinkle.protect.callbacks = {
 		rppPage.setChangeTags(Twinkle.changeTags);
 		rppPage.setPageText(text);
 		rppPage.setCreateOption('recreate');
-		rppPage.save(function(pageobj) {
+		rppPage.save(function() {
 			// Watch the page being requested
 			var watchPref = Twinkle.getPref('watchRequestedPages');
 			// action=watch has no way to rely on user preferences (T262912), so we do it manually.
@@ -1240,7 +1243,8 @@ Twinkle.protect.callbacks = {
 					titles: mw.config.get('wgPageName'),
 					token: mw.user.tokens.get('watchToken')
 				};
-				if (pageobj.getWatched() && watchPref !== 'default' && watchPref !== 'yes') {
+				// Only add the expiry if page is unwatched or already temporarily watched
+				if (Twinkle.protect.watched !== true && watchPref !== 'default' && watchPref !== 'yes') {
 					watch_query.expiry = watchPref;
 				}
 				new Morebits.wiki.api(wgULS('将请求保护的页面加入到监视列表', '將請求保護的頁面加入到監視清單'), watch_query).post();
