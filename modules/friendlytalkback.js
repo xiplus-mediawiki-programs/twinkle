@@ -314,7 +314,7 @@ Twinkle.talkback.evaluate = function(e) {
 			editSummary = wgULS('请看看', '請看看') + '[[:' + page + (section ? '#' + section : '') + ']]' + wgULS('上的讨论', '上的討論');
 		} else {  // tbtarget one of mytalk, usertalk, other
 			editSummary = wgULS('回复通告', '回覆通告') + '（[[:';
-			if (tbtarget !== 'other' && !/^\s*user talk:/i.test(page)) {
+			if (tbtarget !== 'other' && !new RegExp('^\\s*' + Morebits.namespaceRegex(3) + ':', 'i').test(page)) {
 				editSummary += 'User talk:';
 			}
 			editSummary += page + (section ? '#' + section : '') + ']])';

@@ -1542,7 +1542,7 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 						parameters = null;
 						return false;
 					}
-					currentParams.filename = redimage.replace(/^\s*(Image|File|文件|檔案):/i, '');
+					currentParams.filename = redimage.replace(new RegExp('^\\s*' + Morebits.namespaceRegex(6) + ':', 'i'), '');
 				}
 				break;
 
@@ -1554,7 +1554,7 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 						parameters = null;
 						return false;
 					}
-					currentParams.filename = redimage.replace(/^\s*(Image|File|文件|檔案):/i, '');
+					currentParams.filename = redimage.replace(new RegExp('^\\s*' + Morebits.namespaceRegex(6) + ':', 'i'), '');
 				}
 				break;
 
