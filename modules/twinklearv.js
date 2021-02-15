@@ -18,14 +18,15 @@ Twinkle.arv = function twinklearv() {
 		return;
 	}
 
-	var title = mw.util.isIPAddress(username) ? wgULS('报告IP给管理员', '報告IP給管理員') : wgULS('报告用户给管理人员', '報告使用者給管理人員');
+	var isIP = mw.util.isIPAddress(username);
+	var title = isIP ? wgULS('报告IP给管理员', '報告IP給管理員') : wgULS('报告用户给管理人员', '報告使用者給管理人員');
 
 	Twinkle.addPortletLink(function() {
-		Twinkle.arv.callback(username);
+		Twinkle.arv.callback(username, isIP);
 	}, wgULS('告状', '告狀'), 'tw-arv', title);
 };
 
-Twinkle.arv.callback = function (uid) {
+Twinkle.arv.callback = function (uid, isIP) {
 	if (uid === mw.config.get('wgUserName')) {
 		alert(wgULS('你不想报告你自己，对吧？', '你不想報告你自己，對吧？'));
 		return;
@@ -75,6 +76,13 @@ Twinkle.arv.callback = function (uid) {
 		value: 'puppet'
 	});
 	form.append({
+		type: 'div',
+		label: '',
+		style: 'color: red',
+		id: 'twinkle-arv-blockwarning'
+	});
+
+	form.append({
 		type: 'field',
 		label: 'Work area',
 		name: 'work_area'
@@ -89,6 +97,33 @@ Twinkle.arv.callback = function (uid) {
 	var result = form.render();
 	Window.setContent(result);
 	Window.display();
+
+	// Check if the user is blocked, update notice
+	var query = {
+		action: 'query',
+		list: 'blocks',
+		bkprop: 'range|flags',
+		format: 'json'
+	};
+	if (isIP) {
+		query.bkip = uid;
+	} else {
+		query.bkusers = uid;
+	}
+	new Morebits.wiki.api(wgULS('检查用户的封禁状态', '檢查使用者的封鎖狀態'), query, function(apiobj) {
+		var blocklist = apiobj.getResponse().query.blocks;
+		if (blocklist.length) {
+			var block = blocklist[0];
+			var message = (isIP ? wgULS('此IP地址', '此IP位址') : wgULS('此账户', '此帳號')) + wgULS('已经被', '已經被') + (block.partial ? '部分' : '');
+			// Start and end differ, range blocked
+			message += block.rangestart !== block.rangeend ? wgULS('段封禁。', '段封鎖。') : wgULS('封禁。', '封鎖。');
+			if (block.partial) {
+				$('#twinkle-arv-blockwarning').css('color', 'black'); // Less severe
+			}
+			$('#twinkle-arv-blockwarning').text(message);
+		}
+	}).post();
+
 
 	// We must init the
 	var evt = document.createEvent('Event');
