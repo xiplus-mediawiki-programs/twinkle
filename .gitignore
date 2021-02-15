@@ -29,4 +29,4 @@ Icon
 node_modules/
 npm-debug.log*
 __pycache__/
-maintenance/*output.txt
+scripts/*output.txt

@@ -238,6 +238,6 @@ text += 'Unused pages\n'
 for template in markedPages - templates - WHITELIST:
     text += '# [[{}]]\n'.format(template)
 
-outpath = os.path.join(basedir, 'maintenance/get_templates-output.txt')
+outpath = os.path.join(basedir, 'scripts/get_templates-output.txt')
 with open(outpath, 'w', encoding='utf8') as f:
     f.write(text)

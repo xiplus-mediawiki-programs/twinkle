@@ -53,8 +53,8 @@ mw.loader.using('jquery.ui', function() {
 			}
 			page.setCreateOption(window.morebits_test_createOption);
 
-			if ($('#runTestForm input[name="lookupCreator"]').attr('checked')) {
-				page.lookupCreator(Twinkle.morebitsTest.lookupCreatorCallback);
+			if ($('#runTestForm input[name="lookupCreation"]').attr('checked')) {
+				page.lookupCreation(Twinkle.morebitsTest.lookupCreationCallback);
 			}
 		},
 
@@ -76,8 +76,8 @@ mw.loader.using('jquery.ui', function() {
 			page.save(Twinkle.morebitsTest.finalSaveCallback);
 		},
 
-		lookupCreatorCallback: function(page) {
-			alert('Page was created by: ' + page.getCreator());
+		lookupCreationCallback: function(page) {
+			alert('Page was created by: ' + page.getCreator() + ' at: ' + page.getCreationTimestamp());
 		},
 
 		finalSaveCallback: function(page) {
@@ -89,7 +89,7 @@ mw.loader.using('jquery.ui', function() {
 			// Define runTest interface
 			// Can also use alternative syntax new to jQuery 1.4:
 			//    $('<div style="margin-top:0.4em;"></div>').html( 'Text to be added:' )
-			//  → $('<div/>', { css: { 'margin-top': '0.4em' }, text: 'Text to be added:' } )
+			//  -> $('<div/>', { css: { 'margin-top': '0.4em' }, text: 'Text to be added:' } )
 
 			window.morebits_test_createOption = null;
 
@@ -103,7 +103,7 @@ mw.loader.using('jquery.ui', function() {
 				.append($('<div style="margin-top:0.4em;"></div>').html('<input type="checkbox" name="watchlist"/> Add to watchlist'))
 				.append($('<div style="margin-top:0.4em;"></div>').html('<input type="checkbox" name="watchlistFromPreferences"/> Add to watchlist based on preference settings'))
 				.append($('<div style="margin-top:0.4em;"></div>').html('<input type="checkbox" name="noRetries"/> Disable retries'))
-				.append($('<div style="margin-top:0.4em;"></div>').html('<input type="checkbox" name="lookupCreator"/> Lookup page creator<hr/>'))
+				.append($('<div style="margin-top:0.4em;"></div>').html('<input type="checkbox" name="lookupCreation"/> Lookup page creator and timestamp<hr/>'))
 				.append($('<div style="margin-top:0.4em;"></div>').html('<input type="radio" name="createOption" value="" onclick="window.morebits_test_createOption=value" checked/> Create page if needed, unless deleted since loaded<br>'))
 				.append($('<div style="margin-top:0.4em;"></div>').html('<input type="radio" name="createOption" value="recreate" onclick="window.morebits_test_createOption=value"/> Create page if needed<br>'))
 				.append($('<div style="margin-top:0.4em;"></div>').html('<input type="radio" name="createOption" value="createonly" onclick="window.morebits_test_createOption=value"/> Only create a new page<br>'))
