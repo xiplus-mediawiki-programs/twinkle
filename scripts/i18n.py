@@ -62,6 +62,7 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:已在运行;zh-hant:已在執行}-
 -{H|zh-hans:当前;zh-hant:目前}-
 -{H|zh-hans:最近更改;zh-hant:近期變更}-
+-{H|zh-hans:相关更改;zh-hant:相關變更}-
 -{H|zh-hans:说明;zh-hant:說明}-
 -{H|zh-hans:Twinkle帮助;zh-hant:Twinkle說明}-
 -{H|zh-hans:公用IP;zh-hant:公共IP}-

@@ -315,7 +315,7 @@ Twinkle.config.sections = [
 				name: 'markRevertedPagesAsMinor',
 				label: wgULS('将这些类型的回退标记为小修改', '將這些類別的回退標記為小修改'),
 				type: 'set',
-				setValues: wgULS({ agf: '善意回退', norm: '常规回退', vand: '破坏回退', torev: '“恢复此版本”' }, { agf: '善意回退', norm: '常規回退', vand: '破壞回退', torev: '「恢復此版本」' })
+				setValues: { agf: '善意回退', norm: wgULS('常规回退', '常規回退'), vand: wgULS('破坏回退', '破壞回退'), torev: wgULS('“恢复此版本”', '「恢復此版本」') }
 			},
 
 			// TwinkleConfig.watchRevertedPages (array)
@@ -324,7 +324,7 @@ Twinkle.config.sections = [
 				name: 'watchRevertedPages',
 				label: wgULS('把这些类型的回退加入到监视列表', '把這些類別的回退加入到監視清單'),
 				type: 'set',
-				setValues: wgULS({ agf: '善意回退', norm: '常规回退', vand: '破坏回退', torev: '“恢复此版本”' }, { agf: '善意回退', norm: '常規回退', vand: '破壞回退', torev: '「恢復此版本」' })
+				setValues: { agf: '善意回退', norm: wgULS('常规回退', '常規回退'), vand: wgULS('破坏回退', '破壞回退'), torev: wgULS('“恢复此版本”', '「恢復此版本」') }
 			},
 			// TwinkleConfig.watchRevertedExpiry
 			// If any of the above items are selected, whether to expire the watch
@@ -366,7 +366,7 @@ Twinkle.config.sections = [
 				name: 'showRollbackLinks',
 				label: wgULS('在这些页面上显示回退链接', '在這些頁面上顯示回退連結'),
 				type: 'set',
-				setValues: wgULS({ diff: '差异', history: '历史记录', others: '其它用户的贡献', mine: '我的贡献', recentchanges: '最近更改', recentchangeslinked: '相关更改' }, { diff: '差異', history: '歷史記錄', others: '其它用戶的貢獻', mine: '我的貢獻', recentchanges: '近期變更', recentchangeslinked: '相關變更' })
+				setValues: { diff: wgULS('差异', '差異'), history: wgULS('历史记录', '歷史記錄'), others: wgULS('其它用户的贡献', '其它使用者的貢獻'), mine: wgULS('我的贡献', '我的貢獻'), recentchanges: wgULS('最近更改', '近期變更'), recentchangeslinked: wgULS('相关更改', '相關變更') }
 			},
 			{
 				name: 'customRevertSummary',
@@ -399,7 +399,7 @@ Twinkle.config.sections = [
 				name: 'speedySelectionStyle',
 				label: wgULS('什么时候执行标记或删除', '什麼時候執行標記或刪除'),
 				type: 'enum',
-				enumValues: wgULS({ buttonClick: '当我点“提交”时', radioClick: '当我点一个选项时' }, { buttonClick: '當我點「提交」時', radioClick: '當我點一個設定時' })
+				enumValues: { buttonClick: wgULS('当我点“提交”时', '當我點「提交」時'), radioClick: wgULS('当我点一个选项时', '當我點一個選項時') }
 			},
 
 			// TwinkleConfig.watchSpeedyPages (array)
@@ -902,13 +902,7 @@ Twinkle.config.sections = [
 				label: wgULS('默认提删类型', '預設提刪類別'),
 				helptip: wgULS('若选择“相同于上次选择”将使用localStorage来记忆。', '若選擇「相同於上次選擇」將使用localStorage來記憶。'),
 				type: 'enum',
-				enumValues: wgULS({
-					delete: '删除',
-					same: '相同于上次选择'
-				}, {
-					delete: '刪除',
-					same: '相同於上次選擇'
-				})
+				enumValues: { delete: wgULS('删除', '刪除'), same: wgULS('相同于上次选择', '相同於上次選擇') }
 			},
 
 			{
@@ -930,15 +924,7 @@ Twinkle.config.sections = [
 				label: wgULS('在存废讨论显示关闭讨论按钮', '在存廢討論顯示關閉討論按鈕'),
 				helptip: wgULS('请确保您充分了解[[Wikipedia:关闭存废讨论指引]]才开启此功能。', '請確保您充分了解[[Wikipedia:關閉存廢討論指引]]才開啟此功能。'),
 				type: 'enum',
-				enumValues: wgULS({
-					hide: '不显示',
-					nonadminonly: '只包含非管理员可使用选项',
-					all: '显示所有选项'
-				}, {
-					hide: '不顯示',
-					nonadminonly: '只包含非管理員可使用選項',
-					all: '顯示所有選項'
-				})
+				enumValues: { hide: wgULS('不显示', '不顯示'), nonadminonly: wgULS('只包含非管理员可使用选项', '只包含非管理員可使用選項'), all: wgULS('显示所有选项', '顯示所有選項') }
 			}
 		]
 
