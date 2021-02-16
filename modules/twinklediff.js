@@ -46,13 +46,13 @@ Twinkle.diff.evaluate = function twinklediffEvaluate(me) {
 		user = $(node).find('a').first().text();
 	}
 	var query = {
-		'prop': 'revisions',
-		'action': 'query',
-		'titles': mw.config.get('wgPageName'),
-		'rvlimit': 1,
-		'rvprop': [ 'ids', 'user' ],
-		'rvstartid': mw.config.get('wgCurRevisionId') - 1, // i.e. not the current one
-		'rvuser': user
+		prop: 'revisions',
+		action: 'query',
+		titles: mw.config.get('wgPageName'),
+		rvlimit: 1,
+		rvprop: [ 'ids', 'user' ],
+		rvstartid: mw.config.get('wgCurRevisionId') - 1, // i.e. not the current one
+		rvuser: user
 	};
 	Morebits.status.init(document.getElementById('mw-content-text'));
 	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取最初贡献者信息', '抓取最初貢獻者資訊'), query, Twinkle.diff.callbacks.main);

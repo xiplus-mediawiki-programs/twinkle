@@ -168,10 +168,10 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 	var templatename = type;
 
 	var params = {
-		'type': type,
-		'templatename': templatename,
-		'normalized': csdcrit,
-		'lognomination': lognomination
+		type: type,
+		templatename: templatename,
+		normalized: csdcrit,
+		lognomination: lognomination
 	};
 	if (csdcrit === 'f8') {
 		params.f8_source = event.target['type.f8_source'].value;

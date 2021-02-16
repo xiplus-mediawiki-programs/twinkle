@@ -418,19 +418,19 @@ Twinkle.xfd.callbacks = {
 					} else {
 						var appendText = '\n{{safesubst:SafeAfdHead}}\n' +
 							{
-								'fame': '==30天后仍掛有{{tl|notability}}模板的條目==\n' +
+								fame: '==30天后仍掛有{{tl|notability}}模板的條目==\n' +
 									'<span style="font-size:smaller;">(已掛[[template:notability|關注度模板]]30天)</span>',
-								'substub': '==到期篩選的小小作品==',
-								'batch': '==批量提刪=='
+								substub: '==到期篩選的小小作品==',
+								batch: '==批量提刪=='
 							}[type] + '\n' +
 							newText + '\n\n' +
 							commentText + '\n' +
 							'----\n' +
 							':{{删除}}理據：' + Morebits.string.formatReasonText(params.reason) + '\n' +
 							'提报以上' + {
-							'fame': '<u>关注度不足</u>条目',
-							'substub': '<u>小小作品</u>',
-							'batch': '頁面'
+							fame: '<u>关注度不足</u>条目',
+							substub: '<u>小小作品</u>',
+							batch: '頁面'
 						}[type] + '的維基人及時間：<br id="no-new-title" />~~~~';
 						pageobj.setAppendText(appendText);
 					}

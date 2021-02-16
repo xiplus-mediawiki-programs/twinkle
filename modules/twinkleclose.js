@@ -74,138 +74,138 @@ Twinkle.close = function twinkleclose() {
 
 // Keep this synchronized with {{delh}}
 Twinkle.close.codes = wgULS({
-	'请求无效': {
-		'ir': {
+	请求无效: {
+		ir: {
 			label: '请求无效',
 			action: 'keep'
 		},
-		'rep': {
+		rep: {
 			label: '重复提出，无效',
 			action: 'keep'
 		},
-		'commons': {
+		commons: {
 			label: '应在维基共享资源提请',
 			action: 'keep'
 		},
-		'ne': {
+		ne: {
 			label: '目标页面或档案不存在，无效',
 			action: 'keep'
 		},
-		'nq': {
+		nq: {
 			label: '提删者未取得提删资格，无效',
 			action: 'keep'
 		}
 	},
-	'保留': {
-		'k': {
+	保留: {
+		k: {
 			label: '保留',
 			action: 'keep',
 			adminonly: true
 		},
-		'sk': {
+		sk: {
 			label: '快速保留',
 			action: 'keep'
 		},
-		'tk': {
+		tk: {
 			label: '暂时保留',
 			action: 'keep'
 		},
-		'rr': {
+		rr: {
 			label: '请求理由消失',
 			action: 'keep',
 			selected: Twinkle.getPref('XfdClose') === 'nonadminonly'
 		},
-		'dan': {
+		dan: {
 			label: '删后重建',
 			action: 'keep',
 			adminonly: true
 		}
 	},
-	'删除': {
-		'd': {
+	删除: {
+		d: {
 			label: '删除',
 			action: 'del',
 			adminonly: true,
 			selected: Twinkle.getPref('XfdClose') === 'all'
 		},
-		'ic': {
+		ic: {
 			label: '图像因侵权被删',
 			action: 'del',
 			adminonly: true
 		}
 	},
-	'快速删除': {
-		'sd': {
+	快速删除: {
+		sd: {
 			label: '快速删除',
 			action: 'del'
 		},
-		'lssd': {
+		lssd: {
 			label: '无来源或版权资讯，快速删除',
 			action: 'del'
 		},
-		'svg': {
+		svg: {
 			label: '已改用SVG图形，快速删除',
 			action: 'del'
 		},
-		'nowcommons': {
+		nowcommons: {
 			label: '维基共享资源已提供，快速删除',
 			action: 'del'
 		},
-		'drep': {
+		drep: {
 			label: '多次被删除，条目锁定',
 			action: 'del',
 			adminonly: true
 		}
 	},
-	'转移至其他维基计划': {
-		'twc': {
+	转移至其他维基计划: {
+		twc: {
 			label: '转移至维基共享资源',
 			action: 'noop',
 			adminonly: true
 		},
-		'twn': {
+		twn: {
 			label: '转移至维基新闻',
 			action: 'noop',
 			adminonly: true
 		},
-		'tws': {
+		tws: {
 			label: '转移至维基文库',
 			action: 'noop',
 			adminonly: true
 		},
-		'twb': {
+		twb: {
 			label: '转移至维基教科书',
 			action: 'noop',
 			adminonly: true
 		},
-		'twq': {
+		twq: {
 			label: '转移至维基语录',
 			action: 'noop',
 			adminonly: true
 		},
-		'twt': {
+		twt: {
 			label: '转移至维基词典',
 			action: 'noop',
 			adminonly: true
 		},
-		'twv': {
+		twv: {
 			label: '转移至维基学院',
 			action: 'noop',
 			adminonly: true
 		},
-		'twvoy': {
+		twvoy: {
 			label: '转移至维基导游',
 			action: 'noop',
 			adminonly: true
 		},
-		'two': {
+		two: {
 			label: '转移至其他维基计划',
 			action: 'noop',
 			adminonly: true
 		}
 	},
-	'其他处理方法': {
-		'c': {
+	其他处理方法: {
+		c: {
 			label: '转交侵权',
 			action: 'noop'
 		},
@@ -213,173 +213,173 @@ Twinkle.close.codes = wgULS({
 			label: '转送页面存废讨论',
 			action: 'noop'
 		}, */
-		'm2ifd': {
+		m2ifd: {
 			label: '转送文件存废讨论',
 			action: 'noop'
 		},
-		'r': {
+		r: {
 			label: '重定向',
 			action: 'keep',
 			adminonly: true
 		},
-		'cr': {
+		cr: {
 			label: '分类重定向',
 			action: 'keep',
 			adminonly: true
 		},
-		'm': {
+		m: {
 			label: '移动',
 			action: 'keep',
 			adminonly: true
 		},
-		'merge': {
+		merge: {
 			label: '并入',
 			action: 'keep',
 			adminonly: true
 		},
-		'mergeapproved': {
+		mergeapproved: {
 			label: '允许并入',
 			action: 'keep',
 			adminonly: true
 		},
-		'nc': {
+		nc: {
 			label: '无共识',
 			action: 'keep'
 		}
 	}
 }, {
-	'請求無效': {
-		'ir': {
+	請求無效: {
+		ir: {
 			label: '請求無效',
 			action: 'keep'
 		},
-		'rep': {
+		rep: {
 			label: '重複提出，無效',
 			action: 'keep'
 		},
-		'commons': {
+		commons: {
 			label: '應在維基共享資源提請',
 			action: 'keep'
 		},
-		'ne': {
+		ne: {
 			label: '目標頁面或檔案不存在，無效',
 			action: 'keep'
 		},
-		'nq': {
+		nq: {
 			label: '提刪者未取得提刪資格，無效',
 			action: 'keep'
 		}
 	},
-	'保留': {
-		'k': {
+	保留: {
+		k: {
 			label: '保留',
 			action: 'keep',
 			adminonly: true
 		},
-		'sk': {
+		sk: {
 			label: '快速保留',
 			action: 'keep'
 		},
-		'tk': {
+		tk: {
 			label: '暫時保留',
 			action: 'keep'
 		},
-		'rr': {
+		rr: {
 			label: '請求理由消失',
 			action: 'keep',
 			selected: Twinkle.getPref('XfdClose') === 'nonadminonly'
 		},
-		'dan': {
+		dan: {
 			label: '刪後重建',
 			action: 'keep',
 			adminonly: true
 		}
 	},
-	'刪除': {
-		'd': {
+	刪除: {
+		d: {
 			label: '刪除',
 			action: 'del',
 			adminonly: true,
 			selected: Twinkle.getPref('XfdClose') === 'all'
 		},
-		'ic': {
+		ic: {
 			label: '圖像因侵權被刪',
 			action: 'del',
 			adminonly: true
 		}
 	},
-	'快速刪除': {
-		'sd': {
+	快速刪除: {
+		sd: {
 			label: '快速刪除',
 			action: 'del'
 		},
-		'lssd': {
+		lssd: {
 			label: '無來源或版權資訊，快速刪除',
 			action: 'del'
 		},
-		'svg': {
+		svg: {
 			label: '已改用SVG圖形，快速刪除',
 			action: 'del'
 		},
-		'nowcommons': {
+		nowcommons: {
 			label: '維基共享資源已提供，快速刪除',
 			action: 'del'
 		},
-		'drep': {
+		drep: {
 			label: '多次被刪除，條目鎖定',
 			action: 'del',
 			adminonly: true
 		}
 	},
-	'轉移至其他維基計劃': {
-		'twc': {
+	轉移至其他維基計劃: {
+		twc: {
 			label: '轉移至維基共享資源',
 			action: 'noop',
 			adminonly: true
 		},
-		'twn': {
+		twn: {
 			label: '轉移至維基新聞',
 			action: 'noop',
 			adminonly: true
 		},
-		'tws': {
+		tws: {
 			label: '轉移至維基文庫',
 			action: 'noop',
 			adminonly: true
 		},
-		'twb': {
+		twb: {
 			label: '轉移至維基教科書',
 			action: 'noop',
 			adminonly: true
 		},
-		'twq': {
+		twq: {
 			label: '轉移至維基語錄',
 			action: 'noop',
 			adminonly: true
 		},
-		'twt': {
+		twt: {
 			label: '轉移至維基詞典',
 			action: 'noop',
 			adminonly: true
 		},
-		'twv': {
+		twv: {
 			label: '轉移至維基學院',
 			action: 'noop',
 			adminonly: true
 		},
-		'twvoy': {
+		twvoy: {
 			label: '轉移至維基導遊',
 			action: 'noop',
 			adminonly: true
 		},
-		'two': {
+		two: {
 			label: '轉移至其他維基計劃',
 			action: 'noop',
 			adminonly: true
 		}
 	},
-	'其他處理方法': {
-		'c': {
+	其他處理方法: {
+		c: {
 			label: '轉交侵權',
 			action: 'noop'
 		},
@@ -387,36 +387,36 @@ Twinkle.close.codes = wgULS({
 			label: '轉送頁面存廢討論',
 			action: 'noop'
 		}, */
-		'm2ifd': {
+		m2ifd: {
 			label: '轉送檔案存廢討論',
 			action: 'noop'
 		},
-		'r': {
+		r: {
 			label: '重定向',
 			action: 'keep',
 			adminonly: true
 		},
-		'cr': {
+		cr: {
 			label: '分類重定向',
 			action: 'keep',
 			adminonly: true
 		},
-		'm': {
+		m: {
 			label: '移動',
 			action: 'keep',
 			adminonly: true
 		},
-		'merge': {
+		merge: {
 			label: '併入',
 			action: 'keep',
 			adminonly: true
 		},
-		'mergeapproved': {
+		mergeapproved: {
 			label: '允許併入',
 			action: 'keep',
 			adminonly: true
 		},
-		'nc': {
+		nc: {
 			label: '無共識',
 			action: 'keep'
 		}
@@ -684,10 +684,10 @@ Twinkle.close.callbacks = {
 		}
 		if (params.redirects) {
 			query = {
-				'action': 'query',
-				'titles': params.title,
-				'prop': 'redirects',
-				'rdlimit': 'max' // 500 is max for normal users, 5000 for bots and sysops
+				action: 'query',
+				titles: params.title,
+				prop: 'redirects',
+				rdlimit: 'max' // 500 is max for normal users, 5000 for bots and sysops
 			};
 			wikipedia_api = new Morebits.wiki.api(wgULS('正在获取重定向', '正在取得重新導向'), query, Twinkle.close.callbacks.deleteRedirectsMain);
 			wikipedia_api.params = params;
@@ -698,8 +698,8 @@ Twinkle.close.callbacks = {
 			if (pageTitle && pageTitle.namespace % 2 === 0 && pageTitle.namespace !== 2) {
 				pageTitle.namespace++;  // now pageTitle is the talk page title!
 				query = {
-					'action': 'query',
-					'titles': pageTitle.toText()
+					action: 'query',
+					titles: pageTitle.toText()
 				};
 				wikipedia_api = new Morebits.wiki.api(wgULS('正在检查讨论页面是否存在', '正在檢查討論頁面是否存在'), query, Twinkle.close.callbacks.deleteTalk);
 				wikipedia_api.params = params;

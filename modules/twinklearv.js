@@ -437,12 +437,12 @@ Twinkle.arv.callback.changeCategory = function (e) {
 						for (var i = 0; i < page.revisions.length; ++i) {
 							var rev = page.revisions[i];
 							var $entry = $('<div/>', {
-								'class': 'entry'
+								class: 'entry'
 							});
 							var $input = $('<input/>', {
-								'type': 'checkbox',
-								'name': 's_diffs',
-								'value': rev.revid
+								type: 'checkbox',
+								name: 's_diffs',
+								value: rev.revid
 							});
 							$input.data('revinfo', rev);
 							$input.appendTo($entry);
@@ -474,12 +474,12 @@ Twinkle.arv.callback.changeCategory = function (e) {
 						for (var i = 0; i < page.revisions.length; ++i) {
 							var rev = page.revisions[i];
 							var $entry = $('<div/>', {
-								'class': 'entry'
+								class: 'entry'
 							});
 							var $input = $('<input/>', {
-								'type': 'checkbox',
-								'name': 's_warnings',
-								'value': rev.revid
+								type: 'checkbox',
+								name: 's_warnings',
+								value: rev.revid
 							});
 							$input.data('revinfo', rev);
 							$input.appendTo($entry);
@@ -516,12 +516,12 @@ Twinkle.arv.callback.changeCategory = function (e) {
 						for (var i = 0; i < page.revisions.length; ++i) {
 							var rev = page.revisions[i];
 							var $entry = $('<div/>', {
-								'class': 'entry'
+								class: 'entry'
 							});
 							var $input = $('<input/>', {
-								'type': 'checkbox',
-								'name': 's_resolves',
-								'value': rev.revid
+								type: 'checkbox',
+								name: 's_resolves',
+								value: rev.revid
 							});
 							$input.data('revinfo', rev);
 							$input.appendTo($entry);
@@ -530,16 +530,16 @@ Twinkle.arv.callback.changeCategory = function (e) {
 
 						// add free form input
 						var $free_entry = $('<div/>', {
-							'class': 'entry'
+							class: 'entry'
 						});
 						var $free_input = $('<input/>', {
-							'type': 'text',
-							'name': 's_resolves_free'
+							type: 'text',
+							name: 's_resolves_free'
 						});
 
 						var $free_label = $('<label/>', {
-							'for': 's_resolves_free',
-							'html': 'Diff to additional discussions: '
+							for: 's_resolves_free',
+							html: 'Diff to additional discussions: '
 						});
 						$free_entry.append($free_label).append($free_input).appendTo($resolves);
 

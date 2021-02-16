@@ -281,7 +281,7 @@ Twinkle.talkback.changeTarget = function(e) {
 };
 
 Twinkle.talkback.noticeboards = {
-	'affp': {
+	affp: {
 		label: 'WP:AF/FP（' + wgULS('防滥用过滤器/错误报告', '防濫用過濾器/錯誤報告') + '）',
 		title: '過濾器錯誤報告通知',
 		content: '您的過濾器錯誤報告已有回應，請前往查看。--~~~~',

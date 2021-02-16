@@ -64,8 +64,8 @@ Twinkle.welcome.normal = function() {
 
 				var oWelcomeNode = welcomeNode.cloneNode(true);
 				oWelcomeNode.firstChild.setAttribute('href', oHref + '&' + $.param({
-					'friendlywelcome': Twinkle.getPref('quickWelcomeMode') === 'auto' ? 'auto' : 'norm',
-					'vanarticle': Morebits.pageNameNorm
+					friendlywelcome: Twinkle.getPref('quickWelcomeMode') === 'auto' ? 'auto' : 'norm',
+					vanarticle: Morebits.pageNameNorm
 				}));
 				$oList[0].parentNode.parentNode.appendChild(document.createTextNode(' '));
 				$oList[0].parentNode.parentNode.appendChild(oWelcomeNode);
@@ -76,8 +76,8 @@ Twinkle.welcome.normal = function() {
 
 				var nWelcomeNode = welcomeNode.cloneNode(true);
 				nWelcomeNode.firstChild.setAttribute('href', nHref + '&' + $.param({
-					'friendlywelcome': Twinkle.getPref('quickWelcomeMode') === 'auto' ? 'auto' : 'norm',
-					'vanarticle': Morebits.pageNameNorm
+					friendlywelcome: Twinkle.getPref('quickWelcomeMode') === 'auto' ? 'auto' : 'norm',
+					vanarticle: Morebits.pageNameNorm
 				}));
 				$nList[0].parentNode.parentNode.appendChild(document.createTextNode(' '));
 				$nList[0].parentNode.parentNode.appendChild(nWelcomeNode);
@@ -238,16 +238,16 @@ Twinkle.welcome.populateWelcomeList = function(e) {
 //   - $HEADER$    - adds a level 2 header (most templates already include this)
 
 Twinkle.welcome.templates = wgULS({
-	'standard': {
-		'一般欢迎模板': {
-			'Welcome': {
+	standard: {
+		一般欢迎模板: {
+			Welcome: {
 				description: '标准欢迎',
 				syntax: '{{subst:Welcome}}'
 			}
 		},
 
-		'问题用户欢迎模板': {
-			'Firstarticle': {
+		问题用户欢迎模板: {
+			Firstarticle: {
 				description: '给第一篇条目不符条目创建指引的用户',
 				linkedArticle: true,
 				syntax: '{{subst:Firstarticle|1=$ARTICLE$}}'
@@ -255,18 +255,18 @@ Twinkle.welcome.templates = wgULS({
 		}
 	},
 
-	'anonymous': {
-		'匿名用户欢迎模板': {
-			'Welcomeip': {
+	anonymous: {
+		匿名用户欢迎模板: {
+			Welcomeip: {
 				description: '供匿名用户，鼓励其创建账户',
 				syntax: '{{subst:Welcomeip}}'
 			}
 		}
 	},
 
-	'nonChinese': {
-		'非中文欢迎模板': {
-			'Welcomeen': {
+	nonChinese: {
+		非中文欢迎模板: {
+			Welcomeen: {
 				description: '欢迎非中文用户',
 				linkedArticle: true,
 				syntax: '{{subst:Welcomeen|art=$ARTICLE$}}'
@@ -275,16 +275,16 @@ Twinkle.welcome.templates = wgULS({
 	}
 
 }, {
-	'standard': {
-		'一般歡迎模板': {
-			'Welcome': {
+	standard: {
+		一般歡迎模板: {
+			Welcome: {
 				description: '標準歡迎',
 				syntax: '{{subst:Welcome}}'
 			}
 		},
 
-		'問題使用者歡迎模板': {
-			'Firstarticle': {
+		問題使用者歡迎模板: {
+			Firstarticle: {
 				description: '給第一篇條目不符條目建立指引的使用者',
 				linkedArticle: true,
 				syntax: '{{subst:Firstarticle|1=$ARTICLE$}}'
@@ -292,18 +292,18 @@ Twinkle.welcome.templates = wgULS({
 		}
 	},
 
-	'anonymous': {
-		'匿名使用者歡迎模板': {
-			'Welcomeip': {
+	anonymous: {
+		匿名使用者歡迎模板: {
+			Welcomeip: {
 				description: '供匿名使用者，鼓勵其建立帳戶',
 				syntax: '{{subst:Welcomeip}}'
 			}
 		}
 	},
 
-	'nonChinese': {
-		'非中文歡迎模板': {
-			'Welcomeen': {
+	nonChinese: {
+		非中文歡迎模板: {
+			Welcomeen: {
 				description: '歡迎非中文使用者',
 				linkedArticle: true,
 				syntax: '{{subst:Welcomeen|art=$ARTICLE$}}'

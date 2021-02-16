@@ -7,9 +7,9 @@ var api = new mw.Api(), relevantUserName;
 var menuFormattedNamespaces = mw.config.get('wgFormattedNamespaces');
 menuFormattedNamespaces[0] = wgULS('（条目）', '（條目）');
 var blockActionText = {
-	'block': wgULS('封禁', '封鎖'),
-	'reblock': wgULS('重新封禁', '重新封鎖'),
-	'unblock': wgULS('解除封禁', '解除封鎖')
+	block: wgULS('封禁', '封鎖'),
+	reblock: wgULS('重新封禁', '重新封鎖'),
+	unblock: wgULS('解除封禁', '解除封鎖')
 };
 
 /*
@@ -594,12 +594,12 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 						return;
 					}
 					return {
-						'action': 'query',
-						'format': 'json',
-						'list': 'allpages',
-						'apfrom': title.title,
-						'apnamespace': title.namespace,
-						'aplimit': '10'
+						action: 'query',
+						format: 'json',
+						list: 'allpages',
+						apfrom: title.title,
+						apnamespace: title.namespace,
+						aplimit: '10'
 					};
 				},
 				processResults: function(data) {

@@ -22,8 +22,8 @@
 Twinkle.config = {};
 
 Twinkle.config.watchlistEnums = {
-	yes: wgULS('永久加入到监视列表', '永久加入到監視清單'),
-	no: wgULS('不加入到监视列表', '不加入到監視清單'),
+	'yes': wgULS('永久加入到监视列表', '永久加入到監視清單'),
+	'no': wgULS('不加入到监视列表', '不加入到監視清單'),
 	'default': wgULS('遵守站点设置', '遵守站點設定'),
 	'1 week': wgULS('加入到监视列表1周', '加入到監視清單1週'),
 	'1 month': wgULS('加入到监视列表1个月', '加入到監視清單1個月'),
@@ -81,11 +81,11 @@ Twinkle.config.commonSets = {
 		'r2', 'r3', 'r5', 'r6', 'r7'
 	],
 	xfdCriteria: {
-		'delete': wgULS('删除', '刪除'), 'merge': wgULS('合并', '合併'),
-		'vmd': wgULS('移动到维基词典', '移動到維基詞典'), 'vms': wgULS('移动到维基文库', '移動到維基文庫'), 'vmb': wgULS('移动到维基教科书', '移動到維基教科書'), 'vmq': wgULS('移动到维基语录', '移動到維基語錄'), 'vmvoy': wgULS('移动到维基导游', '移動到維基導遊'), 'vmv': wgULS('移动到维基学院', '移動到維基學院'),
-		'fwdcsd': wgULS('转交自快速删除候选', '轉交自快速刪除候選'),
-		'fame': wgULS('批量关注度提删', '批次關注度提刪'), 'substub': wgULS('批量小小作品提删', '批次小小作品提刪'), 'batch': wgULS('批量其他提删', '批次其他提刪'),
-		'ffd': wgULS('文件存废讨论', '檔案存廢討論')
+		delete: wgULS('删除', '刪除'), merge: wgULS('合并', '合併'),
+		vmd: wgULS('移动到维基词典', '移動到維基詞典'), vms: wgULS('移动到维基文库', '移動到維基文庫'), vmb: wgULS('移动到维基教科书', '移動到維基教科書'), vmq: wgULS('移动到维基语录', '移動到維基語錄'), vmvoy: wgULS('移动到维基导游', '移動到維基導遊'), vmv: wgULS('移动到维基学院', '移動到維基學院'),
+		fwdcsd: wgULS('转交自快速删除候选', '轉交自快速刪除候選'),
+		fame: wgULS('批量关注度提删', '批次關注度提刪'), substub: wgULS('批量小小作品提删', '批次小小作品提刪'), batch: wgULS('批量其他提删', '批次其他提刪'),
+		ffd: wgULS('文件存废讨论', '檔案存廢討論')
 	},
 	xfdCriteriaDisplayOrder: [
 		'delete', 'merge',
@@ -95,28 +95,28 @@ Twinkle.config.commonSets = {
 		'ffd'
 	],
 	namespacesNoSpecial: {
-		'0': wgULS('（条目）', '（條目）'),
-		'1': 'Talk',
-		'2': 'User',
-		'3': 'User talk',
-		'4': 'Wikipedia',
-		'5': 'Wikipedia talk',
-		'6': 'File',
-		'7': 'File talk',
-		'8': 'MediaWiki',
-		'9': 'MediaWiki talk',
-		'10': 'Template',
-		'11': 'Template talk',
-		'12': 'Help',
-		'13': 'Help talk',
-		'14': 'Category',
-		'15': 'Category talk',
-		'100': 'Portal',
-		'101': 'Portal talk',
-		'118': 'Draft',
-		'119': 'Draft talk',
-		'828': 'Module',
-		'829': 'Module talk'
+		0: wgULS('（条目）', '（條目）'),
+		1: 'Talk',
+		2: 'User',
+		3: 'User talk',
+		4: 'Wikipedia',
+		5: 'Wikipedia talk',
+		6: 'File',
+		7: 'File talk',
+		8: 'MediaWiki',
+		9: 'MediaWiki talk',
+		10: 'Template',
+		11: 'Template talk',
+		12: 'Help',
+		13: 'Help talk',
+		14: 'Category',
+		15: 'Category talk',
+		100: 'Portal',
+		101: 'Portal talk',
+		118: 'Draft',
+		119: 'Draft talk',
+		828: 'Module',
+		829: 'Module talk'
 	}
 };
 
@@ -180,7 +180,7 @@ Twinkle.config.sections = [
 				label: wgULS('关闭指定的Twinkle模块', '關閉指定的Twinkle模組'),
 				helptip: wgULS('您在此选择的功能将无法使用，取消选择以重新启用功能。', '您在此選擇的功能將無法使用，取消選擇以重新啟用功能。'),
 				type: 'set',
-				setValues: { arv: wgULS('告状', '告狀'), warn: '警告', welcome: wgULS('欢迎', '歡迎'), talkback: '通告', speedy: wgULS('速删', '速刪'), copyvio: wgULS('侵权', '侵權'), xfd: wgULS('提删', '提刪'), image: wgULS('图权', '圖權'), protect: wgULS('保护', '保護'), tag: wgULS('标记', '標記'), stub: '小作品', diff: wgULS('差异', '差異'), unlink: wgULS('链入', '連入'), 'fluff': '回退' }
+				setValues: { arv: wgULS('告状', '告狀'), warn: '警告', welcome: wgULS('欢迎', '歡迎'), talkback: '通告', speedy: wgULS('速删', '速刪'), copyvio: wgULS('侵权', '侵權'), xfd: wgULS('提删', '提刪'), image: wgULS('图权', '圖權'), protect: wgULS('保护', '保護'), tag: wgULS('标记', '標記'), stub: '小作品', diff: wgULS('差异', '差異'), unlink: wgULS('链入', '連入'), fluff: '回退' }
 			},
 
 			// Twinkle.config.disabledSysopModules (array)
@@ -399,7 +399,7 @@ Twinkle.config.sections = [
 				name: 'speedySelectionStyle',
 				label: wgULS('什么时候执行标记或删除', '什麼時候執行標記或刪除'),
 				type: 'enum',
-				enumValues: wgULS({ 'buttonClick': '当我点“提交”时', 'radioClick': '当我点一个选项时' }, { 'buttonClick': '當我點「提交」時', 'radioClick': '當我點一個設定時' })
+				enumValues: wgULS({ buttonClick: '当我点“提交”时', radioClick: '当我点一个选项时' }, { buttonClick: '當我點「提交」時', radioClick: '當我點一個設定時' })
 			},
 
 			// TwinkleConfig.watchSpeedyPages (array)
@@ -579,7 +579,7 @@ Twinkle.config.sections = [
 				name: 'tagArticleSortOrder',
 				label: wgULS('条目标记的默认查看方式', '條目標記的預設檢視方式'),
 				type: 'enum',
-				enumValues: { 'cat': wgULS('按类型', '按類別'), 'alpha': '按字母' }
+				enumValues: { cat: wgULS('按类型', '按類別'), alpha: '按字母' }
 			},
 			{
 				name: 'customTagList',
@@ -631,7 +631,7 @@ Twinkle.config.sections = [
 				name: 'stubArticleSortOrder',
 				label: wgULS('条目小作品的默认查看方式', '條目小作品的預設檢視方式'),
 				type: 'enum',
-				enumValues: { 'cat': wgULS('按类型', '按類別'), 'alpha': '按字母' }
+				enumValues: { cat: wgULS('按类型', '按類別'), alpha: '按字母' }
 			},
 			{
 				name: 'customStubList',
@@ -699,17 +699,17 @@ Twinkle.config.sections = [
 				label: wgULS('默认警告级别', '預設警告級別'),
 				type: 'enum',
 				enumValues: {
-					'1': '1：提醒',
-					'2': '2：注意',
-					'3': '3：警告',
-					'4': wgULS('4：最后警告', '4：最後警告'),
-					'5': '4im：唯一警告',
-					'6': wgULS('单层级提醒', '單層級提醒'),
-					'7': wgULS('单层级警告', '單層級警告'),
+					1: '1：提醒',
+					2: '2：注意',
+					3: '3：警告',
+					4: wgULS('4：最后警告', '4：最後警告'),
+					5: '4im：唯一警告',
+					6: wgULS('单层级提醒', '單層級提醒'),
+					7: wgULS('单层级警告', '單層級警告'),
 					// 8 was used for block templates before #260
-					'9': wgULS('自定义警告', '自訂警告'),
-					'10': '所有警告模板',
-					'11': wgULS('自动选择层级（1-4）', '自動選擇層級（1-4）')
+					9: wgULS('自定义警告', '自訂警告'),
+					10: '所有警告模板',
+					11: wgULS('自动选择层级（1-4）', '自動選擇層級（1-4）')
 				}
 			},
 
@@ -903,11 +903,11 @@ Twinkle.config.sections = [
 				helptip: wgULS('若选择“相同于上次选择”将使用localStorage来记忆。', '若選擇「相同於上次選擇」將使用localStorage來記憶。'),
 				type: 'enum',
 				enumValues: wgULS({
-					'delete': '删除',
-					'same': '相同于上次选择'
+					delete: '删除',
+					same: '相同于上次选择'
 				}, {
-					'delete': '刪除',
-					'same': '相同於上次選擇'
+					delete: '刪除',
+					same: '相同於上次選擇'
 				})
 			},
 
@@ -931,13 +931,13 @@ Twinkle.config.sections = [
 				helptip: wgULS('请确保您充分了解[[Wikipedia:关闭存废讨论指引]]才开启此功能。', '請確保您充分了解[[Wikipedia:關閉存廢討論指引]]才開啟此功能。'),
 				type: 'enum',
 				enumValues: wgULS({
-					'hide': '不显示',
-					'nonadminonly': '只包含非管理员可使用选项',
-					'all': '显示所有选项'
+					hide: '不显示',
+					nonadminonly: '只包含非管理员可使用选项',
+					all: '显示所有选项'
 				}, {
-					'hide': '不顯示',
-					'nonadminonly': '只包含非管理員可使用選項',
-					'all': '顯示所有選項'
+					hide: '不顯示',
+					nonadminonly: '只包含非管理員可使用選項',
+					all: '顯示所有選項'
 				})
 			}
 		]

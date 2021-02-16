@@ -54,12 +54,12 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 	Window.display();
 
 	var query = {
-		'action': 'query',
-		'generator': 'links',
-		'prop': 'info',
-		'inprop': 'protection',
-		'titles': mw.config.get('wgPageName'),
-		'gpllimit': Twinkle.getPref('batchMax')
+		action: 'query',
+		generator: 'links',
+		prop: 'info',
+		inprop: 'protection',
+		titles: mw.config.get('wgPageName'),
+		gpllimit: Twinkle.getPref('batchMax')
 	};
 	var statelem = new Morebits.status(wgULS('抓取页面列表', '抓取頁面列表'));
 	var wikipedia_api = new Morebits.wiki.api(wgULS('加载中…', '載入中…'), query, function(apiobj) {
@@ -174,11 +174,11 @@ Twinkle.batchundelete.callbacks = {
 			var talkpagename = new mw.Title(params.page).getTalkPage().getPrefixedText();
 			if (talkpagename !== params.page) {
 				query = {
-					'action': 'query',
-					'prop': 'deletedrevisions',
-					'drvprop': 'ids',
-					'drvlimit': 1,
-					'titles': talkpagename
+					action: 'query',
+					prop: 'deletedrevisions',
+					drvprop: 'ids',
+					drvlimit: 1,
+					titles: talkpagename
 				};
 				wikipedia_api = new Morebits.wiki.api(wgULS('检查讨论页的已删版本', '檢查討論頁的已刪版本'), query, Twinkle.batchundelete.callbacks.undeleteTalk);
 				wikipedia_api.params = params;

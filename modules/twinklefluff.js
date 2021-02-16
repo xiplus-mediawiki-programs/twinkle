@@ -394,15 +394,15 @@ Twinkle.fluff.revert = function revertPage(type, vandal, rev, page) {
 	};
 
 	var query = {
-		'action': 'query',
-		'prop': ['info', 'revisions'],
-		'titles': pagename,
-		'intestactions': 'edit',
-		'rvlimit': Twinkle.getPref('revertMaxRevisions'),
-		'rvprop': [ 'ids', 'timestamp', 'user' ],
-		'curtimestamp': '',
-		'meta': 'tokens',
-		'type': 'csrf'
+		action: 'query',
+		prop: ['info', 'revisions'],
+		titles: pagename,
+		intestactions: 'edit',
+		rvlimit: Twinkle.getPref('revertMaxRevisions'),
+		rvprop: [ 'ids', 'timestamp', 'user' ],
+		curtimestamp: '',
+		meta: 'tokens',
+		type: 'csrf'
 	};
 	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取较早修订版本信息', '抓取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.main);
 	wikipedia_api.params = params;
@@ -419,16 +419,16 @@ Twinkle.fluff.revertToRevision = function revertToRevision(oldrev) {
 	Morebits.status.init(document.getElementById('mw-content-text'));
 
 	var query = {
-		'action': 'query',
-		'prop': ['info', 'revisions'],
-		'titles': mw.config.get('wgPageName'),
-		'rvlimit': 1,
-		'rvstartid': oldrev,
-		'rvprop': [ 'ids', 'user' ],
-		'format': 'xml',
-		'curtimestamp': '',
-		'meta': 'tokens',
-		'type': 'csrf'
+		action: 'query',
+		prop: ['info', 'revisions'],
+		titles: mw.config.get('wgPageName'),
+		rvlimit: 1,
+		rvstartid: oldrev,
+		rvprop: [ 'ids', 'user' ],
+		format: 'xml',
+		curtimestamp: '',
+		meta: 'tokens',
+		type: 'csrf'
 	};
 	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取较早修订版本信息', '抓取較早修訂版本資訊'), query, Twinkle.fluff.callbacks.toRevision);
 	wikipedia_api.params = { rev: oldrev, summary: summary };
@@ -463,17 +463,17 @@ Twinkle.fluff.callbacks = {
 			revertToUserHidden ? null : revertToUser, optional_summary);
 
 		var query = {
-			'action': 'edit',
-			'title': mw.config.get('wgPageName'),
-			'summary': summary,
-			'tags': Twinkle.changeTags,
-			'token': csrftoken,
-			'undo': lastrevid,
-			'undoafter': revertToRevID,
-			'basetimestamp': touched,
-			'starttimestamp': loadtimestamp,
-			'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf('torev') !== -1 ? true : undefined,
-			'bot': true
+			action: 'edit',
+			title: mw.config.get('wgPageName'),
+			summary: summary,
+			tags: Twinkle.changeTags,
+			token: csrftoken,
+			undo: lastrevid,
+			undoafter: revertToRevID,
+			basetimestamp: touched,
+			starttimestamp: loadtimestamp,
+			minor: Twinkle.getPref('markRevertedPagesAsMinor').indexOf('torev') !== -1 ? true : undefined,
+			bot: true
 		};
 		// Handle watching, possible expiry
 		if (Twinkle.getPref('watchRevertedPages').indexOf('torev') !== -1) {
@@ -684,17 +684,17 @@ Twinkle.fluff.callbacks = {
 		}
 
 		var query = {
-			'action': 'edit',
-			'title': params.pagename,
-			'summary': summary,
-			'tags': Twinkle.changeTags,
-			'token': csrftoken,
-			'undo': lastrevid,
-			'undoafter': params.goodid,
-			'basetimestamp': touched,
-			'starttimestamp': loadtimestamp,
-			'minor': Twinkle.getPref('markRevertedPagesAsMinor').indexOf(params.type) !== -1 ? true : undefined,
-			'bot': true
+			action: 'edit',
+			title: params.pagename,
+			summary: summary,
+			tags: Twinkle.changeTags,
+			token: csrftoken,
+			undo: lastrevid,
+			undoafter: params.goodid,
+			basetimestamp: touched,
+			starttimestamp: loadtimestamp,
+			minor: Twinkle.getPref('markRevertedPagesAsMinor').indexOf(params.type) !== -1 ? true : undefined,
+			bot: true
 		};
 		// Handle watching, possible expiry
 		if (Twinkle.getPref('watchRevertedPages').indexOf(params.type) !== -1) {
@@ -740,15 +740,15 @@ Twinkle.fluff.callbacks = {
 				Morebits.status.info(wgULS('信息', '資訊'), [wgULS('开启用户 ', '開啟使用者 '), Morebits.htmlNode('strong', params.user), wgULS(' 的讨论页', ' 的討論頁')]);
 
 				var windowQuery = {
-					'title': 'User talk:' + params.user,
-					'action': 'edit',
-					'preview': 'yes',
-					'vanarticle': params.pagename.replace(/_/g, ' '),
-					'vanarticlerevid': params.revid,
-					'vantimestamp': params.vantimestamp,
-					'vanarticlegoodrevid': params.goodid,
-					'type': params.type,
-					'count': params.count
+					title: 'User talk:' + params.user,
+					action: 'edit',
+					preview: 'yes',
+					vanarticle: params.pagename.replace(/_/g, ' '),
+					vanarticlerevid: params.revid,
+					vantimestamp: params.vantimestamp,
+					vanarticlegoodrevid: params.goodid,
+					type: params.type,
+					count: params.count
 				};
 
 				switch (Twinkle.getPref('userTalkPageMode')) {

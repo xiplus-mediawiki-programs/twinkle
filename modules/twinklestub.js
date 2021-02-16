@@ -271,11 +271,11 @@ Twinkle.stub.article.tags = wgULS({
 // Add new categories with discretion - the list is long enough as is!
 
 Twinkle.stub.article.tagCategories = wgULS({
-	'通用模板': [
+	通用模板: [
 		'stub',
 		'expand list'
 	],
-	'国家和地理': [
+	国家和地理: [
 		'asia-stub',
 		'europe-stub',
 		'france-geo-stub',
@@ -287,7 +287,7 @@ Twinkle.stub.article.tagCategories = wgULS({
 		'US-geo-stub',
 		'US-stub'
 	],
-	'杂项': [
+	杂项: [
 		'food-stub',
 		'hist-stub',
 		'mil-stub',
@@ -295,12 +295,12 @@ Twinkle.stub.article.tagCategories = wgULS({
 		'religion-stub',
 		'transp-stub'
 	],
-	'人物': [
+	人物: [
 		'actor-stub',
 		'bio-stub',
 		'US-bio-stub'
 	],
-	'科学': [
+	科学: [
 		'biology-stub',
 		'chem-stub',
 		'math-stub',
@@ -309,13 +309,13 @@ Twinkle.stub.article.tagCategories = wgULS({
 		'science-stub',
 		'weather-stub'
 	],
-	'体育': [
+	体育: [
 		'sport-stub'
 	],
-	'技术': [
+	技术: [
 		'tech-stub'
 	],
-	'艺术': [
+	艺术: [
 		'actor-stub',
 		'lit-stub',
 		'movie-stub',
@@ -323,11 +323,11 @@ Twinkle.stub.article.tagCategories = wgULS({
 		'TV-stub'
 	]
 }, {
-	'通用模板': [
+	通用模板: [
 		'stub',
 		'expand list'
 	],
-	'國家和地理': [
+	國家和地理: [
 		'asia-stub',
 		'europe-stub',
 		'france-geo-stub',
@@ -339,7 +339,7 @@ Twinkle.stub.article.tagCategories = wgULS({
 		'US-geo-stub',
 		'US-stub'
 	],
-	'雜項': [
+	雜項: [
 		'food-stub',
 		'hist-stub',
 		'mil-stub',
@@ -347,12 +347,12 @@ Twinkle.stub.article.tagCategories = wgULS({
 		'religion-stub',
 		'transp-stub'
 	],
-	'人物': [
+	人物: [
 		'actor-stub',
 		'bio-stub',
 		'US-bio-stub'
 	],
-	'科學': [
+	科學: [
 		'biology-stub',
 		'chem-stub',
 		'math-stub',
@@ -361,13 +361,13 @@ Twinkle.stub.article.tagCategories = wgULS({
 		'science-stub',
 		'weather-stub'
 	],
-	'體育': [
+	體育: [
 		'sport-stub'
 	],
-	'技術': [
+	技術: [
 		'tech-stub'
 	],
-	'藝術': [
+	藝術: [
 		'actor-stub',
 		'lit-stub',
 		'movie-stub',

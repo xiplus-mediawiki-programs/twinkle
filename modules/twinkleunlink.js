@@ -73,25 +73,25 @@ Twinkle.unlink.callback = function(presetReason) {
 	var query;
 	if (mw.config.get('wgNamespaceNumber') === 6) {  // File:
 		query = {
-			'action': 'query',
-			'list': [ 'backlinks', 'imageusage' ],
-			'bltitle': Morebits.pageNameNorm,
-			'iutitle': Morebits.pageNameNorm,
-			'bllimit': Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
-			'iulimit': Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
-			'blnamespace': Twinkle.getPref('unlinkNamespaces'),
-			'iunamespace': Twinkle.getPref('unlinkNamespaces'),
-			'rawcontinue': true
+			action: 'query',
+			list: [ 'backlinks', 'imageusage' ],
+			bltitle: Morebits.pageNameNorm,
+			iutitle: Morebits.pageNameNorm,
+			bllimit: Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
+			iulimit: Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
+			blnamespace: Twinkle.getPref('unlinkNamespaces'),
+			iunamespace: Twinkle.getPref('unlinkNamespaces'),
+			rawcontinue: true
 		};
 	} else {
 		query = {
-			'action': 'query',
-			'list': 'backlinks',
-			'bltitle': Morebits.pageNameNorm,
-			'blfilterredir': 'nonredirects',
-			'bllimit': Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
-			'blnamespace': Twinkle.getPref('unlinkNamespaces'),
-			'rawcontinue': true
+			action: 'query',
+			list: 'backlinks',
+			bltitle: Morebits.pageNameNorm,
+			blfilterredir: 'nonredirects',
+			bllimit: Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
+			blnamespace: Twinkle.getPref('unlinkNamespaces'),
+			rawcontinue: true
 		};
 	}
 	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取链入', '抓取連入'), query, Twinkle.unlink.callbacks.display.backlinks);

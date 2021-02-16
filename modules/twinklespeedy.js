@@ -1079,10 +1079,10 @@ Twinkle.speedy.callbacks = {
 			// delete redirects
 			if (params.deleteRedirects) {
 				var query = {
-					'action': 'query',
-					'titles': mw.config.get('wgPageName'),
-					'prop': 'redirects',
-					'rdlimit': 5000  // 500 is max for normal users, 5000 for bots and sysops
+					action: 'query',
+					titles: mw.config.get('wgPageName'),
+					prop: 'redirects',
+					rdlimit: 5000  // 500 is max for normal users, 5000 for bots and sysops
 				};
 				var wikipedia_api = new Morebits.wiki.api(wgULS('获取重定向列表…', '取得重新導向列表…'), query, Twinkle.speedy.callbacks.sysop.deleteRedirectsMain,
 					new Morebits.status(wgULS('删除重定向', '刪除重新導向')));
@@ -1094,10 +1094,10 @@ Twinkle.speedy.callbacks = {
 			var $link, $bigtext;
 			if (params.normalized === 'g11') {
 				$link = $('<a/>', {
-					'href': '#',
-					'text': wgULS('单击这里施行保护', '點擊這裡施行保護'),
-					'css': { 'fontSize': '130%', 'fontWeight': 'bold' },
-					'click': function() {
+					href: '#',
+					text: wgULS('单击这里施行保护', '點擊這裡施行保護'),
+					css: { fontSize: '130%', fontWeight: 'bold' },
+					click: function() {
 						Morebits.wiki.actionCompleted.redirect = null;
 						Twinkle.speedy.dialog.close();
 						mw.config.set('wgArticleId', 0);
@@ -1105,8 +1105,8 @@ Twinkle.speedy.callbacks = {
 					}
 				});
 				$bigtext = $('<span/>', {
-					'text': wgULS('白纸保护该页', '白紙保護該頁'),
-					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
+					text: wgULS('白纸保护该页', '白紙保護該頁'),
+					css: { fontSize: '130%', fontWeight: 'bold' }
 				});
 				Morebits.status.info($bigtext[0], $link[0]);
 			}
@@ -1114,34 +1114,34 @@ Twinkle.speedy.callbacks = {
 			// promote Unlink tool
 			if (mw.config.get('wgNamespaceNumber') === 6 && params.normalized !== 'f7') {
 				$link = $('<a/>', {
-					'href': '#',
-					'text': wgULS('单击这里前往反链工具', '點擊這裡前往反鏈工具'),
-					'css': { 'fontWeight': 'bold' },
-					'click': function() {
+					href: '#',
+					text: wgULS('单击这里前往反链工具', '點擊這裡前往反鏈工具'),
+					css: { fontWeight: 'bold' },
+					click: function() {
 						Morebits.wiki.actionCompleted.redirect = null;
 						Twinkle.speedy.dialog.close();
 						Twinkle.unlink.callback(wgULS('取消对已删除文件 ', '取消對已刪除檔案 ') + Morebits.pageNameNorm + ' 的使用');
 					}
 				});
 				$bigtext = $('<span/>', {
-					'text': wgULS('取消对已删除文件的使用', '取消對已刪除檔案的使用'),
-					'css': { 'fontWeight': 'bold' }
+					text: wgULS('取消对已删除文件的使用', '取消對已刪除檔案的使用'),
+					css: { fontWeight: 'bold' }
 				});
 				Morebits.status.info($bigtext[0], $link[0]);
 			} else if (params.normalized !== 'f7') {
 				$link = $('<a/>', {
-					'href': '#',
-					'text': wgULS('单击这里前往反链工具', '點擊這裡前往反鏈工具'),
-					'css': { 'fontWeight': 'bold' },
-					'click': function() {
+					href: '#',
+					text: wgULS('单击这里前往反链工具', '點擊這裡前往反鏈工具'),
+					css: { fontWeight: 'bold' },
+					click: function() {
 						Morebits.wiki.actionCompleted.redirect = null;
 						Twinkle.speedy.dialog.close();
 						Twinkle.unlink.callback(wgULS('取消对已删除页面 ', '取消對已刪除頁面 ') + Morebits.pageNameNorm + wgULS(' 的链接', ' 的連結'));
 					}
 				});
 				$bigtext = $('<span/>', {
-					'text': wgULS('取消对已删除页面的链接', '取消對已刪除頁面的連結'),
-					'css': { 'fontWeight': 'bold' }
+					text: wgULS('取消对已删除页面的链接', '取消對已刪除頁面的連結'),
+					css: { fontWeight: 'bold' }
 				});
 				Morebits.status.info($bigtext[0], $link[0]);
 			}
@@ -1152,24 +1152,24 @@ Twinkle.speedy.callbacks = {
 			var params = pageobj.getCallbackParameters();
 
 			var query = {
-				'title': 'User talk:' + user,
-				'action': 'edit',
-				'preview': 'yes',
-				'vanarticle': Morebits.pageNameNorm
+				title: 'User talk:' + user,
+				action: 'edit',
+				preview: 'yes',
+				vanarticle: Morebits.pageNameNorm
 			};
 
 			if (params.normalized === 'db' || Twinkle.getPref('promptForSpeedyDeletionSummary').indexOf(params.normalized) !== -1) {
 				// provide a link to the user talk page
 				var $link, $bigtext;
 				$link = $('<a/>', {
-					'href': mw.util.wikiScript('index') + '?' + $.param(query),
-					'text': wgULS('点此打开User talk:', '點此打開User talk:') + user,
-					'target': '_blank',
-					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
+					href: mw.util.wikiScript('index') + '?' + $.param(query),
+					text: wgULS('点此打开User talk:', '點此打開User talk:') + user,
+					target: '_blank',
+					css: { fontSize: '130%', fontWeight: 'bold' }
 				});
 				$bigtext = $('<span/>', {
-					'text': wgULS('通知页面创建者', '通知頁面建立者'),
-					'css': { 'fontSize': '130%', 'fontWeight': 'bold' }
+					text: wgULS('通知页面创建者', '通知頁面建立者'),
+					css: { fontSize: '130%', fontWeight: 'bold' }
 				});
 				Morebits.status.info($bigtext[0], $link[0]);
 			} else {
