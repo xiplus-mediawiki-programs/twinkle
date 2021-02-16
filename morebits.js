@@ -81,6 +81,7 @@ Morebits.userIsSysop = Morebits.userIsInGroup('sysop');
 
 /**
  * Check if the address is a CIDR range.
+ *
  * @param {*} address - The IP address, with or without CIDR.
  * @returns {boolean}
  */
@@ -1401,7 +1402,7 @@ Morebits.string = {
 	},
 
 	/**
-	 * @param {*} time The string to foramt
+	 * @param {*} time - The string to foramt
 	 * @returns {string}
 	 */
 	formatTime: function morebitsStringFormatTime(time) {
@@ -1435,9 +1436,10 @@ Morebits.string = {
 
 	/**
 	 * Append punctuation to a string when it's missing
+	 *
 	 * @param {string} str
 	 * @param {string} punctuation
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	appendPunctuation: function(str, punctuation) {
 		if (punctuation === undefined) {
@@ -2949,8 +2951,8 @@ Morebits.wiki.page = function(pageName, status) {
 	 * - `true`|`'yes'`: page will be added to the user's watchlist when the action is called
 	 * - `false`|`'no'`|`'nochange'`: watchlist status of the page will not be changed.
 	 * - `'default'`|`'preferences'`: watchlist status of the page will
-         * be set based on the user's preference settings when the action is
-         * called.  Ignores ability of default + expiry.
+	 * be set based on the user's preference settings when the action is
+	 * called.  Ignores ability of default + expiry.
 	 * - `'unwatch'`: explicitly unwatch the page
 	 * - {string|number}: watch page until the specified time (relative or absolute datestring)
 	 */
