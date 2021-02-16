@@ -243,6 +243,33 @@ Twinkle.config.sections = [
 	},
 
 	{
+		title: wgULS('保护', '保護'),
+		module: 'protect',
+		preferences: [
+			{
+				name: 'watchRequestedPages',
+				label: wgULS('请求保护页面时加入到监视列表', '請求保護頁面時加入到監視清單'),
+				type: 'enum',
+				enumValues: Twinkle.config.watchlistEnums
+			},
+			{
+				name: 'watchPPTaggedPages',
+				label: wgULS('标记保护模板时加入到监视列表', '標記保護模板時加入到監視清單'),
+				type: 'enum',
+				enumValues: Twinkle.config.watchlistEnums
+			},
+			{
+				name: 'watchProtectedPages',
+				label: wgULS('保护时加入到监视列表', '保護時加入到監視清單'),
+				helptip: wgULS('如果在保护后也标记页面，则使用标记页面的参数设置。', '如果在保護後也標記頁面，則使用標記頁面的偏好設定。'),
+				adminOnly: true,
+				type: 'enum',
+				enumValues: Twinkle.config.watchlistEnums
+			}
+		]
+	},
+
+	{
 		title: '回退',  // twinklefluff module
 		module: 'fluff',
 		preferences: [
