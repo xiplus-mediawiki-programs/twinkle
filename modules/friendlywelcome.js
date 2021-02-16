@@ -237,16 +237,17 @@ Twinkle.welcome.populateWelcomeList = function(e) {
 //   - $ARTICLE$   - replaced by an article name, if "linkedArticle" is true
 //   - $HEADER$    - adds a level 2 header (most templates already include this)
 
+/* eslint-disable quote-props */
 Twinkle.welcome.templates = wgULS({
 	standard: {
-		一般欢迎模板: {
+		'一般欢迎模板': {
 			Welcome: {
 				description: '标准欢迎',
 				syntax: '{{subst:Welcome}}'
 			}
 		},
 
-		问题用户欢迎模板: {
+		'问题用户欢迎模板': {
 			Firstarticle: {
 				description: '给第一篇条目不符条目创建指引的用户',
 				linkedArticle: true,
@@ -256,7 +257,7 @@ Twinkle.welcome.templates = wgULS({
 	},
 
 	anonymous: {
-		匿名用户欢迎模板: {
+		'匿名用户欢迎模板': {
 			Welcomeip: {
 				description: '供匿名用户，鼓励其创建账户',
 				syntax: '{{subst:Welcomeip}}'
@@ -265,7 +266,7 @@ Twinkle.welcome.templates = wgULS({
 	},
 
 	nonChinese: {
-		非中文欢迎模板: {
+		'非中文欢迎模板': {
 			Welcomeen: {
 				description: '欢迎非中文用户',
 				linkedArticle: true,
@@ -276,14 +277,14 @@ Twinkle.welcome.templates = wgULS({
 
 }, {
 	standard: {
-		一般歡迎模板: {
+		'一般歡迎模板': {
 			Welcome: {
 				description: '標準歡迎',
 				syntax: '{{subst:Welcome}}'
 			}
 		},
 
-		問題使用者歡迎模板: {
+		'問題使用者歡迎模板': {
 			Firstarticle: {
 				description: '給第一篇條目不符條目建立指引的使用者',
 				linkedArticle: true,
@@ -293,7 +294,7 @@ Twinkle.welcome.templates = wgULS({
 	},
 
 	anonymous: {
-		匿名使用者歡迎模板: {
+		'匿名使用者歡迎模板': {
 			Welcomeip: {
 				description: '供匿名使用者，鼓勵其建立帳戶',
 				syntax: '{{subst:Welcomeip}}'
@@ -302,7 +303,7 @@ Twinkle.welcome.templates = wgULS({
 	},
 
 	nonChinese: {
-		非中文歡迎模板: {
+		'非中文歡迎模板': {
 			Welcomeen: {
 				description: '歡迎非中文使用者',
 				linkedArticle: true,
@@ -312,6 +313,7 @@ Twinkle.welcome.templates = wgULS({
 	}
 
 });
+/* eslint-enable quote-props */
 
 Twinkle.welcome.getTemplateWikitext = function(type, template, article) {
 	// the iteration is required as the type=standard has two groups

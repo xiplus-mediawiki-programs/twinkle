@@ -596,30 +596,31 @@ Twinkle.tag.article = {};
 // but tags should be in alphabetical order within the categories
 // excludeMI: true indicate a tag that *does not* work inside {{multiple issues}}
 // Add new categories with discretion - the list is long enough as is!
+/* eslint-disable quote-props */
 Twinkle.tag.article.tagList = wgULS({
-	清理和维护模板: {
-		常规清理: [
+	'清理和维护模板': {
+		'常规清理': [
 			{ tag: 'Cleanup', description: '可能需要进行清理，以符合维基百科的质量标准' },
 			{ tag: 'Cleanup rewrite', description: '不符合维基百科的质量标准，需要完全重写' },
 			{ tag: 'Cleanup-jargon', description: '包含过多行话或专业术语，可能需要简化或提出进一步解释' },
 			{ tag: 'Copy edit', description: '需要编修，以确保文法、用词、语气、格式、标点等使用恰当' }
 		],
-		可能多余的内容: [
+		'可能多余的内容': [
 			{ tag: 'Copypaste', description: '内容可能是从某个来源处拷贝后贴上' },
 			{ tag: 'External links', description: '使用外部链接的方式可能不符合维基百科的方针或指引' },
 			{ tag: 'Non-free', description: '可能过多或不当地使用了受版权保护的文字、图像或/及多媒体文件' }
 		],
-		结构和导言: [
+		'结构和导言': [
 			{ tag: 'Lead too long', description: '导言部分也许过于冗长' },
 			{ tag: 'Lead too short', description: '导言部分也许不足以概括其内容' },
 			{ tag: 'Very long', description: '可能过于冗长' }
 		],
-		虚构作品相关清理: [
+		'虚构作品相关清理': [
 			{ tag: 'In-universe', description: '使用小说故事内的观点描述一个虚构事物' },
 			{ tag: 'Long plot', description: '可能包含过于详细的剧情摘要' }
 		]
 	},
-	常规条目问题: {
+	'常规条目问题': {
 		'重要性和知名度': [
 			{ tag: 'Notability', description: '可能不符合通用关注度指引', excludeMI: true },  // has a subgroup with subcategories
 			{ tag: 'Notability Unreferenced', description: '可能具备关注度，但需要来源加以彰显' }
@@ -673,57 +674,57 @@ Twinkle.tag.article.tagList = wgULS({
 			{ tag: 'Unreferenced', description: '没有列出任何参考或来源' }
 		]
 	},
-	具体内容问题: {
-		语言: [
+	'具体内容问题': {
+		'语言': [
 			{ tag: 'NotMandarin', description: '包含过多不是现代标准汉语的内容', excludeMI: true },
 			{ tag: 'Rough translation', description: '翻译品质不佳' }
 		],
-		链接: [
+		'链接': [
 			{ tag: 'Dead end', description: '需要加上内部链接以构筑百科全书的链接网络' },
 			{ tag: 'Orphan', description: '没有或只有很少链入页面' },
 			{ tag: 'Overlinked', description: '含有过多、重复、或不必要的内部链接' },
 			{ tag: 'Underlinked', description: '需要更多内部链接以构筑百科全书的链接网络' }
 		],
-		参考技术: [
+		'参考技术': [
 			{ tag: 'Citation style', description: '引用需要进行清理' }
 		],
-		分类: [
+		'分类': [
 			{ tag: 'Improve categories', description: '需要更多页面分类', excludeMI: true },
 			{ tag: 'Uncategorized', description: '缺少页面分类', excludeMI: true }
 		]
 	},
-	合并: [
+	'合并': [
 		{ tag: 'Merge', description: '建议此页面与页面合并', excludeMI: true },  // these three have a subgroup with several options
 		{ tag: 'Merge from', description: '建议将页面并入本页面', excludeMI: true },
 		{ tag: 'Merge to', description: '建议将此页面并入页面', excludeMI: true }
 	],
-	移动: [
+	'移动': [
 		{ tag: 'Requested move', description: '建议将此页面移动到新名称', excludeMI: true }  // these three have a subgroup with several options
 	]
 }, {
-	清理和維護模板: {
-		常規清理: [
+	'清理和維護模板': {
+		'常規清理': [
 			{ tag: 'Cleanup', description: '可能需要進行清理，以符合維基百科的質量標準' },
 			{ tag: 'Cleanup rewrite', description: '不符合維基百科的質量標準，需要完全重寫' },
 			{ tag: 'Cleanup-jargon', description: '包含過多行話或專業術語，可能需要簡化或提出進一步解釋' },
 			{ tag: 'Copy edit', description: '需要編修，以確保文法、用詞、語氣、格式、標點等使用恰當' }
 		],
-		可能多餘的內容: [
+		'可能多餘的內容': [
 			{ tag: 'Copypaste', description: '內容可能是從某個來源處拷貝後貼上' },
 			{ tag: 'External links', description: '使用外部連結的方式可能不符合維基百科的方針或指引' },
 			{ tag: 'Non-free', description: '可能過多或不當地使用了受版權保護的文字、圖像或/及多媒體檔案' }
 		],
-		結構和導言: [
+		'結構和導言': [
 			{ tag: 'Lead too long', description: '導言部分也許過於冗長' },
 			{ tag: 'Lead too short', description: '導言部分也許不足以概括其內容' },
 			{ tag: 'Very long', description: '可能過於冗長' }
 		],
-		虛構作品相關清理: [
+		'虛構作品相關清理': [
 			{ tag: 'In-universe', description: '使用小說故事內的觀點描述一個虛構事物' },
 			{ tag: 'Long plot', description: '可能包含過於詳細的劇情摘要' }
 		]
 	},
-	常規條目問題: {
+	'常規條目問題': {
 		'重要性和知名度': [
 			{ tag: 'Notability', description: '可能不符合通用關注度指引', excludeMI: true },  // has a subgroup with subcategories
 			{ tag: 'Notability Unreferenced', description: '可能具備關注度，但需要來源加以彰顯' }
@@ -777,31 +778,31 @@ Twinkle.tag.article.tagList = wgULS({
 			{ tag: 'Unreferenced', description: '沒有列出任何參考或來源' }
 		]
 	},
-	具體內容問題: {
-		語言: [
+	'具體內容問題': {
+		'語言': [
 			{ tag: 'NotMandarin', description: '包含過多不是現代標準漢語的內容', excludeMI: true },
 			{ tag: 'Rough translation', description: '翻譯品質不佳' }
 		],
-		連結: [
+		'連結': [
 			{ tag: 'Dead end', description: '需要加上內部連結以構築百科全書的連結網絡' },
 			{ tag: 'Orphan', description: '沒有或只有很少連入頁面' },
 			{ tag: 'Overlinked', description: '含有過多、重複、或不必要的內部連結' },
 			{ tag: 'Underlinked', description: '需要更多內部連結以構築百科全書的連結網絡' }
 		],
-		參考技術: [
+		'參考技術': [
 			{ tag: 'Citation style', description: '引用需要進行清理' }
 		],
-		分類: [
+		'分類': [
 			{ tag: 'Improve categories', description: '需要更多頁面分類', excludeMI: true },
 			{ tag: 'Uncategorized', description: '缺少頁面分類', excludeMI: true }
 		]
 	},
-	合併: [
+	'合併': [
 		{ tag: 'Merge', description: '建議此頁面與頁面合併', excludeMI: true },  // these three have a subgroup with several options
 		{ tag: 'Merge from', description: '建議將頁面併入本頁面', excludeMI: true },
 		{ tag: 'Merge to', description: '建議將此頁面併入頁面', excludeMI: true }
 	],
-	移動: [
+	'移動': [
 		{ tag: 'Requested move', description: '建議將此頁面移動到新名稱', excludeMI: true }  // these three have a subgroup with several options
 	]
 });
@@ -810,7 +811,7 @@ Twinkle.tag.article.tagList = wgULS({
 // Not by policy, but the list roughly approximates items with >500
 // transclusions from Template:R template index
 Twinkle.tag.redirectList = wgULS({
-	常用模板: [
+	'常用模板': [
 		{ tag: '合并重定向', description: '保持页面题名至相应主条目，令页面内容在合并后仍能保存其编辑历史' },
 		{ tag: '简繁重定向', description: '引导简体至繁体，或繁体至简体' },
 		{ tag: '关注度重定向', description: '缺乏关注度的子主题向有关注度的母主题的重定向' },
@@ -841,7 +842,7 @@ Twinkle.tag.redirectList = wgULS({
 		},
 		{ tag: '日文重定向', description: '日语名称' }
 	],
-	偶用模板: [
+	'偶用模板': [
 		{ tag: '角色重定向', description: '电视剧、电影、书籍等作品的角色' },
 		{ tag: '章节重定向', description: '导向至较高密度组织的页面' },
 		{ tag: '列表重定向', description: '导向至低密度的列表' },
@@ -867,7 +868,7 @@ Twinkle.tag.redirectList = wgULS({
 		},
 		{ tag: '捷徑重定向', description: '维基百科快捷方式' }
 	],
-	鲜用模板: [
+	'鲜用模板': [
 		{ tag: '词组重定向', description: '将词组/词组/成语指向切题的条目及恰当章节' },
 		{ tag: '消歧义页重定向', description: '指向消歧义页' },
 		{ tag: '域名重定向', description: '网域名称' },
@@ -877,7 +878,7 @@ Twinkle.tag.redirectList = wgULS({
 		{ tag: 'EXIF重定向', description: 'JPEG图像包含EXIF信息' }
 	]
 }, {
-	常用模板: [
+	'常用模板': [
 		{ tag: '合併重定向', description: '保持頁面題名至相應主條目，令頁面內容在合併後仍能儲存其編輯歷史' },
 		{ tag: '簡繁重定向', description: '引導簡體至繁體，或繁體至簡體' },
 		{ tag: '關注度重定向', description: '缺乏關注度的子主題向有關注度的母主題的重定向' },
@@ -908,7 +909,7 @@ Twinkle.tag.redirectList = wgULS({
 		},
 		{ tag: '日文重定向', description: '日語名稱' }
 	],
-	偶用模板: [
+	'偶用模板': [
 		{ tag: '角色重定向', description: '電視劇、電影、書籍等作品的角色' },
 		{ tag: '章節重定向', description: '導向至較高密度組織的頁面' },
 		{ tag: '列表重定向', description: '導向至低密度的列表' },
@@ -934,7 +935,7 @@ Twinkle.tag.redirectList = wgULS({
 		},
 		{ tag: '捷徑重定向', description: '維基百科快捷方式' }
 	],
-	鮮用模板: [
+	'鮮用模板': [
 		{ tag: '詞組重定向', description: '將詞組/詞組/成語指向切題的條目及恰當章節' },
 		{ tag: '消歧義頁重定向', description: '指向消歧義頁' },
 		{ tag: '域名重定向', description: '網域名稱' },
@@ -944,6 +945,7 @@ Twinkle.tag.redirectList = wgULS({
 		{ tag: 'EXIF重定向', description: 'JPEG圖檔包含EXIF資訊' }
 	]
 });
+/* eslint-enable quote-props */
 
 // maintenance tags for FILES start here
 

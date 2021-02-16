@@ -73,8 +73,9 @@ Twinkle.close = function twinkleclose() {
 };
 
 // Keep this synchronized with {{delh}}
+/* eslint-disable quote-props */
 Twinkle.close.codes = wgULS({
-	请求无效: {
+	'请求无效': {
 		ir: {
 			label: '请求无效',
 			action: 'keep'
@@ -96,7 +97,7 @@ Twinkle.close.codes = wgULS({
 			action: 'keep'
 		}
 	},
-	保留: {
+	'保留': {
 		k: {
 			label: '保留',
 			action: 'keep',
@@ -121,7 +122,7 @@ Twinkle.close.codes = wgULS({
 			adminonly: true
 		}
 	},
-	删除: {
+	'删除': {
 		d: {
 			label: '删除',
 			action: 'del',
@@ -134,7 +135,7 @@ Twinkle.close.codes = wgULS({
 			adminonly: true
 		}
 	},
-	快速删除: {
+	'快速删除': {
 		sd: {
 			label: '快速删除',
 			action: 'del'
@@ -157,7 +158,7 @@ Twinkle.close.codes = wgULS({
 			adminonly: true
 		}
 	},
-	转移至其他维基计划: {
+	'转移至其他维基计划': {
 		twc: {
 			label: '转移至维基共享资源',
 			action: 'noop',
@@ -204,7 +205,7 @@ Twinkle.close.codes = wgULS({
 			adminonly: true
 		}
 	},
-	其他处理方法: {
+	'其他处理方法': {
 		c: {
 			label: '转交侵权',
 			action: 'noop'
@@ -248,7 +249,7 @@ Twinkle.close.codes = wgULS({
 		}
 	}
 }, {
-	請求無效: {
+	'請求無效': {
 		ir: {
 			label: '請求無效',
 			action: 'keep'
@@ -270,7 +271,7 @@ Twinkle.close.codes = wgULS({
 			action: 'keep'
 		}
 	},
-	保留: {
+	'保留': {
 		k: {
 			label: '保留',
 			action: 'keep',
@@ -295,7 +296,7 @@ Twinkle.close.codes = wgULS({
 			adminonly: true
 		}
 	},
-	刪除: {
+	'刪除': {
 		d: {
 			label: '刪除',
 			action: 'del',
@@ -308,7 +309,7 @@ Twinkle.close.codes = wgULS({
 			adminonly: true
 		}
 	},
-	快速刪除: {
+	'快速刪除': {
 		sd: {
 			label: '快速刪除',
 			action: 'del'
@@ -331,7 +332,7 @@ Twinkle.close.codes = wgULS({
 			adminonly: true
 		}
 	},
-	轉移至其他維基計劃: {
+	'轉移至其他維基計劃': {
 		twc: {
 			label: '轉移至維基共享資源',
 			action: 'noop',
@@ -378,7 +379,7 @@ Twinkle.close.codes = wgULS({
 			adminonly: true
 		}
 	},
-	其他處理方法: {
+	'其他處理方法': {
 		c: {
 			label: '轉交侵權',
 			action: 'noop'
@@ -422,6 +423,7 @@ Twinkle.close.codes = wgULS({
 		}
 	}
 });
+/* eslint-enable quote-props */
 
 Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 	var Window = new Morebits.simpleWindow(400, 200);
