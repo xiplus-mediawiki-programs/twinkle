@@ -2540,6 +2540,7 @@ Morebits.wiki.page = function(pageName, status) {
 		onSaveSuccess: null,
 		onSaveFailure: null,
 		onLookupCreationSuccess: null,
+		onLookupCreationFailure: null,
 		onMoveSuccess: null,
 		onMoveFailure: null,
 		onDeleteSuccess: null,
@@ -3234,13 +3235,17 @@ Morebits.wiki.page = function(pageName, status) {
 	 *
 	 * @param {Function} onSuccess - Callback function to be called when
 	 * the username and timestamp are found within the callback.
+	 * @param {Function} [onFailure] - Callback function to be called when
+	 * the lookup fails
 	 */
-	this.lookupCreation = function(onSuccess) {
+	this.lookupCreation = function(onSuccess, onFailure) {
+		ctx.onLookupCreationSuccess = onSuccess;
+		ctx.onLookupCreationFailure = onFailure || emptyFunction;
 		if (!onSuccess) {
 			ctx.statusElement.error('Internal error: no onSuccess callback provided to lookupCreation()!');
+			ctx.onLookupCreationFailure(this);
 			return;
 		}
-		ctx.onLookupCreationSuccess = onSuccess;
 
 		var query = {
 			action: 'query',
@@ -3266,7 +3271,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.redirects = '';  // follow all redirects
 		}
 
-		ctx.lookupCreationApi = new Morebits.wiki.api(wgULS('抓取页面创建者信息', '抓取頁面建立者資訊'), query, fnLookupCreationSuccess, ctx.statusElement);
+		ctx.lookupCreationApi = new Morebits.wiki.api(wgULS('抓取页面创建者信息', '抓取頁面建立者資訊'), query, fnLookupCreationSuccess, ctx.statusElement, ctx.onLookupCreationFailure);
 		ctx.lookupCreationApi.setParent(this);
 		ctx.lookupCreationApi.post();
 	};
@@ -3855,13 +3860,14 @@ Morebits.wiki.page = function(pageName, status) {
 	var fnLookupCreationSuccess = function() {
 		var response = ctx.lookupCreationApi.getResponse().query;
 
-		if (!fnCheckPageName(response)) {
+		if (!fnCheckPageName(response, ctx.onLookupCreationFailure)) {
 			return; // abort
 		}
 
 		var rev = response.pages[0].revisions && response.pages[0].revisions[0];
 		if (!rev) {
 			ctx.statusElement.error(wgULS('无法找到', '無法找到') + ctx.pageName + wgULS('的任何修订版本', '的任何修訂版本'));
+			ctx.onLookupCreationFailure(this);
 			return;
 		}
 
@@ -3870,11 +3876,13 @@ Morebits.wiki.page = function(pageName, status) {
 			ctx.creator = rev.user;
 			if (!ctx.creator) {
 				ctx.statusElement.error(wgULS('无法获取页面创建者的名字', '無法取得頁面建立者的名字'));
+				ctx.onLookupCreationFailure(this);
 				return;
 			}
 			ctx.timestamp = rev.timestamp;
 			if (!ctx.timestamp) {
 				ctx.statusElement.error(wgULS('无法获取页面创建时间', '無法取得頁面建立時間'));
+				ctx.onLookupCreationFailure(this);
 				return;
 			}
 			ctx.onLookupCreationSuccess(this);
@@ -3883,7 +3891,7 @@ Morebits.wiki.page = function(pageName, status) {
 			ctx.lookupCreationApi.query.rvlimit = 50; // modify previous query to fetch more revisions
 			ctx.lookupCreationApi.query.titles = ctx.pageName; // update pageName if redirect resolution took place in earlier query
 
-			ctx.lookupCreationApi = new Morebits.wiki.api(wgULS('获取页面创建信息', '取得頁面建立資訊'), ctx.lookupCreationApi.query, fnLookupNonRedirectCreator, ctx.statusElement);
+			ctx.lookupCreationApi = new Morebits.wiki.api(wgULS('获取页面创建信息', '取得頁面建立資訊'), ctx.lookupCreationApi.query, fnLookupNonRedirectCreator, ctx.statusElement, ctx.onLookupCreationFailure);
 			ctx.lookupCreationApi.setParent(this);
 			ctx.lookupCreationApi.post();
 		}
@@ -3908,12 +3916,14 @@ Morebits.wiki.page = function(pageName, status) {
 			ctx.timestamp = revs[0].timestamp;
 			if (!ctx.creator) {
 				ctx.statusElement.error(wgULS('无法获取页面创建者的名字', '無法取得頁面建立者的名字'));
+				ctx.onLookupCreationFailure(this);
 				return;
 			}
 
 		}
 		if (!ctx.timestamp) {
 			ctx.statusElement.error(wgULS('无法获取页面创建时间', '無法取得頁面建立時間'));
+			ctx.onLookupCreationFailure(this);
 			return;
 		}
 
