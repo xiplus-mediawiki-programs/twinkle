@@ -1776,12 +1776,20 @@ Morebits.date.localeData = {
  *
  * @memberof Morebits.date
  * @type {object.<string, string>}
+ * @property {string} seconds
+ * @property {string} minutes
+ * @property {string} hours
+ * @property {string} days
+ * @property {string} weeks
+ * @property {string} months
+ * @property {string} years
  */
 Morebits.date.unitMap = {
 	seconds: 'Seconds',
 	minutes: 'Minutes',
 	hours: 'Hours',
 	days: 'Date',
+	weeks: 'Week', // Not a function but handled in `add` through cunning use of multiplication
 	months: 'Month',
 	years: 'FullYear'
 };
@@ -1841,7 +1849,7 @@ Morebits.date.prototype = {
 	},
 
 	/**
-	 * Add a given number of minutes, hours, days, months or years to the date.
+	 * Add a given number of minutes, hours, days, weeks, months, or years to the date.
 	 * This is done in-place. The modified date object is also returned, allowing chaining.
 	 *
 	 * @param {number} number - Should be an integer.
@@ -1858,6 +1866,11 @@ Morebits.date.prototype = {
 		var unitMap = Morebits.date.unitMap;
 		var unitNorm = unitMap[unit] || unitMap[unit + 's']; // so that both singular and  plural forms work
 		if (unitNorm) {
+			// No built-in week functions, so rather than build out ISO's getWeek/setWeek, just multiply
+			// Probably can't be used for Julian->Gregorian changeovers, etc.
+			if (unitNorm === 'Week') {
+				unitNorm = 'Date', num *= 7;
+			}
 			this['set' + unitNorm](this['get' + unitNorm]() + num);
 			return this;
 		}
@@ -1865,7 +1878,7 @@ Morebits.date.prototype = {
 	},
 
 	/**
-	 * Subtracts a given number of minutes, hours, days, months or years to the date.
+	 * Subtracts a given number of minutes, hours, days, weeks, months, or years to the date.
 	 * This is done in-place. The modified date object is also returned, allowing chaining.
 	 *
 	 * @param {number} number - Should be an integer.
@@ -2702,7 +2715,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.tags = ctx.changeTags;
 		}
 
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 
@@ -3760,6 +3773,48 @@ Morebits.wiki.page = function(pageName, status) {
 		return true; // all OK
 	};
 
+	/**
+	 * Determine whether we should provide a watchlist expiry.  Will not
+	 * do so if the page is currently permanently watched, or the current
+	 * expiry is *after* the new, provided expiry.  Only handles strings
+	 * recognized by {@link Morebits.date} or relative timeframes with
+	 * unit it can process.  Relies on the fact that fnCanUseMwUserToken
+	 * requires page loading if a watchlistexpiry is provided, so we are
+	 * ensured of knowing the watch status by the use of this.
+	 *
+	 * @returns {boolean}
+	 */
+	var fnApplyWatchlistExpiry = function() {
+		if (ctx.watchlistExpiry) {
+			if (!ctx.watched || Morebits.string.isInfinity(ctx.watchlistExpiry)) {
+				return true;
+			} else if (typeof ctx.watched === 'string') {
+				var newExpiry;
+				// Attempt to determine if the new expiry is a
+				// relative (e.g. `1 month`) or absolute datetime
+				var rel = ctx.watchlistExpiry.split(' ');
+				try {
+					newExpiry = new Morebits.date().add(rel[0], rel[1]);
+				} catch (e) {
+					newExpiry = new Morebits.date(ctx.watchlistExpiry);
+				}
+
+				// If the date is valid, only use it if it extends the current expiry
+				if (newExpiry.isValid()) {
+					if (newExpiry.isAfter(new Morebits.date(ctx.watched))) {
+						return true;
+					}
+				} else {
+					// If it's still not valid, hope it's a valid MW expiry format that
+					// Morebits.date doesn't recognize, so just default to using it.
+					// This will also include minor typos.
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+
 	// callback from saveApi.post()
 	var fnSaveSuccess = function() {
 		ctx.editMode = 'all';  // cancel append/prepend/newSection/revert modes
@@ -4050,7 +4105,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.tags = ctx.changeTags;
 		}
 
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 		if (ctx.moveTalkPage) {
@@ -4195,7 +4250,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.tags = ctx.changeTags;
 		}
 
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 
@@ -4259,7 +4314,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.tags = ctx.changeTags;
 		}
 
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 
@@ -4393,7 +4448,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.tags = ctx.changeTags;
 		}
 
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 		if (ctx.protectCascade) {
@@ -4437,7 +4492,7 @@ Morebits.wiki.page = function(pageName, status) {
 		};
 
 		/* Doesn't support watchlist expiry [[phab:T263336]]
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 		*/
