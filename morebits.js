@@ -4004,6 +4004,8 @@ Morebits.wiki.page = function(pageName, status) {
 				ctx.onLookupCreationFailure(this);
 				return;
 			}
+
+			ctx.statusElement.info(wgULS('已获取页面创建信息', '已取得頁面建立資訊'));
 			ctx.onLookupCreationSuccess(this);
 
 		} else {
@@ -4046,6 +4048,7 @@ Morebits.wiki.page = function(pageName, status) {
 			return;
 		}
 
+		ctx.statusElement.info(wgULS('已获取页面创建信息', '已取得頁面建立資訊'));
 		ctx.onLookupCreationSuccess(this);
 
 	};
