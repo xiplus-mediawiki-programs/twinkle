@@ -206,6 +206,15 @@ Twinkle.config.sections = [
 				name: 'defaultToPartialBlocks',
 				label: wgULS('打开封禁菜单时默认选择部分封禁', '打開封鎖選單時預設選擇部分封鎖'),
 				type: 'boolean'
+			},
+
+			{
+				name: 'customBlockReasonList',
+				label: wgULS('自定义封禁理由', '自訂封鎖理由'),
+				helptip: wgULS('您可以加入常用的封禁理由。自定义的封禁理由会出现在一般的封禁理由下方。', '您可以加入常用的封鎖理由。自訂的封鎖理由會出現在一般的封鎖理由下方。'),
+				type: 'customList',
+				customListValueTitle: wgULS('使用封禁模板（默认为 uw-block1）', '使用封鎖模板（預設為 uw-block1）'),
+				customListLabelTitle: wgULS('“由于…您已被封禁”及封禁日志理由', '「由於…您已被封鎖」及封鎖日誌理由')
 			}
 		]
 	},
@@ -757,21 +766,6 @@ Twinkle.config.sections = [
 				type: 'customList',
 				customListValueTitle: wgULS('模板名（不含大括号）', '模板名（不含大括號）'),
 				customListLabelTitle: wgULS('显示的文字（和编辑摘要）', '顯示的文字（和編輯摘要）')
-			}
-		]
-	},
-
-	{
-		title: wgULS('封禁', '封鎖'),
-		module: 'block',
-		preferences: [
-			{
-				name: 'customBlockReasonList',
-				label: wgULS('自定义封禁理由', '自訂封鎖理由'),
-				helptip: wgULS('您可以加入常用的封禁理由。自定义的封禁理由会出现在一般的封禁理由下方。', '您可以加入常用的封鎖理由。自訂的封鎖理由會出現在一般的封鎖理由下方。'),
-				type: 'customList',
-				customListValueTitle: wgULS('使用封禁模板（默认为 uw-block1）', '使用封鎖模板（預設為 uw-block1）'),
-				customListLabelTitle: wgULS('“由于…您已被封禁”及封禁日志理由', '「由於…您已被封鎖」及封鎖日誌理由')
 			}
 		]
 	},
