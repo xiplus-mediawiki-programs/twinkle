@@ -310,6 +310,10 @@ Twinkle.batchdelete.deletereasonlist = [
 		value: wgULS('[[Wikipedia:CSD#F7|F7]]: 与[[维基共享资源]]文件重复的文件', '[[Wikipedia:CSD#F7|F7]]: 與[[維基共享資源]]檔案重複的檔案')
 	},
 	{
+		label: wgULS('F10: 可被替代的非自由著作权文件', 'F10: 可被替代的非自由版權檔案'),
+		value: wgULS('[[Wikipedia:CSD#F10|F10]]: 可被替代的非自由著作权文件', '[[Wikipedia:CSD#F10|F10]]: 可被替代的非自由版權檔案')
+	},
+	{
 		label: wgULS('O1: 用户请求删除自己的用户页或其子页面', 'O1: 使用者請求刪除自己的使用者頁面或其子頁面'),
 		value: wgULS('[[Wikipedia:CSD#O1|O1]]: 用户请求删除自己的[[Help:用户页|用户页]]或其子页面。', '[[Wikipedia:CSD#O1|O1]]: 使用者請求刪除自己的[[Help:用户页|使用者頁面]]或其子頁面。')
 	},
