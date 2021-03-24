@@ -1278,7 +1278,7 @@ Twinkle.protect.callbacks = {
 		var requestList = sectionText.split(/(?=\n===.+===\s*\n)/);
 
 		var found = false;
-		var rppRe = new RegExp('===\\s*(\\[\\[)?\\s*:?\\s*' + Morebits.string.escapeRegExp(Morebits.pageNameNorm) + '\\s*(\\]\\])?\\s*===', 'm');
+		var rppRe = new RegExp('===\\s*(\\[\\[)?\\s*:?\\s*' + Morebits.pageNameRegex(Morebits.pageNameNorm) + '\\s*(\\]\\])?\\s*===', 'm');
 		for (var i = 1; i < requestList.length; i++) {
 			if (rppRe.exec(requestList[i])) {
 				requestList[i] = requestList[i].trimRight();
