@@ -67,6 +67,7 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:Twinkle帮助;zh-hant:Twinkle說明}-
 -{H|zh-hans:公用IP;zh-hant:公共IP}-
 -{H|zh-hans:监视;zh-hant:監視}-
+-{H|zh-hans:通过;zh-hant:透過}-
 '''
 
 headers = {
