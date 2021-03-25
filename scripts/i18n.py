@@ -7,10 +7,6 @@ import requests
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
 
-parser = argparse.ArgumentParser()
-parser.add_argument('mode', nargs='?', type=int, choices=[1, 2], default=2)
-args = parser.parse_args()
-
 filenames = [
     'twinkle.js',
     'morebits.js',
@@ -31,6 +27,16 @@ filenames = [
     'modules/friendlytag.js',
     'modules/friendlytalkback.js',
 ]
+
+parser = argparse.ArgumentParser()
+parser.add_argument('files', nargs='*')
+parser.add_argument('--mode', nargs='?', type=int, choices=[1, 2], default=2)
+args = parser.parse_args()
+
+run_files = args.files
+if len(run_files) == 0:
+    run_files = filenames
+print(run_files)
 
 noteTA = '''{{NoteTA
 |G1=IT
@@ -84,7 +90,7 @@ def escapeWikitext(text):
     return text
 
 
-for filename in filenames:
+for filename in run_files:
     print(filename)
 
     full_filename = os.path.join(BASEDIR, '..', filename)
