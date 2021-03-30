@@ -62,7 +62,7 @@ Twinkle.config.commonSets = {
 		'a1', 'a2', 'a3', 'a5', 'a6',
 		'o1', 'o3', 'o4',
 		'f1', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10',
-		'r2', 'r3', 'r5', 'r6', 'r7' ,'r8'
+		'r2', 'r3', 'r5', 'r6', 'r7', 'r8'
 	],
 	csdAndDICriteria: {
 		db: wgULS('自定义理由', '自訂理由'),
