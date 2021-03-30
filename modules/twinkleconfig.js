@@ -38,7 +38,7 @@ Twinkle.config.commonSets = {
 		a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a6: 'A6',
 		o1: 'O1', o3: 'O3', o4: 'O4',
 		f1: 'F1', f3: 'F3', f4: 'F4', f5: 'F5', f6: 'F6', f7: 'F7', f8: 'F8', f9: 'F9', f10: 'F10',
-		r2: 'R2', r3: 'R3', r5: 'R5', r6: 'R6', r7: 'R7'
+		r2: 'R2', r3: 'R3', r5: 'R5', r6: 'R6', r7: 'R7', r8: 'R8'
 	},
 	csdCriteriaDisplayOrder: [
 		'db',
@@ -46,7 +46,7 @@ Twinkle.config.commonSets = {
 		'a1', 'a2', 'a3', 'a5', 'a6',
 		'o1', 'o3', 'o4',
 		'f1', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10',
-		'r2', 'r3', 'r5', 'r6', 'r7'
+		'r2', 'r3', 'r5', 'r6', 'r7', 'r8'
 	],
 	csdCriteriaNotification: {
 		db: wgULS('自定义理由', '自訂理由'),
@@ -54,7 +54,7 @@ Twinkle.config.commonSets = {
 		a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a6: 'A6',
 		o1: 'O1', o3: 'O3', o4: 'O4',
 		f1: 'F1', f3: 'F3', f4: 'F4', f5: 'F5', f6: 'F6', f7: 'F7', f8: 'F8', f9: 'F9', f10: 'F10',
-		r2: 'R2', r3: 'R3', r5: 'R5', r6: 'R6', r7: 'R7'
+		r2: 'R2', r3: 'R3', r5: 'R5', r6: 'R6', r7: 'R7', r8: 'R8'
 	},
 	csdCriteriaNotificationDisplayOrder: [
 		'db',
@@ -62,7 +62,7 @@ Twinkle.config.commonSets = {
 		'a1', 'a2', 'a3', 'a5', 'a6',
 		'o1', 'o3', 'o4',
 		'f1', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10',
-		'r2', 'r3', 'r5', 'r6', 'r7'
+		'r2', 'r3', 'r5', 'r6', 'r7' ,'r8'
 	],
 	csdAndDICriteria: {
 		db: wgULS('自定义理由', '自訂理由'),
@@ -70,7 +70,7 @@ Twinkle.config.commonSets = {
 		a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a6: 'A6',
 		o1: 'O1', o3: 'O3', o4: 'O4',
 		f1: 'F1', f3: 'F3', f4: 'F4', f5: 'F5', f6: 'F6', f7: 'F7', f8: 'F8', f9: 'F9', f10: 'F10',
-		r2: 'R2', r3: 'R3', r5: 'R5', r6: 'R6', r7: 'R7'
+		r2: 'R2', r3: 'R3', r5: 'R5', r6: 'R6', r7: 'R7', r8: 'R8'
 	},
 	csdAndDICriteriaDisplayOrder: [
 		'db',
@@ -78,7 +78,7 @@ Twinkle.config.commonSets = {
 		'a1', 'a2', 'a3', 'a5', 'a6',
 		'o1', 'o3', 'o4',
 		'f1', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10',
-		'r2', 'r3', 'r5', 'r6', 'r7'
+		'r2', 'r3', 'r5', 'r6', 'r7', 'r8'
 	],
 	xfdCriteria: {
 		delete: wgULS('删除', '刪除'), merge: wgULS('合并', '合併'),
