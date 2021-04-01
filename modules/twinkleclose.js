@@ -429,7 +429,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 	var Window = new Morebits.simpleWindow(400, 200);
 	Window.setTitle(wgULS('关闭存废讨论', '關閉存廢討論') + ' \u00B7 ' + title);
 	Window.setScriptName('Twinkle');
-	Window.addFooterLink(wgULS('存废讨论设置', '存廢討論設定'), 'WP:TWPREF#close');
+	Window.addFooterLink(wgULS('存废讨论设置', '存廢討論設定'), 'WP:TW/PREF#close');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#close');
 
 	var form = new Morebits.quickForm(Twinkle.close.callback.evaluate);

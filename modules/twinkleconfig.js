@@ -911,7 +911,7 @@ Twinkle.config.sections = [
 				label: wgULS('默认小小作品提删理由', '預設小小作品提刪理由'),
 				helptip: wgULS('用于批量提删。', '用於批次提刪。'),
 				type: 'string'
-			},
+			}
 
 		]
 	},

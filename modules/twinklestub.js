@@ -32,7 +32,7 @@ Twinkle.stub.callback = function friendlytagCallback() {
 	var Window = new Morebits.simpleWindow(630, Twinkle.stub.mode === 'article' ? 450 : 400);
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink('小作品說明', 'Wikipedia:小作品');
-	Window.addFooterLink(wgULS('小作品设置', '小作品設定'), 'WP:TWPREF#stub');
+	Window.addFooterLink(wgULS('小作品设置', '小作品設定'), 'WP:TW/PREF#stub');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#stub');
 
 	var form = new Morebits.quickForm(Twinkle.stub.callback.evaluate);

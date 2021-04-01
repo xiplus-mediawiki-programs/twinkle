@@ -26,7 +26,7 @@ Twinkle.image.callback = function twinkleimageCallback() {
 	Window.setTitle(wgULS('文件快速删除候选', '檔案快速刪除候選'));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(wgULS('快速删除方针', '快速刪除方針'), 'WP:CSD');
-	Window.addFooterLink(wgULS('图权设置', '圖權設定'), 'WP:TWPREF#image');
+	Window.addFooterLink(wgULS('图权设置', '圖權設定'), 'WP:TW/PREF#image');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#image');
 
 	var form = new Morebits.quickForm(Twinkle.image.callback.evaluate);

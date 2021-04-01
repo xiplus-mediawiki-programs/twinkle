@@ -43,7 +43,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink('封禁模板', 'Wikipedia:模板消息/用戶討論名字空間#封禁');
 	Window.addFooterLink(wgULS('封禁方针', '封鎖方針'), 'WP:BLOCK');
-	Window.addFooterLink(wgULS('封禁设置', '封鎖設定'), 'WP:TWPREF#block');
+	Window.addFooterLink(wgULS('封禁设置', '封鎖設定'), 'WP:TW/PREF#block');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#block');
 
 	var form = new Morebits.quickForm(Twinkle.block.callback.evaluate);
