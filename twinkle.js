@@ -499,8 +499,6 @@ Twinkle.load = function () {
 		Twinkle.addInitCallback(module.func, module.name);
 	});
 
-	Twinkle.addPortletLink(mw.util.wikiScript('index') + '?title=' + Twinkle.getPref('configPage'), wgULS('设置', '設定'), 'tw-config', wgULS('设置Twinkle参数', '設定Twinkle參數'));
-
 	// Increases text size in Twinkle dialogs, if so configured
 	if (Twinkle.getPref('dialogLargeFont')) {
 		mw.util.addCSS('.morebits-dialog-content, .morebits-dialog-footerlinks { font-size: 100% !important; } ' +

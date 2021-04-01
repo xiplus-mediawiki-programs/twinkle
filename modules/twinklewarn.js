@@ -122,6 +122,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	dialog.setTitle(wgULS('警告、提醒用户', '警告、提醒使用者'));
 	dialog.setScriptName('Twinkle');
 	dialog.addFooterLink(wgULS('选择警告级别', '選擇警告級別'), 'WP:WARN');
+	dialog.addFooterLink(wgULS('警告设置', '警告設定'), 'WP:TW/PREF#warn');
 	dialog.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#warn');
 
 	var form = new Morebits.quickForm(Twinkle.warn.callback.evaluate);

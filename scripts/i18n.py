@@ -15,6 +15,7 @@ filenames = [
     'modules/twinklebatchundelete.js',
     'modules/twinkleblock.js',
     'modules/twinkleconfig.js',
+    'modules/twinklecopyvio.js',
     'modules/twinklediff.js',
     'modules/twinklefluff.js',
     'modules/twinkleimage.js',

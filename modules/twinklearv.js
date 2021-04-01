@@ -40,6 +40,7 @@ Twinkle.arv.callback = function (uid, isIP) {
 	Window.addFooterLink('UAA', 'WP:UAA');
 	Window.addFooterLink(wgULS('用户名方针', '使用者名稱方針'), 'WP:U');
 	Window.addFooterLink('SRCU', 'WP:SRCU');
+	Window.addFooterLink(wgULS('告状设置', '告狀設定'), 'WP:TW/PREF#arv');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'H:TW#告狀');
 
 	var form = new Morebits.quickForm(Twinkle.arv.callback.evaluate);

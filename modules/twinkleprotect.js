@@ -34,6 +34,7 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(wgULS('保护模板', '保護模板'), 'Template:Protection templates');
 	Window.addFooterLink(wgULS('保护方针', '保護方針'), 'WP:PROT');
+	Window.addFooterLink(wgULS('保护设置', '保護設定'), 'WP:TW/PREF#protect');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#protect');
 
 	var form = new Morebits.quickForm(Twinkle.protect.callback.evaluate);

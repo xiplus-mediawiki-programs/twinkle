@@ -41,6 +41,7 @@ Twinkle.unlink.callback = function(presetReason) {
 	var Window = new Morebits.simpleWindow(600, 440);
 	Window.setTitle(wgULS('取消链入', '取消連入') + (fileSpace ? wgULS('和文件使用', '和檔案使用') : ''));
 	Window.setScriptName('Twinkle');
+	Window.addFooterLink(wgULS('链入设置', '連入設定'), 'WP:TW/PREF#unlink');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#unlink');
 
 	var form = new Morebits.quickForm(Twinkle.unlink.callback.evaluate);

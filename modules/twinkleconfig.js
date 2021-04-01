@@ -911,8 +911,15 @@ Twinkle.config.sections = [
 				label: wgULS('默认小小作品提删理由', '預設小小作品提刪理由'),
 				helptip: wgULS('用于批量提删。', '用於批次提刪。'),
 				type: 'string'
-			},
+			}
 
+		]
+	},
+
+	{
+		title: wgULS('关闭存废讨论', '關閉存廢討論'),
+		module: 'close',
+		preferences: [
 			{
 				name: 'XfdClose',
 				label: wgULS('在存废讨论显示关闭讨论按钮', '在存廢討論顯示關閉討論按鈕'),
