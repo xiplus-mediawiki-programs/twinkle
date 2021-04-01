@@ -682,14 +682,14 @@ Twinkle.config.sections = [
 	},
 
 	{
-		title: wgULS('反链', '反鏈'),
+		title: wgULS('取消链入', '取消連入'),
 		module: 'unlink',
 		preferences: [
 		// TwinkleConfig.unlinkNamespaces (array)
 		// In what namespaces unlink should happen, default in 0 (article) and 100 (portal)
 			{
 				name: 'unlinkNamespaces',
-				label: wgULS('取消以下名字空间中的反链', '取消以下命名空間中的反鏈'),
+				label: wgULS('取消以下名字空间中的反向链接', '取消以下命名空間中的反向連結'),
 				helptip: wgULS('请避免选择讨论页，因这样会导致Twinkle试图修改讨论存档。', '請避免選擇討論頁，因這樣會導致Twinkle試圖修改討論存檔。'),
 				type: 'set',
 				setValues: Twinkle.config.commonSets.namespacesNoSpecial
@@ -831,7 +831,7 @@ Twinkle.config.sections = [
 			{
 				name: 'logXfdNominations',
 				label: wgULS('在用户空间中记录所有存废讨论提名', '在使用者空間中記錄所有存廢討論提名'),
-				helptip: wgULS('该日志供您追踪所有透过Twinkle提交的存废讨论', '該日誌供您追蹤所有透過Twinkle提交的存廢討論'),
+				helptip: wgULS('该日志供您追踪所有通过Twinkle提交的存废讨论', '該日誌供您追蹤所有透過Twinkle提交的存廢討論'),
 				type: 'boolean'
 			},
 			{

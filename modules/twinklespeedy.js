@@ -1099,7 +1099,7 @@ Twinkle.speedy.callbacks = {
 			if (mw.config.get('wgNamespaceNumber') === 6 && params.normalized !== 'f7') {
 				$link = $('<a/>', {
 					href: '#',
-					text: wgULS('单击这里前往反链工具', '點擊這裡前往反鏈工具'),
+					text: wgULS('单击这里前往取消链入工具', '點擊這裡前往取消連入工具'),
 					css: { fontWeight: 'bold' },
 					click: function() {
 						Morebits.wiki.actionCompleted.redirect = null;
@@ -1115,7 +1115,7 @@ Twinkle.speedy.callbacks = {
 			} else if (params.normalized !== 'f7') {
 				$link = $('<a/>', {
 					href: '#',
-					text: wgULS('单击这里前往反链工具', '點擊這裡前往反鏈工具'),
+					text: wgULS('单击这里前往取消链入工具', '點擊這裡前往取消連入工具'),
 					css: { fontWeight: 'bold' },
 					click: function() {
 						Morebits.wiki.actionCompleted.redirect = null;

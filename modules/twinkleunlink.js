@@ -17,7 +17,7 @@ Twinkle.unlink = function twinkleunlink() {
 		return;
 	}
 	if (Morebits.userIsSysop) {
-		Twinkle.addPortletLink(Twinkle.unlink.callback, wgULS('链入', '連入'), 'tw-unlink', wgULS('取消到本页的链接', '取消到本頁的連結'));
+		Twinkle.addPortletLink(Twinkle.unlink.callback, wgULS('消连', '消連'), 'tw-unlink', wgULS('取消到本页的链接', '取消到本頁的連結'));
 	}
 };
 
@@ -293,7 +293,7 @@ Twinkle.unlink.callbacks = {
 			text = wikiPage.removeLink(Morebits.pageNameNorm).getText();
 			// did we actually make any changes?
 			if (text === oldtext) {
-				warningString = warningString ? wgULS('反链或文件使用', '反鏈或檔案使用') : wgULS('反链', '反鏈');
+				warningString = warningString ? wgULS('取消链入或文件使用', '取消連入或檔案使用') : wgULS('取消链入', '取消連入');
 			} else {
 				summaryText = (summaryText ? summaryText + ' / ' : '') + wgULS('取消链接到', '取消連結到');
 				oldtext = text;
