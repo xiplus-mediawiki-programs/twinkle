@@ -1012,54 +1012,32 @@ Twinkle.speedy.callbacks = {
 		deletePage: function(reason, params) {
 			var thispage = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('删除页面', '刪除頁面'));
 
-			if (mw.config.get('wgPageName') === mw.config.get('wgMainPageTitle')) {
-				var statusElement = thispage.getStatusElement();
-				new mw.Api().getToken('block').then(function(token) {
-					statusElement.status('The Enrichment Center is required to remind you that you will be baked. 恭喜您！您是继[[User:燃玉]]之后又一个通过Twinkle删除首页的管理员！');
+			if (reason === null) {
+				return Morebits.status.error(wgULS('询问理由', '詢問理由'), wgULS('用户取消操作。', '使用者取消操作。'));
+			} else if (!reason || !reason.replace(/^\s*/, '').replace(/\s*$/, '')) {
+				return Morebits.status.error(wgULS('询问理由', '詢問理由'), wgULS('你不给我理由…我就…不管了…', '你不給我理由…我就…不管了…'));
+			}
 
-					var mbApi = new Morebits.wiki.api('颁发荣誉', {
-						action: 'block',
-						user: mw.config.get('wgUserName'),
-						reason: '试图[[Wikipedia:不要删除首页|像User:燃玉那样创造奇迹]]',
-						allowusertalk: true,
-						expiry: '31 hours',
-						tags: Twinkle.changeTags,
-						token: token
-					}, function() {
-						statusElement.info(wgULS('请记得阅读[[Wikipedia:不要删除主页]]。', '請記得閱讀[[Wikipedia:不要刪除首頁]]。'));
-					});
-					mbApi.post();
-				}, function() {
-					statusElement.error(wgULS('未能抓取操作令牌', '未能抓取操作權杖'));
+			var deleteMain = function() {
+				thispage.setEditSummary(reason);
+				thispage.setChangeTags(Twinkle.changeTags);
+				thispage.setWatchlist(params.watch);
+				thispage.deletePage(function() {
+					thispage.getStatusElement().info('完成');
+					Twinkle.speedy.callbacks.sysop.deleteTalk(params);
+				});
+			};
+
+			// look up initial contributor. If prompting user for deletion reason, just display a link.
+			// Otherwise open the talk page directly
+			if (params.openUserTalk) {
+				thispage.setCallbackParameters(params);
+				thispage.lookupCreation(function() {
+					Twinkle.speedy.callbacks.sysop.openUserTalkPage(thispage);
+					deleteMain();
 				});
 			} else {
-				if (reason === null) {
-					return Morebits.status.error(wgULS('询问理由', '詢問理由'), wgULS('用户取消操作。', '使用者取消操作。'));
-				} else if (!reason || !reason.replace(/^\s*/, '').replace(/\s*$/, '')) {
-					return Morebits.status.error(wgULS('询问理由', '詢問理由'), wgULS('你不给我理由…我就…不管了…', '你不給我理由…我就…不管了…'));
-				}
-
-				var deleteMain = function() {
-					thispage.setEditSummary(reason);
-					thispage.setChangeTags(Twinkle.changeTags);
-					thispage.setWatchlist(params.watch);
-					thispage.deletePage(function() {
-						thispage.getStatusElement().info('完成');
-						Twinkle.speedy.callbacks.sysop.deleteTalk(params);
-					});
-				};
-
-				// look up initial contributor. If prompting user for deletion reason, just display a link.
-				// Otherwise open the talk page directly
-				if (params.openUserTalk) {
-					thispage.setCallbackParameters(params);
-					thispage.lookupCreation(function() {
-						Twinkle.speedy.callbacks.sysop.openUserTalkPage(thispage);
-						deleteMain();
-					});
-				} else {
-					deleteMain();
-				}
+				deleteMain();
 			}
 		},
 		deleteTalk: function(params) {
