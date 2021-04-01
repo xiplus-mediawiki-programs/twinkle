@@ -137,7 +137,7 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 		usprop: 'groupmemberships',
 		letitle: 'User:' + userName
 	};
-	if (Morebits.isIPRange(userName)) {
+	if (Morebits.ip.isRange(userName)) {
 		query.bkip = userName;
 	} else {
 		query.bkusers = userName;
@@ -1337,7 +1337,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			lelimit: 1,
 			letitle: 'User:' + blockoptions.user
 		};
-		if (Morebits.isIPRange(blockoptions.user)) {
+		if (Morebits.ip.isRange(blockoptions.user)) {
 			query.bkip = blockoptions.user;
 		} else {
 			query.bkusers = blockoptions.user;
@@ -1478,7 +1478,7 @@ Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUse
 };
 
 Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTemplate(formData) {
-	if (Morebits.isIPRange(Morebits.wiki.flow.relevantUserName(true))) {
+	if (Morebits.ip.isRange(Morebits.wiki.flow.relevantUserName(true))) {
 		new Morebits.status(wgULS('信息', '資訊'), wgULS('由于封禁目标为IP段，加入封禁模板已略过', '由於封鎖目標為IP段，加入封鎖模板已略過'), 'warn');
 		return;
 	}

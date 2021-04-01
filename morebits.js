@@ -12,6 +12,7 @@
  * - {@link Morebits.wikitext} - utilities for dealing with wikitext
  * - {@link Morebits.string} - utilities for manipulating strings
  * - {@link Morebits.array} - utilities for manipulating arrays
+ * - {@link Morebits.ip} - utilities to help process IP addresses
  *
  * Dependencies:
  * - The whole thing relies on jQuery.  But most wikis should provide this by default.
@@ -80,15 +81,9 @@ Morebits.userIsInGroup = function (group) {
 Morebits.userIsSysop = Morebits.userIsInGroup('sysop');
 
 /**
- * Check if the address is a CIDR range.
- * @param {*} address - The IP address, with or without CIDR.
- * @returns {boolean}
- */
-Morebits.isIPRange = function (address) {
-	return mw.util.isIPAddress(address, true) && !mw.util.isIPAddress(address);
-};
-
-/**
+ * Deprecated as of February 2021, use {@link Morebits.ip.sanitizeIPv6}.
+ *
+ * @deprecated Use {@link Morebits.ip.sanitizeIPv6}.
  * Converts an IPv6 address to the canonical form stored and used by MediaWiki.
  * JavaScript translation of the {@link https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/core/+/8eb6ac3e84ea3312d391ca96c12c49e3ad0753bb/includes/utils/IP.php#131|`IP::sanitizeIP()`}
  * function from the IPUtils library.  Adddresses are verbose, uppercase,
@@ -98,49 +93,8 @@ Morebits.isIPRange = function (address) {
  * @returns {string}
  */
 Morebits.sanitizeIPv6 = function (address) {
-	address = address.trim();
-	if (address === '') {
-		return null;
-	}
-	if (!mw.util.isIPv6Address(address, true)) {
-		return address; // nothing else to do for IPv4 addresses or invalid ones
-	}
-	// Remove any whitespaces, convert to upper case
-	address = address.toUpperCase();
-	// Expand zero abbreviations
-	var abbrevPos = address.indexOf('::');
-	if (abbrevPos > -1) {
-		// We know this is valid IPv6. Find the last index of the
-		// address before any CIDR number (e.g. "a:b:c::/24").
-		var CIDRStart = address.indexOf('/');
-		var addressEnd = CIDRStart !== -1 ? CIDRStart - 1 : address.length - 1;
-		// If the '::' is at the beginning...
-		var repeat, extra, pad;
-		if (abbrevPos === 0) {
-			repeat = '0:';
-			extra = address === '::' ? '0' : ''; // for the address '::'
-			pad = 9; // 7+2 (due to '::')
-		// If the '::' is at the end...
-		} else if (abbrevPos === (addressEnd - 1)) {
-			repeat = ':0';
-			extra = '';
-			pad = 9; // 7+2 (due to '::')
-		// If the '::' is in the middle...
-		} else {
-			repeat = ':0';
-			extra = ':';
-			pad = 8; // 6+2 (due to '::')
-		}
-		var replacement = repeat;
-		pad -= address.split(':').length - 1;
-		for (var i = 1; i < pad; i++) {
-			replacement += repeat;
-		}
-		replacement += extra;
-		address = address.replace('::', replacement);
-	}
-	// Remove leading zeros from each bloc as needed
-	return address.replace(/(^|:)0+([0-9A-Fa-f]{1,4})/g, '$1$2');
+	console.warn('NOTE: Morebits.sanitizeIPv6 was renamed to Morebits.ip.sanitizeIPv6 in February 2021, please use that instead'); // eslint-disable-line no-console
+	return Morebits.ip.sanitizeIPv6(address);
 };
 
 /**
@@ -285,8 +239,10 @@ Morebits.quickForm.prototype.append = function QuickFormAppend(data) {
  *  - `radio`: A radio button. Must use "list" parameter.
  *      - Attributes: name, list, event
  *      - Attributes (within list): name, label, value, checked, disabled, event, subgroup
- *  - `input`: A text box.
- *      - Attributes: name, label, value, size, disabled, required, readonly, maxlength, event
+ *  - `input`: A text input box.
+ *      - Attributes: name, label, value, size, placeholder, maxlength, disabled, required, readonly, event
+ *  - `number`: A number input box.
+ *      - Attributes: Everything the text `input` has, as well as: min, max, step, list
  *  - `dyninput`: A set of text boxes with "Remove" buttons and an "Add" button.
  *      - Attributes: name, label, min, max, sublabel, value, size, maxlength, event
  *  - `hidden`: An invisible form field.
@@ -590,6 +546,8 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 				Morebits.checkboxShiftClickSupport(Morebits.quickForm.getElements(node, data.name));
 			}
 			break;
+		// input is actually a text-type, so number here inherits the same stuff
+		case 'number':
 		case 'input':
 			node = document.createElement('div');
 			node.setAttribute('id', 'div_' + id);
@@ -611,25 +569,32 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 				subnode.setAttribute('placeholder', data.placeholder);
 			}
 			subnode.setAttribute('name', data.name);
-			subnode.setAttribute('type', 'text');
-			if (data.size) {
-				subnode.setAttribute('size', data.size);
+
+			if (data.type === 'input') {
+				subnode.setAttribute('type', 'text');
+			} else {
+				subnode.setAttribute('type', 'number');
+				['min', 'max', 'step', 'list'].forEach(function(att) {
+					if (data[att]) {
+						subnode.setAttribute(att, data[att]);
+					}
+				});
 			}
-			if (data.disabled) {
-				subnode.setAttribute('disabled', 'disabled');
-			}
-			if (data.required) {
-				subnode.setAttribute('required', 'required');
-			}
-			if (data.readonly) {
-				subnode.setAttribute('readonly', 'readonly');
-			}
-			if (data.maxlength) {
-				subnode.setAttribute('maxlength', data.maxlength);
-			}
+
+			['value', 'size', 'placeholder', 'maxlength'].forEach(function(att) {
+				if (data[att]) {
+					subnode.setAttribute(att, data[att]);
+				}
+			});
+			['disabled', 'required', 'readonly'].forEach(function(att) {
+				if (data[att]) {
+					subnode.setAttribute(att, att);
+				}
+			});
 			if (data.event) {
 				subnode.addEventListener('keyup', data.event, false);
 			}
+
 			childContainder = subnode;
 			break;
 		case 'dyninput':
@@ -1214,6 +1179,126 @@ HTMLFormElement.prototype.getUnchecked = function(name, type) {
 	return return_array;
 };
 
+/**
+ * Utilities to help process IP addresses.
+ *
+ * @namespace Morebits.ip
+ * @memberof Morebits
+ */
+Morebits.ip = {
+	/**
+	 * Converts an IPv6 address to the canonical form stored and used by MediaWiki.
+	 * JavaScript translation of the {@link https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/core/+/8eb6ac3e84ea3312d391ca96c12c49e3ad0753bb/includes/utils/IP.php#131|`IP::sanitizeIP()`}
+	 * function from the IPUtils library.  Adddresses are verbose, uppercase,
+	 * normalized, and expanded to 8 words.
+	 *
+	 * @param {string} address - The IPv6 address, with or without CIDR.
+	 * @returns {string}
+	 */
+	sanitizeIPv6: function (address) {
+		address = address.trim();
+		if (address === '') {
+			return null;
+		}
+		if (!mw.util.isIPv6Address(address, true)) {
+			return address; // nothing else to do for IPv4 addresses or invalid ones
+		}
+		// Remove any whitespaces, convert to upper case
+		address = address.toUpperCase();
+		// Expand zero abbreviations
+		var abbrevPos = address.indexOf('::');
+		if (abbrevPos > -1) {
+			// We know this is valid IPv6. Find the last index of the
+			// address before any CIDR number (e.g. "a:b:c::/24").
+			var CIDRStart = address.indexOf('/');
+			var addressEnd = CIDRStart !== -1 ? CIDRStart - 1 : address.length - 1;
+			// If the '::' is at the beginning...
+			var repeat, extra, pad;
+			if (abbrevPos === 0) {
+				repeat = '0:';
+				extra = address === '::' ? '0' : ''; // for the address '::'
+				pad = 9; // 7+2 (due to '::')
+				// If the '::' is at the end...
+			} else if (abbrevPos === (addressEnd - 1)) {
+				repeat = ':0';
+				extra = '';
+				pad = 9; // 7+2 (due to '::')
+				// If the '::' is in the middle...
+			} else {
+				repeat = ':0';
+				extra = ':';
+				pad = 8; // 6+2 (due to '::')
+			}
+			var replacement = repeat;
+			pad -= address.split(':').length - 1;
+			for (var i = 1; i < pad; i++) {
+				replacement += repeat;
+			}
+			replacement += extra;
+			address = address.replace('::', replacement);
+		}
+		// Remove leading zeros from each bloc as needed
+		return address.replace(/(^|:)0+([0-9A-Fa-f]{1,4})/g, '$1$2');
+	},
+
+	/**
+	 * Determine if the given IP address is a range.  Just conjoins
+	 * `mw.util.isIPAddress` with and without the `allowBlock` option.
+	 *
+	 * @param {string} ip
+	 * @returns {boolean} - True if given a valid IP address range, false otherwise.
+	 */
+	isRange: function (ip) {
+		return mw.util.isIPAddress(ip, true) && !mw.util.isIPAddress(ip);
+	},
+
+	/**
+	 * Check that an IP range is within the CIDR limits.  Most likely to be useful
+	 * in conjunction with `wgRelevantUserName`.  CIDR limits are harcoded as /16
+	 * for IPv4 and /32 for IPv6.
+	 *
+	 * @returns {boolean} - True for valid ranges within the CIDR limits,
+	 * otherwise false (ranges outside the limit, single IPs, non-IPs).
+	 */
+	validCIDR: function (ip) {
+		if (Morebits.ip.isRange(ip)) {
+			var subnet = parseInt(ip.match(/\/(\d{1,3})$/)[1], 10);
+			if (subnet) { // Should be redundant
+				if (mw.util.isIPv6Address(ip, true)) {
+					if (subnet >= 32) {
+						return true;
+					}
+				} else {
+					if (subnet >= 16) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	},
+
+	/**
+	 * Get the /64 subnet for an IPv6 address.
+	 *
+	 * @param {string} ipv6 - The IPv6 address, with or without a subnet.
+	 * @returns {boolean|string} - False if not IPv6 or bigger than a 64,
+	 * otherwise the (sanitized) /64 address.
+	 */
+	get64: function (ipv6) {
+		if (!ipv6 || !mw.util.isIPv6Address(ipv6, true)) {
+			return false;
+		}
+		var subnetMatch = ipv6.match(/\/(\d{1,3})$/);
+		if (subnetMatch && parseInt(subnetMatch[1], 10) < 64) {
+			return false;
+		}
+		ipv6 = Morebits.ip.sanitizeIPv6(ipv6);
+		var ip_re = /^((?:[0-9A-F]{1,4}:){4})(?:[0-9A-F]{1,4}:){3}[0-9A-F]{1,4}(?:\/\d{1,3})?$/;
+		return ipv6.replace(ip_re, '$1' + '0:0:0:0/64');
+	}
+};
+
 
 /**
  * @external RegExp
@@ -1765,12 +1850,20 @@ Morebits.date.localeData = {
  *
  * @memberof Morebits.date
  * @type {object.<string, string>}
+ * @property {string} seconds
+ * @property {string} minutes
+ * @property {string} hours
+ * @property {string} days
+ * @property {string} weeks
+ * @property {string} months
+ * @property {string} years
  */
 Morebits.date.unitMap = {
 	seconds: 'Seconds',
 	minutes: 'Minutes',
 	hours: 'Hours',
 	days: 'Date',
+	weeks: 'Week', // Not a function but handled in `add` through cunning use of multiplication
 	months: 'Month',
 	years: 'FullYear'
 };
@@ -1830,7 +1923,7 @@ Morebits.date.prototype = {
 	},
 
 	/**
-	 * Add a given number of minutes, hours, days, months or years to the date.
+	 * Add a given number of minutes, hours, days, weeks, months, or years to the date.
 	 * This is done in-place. The modified date object is also returned, allowing chaining.
 	 *
 	 * @param {number} number - Should be an integer.
@@ -1847,6 +1940,11 @@ Morebits.date.prototype = {
 		var unitMap = Morebits.date.unitMap;
 		var unitNorm = unitMap[unit] || unitMap[unit + 's']; // so that both singular and  plural forms work
 		if (unitNorm) {
+			// No built-in week functions, so rather than build out ISO's getWeek/setWeek, just multiply
+			// Probably can't be used for Julian->Gregorian changeovers, etc.
+			if (unitNorm === 'Week') {
+				unitNorm = 'Date', num *= 7;
+			}
 			this['set' + unitNorm](this['get' + unitNorm]() + num);
 			return this;
 		}
@@ -1854,7 +1952,7 @@ Morebits.date.prototype = {
 	},
 
 	/**
-	 * Subtracts a given number of minutes, hours, days, months or years to the date.
+	 * Subtracts a given number of minutes, hours, days, weeks, months, or years to the date.
 	 * This is done in-place. The modified date object is also returned, allowing chaining.
 	 *
 	 * @param {number} number - Should be an integer.
@@ -2540,6 +2638,7 @@ Morebits.wiki.page = function(pageName, status) {
 		onSaveSuccess: null,
 		onSaveFailure: null,
 		onLookupCreationSuccess: null,
+		onLookupCreationFailure: null,
 		onMoveSuccess: null,
 		onMoveFailure: null,
 		onDeleteSuccess: null,
@@ -2690,7 +2789,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.tags = ctx.changeTags;
 		}
 
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 
@@ -2948,37 +3047,84 @@ Morebits.wiki.page = function(pageName, status) {
 	};
 
 	/**
-	 * @param {boolean|string} [watchlistOption=false] -
+	 * Set whether and how to watch the page, including setting an expiry.
+	 *
+	 * @param {boolean|string|Morebits.date|Date} [watchlistOption=false] -
 	 * Basically a mix of MW API and Twinkley options available pre-expiry:
-	 * - `true`|`'yes'`: page will be added to the user's watchlist when the action is called
-	 * - `false`|`'no'`|`'nochange'`: watchlist status of the page will not be changed.
-	 * - `'default'`|`'preferences'`: watchlist status of the page will
-         * be set based on the user's preference settings when the action is
-         * called.  Ignores ability of default + expiry.
-	 * - `'unwatch'`: explicitly unwatch the page
-	 * - {string|number}: watch page until the specified time (relative or absolute datestring)
+	 * - `true`|`'yes'`|`'watch'`: page will be added to the user's
+	 * watchlist when the action is called. Defaults to an indefinite
+	 * watch unless `watchlistExpiry` is provided.
+	 * - `false`|`'no'`|`'nochange'`: watchlist status of the page (including expiry) will not be changed.
+	 * - `'default'`|`'preferences'`: watchlist status of the page will be
+	 * set based on the user's preference settings when the action is
+	 * called. Defaults to an indefinite watch unless `watchlistExpiry` is
+	 * provided.
+	 * - `'unwatch'`: explicitly unwatch the page.
+	 * - Any other `string` or `number`, or a `Morebits.date` or `Date`
+	 * object: watch page until the specified time, deferring to
+	 * `watchlistExpiry` if provided.
+	 * @param {string|number|Morebits.date|Date} [watchlistExpiry=infinity] -
+	 * A date-like string or number, or a date object.  If a string or number,
+	 * can be relative (2 weeks) or other similarly date-like (i.e. NOT "potato"):
+	 * ISO 8601: 2038-01-09T03:14:07Z
+	 * MediaWiki: 20380109031407
+	 * UNIX: 2147483647
+	 * SQL: 2038-01-09 03:14:07
+	 * Can also be `infinity` or infinity-like (`infinite`, `indefinite`, and `never`).
+	 * See {@link https://phabricator.wikimedia.org/source/mediawiki-libs-Timestamp/browse/master/src/ConvertibleTimestamp.php;4e53b859a9580c55958078f46dd4f3a44d0fcaa0$57-109?as=source&blame=off}
 	 */
-	this.setWatchlist = function(watchlistOption) {
-		if (!watchlistOption || watchlistOption === 'no' || watchlistOption === 'nochange') {
-			ctx.watchlistOption = 'nochange';
-		} else if (watchlistOption === 'default' || watchlistOption === 'preferences') {
-			ctx.watchlistOption = 'preferences';
-		} else if (watchlistOption === 'unwatch') {
-			ctx.watchlistOption = 'unwatch';
-		} else {
-			ctx.watchlistOption = 'watch';
-			if (typeof watchlistOption === 'number' || (typeof watchlistOption === 'string' && watchlistOption !== 'yes')) {
+	this.setWatchlist = function(watchlistOption, watchlistExpiry) {
+		if (watchlistOption instanceof Morebits.date || watchlistOption instanceof Date) {
+			watchlistOption = watchlistOption.toISOString();
+		}
+		if (typeof watchlistExpiry === 'undefined') {
+			watchlistExpiry = 'infinity';
+		} else if (watchlistExpiry instanceof Morebits.date || watchlistExpiry instanceof Date) {
+			watchlistExpiry = watchlistExpiry.toISOString();
+		}
+
+		switch (watchlistOption) {
+			case 'nochange':
+			case 'no':
+			case false:
+			case undefined:
+				ctx.watchlistOption = 'nochange';
+				// The MW API allows for changing expiry with nochange (as "nochange" refers to the binary status),
+				// but by keeping this null it will default to any existing expiry, ensure there is actually "no change."
+				ctx.watchlistExpiry = null;
+				break;
+			case 'unwatch':
+				// expiry unimportant
+				ctx.watchlistOption = 'unwatch';
+				break;
+			case 'preferences':
+			case 'default':
+				ctx.watchlistOption = 'preferences';
+				// The API allows an expiry here, but there is as of yet (T265716)
+				// no expiry preference option, so it's a bit devoid of context.
+				ctx.watchlistExpiry = watchlistExpiry;
+				break;
+			case 'watch':
+			case 'yes':
+			case true:
+				ctx.watchlistOption = 'watch';
+				ctx.watchlistExpiry = watchlistExpiry;
+				break;
+			default: // Not really a "default" per se but catches "any other string"
+				ctx.watchlistOption = 'watch';
 				ctx.watchlistExpiry = watchlistOption;
-			}
+				break;
 		}
 	};
 
 	/**
-	 * Set an expiry. setWatchlist can handle this by itself if passed a
-	 * string, so this is here largely for completeness and compatibility.
+	 * Set a watchlist expiry. setWatchlist can mostly handle this by
+	 * itself, so this is here largely for completeness and compatibility
+	 * with the full suite of options.
 	 *
-	 * @param {string} watchlistExpiry - A date-like string or array of strings
-	 * Can be relative (2 weeks) or other similarly date-like (i.e. NOT "potato"):
+	 * @param {string|number|Morebits.date|Date} [watchlistExpiry=infinity] -
+	 * A date-like string or number, or a date object.  If a string or number,
+	 * can be relative (2 weeks) or other similarly date-like (i.e. NOT "potato"):
 	 * ISO 8601: 2038-01-09T03:14:07Z
 	 * MediaWiki: 20380109031407
 	 * UNIX: 2147483647
@@ -2987,6 +3133,11 @@ Morebits.wiki.page = function(pageName, status) {
 	 * See {@link https://phabricator.wikimedia.org/source/mediawiki-libs-Timestamp/browse/master/src/ConvertibleTimestamp.php;4e53b859a9580c55958078f46dd4f3a44d0fcaa0$57-109?as=source&blame=off}
 	 */
 	this.setWatchlistExpiry = function(watchlistExpiry) {
+		if (typeof watchlistExpiry === 'undefined') {
+			watchlistExpiry = 'infinity';
+		} else if (watchlistExpiry instanceof Morebits.date || watchlistExpiry instanceof Date) {
+			watchlistExpiry = watchlistExpiry.toISOString();
+		}
 		ctx.watchlistExpiry = watchlistExpiry;
 	};
 
@@ -3234,13 +3385,17 @@ Morebits.wiki.page = function(pageName, status) {
 	 *
 	 * @param {Function} onSuccess - Callback function to be called when
 	 * the username and timestamp are found within the callback.
+	 * @param {Function} [onFailure] - Callback function to be called when
+	 * the lookup fails
 	 */
-	this.lookupCreation = function(onSuccess) {
+	this.lookupCreation = function(onSuccess, onFailure) {
+		ctx.onLookupCreationSuccess = onSuccess;
+		ctx.onLookupCreationFailure = onFailure || emptyFunction;
 		if (!onSuccess) {
 			ctx.statusElement.error('Internal error: no onSuccess callback provided to lookupCreation()!');
+			ctx.onLookupCreationFailure(this);
 			return;
 		}
-		ctx.onLookupCreationSuccess = onSuccess;
 
 		var query = {
 			action: 'query',
@@ -3266,7 +3421,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.redirects = '';  // follow all redirects
 		}
 
-		ctx.lookupCreationApi = new Morebits.wiki.api(wgULS('抓取页面创建者信息', '抓取頁面建立者資訊'), query, fnLookupCreationSuccess, ctx.statusElement);
+		ctx.lookupCreationApi = new Morebits.wiki.api(wgULS('抓取页面创建者信息', '抓取頁面建立者資訊'), query, fnLookupCreationSuccess, ctx.statusElement, ctx.onLookupCreationFailure);
 		ctx.lookupCreationApi.setParent(this);
 		ctx.lookupCreationApi.post();
 	};
@@ -3539,9 +3694,10 @@ Morebits.wiki.page = function(pageName, status) {
 	var fnCanUseMwUserToken = function(action) {
 		action = typeof action !== 'undefined' ? action : 'edit'; // IE doesn't support default parameters
 
-		// If a watchlist expiry is set, always load protection status to avoid
-		// overwriting indefinite protection; see [[phab:T270057]] and [[phab:T268834]]
-		if (ctx.watchlistExpiry) {
+		// If a watchlist expiry is set, we must always load the page
+		// to avoid overwriting indefinite protection.  Of course, not
+		// needed if setting indefinite watching!
+		if (ctx.watchlistExpiry && !Morebits.string.isInfinity(ctx.watchlistExpiry)) {
 			return false;
 		}
 
@@ -3744,6 +3900,48 @@ Morebits.wiki.page = function(pageName, status) {
 		return true; // all OK
 	};
 
+	/**
+	 * Determine whether we should provide a watchlist expiry.  Will not
+	 * do so if the page is currently permanently watched, or the current
+	 * expiry is *after* the new, provided expiry.  Only handles strings
+	 * recognized by {@link Morebits.date} or relative timeframes with
+	 * unit it can process.  Relies on the fact that fnCanUseMwUserToken
+	 * requires page loading if a watchlistexpiry is provided, so we are
+	 * ensured of knowing the watch status by the use of this.
+	 *
+	 * @returns {boolean}
+	 */
+	var fnApplyWatchlistExpiry = function() {
+		if (ctx.watchlistExpiry) {
+			if (!ctx.watched || Morebits.string.isInfinity(ctx.watchlistExpiry)) {
+				return true;
+			} else if (typeof ctx.watched === 'string') {
+				var newExpiry;
+				// Attempt to determine if the new expiry is a
+				// relative (e.g. `1 month`) or absolute datetime
+				var rel = ctx.watchlistExpiry.split(' ');
+				try {
+					newExpiry = new Morebits.date().add(rel[0], rel[1]);
+				} catch (e) {
+					newExpiry = new Morebits.date(ctx.watchlistExpiry);
+				}
+
+				// If the date is valid, only use it if it extends the current expiry
+				if (newExpiry.isValid()) {
+					if (newExpiry.isAfter(new Morebits.date(ctx.watched))) {
+						return true;
+					}
+				} else {
+					// If it's still not valid, hope it's a valid MW expiry format that
+					// Morebits.date doesn't recognize, so just default to using it.
+					// This will also include minor typos.
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+
 	// callback from saveApi.post()
 	var fnSaveSuccess = function() {
 		ctx.editMode = 'all';  // cancel append/prepend/newSection/revert modes
@@ -3855,13 +4053,14 @@ Morebits.wiki.page = function(pageName, status) {
 	var fnLookupCreationSuccess = function() {
 		var response = ctx.lookupCreationApi.getResponse().query;
 
-		if (!fnCheckPageName(response)) {
+		if (!fnCheckPageName(response, ctx.onLookupCreationFailure)) {
 			return; // abort
 		}
 
 		var rev = response.pages[0].revisions && response.pages[0].revisions[0];
 		if (!rev) {
 			ctx.statusElement.error(wgULS('无法找到', '無法找到') + ctx.pageName + wgULS('的任何修订版本', '的任何修訂版本'));
+			ctx.onLookupCreationFailure(this);
 			return;
 		}
 
@@ -3870,20 +4069,24 @@ Morebits.wiki.page = function(pageName, status) {
 			ctx.creator = rev.user;
 			if (!ctx.creator) {
 				ctx.statusElement.error(wgULS('无法获取页面创建者的名字', '無法取得頁面建立者的名字'));
+				ctx.onLookupCreationFailure(this);
 				return;
 			}
 			ctx.timestamp = rev.timestamp;
 			if (!ctx.timestamp) {
 				ctx.statusElement.error(wgULS('无法获取页面创建时间', '無法取得頁面建立時間'));
+				ctx.onLookupCreationFailure(this);
 				return;
 			}
+
+			ctx.statusElement.info(wgULS('已获取页面创建信息', '已取得頁面建立資訊'));
 			ctx.onLookupCreationSuccess(this);
 
 		} else {
 			ctx.lookupCreationApi.query.rvlimit = 50; // modify previous query to fetch more revisions
 			ctx.lookupCreationApi.query.titles = ctx.pageName; // update pageName if redirect resolution took place in earlier query
 
-			ctx.lookupCreationApi = new Morebits.wiki.api(wgULS('获取页面创建信息', '取得頁面建立資訊'), ctx.lookupCreationApi.query, fnLookupNonRedirectCreator, ctx.statusElement);
+			ctx.lookupCreationApi = new Morebits.wiki.api(wgULS('获取页面创建信息', '取得頁面建立資訊'), ctx.lookupCreationApi.query, fnLookupNonRedirectCreator, ctx.statusElement, ctx.onLookupCreationFailure);
 			ctx.lookupCreationApi.setParent(this);
 			ctx.lookupCreationApi.post();
 		}
@@ -3908,15 +4111,18 @@ Morebits.wiki.page = function(pageName, status) {
 			ctx.timestamp = revs[0].timestamp;
 			if (!ctx.creator) {
 				ctx.statusElement.error(wgULS('无法获取页面创建者的名字', '無法取得頁面建立者的名字'));
+				ctx.onLookupCreationFailure(this);
 				return;
 			}
 
 		}
 		if (!ctx.timestamp) {
 			ctx.statusElement.error(wgULS('无法获取页面创建时间', '無法取得頁面建立時間'));
+			ctx.onLookupCreationFailure(this);
 			return;
 		}
 
+		ctx.statusElement.info(wgULS('已获取页面创建信息', '已取得頁面建立資訊'));
 		ctx.onLookupCreationSuccess(this);
 
 	};
@@ -4029,7 +4235,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.tags = ctx.changeTags;
 		}
 
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 		if (ctx.moveTalkPage) {
@@ -4174,7 +4380,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.tags = ctx.changeTags;
 		}
 
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 
@@ -4238,7 +4444,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.tags = ctx.changeTags;
 		}
 
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 
@@ -4372,7 +4578,7 @@ Morebits.wiki.page = function(pageName, status) {
 			query.tags = ctx.changeTags;
 		}
 
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 		if (ctx.protectCascade) {
@@ -4416,7 +4622,7 @@ Morebits.wiki.page = function(pageName, status) {
 		};
 
 		/* Doesn't support watchlist expiry [[phab:T263336]]
-		if (ctx.watchlistExpiry && !ctx.watched) {
+		if (fnApplyWatchlistExpiry()) {
 			query.watchlistexpiry = ctx.watchlistExpiry;
 		}
 		*/
@@ -5509,7 +5715,7 @@ Morebits.status.error = function(text, status) {
 Morebits.status.actionCompleted = function(text) {
 	var node = document.createElement('div');
 	node.appendChild(document.createElement('b')).appendChild(document.createTextNode(text));
-	node.className = 'morebits_status_info';
+	node.className = 'morebits_status_info morebits_action_complete';
 	if (Morebits.status.root) {
 		Morebits.status.root.appendChild(node);
 	}
@@ -5850,7 +6056,7 @@ Morebits.batchOperation = function(currentAction) {
 
 /**
  * Given a set of asynchronous functions to run along with their dependencies,
- * figure out an efficient sequence of running them so that multiple functions
+ * run them in an efficient sequence so that multiple functions
  * that don't depend on each other are triggered simultaneously. Where
  * dependencies exist, it ensures that the dependency functions finish running
  * before the dependent function runs. The values resolved by the dependencies
@@ -5859,10 +6065,12 @@ Morebits.batchOperation = function(currentAction) {
  * @memberof Morebits
  * @class
  */
-Morebits.taskManager = function() {
+Morebits.taskManager = function(context) {
 	this.taskDependencyMap = new Map();
+	this.failureCallbackMap = new Map();
 	this.deferreds = new Map();
 	this.allDeferreds = []; // Hack: IE doesn't support Map.prototype.values
+	this.context = context || window;
 
 	/**
 	 * Register a task along with its dependencies (tasks which should have finished
@@ -5872,9 +6080,12 @@ Morebits.taskManager = function() {
 	 *
 	 * @param {Function} func - A task.
 	 * @param {Function[]} deps - Its dependencies.
+	 * @param {Function} [onFailure] - a failure callback that's run if the task or any one
+	 * of its dependencies fail.
 	 */
-	this.add = function(func, deps) {
+	this.add = function(func, deps, onFailure) {
 		this.taskDependencyMap.set(func, deps);
+		this.failureCallbackMap.set(func, onFailure || function() {});
 		var deferred = $.Deferred();
 		this.deferreds.set(func, deferred);
 		this.allDeferreds.push(deferred);
@@ -5883,7 +6094,7 @@ Morebits.taskManager = function() {
 	/**
 	 * Run all the tasks. Multiple tasks may be run at once.
 	 *
-	 * @returns {promise} - A jQuery promise object that is resolved or rejected with the api object.
+	 * @returns {jQuery.Promise} - Resolved if all tasks succeed, rejected otherwise.
 	 */
 	this.execute = function() {
 		var self = this; // proxy for `this` for use inside functions where `this` is something else
@@ -5891,10 +6102,21 @@ Morebits.taskManager = function() {
 			var dependencyPromisesArray = deps.map(function(dep) {
 				return self.deferreds.get(dep);
 			});
-			$.when.apply(null, dependencyPromisesArray).then(function() {
-				task.apply(null, arguments).then(function() {
-					self.deferreds.get(task).resolve.apply(null, arguments);
+			$.when.apply(self.context, dependencyPromisesArray).then(function() {
+				var result = task.apply(self.context, arguments);
+				if (result === undefined) { // maybe the function threw, or it didn't return anything
+					mw.log.error('Morebits.taskManager: task returned undefined');
+					self.deferreds.get(task).reject.apply(self.context, arguments);
+					self.failureCallbackMap.get(task).apply(self.context, []);
+				}
+				result.then(function() {
+					self.deferreds.get(task).resolve.apply(self.context, arguments);
+				}, function() { // task failed
+					self.deferreds.get(task).reject.apply(self.context, arguments);
+					self.failureCallbackMap.get(task).apply(self.context, arguments);
 				});
+			}, function() { // one or more of the dependencies failed
+				self.failureCallbackMap.get(task).apply(self.context, arguments);
 			});
 		});
 		return $.when.apply(null, this.allDeferreds); // resolved when everything is done!
