@@ -138,6 +138,58 @@ Morebits.pageNameRegex = function(pageName) {
 };
 
 /**
+ * Converts string or array of DOM nodes into an HTML fragment.
+ * Wikilink syntax (`[[...]]`) is transformed into HTML anchor.
+ * Used in Morebits.quickForm and Morebits.status
+ * @internal
+ * @param {string|Node|(string|Node)[]} input
+ * @returns {DocumentFragment}
+ */
+Morebits.createHtml = function(input) {
+	var fragment = document.createDocumentFragment();
+	if (!Array.isArray(input)) {
+		input = [ input ];
+	}
+	for (var i = 0; i < input.length; ++i) {
+		if (input[i] instanceof Node) {
+			fragment.appendChild(input[i]);
+		} else {
+			$.parseHTML(Morebits.createHtml.renderWikilinks(input[i])).forEach(function(node) {
+				if (node.nodeType === 3) { // text node
+					fragment.appendChild(node);
+				} else if (node.nodeType === 1) { // Element node, strip dangerous attributes
+					Array.prototype.slice.call(node.attributes).forEach(function(attr) {
+						// onclick, onerror, onload, etc
+						if (attr.name.indexOf('on') === 0) {
+							node.removeAttribute(attr.name);
+						}
+					});
+					fragment.appendChild(node);
+				} // any other node type is suspicious
+			});
+		}
+	}
+	return fragment;
+};
+
+/**
+ * Converts wikilinks to HTML anchor tags.
+ * @param text
+ * @returns {*}
+ */
+Morebits.createHtml.renderWikilinks = function (text) {
+	return text.replace(
+		/\[\[:?(?:([^|\]]+?)\|)?([^\]|]+?)\]\]/g,
+		function(_, target, text) {
+			if (!target) {
+				target = text;
+			}
+			return '<a target="_blank" href="' + mw.util.getUrl(target) +
+				'" title="' + target.replace(/"/g, '&#34;') + '">' + text + '</a>';
+		});
+};
+
+/**
  * Create a string for use in regex matching all namespace aliases, regardless
  * of the capitalization and underscores/spaces.  Doesn't include the optional
  * leading `:`, but if there's more than one item, wraps the list in a
@@ -353,7 +405,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 			if (data.label) {
 				label = node.appendChild(document.createElement('label'));
 				label.setAttribute('for', id);
-				label.appendChild(document.createTextNode(data.label));
+				label.appendChild(Morebits.createHtml(data.label));
 			}
 			var select = node.appendChild(document.createElement('select'));
 			if (data.event) {
@@ -418,7 +470,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 		case 'field':
 			node = document.createElement('fieldset');
 			label = node.appendChild(document.createElement('legend'));
-			label.appendChild(document.createTextNode(data.label));
+			label.appendChild(Morebits.createHtml(data.label));
 			if (data.name) {
 				node.setAttribute('name', data.name);
 			}
@@ -468,7 +520,8 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 						subnode.setAttribute('disabled', 'disabled');
 					}
 					label = cur_div.appendChild(document.createElement('label'));
-					label.appendChild(document.createTextNode(current.label));
+
+					label.appendChild(Morebits.createHtml(current.label));
 					label.setAttribute('for', cur_id);
 					if (current.tooltip) {
 						Morebits.quickForm.element.generateTooltip(label, current);
@@ -557,7 +610,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 
 			if (data.label) {
 				label = node.appendChild(document.createElement('label'));
-				label.appendChild(document.createTextNode(data.label));
+				label.appendChild(Morebits.createHtml(data.label));
 				label.setAttribute('for', data.id || id);
 			}
 
@@ -604,8 +657,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 			node = document.createElement('div');
 
 			label = node.appendChild(document.createElement('h5'));
-			label.appendChild(document.createTextNode(data.label));
-
+			label.appendChild(Morebits.createHtml(data.label));
 			var listNode = node.appendChild(document.createElement('div'));
 
 			var more = this.compute({
@@ -705,7 +757,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 			break;
 		case 'header':
 			node = document.createElement('h5');
-			node.appendChild(document.createTextNode(data.label));
+			node.appendChild(Morebits.createHtml(data.label));
 			break;
 		case 'div':
 			node = document.createElement('div');
@@ -718,13 +770,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 				}
 				var result = document.createElement('span');
 				result.className = 'quickformDescription';
-				for (i = 0; i < data.label.length; ++i) {
-					if (typeof data.label[i] === 'string') {
-						result.appendChild(document.createTextNode(data.label[i]));
-					} else if (data.label[i] instanceof Element) {
-						result.appendChild(data.label[i]);
-					}
-				}
+				result.appendChild(Morebits.createHtml(data.label));
 				node.appendChild(result);
 			}
 			break;
@@ -764,7 +810,7 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 			if (data.label) {
 				label = node.appendChild(document.createElement('h5'));
 				var labelElement = document.createElement('label');
-				labelElement.textContent = data.label;
+				labelElement.appendChild(Morebits.createHtml(data.label));
 				labelElement.setAttribute('for', data.id || id);
 				label.appendChild(labelElement);
 			}
@@ -5516,7 +5562,7 @@ Morebits.userspaceLogger = function(logPageName) {
 
 Morebits.status = function Status(text, stat, type) {
 	this.textRaw = text;
-	this.text = this.codify(text);
+	this.text = Morebits.createHtml(text);
 	this.type = type || 'status';
 	this.generate();
 	if (stat) {
@@ -5584,33 +5630,6 @@ Morebits.status.prototype = {
 	},
 
 	/**
-	 * Create a document fragment with the status text, parsing as HTML.
-	 * Runs upon construction for text (part before colon) and upon
-	 * render/update for status (part after colon).
-	 *
-	 * @param {(string|Element|Array)} obj
-	 * @returns {DocumentFragment}
-	 */
-	codify: function(obj) {
-		if (!Array.isArray(obj)) {
-			obj = [ obj ];
-		}
-		var result;
-		result = document.createDocumentFragment();
-		for (var i = 0; i < obj.length; ++i) {
-			if (obj[i] instanceof Element) {
-				result.appendChild(obj[i]);
-			} else {
-				$.parseHTML(obj[i]).forEach(function(elem) {
-					result.appendChild(elem);
-				});
-			}
-		}
-		return result;
-
-	},
-
-	/**
 	 * Update the status.
 	 *
 	 * @param {string} status - Part of status message after colon.
@@ -5619,7 +5638,7 @@ Morebits.status.prototype = {
 	 */
 	update: function(status, type) {
 		this.statRaw = status;
-		this.stat = this.codify(status);
+		this.stat = Morebits.createHtml(status);
 		if (type) {
 			this.type = type;
 			if (type === 'error') {
