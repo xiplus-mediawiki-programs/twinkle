@@ -150,7 +150,7 @@ Twinkle.batchundelete.callback.evaluate = function(event) {
 
 		var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('反删除页面', '反刪除頁面') + pageName);
 		wikipedia_page.setCallbackParameters(params);
-		wikipedia_page.setEditSummary(reason);
+		wikipedia_page.setEditSummary(reason + ' (批量)');
 		wikipedia_page.setChangeTags(Twinkle.changeTags);
 		wikipedia_page.suppressProtectWarning();
 		wikipedia_page.setMaxRetries(3); // temporary increase from 2 to make batchundelete more likely to succeed [[phab:T222402]] #613
