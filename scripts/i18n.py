@@ -99,7 +99,7 @@ for filename in run_files:
     with open(full_filename, 'r', encoding='utf8') as f:
         jstext = f.read()
 
-    matches = re.findall(r"wgULS\('(.*?)',[\s\n]*?'((?:[^()]|\([^()]\))*?)'\)", jstext)
+    matches = re.findall(r"wgULS\('(.*?)',[\s\n]*?'((?:[^()]|\([^()]*?\))*?)'\)", jstext)
 
     text = noteTA
 
