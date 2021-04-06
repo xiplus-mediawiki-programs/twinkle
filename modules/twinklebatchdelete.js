@@ -543,7 +543,7 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 		var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('正在删除页面 ', '正在刪除頁面 ') + pageName);
 		wikipedia_page.setCallbackParameters(params);
 		if (delete_page) {
-			wikipedia_page.setEditSummary(reason);
+			wikipedia_page.setEditSummary(reason + ' (批量)');
 			wikipedia_page.setChangeTags(Twinkle.changeTags);
 			wikipedia_page.suppressProtectWarning();
 			wikipedia_page.deletePage(Twinkle.batchdelete.callbacks.doExtras, pageDeleter.workerFailure);
@@ -570,7 +570,7 @@ Twinkle.batchdelete.callback.evaluate = function twinklebatchdeleteCallbackEvalu
 
 				var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('正在删除子页面 ', '正在刪除子頁面 ') + pageName);
 				wikipedia_page.setCallbackParameters(params);
-				wikipedia_page.setEditSummary(reason);
+				wikipedia_page.setEditSummary(reason + ' (批量)');
 				wikipedia_page.setChangeTags(Twinkle.changeTags);
 				wikipedia_page.suppressProtectWarning();
 				wikipedia_page.deletePage(Twinkle.batchdelete.callbacks.doExtras, pageDeleter.workerFailure);
