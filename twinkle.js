@@ -506,6 +506,23 @@ Twinkle.load = function () {
 	}
 };
 
+/** Twinkle-specific utility functions shared by multiple modules */
+// Used in batch, unlink, and deprod to sort pages by namespace, as
+// json formatversion=2 sorts by pageid instead (#1251)
+Twinkle.sortByNamespace = function(first, second) {
+	return first.ns - second.ns || (first.title > second.title ? 1 : -1);
+};
+
+// Used in deprod and unlink listings to link the page title
+Twinkle.generateBatchPageLinks = function (checkbox) {
+	var $checkbox = $(checkbox);
+	var link = Morebits.htmlNode('a', $checkbox.val());
+	link.setAttribute('class', 'tw-batchpage-link');
+	link.setAttribute('href', mw.util.getUrl($checkbox.val()));
+	link.setAttribute('target', '_blank');
+	$checkbox.next().prepend([link, ' ']);
+};
+
 }(window, document, jQuery)); // End wrap with anonymous function
 
 // </nowiki>

@@ -13,25 +13,10 @@
  */
 
 Twinkle.unlink = function twinkleunlink() {
-	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageName') === Twinkle.getPref('sandboxPage')) {
+	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageName') === Twinkle.getPref('sandboxPage') || !Morebits.userIsSysop) {
 		return;
 	}
-	if (Morebits.userIsSysop) {
-		Twinkle.addPortletLink(Twinkle.unlink.callback, wgULS('消连', '消連'), 'tw-unlink', wgULS('取消到本页的链接', '取消到本頁的連結'));
-	}
-};
-
-Twinkle.unlink.getChecked2 = function twinkleunlinkGetChecked2(nodelist) {
-	if (!(nodelist instanceof NodeList) && !(nodelist instanceof HTMLCollection)) {
-		return nodelist.checked ? [ nodelist.values ] : [];
-	}
-	var result = [];
-	for (var i = 0; i < nodelist.length; ++i) {
-		if (nodelist[i].checked) {
-			result.push(nodelist[i].values);
-		}
-	}
-	return result;
+	Twinkle.addPortletLink(Twinkle.unlink.callback, wgULS('消连', '消連'), 'tw-unlink', wgULS('取消到本页的链接', '取消到本頁的連結'));
 };
 
 // the parameter is used when invoking unlink from admin speedy
@@ -97,15 +82,7 @@ Twinkle.unlink.callback = function(presetReason) {
 		query.iulimit = query.bllimit;
 		query.iunamespace = query.blnamespace;
 	} else {
-		query = {
-			action: 'query',
-			list: 'backlinks',
-			bltitle: Morebits.pageNameNorm,
-			blfilterredir: 'nonredirects',
-			bllimit: Morebits.userIsSysop ? 5000 : 500, // 500 is max for normal users, 5000 for bots and sysops
-			blnamespace: Twinkle.getPref('unlinkNamespaces'),
-			rawcontinue: true
-		};
+		query.blfilterredir = 'nonredirects';
 	}
 	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取链入', '抓取連入'), query, Twinkle.unlink.callbacks.display.backlinks);
 	wikipedia_api.params = { form: form, Window: Window, image: fileSpace };
@@ -158,16 +135,16 @@ Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event)
 Twinkle.unlink.callbacks = {
 	display: {
 		backlinks: function twinkleunlinkCallbackDisplayBacklinks(apiobj) {
-			var xmlDoc = apiobj.responseXML;
+			var response = apiobj.getResponse();
 			var havecontent = false;
 			var list, namespaces, i;
 
 			if (apiobj.params.image) {
-				var imageusage = $(xmlDoc).find('query imageusage iu');
+				var imageusage = response.query.imageusage.sort(Twinkle.sortByNamespace);
 				list = [];
 				for (i = 0; i < imageusage.length; ++i) {
-					var usagetitle = imageusage[i].getAttribute('title');
-					list.push({ label: usagetitle, value: usagetitle, checked: true });
+					// Label made by Twinkle.generateBatchPageLinks
+					list.push({ label: '', value: imageusage[i].title, checked: true });
 				}
 				if (!list.length) {
 					apiobj.params.form.append({ type: 'div', label: wgULS('未找到文件使用。', '未找到檔案使用。') });
@@ -179,13 +156,13 @@ Twinkle.unlink.callbacks = {
 					});
 					apiobj.params.form.append({
 						type: 'div',
-						label: wgULS('已选择的名字空间：', '已選擇的命名空間：') + namespaces.join(', '),
+						label: wgULS('已选择的名字空间：', '已選擇的命名空間：') + namespaces.join('、'),
 						tooltip: wgULS('您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]', '您可在Twinkle屬性中更改這個，請參見[[WP:TWPREFS]]')
 					});
-					if ($(xmlDoc).find('query-continue').length) {
+					if (response['query-continue'] && response['query-continue'].imageusage) {
 						apiobj.params.form.append({
 							type: 'div',
-							label: wgULS('显示头 ' + mw.language.convertNumber(list.length) + ' 个文件使用。', '顯示頭 ' + mw.language.convertNumber(list.length) + ' 個檔案使用。')
+							label: wgULS('显示前', '顯示前') + mw.language.convertNumber(list.length) + wgULS('个文件使用。', '個檔案使用。')
 						});
 					}
 					apiobj.params.form.append({
@@ -212,27 +189,27 @@ Twinkle.unlink.callbacks = {
 				}
 			}
 
-			var backlinks = $(xmlDoc).find('query backlinks bl');
+			var backlinks = response.query.backlinks.sort(Twinkle.sortByNamespace);
 			if (backlinks.length > 0) {
 				list = [];
 				for (i = 0; i < backlinks.length; ++i) {
-					var title = backlinks[i].getAttribute('title');
-					list.push({ label: title, value: title, checked: true });
+					// Label made by Twinkle.generateBatchPageLinks
+					list.push({ label: '', value: backlinks[i].title, checked: true });
 				}
-				apiobj.params.form.append({ type: 'header', label: 'Backlinks' });
+				apiobj.params.form.append({ type: 'header', label: wgULS('链入', '連入') });
 				namespaces = [];
 				$.each(Twinkle.getPref('unlinkNamespaces'), function(k, v) {
 					namespaces.push(v === '0' ? wgULS('（条目）', '（條目）') : mw.config.get('wgFormattedNamespaces')[v]);
 				});
 				apiobj.params.form.append({
 					type: 'div',
-					label: wgULS('已选择的名字空间：', '已選擇的命名空間：') + namespaces.join(', '),
+					label: wgULS('已选择的名字空间：', '已選擇的命名空間：') + namespaces.join('、'),
 					tooltip: wgULS('您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]', '您可在Twinkle屬性中更改這個，請參見[[WP:TWPREFS]]')
 				});
-				if ($(xmlDoc).find('query-continue').length) {
+				if (response['query-continue'] && response['query-continue'].backlinks) {
 					apiobj.params.form.append({
 						type: 'div',
-						label: wgULS('显示头 ' + mw.language.convertNumber(list.length) + ' 个链入。', '顯示頭 ' + mw.language.convertNumber(list.length) + ' 個連入。')
+						label: wgULS('显示前', '顯示前') + mw.language.convertNumber(list.length) + wgULS('个链入。', '個連入。')
 					});
 				}
 				apiobj.params.form.append({
@@ -266,6 +243,9 @@ Twinkle.unlink.callbacks = {
 
 			var result = apiobj.params.form.render();
 			apiobj.params.Window.setContent(result);
+
+			Morebits.quickForm.getElements(result, 'backlinks').forEach(Twinkle.generateBatchPageLinks);
+			Morebits.quickForm.getElements(result, 'imageusage').forEach(Twinkle.generateBatchPageLinks);
 
 		}
 	},
