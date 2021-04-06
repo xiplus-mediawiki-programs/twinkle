@@ -113,6 +113,8 @@ Twinkle.config.commonSets = {
 		15: 'Category talk',
 		100: 'Portal',
 		101: 'Portal talk',
+		102: 'WikiProject',
+		103: 'WikiProject talk',
 		118: 'Draft',
 		119: 'Draft talk',
 		828: 'Module',

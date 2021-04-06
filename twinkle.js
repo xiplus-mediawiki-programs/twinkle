@@ -118,7 +118,7 @@ Twinkle.defaultConfig = {
 	enlargeG11Input: false,
 
 	// Unlink
-	unlinkNamespaces: [ '0', '10', '100', '118' ],
+	unlinkNamespaces: [ '0', '10', '100', '102', '118' ],
 
 	// Warn
 	defaultWarningGroup: '1',
