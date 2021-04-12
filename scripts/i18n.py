@@ -75,6 +75,8 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:公用IP;zh-hant:公共IP}-
 -{H|zh-hans:监视;zh-hant:監視}-
 -{H|zh-hans:通过;zh-hant:透過}-
+-{H|zh-hans:链入;zh-hant:連入}-
+-{H|zh-hans:消链;zh-hant:消連}-
 '''
 
 headers = {

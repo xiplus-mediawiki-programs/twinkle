@@ -16,7 +16,7 @@ Twinkle.unlink = function twinkleunlink() {
 	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageName') === Twinkle.getPref('sandboxPage') || !Morebits.userIsSysop) {
 		return;
 	}
-	Twinkle.addPortletLink(Twinkle.unlink.callback, wgULS('消连', '消連'), 'tw-unlink', wgULS('取消到本页的链接', '取消到本頁的連結'));
+	Twinkle.addPortletLink(Twinkle.unlink.callback, wgULS('消链', '消連'), 'tw-unlink', wgULS('取消到本页的链接', '取消到本頁的連結'));
 };
 
 // the parameter is used when invoking unlink from admin speedy
@@ -276,7 +276,7 @@ Twinkle.unlink.callbacks = {
 			if (text === oldtext) {
 				warningString = warningString ? wgULS('取消链入或文件使用', '取消連入或檔案使用') : wgULS('取消链入', '取消連入');
 			} else {
-				summaryText = (summaryText ? summaryText + ' / ' : '') + wgULS('取消链接到', '取消連結到');
+				summaryText = (summaryText ? summaryText + ' / ' : '') + wgULS('取消链结到', '取消連結到');
 				oldtext = text;
 			}
 		}
