@@ -949,7 +949,6 @@ Twinkle.speedy.normalizeHash = {
 };
 
 Twinkle.speedy.callbacks = {
-	
 	getTemplateCodeAndParams: function(params) {
 		var code, parameters, i;
 		if (params.normalizeds.length > 1) {
