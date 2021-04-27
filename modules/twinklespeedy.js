@@ -343,8 +343,6 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 		});
 	}
 
-	var pseudoNameSpace = ['MOS', 'LTA'];
-	var pagePrefix = mw.config.get('wgPageName').slice(0, mw.config.get('wgPageName').indexOf(':'));
 	var radioOrCheckbox = Twinkle.speedy.mode.isMultiple(mode) ? 'checkbox' : 'radio';
 
 	if (isSysopMode && !Twinkle.speedy.mode.isMultiple(mode)) {
@@ -353,10 +351,10 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 	}
 
 	switch (namespace) {
-		case 0:  // article including pseudo namespace
+		case 0:  // article and pseudo namespace
 			work_area.append({ type: 'header', label: wgULS('条目', '條目') });
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.articleList, mode) });
-			if (pseudoNameSpace.toString().indexOf(pagePrefix) > -1) {
+			if (/^(MOS|LTA):/.test(mw.config.get('wgPageName')) && !Morebits.isPageRedirect()) { // pseudo namespace
 				work_area.append({ type: 'header', label: wgULS('伪名字空间', '偽命名空間') });
 				work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.pseudoNSList, mode) });
 			}
