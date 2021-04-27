@@ -351,9 +351,13 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 	}
 
 	switch (namespace) {
-		case 0:  // article
+		case 0:  // article and pseudo namespace
 			work_area.append({ type: 'header', label: wgULS('条目', '條目') });
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.articleList, mode) });
+			if (/^(MOS|LTA):/.test(mw.config.get('wgPageName')) && !Morebits.isPageRedirect()) { // pseudo namespace
+				work_area.append({ type: 'header', label: wgULS('伪名字空间', '偽命名空間') });
+				work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.pseudoNSList, mode) });
+			}
 			break;
 
 		case 2:  // user
@@ -585,6 +589,14 @@ Twinkle.speedy.customRationale = [
 			size: 60
 		}
 		// hideWhenMultiple: true
+	}
+];
+
+Twinkle.speedy.pseudoNSList = [
+	{
+		label: wgULS('O8. 在伪名字空间中创建的非重定向页', 'O8. 在偽命名空間中建立的非重新導向頁面'),
+		value: 'o8',
+		tooltip: wgULS('伪名字空间仅能用于重定向。如可以移动到合适的名称，请将页面移动到合适的名称，否则请使用此款快速删除。若页面明显是一个条目，则不适用此款快速删除。', '偽命名空間僅能用於重新導向。如可以移動到合適的名稱，請將頁面移動到合適的名稱，否則請使用此款快速刪除。若頁面明顯是一個條目，則不適用此款快速刪除。')
 	}
 ];
 
@@ -930,7 +942,8 @@ Twinkle.speedy.normalizeHash = {
 	'o1': 'o1',
 	'o3': 'o3',
 	'o4': 'o4',
-	'o7': 'o7'
+	'o7': 'o7',
+	'o8': 'o8'
 };
 
 Twinkle.speedy.callbacks = {
