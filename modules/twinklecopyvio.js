@@ -114,11 +114,26 @@ Twinkle.copyvio.callbacks = {
 	},
 	taggingArticle: function(pageobj) {
 		var params = pageobj.getCallbackParameters();
-		var tag = '{{subst:Copyvio/auto|url=' + params.source.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^*])/gm, '* $1').replace(/^\* $/m, '') + '|OldRevision=' + mw.config.get('wgRevisionId') + '}}';
+		var url = params.source.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^*])/gm, '* $1').replace(/^\* $/m, '');
+		var tag = '{{subst:Copyvio/auto|url=' + url + '|OldRevision=' + mw.config.get('wgRevisionId') + '}}';
 		var text = pageobj.getPageText();
 		var oldcsd = text.match(/\{\{\s*(db(-\w*)?|d|delete)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}/i);
 		if (oldcsd && confirm(wgULS('在页面上找到快速删除模板，要保留吗？\n\n当页面同时侵犯著作权又符合快速删除标准时，应该优先走快速删除程序。\n单击“确认”以保留快速删除模板，若您认为快速删除理由不合，单击“取消”以移除快速删除模板。', '在頁面上找到快速刪除模板，要保留嗎？\n\n當頁面同時侵犯版權又符合快速刪除標準時，應該優先走快速刪除程序。\n點擊「確認」以保留快速刪除模板，若您認為快速刪除理由不合，點擊「取消」以移除快速刪除模板。'))) {
 			tag = oldcsd[0] + '\n' + tag;
+		}
+
+		if (mw.config.get('wgPageContentModel') === 'json') {
+			text = JSON.stringify([{
+				_addText: tag
+			}]);
+		} else if (mw.config.get('wgPageContentModel') === 'Scribunto') {
+			Twinkle.copyvio.callbacks.tagginglua(pageobj, tag);
+			return;
+		} else if (['javascript', 'css', 'sanitized-css'].indexOf(mw.config.get('wgPageContentModel')) > -1) {
+			if (tag.indexOf('*/')) {
+				tag = tag.replace(/\*\//g, '*&#0047;');
+			}
+			tag = '/* _addText: ' + tag + ' */';
 		}
 
 		pageobj.setPageText(tag);
@@ -131,6 +146,27 @@ Twinkle.copyvio.callbacks = {
 		if (Twinkle.getPref('markCopyvioPagesAsPatrolled')) {
 			pageobj.patrol();
 		}
+	},
+	tagginglua: function(pageobj, tag) {
+		new mw.Api().parse(tag, {
+			onlypst: 1
+		}).then(function (tag) {
+			var equals = '';
+			while (tag.indexOf(']' + equals + ']') !== -1) {
+				equals += '=';
+			}
+			tag = "require('Module:Module wikitext')._addText([" + equals + '[' + tag + ']' + equals + ']);';
+
+			pageobj.setPageText(tag);
+			pageobj.setEditSummary(wgULS('本页面疑似侵犯著作权', '本頁面疑似侵犯版權'));
+			pageobj.setChangeTags(Twinkle.changeTags);
+			pageobj.setWatchlist(Twinkle.getPref('copyvioWatchPage'));
+			// pageobj.setCreateOption('recreate');
+			pageobj.save();
+		}, function (err) {
+			mw.log.error(err);
+			Morebits.status.error(wgULS('错误', '錯誤'), wgULS('无法展开wikitext', '無法展開wikitext'));
+		});
 	},
 	copyvioList: function(pageobj) {
 		var text = pageobj.getPageText();
