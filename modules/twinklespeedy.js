@@ -1292,14 +1292,45 @@ Twinkle.speedy.callbacks = {
 				code += '\n{{subst:Copyvio/auto|url=* 請管理員檢查已刪歷史內容及侵權來源：[[Special:Undelete/' + params.copyvio + ']]|OldRevision=' + mw.config.get('wgRevisionId') + '}}';
 			}
 
-			// Scribunto isn't parsed like wikitext, so CSD templates on modules need special handling to work
-			if (mw.config.get('wgPageContentModel') === 'Scribunto') {
-				var equals = '';
-				while (code.indexOf(']' + equals + ']') !== -1) {
-					equals += '=';
+			if (mw.config.get('wgPageContentModel') === 'json') {
+				var json = JSON.parse(text);
+				if (params.blank) {
+					json = [{
+						_addText: code
+					}];
+				} else if (json instanceof Array) {
+					json.unshift({
+						_addText: code
+					});
+				} else {
+					json._addText = code;
 				}
-				code = "require('Module:Module wikitext')._addText([" + equals + '[' + code + ']' + equals + ']);';
+
+				text = JSON.stringify(json);
+			} else {
+				if (mw.config.get('wgPageContentModel') === 'Scribunto') {
+					var equals = '';
+					while (code.indexOf(']' + equals + ']') !== -1) {
+						equals += '=';
+					}
+					code = "require('Module:Module wikitext')._addText([" + equals + '[' + code + ']' + equals + ']);';
+				} else if (['javascript', 'css', 'sanitized-css'].indexOf(mw.config.get('wgPageContentModel'))) {
+					if (code.indexOf('*/')) {
+						code = code.replace(/\*\//g, '*&#0047;');
+					}
+					code = '/* _addText: ' + code + ' */';
+				}
+
+				// Blank attack pages
+				if (params.blank) {
+					text = code;
+				} else {
+					// Insert tag after short description or any hatnotes
+					var wikipage = new Morebits.wikitext.page(text);
+					text = wikipage.insertAfterTemplates(code + '\n', Twinkle.hatnoteRegex).getText();
+				}
 			}
+
 
 			// Generate edit summary for edit
 			var editsummary;
@@ -1317,17 +1348,6 @@ Twinkle.speedy.callbacks = {
 			} else {
 				editsummary = wgULS('请求快速删除', '請求快速刪除') + '（[[WP:CSD#' + params.normalizeds[0].toUpperCase() + '|CSD ' + params.normalizeds[0].toUpperCase() + ']]）';
 			}
-
-
-			// Blank attack pages
-			if (params.blank) {
-				text = code;
-			} else {
-				// Insert tag after short description or any hatnotes
-				var wikipage = new Morebits.wikitext.page(text);
-				text = wikipage.insertAfterTemplates(code + '\n', Twinkle.hatnoteRegex).getText();
-			}
-
 
 			pageobj.setPageText(text);
 			pageobj.setEditSummary(editsummary);
