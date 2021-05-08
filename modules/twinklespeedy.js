@@ -1314,7 +1314,7 @@ Twinkle.speedy.callbacks = {
 						equals += '=';
 					}
 					code = "require('Module:Module wikitext')._addText([" + equals + '[' + code + ']' + equals + ']);';
-				} else if (['javascript', 'css', 'sanitized-css'].indexOf(mw.config.get('wgPageContentModel'))) {
+				} else if (['javascript', 'css', 'sanitized-css'].indexOf(mw.config.get('wgPageContentModel')) > -1) {
 					if (code.indexOf('*/')) {
 						code = code.replace(/\*\//g, '*&#0047;');
 					}

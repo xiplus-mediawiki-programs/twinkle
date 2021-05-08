@@ -380,12 +380,13 @@ Twinkle.xfd.callbacks = {
 						equals += '=';
 					}
 					tag = "require('Module:Module wikitext')._addText([" + equals + '[' + tag + ']' + equals + ']);';
-				} else if (['javascript', 'css', 'sanitized-css'].indexOf(mw.config.get('wgPageContentModel'))) {
+				} else if (['javascript', 'css', 'sanitized-css'].indexOf(mw.config.get('wgPageContentModel')) > -1) {
 					if (tag.indexOf('*/')) {
 						tag = tag.replace(/\*\//g, '*&#0047;');
 					}
 					tag = '/* _addText: ' + tag + ' */';
 				}
+
 				// Insert tag after short description or any hatnotes
 				var wikipage = new Morebits.wikitext.page(text);
 				text = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
