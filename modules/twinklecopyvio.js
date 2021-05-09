@@ -126,7 +126,25 @@ Twinkle.copyvio.callbacks = {
 				_addText: tag
 			}]);
 		} else if (mw.config.get('wgPageContentModel') === 'Scribunto') {
-			Twinkle.copyvio.callbacks.tagginglua(pageobj, tag);
+			new mw.Api().parse(tag, {
+				onlypst: 1
+			}).then(function (tag) {
+				var equals = '';
+				while (tag.indexOf(']' + equals + ']') !== -1) {
+					equals += '=';
+				}
+				tag = "require('Module:Module wikitext')._addText([" + equals + '[' + tag + ']' + equals + ']);';
+
+				pageobj.setPageText(tag);
+				pageobj.setEditSummary(wgULS('本页面疑似侵犯著作权', '本頁面疑似侵犯版權'));
+				pageobj.setChangeTags(Twinkle.changeTags);
+				pageobj.setWatchlist(Twinkle.getPref('copyvioWatchPage'));
+				// pageobj.setCreateOption('recreate');
+				pageobj.save();
+			}, function (err) {
+				mw.log.error(err);
+				Morebits.status.error(wgULS('错误', '錯誤'), wgULS('无法展开wikitext', '無法展開wikitext'));
+			});
 			return;
 		} else if (['javascript', 'css', 'sanitized-css'].indexOf(mw.config.get('wgPageContentModel')) > -1) {
 			tag = '/* _addText: ' + tag.replace(/\*\//g, '*&#0047;') + ' */';
@@ -142,27 +160,6 @@ Twinkle.copyvio.callbacks = {
 		if (Twinkle.getPref('markCopyvioPagesAsPatrolled')) {
 			pageobj.patrol();
 		}
-	},
-	tagginglua: function(pageobj, tag) {
-		new mw.Api().parse(tag, {
-			onlypst: 1
-		}).then(function (tag) {
-			var equals = '';
-			while (tag.indexOf(']' + equals + ']') !== -1) {
-				equals += '=';
-			}
-			tag = "require('Module:Module wikitext')._addText([" + equals + '[' + tag + ']' + equals + ']);';
-
-			pageobj.setPageText(tag);
-			pageobj.setEditSummary(wgULS('本页面疑似侵犯著作权', '本頁面疑似侵犯版權'));
-			pageobj.setChangeTags(Twinkle.changeTags);
-			pageobj.setWatchlist(Twinkle.getPref('copyvioWatchPage'));
-			// pageobj.setCreateOption('recreate');
-			pageobj.save();
-		}, function (err) {
-			mw.log.error(err);
-			Morebits.status.error(wgULS('错误', '錯誤'), wgULS('无法展开wikitext', '無法展開wikitext'));
-		});
 	},
 	copyvioList: function(pageobj) {
 		var text = pageobj.getPageText();
