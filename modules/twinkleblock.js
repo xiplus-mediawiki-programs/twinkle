@@ -686,7 +686,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 					$('<b>' + new Morebits.date(Twinkle.block.recentBlockLog.timestamp).calendar('utc') + '</b>')[0],
 					'被' + Twinkle.block.recentBlockLog.user + wgULS('封禁', '封鎖'),
 					$('<b>' + Morebits.string.formatTime(Twinkle.block.recentBlockLog.params.duration) + '</b>')[0],
-					Twinkle.block.manualUnblock ? wgULS('（手动解封）', '（手動解封）') : wgULS('（自动过期）', '（自動逾期）')
+					Twinkle.block.manualUnblock ? wgULS('（手动解封）', '（手動解封）') : wgULS('（自动过期）', '（自動過期）')
 				],
 			$blockloglink[0]
 		);
