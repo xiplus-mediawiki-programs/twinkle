@@ -129,10 +129,7 @@ Twinkle.copyvio.callbacks = {
 			Twinkle.copyvio.callbacks.tagginglua(pageobj, tag);
 			return;
 		} else if (['javascript', 'css', 'sanitized-css'].indexOf(mw.config.get('wgPageContentModel')) > -1) {
-			if (tag.indexOf('*/')) {
-				tag = tag.replace(/\*\//g, '*&#0047;');
-			}
-			tag = '/* _addText: ' + tag + ' */';
+			tag = '/* _addText: ' + tag.replace(/\*\//g, '*&#0047;') + ' */';
 		}
 
 		pageobj.setPageText(tag);
