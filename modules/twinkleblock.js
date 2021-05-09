@@ -173,9 +173,9 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 				? data.query.logevents[0]
 				: data.query.logevents.length >= 2 ? data.query.logevents[1] : null;
 			// Only ongoing block could be unblocked
-			Twinkle.block.manualUnblock = Twinkle.block.hasBlockLog 
-				? data.query.logevents[0].action === 'unblock' ? true : false
-				: false
+			Twinkle.block.manualUnblock = Twinkle.block.hasBlockLog
+				? data.query.logevents[0].action === 'unblock'
+				: false;
 			if (typeof fn === 'function') {
 				return fn();
 			}
