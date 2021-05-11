@@ -1324,10 +1324,10 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		if (checkIncompatible(['Blocked user', 'Sockpuppeteer'], wgULS('{{Sockpuppeteer}}已有遭到永久封禁字样。', '{{Sockpuppeteer}}已有遭到永久封鎖字樣。'))) {
 			return;
 		}
-		if (checkIncompatible(['Blocked user', 'Locked global account'], wgULS('请勾选{{Locked global account}}的“亦被本地封禁”选项。', '請勾選{{Locked global account}}的「亦被本地封鎖」選項。'))) {
+		if (checkIncompatible(['Blocked user', 'Locked global account'], wgULS('请使用{{Locked global account}}的“亦被本地封禁”选项。', '請使用{{Locked global account}}的「亦被本地封鎖」選項。'))) {
 			return;
 		}
-		if (checkIncompatible(['Blocked sockpuppet', 'Sockpuppeteer'], wgULS('您从主账户和分身账户中选择一个。', '您從主帳號和分身帳號中選擇一個。'))) {
+		if (checkIncompatible(['Blocked sockpuppet', 'Sockpuppeteer'], wgULS('请从主账户和分身账户中选择一个。', '請從主帳號和分身帳號中選擇一個。'))) {
 			return;
 		}
 
