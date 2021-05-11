@@ -1541,10 +1541,10 @@ Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUse
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.protect(function() {
 			Morebits.status.info(wgULS('保护用户页', '保護使用者頁面'), pageobj.exists() ? wgULS('已全保护', '已全保護') : wgULS('已白纸保护', '已白紙保護'));
-			statelem.done('全部完成');
+			statelem.info('全部完成');
 		});
 	} else {
-		statelem.done('全部完成');
+		statelem.info('全部完成');
 	}
 };
 
