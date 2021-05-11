@@ -1530,7 +1530,7 @@ Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUse
 	var params = pageobj.getCallbackParameters();
 	var statelem = pageobj.getStatusElement();
 
-	if (params.isprotect) {
+	if (params.actiontype.indexOf('protect') > -1) {
 		if (pageobj.exists()) {
 			pageobj.setEditProtection('sysop', 'indefinite');
 			pageobj.setMoveProtection('sysop', 'indefinite');
