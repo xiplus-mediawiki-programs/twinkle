@@ -539,11 +539,11 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			list: [
 				{
 					label: '{{Blocked user}}：' + wgULS('一般永久封禁', '一般永久封鎖'),
-					value: 'indef'
+					value: 'Blocked user'
 				},
 				{
 					label: '{{Blocked sockpuppet}}：' + wgULS('傀儡账户', '傀儡帳號'),
-					value: 'spp',
+					value: 'Blocked sockpuppet',
 					subgroup: [
 						{
 							name: 'sppUsername',
@@ -560,7 +560,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				},
 				{
 					label: '{{Sockpuppeteer|blocked}}：' + wgULS('傀儡主账户', '傀儡主帳號'),
-					value: 'spm',
+					value: 'Sockpuppeteer',
 					subgroup: [
 						{
 							type: 'checkbox',
@@ -581,7 +581,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				},
 				{
 					label: '{{Locked global account}}：' + wgULS('全域锁定', '全域鎖定'),
-					value: 'lock',
+					value: 'Locked global account',
 					subgroup: [
 						{
 							type: 'checkbox',
@@ -1300,11 +1300,38 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	templateoptions.expiry = templateoptions.template_expiry || blockoptions.expiry;
 
 	// Check tags
+	// Given an array of incompatible tags, check if we have two or more selected
+	var checkIncompatible = function(conflicts, extra) {
+		var count = conflicts.reduce(function(sum, tag) {
+			return sum += params.tag.indexOf(tag) !== -1;
+		}, 0);
+		if (count > 1) {
+			var message = wgULS('请在以下标签中择一使用', '請在以下標籤中擇一使用') + '：{{' + conflicts.join('}}、{{') + '}}。';
+			message += extra ? extra : '';
+			alert(message);
+			return true;
+		}
+	};
+
 	if (toTag) {
 		if (params.tag.length === 0) {
 			return alert(wgULS('请至少选择一个用户页标记！', '請至少選擇一個使用者頁面標記！'));
 		}
-		if (params.tag.indexOf('spp') > -1 && params.sppUsername.trim() === '') {
+
+		if (checkIncompatible(['Blocked user', 'Blocked sockpuppet'], '{{Blocked sockpuppet}}已包含{{Blocked user}}。')) {
+			return;
+		}
+		if (checkIncompatible(['Blocked user', 'Sockpuppeteer'], wgULS('{{Sockpuppeteer}}已有遭到永久封禁字样。', '{{Sockpuppeteer}}已有遭到永久封鎖字樣。'))) {
+			return;
+		}
+		if (checkIncompatible(['Blocked user', 'Locked global account'], wgULS('请勾选{{Locked global account}}的“亦被本地封禁”选项。', '請勾選{{Locked global account}}的「亦被本地封鎖」選項。'))) {
+			return;
+		}
+		if (checkIncompatible(['Blocked sockpuppet', 'Sockpuppeteer'], wgULS('您从主账户和分身账户中选择一个。', '您從主帳號和分身帳號中選擇一個。'))) {
+			return;
+		}
+
+		if (params.tag.indexOf('Blocked sockpuppet') > -1 && params.sppUsername.trim() === '') {
 			return alert(wgULS('请提供傀儡账户的主账户用户名！', '請提供傀儡帳號的主帳號使用者名稱！'));
 		}
 	}
@@ -1475,21 +1502,19 @@ Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pa
 	if (params.actiontype.indexOf('tag') > -1) {
 		var tags = [];
 		params.tag.forEach(function(tag) {
-			var tagtext = '{{';
+			var tagtext = '{{' + tag;
 
 			switch (tag) {
-				case 'indef':
-					tagtext += 'Blocked user';
+				case 'Blocked user':
 					break;
-				case 'spp':
-					tagtext += 'Blocked sockpuppet';
+				case 'Blocked sockpuppet':
 					tagtext += '|1=' + params.sppUsername.trim();
 					if (params.sppEvidence.trim()) {
 						tagtext += '|evidence=' + params.sppEvidence.trim();
 					}
 					break;
-				case 'spm':
-					tagtext += 'Sockpuppeteer|blocked';
+				case 'Sockpuppeteer':
+					tagtext += '|blocked';
 					if (params.spmChecked) {
 						tagtext += '|check=yes';
 					}
@@ -1497,8 +1522,7 @@ Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pa
 						tagtext += '|evidence=' + params.spmEvidence.trim();
 					}
 					break;
-				case 'lock':
-					tagtext += 'Locked global account';
+				case 'Locked global account':
 					if (params.lockBlocked) {
 						tagtext += '|blocked=yes';
 					}
