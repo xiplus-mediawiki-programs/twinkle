@@ -1318,10 +1318,10 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			return alert(wgULS('请至少选择一个用户页标记！', '請至少選擇一個使用者頁面標記！'));
 		}
 
-		if (checkIncompatible(['Blocked user', 'Blocked sockpuppet'], '{{Blocked sockpuppet}}已包含{{Blocked user}}。')) {
+		if (checkIncompatible(['Blocked user', 'Blocked sockpuppet'], wgULS('{{Blocked sockpuppet}}已涵盖{{Blocked user}}的功能。', '{{Blocked sockpuppet}}已涵蓋{{Blocked user}}的功能。'))) {
 			return;
 		}
-		if (checkIncompatible(['Blocked user', 'Sockpuppeteer'], wgULS('{{Sockpuppeteer}}已有遭到永久封禁字样。', '{{Sockpuppeteer}}已有遭到永久封鎖字樣。'))) {
+		if (checkIncompatible(['Blocked user', 'Sockpuppeteer'], wgULS('{{Sockpuppeteer}}已涵盖{{Blocked user}}的功能。', '{{Sockpuppeteer}}已涵蓋{{Blocked user}}的功能。'))) {
 			return;
 		}
 		if (checkIncompatible(['Blocked user', 'Locked global account'], wgULS('请使用{{Locked global account}}的“亦被本地封禁”选项。', '請使用{{Locked global account}}的「亦被本地封鎖」選項。'))) {
