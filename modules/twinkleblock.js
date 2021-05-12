@@ -821,20 +821,12 @@ Twinkle.block.blockPresetsInfo = {
 		nocreate: true,
 		reasonParam: true
 	},
-	'uw-bblock': {
-	},
-	'uw-block1': {
+	'uw-block': {
 		autoblock: true,
 		nocreate: true,
 		reasonParam: true
 	},
-	'uw-block2': {
-		autoblock: true,
-		expiry: '1 week',
-		nocreate: true,
-		reasonParam: true
-	},
-	'uw-block3': {
+	'uw-blockindef': {
 		autoblock: true,
 		expiry: 'infinity',
 		nocreate: true,
@@ -944,9 +936,8 @@ Twinkle.block.blockGroups = [
 		meta: true,
 		label: '封禁模板',
 		list: [
-			{ label: wgULS('层级1封禁', '層級1封鎖'), value: 'uw-block1' },
-			{ label: wgULS('层级2封禁', '層級2封鎖'), value: 'uw-block2' },
-			{ label: wgULS('层级3封禁', '層級3封鎖'), value: 'uw-block3' },
+			{ label: wgULS('一般封禁', '一般封鎖'), value: 'uw-block' },
+			{ label: wgULS('永久封禁', '永久封鎖'), value: 'uw-blockindef' },
 			{ label: '匿名封禁', value: 'uw-ablock', forAnonOnly: true }
 		]
 	},
@@ -954,26 +945,26 @@ Twinkle.block.blockGroups = [
 		label: '一般的封禁理由',
 		list: [
 			{ label: wgULS('[[WP:VAN|破坏]]', '[[WP:VAN|破壞]]'), value: 'uw-vblock' },
-			{ label: wgULS('[[WP:VAN#LANG|繁简破坏]]', '[[WP:VAN#LANG|繁簡破壞]]'), value: 'uw-block1' },
-			{ label: wgULS('跨维基项目破坏', '跨維基項目破壞'), value: 'uw-block1', forRegisteredOnly: true },
-			{ label: wgULS('[[WP:VOA|纯粹破坏]]', '[[WP:VOA|純粹破壞]]'), value: 'uw-block3', forRegisteredOnly: true },
+			{ label: wgULS('[[WP:VAN#LANG|繁简破坏]]', '[[WP:VAN#LANG|繁簡破壞]]'), value: 'uw-block' },
+			{ label: wgULS('跨维基项目破坏', '跨維基項目破壞'), value: 'uw-block', forRegisteredOnly: true },
+			{ label: wgULS('[[WP:VOA|纯粹破坏]]', '[[WP:VOA|純粹破壞]]'), value: 'uw-blockindef', forRegisteredOnly: true },
 			{ label: wgULS('不断加入[[Wikipedia:垃圾内容|垃圾链接]]', '不斷加入[[Wikipedia:垃圾內容|垃圾連結]]'), value: 'uw-sblock' },
-			{ label: wgULS('[[WP:SOAP|散发广告/宣传]]', '[[WP:SOAP|散發廣告/宣傳]]'), value: 'uw-block1' },
-			{ label: wgULS('仅[[WP:SOAP|散发广告/宣传]]', '僅[[WP:SOAP|散發廣告/宣傳]]'), value: 'uw-block3', forRegisteredOnly: true },
+			{ label: wgULS('[[WP:SOAP|散发广告/宣传]]', '[[WP:SOAP|散發廣告/宣傳]]'), value: 'uw-block' },
+			{ label: wgULS('仅[[WP:SOAP|散发广告/宣传]]', '僅[[WP:SOAP|散發廣告/宣傳]]'), value: 'uw-blockindef', forRegisteredOnly: true },
 			{ label: wgULS('违反[[WP:3RR|回退不过三原则]]', '違反[[WP:3RR|回退不過三原則]]'), value: 'uw-3block' },
-			{ label: wgULS('无礼的行为、[[WP:NPA|攻击别人]]', '無禮的行為、[[WP:NPA|攻擊別人]]'), value: 'uw-block1' },
-			{ label: wgULS('[[WP:骚扰|骚扰用户]]', '[[WP:騷擾|騷擾使用者]]'), value: 'uw-block1' },
-			{ label: wgULS('[[WP:扰乱|扰乱]]', '[[WP:擾亂|擾亂]]'), value: 'uw-block1' },
-			{ label: wgULS('[[WP:GAME|游戏维基规则]]', '[[WP:GAME|遊戲維基規則]]'), value: 'uw-block1' },
-			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根据用户贡献确定', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根據使用者貢獻確定'), value: 'uw-block1', forAnonOnly: true },
-			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 用户查核确认', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 使用者查核確認'), value: 'uw-block1', forAnonOnly: true },
-			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根据用户贡献确定', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根據使用者貢獻確定'), value: 'uw-block3', forRegisteredOnly: true },
-			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 用户查核确认', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 使用者查核確認'), value: 'uw-block3', forRegisteredOnly: true },
-			{ label: wgULS('滥用[[WP:SOCK|傀儡]]', '濫用[[WP:SOCK|傀儡]]'), value: 'uw-block1', forRegisteredOnly: true },
-			{ label: wgULS('屡次增加不实资料', '屢次增加不實資料'), value: 'uw-block1' },
-			{ label: wgULS('在条目中增加无意义文字', '在條目中增加無意義文字'), value: 'uw-block1' },
+			{ label: wgULS('无礼的行为、[[WP:NPA|攻击别人]]', '無禮的行為、[[WP:NPA|攻擊別人]]'), value: 'uw-block' },
+			{ label: wgULS('[[WP:骚扰|骚扰用户]]', '[[WP:騷擾|騷擾使用者]]'), value: 'uw-block' },
+			{ label: wgULS('[[WP:扰乱|扰乱]]', '[[WP:擾亂|擾亂]]'), value: 'uw-block' },
+			{ label: wgULS('[[WP:GAME|游戏维基规则]]', '[[WP:GAME|遊戲維基規則]]'), value: 'uw-block' },
+			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根据用户贡献确定', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根據使用者貢獻確定'), value: 'uw-block', forAnonOnly: true },
+			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 用户查核确认', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 使用者查核確認'), value: 'uw-block', forAnonOnly: true },
+			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根据用户贡献确定', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根據使用者貢獻確定'), value: 'uw-blockindef', forRegisteredOnly: true },
+			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 用户查核确认', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 使用者查核確認'), value: 'uw-blockindef', forRegisteredOnly: true },
+			{ label: wgULS('滥用[[WP:SOCK|傀儡]]', '濫用[[WP:SOCK|傀儡]]'), value: 'uw-block', forRegisteredOnly: true },
+			{ label: wgULS('屡次增加不实资料', '屢次增加不實資料'), value: 'uw-block' },
+			{ label: wgULS('在条目中增加无意义文字', '在條目中增加無意義文字'), value: 'uw-block' },
 			{ label: wgULS('无故删除条目内容', '無故刪除條目內容'), value: 'uw-dblock' },
-			{ label: wgULS('多次加入[[WP:COPYVIO|侵犯著作权]]的内容', '多次加入[[WP:COPYVIO|侵犯著作權]]的內容'), value: 'uw-block1' },
+			{ label: wgULS('多次加入[[WP:COPYVIO|侵犯著作权]]的内容', '多次加入[[WP:COPYVIO|侵犯著作權]]的內容'), value: 'uw-block' },
 			{ label: wgULS('机器人发生故障并必须紧急停止', '機器人發生故障並必須緊急停止'), value: 'Bot block message', forRegisteredOnly: true }
 			// { label: wgULS('剥夺编辑讨论页权限', '剝奪編輯討論頁權限'), value: '' }
 		]
