@@ -533,24 +533,70 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		field_tag_options = new Morebits.quickForm.element({ type: 'field', label: wgULS('标记用户页', '標記使用者頁面'), name: 'field_tag_options' });
 
 		field_tag_options.append({
-			type: 'select',
+			type: 'checkbox',
 			name: 'tag',
 			label: wgULS('选择用户页模板：', '選擇使用者頁面模板：'),
-			event: Twinkle.block.callback.change_tag,
 			list: [
-				{ label: '{{Indef}}：一般永久封禁', value: 'indef' },
-				{ label: '{{Spp}}：傀儡帳號', value: 'spp' },
-				{ label: '{{Sockpuppeteer|blocked}}：傀儡主帳號', value: 'spm' }
+				{
+					label: '{{Blocked user}}：' + wgULS('一般永久封禁', '一般永久封鎖'),
+					value: 'Blocked user'
+				},
+				{
+					label: '{{Blocked sockpuppet}}：' + wgULS('傀儡账户', '傀儡帳號'),
+					value: 'Blocked sockpuppet',
+					subgroup: [
+						{
+							name: 'sppUsername',
+							type: 'input',
+							label: wgULS('主账户用户名：', '主帳號使用者名稱：')
+						},
+						{
+							name: 'sppEvidence',
+							type: 'input',
+							label: wgULS('根据……确定：', '根據……確定：'),
+							tooltip: wgULS('纯文字或是带[[]]的链接，例如：[[Special:固定链接/xxxxxxxx|用户查核]]', '純文字或是帶[[]]的連結，例如：[[Special:固定链接/xxxxxxxx|用戶查核]]')
+						}
+					]
+				},
+				{
+					label: '{{Sockpuppeteer|blocked}}：' + wgULS('傀儡主账户', '傀儡主帳號'),
+					value: 'Sockpuppeteer',
+					subgroup: [
+						{
+							type: 'checkbox',
+							list: [
+								{
+									name: 'spmChecked',
+									value: 'spmChecked',
+									label: wgULS('经用户查核确认', '經使用者查核確認')
+								}
+							]
+						},
+						{
+							name: 'spmEvidence',
+							type: 'input',
+							label: wgULS('额外理由：', '額外理由：')
+						}
+					]
+				},
+				{
+					label: '{{Locked global account}}：' + wgULS('全域锁定', '全域鎖定'),
+					value: 'Locked global account',
+					subgroup: [
+						{
+							type: 'checkbox',
+							list: [
+								{
+									name: 'lockBlocked',
+									value: 'lockBlocked',
+									label: wgULS('亦被本地封禁', '亦被本地封鎖')
+								}
+							]
+						}
+					]
+				}
 			]
 		});
-
-		field_tag_options.append({
-			type: 'input',
-			name: 'username',
-			label: wgULS('主账户用户名：', '主帳號使用者名稱：'),
-			display: 'none'
-		});
-
 	}
 
 	if ($form.find('[name=actiontype][value=unblock]').is(':checked')) {
@@ -716,9 +762,6 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		} else {
 			Twinkle.block.callback.change_template(e);
 		}
-	}
-	if ($form.find('[name=actiontype][value=tag]').is(':checked')) {
-		Twinkle.block.callback.change_tag(e);
 	}
 };
 
@@ -1192,16 +1235,6 @@ Twinkle.block.prev_block_reason = null;
 Twinkle.block.prev_article = null;
 Twinkle.block.prev_reason = null;
 
-Twinkle.block.callback.change_tag = function twinkleblockcallbackChangeTag(e) {
-	var form = e.target.form, value = form.tag.value;
-
-	if (value === 'spp') {
-		form.username.parentNode.style.display = 'block';
-	} else {
-		form.username.parentNode.style.display = 'none';
-	}
-};
-
 Twinkle.block.callback.preview = function twinkleblockcallbackPreview(form) {
 	var params = {
 		article: form.article.value,
@@ -1226,6 +1259,8 @@ Twinkle.block.callback.preview = function twinkleblockcallbackPreview(form) {
 };
 
 Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
+	var params = Morebits.quickForm.getInputData(e.target);
+
 	var $form = $(e.target),
 		toBlock = $form.find('[name=actiontype][value=block]').is(':checked'),
 		toWarn = $form.find('[name=actiontype][value=template]').is(':checked'),
@@ -1233,7 +1268,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		toTag = $form.find('[name=actiontype][value=tag]').is(':checked'),
 		toProtect = $form.find('[name=actiontype][value=protect]').is(':checked'),
 		toUnblock = $form.find('[name=actiontype][value=unblock]').is(':checked'),
-		blockoptions = {}, templateoptions = {}, unblockoptions = {}, tagprotectoptions = {};
+		blockoptions = {}, templateoptions = {}, unblockoptions = {};
 
 	Twinkle.block.callback.saveFieldset($form.find('[name=field_block_options]'));
 	Twinkle.block.callback.saveFieldset($form.find('[name=field_template_options]'));
@@ -1242,14 +1277,10 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 
 	blockoptions = Twinkle.block.field_block_options;
 	unblockoptions = Twinkle.block.field_unblock_options;
-	tagprotectoptions = Twinkle.block.field_tag_options;
 
 	templateoptions = Twinkle.block.field_template_options;
 	templateoptions.disabletalk = !!(templateoptions.disabletalk || blockoptions.disabletalk);
 	templateoptions.hardblock = !!blockoptions.hardblock;
-
-	tagprotectoptions.istag = toTag;
-	tagprotectoptions.isprotect = toProtect;
 
 	// remove extraneous
 	delete blockoptions.expiry_preset;
@@ -1267,6 +1298,43 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	// use block settings as warn options where not supplied
 	templateoptions.summary = templateoptions.summary || blockoptions.reason;
 	templateoptions.expiry = templateoptions.template_expiry || blockoptions.expiry;
+
+	// Check tags
+	// Given an array of incompatible tags, check if we have two or more selected
+	var checkIncompatible = function(conflicts, extra) {
+		var count = conflicts.reduce(function(sum, tag) {
+			return sum += params.tag.indexOf(tag) !== -1;
+		}, 0);
+		if (count > 1) {
+			var message = wgULS('请在以下标签中择一使用', '請在以下標籤中擇一使用') + '：{{' + conflicts.join('}}、{{') + '}}。';
+			message += extra ? extra : '';
+			alert(message);
+			return true;
+		}
+	};
+
+	if (toTag) {
+		if (params.tag.length === 0) {
+			return alert(wgULS('请至少选择一个用户页标记！', '請至少選擇一個使用者頁面標記！'));
+		}
+
+		if (checkIncompatible(['Blocked user', 'Blocked sockpuppet'], wgULS('{{Blocked sockpuppet}}已涵盖{{Blocked user}}的功能。', '{{Blocked sockpuppet}}已涵蓋{{Blocked user}}的功能。'))) {
+			return;
+		}
+		if (checkIncompatible(['Blocked user', 'Sockpuppeteer'], wgULS('{{Sockpuppeteer}}已涵盖{{Blocked user}}的功能。', '{{Sockpuppeteer}}已涵蓋{{Blocked user}}的功能。'))) {
+			return;
+		}
+		if (checkIncompatible(['Blocked user', 'Locked global account'], wgULS('请使用{{Locked global account}}的“亦被本地封禁”选项。', '請使用{{Locked global account}}的「亦被本地封鎖」選項。'))) {
+			return;
+		}
+		if (checkIncompatible(['Blocked sockpuppet', 'Sockpuppeteer'], wgULS('请从主账户和分身账户中选择一个。', '請從主帳號和分身帳號中選擇一個。'))) {
+			return;
+		}
+
+		if (params.tag.indexOf('Blocked sockpuppet') > -1 && params.sppUsername.trim() === '') {
+			return alert(wgULS('请提供傀儡账户的主账户用户名！', '請提供傀儡帳號的主帳號使用者名稱！'));
+		}
+	}
 
 	if (toBlock) {
 		if (blockoptions.partial) {
@@ -1401,7 +1469,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		Morebits.status.init(e.target);
 		var userPage = 'User:' + Morebits.wiki.flow.relevantUserName(true);
 		var wikipedia_page = new Morebits.wiki.page(userPage, wgULS('标记或保护用户页', '標記或保護使用者頁面'));
-		wikipedia_page.setCallbackParameters(tagprotectoptions);
+		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.block.callback.taguserpage);
 	}
 	if (toUnblock) {
@@ -1429,31 +1497,52 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 
 Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pageobj) {
 	var params = pageobj.getCallbackParameters();
-	// var statelem = pageobj.getStatusElement();
-	if (params.istag) {
-		var pagetext = '';
-		switch (params.tag) {
-			case 'indef':
-				pagetext = '{{indef}}';
-				break;
-			case 'spp':
-				var username = params.username.trim();
-				if (!username) {
-					return alert(wgULS('请给主账户用户名！', '請給主帳號使用者名稱！'));
-				}
-				pagetext = '{{Blocked sockpuppet|' + username + '}}';
-				break;
-			case 'spm':
-				pagetext = '{{Sockpuppeteer|blocked}}';
-				break;
-			default:
-				return alert(wgULS('未知的用户页模板！', '未知的使用者頁面模板！'));
-		}
-		pageobj.setPageText(pagetext);
+	var statelem = pageobj.getStatusElement();
+
+	if (params.actiontype.indexOf('tag') > -1) {
+		var tags = [];
+		params.tag.forEach(function(tag) {
+			var tagtext = '{{' + tag;
+
+			switch (tag) {
+				case 'Blocked user':
+					break;
+				case 'Blocked sockpuppet':
+					tagtext += '|1=' + params.sppUsername.trim();
+					if (params.sppEvidence.trim()) {
+						tagtext += '|evidence=' + params.sppEvidence.trim();
+					}
+					break;
+				case 'Sockpuppeteer':
+					tagtext += '|blocked';
+					if (params.spmChecked) {
+						tagtext += '|check=yes';
+					}
+					if (params.spmEvidence.trim()) {
+						tagtext += '|evidence=' + params.spmEvidence.trim();
+					}
+					break;
+				case 'Locked global account':
+					if (params.lockBlocked) {
+						tagtext += '|blocked=yes';
+					}
+					break;
+				default:
+					return alert(wgULS('未知的用户页模板！', '未知的使用者頁面模板！'));
+			}
+
+			tagtext += '}}';
+			tags.push(tagtext);
+		});
+
+		var text = tags.join('\n');
+
+		pageobj.setPageText(text);
 		pageobj.setEditSummary(wgULS('标记被永久封禁的用户页', '標記被永久封鎖的使用者頁面'));
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.save(function() {
 			Morebits.status.info(wgULS('标记用户页', '標記使用者頁面'), '完成');
+			statelem.status(wgULS('正在保护页面', '正在保護頁面'));
 			pageobj.load(Twinkle.block.callback.protectuserpage);
 		});
 	} else {
@@ -1463,8 +1552,9 @@ Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pa
 
 Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUserpage(pageobj) {
 	var params = pageobj.getCallbackParameters();
-	// var statelem = pageobj.getStatusElement();
-	if (params.isprotect) {
+	var statelem = pageobj.getStatusElement();
+
+	if (params.actiontype.indexOf('protect') > -1) {
 		if (pageobj.exists()) {
 			pageobj.setEditProtection('sysop', 'indefinite');
 			pageobj.setMoveProtection('sysop', 'indefinite');
@@ -1475,7 +1565,10 @@ Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUse
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.protect(function() {
 			Morebits.status.info(wgULS('保护用户页', '保護使用者頁面'), pageobj.exists() ? wgULS('已全保护', '已全保護') : wgULS('已白纸保护', '已白紙保護'));
+			statelem.info('全部完成');
 		});
+	} else {
+		statelem.info('全部完成');
 	}
 };
 
