@@ -224,7 +224,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	}
 	partial.prop('disabled', !blockBox && !templateBox);
 
-	// disable all option except tag
+	// disable all options except tag if module is enabled by nonSysopTagUserPage
 	if (!Morebits.userIsSysop) {
 		block.prop('disabled', true);
 		template.prop('disabled', true);
