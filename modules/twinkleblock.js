@@ -22,14 +22,14 @@ var blockActionText = {
 
 Twinkle.block = function twinkleblock() {
 	// should show on Contributions or Block pages, anywhere there's a relevant user
-	if (Morebits.userIsSysop && Morebits.wiki.flow.relevantUserName(true)) {
+	if ((Morebits.userIsSysop || Twinkle.getPref('nonSysopTagUserPage')) && Morebits.wiki.flow.relevantUserName(true)) {
 		Twinkle.addPortletLink(Twinkle.block.callback, wgULS('封禁', '封鎖'), 'tw-block', wgULS('封禁相关用户', '封鎖相關使用者'));
 	}
 };
 
 Twinkle.block.callback = function twinkleblockCallback() {
 	if (Morebits.wiki.flow.relevantUserName(true) === mw.config.get('wgUserName') &&
-			!confirm(wgULS('您即将封禁自己！确认要继续吗？', '您即將封鎖自己！確認要繼續嗎？'))) {
+			!confirm(wgULS('您即将对自己执行封禁相关操作！确认要继续吗？', '您即將對自己執行封鎖相關操作！確認要繼續嗎？'))) {
 		return;
 	}
 
@@ -60,7 +60,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 				label: wgULS('封禁用户', '封鎖使用者'),
 				value: 'block',
 				tooltip: wgULS('用选择的选项全站封禁相关用户，如果未勾选部分封禁则为全站封禁。', '用選擇的選項全站封鎖相關使用者，如果未勾選部分封鎖則為全站封鎖。'),
-				checked: true
+				checked: Morebits.userIsSysop
 			},
 			{
 				label: wgULS('部分封禁', '部分封鎖'),
@@ -72,13 +72,14 @@ Twinkle.block.callback = function twinkleblockCallback() {
 				label: wgULS('加入封禁模板到用户讨论页', '加入封鎖模板到使用者討論頁'),
 				value: 'template',
 				tooltip: wgULS('如果执行封禁的管理员忘记发出封禁模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。勾选部分封禁以使用部分封禁模板。', '如果執行封鎖的管理員忘記發出封鎖模板，或你封鎖了使用者而沒有給其發出模板，則你可以用此來發出合適的模板。勾選部分封鎖以使用部分封鎖模板。'),
-				checked: true
+				checked: Morebits.userIsSysop
 			},
 			{
 				label: wgULS('标记用户页', '標記使用者頁面'),
 				value: 'tag',
 				tooltip: wgULS('将用户页替换成{{indef}}或{{spp}}，仅限永久封禁使用。', '將使用者頁面替換成{{indef}}或{{spp}}，僅限永久封鎖使用。'),
-				hidden: true
+				hidden: true,
+				checked: !Morebits.userIsSysop && Twinkle.getPref('nonSysopTagUserPage')
 			},
 			{
 				label: wgULS('保护用户页', '保護使用者頁面'),
@@ -222,6 +223,15 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		unblock.prop('checked', false);
 	}
 	partial.prop('disabled', !blockBox && !templateBox);
+
+	// disable all option except tag
+	if (!Morebits.userIsSysop) {
+		block.prop('disabled', true);
+		template.prop('disabled', true);
+		protect.prop('disabled', true);
+		partial.prop('disabled', true);
+		unblock.prop('disabled', true);
+	}
 
 	Twinkle.block.callback.saveFieldset($('[name=field_block_options]'));
 	Twinkle.block.callback.saveFieldset($('[name=field_template_options]'));
