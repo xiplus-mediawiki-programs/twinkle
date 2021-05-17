@@ -72,6 +72,7 @@ Twinkle.defaultConfig = {
 	defaultToPartialBlocks: false,
 	blankTalkpageOnIndefBlock: false,
 	customBlockReasonList: [],
+	nonSysopTagUserPage: false,
 
 	// Fluff (revert and rollback)
 	openTalkPage: [ ],
