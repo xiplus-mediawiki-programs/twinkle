@@ -443,6 +443,16 @@ Twinkle.tag.updateSortOrder = function(e) {
 					}
 				];
 				break;
+			case 'Cleanup':
+				checkbox.subgroup = [
+					{
+						name: 'cleanupReason',
+						type: 'input',
+						label: '需要清理的理由',
+						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。', '可選，但強烈推薦。如不需要請留空。')
+					}
+				];
+				break;
 			default:
 				break;
 		}
@@ -1289,6 +1299,11 @@ Twinkle.tag.callbacks = {
 							params.moveTarget = Morebits.string.toUpperCaseFirstChar(params.moveTarget.replace(/_/g, ' '));
 							params.discussArticle = mw.config.get('wgTitle');
 							currentTag += '|' + params.moveTarget;
+						}
+						break;
+					case 'Cleanup':
+						if (params.cleanupReason) {
+							currentTag += '|reason=' + params.cleanupReason;
 						}
 						break;
 					default:
