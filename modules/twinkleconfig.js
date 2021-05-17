@@ -200,14 +200,14 @@ Twinkle.config.sections = [
 	{
 		title: wgULS('封禁用户', '封鎖使用者'),
 		module: 'block',
+		adminOnly: true,
 		preferences: [
 			// TwinkleConfig.defaultToPartialBlocks (boolean)
 			// Whether to default partial blocks on or off
 			{
 				name: 'defaultToPartialBlocks',
 				label: wgULS('打开封禁菜单时默认选择部分封禁', '打開封鎖選單時預設選擇部分封鎖'),
-				type: 'boolean',
-				adminOnly: true
+				type: 'boolean'
 			},
 
 			{
@@ -216,15 +216,7 @@ Twinkle.config.sections = [
 				helptip: wgULS('您可以加入常用的封禁理由。自定义的封禁理由会出现在一般的封禁理由下方。', '您可以加入常用的封鎖理由。自訂的封鎖理由會出現在一般的封鎖理由下方。'),
 				type: 'customList',
 				customListValueTitle: wgULS('使用封禁模板（默认为 uw-block1）', '使用封鎖模板（預設為 uw-block1）'),
-				customListLabelTitle: wgULS('“由于…您已被封禁”及封禁日志理由', '「由於…您已被封鎖」及封鎖日誌理由'),
-				adminOnly: true
-			},
-
-			{
-				name: 'nonSysopTagUserPage',
-				label: wgULS('非管理员启用标记用户页功能', '非管理員啟用標記使用者頁面功能'),
-				helptip: wgULS('当它打开时，非管理员用户可使用Twinkle封禁模块中的标记用户页功能，此选项不会影响管理员的使用', '當它打開時，非管理員使用者可使用Twinkle封禁模組中的標記使用者頁面功能，此選項不會影響管理員的使用'),
-				type: 'boolean'
+				customListLabelTitle: wgULS('“由于…您已被封禁”及封禁日志理由', '「由於…您已被封鎖」及封鎖日誌理由')
 			}
 		]
 	},
