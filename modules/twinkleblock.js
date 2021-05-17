@@ -22,7 +22,7 @@ var blockActionText = {
 
 Twinkle.block = function twinkleblock() {
 	// should show on Contributions or Block pages, anywhere there's a relevant user
-	if ((Morebits.userIsSysop || Twinkle.getPref('nonSysopTagUserPage')) && Morebits.wiki.flow.relevantUserName(true)) {
+	if (Morebits.wiki.flow.relevantUserName(true)) {
 		Twinkle.addPortletLink(Twinkle.block.callback, wgULS('封禁', '封鎖'), 'tw-block', wgULS('封禁相关用户', '封鎖相關使用者'));
 	}
 };
@@ -79,7 +79,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 				value: 'tag',
 				tooltip: wgULS('将用户页替换成{{indef}}或{{spp}}，仅限永久封禁使用。', '將使用者頁面替換成{{indef}}或{{spp}}，僅限永久封鎖使用。'),
 				hidden: true,
-				checked: !Morebits.userIsSysop && Twinkle.getPref('nonSysopTagUserPage')
+				checked: !Morebits.userIsSysop
 			},
 			{
 				label: wgULS('保护用户页', '保護使用者頁面'),
@@ -224,13 +224,13 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	}
 	partial.prop('disabled', !blockBox && !templateBox);
 
-	// disable all options except tag if module is enabled by nonSysopTagUserPage
+	// hide all options except tag if module is enabled by non-sysop
 	if (!Morebits.userIsSysop) {
-		block.prop('disabled', true);
-		template.prop('disabled', true);
-		protect.prop('disabled', true);
-		partial.prop('disabled', true);
-		unblock.prop('disabled', true);
+		Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=block]').parent(), false);
+		Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=partial]').parent(), false);
+		Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=template]').parent(), false);
+		Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=protect]').parent(), false);
+		Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=unblock]').parent(), false);
 	}
 
 	Twinkle.block.callback.saveFieldset($('[name=field_block_options]'));
