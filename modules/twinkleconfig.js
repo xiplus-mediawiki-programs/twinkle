@@ -182,7 +182,7 @@ Twinkle.config.sections = [
 				label: wgULS('关闭指定的Twinkle模块', '關閉指定的Twinkle模組'),
 				helptip: wgULS('您在此选择的功能将无法使用，取消选择以重新启用功能。', '您在此選擇的功能將無法使用，取消選擇以重新啟用功能。'),
 				type: 'set',
-				setValues: { arv: wgULS('告状', '告狀'), warn: '警告', welcome: wgULS('欢迎', '歡迎'), talkback: '通告', speedy: wgULS('速删', '速刪'), copyvio: wgULS('侵权', '侵權'), xfd: wgULS('提删', '提刪'), image: wgULS('图权', '圖權'), protect: wgULS('保护', '保護'), tag: wgULS('标记', '標記'), stub: '小作品', diff: wgULS('差异', '差異'), unlink: wgULS('链入', '連入'), fluff: '回退' }
+				setValues: { arv: wgULS('告状', '告狀'), warn: '警告', welcome: wgULS('欢迎', '歡迎'), talkback: '通告', speedy: wgULS('速删', '速刪'), copyvio: wgULS('侵权', '侵權'), xfd: wgULS('提删', '提刪'), image: wgULS('图权', '圖權'), protect: wgULS('保护', '保護'), tag: wgULS('标记', '標記'), stub: '小作品', diff: wgULS('差异', '差異'), unlink: wgULS('链入', '連入'), fluff: '回退', block: wgULS('封禁', '封鎖') }
 			},
 
 			// Twinkle.config.disabledSysopModules (array)
@@ -192,7 +192,7 @@ Twinkle.config.sections = [
 				helptip: wgULS('您在此选择的功能将无法使用，取消选择以重新启用功能。', '您在此選擇的功能將無法使用，取消選擇以重新啟用功能。'),
 				adminOnly: true,
 				type: 'set',
-				setValues: { block: wgULS('封禁', '封鎖'), batchdelete: wgULS('批删', '批刪'), batchundelete: wgULS('批复', '批復') }
+				setValues: { batchdelete: wgULS('批删', '批刪'), batchundelete: wgULS('批复', '批復') }
 			}
 		]
 	},
@@ -200,14 +200,14 @@ Twinkle.config.sections = [
 	{
 		title: wgULS('封禁用户', '封鎖使用者'),
 		module: 'block',
-		adminOnly: true,
 		preferences: [
 			// TwinkleConfig.defaultToPartialBlocks (boolean)
 			// Whether to default partial blocks on or off
 			{
 				name: 'defaultToPartialBlocks',
 				label: wgULS('打开封禁菜单时默认选择部分封禁', '打開封鎖選單時預設選擇部分封鎖'),
-				type: 'boolean'
+				type: 'boolean',
+				adminOnly: true
 			},
 
 			{
@@ -216,7 +216,15 @@ Twinkle.config.sections = [
 				helptip: wgULS('您可以加入常用的封禁理由。自定义的封禁理由会出现在一般的封禁理由下方。', '您可以加入常用的封鎖理由。自訂的封鎖理由會出現在一般的封鎖理由下方。'),
 				type: 'customList',
 				customListValueTitle: wgULS('使用封禁模板（默认为 uw-block1）', '使用封鎖模板（預設為 uw-block1）'),
-				customListLabelTitle: wgULS('“由于…您已被封禁”及封禁日志理由', '「由於…您已被封鎖」及封鎖日誌理由')
+				customListLabelTitle: wgULS('“由于…您已被封禁”及封禁日志理由', '「由於…您已被封鎖」及封鎖日誌理由'),
+				adminOnly: true
+			},
+
+			{
+				name: 'nonSysopTagUserPage',
+				label: wgULS('非管理员启用标记用户页功能', '非管理員啟用標記使用者頁面功能'),
+				helptip: wgULS('当它打开时，非管理员用户可使用Twinkle封禁模块中的标记用户页功能，此选项不会影响管理员的使用', '當它打開時，非管理員使用者可使用Twinkle封禁模組中的標記使用者頁面功能，此選項不會影響管理員的使用'),
+				type: 'boolean'
 			}
 		]
 	},
