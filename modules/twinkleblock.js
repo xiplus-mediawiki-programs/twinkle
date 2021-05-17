@@ -33,6 +33,11 @@ Twinkle.block.callback = function twinkleblockCallback() {
 		return;
 	}
 
+	// Only shows when user is not sysop and target is ip
+	if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName(true)) && !Morebits.userIsSysop) {
+		alert(wgULS('非注册用户的用户页不应被标记！', '非註冊使用者的使用者頁面不應被標記！'));
+		return;
+	}
 	Twinkle.block.currentBlockInfo = undefined;
 	Twinkle.block.field_block_options = {};
 	Twinkle.block.field_template_options = {};
