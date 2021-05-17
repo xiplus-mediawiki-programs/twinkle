@@ -65,14 +65,13 @@ Twinkle.defaultConfig = {
 	// General
 	userTalkPageMode: 'tab',
 	dialogLargeFont: false,
-	disabledModules: [],
+	disabledModules: Morebits.userIsSysop ? [] : ['block'], // default to disable block for non-sysop, if enable manually, they can only use it to tag userpage
 	disabledSysopModules: [],
 
 	// Block
 	defaultToPartialBlocks: false,
 	blankTalkpageOnIndefBlock: false,
 	customBlockReasonList: [],
-	nonSysopTagUserPage: false,
 
 	// Fluff (revert and rollback)
 	openTalkPage: [ ],
