@@ -65,6 +65,37 @@ window.Morebits = Morebits;  // allow global access
 
 
 /**
+ * Wiki-specific configurations for Morebits
+ */
+Morebits.l10n = {
+	/**
+	 * Local aliases for "redirect" magic word.
+	 * Check using api.php?action=query&format=json&meta=siteinfo&formatversion=2&siprop=magicwords
+	 */
+	redirectTagAliases: ['#REDIRECT', '#重定向'],
+
+	/**
+	 * Takes a string as argument and checks if it is a timestamp or not
+	 * If not, it returns null. If yes, it returns an array of integers
+	 * in the format [year, month, date, hour, minute, second]
+	 * which can be passed to Date.UTC()
+	 * @param {string} str
+	 * @returns {number[] | null}
+	 */
+	signatureTimestampFormat: function (str) {
+		// YYYY年Month月DD日 (w) HH:mm (UTC)
+		var rgx = /(\d{4})年(\d{1,2})月(\d{1,2})日 \(.\) (\d{2}):(\d{2}) \(UTC\)/;
+		var match = rgx.exec(str);
+		if (!match) {
+			return null;
+		}
+		// ..... year .... month ... date .... hour ... minute
+		return [match[1], match[2] - 1, match[3], match[4], match[5]];
+	}
+};
+
+
+/**
  * Simple helper function to see what groups a user might belong.
  *
  * @param {string} group - e.g. `sysop`, `extendedconfirmed`, etc.
@@ -1840,7 +1871,7 @@ Morebits.date = function() {
 			}
 		} else if (typeof param === 'string') {
 			// Wikitext signature timestamp
-			var dateParts = Morebits.date.localeData.signatureTimestampFormat(param);
+			var dateParts = Morebits.l10n.signatureTimestampFormat(param);
 			if (dateParts) {
 				this._d = new Date(Date.UTC.apply(null, dateParts));
 			}
@@ -1882,16 +1913,6 @@ Morebits.date.localeData = {
 		thisWeek: 'ddddA hh:mm',
 		pastWeek: '[上]ddddA hh:mm',
 		other: 'YYYY-MM-DD'
-	},
-	signatureTimestampFormat: function (str) {
-		// YYYY年Month月DD日 (w) HH:mm (UTC)
-		var rgx = /(\d{4})年(\d{1,2})月(\d{1,2})日 \(.\) (\d{2}):(\d{2}) \(UTC\)/;
-		var match = rgx.exec(str);
-		if (!match) {
-			return null;
-		}
-		// ..... year .... month ... date .... hour ... minute
-		return [match[1], match[2] - 1, match[3], match[4], match[5]];
 	}
 };
 
@@ -4101,6 +4122,15 @@ Morebits.wiki.page = function(pageName, status) {
 		}
 	};
 
+	var isTextRedirect = function(text) {
+		if (!text) { // no text - content empty or inaccessible (revdelled or suppressed)
+			return false;
+		}
+		return Morebits.l10n.redirectTagAliases.some(function(tag) {
+			return new RegExp(tag + '\\W', 'i').test(text);
+		});
+	};
+
 	var fnLookupCreationSuccess = function() {
 		var response = ctx.lookupCreationApi.getResponse().query;
 
@@ -4115,7 +4145,7 @@ Morebits.wiki.page = function(pageName, status) {
 			return;
 		}
 
-		if (!ctx.lookupNonRedirectCreator || !/^\s*#(?:redirect|重定向)/i.test(rev.content)) {
+		if (!ctx.lookupNonRedirectCreator || !isTextRedirect(rev.content)) {
 
 			ctx.creator = rev.user;
 			if (!ctx.creator) {
@@ -4149,7 +4179,8 @@ Morebits.wiki.page = function(pageName, status) {
 		var revs = response.pages[0].revisions;
 
 		for (var i = 0; i < revs.length; i++) {
-			if (!/^\s*#(?:redirect|重定向)/i.test(revs[i].content)) { // inaccessible revisions also check out
+
+			if (!isTextRedirect(revs[i].content)) {
 				ctx.creator = revs[i].user;
 				ctx.timestamp = revs[i].timestamp;
 				break;
