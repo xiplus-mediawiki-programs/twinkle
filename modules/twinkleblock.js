@@ -22,7 +22,8 @@ var blockActionText = {
 
 Twinkle.block = function twinkleblock() {
 	// should show on Contributions or Block pages, anywhere there's a relevant user
-	if (Morebits.wiki.flow.relevantUserName(true)) {
+	if (Morebits.wiki.flow.relevantUserName(true)
+		&& (Morebits.userIsSysop || !mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName(true), true))) {
 		Twinkle.addPortletLink(Twinkle.block.callback, wgULS('封禁', '封鎖'), 'tw-block', wgULS('封禁相关用户', '封鎖相關使用者'));
 	}
 };
@@ -33,11 +34,6 @@ Twinkle.block.callback = function twinkleblockCallback() {
 		return;
 	}
 
-	// Only shows when user is not sysop and target is ip
-	if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName(true)) && !Morebits.userIsSysop) {
-		alert(wgULS('非注册用户的用户页不应被标记！', '非註冊使用者的使用者頁面不應被標記！'));
-		return;
-	}
 	Twinkle.block.currentBlockInfo = undefined;
 	Twinkle.block.field_block_options = {};
 	Twinkle.block.field_template_options = {};
@@ -65,24 +61,27 @@ Twinkle.block.callback = function twinkleblockCallback() {
 				label: wgULS('封禁用户', '封鎖使用者'),
 				value: 'block',
 				tooltip: wgULS('用选择的选项全站封禁相关用户，如果未勾选部分封禁则为全站封禁。', '用選擇的選項全站封鎖相關使用者，如果未勾選部分封鎖則為全站封鎖。'),
+				hidden: !Morebits.userIsSysop,
 				checked: Morebits.userIsSysop
 			},
 			{
 				label: wgULS('部分封禁', '部分封鎖'),
 				value: 'partial',
 				tooltip: wgULS('启用部分封禁及部分封禁模板。', '啟用部分封鎖及部分封鎖模板。'),
+				hidden: !Morebits.userIsSysop,
 				checked: Twinkle.getPref('defaultToPartialBlocks')
 			},
 			{
 				label: wgULS('加入封禁模板到用户讨论页', '加入封鎖模板到使用者討論頁'),
 				value: 'template',
 				tooltip: wgULS('如果执行封禁的管理员忘记发出封禁模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。勾选部分封禁以使用部分封禁模板。', '如果執行封鎖的管理員忘記發出封鎖模板，或你封鎖了使用者而沒有給其發出模板，則你可以用此來發出合適的模板。勾選部分封鎖以使用部分封鎖模板。'),
+				hidden: !Morebits.userIsSysop,
 				checked: Morebits.userIsSysop
 			},
 			{
 				label: wgULS('标记用户页', '標記使用者頁面'),
 				value: 'tag',
-				tooltip: wgULS('将用户页替换成{{indef}}或{{spp}}，仅限永久封禁使用。', '將使用者頁面替換成{{indef}}或{{spp}}，僅限永久封鎖使用。'),
+				tooltip: wgULS('将用户页替换成相关的标记模板，仅限永久封禁使用。', '將使用者頁面替換成相關的標記模板，僅限永久封鎖使用。'),
 				hidden: true,
 				checked: !Morebits.userIsSysop
 			},
@@ -95,7 +94,8 @@ Twinkle.block.callback = function twinkleblockCallback() {
 			{
 				label: wgULS('解除封禁用户', '解除封鎖使用者'),
 				value: 'unblock',
-				tooltip: wgULS('解除封禁相关用户。', '解除封鎖相關使用者。')
+				tooltip: wgULS('解除封禁相关用户。', '解除封鎖相關使用者。'),
+				hidden: !Morebits.userIsSysop
 			}
 		]
 	});
@@ -117,7 +117,9 @@ Twinkle.block.callback = function twinkleblockCallback() {
 		if (Twinkle.block.isRegistered) {
 			var $form = $(result);
 			Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=tag]').parent(), true);
-			Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=protect]').parent(), true);
+			if (Morebits.userIsSysop) {
+				Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=protect]').parent(), true);
+			}
 		}
 
 		// clean up preset data (defaults, etc.), done exactly once, must be before Twinkle.block.callback.change_action is called
@@ -228,15 +230,6 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		unblock.prop('checked', false);
 	}
 	partial.prop('disabled', !blockBox && !templateBox);
-
-	// hide all options except tag if module is enabled by non-sysop
-	if (!Morebits.userIsSysop) {
-		Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=block]').parent(), false);
-		Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=partial]').parent(), false);
-		Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=template]').parent(), false);
-		Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=protect]').parent(), false);
-		Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=unblock]').parent(), false);
-	}
 
 	Twinkle.block.callback.saveFieldset($('[name=field_block_options]'));
 	Twinkle.block.callback.saveFieldset($('[name=field_template_options]'));
@@ -733,7 +726,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		$form.find('fieldset[name="field_template_options"]').hide();
 	}
 
-	if (Twinkle.block.hasBlockLog) {
+	if (blockBox && Twinkle.block.hasBlockLog) {
 		var $blockloglink = $('<a target="_blank" href="' + mw.util.getUrl('Special:Log', {action: 'view', page: Morebits.wiki.flow.relevantUserName(true), type: 'block'}) + '">' + wgULS('封禁日志', '封鎖日誌') + '</a>)');
 
 		Morebits.status.init($('div[name="hasblocklog"] span').last()[0]);
@@ -751,7 +744,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		);
 	}
 
-	if (Twinkle.block.currentBlockInfo) {
+	if (blockBox && Twinkle.block.currentBlockInfo) {
 		Morebits.status.init($('div[name="currentblock"] span').last()[0]);
 		// list=blocks without bkprops (as we do in fetchUerInfo)
 		// returns partial: '' if the user is partially blocked
