@@ -1419,7 +1419,7 @@ Twinkle.speedy.callbacks = {
 				'使用[[WP:CSD#O1|CSD O1]]提交快速删除。' +
 				(Morebits.userIsSysop ? '\n\n此日志并不记录用Twinkle直接执行的删除。' : '');
 
-			var appendText = '# [[:' + Morebits.pageNameNorm + ']]: ';
+			var appendText = '# [[:' + Morebits.pageNameNorm + ']]：';
 			if (params.fromDI) {
 				if (params.normalized === 'f3 f4') {
 					appendText += '图版[[WP:CSD#F3|CSD F3]]+[[WP:CSD#F4|CSD F4]]（{{tl|no source no license/auto}}）';
