@@ -3017,7 +3017,7 @@ Morebits.wiki.page = function(pageName, status) {
 			ctx.pageText = "require('Module:Module wikitext')._addText([" + equals + '[' + tag + ']' + equals + ']);\n' + ctx.pageText;
 		} else if (['javascript', 'css', 'sanitized-css'].indexOf(ctx.contentModel) !== -1) {
 			// Likewise for JS/CSS pages
-			ctx.pageText = '/* ' + tag + ' */\n' + ctx.pageText;
+			ctx.pageText = '/* _addText: ' + tag.replace(/\*\//g, '*&#0047;') + ' */\n' + ctx.pageText;
 		} else if (ctx.contentModel === 'json') {
 			try {
 				var pageJson = JSON.parse(ctx.pageText);
