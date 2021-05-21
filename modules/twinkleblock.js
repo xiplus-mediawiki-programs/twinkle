@@ -609,7 +609,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		field_tag_options.append({
 			type: 'input',
 			name: 'category',
-			label: 'Category:…的維基用戶分身', // no wgULS, it's category name
+			label: 'Category:……的維基用戶分身' + wgULS('（主账户用户名）', '（主帳號使用者名稱）'), // no wgULS for category name
 			tooltip: wgULS('您通常应该使用{{Blocked sockpuppet}}的主账户参数来产生分类，只有单独使用{{Locked global account}}才需填写此项。', '您通常應該使用{{Blocked sockpuppet}}的主帳號參數來產生分類，只有單獨使用{{Locked global account}}才需填寫此項。')
 		});
 	}
