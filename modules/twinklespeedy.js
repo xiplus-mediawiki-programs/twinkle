@@ -856,7 +856,7 @@ Twinkle.speedy.redirectList = [
 		label: wgULS('R2: 跨名字空间重定向。', 'R2: 跨命名空間重新導向。'),
 		value: 'r2',
 		tooltip: wgULS('由条目的名字空间重定向至非条目名字空间，或者从草稿名字空间指向非草稿名字空间的重定向。', '由條目的命名空間重新導向至非條目命名空間，或者從草稿命名空間指向非草稿命名空間的重新導向。'),
-		showInNamespaces: [ 0, 118 ] // main, draft
+		showInNamespaces: [ 0, 4, 102, 118 ] // main, wikipedia, wikiproject, draft
 	},
 	{
 		label: wgULS('R3: 格式错误，或明显笔误的重定向。', 'R3: 格式錯誤，或明顯筆誤的重新導向。'),
