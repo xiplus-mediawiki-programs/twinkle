@@ -324,6 +324,10 @@ Twinkle.batchdelete.deletereasonlist = [
 	{
 		label: wgULS('O7: 废弃草稿', 'O7: 廢棄草稿'),
 		value: wgULS('[[Wikipedia:CSD#O7|O7]]: 废弃草稿。', '[[Wikipedia:CSD#O7|O7]]: 廢棄草稿。')
+	},
+	{
+		label: wgULS('R2: 跨名字空间的重定向', 'R2: 跨命名空間的重新導向'),
+		value: wgULS('[[WP:CSD#R2|R2]]: 跨[[H:NS|名字空间]]的[[WP:R|重定向]]', '[[WP:CSD#R2|R2]]: 跨[[H:NS|命名空間]]的[[WP:R|重新導向]]')
 	}
 ];
 
