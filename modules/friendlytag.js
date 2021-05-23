@@ -1142,9 +1142,9 @@ Twinkle.tag.callbacks = {
 				// special functions for requested move tags
 				if (params.moveReason) {
 					// post the rationale on the talk page (only operates in main namespace)
-					var moveTalkpageText = '\n\n{{subst:RM|' + params.moveReason.trim();
+					var moveTalkpageText = '\n\n{{subst:RM|1=' + params.moveReason.trim();
 					if (params.moveTarget) {
-						moveTalkpageText += '|' + params.moveTarget;
+						moveTalkpageText += '|2=' + params.moveTarget;
 					}
 					moveTalkpageText += '}}';
 
