@@ -252,18 +252,18 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		}
 	}
 
-	if (mw.util.isIPAddress(mw.config.get('wgRelevantUserName'))) {
+	if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())) {
 		query = {
 			format: 'json',
 			action: 'query',
 			list: 'usercontribs',
 			uclimit: 1,
 			ucend: new Morebits.date().subtract(30, 'days').format('YYYY-MM-DDTHH:MM:ssZ', 'utc'),
-			ucuser: mw.config.get('wgRelevantUserName')
+			ucuser: Morebits.wiki.flow.relevantUserName()
 		};
 		new Morebits.wiki.api(wgULS('检查该IP用户上一笔贡献时间', '檢查該IP使用者上一筆貢獻時間'), query, function(apiobj) {
-			if (!$(apiobj.getResponse())[0].query.usercontribs.length) {
-				message += wgULS('此IP用户上一次编辑在30日之前，现在警告可能已过时。', '此IP使用者上一次編輯在30日之前，现在警告可能已过时。');
+			if (apiobj.getResponse().query.usercontribs.length === 0) {
+				message += wgULS('此IP用户上一次编辑在30日之前，现在警告可能已过时。', '此IP使用者上一次編輯在30日之前，現在警告可能已過時。');
 				$('#twinkle-warn-warning-messages').text('注意：' + message);
 			}
 		}).post();
