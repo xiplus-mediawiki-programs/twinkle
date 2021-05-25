@@ -198,11 +198,10 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	result.previewer = new Morebits.wiki.preview($(result).find('div#twinklewarn-previewbox').last()[0]);
 
 	// Potential notices for staleness and missed reverts
+	var message = '';
+	var query = {};
 	var vanrevid = mw.util.getParamValue('vanarticlerevid');
 	if (vanrevid) {
-		var message = '';
-		var query = {};
-
 		// If you tried reverting, check if *you* actually reverted
 		if (!mw.util.getParamValue('noautowarn') && mw.util.getParamValue('vanarticle')) { // Via fluff link
 			query = {
@@ -251,6 +250,23 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 				checkStale(vantimestamp);
 			}).post();
 		}
+	}
+
+	if (mw.util.isIPAddress(mw.config.get('wgRelevantUserName'))) {
+		query = {
+			format: 'json',
+			action: 'query',
+			list: 'usercontribs',
+			uclimit: 1,
+			ucend: new Morebits.date().subtract(30, 'days').format('YYYY-MM-DDTHH:MM:ssZ', 'utc'),
+			ucuser: mw.config.get('wgRelevantUserName')
+		};
+		new Morebits.wiki.api(wgULS('检查该IP用户上一笔贡献时间', '檢查該IP使用者上一筆貢獻時間'), query, function(apiobj) {
+			if (!$(apiobj.getResponse())[0].query.usercontribs.length) {
+				message += wgULS('此IP用户上一次编辑在30日之前，现在警告可能已过时。', '此IP使用者上一次編輯在30日之前，现在警告可能已过时。');
+				$('#twinkle-warn-warning-messages').text('注意：' + message);
+			}
+		}).post();
 	}
 
 	var init = function() {
