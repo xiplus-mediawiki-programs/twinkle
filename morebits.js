@@ -2997,6 +2997,17 @@ Morebits.wiki.page = function(pageName, status) {
 		ctx.pageText = pageText;
 	};
 
+	/** Blank page based on content model */
+	this.blankPage = function() {
+		if (ctx.contentModel === 'json') {
+			ctx.pageText = '{}';
+		} else if (['Scribunto', 'javascript', 'css', 'sanitized-css', 'wikitext'].indexOf(ctx.contentModel) !== -1) {
+			ctx.pageText = '';
+		} else {
+			ctx.statusElement.error('Internal error: Unsupported content model: ' + ctx.contentModel);
+		}
+	};
+
 	/**
 	 * Prepend maintenance tag based on content model
 	 *
