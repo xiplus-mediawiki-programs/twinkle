@@ -1149,6 +1149,10 @@ Twinkle.protect.callbacks = {
 		var params = protectedPage.getCallbackParameters();
 		var text = protectedPage.getPageText();
 		var newVersion = Twinkle.protect.callbacks.getTaggedPage(params, text);
+		if (typeof newVersion === 'undefined') {
+			protectedPage.getStatusElement().info('完成');
+			return;
+		}
 
 		protectedPage.setEditSummary(newVersion.summary);
 		protectedPage.setChangeTags(Twinkle.changeTags);
@@ -1162,6 +1166,11 @@ Twinkle.protect.callbacks = {
 		var params = flowpage.getCallbackParameters();
 		var text = flowpage.getHeader();
 		var newVersion = Twinkle.protect.callbacks.getTaggedPage(params, text);
+		if (typeof newVersion === 'undefined') {
+			flowpage.getStatusElement().info('完成');
+			return;
+		}
+
 		flowpage.setHeader(newVersion.text);
 		flowpage.editHeader();
 	},
