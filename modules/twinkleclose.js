@@ -18,6 +18,14 @@ Twinkle.close = function twinkleclose() {
 		return;
 	}
 
+	mw.hook('wikipage.content').add(function(item) {
+		if (item.attr('id') === 'mw-content-text') {
+			Twinkle.close.addLinks();
+		}
+	});
+};
+
+Twinkle.close.addLinks = function twinklecloseAddLinks() {
 	var spanTag = function(color, content) {
 		var span = document.createElement('span');
 		span.style.color = color;
