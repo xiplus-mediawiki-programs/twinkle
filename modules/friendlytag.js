@@ -1292,20 +1292,20 @@ Twinkle.tag.callbacks = {
 				switch (tagName) {
 					case 'Expand language':
 						currentTag += '|1=' + params.expandLanguage;
-						if (params.expandLanguage2) {
-							currentTag += '|2=' + params.expandLanguage2;
-						}
-						if (params.expandLanguage3) {
-							currentTag += '|3=' + params.expandLanguage3;
-						}
 						if (params.highQualityArticle) {
 							currentTag += '|status=yes';
 						}
-						if (params.highQualityArticle) {
-							currentTag += '|status2=yes';
+						if (params.expandLanguage2) {
+							currentTag += '|2=' + params.expandLanguage2;
+							if (params.highQualityArticle2) {
+								currentTag += '|status2=yes';
+							}
 						}
-						if (params.highQualityArticle) {
-							currentTag += '|status3=yes';
+						if (params.expandLanguage3) {
+							currentTag += '|3=' + params.expandLanguage3;
+							if (params.highQualityArticle3) {
+								currentTag += '|status3=yes';
+							}
 						}
 						break;
 					case 'Expert needed':
