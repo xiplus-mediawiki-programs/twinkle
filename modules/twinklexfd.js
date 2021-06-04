@@ -474,7 +474,7 @@ Twinkle.xfd.callbacks = {
 			// Notification to first contributor
 			var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
 			wikipedia_page.setCallbackParameters(pageobj.getCallbackParameters());
-			if (['Scribunto', 'javascript', 'sanitized-css', 'css'].indexOf(mw.config.get('wgPageContentModel')) !== -1) {
+			if (['Scribunto', 'javascript', 'sanitized-css', 'css'].indexOf(mw.config.get('wgPageContentModel')) === -1) {
 				wikipedia_page.setLookupNonRedirectCreator(true); // Look for author of first non-redirect revision
 			}
 			wikipedia_page.lookupCreation(Twinkle.xfd.callbacks.afd.main);
