@@ -2621,6 +2621,7 @@ Morebits.wiki.page = function(pageName, status) {
 		// backing fields for public properties
 		pageName: pageName,
 		pageExists: false,
+		hatnoteRegex: null,
 		editSummary: null,
 		changeTags: null,
 		testActions: null,  // array if any valid actions
@@ -2996,6 +2997,70 @@ Morebits.wiki.page = function(pageName, status) {
 		ctx.pageText = pageText;
 	};
 
+	/** Blank page based on content model */
+	this.blankPage = function() {
+		if (ctx.contentModel === 'json') {
+			ctx.pageText = '{}';
+		} else if (['Scribunto', 'javascript', 'css', 'sanitized-css', 'wikitext'].indexOf(ctx.contentModel) !== -1) {
+			ctx.pageText = '';
+		} else {
+			ctx.statusElement.error('Internal error: Unsupported content model: ' + ctx.contentModel);
+		}
+	};
+
+	/**
+	 * Prepend maintenance tag based on content model
+	 *
+	 * @param {string} tag
+	 */
+	this.addMaintenanceTag = function(tag) {
+		if (!ctx.pageLoaded) {
+			ctx.statusElement.error('Internal error: cannot add maintenance tag that the page has not been loaded!');
+			return;
+		}
+
+		if (ctx.contentModel === 'Scribunto') {
+			// Scribunto isn't parsed like wikitext, so CSD templates on modules need special handling to work
+			var equals = '';
+			while (tag.indexOf(']' + equals + ']') !== -1) {
+				equals += '=';
+			}
+			ctx.pageText = "require('Module:Module wikitext')._addText([" + equals + '[' + tag + ']' + equals + ']);\n' + ctx.pageText;
+		} else if (['javascript', 'css', 'sanitized-css'].indexOf(ctx.contentModel) !== -1) {
+			// Likewise for JS/CSS pages
+			ctx.pageText = '/* _addText: ' + tag.replace(/\*\//g, '*&#0047;') + ' */\n' + ctx.pageText;
+		} else if (ctx.contentModel === 'json') {
+			try {
+				var pageJson = JSON.parse(ctx.pageText);
+				if (pageJson instanceof Array) {
+					pageJson.unshift({
+						_addText: tag
+					});
+				} else {
+					if (Object.prototype.hasOwnProperty.call(pageJson, '_addText')) {
+						pageJson._addText = tag + '\n' + pageJson._addText;
+					} else {
+						pageJson = $.extend({_addText: tag}, pageJson);
+					}
+				}
+				ctx.pageText = JSON.stringify(pageJson);
+			} catch (e) {
+				ctx.statusElement.error('Internal error: failed to parse page text into json!');
+			}
+		} else if (ctx.contentModel === 'wikitext') {
+			if (!ctx.hatnoteRegex) {
+				ctx.statusElement.error('Internal error: hatnoteRegex is not set!');
+				return;
+			}
+
+			// Insert tag after short description or any hatnotes
+			var wikipage = new Morebits.wikitext.page(ctx.pageText);
+			ctx.pageText = wikipage.insertAfterTemplates(tag + '\n', ctx.hatnoteRegex).getText();
+		} else {
+			ctx.statusElement.error('Internal error: Unsupported content model: ' + ctx.contentModel);
+		}
+	};
+
 	/** @param {string} appendText - Text that will be appended to the page when `append()` is called */
 	this.setAppendText = function(appendText) {
 		ctx.editMode = 'append';
@@ -3026,6 +3091,15 @@ Morebits.wiki.page = function(pageName, status) {
 
 
 	// Edit-related setter methods:
+	/**
+	 * Set hatnoteRegex, used in addMaintenanceTag
+	 *
+	 * @param {string} regex
+	 */
+	this.setHatnoteRegex = function(regex) {
+		ctx.hatnoteRegex = regex;
+	};
+
 	/**
 	 * Set the edit summary that will be used when `save()` is called.
 	 * Unnecessary if editMode is 'new' and newSectionTitle is provided.

@@ -362,11 +362,10 @@ Twinkle.xfd.callbacks = {
 				pageobj.patrol();
 			}
 
-			// Insert tag after short description or any hatnotes
-			var wikipage = new Morebits.wikitext.page(text);
-			text = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
-
 			pageobj.setPageText(text);
+			pageobj.setHatnoteRegex(Twinkle.hatnoteRegex);
+			pageobj.addMaintenanceTag(tag);
+
 			pageobj.setEditSummary(wgULS('页面存废讨论：[[', '頁面存廢討論：[[') + params.logpage + '#' + Morebits.pageNameNorm + ']]');
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setWatchlist(Twinkle.getPref('xfdWatchPage'));
@@ -450,7 +449,7 @@ Twinkle.xfd.callbacks = {
 		tryTagging: function (pageobj) {
 			var statelem = pageobj.getStatusElement();
 			// defaults to /doc for lua modules, which may not exist
-			if (!pageobj.exists() && mw.config.get('wgPageContentModel') !== 'Scribunto') {
+			if (!pageobj.exists()) {
 				statelem.error(wgULS('页面不存在，可能已被删除', '頁面不存在，可能已被刪除'));
 				return;
 			}
@@ -703,8 +702,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 			Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重新導向到討論頁');
 
 			// Tagging page
-			var isScribunto = mw.config.get('wgPageContentModel') === 'Scribunto';
-			wikipedia_page = isScribunto ? new Morebits.wiki.page(mw.config.get('wgPageName') + '/doc', wgULS('加入存废讨论模板到模块文件页', '加入存廢討論模板到模組文件頁')) : new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('加入存废讨论模板到页面', '加入存廢討論模板到頁面'));
+			wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('加入存废讨论模板到页面', '加入存廢討論模板到頁面'));
 			wikipedia_page.setFollowRedirect(false);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.xfd.callbacks.afd.tryTagging);
