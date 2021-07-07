@@ -919,8 +919,8 @@ Twinkle.warn.messages = wgULS({
 			summary: '提醒：剪贴移动'
 		},
 		'uw-chinese': {
-			label: '不是以中文进行沟通',
-			summary: '提醒：不是以中文进行沟通'
+			label: '请使用标准汉语沟通',
+			summary: '提醒：请使用标准汉语沟通'
 		},
 		'uw-coi': {
 			label: '利益冲突',
@@ -1740,8 +1740,8 @@ Twinkle.warn.messages = wgULS({
 			summary: '提醒：剪貼移動'
 		},
 		'uw-chinese': {
-			label: '不是以中文進行溝通',
-			summary: '提醒：不是以中文進行溝通'
+			label: '請使用標準漢語溝通',
+			summary: '提醒：請使用標準漢語溝通'
 		},
 		'uw-coi': {
 			label: '利益衝突',
