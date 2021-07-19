@@ -969,10 +969,10 @@ Twinkle.tag.fileList[wgULS('维基共享资源相关标签', '維基共享資源
 	{ label: '{{Copy to Wikimedia Commons}}：' + wgULS('自由著作权文件应该被移动至维基共享资源', '自由版權檔案應該被移動至維基共享資源'), value: 'Copy to Wikimedia Commons' },
 	{
 		label: '{{Do not move to Commons}}：' + wgULS('不要移动至维基共享资源', '不要移動至維基共享資源'),
-		value: 'Do not move to Commons_reason',
+		value: 'Do not move to Commons',
 		subgroup: {
 			type: 'input',
-			name: 'DoNotMoveToCommons',
+			name: 'DoNotMoveToCommons_reason',
 			label: '原因：',
 			tooltip: wgULS('输入不应该将该图像移动到维基共享资源的原因（必填）。', '輸入不應該將該圖像移動到維基共享資源的原因（必填）。')
 		}
@@ -1571,14 +1571,14 @@ Twinkle.tag.callbacks = {
 			var tagtext = '', currentTag;
 			$.each(params.tags, function(k, tag) {
 				// when other commons-related tags are placed, remove "move to Commons" tag
-				if (['Keep local', 'Now Commons', 'Do not move to Commons_reason', 'Do not move to Commons'].indexOf(tag) !== -1) {
+				if (['Keep local', 'Now Commons', 'Do not move to Commons'].indexOf(tag) !== -1) {
 					text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, '');
 				}
 				if (tag === 'Vector version available') {
 					text = text.replace(/\{\{((convert to |convertto|should be |shouldbe|to)?svg|badpng|vectorize)[^}]*\}\}/gi, '');
 				}
 
-				currentTag = tag === 'Do not move to Commons_reason' ? 'Do not move to Commons' : tag;
+				currentTag = tag;
 
 				switch (tag) {
 					case 'Now Commons':
@@ -1608,8 +1608,8 @@ Twinkle.tag.callbacks = {
 					case 'Obsolete':
 						currentTag += '|1=' + params[tag.replace(/ /g, '_') + 'File'];
 						break;
-					case 'Do not move to Commons_reason':
-						currentTag += '|reason=' + params.DoNotMoveToCommons;
+					case 'Do not move to Commons':
+						currentTag += '|reason=' + params.DoNotMoveToCommons_reason;
 						break;
 					case 'Copy to Wikimedia Commons':
 						currentTag += '|human=' + mw.config.get('wgUserName');
@@ -1716,7 +1716,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 				checkParameter('Vector version available', 'Vector_version_availableFile', wgULS('替换的文件名称', '替換的檔案名稱'))) {
 				return;
 			}
-			if (checkParameter('Do not move to Commons_reason', 'DoNotMoveToCommons')) {
+			if (checkParameter('Do not move to Commons', 'DoNotMoveToCommons_reason')) {
 				return;
 			}
 			break;
