@@ -360,7 +360,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					},
 					{
 						name: 'noinclude',
-						label: wgULS('用<noinclude>包裹保护模板', '用<noinclude>包裹保護模板'),
+						label: wgULS('用&lt;noinclude&gt;包裹保护模板', '用&lt;noinclude&gt;包裹保護模板'),
 						tooltip: wgULS('将保护模板包裹在&lt;noinclude&gt;中', '將保護模板包裹在&lt;noinclude&gt;中'),
 						checked: mw.config.get('wgNamespaceNumber') === 10
 					},

@@ -138,7 +138,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 				type: 'checkbox',
 				list: [
 					{
-						label: '使用<noinclude>包裹模板',
+						label: '使用&lt;noinclude&gt;包裹模板',
 						value: 'noinclude',
 						name: 'noinclude',
 						checked: mw.config.get('wgNamespaceNumber') === 10 && mw.config.get('wgPageContentModel') !== 'Scribunto', // Template namespace
