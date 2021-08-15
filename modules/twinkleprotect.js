@@ -603,7 +603,7 @@ Twinkle.protect.protectionPresetsInfo = {
 		edit: 'templateeditor',
 		move: 'templateeditor',
 		expiry: 'infinity',
-		reason: wgULS('高风险模板', '高風險模板'),
+		reason: wgULS('[[WP:HRT|高风险模板]]', '[[WP:HRT|高風險模板]]'),
 		template: 'noop'
 	},
 	'pp-userpage': {
@@ -634,7 +634,7 @@ Twinkle.protect.protectionPresetsInfo = {
 	'pp-semi-template': {  // removed for now
 		edit: 'autoconfirmed',
 		expiry: 'infinity',
-		reason: wgULS('高风险模板', '高風險模板'),
+		reason: wgULS('[[WP:HRT|高风险模板]]', '[[WP:HRT|高風險模板]]'),
 		template: 'noop'
 	},
 	'pp-semi-sock': {
