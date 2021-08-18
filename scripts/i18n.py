@@ -21,6 +21,7 @@ filenames = [
     'modules/twinkleimage.js',
     'modules/twinkleprotect.js',
     'modules/twinklespeedy.js',
+    'modules/twinklestub.js',
     'modules/twinkleunlink.js',
     'modules/twinklewarn.js',
     'modules/twinklexfd.js',

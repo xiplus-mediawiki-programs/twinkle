@@ -1740,7 +1740,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	Morebits.status.init(form);
 
 	Morebits.wiki.actionCompleted.redirect = Morebits.pageNameNorm;
-	Morebits.wiki.actionCompleted.notice = wgULS('标记完成，在几秒内刷新页面', '標記完成，在幾秒內重新整理頁面');
+	Morebits.wiki.actionCompleted.notice = wgULS('标记完成，将在几秒内刷新页面', '標記完成，將在幾秒內重新整理頁面');
 	if (Twinkle.tag.modeEn === 'redirect') {
 		Morebits.wiki.actionCompleted.followRedirect = false;
 	}

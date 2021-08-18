@@ -175,7 +175,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 	Morebits.wiki.addCheckpoint();
 	// Updating data for the action completed event
 	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
-	Morebits.wiki.actionCompleted.notice = wgULS('提报完成，将在几秒内刷新', '提報完成，將在幾秒內重新整理');
+	Morebits.wiki.actionCompleted.notice = wgULS('提报完成，将在几秒内刷新页面', '提報完成，將在幾秒內重新整理頁面');
 
 	// Tagging file
 	wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('加入侵权模板到页面', '加入侵權模板到頁面'));

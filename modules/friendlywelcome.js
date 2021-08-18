@@ -103,7 +103,7 @@ Twinkle.welcome.welcomeUser = function welcomeUser() {
 
 	var userTalkPage = mw.config.get('wgFormattedNamespaces')[3] + ':' + Morebits.wiki.flow.relevantUserName();
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
-	Morebits.wiki.actionCompleted.notice = wgULS('欢迎完成，在几秒内刷新页面', '歡迎完成，在幾秒內重新整理頁面');
+	Morebits.wiki.actionCompleted.notice = wgULS('欢迎完成，将在几秒内刷新页面', '歡迎完成，將在幾秒內重新整理頁面');
 
 	var wikipedia_page = new Morebits.wiki.page(userTalkPage, wgULS('编辑用户讨论页', '編輯使用者討論頁'));
 	wikipedia_page.setFollowRedirect(true);
@@ -407,7 +407,7 @@ Twinkle.welcome.callback.evaluate = function friendlywelcomeCallbackEvaluate(e) 
 
 	var userTalkPage = mw.config.get('wgFormattedNamespaces')[3] + ':' + Morebits.wiki.flow.relevantUserName();
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
-	Morebits.wiki.actionCompleted.notice = wgULS('欢迎完成，在几秒内刷新讨论页面', '歡迎完成，在幾秒內重新整理討論頁面');
+	Morebits.wiki.actionCompleted.notice = wgULS('欢迎完成，将在几秒内刷新讨论页面', '歡迎完成，將在幾秒內重新整理討論頁面');
 
 	var wikipedia_page = new Morebits.wiki.page(userTalkPage, wgULS('修改用户讨论页', '修改使用者討論頁'));
 	wikipedia_page.setFollowRedirect(true);

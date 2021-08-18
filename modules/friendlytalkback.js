@@ -328,7 +328,7 @@ Twinkle.talkback.evaluate = function(e) {
 	var fullUserTalkPageName = mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user_talk] + ':' + Morebits.wiki.flow.relevantUserName();
 
 	Morebits.wiki.actionCompleted.redirect = fullUserTalkPageName;
-	Morebits.wiki.actionCompleted.notice = wgULS('回复通告完成，将在几秒内刷新', '回覆通告完成，將在幾秒內重新整理');
+	Morebits.wiki.actionCompleted.notice = wgULS('回复通告完成，将在几秒内刷新页面', '回覆通告完成，將在幾秒內重新整理頁面');
 
 	Morebits.wiki.flow.check(fullUserTalkPageName, function () {
 		var data = Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message);
