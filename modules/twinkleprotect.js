@@ -526,7 +526,6 @@ Twinkle.protect.protectionTypesAdmin = [
 			{ label: wgULS('常规（全）', '常規（全）'), value: 'pp-protected' },
 			{ label: wgULS('争议、编辑战（全）', '爭議、編輯戰（全）'), value: 'pp-dispute' },
 			{ label: wgULS('长期破坏（全）', '長期破壞（全）'), value: 'pp-vandalism' },
-			{ label: wgULS('被封禁用户滥用讨论页（全）', '被封禁使用者濫用討論頁（全）'), value: 'pp-usertalk' }
 		]
 	},
 	{
@@ -604,11 +603,6 @@ Twinkle.protect.protectionPresetsInfo = {
 		expiry: 'infinity',
 		reason: wgULS('[[WP:HRT|高风险模板]]', '[[WP:HRT|高風險模板]]'),
 		template: 'noop'
-	},
-	'pp-usertalk': {
-		edit: 'sysop',
-		move: 'sysop',
-		reason: wgULS('被封禁用户滥用其讨论页', '被封禁使用者濫用其討論頁')
 	},
 	'pp-semi-vandalism': {
 		edit: 'autoconfirmed',
@@ -694,7 +688,6 @@ Twinkle.protect.protectionTags = [
 		label: wgULS('全保护模板', '全保護模板'),
 		list: [
 			{ label: '{{pp-dispute}}: ' + wgULS('争议', '爭議'), value: 'pp-dispute', selected: true },
-			{ label: '{{pp-usertalk}}: ' + wgULS('封禁的用户讨论页', '封禁的使用者討論頁'), value: 'pp-usertalk' }
 		]
 	},
 	{
@@ -944,7 +937,6 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			switch (input.category) {
 				case 'pp-dispute':
 				case 'pp-vandalism':
-				case 'pp-usertalk':
 				case 'pp-protected':
 					typename = wgULS('全保护', '全保護');
 					break;
@@ -996,7 +988,6 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				case 'pp-create-userpage':
 					typereason = wgULS('被永久封禁的用户页', '被永久封鎖的使用者頁面');
 					break;
-				case 'pp-usertalk':
 				case 'pp-semi-usertalk':
 					typereason = wgULS('已封禁用户的讨论页', '已封鎖使用者的討論頁');
 					break;
