@@ -225,7 +225,6 @@ BLACKLIST = set([
     'Template:Pp-semi-template',
     'Template:Pp-create-userpage',
     'Template:Pp-create-vandalism',
-    'Template:Pp-userpage',
     # other
     'Template:!',
 ])

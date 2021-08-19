@@ -526,7 +526,6 @@ Twinkle.protect.protectionTypesAdmin = [
 			{ label: wgULS('常规（全）', '常規（全）'), value: 'pp-protected' },
 			{ label: wgULS('争议、编辑战（全）', '爭議、編輯戰（全）'), value: 'pp-dispute' },
 			{ label: wgULS('长期破坏（全）', '長期破壞（全）'), value: 'pp-vandalism' },
-			{ label: wgULS('永久封禁的用户页（全）', '永久封禁的使用者頁面（全）'), value: 'pp-userpage' },
 			{ label: wgULS('被封禁用户滥用讨论页（全）', '被封禁使用者濫用討論頁（全）'), value: 'pp-usertalk' }
 		]
 	},
@@ -604,13 +603,6 @@ Twinkle.protect.protectionPresetsInfo = {
 		move: 'templateeditor',
 		expiry: 'infinity',
 		reason: wgULS('[[WP:HRT|高风险模板]]', '[[WP:HRT|高風險模板]]'),
-		template: 'noop'
-	},
-	'pp-userpage': {
-		edit: 'sysop',
-		move: 'sysop',
-		expiry: 'infinity',
-		reason: wgULS('被永久封禁的用户页', '被永久封禁的使用者頁'),
 		template: 'noop'
 	},
 	'pp-usertalk': {
@@ -1001,7 +993,6 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				case 'pp-semi-template':  // removed for now
 					typereason = wgULS('高风险模板', '高風險模板');
 					break;
-				case 'pp-userpage':
 				case 'pp-create-userpage':
 					typereason = wgULS('被永久封禁的用户页', '被永久封鎖的使用者頁面');
 					break;
