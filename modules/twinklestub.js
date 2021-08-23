@@ -432,6 +432,7 @@ Twinkle.stub.callbacks = {
 
 		pageobj.setPageText(pageText);
 		pageobj.setEditSummary(summaryText);
+		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setWatchlist(Twinkle.getPref('watchStubbedPages'));
 		pageobj.setMinorEdit(Twinkle.getPref('markStubbedPagesAsMinor'));
 		pageobj.setCreateOption('nocreate');
