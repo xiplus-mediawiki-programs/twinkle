@@ -525,7 +525,7 @@ Twinkle.protect.protectionTypesAdmin = [
 		list: [
 			{ label: wgULS('常规（全）', '常規（全）'), value: 'pp-protected' },
 			{ label: wgULS('争议、编辑战（全）', '爭議、編輯戰（全）'), value: 'pp-dispute' },
-			{ label: wgULS('长期破坏（全）', '長期破壞（全）'), value: 'pp-vandalism' },
+			{ label: wgULS('长期破坏（全）', '長期破壞（全）'), value: 'pp-vandalism' }
 		]
 	},
 	{
@@ -687,7 +687,7 @@ Twinkle.protect.protectionTags = [
 	{
 		label: wgULS('全保护模板', '全保護模板'),
 		list: [
-			{ label: '{{pp-dispute}}: ' + wgULS('争议', '爭議'), value: 'pp-dispute', selected: true },
+			{ label: '{{pp-dispute}}: ' + wgULS('争议', '爭議'), value: 'pp-dispute', selected: true }
 		]
 	},
 	{
