@@ -15,12 +15,8 @@
  */
 
 Twinkle.stub = function friendlytag() {
-	// redirect tagging
 	if (Morebits.isPageRedirect()) {
-		Twinkle.stub.mode = '重定向';
-	// file tagging
-	} else if (mw.config.get('wgNamespaceNumber') === 6 && !document.getElementById('mw-sharedupload') && document.getElementById('mw-imagepage-section-filehistory')) {
-		Twinkle.stub.mode = wgULS('文件', '檔案');
+		// Skip
 	// article/draft article tagging
 	} else if (((mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 118) && mw.config.get('wgCurRevisionId')) || (Morebits.pageNameNorm === Twinkle.getPref('sandboxPage'))) {
 		Twinkle.stub.mode = wgULS('条目', '條目');
@@ -456,13 +452,6 @@ Twinkle.stub.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		case '条目':
 			params.tags = form.getChecked('articleTags');
 			params.group = false;
-			break;
-		case '文件':
-		case '檔案':
-			params.tags = form.getChecked('imageTags');
-			break;
-		case '重定向':
-			params.tags = form.getChecked('redirectTags');
 			break;
 		default:
 			alert('Twinkle.stub：未知模式 ' + Twinkle.stub.mode);
