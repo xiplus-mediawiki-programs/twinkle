@@ -616,7 +616,7 @@ Twinkle.fluff.callbacks = {
 		var good_revision = revs[found];
 		var userHasAlreadyConfirmedAction = false;
 		if (params.type !== 'vand' && count > 1) {
-			if (!confirm(userNorm + wgULS(' 连续做出了 ', ' 連續做出了 ') + mw.language.convertNumber(count) + wgULS(' 次编辑，是否要回退所有这些？', ' 次編輯，是否要回退所有這些？'))) {
+			if (!confirm(userNorm + wgULS(' 连续做出了 ', ' 連續做出了 ') + mw.language.convertNumber(count) + wgULS(' 次编辑，是否要全部回退？', ' 次編輯，是否要全部回退？'))) {
 				Morebits.status.info('提示', wgULS('用户取消操作', '使用者取消操作'));
 				return;
 			}
