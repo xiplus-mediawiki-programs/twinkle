@@ -281,7 +281,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 					event: Twinkle.protect.formevents.movelevel,
 					list: Twinkle.protect.protectionLevels.filter(function(level) {
 						// Autoconfirmed is required for a move, redundant
-						return isTemplate || level.value !== 'templateeditor';
+						return level.value !== 'autoconfirmed' && (isTemplate || level.value !== 'templateeditor');
 					})
 				});
 				field2.append({
@@ -495,6 +495,7 @@ Twinkle.protect.doCustomExpiry = function twinkleprotectDoCustomExpiry(target) {
 Twinkle.protect.protectionLevels = [
 	{ label: '全部', value: 'all' },
 	{ label: wgULS('仅允许自动确认用户', '僅允許自動確認使用者'), value: 'autoconfirmed' },
+	{ label: wgULS('仅允许延伸确认用户', '僅允許延伸確認使用者'), value: 'extendedconfirmed' },
 	{ label: wgULS('仅模板编辑员和管理员', '僅模板編輯員和管理員'), value: 'templateeditor' },
 	{ label: wgULS('仅管理员', '僅管理員'), value: 'sysop', selected: true }
 ];
@@ -524,8 +525,7 @@ Twinkle.protect.protectionTypesAdmin = [
 		label: wgULS('全保护', '全保護'),
 		list: [
 			{ label: wgULS('常规（全）', '常規（全）'), value: 'pp-protected' },
-			{ label: wgULS('争议、编辑战（全）', '爭議、編輯戰（全）'), value: 'pp-dispute' },
-			{ label: wgULS('长期破坏（全）', '長期破壞（全）'), value: 'pp-vandalism' }
+			{ label: wgULS('争议、编辑战（全）', '爭議、編輯戰（全）'), value: 'pp-dispute' }
 		]
 	},
 	{
@@ -535,10 +535,17 @@ Twinkle.protect.protectionTypesAdmin = [
 		]
 	},
 	{
+		label: wgULS('延伸确认保护', '延伸確認保護'),
+		list: [
+			{ label: wgULS('争议、编辑战（延伸）', '爭議、編輯戰（延伸）'), value: 'pp-extend-dispute' },
+			{ label: wgULS('持续破坏（延伸）', '持續破壞（延伸）'), value: 'pp-vandalism' }
+		]
+	},
+	{
 		label: wgULS('半保护', '半保護'),
 		list: [
 			{ label: wgULS('常规（半）', '常規（半）'), value: 'pp-semi-protected' },
-			{ label: wgULS('长期破坏（半）', '長期破壞（半）'), value: 'pp-semi-vandalism' },
+			{ label: wgULS('持续破坏（半）', '持續破壞（半）'), value: 'pp-semi-vandalism' },
 			{ label: wgULS('违反生者传记方针（半）', '違反生者傳記方針（半）'), value: 'pp-semi-blp' },
 			{ label: wgULS('傀儡破坏（半）', '傀儡破壞（半）'), value: 'pp-semi-sock' },
 			{ label: wgULS('高风险模板（半）', '高風險模板（半）'), value: 'pp-semi-template' },
@@ -565,7 +572,7 @@ Twinkle.protect.protectionTypesCreateOnly = [
 		list: [
 			{ label: wgULS('常规（白纸）', '常規（白紙）'), value: 'pp-create' },
 			{ label: wgULS('多次重复创建（白纸）', '多次重複建立（白紙）'), value: 'pp-create-repeat' },
-			{ label: wgULS('长期破坏（白纸）', '長期破壞（白紙）'), value: 'pp-create-vandalism' },
+			{ label: wgULS('持续破坏（白纸）', '持續破壞（白紙）'), value: 'pp-create-vandalism' },
 			{ label: wgULS('已封禁用户的用户页（白纸）', '已封禁使用者的使用者頁（白紙）'), value: 'pp-create-userpage' }
 		]
 	}
@@ -592,17 +599,23 @@ Twinkle.protect.protectionPresetsInfo = {
 		move: 'sysop',
 		reason: wgULS('编辑战', '編輯戰')
 	},
-	'pp-vandalism': {
-		edit: 'sysop',
-		move: 'sysop',
-		reason: wgULS('被自动确认用户破坏', '被自動確認使用者破壞')
-	},
 	'pp-template': {
 		edit: 'templateeditor',
 		move: 'templateeditor',
 		expiry: 'infinity',
 		reason: wgULS('[[WP:HRT|高风险模板]]', '[[WP:HRT|高風險模板]]'),
 		template: 'noop'
+	},
+	'pp-vandalism': {
+		edit: 'extendedconfirmed',
+		move: 'extendedconfirmed',
+		reason: wgULS('被自动确认用户破坏', '被自動確認使用者破壞')
+	},
+	'pp-extend-dispute': {
+		edit: 'extendedconfirmed',
+		move: 'extendedconfirmed',
+		reason: wgULS('自动确认用户编辑战', '自動確認使用者編輯戰'),
+		template: 'pp-dispute'
 	},
 	'pp-semi-vandalism': {
 		edit: 'autoconfirmed',
@@ -685,15 +698,10 @@ Twinkle.protect.protectionTags = [
 		value: 'noop'
 	},
 	{
-		label: wgULS('全保护模板', '全保護模板'),
-		list: [
-			{ label: '{{pp-dispute}}: ' + wgULS('争议', '爭議'), value: 'pp-dispute', selected: true }
-		]
-	},
-	{
 		label: '通用模板',
 		list: [
-			{ label: '{{pp-vandalism}}: ' + wgULS('破坏', '破壞'), value: 'pp-vandalism' },
+			{ label: '{{pp-dispute}}: ' + wgULS('争议', '爭議'), value: 'pp-dispute' },
+			{ label: '{{pp-vandalism}}: ' + wgULS('破坏', '破壞'), value: 'pp-vandalism', selected: true },
 			{ label: '{{pp-template}}: ' + wgULS('高风险模板', '高風險模板'), value: 'pp-template' },
 			{ label: '{{pp-protected}}: ' + wgULS('常规', '常規'), value: 'pp-protected' }
 		]
@@ -936,12 +944,15 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			var typename, typereason;
 			switch (input.category) {
 				case 'pp-dispute':
-				case 'pp-vandalism':
 				case 'pp-protected':
 					typename = wgULS('全保护', '全保護');
 					break;
 				case 'pp-template':
 					typename = wgULS('模板保护', '模板保護');
+					break;
+				case 'pp-vandalism':
+				case 'pp-extend-dispute':
+					typename = wgULS('延伸确认保护', '延伸確認保護');
 					break;
 				case 'pp-semi-vandalism':
 				case 'pp-semi-usertalk':
@@ -974,12 +985,13 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			}
 			switch (input.category) {
 				case 'pp-dispute':
+				case 'pp-extend-dispute':
 					typereason = wgULS('争议、编辑战', '爭議、編輯戰');
 					break;
 				case 'pp-vandalism':
 				case 'pp-semi-vandalism':
 				case 'pp-create-vandalism':
-					typereason = wgULS('长期破坏', '長期破壞');
+					typereason = wgULS('持续破坏', '持續破壞');
 					break;
 				case 'pp-template':
 				case 'pp-semi-template':  // removed for now
@@ -1365,6 +1377,9 @@ Twinkle.protect.formatProtectionDescription = function(protectionLevels) {
 			switch (settings.level) {
 				case 'autoconfirmed':
 					level = wgULS('仅允许自动确认用户', '僅允許自動確認使用者');
+					break;
+				case 'extendedconfirmed':
+					level = wgULS('仅允许延伸确认用户', '僅允許延伸確認使用者');
 					break;
 				case 'templateeditor':
 					level = wgULS('仅模板编辑员和管理员', '僅模板編輯員和管理員');
