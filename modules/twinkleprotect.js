@@ -881,13 +881,20 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 
 			var protectIt = function twinkleprotectCallbackProtectIt(next) {
 				thispage = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('保护页面', '保護頁面'));
+				var anyExtendProtection = false;
 				if (mw.config.get('wgArticleId')) {
 					if (input.editmodify) {
+						if (input.editlevel === 'extendedconfirmed') {
+							anyExtendProtection = true;
+						}
 						thispage.setEditProtection(input.editlevel, input.editexpiry);
 					}
 					if (input.movemodify) {
 						// Ensure a level has actually been chosen
 						if (input.movelevel) {
+							if (input.movelevel === 'extendedconfirmed') {
+								anyExtendProtection = true;
+							}
 							thispage.setMoveProtection(input.movelevel, input.moveexpiry);
 						} else {
 							alert(wgULS('您需要选择保护层级！', '您需要選擇保護層級！'));
@@ -896,11 +903,19 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 					}
 					thispage.setWatchlist(Twinkle.getPref('watchProtectedPages'));
 				} else {
+					if (input.createlevel === 'extendedconfirmed') {
+						anyExtendProtection = true;
+					}
 					thispage.setCreateProtection(input.createlevel, input.createexpiry);
 					thispage.setWatchlist(false);
 				}
 
 				if (input.protectReason) {
+					if (anyExtendProtection && !/(争议|爭議|编辑战|編輯戰|破坏|破壞|重复创建|重複建立)/.test(input.protectReason)
+						&& !confirm(wgULS('根据保护方针，延伸确认保护仅可用于编辑战或破坏，但是您指定的保护理由似乎未符此条件。单击确认以继续保护，单击取消以更改保护设置', '根據保護方針，延伸確認保護僅可用於編輯戰或破壞，但是您指定的保護理由似乎未符此條件。點擊確認以繼續保護，點擊取消以更改保護設定'))) {
+						return;
+					}
+
 					thispage.setEditSummary(input.protectReason);
 					thispage.setChangeTags(Twinkle.changeTags);
 				} else {
