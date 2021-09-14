@@ -353,6 +353,13 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			value: '1'
 		});
 
+		blockoptions.push({
+			checked: true,
+			label: wgULS('标记当前的破坏中的请求（BETA版功能，请复查编辑！）', '標記當前的破壞中的請求（BETA版功能，請複查編輯！）'),
+			name: 'closevip',
+			value: '1'
+		});
+
 		field_block_options.append({
 			type: 'checkbox',
 			name: 'blockoptions',
@@ -1284,12 +1291,15 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	blockoptions = Twinkle.block.field_block_options;
 	unblockoptions = Twinkle.block.field_unblock_options;
 
+	var toClosevip = !!blockoptions.closevip;
+
 	templateoptions = Twinkle.block.field_template_options;
 	templateoptions.disabletalk = !!(templateoptions.disabletalk || blockoptions.disabletalk);
 	templateoptions.hardblock = !!blockoptions.hardblock;
 
 	// remove extraneous
 	delete blockoptions.expiry_preset;
+	delete blockoptions.closevip;
 
 	// Partial API requires this to be gone, not false or 0
 	if (toPartial) {
@@ -1461,6 +1471,12 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				if (toWarn) {
 					Twinkle.block.callback.issue_template(templateoptions);
 				}
+				if (toClosevip) {
+					var vipPage = new Morebits.wiki.page('Wikipedia:当前的破坏', wgULS('关闭请求', '關閉請求'));
+					vipPage.setFollowRedirect(true);
+					vipPage.setCallbackParameters(blockoptions);
+					vipPage.load(Twinkle.block.callback.closeRequest);
+				}
 			});
 			mbApi.post();
 		});
@@ -1613,6 +1629,50 @@ Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTempla
 		wikipedia_page.load(Twinkle.block.callback.main);
 	});
 
+};
+
+Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(vipPage) {
+	var params = vipPage.getCallbackParameters();
+	var text = vipPage.getPageText();
+	var statusElement = vipPage.getStatusElement();
+	var userName = Morebits.wiki.flow.relevantUserName(true);
+
+	var expiryText = Morebits.string.formatTime(params.expiry);
+	var comment = '{{Blocked|' + (Morebits.string.isInfinity(params.expiry) ? 'indef' : expiryText) + '}}';
+
+	var requestList = text.split(/(?=\n===.+===\s*\n)/);
+
+	var found = false;
+	var vipRe = new RegExp('===\\s*{{\\s*[Vv]andal\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.pageNameRegex(userName) + '\\s*}}\\s*===', 'm');
+	for (var i = 1; i < requestList.length; i++) {
+		if (vipRe.exec(requestList[i])) {
+			requestList[i] = requestList[i].trimRight();
+
+			var newText = requestList[i].replace(/^(\*\s*处理：)[ \t]*(<!-- 非管理員僅可標記已執行的封禁，針對提報的意見請放在下一行 -->)?[ \t]*$/m, '$1' + comment + '--~~~~\n');
+			if (requestList[i] === newText) {
+				newText = requestList[i] + '\n* 处理：' + comment + '--~~~~\n';
+			}
+
+			requestList[i] = newText;
+
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
+		statusElement.warn(wgULS('没有找到相关的请求', '沒有找到相關的請求'));
+		return;
+	}
+
+	text = requestList.join('');
+
+	var summary = wgULS('标记为已处理', '標記為已處理');
+
+	vipPage.setEditSummary(summary);
+	vipPage.setChangeTags(Twinkle.changeTags);
+	vipPage.setPageText(text);
+	vipPage.save();
 };
 
 Twinkle.block.formatBlockTime = function twinkleblockFormatBlockTime(time) {
