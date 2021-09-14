@@ -356,7 +356,8 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		blockoptions.push({
 			checked: true,
 			label: wgULS('标记当前的破坏中的请求（测试功能，请复查编辑！）', '標記當前的破壞中的請求（測試功能，請複查編輯！）'),
-			name: 'closevip'
+			name: 'closevip',
+			value: '1'
 		});
 
 		field_block_options.append({
@@ -1290,7 +1291,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	blockoptions = Twinkle.block.field_block_options;
 	unblockoptions = Twinkle.block.field_unblock_options;
 
-	var toClose = !!(blockoptions.close);
+	var toClosevip = !!blockoptions.closevip;
 
 	templateoptions = Twinkle.block.field_template_options;
 	templateoptions.disabletalk = !!(templateoptions.disabletalk || blockoptions.disabletalk);
@@ -1298,7 +1299,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 
 	// remove extraneous
 	delete blockoptions.expiry_preset;
-	delete blockoptions.close;
+	delete blockoptions.closevip;
 
 	// Partial API requires this to be gone, not false or 0
 	if (toPartial) {
@@ -1470,11 +1471,11 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				if (toWarn) {
 					Twinkle.block.callback.issue_template(templateoptions);
 				}
-				if (toClose) {
+				if (toClosevip) {
 					var vipPage = new Morebits.wiki.page('Wikipedia:当前的破坏', wgULS('关闭请求', '關閉請求'));
 					vipPage.setFollowRedirect(true);
 					vipPage.setCallbackParameters(blockoptions);
-					vipPage.load(Twinkle.block.callbacks.closeRequest);
+					vipPage.load(Twinkle.block.callback.closeRequest);
 				}
 			});
 			mbApi.post();
