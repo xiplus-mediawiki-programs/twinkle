@@ -1648,12 +1648,12 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 		if (vipRe.exec(requestList[i])) {
 			requestList[i] = requestList[i].trimRight();
 
-			var newText = requestList[i].replace(/^(\*\s*处理：)[ \t]*(<!-- 非管理員僅可標記已執行的封禁，針對提報的意見請放在下一行 -->)?[ \t]*$/m, '$1' + comment + '--~~~~\n');
+			var newText = requestList[i].replace(/^(\*\s*处理：)[ \t]*(<!-- 非管理員僅可標記已執行的封禁，針對提報的意見請放在下一行 -->)?[ \t]*$/m, '$1' + comment + '--~~~~');
 			if (requestList[i] === newText) {
-				newText = requestList[i] + '\n* 处理：' + comment + '--~~~~\n';
+				newText = requestList[i] + '\n* 处理：' + comment + '--~~~~';
 			}
 
-			requestList[i] = newText;
+			requestList[i] = newText + '\n';
 
 			found = true;
 			break;
