@@ -1195,6 +1195,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 						input = document.createElement('select');
 						input.setAttribute('id', pref.name);
 						input.setAttribute('name', pref.name);
+						var optionExists = false;
 						$.each(pref.enumValues, function(enumvalue, enumdisplay) {
 							var option = document.createElement('option');
 							option.setAttribute('value', enumvalue);
@@ -1205,10 +1206,19 @@ Twinkle.config.init = function twinkleconfigInit() {
 								((gotPref && enumvalue === 'yes') ||
 								(!gotPref && enumvalue === 'no')))) {
 								option.setAttribute('selected', 'selected');
+								optionExists = true;
 							}
 							option.appendChild(document.createTextNode(enumdisplay));
 							input.appendChild(option);
 						});
+						// Append user-defined value to options
+						if (!optionExists) {
+							var option = document.createElement('option');
+							option.setAttribute('value', gotPref);
+							option.setAttribute('selected', 'selected');
+							option.appendChild(document.createTextNode(gotPref));
+							input.appendChild(option);
+						}
 						cell.appendChild(input);
 						break;
 
