@@ -1675,32 +1675,6 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 	vipPage.save();
 };
 
-Twinkle.block.formatBlockTime = function twinkleblockFormatBlockTime(time) {
-	var m;
-	if ((m = time.match(/^\s*(\d+)\s*seconds?\s*$/)) !== null) {
-		return m[1] + '秒';
-	}
-	if ((m = time.match(/^\s*(\d+)\s*min(ute)?s?\s*$/)) !== null) {
-		return m[1] + '分';
-	}
-	if ((m = time.match(/^\s*(\d+)\s*hours?\s*$/)) !== null) {
-		return m[1] + '小時';
-	}
-	if ((m = time.match(/^\s*(\d+)\s*days?\s*$/)) !== null) {
-		return m[1] + '天';
-	}
-	if ((m = time.match(/^\s*(\d+)\s*weeks?\s*$/)) !== null) {
-		return m[1] + '週';
-	}
-	if ((m = time.match(/^\s*(\d+)\s*months?\s*$/)) !== null) {
-		return m[1] + '個月';
-	}
-	if ((m = time.match(/^\s*(\d+)\s*years?\s*$/)) !== null) {
-		return m[1] + '年';
-	}
-	return time;
-};
-
 Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 	var text = '{{', settings = Twinkle.block.blockPresetsInfo[params.template];
 	if (!settings.nonstandard) {
@@ -1713,7 +1687,7 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 			if (params.indefinite) {
 				text += '|indef=yes';
 			} else if (!params.blank_duration) {
-				text += '|time=' + Twinkle.block.formatBlockTime(params.expiry);
+				text += '|time=' + Morebits.string.formatTime(params.expiry);
 			}
 		}
 
