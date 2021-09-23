@@ -259,17 +259,15 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				{ label: wgULS('无限期', '無限期'), value: 'infinity' },
 				{ label: wgULS('3小时', '3小時'), value: '3 hours' },
 				{ label: wgULS('12小时', '12小時'), value: '12 hours' },
-				{ label: wgULS('24小时', '24小時'), value: '24 hours' },
+				{ label: '1天', value: '1 day' },
 				{ label: wgULS('31小时', '31小時'), value: '31 hours' },
-				{ label: wgULS('36小时', '36小時'), value: '36 hours' },
-				{ label: wgULS('48小时', '48小時'), value: '48 hours' },
-				{ label: wgULS('60小时', '60小時'), value: '60 hours' },
-				{ label: wgULS('72小时', '72小時'), value: '72 hours' },
+				{ label: '2天', value: '2 days' },
+				{ label: '3天', value: '3 days' },
 				{ label: wgULS('1周', '1週'), value: '1 week' },
 				{ label: wgULS('2周', '2週'), value: '2 weeks' },
-				{ label: '1月', value: '1 month' },
-				{ label: '3月', value: '3 months' },
-				{ label: '6月', value: '6 months' },
+				{ label: wgULS('1个月', '1個月'), value: '1 month' },
+				{ label: wgULS('3个月', '3個月'), value: '3 months' },
+				{ label: wgULS('6个月', '6個月'), value: '6 months' },
 				{ label: '1年', value: '1 year' },
 				{ label: '2年', value: '2 years' },
 				{ label: '3年', value: '3 years' }
@@ -819,7 +817,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
  */
 Twinkle.block.blockPresetsInfo = {
 	'anonblock': {
-		expiry: '72 hours',
+		expiry: '3 days',
 		forAnonOnly: true,
 		nocreate: true,
 		nonstandard: true,
@@ -876,12 +874,12 @@ Twinkle.block.blockPresetsInfo = {
 	// uw-prefixed
 	'uw-3block': {
 		autoblock: true,
-		expiry: '24 hours',
+		expiry: '1 day',
 		nocreate: true
 	},
 	'uw-ablock': {
 		autoblock: true,
-		expiry: '24 hours',
+		expiry: '1 day',
 		forAnonOnly: true,
 		nocreate: true,
 		reasonParam: true
@@ -931,7 +929,7 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-vblock': {
 		autoblock: true,
-		expiry: '24 hours',
+		expiry: '1 day',
 		nocreate: true
 	},
 	'Bot block message': {
@@ -940,7 +938,7 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-pblock': {
 		autoblock: true,
-		expiry: '24 hours',
+		expiry: '1 day',
 		nocreate: false,
 		pageParam: false,
 		reasonParam: true,
@@ -957,9 +955,9 @@ Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets
 		settings.indefinite = settings.indefinite || Morebits.string.isInfinity(settings.expiry);
 
 		if (!Twinkle.block.isRegistered && settings.indefinite) {
-			settings.expiry = '24 hours';
+			settings.expiry = '1 day';
 		} else {
-			settings.expiry = settings.expiry || '24 hours';
+			settings.expiry = settings.expiry || '1 day';
 		}
 
 		Twinkle.block.blockPresetsInfo[preset] = settings;
@@ -984,7 +982,7 @@ Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets
 					Twinkle.block.blockPresetsInfo[blockPreset.value] = Twinkle.block.blockPresetsInfo[newPreset];
 				}
 				if (blockGroup.custom && Twinkle.block.blockPresetsInfo[blockPreset.value].expiry === undefined) {
-					Twinkle.block.blockPresetsInfo[blockPreset.value].expiry = '24 hours';
+					Twinkle.block.blockPresetsInfo[blockPreset.value].expiry = '1 day';
 				}
 				blockPreset.value = newPreset;
 			});

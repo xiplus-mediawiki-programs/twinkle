@@ -503,17 +503,13 @@ Twinkle.protect.protectionLevels = [
 // default expiry selection is conditionally set in Twinkle.protect.callback.changePreset
 // NOTE: This list is used by batchprotect as well
 Twinkle.protect.protectionLengths = [
-	{ label: wgULS('1小时', '1小時'), value: '1 hour' },
-	{ label: wgULS('2小时', '2小時'), value: '2 hours' },
-	{ label: wgULS('3小时', '3小時'), value: '3 hours' },
-	{ label: wgULS('6小时', '6小時'), value: '6 hours' },
-	{ label: '1日', value: '1 day' },
-	{ label: '3日', value: '3 days' },
+	{ label: '1天', value: '1 day' },
+	{ label: '3天', value: '3 days' },
 	{ label: wgULS('1周', '1週'), value: '1 week' },
 	{ label: wgULS('2周', '2週'), value: '2 weeks' },
-	{ label: '1月', value: '1 month' },
-	{ label: '3月', value: '3 months' },
-	{ label: '6月', value: '6 months' },
+	{ label: wgULS('1个月', '1個月'), value: '1 month' },
+	{ label: wgULS('3个月', '3個月'), value: '3 months' },
+	{ label: wgULS('6个月', '6個月'), value: '6 months' },
 	{ label: '1年', value: '1 year' },
 	{ label: wgULS('无限期', '無限期'), value: 'infinity' },
 	{ label: wgULS('自定义…', '自訂…'), value: 'custom' }
