@@ -1636,7 +1636,7 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 	var userName = Morebits.wiki.flow.relevantUserName(true);
 
 	var expiryText = Morebits.string.formatTime(params.expiry);
-	var comment = '{{Blocked|' + (Morebits.string.isInfinity(params.expiry) ? 'indef' : expiryText) + '}}';
+	var comment = '{{Blocked|' + (Morebits.string.isInfinity(params.expiry) ? 'indef' : expiryText) + '}}。';
 
 	var requestList = text.split(/(?=\n===.+===\s*\n)/);
 
