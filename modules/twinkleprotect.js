@@ -257,7 +257,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						if (e.target.value === 'custom') {
 							Twinkle.protect.doCustomExpiry(e.target);
 						}
-						$('input[name=small]', $(e.target).closest('form'))[0].checked = e.target.selectedIndex >= 8; // 1 month
+						$('input[name=small]', $(e.target).closest('form'))[0].checked = e.target.selectedIndex >= 4; // 1 month
 					},
 					// default expiry selection (2 days) is conditionally set in Twinkle.protect.callback.changePreset
 					list: Twinkle.protect.protectionLengths
