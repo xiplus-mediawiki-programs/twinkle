@@ -78,6 +78,7 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:通过;zh-hant:透過}-
 -{H|zh-hans:链入;zh-hant:連入}-
 -{H|zh-hans:消链;zh-hant:消連}-
+-{H|zh-hans:品质;zh-hant:品質}-
 '''
 
 headers = {
