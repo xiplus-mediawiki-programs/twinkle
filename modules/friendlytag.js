@@ -325,11 +325,50 @@ Twinkle.tag.updateSortOrder = function(e) {
 		}
 		switch (tag) {
 			case 'Expand language':
-				checkbox.subgroup = {
-					name: 'expandLanguage',
-					type: 'input',
-					label: wgULS('外语版本语言代码（必填）：', '外語版本語言代碼（必填）：')
-				};
+				checkbox.subgroup = [
+					{
+						name: 'expandLanguage',
+						type: 'input',
+						label: wgULS('外语版本语言代码（必填）：', '外語版本語言代碼（必填）：')
+					},
+					{
+						type: 'checkbox',
+						list: [
+							{
+								name: 'highQualityArticle',
+								label: wgULS('高品质条目', '高品質條目')
+							}
+						]
+					},
+					{
+						name: 'expandLanguage2',
+						type: 'input',
+						label: wgULS('外语版本语言代码：', '外語版本語言代碼：')
+					},
+					{
+						type: 'checkbox',
+						list: [
+							{
+								name: 'highQualityArticle2',
+								label: wgULS('高品质条目', '高品質條目')
+							}
+						]
+					},
+					{
+						name: 'expandLanguage3',
+						type: 'input',
+						label: wgULS('外语版本语言代码：', '外語版本語言代碼：')
+					},
+					{
+						type: 'checkbox',
+						list: [
+							{
+								name: 'highQualityArticle3',
+								label: wgULS('高品质条目', '高品質條目')
+							}
+						]
+					}
+				];
 				break;
 			case 'Expert needed':
 				checkbox.subgroup = [
@@ -1253,6 +1292,21 @@ Twinkle.tag.callbacks = {
 				switch (tagName) {
 					case 'Expand language':
 						currentTag += '|1=' + params.expandLanguage;
+						if (params.highQualityArticle) {
+							currentTag += '|status=yes';
+						}
+						if (params.expandLanguage2) {
+							currentTag += '|2=' + params.expandLanguage2;
+							if (params.highQualityArticle2) {
+								currentTag += '|status2=yes';
+							}
+						}
+						if (params.expandLanguage3) {
+							currentTag += '|3=' + params.expandLanguage3;
+							if (params.highQualityArticle3) {
+								currentTag += '|status3=yes';
+							}
+						}
 						break;
 					case 'Expert needed':
 						currentTag += '|subject=' + params.expert;
