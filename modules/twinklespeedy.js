@@ -1150,6 +1150,12 @@ Twinkle.speedy.callbacks = {
 				});
 				Morebits.status.info($bigtext[0], $link[0]);
 			}
+
+			$link = $('<a>', {
+				href: mw.util.getUrl('Special:RandomInCategory/快速删除候选'),
+				text: wgULS('单击前往下一个快速删除候选', '點擊前往下一個快速刪除候選')
+			});
+			Morebits.status.info('工具', $link[0]);
 		},
 		openUserTalkPage: function(pageobj) {
 			pageobj.getStatusElement().unlink();  // don't need it anymore
