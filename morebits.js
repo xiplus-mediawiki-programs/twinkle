@@ -5162,11 +5162,13 @@ Morebits.wiki.preview = function(previewbox) {
 
 		var query = {
 			action: 'parse',
-			prop: 'text',
-			pst: 'true',  // PST = pre-save transform; this makes substitution work properly
+			prop: ['text', 'modules'],
+			pst: true,  // PST = pre-save transform; this makes substitution work properly
+			preview: true,
 			text: wikitext,
 			title: pageTitle || pageName, // zhwiki
 			disablelimitreport: true,
+			disableeditsection: true,
 			uselang: mw.config.get('wgUserLanguage'), // zhwiki: Use wgUserLanguage for preview
 			format: 'json'
 		};
@@ -5179,13 +5181,18 @@ Morebits.wiki.preview = function(previewbox) {
 	};
 
 	var fnRenderSuccess = function(apiobj) {
-		var html = apiobj.getResponse().parse.text;
+		var response = apiobj.getResponse();
+		var html = response.parse.text;
 		if (!html) {
 			apiobj.statelem.error(wgULS('加载预览失败，或模板为空', '載入預覽失敗，或模板為空'));
 			return;
 		}
 		previewbox.innerHTML = html;
-		$(previewbox).find('a').attr('target', '_blank'); // this makes links open in new tab
+		mw.loader.load(response.parse.modulestyles);
+		mw.loader.load(response.parse.modules);
+
+		// this makes links open in new tab
+		$(previewbox).find('a').attr('target', '_blank');
 	};
 
 	/** Hides the preview box and clears it. */
