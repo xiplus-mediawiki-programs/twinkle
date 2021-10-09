@@ -1303,7 +1303,8 @@ Twinkle.speedy.callbacks = {
 			}
 
 			if (params.copyvio) {
-				code += '\n{{subst:Copyvio/auto|url=* 請管理員檢查已刪歷史內容及侵權來源：[[Special:Undelete/' + params.copyvio + ']]|OldRevision=' + mw.config.get('wgRevisionId') + '}}';
+				var revisionId = mw.config.get('wgRevisionId') || mw.config.get('wgDiffNewId') || mw.config.get('wgCurRevisionId');
+				code += '\n{{subst:Copyvio/auto|url=* 請管理員檢查已刪歷史內容及侵權來源：[[Special:Undelete/' + params.copyvio + ']]|OldRevision=' + revisionId + '}}';
 			}
 
 			// Generate edit summary for edit
