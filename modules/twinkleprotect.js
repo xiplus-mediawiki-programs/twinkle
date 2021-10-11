@@ -834,11 +834,14 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				} else if (input.editlevel === 'templateeditor') {
 					closeparams.type = 'temp';
 					closeparams.expiry = input.editexpiry;
+				} else if (input.editlevel === 'extendedconfirmed') {
+					closeparams.type = 'ecp';
+					closeparams.expiry = input.editexpiry;
 				} else if (input.editlevel === 'autoconfirmed') {
 					closeparams.type = 'semi';
 					closeparams.expiry = input.editexpiry;
 				}
-			} else if (input.movemodify && ['sysop', 'templateeditor'].indexOf(input.movelevel) !== -1) {
+			} else if (input.movemodify && ['sysop', 'templateeditor', 'extendedconfirmed'].indexOf(input.movelevel) !== -1) {
 				closeparams.type = 'move';
 				closeparams.expiry = input.moveexpiry;
 			}
@@ -1333,6 +1336,9 @@ Twinkle.protect.callbacks = {
 				break;
 			case 'temp':
 				summary = wgULS('模板保护', '模板保護');
+				break;
+			case 'ecp':
+				summary = wgULS('延伸确认保护', '延伸確認保護');
 				break;
 			case 'full':
 				summary = wgULS('全保护', '全保護');
