@@ -1183,6 +1183,9 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 		if (data.useInitialOptions && data[el.name] === undefined) {
 			return;
 		}
+		if (el.name === 'closevip') {
+			return;
+		}
 
 		var check = data[el.name] === '' || !!data[el.name];
 		$(el).prop('checked', check);
@@ -1641,9 +1644,11 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 	var requestList = text.split(/(?=\n===.+===\s*\n)/);
 
 	var found = false;
-	var vipRe = new RegExp('===\\s*{{\\s*[Vv]andal\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.pageNameRegex(userName) + '\\s*}}\\s*===', 'm');
+	var hidename = false;
+	var vipRe = new RegExp('===\\s*{{\\s*[Vv]andal\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.pageNameRegex(userName) + '\\s*(\\|\\s*hidename\\s*=[^|]+)?}}\\s*===', 'm');
 	for (var i = 1; i < requestList.length; i++) {
 		if (vipRe.exec(requestList[i])) {
+			hidename = /\|\s*hidename\s*=[^|]+/.test(requestList[i]);
 			requestList[i] = requestList[i].trimRight();
 
 			var newText = requestList[i].replace(/^(\*\s*处理：)[ \t]*(<!-- 非管理員僅可標記已執行的封禁，針對提報的意見請放在下一行 -->)?[ \t]*$/m, '$1' + comment + '--~~~~');
@@ -1665,7 +1670,17 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 
 	text = requestList.join('');
 
-	var summary = wgULS('标记为已处理', '標記為已處理');
+	var summary;
+	if (hidename) {
+		summary = wgULS('标记为已处理', '標記為已處理');
+	} else {
+		summary = '/* ' + userName + ' */ ';
+		if (Morebits.string.isInfinity(params.expiry)) {
+			summary += wgULS('不限期封禁', '不限期封鎖');
+		} else {
+			summary += wgULS('封禁', '封鎖') + expiryText;
+		}
+	}
 
 	vipPage.setEditSummary(summary);
 	vipPage.setChangeTags(Twinkle.changeTags);
