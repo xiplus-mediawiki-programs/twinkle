@@ -294,9 +294,9 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				type: 'select',
 				multiple: true,
 				name: 'namespacerestrictions',
-				label: wgULS('名字空间封禁', '命名空間封鎖'),
+				label: wgULS('命名空间封禁', '命名空間封鎖'),
 				value: '',
-				tooltip: wgULS('指定封禁的名字空间。', '指定封鎖的命名空間。')
+				tooltip: wgULS('指定封禁的命名空间。', '指定封鎖的命名空間。')
 			});
 			$.each(menuFormattedNamespaces, function(number, name) {
 				// Ignore -1: Special; -2: Media; and 2300-2303: Gadget (talk) and Gadget definition (talk)
@@ -473,7 +473,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			display: 'none',
 			label: wgULS('封禁区域', '封鎖區域'),
 			value: '',
-			tooltip: wgULS('阻止用户编辑的页面或名字空间的可选说明。', '阻止使用者編輯的頁面或命名空間的可選說明。')
+			tooltip: wgULS('阻止用户编辑的页面或命名空间的可选说明。', '阻止使用者編輯的頁面或命名空間的可選說明。')
 		});
 
 		if (!blockBox) {
@@ -698,7 +698,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				searching: Morebits.select2.queryInterceptor
 			},
 			templateResult: Morebits.select2.highlightSearchMatches,
-			placeholder: wgULS('选择要阻止用户编辑的名字空间', '選擇要阻止使用者編輯的命名空間')
+			placeholder: wgULS('选择要阻止用户编辑的命名空间', '選擇要阻止使用者編輯的命名空間')
 		});
 
 		mw.util.addCSS(
@@ -1356,12 +1356,12 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	if (toBlock) {
 		if (blockoptions.partial) {
 			if (blockoptions.disabletalk && blockoptions.namespacerestrictions.indexOf('3') === -1) {
-				return alert(wgULS('部分封禁无法阻止编辑自己的讨论页，除非也封禁了User talk名字空间！', '部分封鎖無法阻止編輯自己的討論頁，除非也封鎖了User talk命名空間！'));
+				return alert(wgULS('部分封禁无法阻止编辑自己的讨论页，除非也封禁了User talk命名空间！', '部分封鎖無法阻止編輯自己的討論頁，除非也封鎖了User talk命名空間！'));
 			}
 			if (!blockoptions.namespacerestrictions && !blockoptions.pagerestrictions) {
 				if (!blockoptions.noemail && !blockoptions.nocreate) { // Blank entries technically allowed [[phab:T208645]]
-					return alert(wgULS('没有选择页面或名字空间，也没有停用电子邮件或禁止创建账户；请选择至少一个选项以应用部分封禁！', '沒有選擇頁面或命名空間，也沒有停用電子郵件或禁止建立帳號；請選擇至少一個選項以應用部分封鎖！'));
-				} else if (!confirm(wgULS('您将要进行封禁，但没有阻止任何页面或名字空间的编辑，确定要继续？', '您將要進行封鎖，但沒有阻止任何頁面或命名空間的編輯，確定要繼續？'))) {
+					return alert(wgULS('没有选择页面或命名空间，也没有停用电子邮件或禁止创建账户；请选择至少一个选项以应用部分封禁！', '沒有選擇頁面或命名空間，也沒有停用電子郵件或禁止建立帳號；請選擇至少一個選項以應用部分封鎖！'));
+				} else if (!confirm(wgULS('您将要进行封禁，但没有阻止任何页面或命名空间的编辑，确定要继续？', '您將要進行封鎖，但沒有阻止任何頁面或命名空間的編輯，確定要繼續？'))) {
 					return;
 				}
 			}
@@ -1740,7 +1740,7 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 					var namespaceNames = params.namespacerestrictions.map(function(id) {
 						return menuFormattedNamespaces[id];
 					});
-					text += wgULS('[[Wikipedia:名字空间|名字空间]]（', '[[Wikipedia:命名空間|命名空間]]（') + makeSentence(namespaceNames) + '）';
+					text += wgULS('[[Wikipedia:命名空间|命名空间]]（', '[[Wikipedia:命名空間|命名空間]]（') + makeSentence(namespaceNames) + '）';
 				}
 			} else if (params.area) {
 				text += '|area=' + params.area;

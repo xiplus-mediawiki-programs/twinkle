@@ -355,7 +355,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			work_area.append({ type: 'header', label: wgULS('条目', '條目') });
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.articleList, mode) });
 			if (/^(MOS|LTA):/.test(mw.config.get('wgPageName')) && !Morebits.isPageRedirect()) { // pseudo namespace
-				work_area.append({ type: 'header', label: wgULS('伪名字空间', '偽命名空間') });
+				work_area.append({ type: 'header', label: wgULS('伪命名空间', '偽命名空間') });
 				work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.pseudoNSList, mode) });
 			}
 			break;
@@ -594,9 +594,9 @@ Twinkle.speedy.customRationale = [
 
 Twinkle.speedy.pseudoNSList = [
 	{
-		label: wgULS('O8. 在伪名字空间中创建的非重定向页', 'O8. 在偽命名空間中建立的非重新導向頁面'),
+		label: wgULS('O8. 在伪命名空间中创建的非重定向页', 'O8. 在偽命名空間中建立的非重新導向頁面'),
 		value: 'o8',
-		tooltip: wgULS('伪名字空间仅能用于重定向。如可以移动到合适的名称，请将页面移动到合适的名称，否则请使用此款快速删除。若页面明显是一个条目，则不适用此款快速删除。', '偽命名空間僅能用於重新導向。如可以移動到合適的名稱，請將頁面移動到合適的名稱，否則請使用此款快速刪除。若頁面明顯是一個條目，則不適用此款快速刪除。')
+		tooltip: wgULS('伪命名空间仅能用于重定向。如可以移动到合适的名称，请将页面移动到合适的名称，否则请使用此款快速删除。若页面明显是一个条目，则不适用此款快速删除。', '偽命名空間僅能用於重新導向。如可以移動到合適的名稱，請將頁面移動到合適的名稱，否則請使用此款快速刪除。若頁面明顯是一個條目，則不適用此款快速刪除。')
 	}
 ];
 
@@ -732,7 +732,7 @@ Twinkle.speedy.userList = [
 	{
 		label: wgULS('O1: 用户请求删除自己的用户页或其子页面。', 'O1: 使用者請求刪除自己的使用者頁面或其子頁面。'),
 		value: 'o1',
-		tooltip: wgULS('如果是从其他名字空间移动来的，须附有合理原因。', '如果是從其他命名空間移動來的，須附有合理原因。')
+		tooltip: wgULS('如果是从其他命名空间移动来的，须附有合理原因。', '如果是從其他命名空間移動來的，須附有合理原因。')
 	}
 ];
 
@@ -818,7 +818,7 @@ Twinkle.speedy.generalList = [
 	{
 		label: wgULS('G13: 翻译拙劣', 'G13: 翻譯拙劣'),
 		value: 'g13',
-		tooltip: wgULS('不适用于所有的讨论名字空间、草稿名字空间和用户名字空间。', '不適用於所有的討論命名空間、草稿命名空間和使用者命名空間。'),
+		tooltip: wgULS('不适用于所有的讨论命名空间、草稿命名空间和用户命名空间。', '不適用於所有的討論命名空間、草稿命名空間和使用者命名空間。'),
 		hideInNamespaces: [ 1, 2, 3, 5, 7, 9, 11, 13, 15, 101, 118, 119, 829 ] // all talk, user, draft
 	},
 	{
@@ -836,7 +836,7 @@ Twinkle.speedy.generalList = [
 	{
 		label: wgULS('G16: 页面与介绍相同事物的原页面同样侵权', 'G16: 頁面與介紹相同事物的原頁面同樣侵權'),
 		value: 'g16',
-		tooltip: wgULS('此条所适用的页面包括但不限于草稿页面、主名字空间（条目空间）页面、用户空间页面等介绍相同事物，且在原页面被提报侵权后创建的页面。提报时需同时附上已提报侵犯著作权页面的名称，除非一眼能看出已提报侵犯著作权页面。', '此條所適用的頁面包括但不限於草稿頁面、主命名空間（條目空間）頁面、使用者空間頁面等介紹相同事物，且在原頁面被提報侵權後建立的頁面。提報時需同時附上已提報侵犯著作權頁面的名稱，除非一眼能看出已提報侵犯著作權頁面。'),
+		tooltip: wgULS('此条所适用的页面包括但不限于草稿页面、主命名空间（条目空间）页面、用户空间页面等介绍相同事物，且在原页面被提报侵权后创建的页面。提报时需同时附上已提报侵犯著作权页面的名称，除非一眼能看出已提报侵犯著作权页面。', '此條所適用的頁面包括但不限於草稿頁面、主命名空間（條目空間）頁面、使用者空間頁面等介紹相同事物，且在原頁面被提報侵權後建立的頁面。提報時需同時附上已提報侵犯著作權頁面的名稱，除非一眼能看出已提報侵犯著作權頁面。'),
 		subgroup: [
 			{
 				name: 'g16_pagename',
@@ -850,7 +850,7 @@ Twinkle.speedy.generalList = [
 		]
 	},
 	{
-		label: wgULS('G17: 位于不恰当的名字空间的消歧义页面', 'G17: 位於不恰當的命名空間的消歧義頁面'),
+		label: wgULS('G17: 位于不恰当的命名空间的消歧义页面', 'G17: 位於不恰當的命名空間的消歧義頁面'),
 		value: 'g17',
 		tooltip: wgULS('在提请快速删除前，请务必先检查并清理相关消歧义页面的链入。此项不论页面是否引用消歧义模板或消歧义消息模板均适用，惟对消歧义模板及消歧义消息模板本身不适用。', '在提請快速刪除前，請務必先檢查並清理相關消歧義頁面的連入。此項不論頁面是否引用消歧義模板或消歧義訊息模板均適用，惟對消歧義模板及消歧義訊息模板本身不適用。'),
 		hideInNamespaces: [ 0, 1, 2, 3, 4, 5, 118, 119 ] // main, user, project, draft and theirs talks
@@ -859,9 +859,9 @@ Twinkle.speedy.generalList = [
 
 Twinkle.speedy.redirectList = [
 	{
-		label: wgULS('R2: 跨名字空间重定向。', 'R2: 跨命名空間重新導向。'),
+		label: wgULS('R2: 跨命名空间重定向。', 'R2: 跨命名空間重新導向。'),
 		value: 'r2',
-		tooltip: wgULS('包括以下几种类型：1. 从条目名字空间指向非条目名字空间；2. 从草稿名字空间指向非草稿名字空间。', '包括以下幾種類型：1. 從條目命名空間指向非條目命名空間；2. 從草稿命名空間指向非草稿命名空間。'),
+		tooltip: wgULS('包括以下几种类型：1. 从条目命名空间指向非条目命名空间；2. 从草稿命名空间指向非草稿命名空间。', '包括以下幾種類型：1. 從條目命名空間指向非條目命名空間；2. 從草稿命名空間指向非草稿命名空間。'),
 		showInNamespaces: [ 0, 118 ] // main, draft
 	},
 	{

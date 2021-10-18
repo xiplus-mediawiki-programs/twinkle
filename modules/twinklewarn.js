@@ -2099,7 +2099,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 						// most likely because it's a cross-namespace redirect
 						// Supersedes the typical $autolevelMessage added in autolevelParseWikitext
 						var $noTalkPageNode = $('<strong/>', {
-							text: wgULS('无法加载用户讨论页，这可能是因为它是跨名字空间重定向，自动选择警告级别将不会运作。', '無法載入使用者討論頁，這可能是因為它是跨命名空間重新導向，自動選擇警告級別將不會運作。'),
+							text: wgULS('无法加载用户讨论页，这可能是因为它是跨命名空间重定向，自动选择警告级别将不会运作。', '無法載入使用者討論頁，這可能是因為它是跨命名空間重新導向，自動選擇警告級別將不會運作。'),
 							id: 'twinkle-warn-autolevel-message',
 							css: {color: 'red' }
 						});

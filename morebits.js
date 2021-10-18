@@ -3928,7 +3928,7 @@ Morebits.wiki.page = function(pageName, status) {
 				var origNs = new mw.Title(ctx.pageName).namespace;
 				var newNs = new mw.Title(resolvedName).namespace;
 				if (origNs !== newNs && !ctx.followCrossNsRedirect) {
-					ctx.statusElement.error(ctx.pageName + wgULS('是跨名字空间重定向到', '是跨命名空間重新導向到') + resolvedName + wgULS('，略过', '，略過'));
+					ctx.statusElement.error(ctx.pageName + wgULS('是跨命名空间重定向到', '是跨命名空間重新導向到') + resolvedName + wgULS('，略过', '，略過'));
 					onFailure(this);
 					return false;
 				}

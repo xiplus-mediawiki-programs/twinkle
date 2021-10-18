@@ -80,7 +80,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 										value: 'delete_subpage_redirects'
 									},
 									{
-										label: wgULS('取消所有已删页面的链入（仅处理条目及Portal名字空间）', '取消所有已刪頁面的連入（僅處理條目及Portal命名空間）'),
+										label: wgULS('取消所有已删页面的链入（仅处理条目及Portal命名空间）', '取消所有已刪頁面的連入（僅處理條目及Portal命名空間）'),
 										name: 'unlink_subpages',
 										value: 'unlink_subpages'
 									}
@@ -91,13 +91,13 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 				}
 			},
 			{
-				label: wgULS('取消链入（仅处理条目及Portal名字空间）', '取消連入（僅處理條目及Portal命名空間）'),
+				label: wgULS('取消链入（仅处理条目及Portal命名空间）', '取消連入（僅處理條目及Portal命名空間）'),
 				name: 'unlink_page',
 				value: 'unlink',
 				checked: false
 			},
 			{
-				label: wgULS('移除文件使用（所有名字空间）', '移除檔案使用（所有命名空間）'),
+				label: wgULS('移除文件使用（所有命名空间）', '移除檔案使用（所有命名空間）'),
 				name: 'unlink_file',
 				value: 'unlink_file',
 				checked: true
@@ -326,8 +326,8 @@ Twinkle.batchdelete.deletereasonlist = [
 		value: wgULS('[[Wikipedia:CSD#O7|O7]]: 废弃草稿。', '[[Wikipedia:CSD#O7|O7]]: 廢棄草稿。')
 	},
 	{
-		label: wgULS('R2: 跨名字空间的重定向', 'R2: 跨命名空間的重新導向'),
-		value: wgULS('[[WP:CSD#R2|R2]]: 跨[[H:NS|名字空间]]的[[WP:R|重定向]]', '[[WP:CSD#R2|R2]]: 跨[[H:NS|命名空間]]的[[WP:R|重新導向]]')
+		label: wgULS('R2: 跨命名空间的重定向', 'R2: 跨命名空間的重新導向'),
+		value: wgULS('[[WP:CSD#R2|R2]]: 跨[[H:NS|命名空间]]的[[WP:R|重定向]]', '[[WP:CSD#R2|R2]]: 跨[[H:NS|命名空間]]的[[WP:R|重新導向]]')
 	}
 ];
 

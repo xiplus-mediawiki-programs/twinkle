@@ -691,7 +691,7 @@ Twinkle.config.sections = [
 		// In what namespaces unlink should happen, default in 0 (article) and 100 (portal)
 			{
 				name: 'unlinkNamespaces',
-				label: wgULS('取消以下名字空间中的反向链接', '取消以下命名空間中的反向連結'),
+				label: wgULS('取消以下命名空间中的反向链接', '取消以下命名空間中的反向連結'),
 				helptip: wgULS('请避免选择讨论页，因这样会导致Twinkle试图修改讨论存档。', '請避免選擇討論頁，因這樣會導致Twinkle試圖修改討論存檔。'),
 				type: 'set',
 				setValues: Twinkle.config.commonSets.namespacesNoSpecial

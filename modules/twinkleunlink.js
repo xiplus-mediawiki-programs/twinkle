@@ -156,7 +156,7 @@ Twinkle.unlink.callbacks = {
 					});
 					apiobj.params.form.append({
 						type: 'div',
-						label: wgULS('已选择的名字空间：', '已選擇的命名空間：') + namespaces.join('、'),
+						label: wgULS('已选择的命名空间：', '已選擇的命名空間：') + namespaces.join('、'),
 						tooltip: wgULS('您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]', '您可在Twinkle屬性中更改這個，請參見[[WP:TWPREFS]]')
 					});
 					if (response['query-continue'] && response['query-continue'].imageusage) {
@@ -203,7 +203,7 @@ Twinkle.unlink.callbacks = {
 				});
 				apiobj.params.form.append({
 					type: 'div',
-					label: wgULS('已选择的名字空间：', '已選擇的命名空間：') + namespaces.join('、'),
+					label: wgULS('已选择的命名空间：', '已選擇的命名空間：') + namespaces.join('、'),
 					tooltip: wgULS('您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]', '您可在Twinkle屬性中更改這個，請參見[[WP:TWPREFS]]')
 				});
 				if (response['query-continue'] && response['query-continue'].backlinks) {

@@ -56,7 +56,7 @@ Twinkle是维基人用于快速执行常见维护工作（如提交删除候选�
     password => "password",
     base     => "User::Username"
 
-其中`base`是`pull`和`push`文件时的wiki路径前缀。如果你不指定`base`参数，文件将会被推到MediaWiki名字空间。
+其中`base`是`pull`和`push`文件时的wiki路径前缀。如果你不指定`base`参数，文件将会被推到MediaWiki命名空间。
 
 留意您的工作目录**不需要**是干净的；亦可以`stash`或`commit`您的修改。
 
