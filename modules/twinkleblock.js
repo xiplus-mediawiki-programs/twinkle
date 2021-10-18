@@ -42,7 +42,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	// need to be verbose about who we're blocking
 	Window.setTitle(wgULS('封禁或向', '封鎖或向') + Morebits.wiki.flow.relevantUserName(true) + wgULS('发出封禁模板', '發出封鎖模板'));
 	Window.setScriptName('Twinkle');
-	Window.addFooterLink('封禁模板', 'Wikipedia:模板消息/用戶討論名字空間#封禁');
+	Window.addFooterLink('封禁模板', 'Wikipedia:模板消息/用戶討論命名空間#封禁');
 	Window.addFooterLink(wgULS('封禁方针', '封鎖方針'), 'WP:BLOCK');
 	Window.addFooterLink(wgULS('封禁设置', '封鎖設定'), 'WP:TW/PREF#block');
 	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#block');
