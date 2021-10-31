@@ -463,7 +463,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			display: 'none',
 			label: wgULS('条目链接', '條目連結'),
 			value: '',
-			tooltip: wgULS('可以随通知链接条目，比如扰乱的主目标。没有条目需要链接则请留空。', '可以隨通知連結條目，比如擾亂的主目標。沒有條目需要連結則請留空。')
+			tooltip: wgULS('可以随通知链接页面，例如破坏的目标。没有条目需要链接则请留空。', '可以隨通知連結頁面，例如破壞的目標。沒有條目需要連結則請留空。')
 		});
 
 		// Only visible if partial and not blocking
@@ -1017,7 +1017,7 @@ Twinkle.block.blockGroups = [
 			{ label: wgULS('违反[[WP:3RR|回退不过三原则]]', '違反[[WP:3RR|回退不過三原則]]'), value: 'uw-3block' },
 			{ label: wgULS('无礼的行为、[[WP:NPA|攻击别人]]', '無禮的行為、[[WP:NPA|攻擊別人]]'), value: 'uw-block' },
 			{ label: wgULS('[[WP:骚扰|骚扰用户]]', '[[WP:騷擾|騷擾使用者]]'), value: 'uw-block' },
-			{ label: wgULS('[[WP:扰乱|扰乱]]', '[[WP:擾亂|擾亂]]'), value: 'uw-block' },
+			{ label: wgULS('[[WP:POINT|为了阐释观点而扰乱维基百科]]', '[[WP:POINT|為了闡釋觀點而擾亂維基百科]]'), value: 'uw-block' },
 			{ label: wgULS('[[WP:GAME|游戏维基规则]]', '[[WP:GAME|遊戲維基規則]]'), value: 'uw-block' },
 			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根据用户贡献确定', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根據使用者貢獻確定'), value: 'uw-block', forAnonOnly: true },
 			{ label: wgULS('确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 用户查核确认', '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 使用者查核確認'), value: 'uw-block', forAnonOnly: true },
