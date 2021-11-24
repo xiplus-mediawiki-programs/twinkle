@@ -384,10 +384,6 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					label: wgULS('请求用户查核', '請求使用者查核'),
 					name: 'checkuser',
 					tooltip: wgULS('用户查核是一种用于获取傀儡指控相关技术证据的工具，若没有正当理由则不会使用，您必须在证据字段充分解释为什么需要使用该工具。用户查核不会用于公开连接用户账户使用的IP地址。', '使用者查核是一種用於獲取傀儡指控相關技術證據的工具，若沒有正當理由則不會使用，您必須在證據欄位充分解釋為什麼需要使用該工具。使用者查核不會用於公開連接使用者帳號使用的IP位址。')
-				}, {
-					label: wgULS('通知相关用户', '通知相關使用者'),
-					name: 'notify',
-					tooltip: wgULS('通知用户不是必须的，在许多情况下（如长期破坏者）通知更可能适得其反。但是，对于涉及新用户的报告而言，通知他们能让报告显得更公平。请使用常识。', '通知使用者不是必須的，在許多情況下（如長期破壞者）通知更可能適得其反。但是，對於涉及新使用者的報告而言，通知他們能讓報告顯得更公平。請使用常識。')
 				}]
 			});
 			work_area = work_area.render();
@@ -833,8 +829,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 		case 'spi':
 			var spiParameters = {
 				evidence: form.evidence.value.trim(),
-				checkuser: form.checkuser.checked,
-				notify: form.notify.checked
+				checkuser: form.checkuser.checked
 			};
 
 			if (!spiParameters.evidence) {
@@ -860,53 +855,6 @@ Twinkle.arv.callback.evaluate = function(e) {
 
 Twinkle.arv.processSPI = function(params) {
 	Morebits.wiki.addCheckpoint(); // prevent notification events from causing an erronous "action completed"
-
-	// notify all user accounts if requested
-	if (params.notify) {
-
-		var notifyEditSummary = wgULS('通知用户查核请求', '通知使用者查核請求');
-		var notifyText = '\n\n{{subst:socksuspectnotice|1=' + params.sockmaster + '}}';
-
-		var notify = function (username, taskname, callback) {
-			Morebits.wiki.flow.check('User talk:' + username, function () {
-				var flowpage = new Morebits.wiki.flow('User talk:' + username, '通知' + taskname);
-				flowpage.setTopic(wgULS('用户查核通知', '使用者查核通知'));
-				flowpage.setContent(notifyText);
-				flowpage.newTopic(callback);
-			}, function () {
-				var talkpage = new Morebits.wiki.page('User talk:' + username, '通知' + taskname);
-				talkpage.setFollowRedirect(true);
-				talkpage.setEditSummary(notifyEditSummary);
-				talkpage.setChangeTags(Twinkle.changeTags);
-				talkpage.setAppendText(notifyText);
-				talkpage.append(callback);
-			});
-		};
-
-		if (params.sockpuppets.length > 0) {
-			var statusIndicator = new Morebits.status('通知傀儡', '0%');
-			var total = params.sockpuppets.length;
-			var current = 0;
-
-			// display status of notifications as they progress
-			var onSuccess = function(sockTalkPage) {
-				var now = parseInt(100 * ++current / total, 10) + '%';
-				statusIndicator.update(now);
-				sockTalkPage.getStatusElement().unlink();
-				if (current >= total) {
-					statusIndicator.info(now + '（完成）');
-				}
-			};
-
-			var socks = params.sockpuppets;
-
-			// notify each puppet account
-			for (var i = 0; i < socks.length; ++i) {
-				notify(socks[i], socks[i], onSuccess);
-			}
-		}
-
-	}
 
 	// prepare the SPI report
 	var text = '\n{{subst:SPI report|' +
