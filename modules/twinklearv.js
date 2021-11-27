@@ -253,7 +253,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			work_area.append({
 				type: 'textarea',
 				name: 'reason',
-				label: wgULS('说明：', '說明：')
+				label: wgULS('评论：', '評論：')
 			});
 			work_area = work_area.render();
 			old_area.parentNode.replaceChild(work_area, old_area);
@@ -589,7 +589,29 @@ Twinkle.arv.callback.evaluate = function(e) {
 	}
 	var uid = form.uid.value;
 
-	var types, header, summary;
+	var checkTitle = function(title, revid) {
+		if (/https?:\/\//.test(title)) {
+			alert(wgULS('页面名称不能使用网址。', '頁面名稱不能使用網址。'));
+			return false;
+		}
+
+		var page;
+		try {
+			page = new mw.Title(title);
+		} catch (error) {
+			alert(wgULS('“', '「') + title + wgULS('”不是一个有效的页面名称，如要使用差异链接请放在“评论”', '」不是一個有效的頁面名稱，如要使用差異連結請放在「評論」') + (revid ? wgULS('，或正确输入“修订版本”', '，或正確輸入「修訂版本」') : '') + '。');
+			return false;
+		}
+
+		if (page.namespace === -1) {
+			alert(wgULS('“', '「') + title + wgULS('”属于特殊页面，如要使用差异链接请放在“评论”', '」屬於特殊頁面，如要使用差異連結請放在「評論」') + (revid ? wgULS('，或正确输入“修订版本”', '，或正確輸入「修訂版本」') : '') + '。');
+			return false;
+		}
+
+		return page;
+	};
+
+	var types, page, header, summary;
 	switch (form.category.value) {
 
 		// Report user for vandalism
@@ -627,14 +649,16 @@ Twinkle.arv.callback.evaluate = function(e) {
 				}
 			}).join('，');
 
-
 			if (form.page.value !== '') {
+				page = checkTitle(form.page.value, true);
+				if (!page) {
+					return;
+				}
 
-				// add a leading : on linked page namespace to prevent transclusion
-				reason = '* {{pagelinks|' + (form.page.value.indexOf('=') > -1 ? '1=' : '') + form.page.value + '}}';
+				reason = '* {{pagelinks|' + (page.getPrefixedText().indexOf('=') > -1 ? '1=' : '') + page.getPrefixedText() + '}}';
 
 				if (form.badid.value !== '') {
-					reason += '（{{diff|' + form.page.value + '|' + form.badid.value + '|' + form.goodid.value + '|diff}}）';
+					reason += '（{{diff|' + page.getPrefixedText() + '|' + form.badid.value + '|' + form.goodid.value + '|diff}}）';
 				}
 				reason += '\n';
 			}
@@ -689,10 +713,13 @@ Twinkle.arv.callback.evaluate = function(e) {
 			var pages = $.map($('input:text[name=page]', form), function (o) {
 				return $(o).val() || null;
 			});
-			if (pages.length >= 1) {
-				pages.forEach(function(v) {
-					reason += '* {{pagelinks|' + v + '}}\n';
-				});
+			for (var i = 0; i < pages.length; i++) {
+				page = checkTitle(pages[i], false);
+				if (!page) {
+					return;
+				}
+
+				reason += '* {{pagelinks|' + (page.getPrefixedText().indexOf('=') > -1 ? '1=' : '') + page.getPrefixedText() + '}}\n';
 			}
 			comment = comment.replace(/\n\n+/g, '\n');
 			comment = comment.replace(/\r?\n/g, '\n*:');  // indent newlines
@@ -704,10 +731,10 @@ Twinkle.arv.callback.evaluate = function(e) {
 			Morebits.simpleWindow.setButtonsEnabled(false);
 			Morebits.status.init(form);
 
-			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:管理员通告板/3RR';
+			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:管理员布告板/编辑争议';
 			Morebits.wiki.actionCompleted.notice = wgULS('报告完成', '報告完成');
 
-			var ewipPage = new Morebits.wiki.page('Wikipedia:管理员通告板/3RR', wgULS('处理EWIP请求', '處理EWIP請求'));
+			var ewipPage = new Morebits.wiki.page('Wikipedia:管理员布告板/编辑争议', wgULS('处理EWIP请求', '處理EWIP請求'));
 			ewipPage.setFollowRedirect(true);
 
 			ewipPage.load(function() {
