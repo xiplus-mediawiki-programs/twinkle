@@ -2637,6 +2637,24 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 		return;
 	}
 
+	if (params.article) {
+		if (/https?:\/\//.test(params.article)) {
+			alert(wgULS('“页面链接”不能使用网址。', '「頁面連結」不能使用網址。'));
+			return;
+		}
+
+		try {
+			var article = new mw.Title(params.article);
+			params.article = article.getPrefixedText();
+			if (article.getFragment()) {
+				params.article += '#' + article.getFragment();
+			}
+		} catch (error) {
+			alert(wgULS('“页面链接”不合法，仅能输入一个页面名称，勿使用网址、[[ ]]，可使用Special:Diff。', '「頁面連結」不合法，僅能輸入一個頁面名稱，勿使用網址、[[ ]]，可使用Special:Diff。'));
+			return;
+		}
+	}
+
 	// The autolevel option will already know by now if a user talk page
 	// is a cross-namespace redirect (via !!Twinkle.warn.talkpageObj), so
 	// technically we could alert an error here, but the user will have
