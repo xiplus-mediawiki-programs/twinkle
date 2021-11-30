@@ -353,7 +353,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 
 		blockoptions.push({
 			checked: true,
-			label: wgULS('标记当前的破坏中的请求（BETA版功能，请复查编辑！）', '標記當前的破壞中的請求（BETA版功能，請複查編輯！）'),
+			label: wgULS('标记当前的破坏中的请求', '標記當前的破壞中的請求'),
 			name: 'closevip',
 			value: '1'
 		});
