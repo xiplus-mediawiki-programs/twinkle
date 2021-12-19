@@ -783,6 +783,13 @@ Twinkle.close.callbacks = {
 			newtext = newtext.replace(/\{\{(notability|fame|mair|知名度|重要性|显著性|顯著性|知名度不足|人物重要性|重要性不足|notable|关注度|关注度不足|關注度|關注度不足|重要|重要度)(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\n*/gi, '');
 			newtext = newtext.replace(/\{\{(substub|小小作品|cod|小小條目|小小条目)(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\n*/gi, '');
 		}
+		if (params.code === 'mergeapproved') {
+			var tag = '{{subst:Merge approved/auto|discuss=' + mw.config.get('wgPageName') + '#' + params.title + '}}\n';
+
+			// Insert tag after short description or any hatnotes
+			var wikipage = new Morebits.wikitext.page(newtext);
+			newtext = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
+		}
 		if (newtext === text) {
 			statelem.warn(wgULS('未找到存废讨论模板，可能已被移除', '未找到存廢討論模板，可能已被移除'));
 			Twinkle.close.callbacks.talkend(params);
