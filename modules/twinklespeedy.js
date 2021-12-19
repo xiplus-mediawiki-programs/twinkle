@@ -872,21 +872,13 @@ Twinkle.speedy.redirectList = [
 			name: 'r3_type',
 			type: 'select',
 			label: wgULS('适用类型：', '適用類別：'),
-			list: wgULS([
-				{ label: '请选择', value: '' },
-				{ label: '标题繁简混用', value: '标题繁简混用。' },
-				{ label: '消歧义使用的括号或空格错误', value: '消歧义使用的括号或空格错误。' },
-				{ label: '间隔号使用错误', value: '间隔号使用错误。' },
-				{ label: '标题中使用非常见的错别字', value: '标题中使用非常见的错别字。' },
-				{ label: '移动侵权页面的临时页后所产生的重定向', value: '移动侵权页面的临时页后所产生的重定向。' }
-			], [
-				{ label: '請選擇', value: '' },
-				{ label: '標題繁簡混用', value: '标题繁简混用。' },
-				{ label: '消歧義使用的括號或空格錯誤', value: '消歧义使用的括号或空格错误。' },
-				{ label: '間隔號使用錯誤', value: '间隔号使用错误。' },
-				{ label: '標題中使用非常見的錯別字', value: '标题中使用非常见的错别字。' },
-				{ label: '移動侵權頁面的臨時頁後所產生的重新導向', value: '移动侵权页面的临时页后所产生的重定向。' }
-			])
+			list: [
+				{ label: wgULS('请选择', '請選擇'), value: '' },
+				{ label: wgULS('标题繁简混用', '標題繁簡混用'), value: '标题繁简混用。' },
+				{ label: wgULS('消歧义使用的括号或空格错误', '消歧義使用的括號或空格錯誤'), value: '消歧义使用的括号或空格错误。' },
+				{ label: wgULS('间隔号使用错误', '間隔號使用錯誤'), value: '间隔号使用错误。' },
+				{ label: wgULS('标题中使用非常见的错别字', '標題中使用非常見的錯別字'), value: '标题中使用非常见的错别字。' }
+			]
 		},
 		hideSubgroupWhenSysop: true
 	},
