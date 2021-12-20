@@ -434,7 +434,7 @@ Twinkle.close.codes = wgULS({
 /* eslint-enable quote-props */
 
 Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
-	var Window = new Morebits.simpleWindow(400, 200);
+	var Window = new Morebits.simpleWindow(410, 200);
 	Window.setTitle(wgULS('关闭存废讨论', '關閉存廢討論') + ' \u00B7 ' + title);
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(wgULS('存废讨论设置', '存廢討論設定'), 'WP:TW/PREF#close');
