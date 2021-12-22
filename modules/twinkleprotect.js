@@ -1184,7 +1184,6 @@ Twinkle.protect.callbacks = {
 	},
 
 	fileRequest: function(rppPage) {
-
 		var params = rppPage.getCallbackParameters();
 		var text = rppPage.getPageText();
 		var statusElement = rppPage.getStatusElement();
@@ -1222,9 +1221,9 @@ Twinkle.protect.callbacks = {
 
 		words += params.typename;
 
+		newtag += '* <small>' + wgULS('当前保护状态', '目前保護狀態') + '：{{protection status|' + mw.config.get('wgPageName') + '}}</small>\n';
 		newtag += wgULS('请求', '請求') + Morebits.string.toUpperCaseFirstChar(words) + (params.reason !== '' ? '：' +
 			Morebits.string.formatReasonText(params.reason) : '。') + '--~~~~';
-		newtag += '\n:: <small>' + wgULS('当前保护状态', '目前保護狀態') + '：{{protection status|' + mw.config.get('wgPageName') + '}}</small>';
 
 		var reg;
 
