@@ -5027,22 +5027,24 @@ Morebits.wiki.flow.check = function(title, callbackOnFlow, callbackOnNonFlow, on
 		if (pages.length > 0) {
 			var model = pages[0].getAttribute('contentmodel');
 			if (model === 'flow-board') {
+				obj.statelem.info('完成');
 				if (typeof callbackOnFlow === 'function') {
 					callbackOnFlow();
 				}
 			} else if (model !== null) {
+				obj.statelem.info('完成');
 				if (typeof callbackOnNonFlow === 'function') {
 					callbackOnNonFlow();
 				}
 			} else {
+				obj.statelem.error('内部错误：页面标题无效');
 				if (typeof onError === 'function') {
-					obj.statelem.error('内部错误：页面标题无效');
 					onError(obj);
 				}
 			}
 		} else {
+			obj.statelem.error('内部错误：调用API时失败');
 			if (typeof onError === 'function') {
-				obj.statelem.error('内部错误：调用API时失败');
 				onError(obj);
 			}
 		}
