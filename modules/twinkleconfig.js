@@ -198,6 +198,19 @@ Twinkle.config.sections = [
 	},
 
 	{
+		title: wgULS('告状', '告狀'),
+		module: 'arv',
+		preferences: [
+			{
+				name: 'spiWatchReport',
+				label: wgULS('发起傀儡调查时加入到监视列表', '發起傀儡調查時加入到監視清單'),
+				type: 'enum',
+				enumValues: Twinkle.config.watchlistEnums
+			}
+		]
+	},
+
+	{
 		title: wgULS('封禁用户', '封鎖使用者'),
 		module: 'block',
 		adminOnly: true,

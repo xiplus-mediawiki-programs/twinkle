@@ -68,13 +68,18 @@ Twinkle.arv.callback = function (uid, isIP) {
 	});
 	categories.append({
 		type: 'option',
-		label: wgULS('用户查核协助请求 - 主账户（WP:RFCUHAM）', '使用者查核協助請求 - 主帳號（WP:RFCUHAM）'),
+		label: wgULS('用户查核协助请求 - 主账户（WP:RFCUHAM）', '使用者查核協助請求 - 主帳號（WP:RFCUHAM） - 2月13日 (日) 23:59 (UTC) 停用'),
 		value: 'sock'
 	});
 	categories.append({
 		type: 'option',
-		label: wgULS('用户查核协助请求 - 傀儡（WP:RFCUHAM）', '使用者查核協助請求 - 傀儡（WP:RFCUHAM）'),
+		label: wgULS('用户查核协助请求 - 傀儡（WP:RFCUHAM）', '使用者查核協助請求 - 傀儡（WP:RFCUHAM） - 2月13日 (日) 23:59 (UTC) 停用'),
 		value: 'puppet'
+	});
+	categories.append({
+		type: 'option',
+		label: wgULS('傀儡调查（WP:SPI）', '傀儡調查（WP:SPI） - 2月14日 (一) 00:00 (UTC) 啟用'),
+		value: 'spi'
 	});
 	form.append({
 		type: 'div',
@@ -130,6 +135,22 @@ Twinkle.arv.callback = function (uid, isIP) {
 	var evt = document.createEvent('Event');
 	evt.initEvent('change', true, true);
 	result.category.dispatchEvent(evt);
+};
+
+Twinkle.arv.lta_list = [
+	{ value: '', label: wgULS('请选择', '請選擇') },
+	{ value: '114.27', label: wgULS('114.27、数论和人瑞类条目破坏、R1t5', '114.27、數論和人瑞類條目破壞、R1t5') },
+	{ value: 'Adam Asrul', label: 'Adam Asrul、ADAM' },
+	{ value: 'Albert20009', label: 'Albert20009' },
+	{ value: 'Kapol6360', label: 'Kapol6360、Kapol' },
+	{ value: 'Royalfanta', label: 'Royalfanta、RF' },
+	{ value: 'Xayahrainie43', label: 'Xayahrainie43、X43、妍欣' },
+	{ value: '米記123', label: '米記123' }
+];
+
+Twinkle.arv.callback.pick_lta = function twinklearvCallbackPickLta(e) {
+	e.target.form.sockmaster.value = e.target.value;
+	e.target.value = '';
 };
 
 Twinkle.arv.callback.changeCategory = function (e) {
@@ -388,6 +409,59 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				} ]
 			});
 			work_area = work_area.render();
+			old_area.parentNode.replaceChild(work_area, old_area);
+			break;
+
+		case 'spi':
+			work_area = new Morebits.quickForm.element({
+				type: 'field',
+				label: wgULS('发起傀儡调查', '發起傀儡調查'),
+				name: 'work_area'
+			});
+			work_area.append({
+				type: 'select',
+				name: 'common_lta',
+				label: '持續出沒的破壞者：',
+				style: 'width: 420px;',
+				list: Twinkle.arv.lta_list,
+				event: Twinkle.arv.callback.pick_lta
+			});
+			work_area.append({
+				type: 'input',
+				name: 'sockmaster',
+				label: wgULS('主账户', '主帳號'),
+				tooltip: wgULS('主账户的用户名（不含User:前缀），这被用于创建傀儡调查子页面的标题，可在 Wikipedia:傀儡调查 的子页面搜索先前的调查。', '主帳號的使用者名稱（不含User:字首），這被用於建立傀儡調查子頁面的標題，可在 Wikipedia:傀儡調查/案件 的子頁面搜尋先前的調查。'),
+				value: root.uid.value
+			});
+			work_area.append({
+				type: 'dyninput',
+				name: 'sockpuppet',
+				label: '傀儡',
+				sublabel: '傀儡：',
+				tooltip: wgULS('傀儡的用户名（不含User:前缀）', '傀儡的使用者名稱（不含User:字首）'),
+				min: 2,
+				max: 9
+			});
+			work_area.append({
+				type: 'textarea',
+				label: wgULS('证据：', '證據：'),
+				name: 'evidence',
+				tooltip: wgULS('输入能够用来体现这些用户可能滥用多重账户的证据，这通常包括互助客栈发言、页面历史或其他有关的信息。请避免在此处提供非与傀儡或滥用多重账户相关的其他讨论。', '輸入能夠用來體現這些使用者可能濫用多重帳號的證據，這通常包括互助客棧發言、頁面歷史或其他有關的資訊。請避免在此處提供非與傀儡或濫用多重帳號相關的其他討論。')
+			});
+			work_area.append({
+				type: 'checkbox',
+				list: [{
+					label: wgULS('请求用户查核', '請求使用者查核'),
+					name: 'checkuser',
+					tooltip: wgULS('用户查核是一种用于获取傀儡指控相关技术证据的工具，若没有正当理由则不会使用，您必须在证据字段充分解释为什么需要使用该工具。用户查核不会用于公开连接用户账户使用的IP地址。', '使用者查核是一種用於獲取傀儡指控相關技術證據的工具，若沒有正當理由則不會使用，您必須在證據欄位充分解釋為什麼需要使用該工具。使用者查核不會用於公開連接使用者帳號使用的IP位址。')
+				}, {
+					label: wgULS('通知相关用户', '通知相關使用者'),
+					name: 'notify',
+					tooltip: wgULS('通知用户不是必须的，在许多情况下（如长期破坏者）通知更可能适得其反。但是，对于涉及新用户的报告而言，通知他们能让报告显得更公平。请使用常识。', '通知使用者不是必須的，在許多情況下（如長期破壞者）通知更可能適得其反。但是，對於涉及新使用者的報告而言，通知他們能讓報告顯得更公平。請使用常識。')
+				}]
+			});
+			work_area = work_area.render();
+			$('input:text[name=sockpuppet]', work_area).first().val(root.uid.value);
 			old_area.parentNode.replaceChild(work_area, old_area);
 			break;
 
@@ -851,6 +925,31 @@ Twinkle.arv.callback.evaluate = function(e) {
 			Morebits.status.init(form);
 			Twinkle.arv.processSock(sockParameters);
 			break;
+		case 'spi':
+			var spiParameters = {
+				evidence: form.evidence.value.trim(),
+				checkuser: form.checkuser.checked,
+				notify: form.notify.checked
+			};
+
+			if (!spiParameters.evidence) {
+				alert(wgULS('请输入证据。', '請輸入證據。'));
+				return;
+			}
+			if (!form.sockpuppet[0].value.trim()) {
+				alert(wgULS('您没有指定任何傀儡。', '您沒有指定任何傀儡。'));
+				return;
+			}
+
+			spiParameters.sockmaster = form.sockmaster.value.trim();
+			spiParameters.sockpuppets = Morebits.array.uniq($.map($('input:text[name=sockpuppet]', form), function(o) {
+				return $(o).val() || null;
+			}));
+
+			Morebits.simpleWindow.setButtonsEnabled(false);
+			Morebits.status.init(form);
+			Twinkle.arv.processSPI(spiParameters);
+			break;
 	}
 };
 
@@ -925,6 +1024,83 @@ Twinkle.arv.processSock = function(params) {
 	spiPage.setEditSummary(wgULS('报告', '報告') + '[[Special:Contributions/' + params.uid + '|' + params.uid + ']]。');
 	spiPage.setChangeTags(Twinkle.changeTags);
 	spiPage.setAppendText(text);
+	spiPage.append();
+
+	Morebits.wiki.removeCheckpoint();  // all page updates have been started
+};
+
+Twinkle.arv.processSPI = function(params) {
+	Morebits.wiki.addCheckpoint(); // prevent notification events from causing an erronous "action completed"
+
+	// notify all user accounts if requested
+	if (params.notify) {
+
+		var notifyEditSummary = wgULS('通知用户查核请求', '通知使用者查核請求');
+		var notifyText = '\n\n{{subst:socksuspectnotice|1=' + params.sockmaster + '}}';
+
+		var notify = function (username, taskname, callback) {
+			Morebits.wiki.flow.check('User talk:' + username, function () {
+				var flowpage = new Morebits.wiki.flow('User talk:' + username, '通知' + taskname);
+				flowpage.setTopic(wgULS('用户查核通知', '使用者查核通知'));
+				flowpage.setContent(notifyText);
+				flowpage.newTopic(callback);
+			}, function () {
+				var talkpage = new Morebits.wiki.page('User talk:' + username, '通知' + taskname);
+				talkpage.setFollowRedirect(true);
+				talkpage.setEditSummary(notifyEditSummary);
+				talkpage.setChangeTags(Twinkle.changeTags);
+				talkpage.setAppendText(notifyText);
+				talkpage.append(callback);
+			});
+		};
+
+		if (params.sockpuppets.length > 0) {
+			var statusIndicator = new Morebits.status('通知傀儡', '0%');
+			var total = params.sockpuppets.length;
+			var current = 0;
+
+			// display status of notifications as they progress
+			var onSuccess = function(sockTalkPage) {
+				var now = parseInt(100 * ++current / total, 10) + '%';
+				statusIndicator.update(now);
+				sockTalkPage.getStatusElement().unlink();
+				if (current >= total) {
+					statusIndicator.info(now + '（完成）');
+				}
+			};
+
+			var socks = params.sockpuppets;
+
+			// notify each puppet account
+			for (var i = 0; i < socks.length; ++i) {
+				notify(socks[i], socks[i], onSuccess);
+			}
+		}
+
+	}
+
+	// prepare the SPI report
+	var text = '\n{{subst:SPI report|' +
+		params.sockpuppets.map(function(sock, index) {
+			return (index + 1) + '=' + sock;
+		}).join('|') + '\n|evidence=' + Morebits.string.appendPunctuation(params.evidence) + '\n';
+
+	if (params.checkuser) {
+		text += '|checkuser=yes';
+	}
+	text += '}}';
+
+	var reportpage = 'Wikipedia:傀儡調查/案件/' + params.sockmaster;
+
+	Morebits.wiki.actionCompleted.redirect = reportpage;
+	Morebits.wiki.actionCompleted.notice = wgULS('报告完成', '報告完成');
+
+	var spiPage = new Morebits.wiki.page(reportpage, wgULS('抓取讨论页面', '抓取討論頁面'));
+	spiPage.setFollowRedirect(true);
+	spiPage.setEditSummary(wgULS('加入新提报', '加入新提報'));
+	spiPage.setChangeTags(Twinkle.changeTags);
+	spiPage.setAppendText(text);
+	spiPage.setWatchlist(Twinkle.getPref('spiWatchReport'));
 	spiPage.append();
 
 	Morebits.wiki.removeCheckpoint();  // all page updates have been started
