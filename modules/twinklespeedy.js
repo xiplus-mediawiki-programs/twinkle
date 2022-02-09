@@ -401,6 +401,9 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 	}
 	work_area.append({ type: 'header', label: wgULS('常规', '常規') });
 	work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(generalCriteria, mode) });
+	if (!Twinkle.speedy.mode.isSysop(mode)) {
+		work_area.append({ type: 'div', label: wgULS('标记CSD G16，请使用Twinkle的“侵权”功能。', '標記CSD G16，請使用Twinkle的「侵權」功能。') });
+	}
 
 	if (mw.config.get('wgIsRedirect') || Morebits.userIsSysop) {
 		work_area.append({ type: 'header', label: '重定向' });
@@ -763,25 +766,19 @@ Twinkle.speedy.generalList = [
 		tooltip: wgULS('包括明显的错误信息、明显的恶作剧、信息明显错误的图片，以及清理移动破坏时留下的重定向。', '包括明顯的錯誤資訊、明顯的惡作劇、資訊明顯錯誤的圖片，以及清理移動破壞時留下的重新導向。')
 	},
 	{
-		label: wgULS('G5: 曾经根据页面存废讨论、侵权审核或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同', 'G5: 曾經根據頁面存廢討論、侵權審核或檔案存廢討論結果刪除後又重新建立的內容，而有關內容與已刪除版本相同或非常相似，無論標題是否相同'),
+		label: wgULS('G5: 曾经根据页面存废讨论<s>、侵权审核</s>或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同', 'G5: 曾經根據頁面存廢討論<s>、侵權審核</s>或檔案存廢討論結果刪除後又重新建立的內容，而有關內容與已刪除版本相同或非常相似，無論標題是否相同'),
 		value: 'g5',
 		tooltip: wgULS('该内容之前必须是经存废讨论删除，如之前属于快速删除，请以相同理由重新提送快速删除。该内容如与被删除的版本明显不同，而提删者认为需要删除，请交到存废讨论，如果提删者对此不肯定，请先联系上次执行删除的管理人员。不适用于根据存废复核结果被恢复的内容。在某些情况下，重新创建的条目有机会发展。那么不应提交快速删除，而应该提交存废复核或存废讨论重新评核。', '該內容之前必須是經存廢討論刪除，如之前屬於快速刪除，請以相同理由重新提送快速刪除。該內容如與被刪除的版本明顯不同，而提刪者認為需要刪除，請交到存廢討論，如果提刪者對此不肯定，請先聯絡上次執行刪除的管理人員。不適用於根據存廢覆核結果被恢復的內容。在某些情況下，重新建立的條目有機會發展。那麼不應提交快速刪除，而應該提交存廢覆核或存廢討論重新評核。'),
 		subgroup: [
-			{
-				type: 'checkbox',
-				list: [
-					{
-						name: 'g5_copyvio',
-						value: 'g5_copyvio',
-						label: wgULS('前次以侵权审核删除。若页面名称不同，请在“删除讨论位置”提供页面名称。勾选此项将自动张贴疑似侵权模板。', '前次以侵權審核刪除。若頁面名稱不同，請在「刪除討論位置」提供頁面名稱。勾選此項將自動張貼疑似侵權模板。')
-					}
-				]
-			},
 			{
 				name: 'g5_1',
 				type: 'input',
 				label: wgULS('删除讨论位置：', '刪除討論位置：'),
 				size: 60
+			},
+			{
+				type: 'div',
+				label: wgULS('对于侵权页面，请使用Twinkle的“侵权”功能。', '對於侵權頁面，請使用Twinkle的「侵權」功能。')
 			}
 		],
 		hideSubgroupWhenMultiple: true
@@ -832,22 +829,6 @@ Twinkle.speedy.generalList = [
 		label: wgULS('G15: 孤立页面，比如没有主页面的讨论页、指向空页面的重定向等', 'G15: 孤立頁面，比如沒有主頁面的討論頁、指向空頁面的重新導向等'),
 		value: 'g15',
 		tooltip: wgULS('包括以下几种类型：1. 没有对应文件的文件页面；2. 没有对应母页面的子页面，用户页子页面除外；3. 指向不存在页面的重定向；4. 没有对应内容页面的讨论页，讨论页存档和用户讨论页除外；5. 不存在注册用户的用户页及用户页子页面，localhost对应IP用户的用户页和随用户更名产生的用户页重定向除外。请在删除时注意有无将内容移至他处的必要。不包括在主页面挂有{{CSD Placeholder}}模板的讨论页。', '包括以下幾種類別：1. 沒有對應檔案的檔案頁面；2. 沒有對應母頁面的子頁面，使用者頁面子頁面除外；3. 指向不存在頁面的重新導向；4. 沒有對應內容頁面的討論頁，討論頁存檔和使用者討論頁除外；5. 不存在註冊使用者的使用者頁面及使用者頁面子頁面，localhost對應IP使用者的使用者頁面和隨使用者更名產生的使用者頁面重新導向除外。請在刪除時注意有無將內容移至他處的必要。不包括在主頁面掛有{{CSD Placeholder}}模板的討論頁。')
-	},
-	{
-		label: wgULS('G16: 页面与介绍相同事物的原页面同样侵权', 'G16: 頁面與介紹相同事物的原頁面同樣侵權'),
-		value: 'g16',
-		tooltip: wgULS('此条所适用的页面包括但不限于草稿页面、主命名空间（条目空间）页面、用户空间页面等介绍相同事物，且在原页面被提报侵权后创建的页面。提报时需同时附上已提报侵犯著作权页面的名称，除非一眼能看出已提报侵犯著作权页面。', '此條所適用的頁面包括但不限於草稿頁面、主命名空間（條目空間）頁面、使用者空間頁面等介紹相同事物，且在原頁面被提報侵權後建立的頁面。提報時需同時附上已提報侵犯著作權頁面的名稱，除非一眼能看出已提報侵犯著作權頁面。'),
-		subgroup: [
-			{
-				name: 'g16_pagename',
-				type: 'input',
-				label: wgULS('当前已提报侵犯著作权页面的名称：', '目前已提報侵犯著作權頁面的名稱：')
-			},
-			{
-				type: 'div',
-				label: wgULS('若另一页面已依侵权审核删除，请使用CSD G5。标记首次侵权的页面，请使用Twinkle的“侵权”功能。', '若另一頁面已依侵權審核刪除，請使用CSD G5。標記首次侵權的頁面，請使用Twinkle的「侵權」功能。')
-			}
-		]
 	},
 	{
 		label: wgULS('G17: 位于不恰当的命名空间的消歧义页面', 'G17: 位於不恰當的命名空間的消歧義頁面'),
@@ -1294,11 +1275,6 @@ Twinkle.speedy.callbacks = {
 				text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, '');
 			}
 
-			if (params.copyvio) {
-				var revisionId = mw.config.get('wgRevisionId') || mw.config.get('wgDiffNewId') || mw.config.get('wgCurRevisionId');
-				code += '\n{{subst:Copyvio/auto|url=* 請管理員檢查已刪歷史內容及侵權來源：[[Special:Undelete/' + params.copyvio + ']]|OldRevision=' + revisionId + '}}';
-			}
-
 			// Generate edit summary for edit
 			var editsummary;
 			if (params.normalizeds.length > 1) {
@@ -1506,11 +1482,7 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 				if (form['csd.g5_1']) {
 					var deldisc = form['csd.g5_1'].value;
 					if (deldisc) {
-						if ((!form.g5_copyvio || !form.g5_copyvio.checked) &&
-							deldisc.substring(0, 9) !== 'Wikipedia' &&
-							deldisc.substring(0, 3) !== 'WP:' &&
-							deldisc.substring(0, 5) !== '维基百科:' &&
-							deldisc.substring(0, 5) !== '維基百科:') {
+						if (/^(Wikipedia|WP|维基百科|維基百科):/i.test(deldisc)) {
 							alert(wgULS('CSD G5：您提供的讨论页名必须以“Wikipedia:”开头。', 'CSD G5：您提供的討論頁名必須以「Wikipedia:」開頭。'));
 							parameters = null;
 							return false;
@@ -1731,16 +1703,6 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 
 	var blank = form.blank.checked;
 
-	var copyvio = false;
-	if (form.g5_copyvio && form.g5_copyvio.checked) {
-		if (form['csd.g5_1'] && form['csd.g5_1'].value) {
-			copyvio = form['csd.g5_1'].value;
-		} else {
-			copyvio = mw.config.get('wgPageName');
-		}
-		blank = true;
-	}
-
 	var params = {
 		values: values,
 		normalizeds: normalizeds,
@@ -1749,8 +1711,7 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 		welcomeuser: welcomeuser,
 		lognomination: csdlog,
 		templateParams: Twinkle.speedy.getParameters(form, values),
-		blank: blank,
-		copyvio: copyvio
+		blank: blank
 	};
 	if (!params.templateParams) {
 		return;

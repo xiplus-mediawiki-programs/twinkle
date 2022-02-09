@@ -47,6 +47,30 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 		type: 'checkbox',
 		list: [
 			{
+				label: wgULS('CSD G5: 曾经根据侵权审核删除后又重新创建的内容', 'CSD G5: 曾經根據侵權審核刪除後又重新建立的內容'),
+				value: 'g5',
+				name: 'g5',
+				tooltip: wgULS('同时以G5准则提报快速删除', '同時以G5準則提報快速刪除'),
+				subgroup: [{
+					name: 'g5_pagename',
+					type: 'input',
+					label: wgULS('前次删除的页面名称', '前次刪除的頁面名稱'),
+					tooltip: wgULS('选填，如果前次删除的页面名称不同，请提供', '選填，如果前次刪除的頁面名稱不同，請提供')
+				}]
+			},
+			{
+				label: wgULS('CSD G16: 页面与介绍相同事物的原页面同样侵权', 'CSD G16: 頁面與介紹相同事物的原頁面同樣侵權'),
+				value: 'g16',
+				name: 'g16',
+				tooltip: wgULS('同时以G16准则提报快速删除', '同時以G16準則提報快速刪除'),
+				subgroup: [{
+					name: 'g16_pagename',
+					type: 'input',
+					label: wgULS('已提报侵权的页面名称', '已提報侵權的頁面名稱'),
+					tooltip: wgULS('必填，请提供当前正在侵权审核的页面名称，若页面已根据侵权删除，则应使用G5准则', '必填，請提供目前正在侵權審核的頁面名稱，若頁面已根據侵權刪除，則應使用G5準則')
+				}]
+			},
+			{
 				label: wgULS('通知页面创建者', '通知頁面建立者'),
 				value: 'notify',
 				name: 'notify',
@@ -54,8 +78,7 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 				checked: true
 			}
 		]
-	}
-	);
+	});
 	form.append({ type: 'submit' });
 
 	var result = form.render();
@@ -121,6 +144,23 @@ Twinkle.copyvio.callbacks = {
 		if (oldcsd && confirm(wgULS('在页面上找到快速删除模板，要保留吗？\n\n当页面同时侵犯著作权又符合快速删除标准时，应该优先走快速删除程序。\n单击“确认”以保留快速删除模板，若您认为快速删除理由不合，单击“取消”以移除快速删除模板。', '在頁面上找到快速刪除模板，要保留嗎？\n\n當頁面同時侵犯版權又符合快速刪除標準時，應該優先走快速刪除程序。\n點擊「確認」以保留快速刪除模板，若您認為快速刪除理由不合，點擊「取消」以移除快速刪除模板。'))) {
 			tag = oldcsd[0] + '\n' + tag;
 		}
+		if (params.g5 || params.g16) {
+			var speedyTag = '{{delete';
+			if (params.g5) {
+				speedyTag += '|g5';
+				if (params.g5_pagename) {
+					speedyTag += '|' + params.g5_pagename + '|c1=[[Special:Undelete/' + params.g5_pagename + ']]';
+				} else {
+					speedyTag += '|c1=[[Special:Undelete/' + mw.config.get('wgPageName') + ']]';
+				}
+			}
+			if (params.g16) {
+				speedyTag += '|g16|' + params.g16_pagename;
+			}
+			speedyTag += '}}';
+
+			tag = speedyTag + '\n' + tag;
+		}
 
 		pageobj.setPageText(tag);
 		pageobj.setEditSummary(wgULS('本页面疑似侵犯著作权', '本頁面疑似侵犯版權'));
@@ -156,22 +196,21 @@ Twinkle.copyvio.callbacks = {
 
 
 Twinkle.copyvio.callback.evaluate = function(e) {
-	mw.config.set('wgPageName', mw.config.get('wgPageName').replace(/_/g, ' '));  // for queen/king/whatever and country!
+	var params = Morebits.quickForm.getInputData(e.target);
 
-	var source = e.target.source.value;
-	var usertalk = e.target.notify.checked;
+	if (!params.source.trim()) {
+		alert(wgULS('请指定侵权来源', '請指定侵權來源'));
+		return;
+	}
+	if (params.g16 && !params.g16_pagename.trim()) {
+		alert(wgULS('请提供G16已提报侵权的页面名称', '請提供G16已提報侵權的頁面名稱'));
+		return;
+	}
 
 	Morebits.simpleWindow.setButtonsEnabled(false);
 	Morebits.status.init(e.target);
 
-	if (!source.trim()) {
-		Morebits.status.error(wgULS('错误', '錯誤'), wgULS('未指定侵权来源', '未指定侵權來源'));
-		return;
-	}
-
-	var query, wikipedia_page, wikipedia_api, logpage, params; // eslint-disable-line no-unused-vars
-	logpage = 'Wikipedia:頁面存廢討論/疑似侵權';
-	params = { source: source, logpage: logpage, usertalk: usertalk };
+	params.logpage = 'Wikipedia:頁面存廢討論/疑似侵權';
 
 	Morebits.wiki.addCheckpoint();
 	// Updating data for the action completed event
@@ -179,7 +218,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 	Morebits.wiki.actionCompleted.notice = wgULS('提报完成，将在几秒内刷新页面', '提報完成，將在幾秒內重新整理頁面');
 
 	// Tagging file
-	wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('加入侵权模板到页面', '加入侵權模板到頁面'));
+	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('加入侵权模板到页面', '加入侵權模板到頁面'));
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.copyvio.callbacks.tryTagging);
 
