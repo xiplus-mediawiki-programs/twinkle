@@ -68,17 +68,7 @@ Twinkle.arv.callback = function (uid, isIP) {
 	});
 	categories.append({
 		type: 'option',
-		label: wgULS('用户查核协助请求 - 主账户（WP:RFCUHAM）', '使用者查核協助請求 - 主帳號（WP:RFCUHAM） - 2月13日 (日) 23:59 (UTC) 停用'),
-		value: 'sock'
-	});
-	categories.append({
-		type: 'option',
-		label: wgULS('用户查核协助请求 - 傀儡（WP:RFCUHAM）', '使用者查核協助請求 - 傀儡（WP:RFCUHAM） - 2月13日 (日) 23:59 (UTC) 停用'),
-		value: 'puppet'
-	});
-	categories.append({
-		type: 'option',
-		label: wgULS('傀儡调查（WP:SPI）', '傀儡調查（WP:SPI） - 2月14日 (一) 00:00 (UTC) 啟用'),
+		label: wgULS('傀儡调查（WP:SPI）', '傀儡調查（WP:SPI）'),
 		value: 'spi'
 	});
 	form.append({
@@ -344,74 +334,6 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			old_area.parentNode.replaceChild(work_area, old_area);
 			break;
 
-		case 'puppet':
-			work_area = new Morebits.quickForm.element({
-				type: 'field',
-				label: wgULS('报告疑似主账户', '報告疑似主帳號'),
-				name: 'work_area'
-			});
-			work_area.append(
-				{
-					type: 'input',
-					name: 'sockmaster',
-					label: wgULS('主账户', '主帳號'),
-					tooltip: wgULS('主账户的用户名（不含User:前缀）', '主帳號的使用者名稱（不含User:字首）')
-				}
-			);
-			work_area.append({
-				type: 'textarea',
-				label: wgULS('证据：', '證據：'),
-				name: 'evidence',
-				tooltip: wgULS('输入能够用来体现这些用户可能滥用多重账户的证据，这通常包括互助客栈发言、页面历史或其他有关的信息。请避免在此处提供非与傀儡或滥用多重账户相关的其他讨论。', '輸入能夠用來體現這些使用者可能濫用多重帳號的證據，這通常包括互助客棧發言、頁面歷史或其他有關的資訊。請避免在此處提供非與傀儡或濫用多重帳號相關的其他討論。')
-			});
-			work_area.append({
-				type: 'checkbox',
-				list: [
-					{
-						label: wgULS('通知相关用户', '通知相關使用者'),
-						name: 'notify',
-						tooltip: wgULS('通知用户不是必须的，在许多情况下（如长期破坏者）通知更可能适得其反。但是，对于涉及新用户的报告而言，通知他们能让报告显得更公平。请使用常识。', '通知使用者不是必須的，在許多情況下（如長期破壞者）通知更可能適得其反。但是，對於涉及新使用者的報告而言，通知他們能讓報告顯得更公平。請使用常識。')
-					}
-				]
-			});
-			work_area = work_area.render();
-			old_area.parentNode.replaceChild(work_area, old_area);
-			break;
-
-		case 'sock':
-			work_area = new Morebits.quickForm.element({
-				type: 'field',
-				label: wgULS('报告疑似傀儡', '報告疑似傀儡'),
-				name: 'work_area'
-			});
-			work_area.append(
-				{
-					type: 'dyninput',
-					name: 'sockpuppet',
-					label: '傀儡',
-					sublabel: '傀儡：',
-					tooltip: wgULS('傀儡的用户名（不含User:前缀）', '傀儡的使用者名稱（不含User:字首）'),
-					min: 2,
-					max: 9
-				});
-			work_area.append({
-				type: 'textarea',
-				label: wgULS('证据：', '證據：'),
-				name: 'evidence',
-				tooltip: wgULS('输入能够用来体现这些用户可能滥用多重账户的证据，这通常包括互助客栈发言、页面历史或其他有关的信息。请避免在此处提供非与傀儡或滥用多重账户相关的其他讨论。', '輸入能夠用來體現這些使用者可能濫用多重帳號的證據，這通常包括互助客棧發言、頁面歷史或其他有關的資訊。請避免在此處提供非與傀儡或濫用多重帳號相關的其他討論。')
-			});
-			work_area.append({
-				type: 'checkbox',
-				list: [ {
-					label: wgULS('通知相关用户', '通知相關使用者'),
-					name: 'notify',
-					tooltip: wgULS('通知用户不是必须的，在许多情况下（如长期破坏者）通知更可能适得其反。但是，对于涉及新用户的报告而言，通知他们能让报告显得更公平。请使用常识。', '通知使用者不是必須的，在許多情況下（如長期破壞者）通知更可能適得其反。但是，對於涉及新使用者的報告而言，通知他們能讓報告顯得更公平。請使用常識。')
-				} ]
-			});
-			work_area = work_area.render();
-			old_area.parentNode.replaceChild(work_area, old_area);
-			break;
-
 		case 'spi':
 			work_area = new Morebits.quickForm.element({
 				type: 'field',
@@ -430,7 +352,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				type: 'input',
 				name: 'sockmaster',
 				label: wgULS('主账户', '主帳號'),
-				tooltip: wgULS('主账户的用户名（不含User:前缀），这被用于创建傀儡调查子页面的标题，可在 Wikipedia:傀儡调查 的子页面搜索先前的调查。', '主帳號的使用者名稱（不含User:字首），這被用於建立傀儡調查子頁面的標題，可在 Wikipedia:傀儡調查/案件 的子頁面搜尋先前的調查。'),
+				tooltip: wgULS('主账户的用户名（不含User:前缀），这被用于创建傀儡调查子页面的标题，可在 Wikipedia:傀儡调查/案件 的子页面搜索先前的调查。', '主帳號的使用者名稱（不含User:字首），這被用於建立傀儡調查子頁面的標題，可在 Wikipedia:傀儡調查/案件 的子頁面搜尋先前的調查。'),
 				value: root.uid.value
 			});
 			work_area.append({
@@ -900,31 +822,6 @@ Twinkle.arv.callback.evaluate = function(e) {
 			break;
 
 		// WP:SPI
-		case 'sock':
-			/* falls through */
-		case 'puppet':
-			var sockParameters = {
-				evidence: form.evidence.value.trim(),
-				notify: form.notify.checked
-			};
-
-			var puppetReport = form.category.value === 'puppet';
-			if (puppetReport && !form.sockmaster.value.trim()) {
-				if (!confirm(wgULS('您未对这个傀儡账户输入主账户，您是否希望报告这个账户为傀儡操作者？', '您未對這個傀儡帳號輸入主帳號，您是否希望報告這個帳號為傀儡操作者？'))) {
-					return;
-				}
-				puppetReport = false;
-			}
-
-			sockParameters.uid = puppetReport ? form.sockmaster.value.trim() : uid;
-			sockParameters.sockpuppets = puppetReport ? [uid] : $.map($('input:text[name=sockpuppet]', form), function(o) {
-				return $(o).val() || null;
-			});
-
-			Morebits.simpleWindow.setButtonsEnabled(false);
-			Morebits.status.init(form);
-			Twinkle.arv.processSock(sockParameters);
-			break;
 		case 'spi':
 			var spiParameters = {
 				evidence: form.evidence.value.trim(),
@@ -951,82 +848,6 @@ Twinkle.arv.callback.evaluate = function(e) {
 			Twinkle.arv.processSPI(spiParameters);
 			break;
 	}
-};
-
-Twinkle.arv.processSock = function(params) {
-	Morebits.wiki.addCheckpoint(); // prevent notification events from causing an erronous "action completed"
-
-	// notify all user accounts if requested
-	if (params.notify) {
-
-		var notifyEditSummary = wgULS('通知用户查核请求', '通知使用者查核請求');
-		var notifyText = '\n\n{{subst:socksuspectnotice|1=' + params.uid + '}}';
-
-		var notify = function (username, taskname, callback) {
-			Morebits.wiki.flow.check('User talk:' + username, function () {
-				var flowpage = new Morebits.wiki.flow('User talk:' + username, '通知' + (taskname || wgULS('主账户', '主帳號')));
-				flowpage.setTopic(wgULS('用户查核通知', '使用者查核通知'));
-				flowpage.setContent(notifyText);
-				flowpage.newTopic(callback);
-			}, function () {
-				var talkpage = new Morebits.wiki.page('User talk:' + username, '通知' + (taskname || wgULS('主账户', '主帳號')));
-				talkpage.setFollowRedirect(true);
-				talkpage.setEditSummary(notifyEditSummary);
-				talkpage.setChangeTags(Twinkle.changeTags);
-				talkpage.setAppendText(notifyText);
-				talkpage.append(callback);
-			});
-		};
-
-		// notify user's master account
-		notify(params.uid);
-
-		if (params.sockpuppets.length > 0) {
-			var statusIndicator = new Morebits.status('通知傀儡', '0%');
-			var total = params.sockpuppets.length;
-			var current = 0;
-
-			// display status of notifications as they progress
-			var onSuccess = function(sockTalkPage) {
-				var now = parseInt(100 * ++current / total, 10) + '%';
-				statusIndicator.update(now);
-				sockTalkPage.getStatusElement().unlink();
-				if (current >= total) {
-					statusIndicator.info(now + '（完成）');
-				}
-			};
-
-			var socks = params.sockpuppets;
-
-			// notify each puppet account
-			for (var i = 0; i < socks.length; ++i) {
-				notify(socks[i], socks[i], onSuccess);
-			}
-		}
-
-	}
-
-	// prepare the SPI report
-	var text = '\n\n{{subst:RFCUform\n' +
-		'| username1  = ' + params.uid + '\n' +
-		params.sockpuppets.map(function(v, i) {
-			return '| username' + (i + 2) + '  = ' + v;
-		}).join('\n') + '\n' +
-		'| reason = ' + params.evidence + '}}';
-
-	var reportpage = 'Wikipedia:元維基用戶查核請求';
-
-	Morebits.wiki.actionCompleted.redirect = reportpage;
-	Morebits.wiki.actionCompleted.notice = wgULS('报告完成', '報告完成');
-
-	var spiPage = new Morebits.wiki.page(reportpage, wgULS('抓取讨论页面', '抓取討論頁面'));
-	spiPage.setFollowRedirect(true);
-	spiPage.setEditSummary(wgULS('报告', '報告') + '[[Special:Contributions/' + params.uid + '|' + params.uid + ']]。');
-	spiPage.setChangeTags(Twinkle.changeTags);
-	spiPage.setAppendText(text);
-	spiPage.append();
-
-	Morebits.wiki.removeCheckpoint();  // all page updates have been started
 };
 
 Twinkle.arv.processSPI = function(params) {
