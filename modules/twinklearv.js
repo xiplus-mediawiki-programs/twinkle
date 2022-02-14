@@ -129,10 +129,10 @@ Twinkle.arv.callback = function (uid, isIP) {
 
 Twinkle.arv.lta_list = [
 	{ value: '', label: wgULS('请选择', '請選擇') },
-	{ value: '114.27', label: wgULS('114.27、数论和人瑞类条目破坏、R1t5', '114.27、數論和人瑞類條目破壞、R1t5') },
 	{ value: 'Adam Asrul', label: 'Adam Asrul、ADAM' },
 	{ value: 'Albert20009', label: 'Albert20009' },
 	{ value: 'Kapol6360', label: 'Kapol6360、Kapol' },
+	{ value: 'R1t5', label: wgULS('114.27、数论和人瑞类条目破坏、R1t5', '114.27、數論和人瑞類條目破壞、R1t5') },
 	{ value: 'Royalfanta', label: 'Royalfanta、RF' },
 	{ value: 'Xayahrainie43', label: 'Xayahrainie43、X43、妍欣' },
 	{ value: '米記123', label: '米記123' }
@@ -355,7 +355,11 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			work_area.append({
 				type: 'input',
 				name: 'sockmaster',
-				label: wgULS('主账户', '主帳號'),
+				label: $('<a>', {
+					href: mw.util.getUrl('Special:PrefixIndex/Wikipedia:傀儡調查/案件/'),
+					text: 'Wikipedia:傀儡調查/案件/',
+					target: '_blank'
+				})[0],
 				tooltip: wgULS('主账户的用户名（不含User:前缀），这被用于创建傀儡调查子页面的标题，可在 Wikipedia:傀儡调查/案件 的子页面搜索先前的调查。', '主帳號的使用者名稱（不含User:字首），這被用於建立傀儡調查子頁面的標題，可在 Wikipedia:傀儡調查/案件 的子頁面搜尋先前的調查。'),
 				value: root.uid.value
 			});
