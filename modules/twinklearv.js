@@ -159,6 +159,10 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'work_area'
 			});
 			work_area.append({
+				type: 'div',
+				label: wgULS('提报傀儡应优先发送至傀儡调查，除非相关的账户有高频率、涉及多个页面等紧急严重的破坏行为。', '提報傀儡應優先發送至傀儡調查，除非相關的帳號有高頻率、涉及多個頁面等緊急嚴重的破壞行為。')
+			});
+			work_area.append({
 				type: 'input',
 				name: 'page',
 				label: wgULS('相关页面：', '相關頁面：'),
