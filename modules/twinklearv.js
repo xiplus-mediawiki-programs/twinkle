@@ -824,7 +824,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				uaaPage.getStatusElement().status(wgULS('加入新报告…', '加入新報告…'));
 				uaaPage.setEditSummary(wgULS('新提报', '新提報'));
 				uaaPage.setChangeTags(Twinkle.changeTags);
-				uaaPage.setAppendText('\n' + reason);
+				uaaPage.setAppendText('\n\n' + reason);
 				uaaPage.append();
 			});
 			break;
