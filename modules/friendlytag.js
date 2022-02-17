@@ -493,6 +493,28 @@ Twinkle.tag.updateSortOrder = function(e) {
 					}
 				];
 				break;
+			case 'Split':
+				checkbox.subgroup = [
+					{
+						name: 'target1',
+						type: 'input',
+						label: wgULS('页面名1：', '頁面名1：'),
+						tooltip: wgULS('可选。', '可選。')
+					},
+					{
+						name: 'target2',
+						type: 'input',
+						label: wgULS('页面名2：', '頁面名2：'),
+						tooltip: wgULS('可选。', '可選。')
+					},
+					{
+						name: 'target3',
+						type: 'input',
+						label: wgULS('页面名3：', '頁面名3：'),
+						tooltip: wgULS('可选。', '可選。')
+					}
+				];
+				break;
 			case 'Cleanup':
 				checkbox.subgroup = [
 					{
@@ -800,17 +822,13 @@ Twinkle.tag.article.tagList = [{
 	}]
 },
 {
-	key: wgULS('合并', '合併'),
+	key: wgULS('合并、拆分、移动', '合併、拆分、移動'),
 	value: [
-		{ tag: 'Merge', description: wgULS('建议此页面与页面合并', '建議此頁面與頁面合併'), excludeMI: true },  // these three have a subgroup with several options
 		{ tag: 'Merge from', description: wgULS('建议将页面并入本页面', '建議將頁面併入本頁面'), excludeMI: true },
-		{ tag: 'Merge to', description: wgULS('建议将此页面并入页面', '建議將此頁面併入頁面'), excludeMI: true }
-	]
-},
-{
-	key: wgULS('移动', '移動'),
-	value: [
-		{ tag: 'Requested move', description: wgULS('建议将此页面移动到新名称', '建議將此頁面移動到新名稱'), excludeMI: true }  // these three have a subgroup with several options
+		{ tag: 'Merge to', description: wgULS('建议将此页面并入页面', '建議將此頁面併入頁面'), excludeMI: true },
+		{ tag: 'Merge', description: wgULS('建议此页面与页面合并', '建議此頁面與頁面合併'), excludeMI: true },
+		{ tag: 'Requested move', description: wgULS('建议将此页面移动到新名称', '建議將此頁面移動到新名稱'), excludeMI: true },
+		{ tag: 'Split', description: wgULS('建议将此页面分割为多个页面', '建議將此頁面分割為多個頁面'), excludeMI: true }
 	]
 }];
 
@@ -1254,6 +1272,17 @@ Twinkle.tag.callbacks = {
 							params.moveTarget = Morebits.string.toUpperCaseFirstChar(params.moveTarget.replace(/_/g, ' '));
 							params.discussArticle = mw.config.get('wgTitle');
 							currentTag += '|' + params.moveTarget;
+						}
+						break;
+					case 'Split':
+						if (params.target1) {
+							currentTag += '|1=' + params.target1;
+						}
+						if (params.target2) {
+							currentTag += '|2=' + params.target2;
+						}
+						if (params.target3) {
+							currentTag += '|3=' + params.target3;
 						}
 						break;
 					case 'Cleanup':
