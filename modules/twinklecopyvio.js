@@ -114,7 +114,7 @@ Twinkle.copyvio.callbacks = {
 		wikipedia_page.load(Twinkle.copyvio.callbacks.copyvioList);
 
 		// Notification to first contributor
-		if (params.usertalk) {
+		if (params.notify) {
 			Morebits.wiki.flow.check('User talk:' + initialContrib, function () {
 				var flowpage = new Morebits.wiki.flow('User talk:' + initialContrib, wgULS('通知页面创建者（' + initialContrib + '）', '通知頁面建立者（' + initialContrib + '）'));
 				var topic = '您建立的页面[[' + mw.config.get('wgPageName') + ']]可能侵犯版权';
