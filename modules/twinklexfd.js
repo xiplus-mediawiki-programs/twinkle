@@ -305,7 +305,7 @@ Twinkle.xfd.callbacks = {
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
 
-			var tag = '{{vfd|' + Morebits.string.formatReasonText(params.reason);
+			var tag = '{{vfd|' + Morebits.string.formatReasonText(params.xfdreason);
 
 			switch (params.xfdcat) {
 				case 'vmd':
@@ -420,7 +420,7 @@ Twinkle.xfd.callbacks = {
 							newText + '\n\n' +
 							commentText + '\n' +
 							'----\n' +
-							':{{删除}}理據：' + Morebits.string.formatReasonText(params.reason) + '\n' +
+							':{{删除}}理據：' + Morebits.string.formatReasonText(params.xfdreason) + '\n' +
 							'提报以上' + {
 							fame: '<u>关注度不足</u>条目',
 							substub: '<u>小小作品</u>',
@@ -430,7 +430,7 @@ Twinkle.xfd.callbacks = {
 					}
 					break;
 				default:
-					pageobj.setAppendText('\n{{subst:DRItem|Type=' + type + '|DRarticles=' + Morebits.pageNameNorm + '|Reason=' + Morebits.string.formatReasonText(params.reason) + (params.fwdcsdreason.trim() !== '' ? '<br>\n轉交理由：' + params.fwdcsdreason : '') + '|To=' + to + '}}~~~~');
+					pageobj.setAppendText('\n{{subst:DRItem|Type=' + type + '|DRarticles=' + Morebits.pageNameNorm + '|Reason=' + Morebits.string.formatReasonText(params.xfdreason) + (params.fwdcsdreason.trim() !== '' ? '<br>\n轉交理由：' + params.fwdcsdreason : '') + '|To=' + to + '}}~~~~');
 					break;
 			}
 
@@ -535,7 +535,7 @@ Twinkle.xfd.callbacks = {
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
 
-			pageobj.setPageText('{{ifd|' + Morebits.string.formatReasonText(params.reason) + '|date={{subst:#time:c}}}}\n' + text);
+			pageobj.setPageText('{{ifd|' + Morebits.string.formatReasonText(params.xfdreason) + '|date={{subst:#time:c}}}}\n' + text);
 			pageobj.setEditSummary(wgULS('文件存废讨论：[[', '檔案存廢討論：[[') + params.logpage + '#' + Morebits.pageNameNorm + ']]');
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setWatchlist(Twinkle.getPref('xfdWatchPage'));
@@ -546,7 +546,7 @@ Twinkle.xfd.callbacks = {
 			// var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
 
-			pageobj.setAppendText('\n{{subst:IfdItem|Filename=' + mw.config.get('wgTitle') + '|Uploader=' + params.creator + '|Reason=' + Morebits.string.formatReasonText(params.reason) + '}}--~~~~');
+			pageobj.setAppendText('\n{{subst:IfdItem|Filename=' + mw.config.get('wgTitle') + '|Uploader=' + params.creator + '|Reason=' + Morebits.string.formatReasonText(params.xfdreason) + '}}--~~~~');
 			pageobj.setEditSummary('加入[[' + Morebits.pageNameNorm + ']]');
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setWatchlist(Twinkle.getPref('xfdWatchDiscussion'));
@@ -649,8 +649,8 @@ Twinkle.xfd.callbacks = {
 		}
 		appendText += '。';
 
-		if (params.reason) {
-			appendText += "'''" + (params.xfdcat === 'fwdcsd' ? wgULS('原删除理据', '原刪除理據') : wgULS('理据', '理據')) + "'''：" + Morebits.string.formatReasonForLog(params.reason);
+		if (params.xfdreason) {
+			appendText += "'''" + (params.xfdcat === 'fwdcsd' ? wgULS('原删除理据', '原刪除理據') : wgULS('理据', '理據')) + "'''：" + Morebits.string.formatReasonForLog(params.xfdreason);
 			appendText = Morebits.string.appendPunctuation(appendText);
 		}
 		if (params.fwdcsdreason) {
@@ -677,7 +677,7 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	Morebits.simpleWindow.setButtonsEnabled(false);
 	Morebits.status.init(e.target);
 
-	Twinkle.xfd.currentRationale = params.reason;
+	Twinkle.xfd.currentRationale = params.xfdreason;
 	Morebits.status.onError(Twinkle.xfd.printRationale);
 
 	if (!params.category) {
