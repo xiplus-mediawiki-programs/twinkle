@@ -96,14 +96,14 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			// needed but also used to generate the alphabetical list
 			// Would be infinitely better with Object.values, but, alas, IE 11
 			Twinkle.tag.article.flatObject = {};
-			Object.keys(Twinkle.tag.article.tagList).forEach(function(group) {
-				Object.keys(Twinkle.tag.article.tagList[group]).forEach(function(subgroup) {
-					if (Array.isArray(Twinkle.tag.article.tagList[group][subgroup])) {
-						Twinkle.tag.article.tagList[group][subgroup].forEach(function(item) {
+			Twinkle.tag.article.tagList.forEach(function(group) {
+				group.value.forEach(function(subgroup) {
+					if (subgroup.value) {
+						subgroup.value.forEach(function(item) {
 							Twinkle.tag.article.flatObject[item.tag] = { description: item.description, excludeMI: !!item.excludeMI };
 						});
 					} else {
-						Twinkle.tag.article.flatObject[Twinkle.tag.article.tagList[group][subgroup].tag] = {description: Twinkle.tag.article.tagList[group][subgroup].description, excludeMI: !!Twinkle.tag.article.tagList[group][subgroup].excludeMI };
+						Twinkle.tag.article.flatObject[subgroup.tag] = { description: subgroup.description, excludeMI: !!subgroup.excludeMI };
 					}
 				});
 			});
@@ -167,9 +167,20 @@ Twinkle.tag.callback = function friendlytagCallback() {
 		case 'file':
 			Window.setTitle(wgULS('文件维护标记', '檔案維護標記'));
 
-			$.each(Twinkle.tag.fileList, function(groupName, group) {
-				form.append({ type: 'header', label: groupName });
-				form.append({ type: 'checkbox', name: 'tags', list: group });
+			Twinkle.tag.fileList.forEach(function(group) {
+				if (group.buildFilename) {
+					group.value.forEach(function(el) {
+						el.subgroup = {
+							type: 'input',
+							label: wgULS('替换的文件：', '替換的檔案：'),
+							tooltip: wgULS('输入替换此文件的文件名称（必填）', '輸入替換此檔案的檔案名稱（必填）'),
+							name: el.value.replace(/ /g, '_') + 'File'
+						};
+					});
+				}
+
+				form.append({ type: 'header', label: group.key });
+				form.append({ type: 'checkbox', name: 'tags', list: group.value });
 			});
 
 			if (Twinkle.getPref('customFileTagList').length) {
@@ -182,12 +193,12 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			Window.setTitle(wgULS('重定向标记', '重新導向標記'));
 
 			var i = 1;
-			$.each(Twinkle.tag.redirectList, function(groupName, group) {
-				form.append({ type: 'header', id: 'tagHeader' + i, label: groupName });
+			Twinkle.tag.redirectList.forEach(function(group) {
+				form.append({ type: 'header', id: 'tagHeader' + i, label: group.key });
 				form.append({
 					type: 'checkbox',
 					name: 'tags',
-					list: group.map(function (item) {
+					list: group.value.map(function (item) {
 						return { value: item.tag, label: '{{' + item.tag + '}}：' + item.description, subgroup: item.subgroup };
 					})
 				});
@@ -542,15 +553,15 @@ Twinkle.tag.updateSortOrder = function(e) {
 		}
 		var i = 1;
 		// go through each category and sub-category and append lists of checkboxes
-		$.each(Twinkle.tag.article.tagList, function(groupName, group) {
-			container.append({ type: 'header', id: 'tagHeader' + i, label: groupName });
+		Twinkle.tag.article.tagList.forEach(function(group) {
+			container.append({ type: 'header', id: 'tagHeader' + i, label: group.key });
 			var subdiv = container.append({ type: 'div', id: 'tagSubdiv' + i++ });
-			if (Array.isArray(group)) {
-				doCategoryCheckboxes(subdiv, group);
+			if (group.value[0].tag) {
+				doCategoryCheckboxes(subdiv, group.value);
 			} else {
-				$.each(group, function(subgroupName, subgroup) {
-					subdiv.append({ type: 'div', label: [ Morebits.htmlNode('b', subgroupName) ] });
-					doCategoryCheckboxes(subdiv, subgroup);
+				group.value.forEach(function(subgroup) {
+					subdiv.append({ type: 'div', label: [ Morebits.htmlNode('b', subgroup.key) ] });
+					doCategoryCheckboxes(subdiv, subgroup.value);
 				});
 			}
 		});
@@ -645,308 +656,189 @@ Twinkle.tag.article = {};
 // but tags should be in alphabetical order within the categories
 // excludeMI: true indicate a tag that *does not* work inside {{multiple issues}}
 // Add new categories with discretion - the list is long enough as is!
-/* eslint-disable quote-props */
-Twinkle.tag.article.tagList = wgULS({
-	'清理和维护模板': {
-		'常规清理': [
-			{ tag: 'Cleanup', description: '可能需要进行清理，以符合维基百科的质量标准' },
-			{ tag: 'Cleanup rewrite', description: '不符合维基百科的质量标准，需要完全重写' },
-			{ tag: 'Cleanup-jargon', description: '包含过多行话或专业术语，可能需要简化或提出进一步解释' },
-			{ tag: 'Copy edit', description: '需要编修，以确保文法、用词、语气、格式、标点等使用恰当' }
-		],
-		'可能多余的内容': [
-			{ tag: 'Copypaste', description: '内容可能是从某个来源处拷贝后贴上' },
-			{ tag: 'External links', description: '使用外部链接的方式可能不符合维基百科的方针或指引' },
-			{ tag: 'Non-free', description: '可能过多或不当地使用了受版权保护的文字、图像或/及多媒体文件' }
-		],
-		'结构和导言': [
-			{ tag: 'Lead too long', description: '导言部分也许过于冗长' },
-			{ tag: 'Lead too short', description: '导言部分也许不足以概括其内容' },
-			{ tag: 'Very long', description: '可能过于冗长' }
-		],
-		'虚构作品相关清理': [
-			{ tag: 'In-universe', description: '使用小说故事内的观点描述一个虚构事物' },
-			{ tag: 'Long plot', description: '可能包含过于详细的剧情摘要' }
+Twinkle.tag.article.tagList = [{
+	key: wgULS('清理和维护模板', '清理和維護模板'),
+	value: [{
+		key: wgULS('常规清理', '常規清理'),
+		value: [
+			{ tag: 'Cleanup', description: wgULS('可能需要进行清理，以符合维基百科的质量标准', '可能需要進行清理，以符合維基百科的質量標準') },
+			{ tag: 'Cleanup rewrite', description: wgULS('不符合维基百科的质量标准，需要完全重写', '不符合維基百科的質量標準，需要完全重寫') },
+			{ tag: 'Cleanup-jargon', description: wgULS('包含过多行话或专业术语，可能需要简化或提出进一步解释', '包含過多行話或專業術語，可能需要簡化或提出進一步解釋') },
+			{ tag: 'Copy edit', description: wgULS('需要编修，以确保文法、用词、语气、格式、标点等使用恰当', '需要編修，以確保文法、用詞、語氣、格式、標點等使用恰當') }
 		]
 	},
-	'常规条目问题': {
-		'重要性和知名度': [
-			{ tag: 'Notability', description: '可能不符合通用关注度指引', excludeMI: true },  // has a subgroup with subcategories
-			{ tag: 'Notability Unreferenced', description: '可能具备关注度，但需要来源加以彰显' }
-		],
-		'写作风格': [
-			{ tag: 'Advert', description: '类似广告或宣传性内容' },
-			{ tag: 'Fanpov', description: '类似爱好者网页' },
-			{ tag: 'How-to', description: '包含指南或教学内容' },
-			{ tag: 'Inappropriate person', description: '使用不适当的第一人称和第二人称' },
-			{ tag: 'Newsrelease', description: '阅读起来像是新闻稿及包含过度的宣传性语调' },
-			{ tag: 'Prose', description: '使用了日期或时间列表式记述，需要改写为连贯的叙述性文字' },
-			{ tag: 'Review', description: '阅读起来类似评论，需要清理' },
-			{ tag: 'Tone', description: '语调或风格可能不适合百科全书的写作方式' }
-		],
-		'内容': [
-			{ tag: 'Expand language', description: '可以根据其他语言版本扩充' },  // these three have a subgroup with several options
+	{
+		key: wgULS('可能多余的内容', '可能多餘的內容'),
+		value: [
+			{ tag: 'Copypaste', description: wgULS('内容可能是从某个来源处拷贝后粘贴', '內容可能是從某個來源處拷貝後貼上') },
+			{ tag: 'External links', description: wgULS('使用外部链接的方式可能不符合维基百科的方针或指引', '使用外部連結的方式可能不符合維基百科的方針或指引') },
+			{ tag: 'Non-free', description: wgULS('可能过多或不当地使用了受著作权保护的文字、图像或多媒体文件', '可能過多或不當地使用了受版權保護的文字、圖像或多媒體檔案') }
+		]
+	},
+	{
+		key: wgULS('结构和导言', '結構和導言'),
+		value: [
+			{ tag: 'Lead too long', description: wgULS('导言部分也许过于冗长', '導言部分也許過於冗長') },
+			{ tag: 'Lead too short', description: wgULS('导言部分也许不足以概括其内容', '導言部分也許不足以概括其內容') },
+			{ tag: 'Very long', description: wgULS('可能过于冗长', '可能過於冗長') }
+		]
+	},
+	{
+		key: wgULS('虚构作品相关清理', '虛構作品相關清理'),
+		value: [
+			{ tag: 'In-universe', description: wgULS('使用小说故事内的观点描述一个虚构事物', '使用小說故事內的觀點描述一個虛構事物') },
+			{ tag: 'Long plot', description: wgULS('可能包含过于详细的剧情摘要', '可能包含過於詳細的劇情摘要') }
+		]
+	}]
+},
+{
+	key: wgULS('常规条目问题', '常規條目問題'),
+	value: [{
+		key: '重要性和知名度',
+		value: [
+			{ tag: 'Notability', description: wgULS('可能不符合通用关注度指引', '可能不符合通用關注度指引'), excludeMI: true },  // has a subgroup with subcategories
+			{ tag: 'Notability Unreferenced', description: wgULS('可能具备关注度，但需要来源加以彰显', '可能具備關注度，但需要來源加以彰顯') }
+		]
+	},
+	{
+		key: wgULS('写作风格', '寫作風格'),
+		value: [
+			{ tag: 'Advert', description: wgULS('类似广告或宣传性内容', '類似廣告或宣傳性內容') },
+			{ tag: 'Fanpov', description: wgULS('类似爱好者网页', '類似愛好者網頁') },
+			{ tag: 'How-to', description: wgULS('包含指南或教学内容', '包含指南或教學內容') },
+			{ tag: 'Inappropriate person', description: wgULS('使用不适当的第一人称和第二人称', '使用不適當的第一人稱和第二人稱') },
+			{ tag: 'Newsrelease', description: wgULS('阅读起来像是新闻稿及包含过度的宣传性语调', '閱讀起來像是新聞稿及包含過度的宣傳性語調') },
+			{ tag: 'Prose', description: wgULS('使用了日期或时间列表式记述，需要改写为连贯的叙述性文字', '使用了日期或時間列表式記述，需要改寫為連貫的敘述性文字') },
+			{ tag: 'Review', description: wgULS('阅读起来类似评论，需要清理', '閱讀起來類似評論，需要清理') },
+			{ tag: 'Tone', description: wgULS('语调或风格可能不适合百科全书的写作方式', '語調或風格可能不適合百科全書的寫作方式') }
+		]
+	},
+	{
+		key: wgULS('内容', '內容'),
+		value: [
+			{ tag: 'Expand language', description: wgULS('可以根据其他语言版本扩展', '可以根據其他語言版本擴充') },  // these three have a subgroup with several options
 			{ tag: 'Missing information', description: '缺少必要的信息' },  // these three have a subgroup with several options
-			{ tag: 'Substub', description: '过于短小', excludeMI: true },
-			{ tag: 'Unencyclopedic', description: '可能不适合写入百科全书' }
-		],
-		'信息和细节': [
-			{ tag: 'Expert needed', description: '需要精通或熟悉本主题的专业人士（专家）参与及协助编辑' },
-			{ tag: 'Overly detailed', description: '包含太多过度细节内容' },
-			{ tag: 'Trivia', description: '应避免有陈列杂项、琐碎资料的部分' }
-		],
-		'时间性': [
-			{ tag: 'Current', description: '记述新闻动态', excludeMI: true }, // Works but not intended for use in MI
-			{ tag: 'Update', description: '当前条目或章节需要更新' }
-		],
-		'中立、偏见和事实准确性': [
-			{ tag: 'Autobiography', description: '类似一篇自传，或内容主要由条目描述的当事人或组织撰写、编辑' },
-			{ tag: 'COI', description: '主要贡献者与本条目所宣扬的内容可能存在利益冲突' },
-			{ tag: 'Disputed', description: '内容疑欠准确，有待查证' },
-			{ tag: 'Globalize', description: '仅具有一部分地区的信息或观点' },
-			{ tag: 'Hoax', description: '真实性被质疑' },
-			{ tag: 'POV', description: '中立性有争议。内容、语调可能带有明显的个人观点或地方色彩' },
-			{ tag: 'Self-contradictory', description: '内容自相矛盾' },
-			{ tag: 'Weasel', description: '语意模棱两可而损及其中立性或准确性' }
-		],
-		'可供查证和来源': [
-			{ tag: 'BLPdispute', description: '可能违反了维基百科关于生者传记的方针' },
-			{ tag: 'BLPsources', description: '生者传记需要补充更多可供查证的来源' },
-			{ tag: 'BLP unsourced', description: '生者传记没有列出任何参考或来源' },
-			{ tag: 'Citecheck', description: '可能包含不适用或被曲解的引用资料，部分内容的准确性无法被证实' },
-			{ tag: 'More footnotes needed', description: '因为文内引用不足，部分字句的来源仍然不明' },
-			{ tag: 'No footnotes', description: '因为没有内文引用而来源仍然不明' },
-			{ tag: 'Onesource', description: '极大或完全地依赖于某个单一的来源' },
-			{ tag: 'Original research', description: '可能包含原创研究或未查证内容' },
-			{ tag: 'Primarysources', description: '依赖第一手来源' },
-			{ tag: 'Refimprove', description: '需要补充更多来源' },
-			{ tag: 'Unreferenced', description: '没有列出任何参考或来源' }
+			{ tag: 'Substub', description: wgULS('过于短小', '過於短小'), excludeMI: true },
+			{ tag: 'Unencyclopedic', description: wgULS('可能不适合写入百科全书', '可能不適合寫入百科全書') }
 		]
 	},
-	'具体内容问题': {
-		'语言': [
-			{ tag: 'NotMandarin', description: '包含过多不是现代标准汉语的内容', excludeMI: true },
-			{ tag: 'Rough translation', description: '翻译品质不佳' }
-		],
-		'链接': [
-			{ tag: 'Dead end', description: '需要加上内部链接以构筑百科全书的链接网络' },
-			{ tag: 'Orphan', description: '没有或只有很少链入页面' },
-			{ tag: 'Overlinked', description: '含有过多、重复、或不必要的内部链接' },
-			{ tag: 'Underlinked', description: '需要更多内部链接以构筑百科全书的链接网络' }
-		],
-		'参考技术': [
-			{ tag: 'Citation style', description: '引用需要进行清理' }
-		],
-		'分类': [
-			{ tag: 'Improve categories', description: '需要更多页面分类', excludeMI: true },
-			{ tag: 'Uncategorized', description: '缺少页面分类', excludeMI: true }
+	{
+		key: wgULS('信息和细节', '資訊和細節'),
+		value: [
+			{ tag: 'Expert needed', description: wgULS('需要精通或熟悉本主题的专业人士（专家）参与及协助编辑', '需要精通或熟悉本主題的專業人士（專家）參與及協助編輯') },
+			{ tag: 'Overly detailed', description: wgULS('包含太多过度细节内容', '包含太多過度細節內容') },
+			{ tag: 'Trivia', description: wgULS('应避免有陈列杂项、琐碎资料的部分', '應避免有陳列雜項、瑣碎資料的部分') }
 		]
 	},
-	'合并': [
-		{ tag: 'Merge', description: '建议此页面与页面合并', excludeMI: true },  // these three have a subgroup with several options
-		{ tag: 'Merge from', description: '建议将页面并入本页面', excludeMI: true },
-		{ tag: 'Merge to', description: '建议将此页面并入页面', excludeMI: true }
-	],
-	'移动': [
-		{ tag: 'Requested move', description: '建议将此页面移动到新名称', excludeMI: true }  // these three have a subgroup with several options
+	{
+		key: wgULS('时间性', '時間性'),
+		value: [
+			{ tag: 'Current', description: wgULS('记述新闻动态', '記述新聞動態'), excludeMI: true }, // Works but not intended for use in MI
+			{ tag: 'Update', description: wgULS('当前条目或章节需要更新', '當前條目或章節需要更新') }
+		]
+	},
+	{
+		key: wgULS('中立、偏见和事实准确性', '中立、偏見和事實準確性'),
+		value: [
+			{ tag: 'Autobiography', description: wgULS('类似一篇自传，或内容主要由条目描述的当事人或组织撰写、编辑', '類似一篇自傳，或內容主要由條目描述的當事人或組織撰寫、編輯') },
+			{ tag: 'COI', description: wgULS('主要贡献者与本条目所宣扬的内容可能存在利益冲突', '主要貢獻者與本條目所宣揚的內容可能存在利益衝突') },
+			{ tag: 'Disputed', description: wgULS('内容疑欠准确，有待查证', '內容疑欠準確，有待查證') },
+			{ tag: 'Globalize', description: wgULS('仅具有一部分地区的信息或观点', '僅具有一部分地區的資訊或觀點') },
+			{ tag: 'Hoax', description: wgULS('真实性被质疑', '真實性被質疑') },
+			{ tag: 'POV', description: wgULS('中立性有争议。内容、语调可能带有明显的个人观点或地方色彩', '中立性有爭議。內容、語調可能帶有明顯的個人觀點或地方色彩') },
+			{ tag: 'Self-contradictory', description: wgULS('内容自相矛盾', '內容自相矛盾') },
+			{ tag: 'Weasel', description: wgULS('语义模棱两可而损及其中立性或准确性', '語意模棱兩可而損及其中立性或準確性') }
+		]
+	},
+	{
+		key: wgULS('可供查证和来源', '可供查證和來源'),
+		value: [
+			{ tag: 'BLPdispute', description: wgULS('可能违反了维基百科关于生者传记的方针', '可能違反了維基百科關於生者傳記的方針') },
+			{ tag: 'BLPsources', description: wgULS('生者传记需要补充更多可供查证的来源', '生者傳記需要補充更多可供查證的來源') },
+			{ tag: 'BLP unsourced', description: wgULS('生者传记没有列出任何参考或来源', '生者傳記沒有列出任何參考或來源') },
+			{ tag: 'Citecheck', description: wgULS('可能包含不适用或被曲解的引用资料，部分内容的准确性无法被证实', '可能包含不適用或被曲解的引用資料，部分內容的準確性無法被證實') },
+			{ tag: 'More footnotes needed', description: wgULS('因为文内引用不足，部分字句的来源仍然不明', '因為文內引用不足，部分字句的來源仍然不明') },
+			{ tag: 'No footnotes', description: wgULS('因为没有内文引用而来源仍然不明', '因為沒有內文引用而來源仍然不明') },
+			{ tag: 'Onesource', description: wgULS('极大或完全地依赖于某个单一的来源', '極大或完全地依賴於某個單一的來源') },
+			{ tag: 'Original research', description: wgULS('可能包含原创研究或未查证内容', '可能包含原創研究或未查證內容') },
+			{ tag: 'Primarysources', description: wgULS('依赖第一手来源', '依賴第一手來源') },
+			{ tag: 'Refimprove', description: wgULS('需要补充更多来源', '需要補充更多來源') },
+			{ tag: 'Unreferenced', description: wgULS('没有列出任何参考或来源', '沒有列出任何參考或來源') }
+		]
+	}]
+},
+{
+	key: wgULS('具体内容问题', '具體內容問題'),
+	value: [{
+		key: wgULS('语言', '語言'),
+		value: [
+			{ tag: 'NotMandarin', description: wgULS('包含过多不是现代标准汉语的内容', '包含過多不是現代標準漢語的內容'), excludeMI: true },
+			{ tag: 'Rough translation', description: wgULS('翻译品质不佳', '翻譯品質不佳') }
+		]
+	},
+	{
+		key: wgULS('链接', '連結'),
+		value: [
+			{ tag: 'Dead end', description: wgULS('需要加上内部链接以构筑百科全书的链接网络', '需要加上內部連結以構築百科全書的連結網絡') },
+			{ tag: 'Orphan', description: wgULS('没有或只有很少链入页面', '沒有或只有很少連入頁面') },
+			{ tag: 'Overlinked', description: wgULS('含有过多、重复、或不必要的内部链接', '含有過多、重複、或不必要的內部連結') },
+			{ tag: 'Underlinked', description: wgULS('需要更多内部链接以构筑百科全书的链接网络', '需要更多內部連結以構築百科全書的連結網絡') }
+		]
+	},
+	{
+		key: wgULS('参考技术', '參考技術'),
+		value: [
+			{ tag: 'Citation style', description: wgULS('引用需要进行清理', '引用需要進行清理') }
+		]
+	},
+	{
+		key: wgULS('分类', '分類'),
+		value: [
+			{ tag: 'Improve categories', description: wgULS('需要更多页面分类', '需要更多頁面分類'), excludeMI: true },
+			{ tag: 'Uncategorized', description: wgULS('缺少页面分类', '缺少頁面分類'), excludeMI: true }
+		]
+	}]
+},
+{
+	key: wgULS('合并', '合併'),
+	value: [
+		{ tag: 'Merge', description: wgULS('建议此页面与页面合并', '建議此頁面與頁面合併'), excludeMI: true },  // these three have a subgroup with several options
+		{ tag: 'Merge from', description: wgULS('建议将页面并入本页面', '建議將頁面併入本頁面'), excludeMI: true },
+		{ tag: 'Merge to', description: wgULS('建议将此页面并入页面', '建議將此頁面併入頁面'), excludeMI: true }
 	]
-}, {
-	'清理和維護模板': {
-		'常規清理': [
-			{ tag: 'Cleanup', description: '可能需要進行清理，以符合維基百科的質量標準' },
-			{ tag: 'Cleanup rewrite', description: '不符合維基百科的質量標準，需要完全重寫' },
-			{ tag: 'Cleanup-jargon', description: '包含過多行話或專業術語，可能需要簡化或提出進一步解釋' },
-			{ tag: 'Copy edit', description: '需要編修，以確保文法、用詞、語氣、格式、標點等使用恰當' }
-		],
-		'可能多餘的內容': [
-			{ tag: 'Copypaste', description: '內容可能是從某個來源處拷貝後貼上' },
-			{ tag: 'External links', description: '使用外部連結的方式可能不符合維基百科的方針或指引' },
-			{ tag: 'Non-free', description: '可能過多或不當地使用了受版權保護的文字、圖像或/及多媒體檔案' }
-		],
-		'結構和導言': [
-			{ tag: 'Lead too long', description: '導言部分也許過於冗長' },
-			{ tag: 'Lead too short', description: '導言部分也許不足以概括其內容' },
-			{ tag: 'Very long', description: '可能過於冗長' }
-		],
-		'虛構作品相關清理': [
-			{ tag: 'In-universe', description: '使用小說故事內的觀點描述一個虛構事物' },
-			{ tag: 'Long plot', description: '可能包含過於詳細的劇情摘要' }
-		]
-	},
-	'常規條目問題': {
-		'重要性和知名度': [
-			{ tag: 'Notability', description: '可能不符合通用關注度指引', excludeMI: true },  // has a subgroup with subcategories
-			{ tag: 'Notability Unreferenced', description: '可能具備關注度，但需要來源加以彰顯' }
-		],
-		'寫作風格': [
-			{ tag: 'Advert', description: '類似廣告或宣傳性內容' },
-			{ tag: 'Fanpov', description: '類似愛好者網頁' },
-			{ tag: 'How-to', description: '包含指南或教學內容' },
-			{ tag: 'Inappropriate person', description: '使用不適當的第一人稱和第二人稱' },
-			{ tag: 'Newsrelease', description: '閱讀起來像是新聞稿及包含過度的宣傳性語調' },
-			{ tag: 'Prose', description: '使用了日期或時間列表式記述，需要改寫為連貫的敘述性文字' },
-			{ tag: 'Review', description: '閱讀起來類似評論，需要清理' },
-			{ tag: 'Tone', description: '語調或風格可能不適合百科全書的寫作方式' }
-		],
-		'內容': [
-			{ tag: 'Expand language', description: '可以根據其他語言版本擴充' },  // these three have a subgroup with several options
-			{ tag: 'Missing information', description: '缺少必要的信息' },  // these three have a subgroup with several options
-			{ tag: 'Substub', description: '過於短小', excludeMI: true },
-			{ tag: 'Unencyclopedic', description: '可能不適合寫入百科全書' }
-		],
-		'資訊和細節': [
-			{ tag: 'Expert needed', description: '需要精通或熟悉本主題的專業人士（專家）參與及協助編輯' },
-			{ tag: 'Overly detailed', description: '包含太多過度細節內容' },
-			{ tag: 'Trivia', description: '應避免有陳列雜項、瑣碎資料的部分' }
-		],
-		'時間性': [
-			{ tag: 'Current', description: '記述新聞動態', excludeMI: true }, // Works but not intended for use in MI
-			{ tag: 'Update', description: '當前條目或章節需要更新' }
-		],
-		'中立、偏見和事實準確性': [
-			{ tag: 'Autobiography', description: '類似一篇自傳，或內容主要由條目描述的當事人或組織撰寫、編輯' },
-			{ tag: 'COI', description: '主要貢獻者與本條目所宣揚的內容可能存在利益衝突' },
-			{ tag: 'Disputed', description: '內容疑欠準確，有待查證' },
-			{ tag: 'Globalize', description: '僅具有一部分地區的資訊或觀點' },
-			{ tag: 'Hoax', description: '真實性被質疑' },
-			{ tag: 'POV', description: '中立性有爭議。內容、語調可能帶有明顯的個人觀點或地方色彩' },
-			{ tag: 'Self-contradictory', description: '內容自相矛盾' },
-			{ tag: 'Weasel', description: '語意模棱兩可而損及其中立性或準確性' }
-		],
-		'可供查證和來源': [
-			{ tag: 'BLPdispute', description: '可能違反了維基百科關於生者傳記的方針' },
-			{ tag: 'BLPsources', description: '生者傳記需要補充更多可供查證的來源' },
-			{ tag: 'BLP unsourced', description: '生者傳記沒有列出任何參考或來源' },
-			{ tag: 'Citecheck', description: '可能包含不適用或被曲解的引用資料，部分內容的準確性無法被證實' },
-			{ tag: 'More footnotes needed', description: '因為文內引用不足，部分字句的來源仍然不明' },
-			{ tag: 'No footnotes', description: '因為沒有內文引用而來源仍然不明' },
-			{ tag: 'Onesource', description: '極大或完全地依賴於某個單一的來源' },
-			{ tag: 'Original research', description: '可能包含原創研究或未查證內容' },
-			{ tag: 'Primarysources', description: '依賴第一手來源' },
-			{ tag: 'Refimprove', description: '需要補充更多來源' },
-			{ tag: 'Unreferenced', description: '沒有列出任何參考或來源' }
-		]
-	},
-	'具體內容問題': {
-		'語言': [
-			{ tag: 'NotMandarin', description: '包含過多不是現代標準漢語的內容', excludeMI: true },
-			{ tag: 'Rough translation', description: '翻譯品質不佳' }
-		],
-		'連結': [
-			{ tag: 'Dead end', description: '需要加上內部連結以構築百科全書的連結網絡' },
-			{ tag: 'Orphan', description: '沒有或只有很少連入頁面' },
-			{ tag: 'Overlinked', description: '含有過多、重複、或不必要的內部連結' },
-			{ tag: 'Underlinked', description: '需要更多內部連結以構築百科全書的連結網絡' }
-		],
-		'參考技術': [
-			{ tag: 'Citation style', description: '引用需要進行清理' }
-		],
-		'分類': [
-			{ tag: 'Improve categories', description: '需要更多頁面分類', excludeMI: true },
-			{ tag: 'Uncategorized', description: '缺少頁面分類', excludeMI: true }
-		]
-	},
-	'合併': [
-		{ tag: 'Merge', description: '建議此頁面與頁面合併', excludeMI: true },  // these three have a subgroup with several options
-		{ tag: 'Merge from', description: '建議將頁面併入本頁面', excludeMI: true },
-		{ tag: 'Merge to', description: '建議將此頁面併入頁面', excludeMI: true }
-	],
-	'移動': [
-		{ tag: 'Requested move', description: '建議將此頁面移動到新名稱', excludeMI: true }  // these three have a subgroup with several options
+},
+{
+	key: wgULS('移动', '移動'),
+	value: [
+		{ tag: 'Requested move', description: wgULS('建议将此页面移动到新名称', '建議將此頁面移動到新名稱'), excludeMI: true }  // these three have a subgroup with several options
 	]
-});
+}];
 
 // Tags for REDIRECTS start here
 // Not by policy, but the list roughly approximates items with >500
 // transclusions from Template:R template index
-Twinkle.tag.redirectList = wgULS({
-	'常用模板': [
-		{ tag: '合并重定向', description: '保持页面题名至相应主条目，令页面内容在合并后仍能保存其编辑历史' },
-		{ tag: '简繁重定向', description: '引导简体至繁体，或繁体至简体' },
-		{ tag: '关注度重定向', description: '缺乏关注度的子主题向有关注度的母主题的重定向' },
-		{ tag: '模板重定向', description: '指向模板的重定向页面' },
-		{ tag: '别名重定向', description: '标题的其他名称、笔名、绰号、同义字等' },
-		{ tag: '译名重定向', description: '人物、作品等各项事物的其他翻译名称' },
-		{ tag: '缩写重定向', description: '标题缩写' },
-		{ tag: '拼写重定向', description: '标题的其他不同拼写' },
-		{ tag: '错字重定向', description: '纠正标题的常见错误拼写或误植' },
-		{ tag: '旧名重定向', description: '将事物早前的名称引导至更改后的主题' },
-		{ tag: '历史名称重定向', description: '具有历史意义的别名、笔名、同义词' },
-		{ tag: '全名重定向', description: '标题的完整或更完整名称' },
-		{ tag: '短名重定向', description: '完整标题名称或人物全名的部分、不完整的名称或简称' },
+Twinkle.tag.redirectList = [{
+	key: '常用模板',
+	value: [
+		{ tag: wgULS('合并重定向', '合併重定向'), description: wgULS('保持页面题名至相应主条目，令页面内容在合并后仍能保存其编辑历史', '保持頁面題名至相應主條目，令頁面內容在合併後仍能儲存其編輯歷史') },
+		{ tag: wgULS('简繁重定向', '簡繁重定向'), description: wgULS('引导简体至繁体，或繁体至简体', '引導簡體至繁體，或繁體至簡體') },
+		{ tag: wgULS('关注度重定向', '關注度重定向'), description: wgULS('缺乏关注度的子主题向有关注度的母主题的重定向', '缺乏關注度的子主題向有關注度的母主題的重定向') },
+		{ tag: '模板重定向', description: wgULS('指向模板的重定向页面', '指向模板的重定向頁面') },
+		{ tag: wgULS('别名重定向', '別名重定向'), description: wgULS('标题的其他名称、笔名、绰号、同义字等', '標題的其他名稱、筆名、綽號、同義字等') },
+		{ tag: wgULS('译名重定向', '譯名重定向'), description: wgULS('人物、作品等各项事物的其他翻译名称', '人物、作品等各項事物的其他翻譯名稱') },
+		{ tag: wgULS('缩写重定向', '縮寫重定向'), description: wgULS('标题缩写', '標題縮寫') },
+		{ tag: wgULS('拼写重定向', '拼寫重定向'), description: wgULS('标题的其他不同拼写', '標題的其他不同拼寫') },
+		{ tag: wgULS('错字重定向', '錯字重定向'), description: wgULS('纠正标题的常见错误拼写或误植', '糾正標題的常見錯誤拼寫或誤植') },
+		{ tag: wgULS('旧名重定向', '舊名重定向'), description: wgULS('将事物早前的名称引导至更改后的主题', '將事物早前的名稱引導至更改後的主題') },
+		{ tag: wgULS('历史名称重定向', '歷史名稱重定向'), description: wgULS('具有历史意义的别名、笔名、同义词', '具有歷史意義的別名、筆名、同義詞') },
+		{ tag: '全名重定向', description: wgULS('标题的完整或更完整名称', '標題的完整或更完整名稱') },
+		{ tag: '短名重定向', description: wgULS('完整标题名称或人物全名的部分、不完整的名称或简称', '完整標題名稱或人物全名的部分、不完整的名稱或簡稱') },
 		{ tag: '姓氏重定向', description: '人物姓氏' },
 		{ tag: '名字重定向', description: '人物人名' },
 		{ tag: '本名重定向', description: '人物本名' },
 		{
 			tag: '非中文重定向',
-			description: '非中文标题',
-			subgroup: [
-				{
-					name: 'altLangFrom',
-					type: 'input',
-					label: '本重定向的语言（可选）',
-					tooltip: '输入重定向名称所使用语言的ISO 639代码，例如en代表英语，代码可参见 Template:ISO_639_name'
-				}
-			]
-		},
-		{ tag: '日文重定向', description: '日语名称' }
-	],
-	'偶用模板': [
-		{ tag: '角色重定向', description: '电视剧、电影、书籍等作品的角色' },
-		{ tag: '章节重定向', description: '导向至较高密度组织的页面' },
-		{ tag: '列表重定向', description: '导向至低密度的列表' },
-		{ tag: '可能性重定向', description: '导向至当前提供内容更为详尽的目标页面' },
-		{ tag: '关联字重定向', description: '标题名称关联字' },
-		{
-			tag: '条目请求重定向',
-			description: '需要独立条目的页面',
-			subgroup: [
-				{
-					name: 'reqArticleLang',
-					type: 'input',
-					label: '外语语言代码：',
-					tooltip: '使用ISO 639代码，可参见 Template:ISO_639_name'
-				},
-				{
-					name: 'reqArticleTitle',
-					type: 'input',
-					label: '外语页面名称：',
-					size: 60
-				}
-			]
-		},
-		{ tag: '捷徑重定向', description: '维基百科快捷方式' }
-	],
-	'鲜用模板': [
-		{ tag: '词组重定向', description: '将词组/词组/成语指向切题的条目及恰当章节' },
-		{ tag: '消歧义页重定向', description: '指向消歧义页' },
-		{ tag: '域名重定向', description: '网域名称' },
-		{ tag: '年代重定向', description: '于年份条目导向至年代条目' },
-		{ tag: '用户框模板重定向', description: '用户框模板' },
-		{ tag: '重定向模板用重定向', description: '导向至重定向模板' },
-		{ tag: 'EXIF重定向', description: 'JPEG图像包含EXIF信息' }
-	]
-}, {
-	'常用模板': [
-		{ tag: '合併重定向', description: '保持頁面題名至相應主條目，令頁面內容在合併後仍能儲存其編輯歷史' },
-		{ tag: '簡繁重定向', description: '引導簡體至繁體，或繁體至簡體' },
-		{ tag: '關注度重定向', description: '缺乏關注度的子主題向有關注度的母主題的重定向' },
-		{ tag: '模板重定向', description: '指向模板的重定向頁面' },
-		{ tag: '別名重定向', description: '標題的其他名稱、筆名、綽號、同義字等' },
-		{ tag: '譯名重定向', description: '人物、作品等各項事物的其他翻譯名稱' },
-		{ tag: '縮寫重定向', description: '標題縮寫' },
-		{ tag: '拼寫重定向', description: '標題的其他不同拼寫' },
-		{ tag: '錯字重定向', description: '糾正標題的常見錯誤拼寫或誤植' },
-		{ tag: '舊名重定向', description: '將事物早前的名稱引導至更改後的主題' },
-		{ tag: '歷史名稱重定向', description: '具有歷史意義的別名、筆名、同義詞' },
-		{ tag: '全名重定向', description: '標題的完整或更完整名稱' },
-		{ tag: '短名重定向', description: '完整標題名稱或人物全名的部分、不完整的名稱或簡稱' },
-		{ tag: '姓氏重定向', description: '人物姓氏' },
-		{ tag: '名字重定向', description: '人物人名' },
-		{ tag: '本名重定向', description: '人物本名' },
-		{
-			tag: '非中文重定向',
-			description: '非中文標題',
+			description: wgULS('非中文标题', '非中文標題'),
 			subgroup: [
 				{
 					name: 'altLangFrom',
@@ -956,17 +848,20 @@ Twinkle.tag.redirectList = wgULS({
 				}
 			]
 		},
-		{ tag: '日文重定向', description: '日語名稱' }
-	],
-	'偶用模板': [
-		{ tag: '角色重定向', description: '電視劇、電影、書籍等作品的角色' },
-		{ tag: '章節重定向', description: '導向至較高密度組織的頁面' },
-		{ tag: '列表重定向', description: '導向至低密度的列表' },
-		{ tag: '可能性重定向', description: '導向至當前提供內容更為詳盡的目標頁面' },
-		{ tag: '關聯字重定向', description: '標題名稱關聯字' },
+		{ tag: '日文重定向', description: wgULS('日语名称', '日語名稱') }
+	]
+},
+{
+	key: '偶用模板',
+	value: [
+		{ tag: '角色重定向', description: wgULS('电视剧、电影、书籍等作品的角色', '電視劇、電影、書籍等作品的角色') },
+		{ tag: wgULS('章节重定向', '章節重定向'), description: wgULS('导向至较高密度组织的页面', '導向至較高密度組織的頁面') },
+		{ tag: '列表重定向', description: wgULS('导向至低密度的列表', '導向至低密度的列表') },
+		{ tag: '可能性重定向', description: wgULS('导向至当前提供内容更为详尽的目标页面', '導向至當前提供內容更為詳盡的目標頁面') },
+		{ tag: wgULS('关联字重定向', '關聯字重定向'), description: wgULS('标题名称关联字', '標題名稱關聯字') },
 		{
-			tag: '條目請求重定向',
-			description: '需要獨立條目的頁面',
+			tag: wgULS('条目请求重定向', '條目請求重定向'),
+			description: wgULS('需要独立条目的页面', '需要獨立條目的頁面'),
 			subgroup: [
 				{
 					name: 'reqArticleLang',
@@ -982,105 +877,111 @@ Twinkle.tag.redirectList = wgULS({
 				}
 			]
 		},
-		{ tag: '捷徑重定向', description: '維基百科快捷方式' }
-	],
-	'鮮用模板': [
-		{ tag: '詞組重定向', description: '將詞組/詞組/成語指向切題的條目及恰當章節' },
-		{ tag: '消歧義頁重定向', description: '指向消歧義頁' },
-		{ tag: '域名重定向', description: '網域名稱' },
-		{ tag: '年代重定向', description: '於年份條目導向至年代條目' },
-		{ tag: '用戶框模板重定向', description: '用戶框模板' },
-		{ tag: '重定向模板用重定向', description: '導向至重定向模板' },
-		{ tag: 'EXIF重定向', description: 'JPEG圖檔包含EXIF資訊' }
+		{ tag: wgULS('快捷方式重定向', '捷徑重定向'), description: wgULS('维基百科快捷方式', '維基百科快捷方式') }
 	]
-});
-/* eslint-enable quote-props */
+},
+{
+	key: wgULS('鲜用模板', '鮮用模板'),
+	value: [
+		{ tag: wgULS('词组重定向', '詞組重定向'), description: wgULS('将词组/词组/成语指向切题的条目及恰当章节', '將詞組/詞組/成語指向切題的條目及恰當章節') },
+		{ tag: wgULS('消歧义页重定向', '消歧義頁重定向'), description: wgULS('指向消歧义页', '指向消歧義頁') },
+		{ tag: '域名重定向', description: wgULS('域名', '網域名稱') },
+		{ tag: '年代重定向', description: wgULS('于年份条目导向至年代条目', '於年份條目導向至年代條目') },
+		{ tag: wgULS('用户框模板重定向', '用戶框模板重定向'), description: wgULS('用户框模板', '用戶框模板') },
+		{ tag: '重定向模板用重定向', description: wgULS('导向至重定向模板', '導向至重定向模板') },
+		{ tag: 'EXIF重定向', description: wgULS('JPEG图像文件包含EXIF信息', 'JPEG圖檔包含EXIF資訊') }
+	]
+}];
 
 // maintenance tags for FILES start here
 
-Twinkle.tag.fileList = {};
-
-Twinkle.tag.fileList[wgULS('著作权和来源问题标签', '著作權和來源問題標籤')] = [
-	{ label: '{{Non-free reduce}}：' + wgULS('非低分辨率的合理使用图像（或过长的音频剪辑等）', '非低解析度的合理使用圖像（或過長的音頻剪輯等）'), value: 'Non-free reduce' }
-];
-
-Twinkle.tag.fileList[wgULS('维基共享资源相关标签', '維基共享資源相關標籤')] = [
-	{ label: '{{Copy to Wikimedia Commons}}：' + wgULS('自由著作权文件应该被移动至维基共享资源', '自由版權檔案應該被移動至維基共享資源'), value: 'Copy to Wikimedia Commons' },
-	{
-		label: '{{Do not move to Commons}}：' + wgULS('不要移动至维基共享资源', '不要移動至維基共享資源'),
-		value: 'Do not move to Commons',
-		subgroup: {
-			type: 'input',
-			name: 'DoNotMoveToCommons_reason',
-			label: '原因：',
-			tooltip: wgULS('输入不应该将该图像移动到维基共享资源的原因（必填）。', '輸入不應該將該圖像移動到維基共享資源的原因（必填）。')
+Twinkle.tag.fileList = [{
+	key: wgULS('著作权和来源问题标签', '著作權和來源問題標籤'),
+	value: [
+		{
+			label: '{{Non-free reduce}}：' + wgULS('非低分辨率的合理使用图像（或过长的音频剪辑等）', '非低解析度的合理使用圖像（或過長的音頻剪輯等）'), value: 'Non-free reduce'
 		}
-	},
-	{
-		label: '{{Keep local}}：' + wgULS('请求在本地保留维基共享资源的文件副本', '請求在本地保留維基共享資源的檔案副本'),
-		value: 'Keep local',
-		subgroup: [
-			{
+	]
+},
+{
+	key: wgULS('维基共享资源相关标签', '維基共享資源相關標籤'),
+	value: [
+		{
+			label: '{{Copy to Wikimedia Commons}}：' + wgULS('自由著作权文件应该被移动至维基共享资源', '自由版權檔案應該被移動至維基共享資源'), value: 'Copy to Wikimedia Commons'
+		},
+		{
+			label: '{{Do not move to Commons}}：' + wgULS('不要移动至维基共享资源', '不要移動至維基共享資源'),
+			value: 'Do not move to Commons',
+			subgroup: {
 				type: 'input',
-				name: 'keeplocalName',
+				name: 'DoNotMoveToCommons_reason',
+				label: '原因：',
+				tooltip: wgULS('输入不应该将该图像移动到维基共享资源的原因（必填）。', '輸入不應該將該圖像移動到維基共享資源的原因（必填）。')
+			}
+		},
+		{
+			label: '{{Keep local}}：' + wgULS('请求在本地保留维基共享资源的文件副本', '請求在本地保留維基共享資源的檔案副本'),
+			value: 'Keep local',
+			subgroup: [
+				{
+					type: 'input',
+					name: 'keeplocalName',
+					label: wgULS('共享资源的不同图像名称：', '共享資源的不同圖像名稱：'),
+					tooltip: wgULS('输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀', '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首')
+				},
+				{
+					type: 'input',
+					name: 'keeplocalReason',
+					label: '原因：',
+					tooltip: wgULS('输入请求在本地保留文件副本的原因（可选）：', '輸入請求在本地保留檔案副本的原因（可選）：')
+				}
+			]
+		},
+		{
+			label: '{{Now Commons}}：' + wgULS('文件已被复制到维基共享资源（CSD F7）', '檔案已被複製到維基共享資源（CSD F7）'),
+			value: 'Now Commons',
+			subgroup: {
+				type: 'input',
+				name: 'nowcommonsName',
 				label: wgULS('共享资源的不同图像名称：', '共享資源的不同圖像名稱：'),
 				tooltip: wgULS('输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀', '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首')
-			},
-			{
-				type: 'input',
-				name: 'keeplocalReason',
-				label: '原因：',
-				tooltip: wgULS('输入请求在本地保留文件副本的原因（可选）：', '輸入請求在本地保留檔案副本的原因（可選）：')
 			}
-		]
-	},
-	{
-		label: '{{Now Commons}}：' + wgULS('文件已被复制到维基共享资源（CSD F7）', '檔案已被複製到維基共享資源（CSD F7）'),
-		value: 'Now Commons',
-		subgroup: {
-			type: 'input',
-			name: 'nowcommonsName',
-			label: wgULS('共享资源的不同图像名称：', '共享資源的不同圖像名稱：'),
-			tooltip: wgULS('输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀', '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首')
 		}
-	}
-];
-
-Twinkle.tag.fileList[wgULS('清理标签', '清理標籤')] = [
-	{ label: '{{Imagewatermark}}：' + wgULS('图像包含了水印', '圖像包含了浮水印'), value: 'Imagewatermark' },
-	{
-		label: '{{Rename media}}：' + wgULS('文件应该根据文件名称指引被重命名', '檔案應該根據檔案名稱指引被重新命名'),
-		value: 'Rename media',
-		subgroup: [
-			{
-				type: 'input',
-				name: 'renamemediaNewname',
-				label: wgULS('新名称：', '新名稱：'),
-				tooltip: wgULS('输入图像的新名称（可选）', '輸入圖像的新名稱（可選）')
-			},
-			{
-				type: 'input',
-				name: 'renamemediaReason',
-				label: '原因：',
-				tooltip: wgULS('输入重命名的原因（可选）', '輸入重新命名的原因（可選）')
-			}
-		]
-	},
-	{ label: '{{Should be SVG}}：' + wgULS('PNG、GIF、JPEG文件应该重制成矢量图形', 'PNG、GIF、JPEG檔案應該重製成向量圖形'), value: 'Should be SVG' }
-];
-
-Twinkle.tag.fileList[wgULS('文件取代标签', '檔案取代標籤')] = [
-	{ label: '{{Obsolete}}：' + wgULS('有新版本可用的过时文件', '有新版本可用的過時檔案'), value: 'Obsolete' },
-	{ label: '{{Vector version available}}：' + wgULS('有矢量图形可用的非矢量图形文件', '有向量圖形可用的非向量圖形檔案'), value: 'Vector version available' }
-];
-Twinkle.tag.fileList[wgULS('文件取代标签', '檔案取代標籤')].forEach(function(el) {
-	el.subgroup = {
-		type: 'input',
-		label: wgULS('替换的文件：', '替換的檔案：'),
-		tooltip: wgULS('输入替换此文件的文件名称（必填）', '輸入替換此檔案的檔案名稱（必填）'),
-		name: el.value.replace(/ /g, '_') + 'File'
-	};
-});
+	]
+},
+{
+	key: wgULS('清理标签', '清理標籤'),
+	value: [
+		{ label: '{{Imagewatermark}}：' + wgULS('图像包含了水印', '圖像包含了浮水印'), value: 'Imagewatermark' },
+		{
+			label: '{{Rename media}}：' + wgULS('文件应该根据文件名称指引被重命名', '檔案應該根據檔案名稱指引被重新命名'),
+			value: 'Rename media',
+			subgroup: [
+				{
+					type: 'input',
+					name: 'renamemediaNewname',
+					label: wgULS('新名称：', '新名稱：'),
+					tooltip: wgULS('输入图像的新名称（可选）', '輸入圖像的新名稱（可選）')
+				},
+				{
+					type: 'input',
+					name: 'renamemediaReason',
+					label: '原因：',
+					tooltip: wgULS('输入重命名的原因（可选）', '輸入重新命名的原因（可選）')
+				}
+			]
+		},
+		{ label: '{{Should be SVG}}：' + wgULS('PNG、GIF、JPEG文件应该重制成矢量图形', 'PNG、GIF、JPEG檔案應該重製成向量圖形'), value: 'Should be SVG' }
+	]
+},
+{
+	key: wgULS('文件取代标签', '檔案取代標籤'),
+	value: [
+		{ label: '{{Obsolete}}：' + wgULS('有新版本可用的过时文件', '有新版本可用的過時檔案'), value: 'Obsolete' },
+		{ label: '{{Vector version available}}：' + wgULS('有矢量图形可用的非矢量图形文件', '有向量圖形可用的非向量圖形檔案'), value: 'Vector version available' }
+	],
+	buildFilename: true
+}];
 
 Twinkle.tag.callbacks = {
 	article: function articleCallback(pageobj) {
