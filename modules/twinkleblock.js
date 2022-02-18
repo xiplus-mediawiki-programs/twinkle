@@ -555,13 +555,23 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 					value: 'Blocked user'
 				},
 				{
-					label: '{{Blocked sockpuppet}}：' + wgULS('傀儡账户', '傀儡帳號'),
-					value: 'Blocked sockpuppet',
+					label: '{{Sockpuppet}}：' + wgULS('傀儡账户', '傀儡帳號'),
+					value: 'Sockpuppet',
 					subgroup: [
 						{
 							name: 'sppUsername',
 							type: 'input',
 							label: wgULS('主账户用户名：', '主帳號使用者名稱：')
+						},
+						{
+							name: 'sppType',
+							type: 'select',
+							label: wgULS('状态：', '狀態：'),
+							list: [
+								{ type: 'option', value: 'blocked', label: 'blocked - ' + wgULS('仅依行为证据认定', '僅依行為證據認定'), selected: true },
+								{ type: 'option', value: 'proven', label: 'proven - ' + wgULS('经傀儡调查确认', '經傀儡調查確認') },
+								{ type: 'option', value: 'confirmed', label: 'confirmed - ' + wgULS('经查核确认', '經查核確認') }
+							]
 						},
 						{
 							name: 'sppEvidence',
@@ -615,7 +625,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			type: 'input',
 			name: 'category',
 			label: 'Category:……的維基用戶分身' + wgULS('（主账户用户名）', '（主帳號使用者名稱）'), // no wgULS for category name
-			tooltip: wgULS('您通常应该使用{{Blocked sockpuppet}}的主账户参数来产生分类，只有单独使用{{Locked global account}}才需填写此项。', '您通常應該使用{{Blocked sockpuppet}}的主帳號參數來產生分類，只有單獨使用{{Locked global account}}才需填寫此項。')
+			tooltip: wgULS('您通常应该使用{{Sockpuppet}}的主账户参数来产生分类，只有单独使用{{Locked global account}}才需填写此项。', '您通常應該使用{{Sockpuppet}}的主帳號參數來產生分類，只有單獨使用{{Locked global account}}才需填寫此項。')
 		});
 	}
 
@@ -1335,7 +1345,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			return alert(wgULS('请至少选择一个用户页标记！', '請至少選擇一個使用者頁面標記！'));
 		}
 
-		if (checkIncompatible(['Blocked user', 'Blocked sockpuppet'], wgULS('{{Blocked sockpuppet}}已涵盖{{Blocked user}}的功能。', '{{Blocked sockpuppet}}已涵蓋{{Blocked user}}的功能。'))) {
+		if (checkIncompatible(['Blocked user', 'Sockpuppet'], wgULS('{{Sockpuppet}}已涵盖{{Blocked user}}的功能。', '{{Sockpuppet}}已涵蓋{{Blocked user}}的功能。'))) {
 			return;
 		}
 		if (checkIncompatible(['Blocked user', 'Sockpuppeteer'], wgULS('{{Sockpuppeteer}}已涵盖{{Blocked user}}的功能。', '{{Sockpuppeteer}}已涵蓋{{Blocked user}}的功能。'))) {
@@ -1344,11 +1354,11 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		if (checkIncompatible(['Blocked user', 'Locked global account'], wgULS('请使用{{Locked global account}}的“亦被本地封禁”选项。', '請使用{{Locked global account}}的「亦被本地封鎖」選項。'))) {
 			return;
 		}
-		if (checkIncompatible(['Blocked sockpuppet', 'Sockpuppeteer'], wgULS('请从主账户和分身账户中选择一个。', '請從主帳號和分身帳號中選擇一個。'))) {
+		if (checkIncompatible(['Sockpuppet', 'Sockpuppeteer'], wgULS('请从主账户和分身账户中选择一个。', '請從主帳號和分身帳號中選擇一個。'))) {
 			return;
 		}
 
-		if (params.tag.indexOf('Blocked sockpuppet') > -1 && params.sppUsername.trim() === '') {
+		if (params.tag.indexOf('Sockpuppet') > -1 && params.sppUsername.trim() === '') {
 			return alert(wgULS('请提供傀儡账户的主账户用户名！', '請提供傀儡帳號的主帳號使用者名稱！'));
 		}
 	}
@@ -1530,20 +1540,23 @@ Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pa
 			switch (tag) {
 				case 'Blocked user':
 					break;
-				case 'Blocked sockpuppet':
-					tagtext += '|1=' + params.sppUsername.trim();
+				case 'Sockpuppet':
+					tagtext += '\n| 1 = ' + params.sppUsername.trim();
+					tagtext += '\n| 2 = ' + params.sppType.trim();
 					if (params.sppEvidence.trim()) {
-						tagtext += '|evidence=' + params.sppEvidence.trim();
+						tagtext += '\n| evidence = ' + params.sppEvidence.trim();
 					}
+					tagtext += '\n| locked = no';
+					tagtext += '\n| notblocked = no';
+					tagtext += '\n';
 					break;
 				case 'Sockpuppeteer':
-					tagtext += '|blocked';
-					if (params.spmChecked) {
-						tagtext += '|check=yes';
-					}
+					tagtext += '\n| 1 = blocked';
+					tagtext += '\n| checked = ' + (params.spmChecked ? 'yes' : '');
 					if (params.spmEvidence.trim()) {
-						tagtext += '|evidence=' + params.spmEvidence.trim();
+						tagtext += '\n| evidence = ' + params.spmEvidence.trim();
 					}
+					tagtext += '\n';
 					break;
 				case 'Locked global account':
 					if (params.lockBlocked) {
