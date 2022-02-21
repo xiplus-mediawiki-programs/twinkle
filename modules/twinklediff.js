@@ -66,7 +66,7 @@ Twinkle.diff.callbacks = {
 		var revid = $(xmlDoc).find('rev').attr('revid');
 
 		if (!revid) {
-			self.statelem.error(wgULS('未找到合适的早期版本，或 ' + self.params.user + ' 是唯一贡献者。取消。', '未找到合適的早期版本，或 ' + self.params.user + ' 是唯一貢獻者。取消。'));
+			self.statelem.error(wgULS('未找到合适的早期版本，或 ', '未找到合適的早期版本，或 ') + self.params.user + wgULS(' 是唯一贡献者。取消。', ' 是唯一貢獻者。取消。'));
 			return;
 		}
 		window.location = mw.util.getUrl(mw.config.get('wgPageName'), {

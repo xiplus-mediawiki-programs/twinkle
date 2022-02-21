@@ -1048,7 +1048,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		// (settings in that file will still work, but they will be overwritten by twinkleoptions.js settings)
 		var contentnotice = document.createElement('p');
 		// I hate innerHTML, but this is one thing it *is* good for...
-		contentnotice.innerHTML = wgULS('<b>在这里修改您的参数设置之前，</b>确认您已移除了<a href="' + mw.util.getUrl('Special:MyPage/skin.js') + '" title="Special:MyPage/skin.js">用户JavaScript文件</a>中任何旧的<code>FriendlyConfig</code>设置。', '<b>在這裡修改您的偏好設定之前，</b>確認您已移除了<a href="' + mw.util.getUrl('Special:MyPage/skin.js') + '" title="Special:MyPage/skin.js">用戶JavaScript檔案</a>中任何舊的<code>FriendlyConfig</code>設定。');
+		contentnotice.innerHTML = '<b>' + wgULS('在这里修改您的参数设置之前，', '在這裡修改您的偏好設定之前，') + '</b>' + wgULS('确认您已移除了', '確認您已移除了') + '<a href="' + mw.util.getUrl('Special:MyPage/skin.js') + '" title="Special:MyPage/skin.js">' + wgULS('用户JavaScript文件', '使用者JavaScript檔案') + '</a>' + wgULS('中任何旧的', '中任何舊的') + '<code>FriendlyConfig</code>' + wgULS('设置。', '設定。');
 		contentdiv.appendChild(contentnotice);
 
 		// look and see if the user does in fact have any old settings in their skin JS file
@@ -1750,7 +1750,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 						case 'integer':  // read from the input box
 							userValue = parseInt(form[pref.name].value, 10);
 							if (isNaN(userValue)) {
-								Morebits.status.warn(wgULS('保存', '儲存'), wgULS('您为 ' + pref.name + ' 指定的值（' + pref.value + '）不合法，会继续保存操作，但此值将会跳过。', '您為 ' + pref.name + ' 指定的值（' + pref.value + '）不合法，會繼續儲存操作，但此值將會跳過。'));
+								Morebits.status.warn(wgULS('保存', '儲存'), wgULS('您为 ', '您為 ') + pref.name + ' 指定的值（' + pref.value + wgULS('）不合法，会继续保存操作，但此值将会跳过。', '）不合法，會繼續儲存操作，但此值將會跳過。'));
 								userValue = null;
 							}
 							break;
@@ -1831,7 +1831,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 		'// </nowiki>';
 
 	pageobj.setPageText(text);
-	pageobj.setEditSummary(wgULS('保存Twinkle参数设置：来自[[' + Morebits.pageNameNorm + ']]的自动编辑', '儲存Twinkle偏好設定：來自[[' + Morebits.pageNameNorm + ']]的自動編輯'));
+	pageobj.setEditSummary(wgULS('保存Twinkle参数设置：来自[[', '儲存Twinkle偏好設定：來自[[') + Morebits.pageNameNorm + wgULS(']]的自动编辑', ']]的自動編輯'));
 	pageobj.setChangeTags(Twinkle.changeTags);
 	pageobj.setCreateOption('recreate');
 	pageobj.save(Twinkle.config.saveSuccess);
@@ -1844,7 +1844,7 @@ Twinkle.config.saveSuccess = function twinkleconfigSaveSuccess(pageobj) {
 	noticebox.className = 'successbox';
 	noticebox.style.fontSize = '100%';
 	noticebox.style.marginTop = '2em';
-	noticebox.innerHTML = wgULS('<p><b>您的Twinkle参数设置已被保存。</b></p><p>要看到这些更改，您可能需要<a href="' + mw.util.getUrl('WP:BYPASS') + '" title="WP:BYPASS"><b>绕过浏览器缓存</b></a>。</p>', '<p><b>您的Twinkle偏好設定已被儲存。</b></p><p>要看到這些更改，您可能需要<a href="' + mw.util.getUrl('WP:BYPASS') + '" title="WP:BYPASS"><b>繞過瀏覽器快取</b></a>。</p>');
+	noticebox.innerHTML = '<p><b>' + wgULS('您的Twinkle参数设置已被保存。', '您的Twinkle偏好設定已被儲存。') + '</b></p><p>' + wgULS('要看到这些更改，您可能需要', '要看到這些更改，您可能需要') + '<a href="' + mw.util.getUrl('WP:BYPASS') + '" title="WP:BYPASS"><b>' + wgULS('绕过浏览器缓存', '繞過瀏覽器快取') + '</b></a>。</p>';
 	Morebits.status.root.appendChild(noticebox);
 	var noticeclear = document.createElement('br');
 	noticeclear.style.clear = 'both';

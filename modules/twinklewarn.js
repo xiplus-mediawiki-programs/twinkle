@@ -2435,7 +2435,7 @@ Twinkle.warn.callbacks = {
 			messageData = params.messageData['level' + templateAndLevel[1]];
 		} else if (params.sub_group in history) {
 			if (new Morebits.date(history[params.sub_group]).add(1, 'day').isAfter(now)) {
-				if (!confirm(wgULS('近24小时内一个同样的 ' + params.sub_group + ' 模板已被发出。\n是否继续？', '近24小時內一個同樣的 ' + params.sub_group + ' 模板已被發出。\n是否繼續？'))) {
+				if (!confirm(wgULS('近24小时内一个同样的 ', '近24小時內一個同樣的 ') + params.sub_group + wgULS(' 模板已被发出。\n是否继续？', ' 模板已被發出。\n是否繼續？'))) {
 					statelem.error(wgULS('用户取消', '使用者取消'));
 					return;
 				}
@@ -2445,7 +2445,7 @@ Twinkle.warn.callbacks = {
 		latest.date.add(1, 'minute'); // after long debate, one minute is max
 
 		if (latest.date.isAfter(now)) {
-			if (!confirm(wgULS('近1分钟内 ' + latest.type + ' 模板已被发出。\n是否继续？', '近1分鐘內 ' + latest.type + ' 模板已被發出。\n是否繼續？'))) {
+			if (!confirm(wgULS('近1分钟内 ', '近1分鐘內 ') + latest.type + wgULS(' 模板已被发出。\n是否继续？', ' 模板已被發出。\n是否繼續？'))) {
 				statelem.error(wgULS('用户取消', '使用者取消'));
 				return;
 			}

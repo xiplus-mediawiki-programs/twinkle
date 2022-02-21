@@ -271,7 +271,7 @@ Twinkle.image.callbacks = {
 
 		// disallow warning yourself
 		if (initialContrib === mw.config.get('wgUserName')) {
-			pageobj.getStatusElement().warn(wgULS('您（' + initialContrib + '）创建了该页，跳过通知', '您（' + initialContrib + '）建立了該頁，跳過通知'));
+			pageobj.getStatusElement().warn('您（' + initialContrib + wgULS('）创建了该页，跳过通知', '）建立了該頁，跳過通知'));
 		} else {
 			var talkPageName = 'User talk:' + initialContrib;
 			Morebits.wiki.flow.check(talkPageName, function () {

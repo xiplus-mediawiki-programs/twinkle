@@ -1158,7 +1158,7 @@ Twinkle.speedy.callbacks = {
 				Morebits.status.info($bigtext[0], $link[0]);
 			} else {
 				// open the initial contributor's talk page
-				var statusIndicator = new Morebits.status(wgULS('打开用户' + user + '讨论页编辑窗口', '打開使用者' + user + '討論頁編輯視窗'), wgULS('打开中…', '打開中…'));
+				var statusIndicator = new Morebits.status(wgULS('打开用户', '打開使用者') + user + wgULS('的讨论页编辑窗口', '的討論頁編輯視窗'), wgULS('打开中…', '打開中…'));
 
 				switch (Twinkle.getPref('userTalkPageMode')) {
 					case 'tab':
@@ -1245,7 +1245,7 @@ Twinkle.speedy.callbacks = {
 			}
 
 			var xfd = /(?:\{\{([rsaiftcmv]fd|md1|proposed deletion)[^{}]*?\}\})/i.exec(text);
-			if (xfd && !confirm(wgULS('删除相关模板{{' + xfd[1] + '}}已被置于页面中，您是否仍想加入一个快速删除模板？', '刪除相關模板{{' + xfd[1] + '}}已被置於頁面中，您是否仍想加入一個快速刪除模板？'))) {
+			if (xfd && !confirm(wgULS('删除相关模板{{', '刪除相關模板{{') + xfd[1] + wgULS('}}已被置于页面中，您是否仍想加入一个快速删除模板？', '}}已被置於頁面中，您是否仍想加入一個快速刪除模板？'))) {
 				statelem.error(wgULS('页面已被提交至存废讨论。', '頁面已被提交至存廢討論。'));
 				return;
 			}
@@ -1332,7 +1332,7 @@ Twinkle.speedy.callbacks = {
 
 					// disallow warning yourself
 					if (initialContrib === mw.config.get('wgUserName')) {
-						Morebits.status.warn(wgULS('您（' + initialContrib + '）创建了该页，跳过通知', '您（' + initialContrib + '）建立了該頁，跳過通知'));
+						Morebits.status.warn('您（' + initialContrib + wgULS('）创建了该页，跳过通知', '）建立了該頁，跳過通知'));
 						initialContrib = null;
 
 					// don't notify users when their user talk page is nominated
@@ -1348,12 +1348,12 @@ Twinkle.speedy.callbacks = {
 					} else {
 						var talkPageName = 'User talk:' + initialContrib;
 						Morebits.wiki.flow.check(talkPageName, function () {
-							var flowpage = new Morebits.wiki.flow(talkPageName, wgULS('通知页面创建者（' + initialContrib + '）', '通知頁面建立者（' + initialContrib + '）'));
+							var flowpage = new Morebits.wiki.flow(talkPageName, wgULS('通知页面创建者（', '通知頁面建立者（') + initialContrib + '）');
 							flowpage.setTopic('[[:' + Morebits.pageNameNorm + ']]的快速删除通知');
 							flowpage.setContent('{{subst:db-notice|target=' + Morebits.pageNameNorm + '|flow=yes}}');
 							flowpage.newTopic();
 						}, function() {
-							var usertalkpage = new Morebits.wiki.page(talkPageName, wgULS('通知页面创建者（' + initialContrib + '）', '通知頁面建立者（' + initialContrib + '）')),
+							var usertalkpage = new Morebits.wiki.page(talkPageName, wgULS('通知页面创建者（', '通知頁面建立者（') + initialContrib + '）'),
 								notifytext;
 
 							notifytext = '\n{{subst:db-notice|target=' + Morebits.pageNameNorm;

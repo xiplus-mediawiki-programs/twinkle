@@ -695,7 +695,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				// check if user has already been reported
 				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
 					aivPage.getStatusElement().error(wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的'));
-					Morebits.status.printUserText(reason, wgULS('您输入的评论已在下方提供，您可以将其加入到' + $aivLink + '已存在的小节中：', '您輸入的評論已在下方提供，您可以將其加入到' + $aivLink + '已存在的小節中：'));
+					Morebits.status.printUserText(reason, wgULS('您输入的评论已在下方提供，您可以将其加入到', '您輸入的評論已在下方提供，您可以將其加入到') + $aivLink + wgULS('已存在的小节中：', '已存在的小節中：'));
 					return;
 				}
 				aivPage.setPageSection(0);
@@ -748,7 +748,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				// check if user has already been reported
 				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
 					ewipPage.getStatusElement().error(wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的'));
-					Morebits.status.printUserText(reason, wgULS('您输入的评论已在下方提供，您可以将其加入到' + $ewipLink + '已存在的小节中：', '您輸入的評論已在下方提供，您可以將其加入到' + $ewipLink + '已存在的小節中：'));
+					Morebits.status.printUserText(reason, wgULS('您输入的评论已在下方提供，您可以将其加入到', '您輸入的評論已在下方提供，您可以將其加入到') + $ewipLink + wgULS('已存在的小节中：', '已存在的小節中：'));
 					return;
 				}
 				ewipPage.setPageSection(0);
@@ -818,7 +818,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				if (new RegExp('\\{\\{\\s*user-uaa\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.string.escapeRegExp(uid) + '\\s*(\\||\\})').test(text)) {
 					uaaPage.getStatusElement().error(wgULS('用户已被列入。', '使用者已被列入。'));
 					var $uaaLink = '<a target="_blank" href="/wiki/WP:UAA">WP:UAA</a>';
-					Morebits.status.printUserText(reason, wgULS('您输入的评论已在下方提供，您可以将其手工加入' + $uaaLink + '上该用户的报告中：', '您輸入的評論已在下方提供，您可以將其手工加入' + $uaaLink + '上該使用者的報告中：'));
+					Morebits.status.printUserText(reason, wgULS('您输入的评论已在下方提供，您可以将其手工加入', '您輸入的評論已在下方提供，您可以將其手工加入') + $uaaLink + wgULS('上该用户的报告中：', '上該使用者的報告中：'));
 					return;
 				}
 				uaaPage.getStatusElement().status(wgULS('加入新报告…', '加入新報告…'));

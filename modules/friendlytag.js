@@ -1252,7 +1252,7 @@ Twinkle.tag.callbacks = {
 									params.discussArticle = tagName === 'Merge to' ? params.mergeTarget : mw.config.get('wgTitle');
 									// nonDiscussArticle is the article which won't have the discussion
 									params.nonDiscussArticle = tagName === 'Merge to' ? mw.config.get('wgTitle') : params.mergeTarget;
-									params.talkDiscussionTitle = wgULS('请求与' + params.nonDiscussArticle + '合并', '請求與' + params.nonDiscussArticle + '合併');
+									params.talkDiscussionTitle = wgULS('请求与', '請求與') + params.nonDiscussArticle + wgULS('合并', '合併');
 								}
 								currentTag += '|discuss=Talk:' + params.discussArticle + '#' + params.talkDiscussionTitle;
 							}
