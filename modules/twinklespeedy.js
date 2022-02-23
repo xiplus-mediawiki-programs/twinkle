@@ -1482,7 +1482,7 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 				if (form['csd.g5_1']) {
 					var deldisc = form['csd.g5_1'].value;
 					if (deldisc) {
-						if (/^(Wikipedia|WP|维基百科|維基百科):/i.test(deldisc)) {
+						if (!/^(Wikipedia|WP|维基百科|維基百科):/i.test(deldisc)) {
 							alert(wgULS('CSD G5：您提供的讨论页名必须以“Wikipedia:”开头。', 'CSD G5：您提供的討論頁名必須以「Wikipedia:」開頭。'));
 							parameters = null;
 							return false;
