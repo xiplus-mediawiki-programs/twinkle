@@ -310,7 +310,7 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 	var mode = Twinkle.speedy.callback.getMode(form);
 	var isSysopMode = Twinkle.speedy.mode.isSysop(mode);
 
-	if (Twinkle.speedy.mode.isSysop(mode)) {
+	if (isSysopMode) {
 		$('[name=delete_options]').show();
 		$('[name=tag_options]').hide();
 		$('button.tw-speedy-submit').text(wgULS('删除页面', '刪除頁面'));
@@ -430,6 +430,22 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 	if (document.querySelector('input[value="g11"]') && Twinkle.getPref('enlargeG11Input')) {
 		document.querySelector('input[value="g11"]').style = 'height: 2em; width: 2em; height: -moz-initial; width: -moz-initial; -moz-transform: scale(2); -o-transform: scale(2);';
 		document.querySelector('input[value="g11"]').labels[0].style = 'font-size: 1.5em; line-height: 1.5em;';
+	}
+
+	if (!isSysopMode && mw.config.get('wgPageContentModel') !== 'wikitext') {
+		$('[name=tag_options]').hide();
+		$('[name=work_area]').empty();
+		var message = [
+			wgULS('Twinkle不支持在页面内容模型为', 'Twinkle不支援在頁面內容模型為'),
+			mw.config.get('wgPageContentModel'),
+			wgULS('的页面上挂上快速删除模板，请参见', '的頁面上掛上快速刪除模板，請參見'),
+			$('<a>').attr({ target: '_blank', href: mw.util.getUrl('WP:SPECIALSD') }).text(wgULS('手动放置模板时的注意事项', '手動放置模板時的注意事項'))[0],
+			'。'
+		];
+		$('[name=work_area]').append(message);
+		Morebits.simpleWindow.setButtonsEnabled(false);
+	} else {
+		Morebits.simpleWindow.setButtonsEnabled(true);
 	}
 };
 
@@ -1219,8 +1235,7 @@ Twinkle.speedy.callbacks = {
 		main: function(pageobj) {
 			var statelem = pageobj.getStatusElement();
 
-			// defaults to /doc for lua modules, which may not exist
-			if (!pageobj.exists() && mw.config.get('wgPageContentModel') !== 'Scribunto') {
+			if (!pageobj.exists()) {
 				statelem.error(wgULS('页面不存在，可能已被删除', '頁面不存在，可能已被刪除'));
 				return;
 			}
@@ -1307,18 +1322,6 @@ Twinkle.speedy.callbacks = {
 			pageobj.setEditSummary(editsummary);
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setWatchlist(params.watch);
-			if (params.scribunto) {
-				pageobj.setCreateOption('recreate'); // Module /doc might not exist
-				if (params.watch) {
-					// Watch module in addition to /doc subpage
-					var watch_query = {
-						action: 'watch',
-						titles: mw.config.get('wgPageName'),
-						token: mw.user.tokens.get('watchToken')
-					};
-					new Morebits.wiki.api(wgULS('将模块加入到监视列表', '將模組加入到監視清單'), watch_query).post();
-				}
-			}
 			pageobj.save(Twinkle.speedy.callbacks.user.tagComplete);
 		},
 
@@ -1723,9 +1726,7 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 	Morebits.wiki.actionCompleted.notice = wgULS('标记完成', '標記完成');
 
-	// Modules can't be tagged, follow standard at TfD and place on /doc subpage
-	params.scribunto = mw.config.get('wgPageContentModel') === 'Scribunto';
-	var wikipedia_page = params.scribunto ? new Morebits.wiki.page(mw.config.get('wgPageName') + '/doc', wgULS('标记模块文件页', '標記模組文件頁')) : new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('标记页面', '標記頁面'));
+	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('标记页面', '標記頁面'));
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.speedy.callbacks.user.main);
 };

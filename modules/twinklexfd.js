@@ -87,6 +87,23 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 	Window.setContent(result);
 	Window.display();
 
+	if (mw.config.get('wgPageContentModel') !== 'wikitext') {
+		form = new Morebits.quickForm(Twinkle.xfd.callback.evaluate);
+		form.append({
+			type: 'div',
+			label: [
+				wgULS('Twinkle不支持在页面内容模型为', 'Twinkle不支援在頁面內容模型為'),
+				mw.config.get('wgPageContentModel'),
+				wgULS('的页面上挂上存废讨论模板，请参见', '的頁面上掛上存廢討論模板，請參見'),
+				$('<a>').attr({ target: '_blank', href: mw.util.getUrl('WP:SPECIALSD') }).text(wgULS('手动放置模板时的注意事项', '手動放置模板時的注意事項'))[0],
+				'。'
+			]
+		});
+		Window.setContent(form.render());
+		Window.display();
+		return;
+	}
+
 	// We must init the controls
 	var evt = document.createEvent('Event');
 	evt.initEvent('change', true, true);
@@ -141,9 +158,8 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 						label: '使用&lt;noinclude&gt;包裹模板',
 						value: 'noinclude',
 						name: 'noinclude',
-						checked: mw.config.get('wgNamespaceNumber') === 10 && mw.config.get('wgPageContentModel') !== 'Scribunto', // Template namespace
-						tooltip: wgULS('使其不会在被包含时出现。', '使其不會在被包含時出現。'),
-						disabled: mw.config.get('wgPageContentModel') === 'Scribunto'
+						checked: mw.config.get('wgNamespaceNumber') === 10, // Template namespace
+						tooltip: wgULS('使其不会在被包含时出现。', '使其不會在被包含時出現。')
 					}
 				]
 			});
@@ -452,8 +468,7 @@ Twinkle.xfd.callbacks = {
 			params.creator = target_page.getCreator();
 
 			// Tagging page
-			var isScribunto = mw.config.get('wgPageContentModel') === 'Scribunto';
-			var tagging_page = isScribunto ? new Morebits.wiki.page(mw.config.get('wgPageName') + '/doc', wgULS('加入存废讨论模板到模块文件页', '加入存廢討論模板到模組文件頁')) : new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('加入存废讨论模板到页面', '加入存廢討論模板到頁面'));
+			var tagging_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('加入存废讨论模板到页面', '加入存廢討論模板到頁面'));
 			tagging_page.setFollowRedirect(false);
 			tagging_page.setCallbackParameters(params);
 			tagging_page.load(Twinkle.xfd.callbacks.afd.tryTagging);
@@ -461,7 +476,7 @@ Twinkle.xfd.callbacks = {
 		tryTagging: function (tagging_page) {
 			var statelem = tagging_page.getStatusElement();
 			// defaults to /doc for lua modules, which may not exist
-			if (!tagging_page.exists() && mw.config.get('wgPageContentModel') !== 'Scribunto') {
+			if (!tagging_page.exists()) {
 				statelem.error(wgULS('页面不存在，可能已被删除', '頁面不存在，可能已被刪除'));
 				return;
 			}
