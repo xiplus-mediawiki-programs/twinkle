@@ -284,10 +284,22 @@ Twinkle.talkback.changeTarget = function(e) {
 Twinkle.talkback.noticeboards = {
 	affp: {
 		label: 'WP:AF/FP（' + wgULS('防滥用过滤器/错误报告', '防濫用過濾器/錯誤報告') + '）',
-		title: '過濾器錯誤報告通知',
-		content: '您的過濾器錯誤報告已有回應，請前往查看。--~~~~',
-		editSummary: '有關[[Wikipedia:防滥用过滤器/错误报告]]的通知',
+		title: wgULS('过滤器错误报告有新回应', '過濾器錯誤報告有新回應'),
+		content: wgULS('您的[[Wikipedia:防滥用过滤器/错误报告|过滤器错误报告]]已有回应，请前往查看。', '您的[[Wikipedia:防滥用过滤器/错误报告|過濾器錯誤報告]]已有回應，請前往查看。') + '--~~~~',
+		editSummary: wgULS('有关[[Wikipedia:防滥用过滤器/错误报告]]的通知', '有關[[Wikipedia:防滥用过滤器/错误报告]]的通知'),
 		defaultSelected: true
+	},
+	sbl: {
+		label: 'Spam-blacklist',
+		title: wgULS('垃圾链接黑名单请求有新回应', '垃圾連結黑名單請求有新回應'),
+		content: wgULS('您的[[MediaWiki talk:Spam-blacklist|垃圾链接黑名单请求]]已有回应，请前往查看。', '您的[[MediaWiki talk:Spam-blacklist|垃圾連結黑名單請求]]已有回應，請前往查看。') + '--~~~~',
+		editSummary: wgULS('有关[[MediaWiki talk:Spam-blacklist]]的通知', '有關[[MediaWiki talk:Spam-blacklist]]的通知')
+	},
+	shl: {
+		label: 'Spam-whitelist',
+		title: wgULS('垃圾链接白名单请求有新回应', '垃圾連結白名單請求有新回應'),
+		content: wgULS('您的[[MediaWiki talk:Spam-whitelist|垃圾链接白名单请求]]已有回应，请前往查看。', '您的[[MediaWiki talk:Spam-whitelist|垃圾連結白名單請求]]已有回應，請前往查看。') + '--~~~~',
+		editSummary: wgULS('有关[[MediaWiki talk:Spam-whitelist]]的通知', '有關[[MediaWiki talk:Spam-whitelist]]的通知')
 	}
 };
 
