@@ -1820,11 +1820,12 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 	text += Twinkle.block.callback.getBlockNoticeWikitext(params);
 
 	// build the edit summary
-	var summary = wgULS('封禁通知：', '封鎖通知：');
-	summary += messageData.summary || messageData.reason || params.reason;
+	var summary = wgULS('封禁通知', '封鎖通知');
+	// Not working correctly
+	/* summary += messageData.summary || messageData.reason || params.reason;
 	if (messageData.suppressArticleInSummary !== true && params.article) {
 		summary += wgULS('，于[[', '，於[[') + params.article + ']]';
-	}
+	} */
 
 	pageobj.setPageText(text);
 	pageobj.setEditSummary(summary);
