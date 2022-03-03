@@ -22,7 +22,7 @@ describe('Morebits.date', () => {
 
 		// Ideally we would test the differences between UTC and non-UTC dates
 		assert.strictEqual(date.getUTCDayName(), '星期六', 'getUTCDayName');
-		assert.strictEqual(date.getUTCDayNameAbbrev(), '星期六', 'getUTCDayNameAbbrev');
+		assert.strictEqual(date.getUTCDayNameAbbrev(), '六', 'getUTCDayNameAbbrev');
 		assert.strictEqual(date.getUTCMonthName(), '11月', 'getUTCMonthName');
 		assert.strictEqual(date.getUTCMonthNameAbbrev(), '11月', 'getUTCMonthNameAbbrev');
 
