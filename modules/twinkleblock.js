@@ -1785,7 +1785,7 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params, nosign) {
 Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 	var params = pageobj.getCallbackParameters(),
 		date = new Morebits.date(pageobj.getLoadTime()),
-		messageData = params.messageData,
+		// messageData = params.messageData,
 		text;
 
 	params.indefinite = Morebits.string.isInfinity(params.expiry);
