@@ -1202,7 +1202,7 @@ Twinkle.speedy.callbacks = {
 			var statusIndicator = apiobj.statelem;
 
 			if (!total) {
-				statusIndicator.status(wgULS('未发现重定向', '未發現重新導向'));
+				statusIndicator.info(wgULS('未发现重定向', '未發現重新導向'));
 				return;
 			}
 
