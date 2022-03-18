@@ -1439,10 +1439,18 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		} else {
 			query.bkusers = blockoptions.user;
 		}
+		if (!mw.util.isIPAddress(blockoptions.user, true)) {
+			query.list += '|users';
+			query.usprop = 'groups';
+			query.ususers = blockoptions.user;
+			query.meta = 'tokens';
+			query.type = 'userrights';
+		}
 
 		api.get(query).then(function(data) {
 			var block = data.query.blocks[0];
 			var logevents = data.query.logevents[0];
+			var user = data.query.users ? data.query.users[0] : null;
 			var logid = data.query.logevents.length ? logevents.logid : false;
 
 			if (logid !== Twinkle.block.blockLogId || !!block !== !!Twinkle.block.currentBlockInfo) {
@@ -1474,6 +1482,25 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				blockoptions.reblock = 1; // Writing over a block will fail otherwise
 			}
 
+			var groupsCanBeRemoved = [
+				'autoreviewer',
+				'confirmed',
+				'eventparticipant',
+				'filemover',
+				'ipblock-exempt',
+				'massmessage-sender',
+				'patroller',
+				'rollbacker',
+				'templateeditor',
+				'transwiki'
+			];
+			var groupsToBeRemoved = [];
+			if (user && Morebits.string.isInfinity(blockoptions.expiry)) {
+				groupsToBeRemoved = user.groups.filter(function (group) {
+					return groupsCanBeRemoved.indexOf(group) > -1;
+				});
+			}
+
 			// execute block
 			blockoptions.tags = Twinkle.changeTags;
 			blockoptions.token = mw.user.tokens.get('csrfToken');
@@ -1487,6 +1514,21 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 					vipPage.setFollowRedirect(true);
 					vipPage.setCallbackParameters(blockoptions);
 					vipPage.load(Twinkle.block.callback.closeRequest);
+				}
+				if (groupsToBeRemoved.length > 0) {
+					var revokeOptions = {
+						action: 'userrights',
+						user: blockoptions.user,
+						remove: groupsToBeRemoved.join('|'),
+						reason: wgULS('用户已被无限期封禁', '使用者已被無限期封鎖'),
+						token: data.query.tokens.userrightstoken,
+						tags: Twinkle.changeTags
+					};
+					var rightStatusElement = new Morebits.status(wgULS('移除权限', '移除權限'));
+					var mrApi = new Morebits.wiki.api(wgULS('移除权限', '移除權限'), revokeOptions, function() {
+						rightStatusElement.info('已移除' + groupsToBeRemoved.join('、'));
+					});
+					mrApi.post();
 				}
 			});
 			mbApi.post();
