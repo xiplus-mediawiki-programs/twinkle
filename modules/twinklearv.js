@@ -140,7 +140,16 @@ Twinkle.arv.lta_list = [
 
 Twinkle.arv.callback.pick_lta = function twinklearvCallbackPickLta(e) {
 	e.target.form.sockmaster.value = e.target.value;
+	Twinkle.arv.callback.set_sockmaster(e.target.value);
 	e.target.value = '';
+};
+
+Twinkle.arv.callback.sockmaster_changed = function twinklearvCallbackSockmasterChanged(e) {
+	Twinkle.arv.callback.set_sockmaster(e.target.value);
+};
+
+Twinkle.arv.callback.set_sockmaster = function twinklearvCallbackSetSockmaster(sockmaster) {
+	$('code.tw-arv-sockmaster').text('{{subst:Socksuspectnotice|1=' + sockmaster + '}}');
 };
 
 Twinkle.arv.callback.changeCategory = function (e) {
@@ -361,7 +370,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					target: '_blank'
 				})[0],
 				tooltip: wgULS('主账户的用户名（不含User:前缀），这被用于创建傀儡调查子页面的标题，可在 Wikipedia:傀儡调查/案件 的子页面搜索先前的调查。', '主帳號的使用者名稱（不含User:字首），這被用於建立傀儡調查子頁面的標題，可在 Wikipedia:傀儡調查/案件 的子頁面搜尋先前的調查。'),
-				value: root.uid.value
+				value: root.uid.value,
+				event: Twinkle.arv.callback.sockmaster_changed
 			});
 			work_area.append({
 				type: 'dyninput',
@@ -386,9 +396,18 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					tooltip: wgULS('用户查核是一种用于获取傀儡指控相关技术证据的工具，若没有正当理由则不会使用，您必须在证据字段充分解释为什么需要使用该工具。用户查核不会用于公开连接用户账户使用的IP地址。', '使用者查核是一種用於獲取傀儡指控相關技術證據的工具，若沒有正當理由則不會使用，您必須在證據欄位充分解釋為什麼需要使用該工具。使用者查核不會用於公開連接使用者帳號使用的IP位址。')
 				}]
 			});
+			work_area.append({
+				type: 'div',
+				label: [
+					wgULS('请使用常识决定是否以', '請使用常識決定是否以'),
+					$('<code>').addClass('tw-arv-sockmaster').attr('style', 'margin: 2px;')[0],
+					wgULS('通知用户。这不是必须的，对于涉及新用户的报告而言，通知他们能让报告显得更公平，但是许多情况下（如长期破坏者）通知更可能适得其反。', '通知使用者。這不是必須的，對於涉及新使用者的報告而言，通知他們能讓報告顯得更公平，但是許多情況下（如長期破壞者）通知更可能適得其反。')
+				]
+			});
 			work_area = work_area.render();
 			$('input:text[name=sockpuppet]', work_area).first().val(root.uid.value);
 			old_area.parentNode.replaceChild(work_area, old_area);
+			Twinkle.arv.callback.set_sockmaster(root.uid.value);
 			break;
 
 		case 'an3':
