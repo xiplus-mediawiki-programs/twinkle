@@ -1516,19 +1516,23 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 					vipPage.load(Twinkle.block.callback.closeRequest);
 				}
 				if (groupsToBeRemoved.length > 0) {
-					var revokeOptions = {
-						action: 'userrights',
-						user: blockoptions.user,
-						remove: groupsToBeRemoved.join('|'),
-						reason: wgULS('用户已被无限期封禁', '使用者已被無限期封鎖'),
-						token: data.query.tokens.userrightstoken,
-						tags: Twinkle.changeTags
-					};
 					var rightStatusElement = new Morebits.status(wgULS('移除权限', '移除權限'));
-					var mrApi = new Morebits.wiki.api(wgULS('移除权限', '移除權限'), revokeOptions, function() {
-						rightStatusElement.info('已移除' + groupsToBeRemoved.join('、'));
-					});
-					mrApi.post();
+					if (confirm(wgULS('该用户有以下权限：', '該使用者有以下權限：') + groupsToBeRemoved.join('、') + wgULS('，您是否想要同时移除这些权限？', '，您是否想要同時移除這些權限？'))) {
+						var revokeOptions = {
+							action: 'userrights',
+							user: blockoptions.user,
+							remove: groupsToBeRemoved.join('|'),
+							reason: wgULS('用户已被无限期封禁', '使用者已被無限期封鎖'),
+							token: data.query.tokens.userrightstoken,
+							tags: Twinkle.changeTags
+						};
+						var mrApi = new Morebits.wiki.api(wgULS('移除权限', '移除權限'), revokeOptions, function() {
+							rightStatusElement.info('已移除' + groupsToBeRemoved.join('、'));
+						});
+						mrApi.post();
+					} else {
+						rightStatusElement.error(wgULS('用户取消操作。', '使用者取消操作。'));
+					}
 				}
 			});
 			mbApi.post();
