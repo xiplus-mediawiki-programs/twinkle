@@ -869,7 +869,7 @@ Twinkle.block.blockPresetsInfo = {
 		forAnonOnly: true,
 		nocreate: true,
 		nonstandard: true,
-		reason: '{{range block}}',
+		reason: '<!-- 請登入您的帳號，若無帳號，請閱讀 https://w.wiki/Jyi -->{{range block}}',
 		summary: wgULS('广域封禁', '廣域封鎖'),
 		sig: '~~~~'
 	},
