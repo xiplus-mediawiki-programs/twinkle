@@ -668,7 +668,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 			Morebits.status.init(form);
 
 			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:当前的破坏';
-			Morebits.wiki.actionCompleted.notice = '报告完成';
+			Morebits.wiki.actionCompleted.notice = wgULS('报告完成', '報告完成');
 
 			var aivPage = new Morebits.wiki.page('Wikipedia:当前的破坏', wgULS('处理VIP请求', '處理VIP請求'));
 			aivPage.setFollowRedirect(true);
@@ -687,7 +687,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				aivPage.getStatusElement().status(wgULS('加入新报告…', '加入新報告…'));
 				aivPage.setEditSummary(summary);
 				aivPage.setChangeTags(Twinkle.changeTags);
-				aivPage.setAppendText(reason[0]);
+				aivPage.setAppendText('\n' + reason[0]);
 				aivPage.append();
 			});
 			break;
@@ -723,7 +723,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				ewipPage.getStatusElement().status(wgULS('加入新报告…', '加入新報告…'));
 				ewipPage.setEditSummary(summary);
 				ewipPage.setChangeTags(Twinkle.changeTags);
-				ewipPage.setAppendText(reason[0]);
+				ewipPage.setAppendText('\n' + reason[0]);
 				ewipPage.append();
 			});
 			break;
