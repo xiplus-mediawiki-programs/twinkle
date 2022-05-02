@@ -157,6 +157,12 @@ Twinkle.arv.callback.changeCategory = function (e) {
 	var root = e.target.form;
 	var old_area = Morebits.quickForm.getElements(root, 'work_area')[0];
 	var work_area = null;
+	var previewlink = document.createElement('a');
+	previewlink.style.cursor = 'pointer';
+	previewlink.textContent = wgULS('预览', '預覽');
+	$(previewlink).on('click', function() {
+		Twinkle.arv.callback.preview(root);
+	});
 
 	switch (value) {
 		case 'aiv':
@@ -255,6 +261,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'reason',
 				label: wgULS('评论：', '評論：')
 			});
+			work_area.append({ type: 'div', id: 'arvpreview', label: [ previewlink ] });
+			work_area.append({ type: 'div', id: 'twinklearv-previewbox', style: 'display: none' });
 			work_area = work_area.render();
 			old_area.parentNode.replaceChild(work_area, old_area);
 			break;
@@ -279,6 +287,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'reason',
 				label: wgULS('评论：', '評論：')
 			});
+			work_area.append({ type: 'div', id: 'arvpreview', label: [ previewlink ] });
+			work_area.append({ type: 'div', id: 'twinklearv-previewbox', style: 'display: none' });
 			work_area = work_area.render();
 			old_area.parentNode.replaceChild(work_area, old_area);
 			break;
@@ -343,6 +353,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				name: 'reason',
 				label: wgULS('评论：', '評論：')
 			});
+			work_area.append({ type: 'div', id: 'arvpreview', label: [ previewlink ] });
+			work_area.append({ type: 'div', id: 'twinklearv-previewbox', style: 'display: none' });
 			work_area = work_area.render();
 			old_area.parentNode.replaceChild(work_area, old_area);
 			break;
@@ -385,7 +397,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			work_area.append({
 				type: 'textarea',
 				label: wgULS('证据：', '證據：'),
-				name: 'evidence',
+				name: 'reason',
 				tooltip: wgULS('输入能够用来体现这些用户可能滥用多重账户的证据，这通常包括互助客栈发言、页面历史或其他有关的信息。请避免在此处提供非与傀儡或滥用多重账户相关的其他讨论。', '輸入能夠用來體現這些使用者可能濫用多重帳號的證據，這通常包括互助客棧發言、頁面歷史或其他有關的資訊。請避免在此處提供非與傀儡或濫用多重帳號相關的其他討論。')
 			});
 			work_area.append({
@@ -396,6 +408,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					tooltip: wgULS('用户查核是一种用于获取傀儡指控相关技术证据的工具，若没有正当理由则不会使用，您必须在证据字段充分解释为什么需要使用该工具。用户查核不会用于公开连接用户账户使用的IP地址。', '使用者查核是一種用於獲取傀儡指控相關技術證據的工具，若沒有正當理由則不會使用，您必須在證據欄位充分解釋為什麼需要使用該工具。使用者查核不會用於公開連接使用者帳號使用的IP位址。')
 				}]
 			});
+			work_area.append({ type: 'div', id: 'arvpreview', label: [ previewlink ] });
+			work_area.append({ type: 'div', id: 'twinklearv-previewbox', style: 'display: none' });
 			work_area.append({
 				type: 'div',
 				label: [
@@ -410,16 +424,31 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			Twinkle.arv.callback.set_sockmaster(root.uid.value);
 			break;
 	}
+	root.previewer = new Morebits.wiki.preview($(work_area).find('#twinklearv-previewbox').last()[0]);
 };
 
-Twinkle.arv.callback.evaluate = function(e) {
-	var form = e.target;
+Twinkle.arv.callback.preview = function(form) {
+	var reason = Twinkle.arv.callback.getReportWikitext(form);
+	if (reason === undefined) {
+		return;
+	}
+	var input = Morebits.quickForm.getInputData(form);
+	var title;
+	switch (input.category) {
+		case 'vip': title = 'Wikipedia:当前的破坏'; break;
+		case 'ewip': title = 'Wikipedia:管理员布告板/编辑争议'; break;
+		case 'username': title = 'Wikipedia:需要管理員注意的用戶名'; break;
+		case 'spi': title = 'Wikipedia:傀儡調查/案件/' + input.sockmaster; break;
+		default: title = mw.config.get('wgPageName'); break;
+	}
+	form.previewer.beginRender('__NOTOC__' + reason[0], title);
+};
+
+Twinkle.arv.callback.getReportWikitext = function(form) {
+	var input = Morebits.quickForm.getInputData(form);
 	var reason = '';
 	var comment = '';
-	if (form.reason) {
-		comment = form.reason.value.trim();
-	}
-	var uid = form.uid.value;
+	var uid = input.uid;
 
 	var checkTitle = function(title, revid) {
 		if (/https?:\/\//.test(title)) {
@@ -443,28 +472,24 @@ Twinkle.arv.callback.evaluate = function(e) {
 		return page;
 	};
 
-	var types, page, header, summary;
-	switch (form.category.value) {
-
+	var page;
+	switch (input.category) {
 		// Report user for vandalism
 		case 'aiv':
 			/* falls through */
 		default:
-			types = form.getChecked('arvtype');
-			if (!types.length && comment === '') {
+			if (!input.arvtype.length && input.reason === '') {
 				alert(wgULS('您必须指定理由', '您必須指定理由'));
 				return;
 			}
 
-			header = '\n=== {{vandal|' + (/=/.test(uid) ? '1=' : '') + uid;
-			summary = wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]';
-			if (form.hidename && form.hidename.checked) {
-				header += '|hidename=1';
-				summary = wgULS('报告一名用户', '報告一名使用者');
+			reason += '=== {{vandal|' + (/=/.test(uid) ? '1=' : '') + uid;
+			if (input.hidename) {
+				reason += '|hidename=1';
 			}
-			header += '}} ===\n';
+			reason += '}} ===\n';
 
-			types = types.map(function(v) {
+			var types = input.arvtype.map(function(v) {
 				switch (v) {
 					case 'final':
 						return '已发出最后警告';
@@ -481,66 +506,41 @@ Twinkle.arv.callback.evaluate = function(e) {
 				}
 			}).join('，');
 
-			if (form.page.value !== '') {
-				page = checkTitle(form.page.value, true);
+			if (input.page !== '') {
+				page = checkTitle(input.page, true);
 				if (!page) {
 					return;
 				}
 
-				reason = '* {{pagelinks|' + (page.getPrefixedText().indexOf('=') > -1 ? '1=' : '') + page.getPrefixedText() + '}}';
+				comment += '* {{pagelinks|' + (page.getPrefixedText().indexOf('=') > -1 ? '1=' : '') + page.getPrefixedText() + '}}';
 
-				if (form.badid.value !== '') {
-					reason += '（{{diff|' + page.getPrefixedText() + '|' + form.badid.value + '|' + form.goodid.value + '|diff}}）';
+				if (input.badid) {
+					comment += '（{{diff|' + page.getPrefixedText() + '|' + input.badid + '|' + (input.goodid ? input.goodid : '') + '|diff}}）';
 				}
-				reason += '\n';
+				comment += '\n';
 			}
 
 			if (types) {
-				reason += '* ' + types;
+				comment += '* ' + types;
 			}
-			if (comment !== '') {
-				comment = comment.replace(/\n\n+/g, '\n');
-				comment = comment.replace(/\r?\n/g, '\n*:');  // indent newlines
-				reason += (types ? '。' : '* ') + comment;
+			if (input.reason !== '') {
+				input.reason = input.reason.replace(/\n\n+/g, '\n');
+				input.reason = input.reason.replace(/\r?\n/g, '\n*:');  // indent newlines
+				comment += (types ? '。' : '* ') + input.reason;
 			}
-			reason = reason.trim();
-			reason = Morebits.string.appendPunctuation(reason);
-			reason += '\n* 发现人：~~~~\n* 处理：';
+			comment = comment.trim();
+			comment = Morebits.string.appendPunctuation(comment);
 
-			Morebits.simpleWindow.setButtonsEnabled(false);
-			Morebits.status.init(form);
-
-			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:当前的破坏';
-			Morebits.wiki.actionCompleted.notice = '报告完成';
-
-			var aivPage = new Morebits.wiki.page('Wikipedia:当前的破坏', wgULS('处理VIP请求', '處理VIP請求'));
-			aivPage.setFollowRedirect(true);
-
-			aivPage.load(function() {
-				var text = aivPage.getPageText();
-				var $aivLink = '<a target="_blank" href="/wiki/WP:VIP">WP:VIP</a>';
-
-				// check if user has already been reported
-				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
-					aivPage.getStatusElement().error(wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的'));
-					Morebits.status.printUserText(reason, wgULS('您输入的评论已在下方提供，您可以将其加入到', '您輸入的評論已在下方提供，您可以將其加入到') + $aivLink + wgULS('已存在的小节中：', '已存在的小節中：'));
-					return;
-				}
-				aivPage.setPageSection(0);
-				aivPage.getStatusElement().status(wgULS('加入新报告…', '加入新報告…'));
-				aivPage.setEditSummary(summary);
-				aivPage.setChangeTags(Twinkle.changeTags);
-				aivPage.setAppendText(header + reason);
-				aivPage.append();
-			});
+			reason += comment + '\n* 发现人：~~~~\n* 处理：';
 			break;
+
 		// Report 3RR
 		case 'ewip':
-			if (comment === '') {
+			if (input.reason === '') {
 				alert(wgULS('您必须指定理由', '您必須指定理由'));
 				return;
 			}
-			header = '\n=== {{vandal|' + (/=/.test(uid) ? '1=' : '') + uid + '}} ===\n';
+			reason = '\n=== {{vandal|' + (/=/.test(uid) ? '1=' : '') + uid + '}} ===\n';
 
 			var pages = $.map($('input:text[name=page]', form), function (o) {
 				return $(o).val() || null;
@@ -551,46 +551,20 @@ Twinkle.arv.callback.evaluate = function(e) {
 					return;
 				}
 
-				reason += '* {{pagelinks|' + (page.getPrefixedText().indexOf('=') > -1 ? '1=' : '') + page.getPrefixedText() + '}}\n';
+				comment += '* {{pagelinks|' + (page.getPrefixedText().indexOf('=') > -1 ? '1=' : '') + page.getPrefixedText() + '}}\n';
 			}
-			comment = comment.replace(/\n\n+/g, '\n');
-			comment = comment.replace(/\r?\n/g, '\n*:');  // indent newlines
-			reason += '* ' + comment + '\n';
-			reason = reason.trim();
-			reason = Morebits.string.appendPunctuation(reason);
-			reason += '\n* 提報人：~~~~\n* 处理：';
-			summary = wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]';
-			Morebits.simpleWindow.setButtonsEnabled(false);
-			Morebits.status.init(form);
+			input.reason = input.reason.replace(/\n\n+/g, '\n');
+			input.reason = input.reason.replace(/\r?\n/g, '\n*:');  // indent newlines
+			comment += '* ' + input.reason + '\n';
+			comment = comment.trim();
+			comment = Morebits.string.appendPunctuation(comment);
 
-			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:管理员布告板/编辑争议';
-			Morebits.wiki.actionCompleted.notice = wgULS('报告完成', '報告完成');
-
-			var ewipPage = new Morebits.wiki.page('Wikipedia:管理员布告板/编辑争议', wgULS('处理EWIP请求', '處理EWIP請求'));
-			ewipPage.setFollowRedirect(true);
-
-			ewipPage.load(function() {
-				var text = ewipPage.getPageText();
-				var $ewipLink = '<a target="_blank" href="/wiki/WP:EWIP">WP:EWIP</a>';
-
-				// check if user has already been reported
-				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
-					ewipPage.getStatusElement().error(wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的'));
-					Morebits.status.printUserText(reason, wgULS('您输入的评论已在下方提供，您可以将其加入到', '您輸入的評論已在下方提供，您可以將其加入到') + $ewipLink + wgULS('已存在的小节中：', '已存在的小節中：'));
-					return;
-				}
-				ewipPage.setPageSection(0);
-				ewipPage.getStatusElement().status(wgULS('加入新报告…', '加入新報告…'));
-				ewipPage.setEditSummary(summary);
-				ewipPage.setChangeTags(Twinkle.changeTags);
-				ewipPage.setAppendText(header + reason);
-				ewipPage.append();
-			});
+			reason += comment + '\n* 提報人：~~~~\n* 处理：';
 			break;
 
 		// Report inappropriate username
 		case 'username':
-			types = form.getChecked('arvtype').map(Morebits.string.toLowerCaseFirstChar);
+			types = input.arvtype.map(Morebits.string.toLowerCaseFirstChar);
 
 			var hasShared = types.indexOf('shared') > -1;
 			if (hasShared) {
@@ -609,26 +583,154 @@ Twinkle.arv.callback.evaluate = function(e) {
 			} else {
 				types = [ types.slice(0, -1).join('、'), types.slice(-1) ].join('和');
 			}
-			reason = '*{{user-uaa|1=' + uid;
-			if (form.hidename.checked) {
-				reason += '|hidename=1';
+			comment += '*{{user-uaa|1=' + uid;
+			if (input.hidename) {
+				comment += '|hidename=1';
 			}
-			reason += '}} &ndash; ';
+			comment += '}} &ndash; ';
 			if (types.length) {
-				reason += types + wgULS('用户名', '使用者名稱');
+				comment += types + wgULS('用户名', '使用者名稱');
 			}
 			if (types.length && hasShared) {
-				reason += '，';
+				comment += '，';
 			}
 			if (hasShared) {
-				reason += wgULS('暗示该账户并非由一人拥有', '暗示該帳號並非由一人擁有');
+				comment += wgULS('暗示该账户并非由一人拥有', '暗示該帳號並非由一人擁有');
 			}
-			reason += '。';
-			if (comment !== '') {
-				reason += Morebits.string.toUpperCaseFirstChar(comment) + '。';
+			if (types.length || hasShared) {
+				comment += '。';
 			}
-			reason += '--~~~~';
-			reason = reason.replace(/\r?\n/g, '\n*:');  // indent newlines
+			if (input.reason) {
+				comment += Morebits.string.toUpperCaseFirstChar(input.reason);
+			}
+			comment = Morebits.string.appendPunctuation(comment);
+			comment += '--~~~~';
+			comment = comment.replace(/\r?\n/g, '\n*:');  // indent newlines
+
+			reason = comment;
+			break;
+
+		// WP:SPI
+		case 'spi':
+			if (!input.reason) {
+				alert(wgULS('请输入证据。', '請輸入證據。'));
+				return;
+			}
+
+			var sockpuppets = Morebits.array.uniq($.map($('input:text[name=sockpuppet]', form), function(o) {
+				return $(o).val() || null;
+			}));
+			if (!sockpuppets[0].trim()) {
+				alert(wgULS('您没有指定任何傀儡。', '您沒有指定任何傀儡。'));
+				return;
+			}
+
+			comment += '{{subst:SPI report|' +
+				sockpuppets.map(function(sock, index) {
+					return (index + 1) + '=' + sock;
+				}).join('|') + '\n|evidence=' + Morebits.string.appendPunctuation(input.reason) + '\n';
+
+			if (input.checkuser) {
+				comment += '|checkuser=yes';
+			}
+			comment += '}}';
+
+			reason = comment;
+			break;
+	}
+
+	return [reason, comment];
+};
+
+Twinkle.arv.callback.evaluate = function(e) {
+	var form = e.target;
+	var input = Morebits.quickForm.getInputData(form);
+	var uid = input.uid;
+	var reason;
+
+	var summary;
+	switch (input.category) {
+		// Report user for vandalism
+		case 'aiv':
+			/* falls through */
+		default:
+			reason = Twinkle.arv.callback.getReportWikitext(form);
+			if (reason === undefined) {
+				return;
+			}
+
+			summary = wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]';
+			if (input.hidename) {
+				summary = wgULS('报告一名用户', '報告一名使用者');
+			}
+
+			Morebits.simpleWindow.setButtonsEnabled(false);
+			Morebits.status.init(form);
+
+			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:当前的破坏';
+			Morebits.wiki.actionCompleted.notice = '报告完成';
+
+			var aivPage = new Morebits.wiki.page('Wikipedia:当前的破坏', wgULS('处理VIP请求', '處理VIP請求'));
+			aivPage.setFollowRedirect(true);
+
+			aivPage.load(function() {
+				var text = aivPage.getPageText();
+				var $aivLink = '<a target="_blank" href="/wiki/WP:VIP">WP:VIP</a>';
+
+				// check if user has already been reported
+				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
+					aivPage.getStatusElement().error(wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的'));
+					Morebits.status.printUserText(reason[1], wgULS('您输入的评论已在下方提供，您可以将其加入到', '您輸入的評論已在下方提供，您可以將其加入到') + $aivLink + wgULS('已存在的小节中：', '已存在的小節中：'));
+					return;
+				}
+				aivPage.setPageSection(0);
+				aivPage.getStatusElement().status(wgULS('加入新报告…', '加入新報告…'));
+				aivPage.setEditSummary(summary);
+				aivPage.setChangeTags(Twinkle.changeTags);
+				aivPage.setAppendText(reason[0]);
+				aivPage.append();
+			});
+			break;
+		// Report 3RR
+		case 'ewip':
+			reason = Twinkle.arv.callback.getReportWikitext(form);
+			if (reason === undefined) {
+				return;
+			}
+
+			summary = wgULS('报告', '報告') + '[[Special:Contributions/' + uid + '|' + uid + ']]';
+
+			Morebits.simpleWindow.setButtonsEnabled(false);
+			Morebits.status.init(form);
+
+			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:管理员布告板/编辑争议';
+			Morebits.wiki.actionCompleted.notice = wgULS('报告完成', '報告完成');
+
+			var ewipPage = new Morebits.wiki.page('Wikipedia:管理员布告板/编辑争议', wgULS('处理EWIP请求', '處理EWIP請求'));
+			ewipPage.setFollowRedirect(true);
+
+			ewipPage.load(function() {
+				var text = ewipPage.getPageText();
+				var $ewipLink = '<a target="_blank" href="/wiki/WP:EWIP">WP:EWIP</a>';
+
+				// check if user has already been reported
+				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
+					ewipPage.getStatusElement().error(wgULS('报告已存在，将不会加入新的', '報告已存在，將不會加入新的'));
+					Morebits.status.printUserText(reason[1], wgULS('您输入的评论已在下方提供，您可以将其加入到', '您輸入的評論已在下方提供，您可以將其加入到') + $ewipLink + wgULS('已存在的小节中：', '已存在的小節中：'));
+					return;
+				}
+				ewipPage.setPageSection(0);
+				ewipPage.getStatusElement().status(wgULS('加入新报告…', '加入新報告…'));
+				ewipPage.setEditSummary(summary);
+				ewipPage.setChangeTags(Twinkle.changeTags);
+				ewipPage.setAppendText(reason[0]);
+				ewipPage.append();
+			});
+			break;
+
+		// Report inappropriate username
+		case 'username':
+			reason = Twinkle.arv.callback.getReportWikitext(form);
 
 			Morebits.simpleWindow.setButtonsEnabled(false);
 			Morebits.status.init(form);
@@ -646,73 +748,38 @@ Twinkle.arv.callback.evaluate = function(e) {
 				if (new RegExp('\\{\\{\\s*user-uaa\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.string.escapeRegExp(uid) + '\\s*(\\||\\})').test(text)) {
 					uaaPage.getStatusElement().error(wgULS('用户已被列入。', '使用者已被列入。'));
 					var $uaaLink = '<a target="_blank" href="/wiki/WP:UAA">WP:UAA</a>';
-					Morebits.status.printUserText(reason, wgULS('您输入的评论已在下方提供，您可以将其手工加入', '您輸入的評論已在下方提供，您可以將其手工加入') + $uaaLink + wgULS('上该用户的报告中：', '上該使用者的報告中：'));
+					Morebits.status.printUserText(reason[1], wgULS('您输入的评论已在下方提供，您可以将其手工加入', '您輸入的評論已在下方提供，您可以將其手工加入') + $uaaLink + wgULS('上该用户的报告中：', '上該使用者的報告中：'));
 					return;
 				}
 				uaaPage.getStatusElement().status(wgULS('加入新报告…', '加入新報告…'));
 				uaaPage.setEditSummary(wgULS('新提报', '新提報'));
 				uaaPage.setChangeTags(Twinkle.changeTags);
-				uaaPage.setAppendText('\n\n' + reason);
+				uaaPage.setAppendText('\n\n' + reason[0]);
 				uaaPage.append();
 			});
 			break;
 
 		// WP:SPI
 		case 'spi':
-			var spiParameters = {
-				evidence: form.evidence.value.trim(),
-				checkuser: form.checkuser.checked
-			};
-
-			if (!spiParameters.evidence) {
-				alert(wgULS('请输入证据。', '請輸入證據。'));
-				return;
-			}
-			if (!form.sockpuppet[0].value.trim()) {
-				alert(wgULS('您没有指定任何傀儡。', '您沒有指定任何傀儡。'));
-				return;
-			}
-
-			spiParameters.sockmaster = form.sockmaster.value.trim();
-			spiParameters.sockpuppets = Morebits.array.uniq($.map($('input:text[name=sockpuppet]', form), function(o) {
-				return $(o).val() || null;
-			}));
+			reason = Twinkle.arv.callback.getReportWikitext(form);
 
 			Morebits.simpleWindow.setButtonsEnabled(false);
 			Morebits.status.init(form);
-			Twinkle.arv.processSPI(spiParameters);
+
+			var reportpage = 'Wikipedia:傀儡調查/案件/' + input.sockmaster;
+
+			Morebits.wiki.actionCompleted.redirect = reportpage;
+			Morebits.wiki.actionCompleted.notice = wgULS('报告完成', '報告完成');
+
+			var spiPage = new Morebits.wiki.page(reportpage, wgULS('抓取讨论页面', '抓取討論頁面'));
+			spiPage.setFollowRedirect(true);
+			spiPage.setEditSummary(wgULS('加入新提报', '加入新提報'));
+			spiPage.setChangeTags(Twinkle.changeTags);
+			spiPage.setAppendText(reason[0]);
+			spiPage.setWatchlist(Twinkle.getPref('spiWatchReport'));
+			spiPage.append();
 			break;
 	}
-};
-
-Twinkle.arv.processSPI = function(params) {
-	Morebits.wiki.addCheckpoint(); // prevent notification events from causing an erronous "action completed"
-
-	// prepare the SPI report
-	var text = '\n{{subst:SPI report|' +
-		params.sockpuppets.map(function(sock, index) {
-			return (index + 1) + '=' + sock;
-		}).join('|') + '\n|evidence=' + Morebits.string.appendPunctuation(params.evidence) + '\n';
-
-	if (params.checkuser) {
-		text += '|checkuser=yes';
-	}
-	text += '}}';
-
-	var reportpage = 'Wikipedia:傀儡調查/案件/' + params.sockmaster;
-
-	Morebits.wiki.actionCompleted.redirect = reportpage;
-	Morebits.wiki.actionCompleted.notice = wgULS('报告完成', '報告完成');
-
-	var spiPage = new Morebits.wiki.page(reportpage, wgULS('抓取讨论页面', '抓取討論頁面'));
-	spiPage.setFollowRedirect(true);
-	spiPage.setEditSummary(wgULS('加入新提报', '加入新提報'));
-	spiPage.setChangeTags(Twinkle.changeTags);
-	spiPage.setAppendText(text);
-	spiPage.setWatchlist(Twinkle.getPref('spiWatchReport'));
-	spiPage.append();
-
-	Morebits.wiki.removeCheckpoint();  // all page updates have been started
 };
 
 Twinkle.addInitCallback(Twinkle.arv, 'arv');
