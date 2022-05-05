@@ -550,7 +550,7 @@ Twinkle.xfd.callbacks = {
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
 
-			pageobj.setPageText('{{ifd|' + Morebits.string.formatReasonText(params.xfdreason) + '|date={{subst:#time:c}}}}\n' + text);
+			pageobj.setPageText('{{ifd|' + Morebits.string.formatReasonText(params.xfdreason) + '|date={{subst:#time:Y/m/d}}}}\n' + text);
 			pageobj.setEditSummary(wgULS('文件存废讨论：[[', '檔案存廢討論：[[') + params.logpage + '#' + Morebits.pageNameNorm + ']]');
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setWatchlist(Twinkle.getPref('xfdWatchPage'));
