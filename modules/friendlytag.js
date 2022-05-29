@@ -848,7 +848,6 @@ Twinkle.tag.redirectList = [{
 		{ tag: wgULS('拼写重定向', '拼寫重定向'), description: wgULS('标题的其他不同拼写', '標題的其他不同拼寫') },
 		{ tag: wgULS('错字重定向', '錯字重定向'), description: wgULS('纠正标题的常见错误拼写或误植', '糾正標題的常見錯誤拼寫或誤植') },
 		{ tag: wgULS('旧名重定向', '舊名重定向'), description: wgULS('将事物早前的名称引导至更改后的主题', '將事物早前的名稱引導至更改後的主題') },
-		{ tag: wgULS('历史名称重定向', '歷史名稱重定向'), description: wgULS('具有历史意义的别名、笔名、同义词', '具有歷史意義的別名、筆名、同義詞') },
 		{ tag: '全名重定向', description: wgULS('标题的完整或更完整名称', '標題的完整或更完整名稱') },
 		{ tag: '短名重定向', description: wgULS('完整标题名称或人物全名的部分、不完整的名称或简称', '完整標題名稱或人物全名的部分、不完整的名稱或簡稱') },
 		{ tag: '姓氏重定向', description: '人物姓氏' },
