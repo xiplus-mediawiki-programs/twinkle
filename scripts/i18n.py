@@ -156,5 +156,5 @@ for filename in run_files:
 
     jstext = re.sub(r"wgULS\('(.+?)',[\s\n]*?'\1'\)", r"'\1'", jstext)
 
-    with open(full_filename, 'w', encoding='utf8') as f:
+    with open(full_filename, 'w', encoding='utf8', newline='\n') as f:
         f.write(jstext)

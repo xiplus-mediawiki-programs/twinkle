@@ -989,7 +989,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				case 'pp-create-userpage':
 				case 'pp-create-repeat':
 				case 'pp-create-vandalism':
-					typename = '白纸保护';
+					typename = wgULS('白纸保护', '白紙保護');
 					break;
 				case 'unprotect':
 					/* falls through */
