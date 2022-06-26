@@ -140,12 +140,23 @@ Twinkle.arv.lta_list = [
 
 Twinkle.arv.callback.pick_lta = function twinklearvCallbackPickLta(e) {
 	e.target.form.sockmaster.value = e.target.value;
+	Twinkle.arv.callback.spi_notice(e.target.form, e.target.value);
 	Twinkle.arv.callback.set_sockmaster(e.target.value);
 	e.target.value = '';
 };
 
 Twinkle.arv.callback.sockmaster_changed = function twinklearvCallbackSockmasterChanged(e) {
+	Twinkle.arv.callback.spi_notice(e.target.form, e.target.value);
 	Twinkle.arv.callback.set_sockmaster(e.target.value);
+};
+
+Twinkle.arv.callback.spi_notice = function twinklearvCallbackSpiNotice(form, sockmaster) {
+	var previewText = '{{#ifexist:Wikipedia:傀儡調查/案件/' + sockmaster +
+		'|{{#ifexist:Wikipedia:傀儡調查/案件通告/' + sockmaster +
+		'  |<div class="extendedconfirmed-show sysop-show">{{Memo|1={{Wikipedia:傀儡調查/案件通告/' + sockmaster + '}}|2=notice}}</div>' +
+		'  |無案件通告}}' +
+		'|您將建立新的提報頁面，如果您希望提報過往曾被提報過的使用者，請檢查您的輸入是否正確。}}';
+	form.spinoticepreviewer.beginRender(previewText, 'Wikipedia:傀儡調查/案件/' + sockmaster);
 };
 
 Twinkle.arv.callback.set_sockmaster = function twinklearvCallbackSetSockmaster(sockmaster) {
@@ -385,6 +396,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				value: root.uid.value,
 				event: Twinkle.arv.callback.sockmaster_changed
 			});
+			work_area.append({ type: 'div', id: 'twinklearv-spinoticebox', style: 'display: none' });
 			work_area.append({
 				type: 'dyninput',
 				name: 'sockpuppet',
@@ -421,6 +433,8 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			work_area = work_area.render();
 			$('input:text[name=sockpuppet]', work_area).first().val(root.uid.value);
 			old_area.parentNode.replaceChild(work_area, old_area);
+			root.spinoticepreviewer = new Morebits.wiki.preview($(work_area).find('#twinklearv-spinoticebox').last()[0]);
+			Twinkle.arv.callback.spi_notice(root, root.uid.value);
 			Twinkle.arv.callback.set_sockmaster(root.uid.value);
 			break;
 	}
