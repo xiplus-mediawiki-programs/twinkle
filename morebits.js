@@ -2337,7 +2337,7 @@ Morebits.wiki.api = function(currentAction, query, onSuccess, statusElement, onE
 	}
 	// Explicitly use the wiki's content language to minimize confusion,
 	// see #1179 for discussion
-	this.query.uselang = 'content';
+	this.query.uselang = this.query.uselang || 'content';
 	this.query.errorlang = 'uselang';
 	this.query.errorsuselocal = 1;
 
@@ -5160,6 +5160,7 @@ Morebits.wiki.preview = function(previewbox) {
 			text: wikitext,
 			title: pageTitle || pageName,
 			disablelimitreport: true,
+			uselang: mw.config.get('wgUserLanguage'),
 			format: 'json'
 		};
 		if (sectionTitle) {
