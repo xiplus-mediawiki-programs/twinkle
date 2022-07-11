@@ -632,17 +632,20 @@ Twinkle.arv.callback.getReportWikitext = function(form) {
 			}
 
 			var sockpuppets = Morebits.array.uniq($.map($('input:text[name=sockpuppet]', form), function(o) {
-				return $(o).val() || null;
+				return $(o).val().trim() || null;
 			}));
-			if (!sockpuppets[0].trim()) {
+			if (!sockpuppets[0]) {
 				alert(wgULS('您没有指定任何傀儡。', '您沒有指定任何傀儡。'));
 				return;
 			}
 
-			comment += '{{subst:SPI report|' +
-				sockpuppets.map(function(sock, index) {
-					return (index + 1) + '=' + sock;
-				}).join('|') + '\n|evidence=' + Morebits.string.appendPunctuation(input.reason) + '\n';
+			comment += '{{subst:SPI report|';
+			if (sockpuppets.indexOf(input.sockmaster) === -1) {
+				comment += '1={{subst:#ifexist:{{subst:FULLPAGENAME}}||' + input.sockmaster + '}}|';
+			}
+			comment += sockpuppets.map(function(sock, index) {
+				return (index + 2) + '=' + sock;
+			}).join('|') + '\n|evidence=' + Morebits.string.appendPunctuation(input.reason) + '\n';
 
 			if (input.checkuser) {
 				comment += '|checkuser=yes';
