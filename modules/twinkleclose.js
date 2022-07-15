@@ -379,7 +379,6 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 	};
 
 	Twinkle.close.codes.forEach(function(group) {
-		console.log(group);
 		var optgroup = new Morebits.quickForm.element({
 			type: 'optgroup',
 			label: group.key
