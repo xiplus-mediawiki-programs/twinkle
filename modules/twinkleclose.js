@@ -81,31 +81,34 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 };
 
 // Keep this synchronized with {{delh}}
-/* eslint-disable quote-props */
-Twinkle.close.codes = wgULS({
-	'请求无效': {
+Twinkle.close.codes = [{
+	key: wgULS('请求无效', '請求無效'),
+	value: {
 		ir: {
-			label: '请求无效',
+			label: wgULS('请求无效', '請求無效'),
 			action: 'keep'
 		},
 		rep: {
-			label: '重复提出，无效',
+			label: wgULS('重复提出，无效', '重複提出，無效'),
 			action: 'keep'
 		},
 		commons: {
-			label: '应在维基共享资源提请',
+			label: wgULS('应在维基共享资源提请', '應在維基共享資源提請'),
 			action: 'keep'
 		},
 		ne: {
-			label: '目标页面或档案不存在，无效',
+			label: wgULS('目标页面或文件不存在，无效', '目標頁面或檔案不存在，無效'),
 			action: 'keep'
 		},
 		nq: {
-			label: '提删者未取得提删资格，无效',
+			label: wgULS('提删者未获取提删资格，无效', '提刪者未取得提刪資格，無效'),
 			action: 'keep'
 		}
-	},
-	'保留': {
+	}
+},
+{
+	key: '保留',
+	value: {
 		k: {
 			label: '保留',
 			action: 'keep',
@@ -116,114 +119,123 @@ Twinkle.close.codes = wgULS({
 			action: 'keep'
 		},
 		tk: {
-			label: '暂时保留',
+			label: wgULS('暂时保留，改挂维护模板（关注度等）', '暫時保留，改掛維護模板（關注度等）'),
+			value: wgULS('暂时保留', '暫時保留'),
 			action: 'keep'
 		},
 		rr: {
-			label: '请求理由消失',
+			label: wgULS('请求理由消失', '請求理由消失'),
 			action: 'keep',
 			selected: Twinkle.getPref('XfdClose') === 'nonadminonly'
 		},
 		dan: {
-			label: '删后重建',
+			label: wgULS('删后重建', '刪後重建'),
 			action: 'keep',
 			adminonly: true
 		}
-	},
-	'删除': {
+	}
+},
+{
+	key: wgULS('删除', '刪除'),
+	value: {
 		d: {
-			label: '删除',
+			label: wgULS('删除', '刪除'),
 			action: 'del',
 			adminonly: true,
 			selected: Twinkle.getPref('XfdClose') === 'all'
 		},
 		ic: {
-			label: '图像因侵权被删',
+			label: wgULS('图像因侵权被删', '圖像因侵權被刪'),
 			action: 'del',
 			adminonly: true
 		}
-	},
-	'快速删除': {
+	}
+},
+{
+	key: wgULS('快速删除', '快速刪除'),
+	value: {
 		sd: {
-			label: '快速删除',
+			label: wgULS('快速删除', '快速刪除'),
 			action: 'del'
 		},
 		lssd: {
-			label: '无来源或版权资讯，快速删除',
+			label: wgULS('无来源或著作权信息，快速删除', '無來源或版權資訊，快速刪除'),
 			action: 'del'
 		},
 		svg: {
-			label: '已改用SVG图形，快速删除',
+			label: wgULS('已改用SVG图形，快速删除', '已改用SVG圖形，快速刪除'),
 			action: 'del'
 		},
 		nowcommons: {
-			label: '维基共享资源已提供，快速删除',
+			label: wgULS('维基共享资源已提供，快速删除', '維基共享資源已提供，快速刪除'),
 			action: 'del'
 		},
 		drep: {
-			label: '多次被删除，条目锁定',
+			label: wgULS('多次被删除，条目锁定', '多次被刪除，條目鎖定'),
 			action: 'del',
 			adminonly: true
 		}
-	},
-	'转移至其他维基计划': {
+	}
+},
+{
+	key: wgULS('转移至其他维基计划', '轉移至其他維基計劃'),
+	value: {
 		twc: {
-			label: '转移至维基共享资源',
+			label: wgULS('转移至维基共享资源', '轉移至維基共享資源'),
 			action: 'noop',
 			adminonly: true
 		},
 		twn: {
-			label: '转移至维基新闻',
+			label: wgULS('转移至维基新闻', '轉移至維基新聞'),
 			action: 'noop',
 			adminonly: true
 		},
 		tws: {
-			label: '转移至维基文库',
+			label: wgULS('转移至维基文库', '轉移至維基文庫'),
 			action: 'noop',
 			adminonly: true
 		},
 		twb: {
-			label: '转移至维基教科书',
+			label: wgULS('转移至维基教科书', '轉移至維基教科書'),
 			action: 'noop',
 			adminonly: true
 		},
 		twq: {
-			label: '转移至维基语录',
+			label: wgULS('转移至维基语录', '轉移至維基語錄'),
 			action: 'noop',
 			adminonly: true
 		},
 		twt: {
-			label: '转移至维基词典',
+			label: wgULS('转移至维基词典', '轉移至維基詞典'),
 			action: 'noop',
 			adminonly: true
 		},
 		twv: {
-			label: '转移至维基学院',
+			label: wgULS('转移至维基学院', '轉移至維基學院'),
 			action: 'noop',
 			adminonly: true
 		},
 		twvoy: {
-			label: '转移至维基导游',
+			label: wgULS('转移至维基导游', '轉移至維基導遊'),
 			action: 'noop',
 			adminonly: true
 		},
 		two: {
-			label: '转移至其他维基计划',
+			label: wgULS('转移至其他维基计划', '轉移至其他維基計劃'),
 			action: 'noop',
 			adminonly: true
 		}
-	},
-	'其他处理方法': {
+	}
+},
+{
+	key: wgULS('其他处理方法', '其他處理方法'),
+	value: {
 		c: {
-			label: '转交侵权',
+			label: wgULS('转交侵权', '轉交侵權'),
 			action: 'noop'
 		},
-		/* 'm2pfd': {
-			label: '转送页面存废讨论',
-			action: 'noop'
-		}, */
 		m2ifd: {
-			label: '转送文件存废讨论',
+			label: wgULS('转送文件存废讨论', '轉送檔案存廢討論'),
 			action: 'noop'
 		},
 		r: {
@@ -232,206 +244,32 @@ Twinkle.close.codes = wgULS({
 			adminonly: true
 		},
 		cr: {
-			label: '分类重定向',
+			label: wgULS('分类重定向', '分類重定向'),
 			action: 'keep',
 			adminonly: true
 		},
 		m: {
-			label: '移动',
+			label: wgULS('移动', '移動'),
 			action: 'keep',
 			adminonly: true
 		},
 		merge: {
-			label: '并入',
+			label: wgULS('并入', '併入'),
 			action: 'keep',
 			adminonly: true
 		},
 		mergeapproved: {
-			label: '允许并入',
+			label: wgULS('允许并入', '允許併入'),
 			action: 'keep',
 			adminonly: true
 		},
 		nc: {
-			label: '无共识',
+			label: wgULS('无共识暂时保留', '無共識暫時保留'),
+			value: wgULS('无共识', '無共識'),
 			action: 'keep'
 		}
 	}
-}, {
-	'請求無效': {
-		ir: {
-			label: '請求無效',
-			action: 'keep'
-		},
-		rep: {
-			label: '重複提出，無效',
-			action: 'keep'
-		},
-		commons: {
-			label: '應在維基共享資源提請',
-			action: 'keep'
-		},
-		ne: {
-			label: '目標頁面或檔案不存在，無效',
-			action: 'keep'
-		},
-		nq: {
-			label: '提刪者未取得提刪資格，無效',
-			action: 'keep'
-		}
-	},
-	'保留': {
-		k: {
-			label: '保留',
-			action: 'keep',
-			adminonly: true
-		},
-		sk: {
-			label: '快速保留',
-			action: 'keep'
-		},
-		tk: {
-			label: '暫時保留',
-			action: 'keep'
-		},
-		rr: {
-			label: '請求理由消失',
-			action: 'keep',
-			selected: Twinkle.getPref('XfdClose') === 'nonadminonly'
-		},
-		dan: {
-			label: '刪後重建',
-			action: 'keep',
-			adminonly: true
-		}
-	},
-	'刪除': {
-		d: {
-			label: '刪除',
-			action: 'del',
-			adminonly: true,
-			selected: Twinkle.getPref('XfdClose') === 'all'
-		},
-		ic: {
-			label: '圖像因侵權被刪',
-			action: 'del',
-			adminonly: true
-		}
-	},
-	'快速刪除': {
-		sd: {
-			label: '快速刪除',
-			action: 'del'
-		},
-		lssd: {
-			label: '無來源或版權資訊，快速刪除',
-			action: 'del'
-		},
-		svg: {
-			label: '已改用SVG圖形，快速刪除',
-			action: 'del'
-		},
-		nowcommons: {
-			label: '維基共享資源已提供，快速刪除',
-			action: 'del'
-		},
-		drep: {
-			label: '多次被刪除，條目鎖定',
-			action: 'del',
-			adminonly: true
-		}
-	},
-	'轉移至其他維基計劃': {
-		twc: {
-			label: '轉移至維基共享資源',
-			action: 'noop',
-			adminonly: true
-		},
-		twn: {
-			label: '轉移至維基新聞',
-			action: 'noop',
-			adminonly: true
-		},
-		tws: {
-			label: '轉移至維基文庫',
-			action: 'noop',
-			adminonly: true
-		},
-		twb: {
-			label: '轉移至維基教科書',
-			action: 'noop',
-			adminonly: true
-		},
-		twq: {
-			label: '轉移至維基語錄',
-			action: 'noop',
-			adminonly: true
-		},
-		twt: {
-			label: '轉移至維基詞典',
-			action: 'noop',
-			adminonly: true
-		},
-		twv: {
-			label: '轉移至維基學院',
-			action: 'noop',
-			adminonly: true
-		},
-		twvoy: {
-			label: '轉移至維基導遊',
-			action: 'noop',
-			adminonly: true
-		},
-		two: {
-			label: '轉移至其他維基計劃',
-			action: 'noop',
-			adminonly: true
-		}
-	},
-	'其他處理方法': {
-		c: {
-			label: '轉交侵權',
-			action: 'noop'
-		},
-		/* 'm2pfd': {
-			label: '轉送頁面存廢討論',
-			action: 'noop'
-		}, */
-		m2ifd: {
-			label: '轉送檔案存廢討論',
-			action: 'noop'
-		},
-		r: {
-			label: '重定向',
-			action: 'keep',
-			adminonly: true
-		},
-		cr: {
-			label: '分類重定向',
-			action: 'keep',
-			adminonly: true
-		},
-		m: {
-			label: '移動',
-			action: 'keep',
-			adminonly: true
-		},
-		merge: {
-			label: '併入',
-			action: 'keep',
-			adminonly: true
-		},
-		mergeapproved: {
-			label: '允許併入',
-			action: 'keep',
-			adminonly: true
-		},
-		nc: {
-			label: '無共識',
-			action: 'keep'
-		}
-	}
-});
-/* eslint-enable quote-props */
+}];
 
 Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 	var Window = new Morebits.simpleWindow(410, 200);
@@ -540,15 +378,16 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 		});
 	};
 
-	$.each(Twinkle.close.codes, function(groupLabel, groupContents) {
+	Twinkle.close.codes.forEach(function(group) {
+		console.log(group);
 		var optgroup = new Morebits.quickForm.element({
 			type: 'optgroup',
-			label: groupLabel
+			label: group.key
 		});
 		optgroup = optgroup.render();
 		sub_group.appendChild(optgroup);
 		// create the options
-		createEntries(groupContents, optgroup);
+		createEntries(group.value, optgroup);
 	});
 
 	var evt = document.createEvent('Event');
@@ -769,9 +608,10 @@ Twinkle.close.callbacks = {
 		if (pagetitle.getNamespaceId() % 2 === 0) {
 			var talkpagetitle = new mw.Title(pagetitle.getMainText(), pagetitle.getNamespaceId() + 1);
 			var talkpage = new Morebits.wiki.page(talkpagetitle.toString(), wgULS('标记讨论页', '標記討論頁'));
-			var vfdkept = '{{Old vfd multi|' + mw.config.get('wgPageName').split('/').slice(2).join('/') + '|' + params.messageData.label + '}}\n';
+			var reason = params.messageData.value || params.messageData.label;
+			var vfdkept = '{{Old vfd multi|' + mw.config.get('wgPageName').split('/').slice(2).join('/') + '|' + reason + '}}\n';
 			talkpage.setPrependText(vfdkept);
-			talkpage.setEditSummary('[[' + mw.config.get('wgPageName') + '#' + params.title + ']]：' + params.messageData.label);
+			talkpage.setEditSummary('[[' + mw.config.get('wgPageName') + '#' + params.title + ']]：' + reason);
 			talkpage.setChangeTags(Twinkle.changeTags);
 			talkpage.setCreateOption('recreate');
 			talkpage.prepend();
@@ -833,7 +673,8 @@ Twinkle.close.callbacks = {
 		var split = bar[0].split('\n');
 
 		text = split[0] + '\n{{delh|' + params.code + '}}\n' + split.slice(1).join('\n');
-		text += '\n<hr>\n: ' + params.messageData.label;
+		var reason = params.messageData.value || params.messageData.label;
+		text += '\n<hr>\n: ' + reason;
 		if (params.remark) {
 			text += '：' + Morebits.string.appendPunctuation(params.remark);
 		} else {
@@ -856,7 +697,7 @@ Twinkle.close.callbacks = {
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label);
+		pageobj.setEditSummary('/* ' + params.title + ' */ ' + reason);
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(Twinkle.close.callbacks.disableLink);
