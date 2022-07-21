@@ -534,7 +534,8 @@ Twinkle.protect.protectionTypesAdmin = [
 		label: wgULS('延伸确认保护', '延伸確認保護'),
 		list: [
 			{ label: wgULS('争议、编辑战（延伸）', '爭議、編輯戰（延伸）'), value: 'pp-extend-dispute' },
-			{ label: wgULS('持续破坏（延伸）', '持續破壞（延伸）'), value: 'pp-vandalism' }
+			{ label: wgULS('持续破坏（延伸）', '持續破壞（延伸）'), value: 'pp-vandalism' },
+			{ label: wgULS('傀儡破坏（延伸）', '傀儡破壞（延伸）'), value: 'pp-sock' }
 		]
 	},
 	{
@@ -613,6 +614,11 @@ Twinkle.protect.protectionPresetsInfo = {
 		reason: wgULS('自动确认用户编辑战', '自動確認使用者編輯戰'),
 		template: 'pp-dispute'
 	},
+	'pp-sock': {
+		edit: 'extendedconfirmed',
+		move: 'extendedconfirmed',
+		reason: wgULS('持续的傀儡破坏', '持續的傀儡破壞')
+	},
 	'pp-semi-vandalism': {
 		edit: 'autoconfirmed',
 		reason: wgULS('被IP用户或新用户破坏', '被IP使用者或新使用者破壞'),
@@ -634,7 +640,8 @@ Twinkle.protect.protectionPresetsInfo = {
 	},
 	'pp-semi-sock': {
 		edit: 'autoconfirmed',
-		reason: wgULS('持续的傀儡破坏', '持續的傀儡破壞')
+		reason: wgULS('持续的傀儡破坏', '持續的傀儡破壞'),
+		template: 'pp-sock'
 	},
 	'pp-semi-protected': {
 		edit: 'autoconfirmed',
@@ -698,6 +705,7 @@ Twinkle.protect.protectionTags = [
 		list: [
 			{ label: '{{pp-dispute}}: ' + wgULS('争议', '爭議'), value: 'pp-dispute' },
 			{ label: '{{pp-vandalism}}: ' + wgULS('破坏', '破壞'), value: 'pp-vandalism', selected: true },
+			{ label: '{{pp-sock}}: ' + '傀儡', value: 'pp-sock' },
 			{ label: '{{pp-template}}: ' + wgULS('高风险模板', '高風險模板'), value: 'pp-template' },
 			{ label: '{{pp-protected}}: ' + wgULS('常规', '常規'), value: 'pp-protected' }
 		]
@@ -706,7 +714,6 @@ Twinkle.protect.protectionTags = [
 		label: wgULS('半保护模板', '半保護模板'),
 		list: [
 			{ label: '{{pp-semi-usertalk}}: ' + wgULS('封禁的用户', '封禁的使用者'), value: 'pp-semi-usertalk' },
-			{ label: '{{pp-semi-sock}}: ' + '傀儡', value: 'pp-semi-sock' },
 			{ label: '{{pp-semi-blp}}: ' + wgULS('生者传记', '生者傳記'), value: 'pp-semi-blp' },
 			{ label: '{{pp-semi-indef}}: ' + wgULS('长期', '長期'), value: 'pp-semi-indef' }
 		]
