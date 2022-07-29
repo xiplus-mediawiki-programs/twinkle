@@ -2552,7 +2552,7 @@ Twinkle.warn.callbacks = {
 				pageobj.setNewSectionTitle(messageData.heading);
 			} else {
 				Morebits.status.info(wgULS('信息', '資訊'), wgULS('未找到当月的二级标题，将创建新的', '未找到當月的二級標題，將建立新的'));
-				pageobj.setNewSectionTitle(now.monthHeader());
+				pageobj.setNewSectionTitle(now.monthHeader(0));
 			}
 			pageobj.setNewSectionText(warningText);
 			pageobj.newSection();
