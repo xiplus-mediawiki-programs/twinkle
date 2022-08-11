@@ -28,8 +28,9 @@ my %conf = (
             username => q{},
             password => q{},
             mode => q{},
-            lang => 'en',
+            lang => 'zh',
             family => 'wikipedia',
+            url => q{},
             base => 'User:Xiplus/'
            );
 
@@ -46,8 +47,9 @@ foreach my $dot (@dotLocales) {
   }
 }
 
-GetOptions (\%conf, 'username|s=s', 'password|p=s', 'lang|l=s', 'family|f=s', 'base|b=s',
-            'all|a', 'mode=s', 'diff|d', 'w=s', 'dry|r', 'help|h' => \&usage);
+GetOptions (\%conf, 'username|s=s', 'password|p=s', 'mode|m=s',
+            'lang|l=s','family|f=s', 'url|u=s', 'base|b=s',
+            'all|a', 'summary|y=s', 'append|e=s', 'diff|d', 'w=s', 'dry|r', 'help|h' => \&usage);
 
 # Ensure we've got a clean branch
 my $repo = Git::Repository->new();
@@ -63,17 +65,18 @@ my @files = forReal();
 
 # Open API and log in before anything else
 my $mw = MediaWiki::API->new({
-			      api_url => "https://$conf{lang}.$conf{family}.org/w/api.php",
+			      api_url => "$conf{url}/w/api.php",
 			      max_lag => 1000000, # not a botty script, thus smash it!
 			      on_error => \&dieNice
 			     });
 $mw->{ua}->agent('Twinkle/sync.pl ('.$mw->{ua}->agent.')');
 $mw->login({lgname => $conf{username}, lgpassword => $conf{password}});
 
+my $diffFunc = $conf{w} || 'diff'; # Only used for the --diff option
+
 ### Main function
 if (@files) {
   my $countDiff = 0;               # Only used for the --dry option
-  my $diffFunc = $conf{w} || 'diff'; # Only used for the --diff option
 
   # loop through each file
   foreach my $file (@files) {
@@ -115,7 +118,7 @@ if (@files) {
 
     print "\n\t";
     if ($conf{mode} eq 'deploy' || $conf{mode} eq 'push') {
-      my $summary = buildEditSummary($page, $file, $wikiPage->{comment});
+      my $summary = buildEditSummary($page, $file, $wikiPage->{comment}, $wikiPage->{timestamp}, $wikiPage->{user});
       my $editReturn = editPage($page, $fileText, $summary, $wikiPage->{timestamp});
       if ($editReturn->{_msg} eq 'OK') {
         print colored ['green'], "$file successfully $conf{mode}ed to $page";
@@ -165,7 +168,14 @@ if ($conf{mode} eq 'deploy') {
   if ($wikiGadgetDef eq $localGadgetDef) {
     print "Gadget up-to-date\n";
   } else {
-    print colored ['red'], "MediaWiki:Gadgets-definition needs udpating!\n";
+    print colored ['red'], "MediaWiki:Gadgets-definition needs updating!\n";
+    if ($conf{diff}) {
+      my $name = $gadgetFile.'temp';
+      write_text($name, $wikiGadgetDef);
+      print colored ['magenta'], "Showing diff\n";
+      system "$diffFunc $name $gadgetFile";
+      unlink $name;
+    }
   }
 }
 
@@ -174,6 +184,7 @@ if ($conf{mode} eq 'deploy') {
 # Check that everything is in order
 sub forReal {
   my @meaningful = qw (mode lang family);
+  push @meaningful, 'url' if $conf{url};
   push @meaningful, 'base' if $conf{mode} ne 'deploy';
   push @meaningful, 'username';
   print "Here are the current parameters specified:\n\n";
@@ -191,6 +202,9 @@ sub forReal {
     print colored ['red'], "Missing information!\n\n";
     usage();
   }
+
+  # Set base URL for the project, used for API, etc.
+  $conf{url} ||= "https://$conf{lang}.$conf{family}.org";
 
   my @inputs;
   my @allFiles = map { split } <DATA>;
@@ -253,7 +267,7 @@ sub forReal {
     print colored ['bright_white'], $conf{base};
   }
   print ' at ';
-  print colored ['green'], "$conf{lang}.$conf{family}.org\n";
+  print colored ['green'], "$conf{url}\n";
 
   while (42) {
     print "Enter (y)es to proceed or (n)o to cancel:\n";
@@ -306,45 +320,51 @@ sub checkPage {
 # Tries to figure out a good edit summary by using the last one onwiki to find
 # the latest changes; prompts user if it can't find a commit hash
 sub buildEditSummary {
-  my ($page, $file, $oldCommitish) = @_;
+  my ($page, $file, $oldCommitish, $timestamp, $user) = @_;
   my $editSummary;
-  # User:Amorymeltzer & User:MusikAnimal or User:Amalthea et al.
-  if ($oldCommitish =~ /(?:Repo|v2\.0) at (\w*?): / || $oldCommitish =~ /v2\.0-\d+-g(\w*?): /) {
-    # Ensure it's a valid commit and no errors are reported back
-    my $valid = $repo->command('merge-base' => '--is-ancestor', "$1", 'HEAD');
-    my @validE = $valid->stderr->getlines();
-    $valid->close();
-    if (!scalar @validE) {
-      my $newLog = $repo->run(log => '--oneline', '--no-merges', '--no-color', "$1..HEAD", $file);
-      open my $nl, '<', \$newLog or die colored ['red'], "$ERRNO\n";
-      while (<$nl>) {
-	chomp;
-	my @arr = split / /, $_, 2;
-	if ($arr[1] =~ /(\S+(?:\.(?:js|css))?) ?[:|-] ?(.+)/) {
-	  my $fixPer = $2;
-	  $fixPer =~ s/\.$//;   # Just in case
-	  $editSummary .= "$fixPer; ";
-	}
+  if ($conf{summary}) {
+      $editSummary = $conf{summary};
+    } else {
+      # User:Amorymeltzer & User:MusikAnimal or User:Amalthea et al.
+      if ($oldCommitish =~ /(?:Repo|v2\.0) at (\w*?): / || $oldCommitish =~ /v2\.0-\d+-g(\w*?): /) {
+        # Ensure it's a valid commit and no errors are reported back
+        my $valid = $repo->command('merge-base' => '--is-ancestor', "$1", 'HEAD');
+        my @validE = $valid->stderr->getlines();
+        $valid->close();
+        if (!scalar @validE) {
+          my $newLog = $repo->run(log => '--oneline', '--no-merges', '--no-color', "$1..HEAD", $file);
+          open my $nl, '<', \$newLog or die colored ['red'], "$ERRNO\n";
+          while (<$nl>) {
+            chomp;
+            my @arr = split / /, $_, 2;
+            # Remove leading file names, trailing period
+            my $portion = $arr[1] =~ s/^\S+(?::| -) //r;
+            $portion =~ s/\.$//;
+            $editSummary .= "$portion; ";
+          }
+          close $nl or die colored ['red'], "$ERRNO\n";
+        }
       }
-      close $nl or die colored ['red'], "$ERRNO\n";
-    }
-  }
 
-  # Prompt for manual entry
-  if (!$editSummary) {
-    my @log = $repo->run(log => '-5', '--pretty=format:%s (%h)', '--no-merges', '--no-color', $file);
-    print colored ['yellow'], "Unable to autogenerate edit summary for $page\n\n";
-    print "The most recent ON-WIKI edit summary is:\n";
-    print colored ['bright_cyan'], "\t$oldCommitish\n";
-    print "The most recent GIT LOG entries are:\n";
-    foreach (@log) {
-      print colored ['bright_cyan'], "\t$_\n";
+      # Prompt for manual entry
+      if (!$editSummary) {
+        my @log = $repo->run(log => '-5', '--pretty=format:%s (%h, %ad)', '--no-merges', '--no-color', '--date=short', $file);
+        print colored ['yellow'], "Unable to autogenerate edit summary for $page\n\n";
+        print "The most recent ON-WIKI edit summary is:\n";
+        print colored ['bright_cyan'], "\t$oldCommitish ($user, $timestamp))\n";
+        print "The most recent GIT LOG entries are:\n";
+        foreach (@log) {
+          print colored ['bright_cyan'], "\t$_\n";
+        }
+        print 'Please provide an edit summary (commit ref will be added automatically';
+        print ",\nas well as your appendation: $conf{append}" if $conf{append};
+        print "):\n";
+        $editSummary = <STDIN>;
+        chomp $editSummary;
+      }
     }
-    print "Please provide an edit summary (commit ref will be added automatically):\n";
-    $editSummary = <STDIN>;
-    chomp $editSummary;
-  }
-  $editSummary =~ s/[\.; ]{1,2}$//; # Tidy
+  $editSummary =~ s/[\.; ]+$//; # Tidy
+  $editSummary .= $conf{append} if $conf{append};
 
   # 'Repo at' will add 17 characters and MW truncates at 497 to allow for '...'
   my $maxLength = 480;
@@ -387,26 +407,34 @@ sub editPage {
 # Final line must be unindented?
 sub usage {
   print <<"USAGE";
-Usage: $PROGRAM_NAME --mode=deploy|pull|push [--diff -w] [--dry] [-u username] [-p password] [-l language] [-f family] [-b base] [--all]
+Usage: $PROGRAM_NAME --mode=deploy|pull|push --username username --password password [--lang language] [--family family] [--url url] [--base base] [--all] [--diff [-w diffprog]] [--dry] [--summary summary] [--append append]
 
-    --mode What action to perform, one of deploy, pull, or push. Required.
+    --mode, -m What action to perform, one of deploy, pull, or push. Required.
         deploy: Push changes live to the gadget
         pull: Pull changes from base-prefixed location
         push: Push changes to base-prefixed location
 
-    --username, -u Username for account. Required.
+    --username, -s Username for account. Required.
     --password, -p Password for account. Required.
 
     --lang, -l Target language, default 'en'
     --family, -f Target family, default 'wikipedia'
-    --base, -b Base page prefix where on-wiki files exist, default 'User:Xiplus/'
 
     --all, -a Pass all available files, rather than just those on the commandline
+
+    --base, -b Base page prefix where on-wiki files exist, default 'User:AzaToth/'
+
+Less common options:
 
     --diff, -d Show a diff between files and pages before proceeding
         -w Pass an alternative diffing function instead of the default `diff`, such as `colordiff`
     --dry, -r Show which files don't match on-wiki, do nothing else. A mode should still be supplied
         in order to determine which on-wiki files to compare to.
+
+    --url, -u Provide the full URL, replacing above options (https://{lang}.{family}.org).
+
+    --summary, -y String to use in place of autogenerated edit summary
+    --append, -e String to append to a push or deploy edit summary
 
     These options can be provided in a config file, .twinklerc, in either this script's
     or your home directory.  It should be a simple file consisting of keys and values:
