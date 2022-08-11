@@ -50,7 +50,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 		type: 'input',
 		label: wgULS('筛选标记列表：', '篩選標記列表：'),
 		name: 'quickfilter',
-		size: '30px',
+		size: '30',
 		event: function twinkletagquickfilter() {
 			// flush the DOM of all existing underline spans
 			$allCheckboxDivs.find('.search-hit').each(function(i, e) {
@@ -159,7 +159,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 				name: 'reason',
 				tooltip: wgULS('附加于编辑摘要的可选理由，例如指出条目内容的哪些部分有问题或移除模板的理由，但如果理由很长则应该发表在讨论页。',
 					'附加於編輯摘要的可選理由，例如指出條目內容的哪些部分有問題或移除模板的理由，但如果理由很長則應該發表在討論頁。'),
-				size: '80px'
+				size: '80'
 			});
 
 			break;
