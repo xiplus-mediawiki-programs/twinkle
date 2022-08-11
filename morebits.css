@@ -106,10 +106,7 @@ form.quickform input:disabled + label
 	color: gray;
 }
 
-form.quickform span.quickformDescription
-{
-	font-style: italic;
-}
+/* zhwiki: no italic for quickformDescription */
 
 form.quickform .quickformSubgroup
 {

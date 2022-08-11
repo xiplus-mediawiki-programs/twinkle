@@ -2,19 +2,19 @@
 
 exports[`quickform checkbox elements (with data-single attribute) 1`] = `
 <div
-  id="node_3"
+  id="node_5"
 >
   <div>
     <input
       checked="checked"
       data-single="data-single"
-      id="node_3_0"
+      id="node_5_0"
       name="checkname1"
       type="checkbox"
       value="checkval1"
     />
     <label
-      for="node_3_0"
+      for="node_5_0"
     >
       checkbox 1
     </label>
@@ -22,13 +22,13 @@ exports[`quickform checkbox elements (with data-single attribute) 1`] = `
   <div>
     <input
       data-single="data-single"
-      id="node_3_1"
+      id="node_5_1"
       name="checkname2"
       type="checkbox"
       value="checkval2"
     />
     <label
-      for="node_3_1"
+      for="node_5_1"
     >
       checkbox 2
     </label>
@@ -38,17 +38,17 @@ exports[`quickform checkbox elements (with data-single attribute) 1`] = `
 
 exports[`quickform checkbox elements 1`] = `
 <div
-  id="node_2"
+  id="node_4"
 >
   <div>
     <input
-      id="node_2_0"
+      id="node_4_0"
       name="checkboxlist1"
       type="checkbox"
       value="checkval1"
     />
     <label
-      for="node_2_0"
+      for="node_4_0"
     >
       checkbox 1
     </label>
@@ -56,13 +56,13 @@ exports[`quickform checkbox elements 1`] = `
   <div>
     <input
       checked="checked"
-      id="node_2_1"
+      id="node_4_1"
       name="checkboxlist1"
       type="checkbox"
       value="checkval2"
     />
     <label
-      for="node_2_1"
+      for="node_4_1"
     >
       checkbox 2
     </label>
@@ -73,14 +73,14 @@ exports[`quickform checkbox elements 1`] = `
 exports[`quickform getElements 1`] = `
 Array [
   <input
-    id="node_18_0"
+    id="node_20_0"
     name="checkboxlist1"
     type="checkbox"
     value="checkval1"
   />,
   <input
     checked="checked"
-    id="node_18_1"
+    id="node_20_1"
     name="checkboxlist1"
     type="checkbox"
     value="checkval2"
@@ -121,18 +121,18 @@ exports[`quickform input element 1`] = `
 
 exports[`quickform radio elements 1`] = `
 <div
-  id="node_4"
+  id="node_6"
 >
   <div>
     <input
       data-single="data-single"
-      id="node_4_0"
+      id="node_6_0"
       name="radioname1"
       type="radio"
       value="radioval1"
     />
     <label
-      for="node_4_0"
+      for="node_6_0"
     >
       radio 1
     </label>
@@ -141,13 +141,13 @@ exports[`quickform radio elements 1`] = `
     <input
       checked="checked"
       data-single="data-single"
-      id="node_4_1"
+      id="node_6_1"
       name="radioname2"
       type="radio"
       value="radioval2"
     />
     <label
-      for="node_4_1"
+      for="node_6_1"
     >
       radio 2
     </label>
@@ -169,14 +169,14 @@ exports[`quickform select element 1`] = `
     name="selectname"
   >
     <option
-      id="node_1"
+      id="node_2"
       label="select label 1"
       value="selectvalue1"
     >
       select label 1
     </option>
     <option
-      id="node_1"
+      id="node_3"
       label="select label 2"
       value="selectvalue2"
     >
@@ -189,7 +189,7 @@ exports[`quickform select element 1`] = `
 exports[`quickform submit 1`] = `
 <span>
   <input
-    id="node_6"
+    id="node_8"
     name="submit"
     type="submit"
   />
@@ -198,11 +198,11 @@ exports[`quickform submit 1`] = `
 
 exports[`quickform textarea element 1`] = `
 <div
-  id="div_node_5"
+  id="div_node_7"
 >
   <textarea
     cols="4"
-    id="node_5"
+    id="node_7"
     name="textareaname1"
   />
 </div>

@@ -80,6 +80,7 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:消链;zh-hant:消連}-
 -{H|zh-hans:品质;zh-hant:品質}-
 -{H|zh-hans:命名空间;zh-hant:命名空間}-
+-{H|zh-hans:表单;zh-hant:表單}-
 '''
 
 headers = {
