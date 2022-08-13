@@ -1841,7 +1841,7 @@ Twinkle.config.saveSuccess = function twinkleconfigSaveSuccess(pageobj) {
 	pageobj.getStatusElement().info('成功');
 
 	var noticebox = document.createElement('div');
-	noticebox.className = 'successbox';
+	noticebox.className = 'mw-message-box mw-message-box-success';
 	noticebox.style.fontSize = '100%';
 	noticebox.style.marginTop = '2em';
 	noticebox.innerHTML = '<p><b>' + wgULS('您的Twinkle参数设置已被保存。', '您的Twinkle偏好設定已被儲存。') + '</b></p><p>' + wgULS('要看到这些更改，您可能需要', '要看到這些更改，您可能需要') + '<a href="' + mw.util.getUrl('WP:BYPASS') + '" title="WP:BYPASS"><b>' + wgULS('绕过浏览器缓存', '繞過瀏覽器快取') + '</b></a>。</p>';
