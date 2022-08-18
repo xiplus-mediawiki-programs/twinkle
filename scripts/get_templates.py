@@ -101,13 +101,13 @@ print('modules/friendlytag.js')
 with open(os.path.join(basedir, 'modules/friendlytag.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
-articleTags = findBetween(jstext, 'Twinkle.tag.article.tagList = wgULS', 'Twinkle.tag.redirectList = wgULS')
+articleTags = findBetween(jstext, 'Twinkle.tag.article.tagList = [{', 'Twinkle.tag.redirectList = [{')
 matches = re.findall(r"tag: '(.+?)',", articleTags)
 for match in matches:
     templates.add(normalizeTitle(match))
     print('\t', normalizeTitle(match))
 
-articleTags = findBetween(jstext, 'Twinkle.tag.fileList =', 'Twinkle.tag.callbacks = {')
+articleTags = findBetween(jstext, 'Twinkle.tag.fileList = [{', 'Twinkle.tag.callbacks = {')
 matches = re.findall(r"{{(.+?)}}", articleTags)
 for match in matches:
     if re.search(r'重定向$', match):
@@ -122,7 +122,7 @@ with open(os.path.join(basedir, 'modules/friendlywelcome.js'), 'r', encoding='ut
     jstext = f.read()
 
 tags = findBetween(jstext, 'Twinkle.welcome.templates = wgULS', 'Twinkle.welcome.getTemplateWikitext = ')
-matches = re.findall(r"\n\t{3}'(.+?)': {", tags)
+matches = re.findall(r"\n\t{3}(.+?): {", tags)
 for match in matches:
     templates.add(normalizeTitle(match))
     print('\t', normalizeTitle(match))
@@ -136,6 +136,13 @@ with open(os.path.join(basedir, 'modules/twinkleblock.js'), 'r', encoding='utf8'
 blockPresetsInfo = findBetween(jstext, 'Twinkle.block.blockPresetsInfo = {', 'Twinkle.block.blockGroupsUpdated = false;')
 
 matches = re.findall(r"'([^|\n]+?)(?:\|[^\n]+?)?': {\n", blockPresetsInfo)
+for match in matches:
+    templates.add(normalizeTitle(match))
+    print('\t', normalizeTitle(match))
+
+blockUserTags = findBetween(jstext, 'Twinkle.block.callback.taguserpage =', 'Twinkle.block.callback.protectuserpage =')
+
+matches = re.findall(r"case '(.+?)':", blockUserTags)
 for match in matches:
     templates.add(normalizeTitle(match))
     print('\t', normalizeTitle(match))
@@ -192,8 +199,8 @@ for match in matches:
 
 matches = re.findall(r"\n\t{2}'([^|\n]+?)': {\n\t+label", warnTemplates)
 for match in matches:
-	templates.add(normalizeTitle(match))
-	print('\t', normalizeTitle(match))
+    templates.add(normalizeTitle(match))
+    print('\t', normalizeTitle(match))
 
 # end
 
@@ -202,19 +209,21 @@ WHITELIST = set([
     # on-wiki
     'Template:Block notice',
     'Template:Singlenotice',
-	# block
-	'Template:Sockpuppeteer',
+    # block
+    'Template:Sockpuppeteer',
     # image
     'Template:No source no license/auto',
     # talkback
     'Template:No talkback',
     # tag
     'Template:Multiple issues',
-	# warn
-	'Template:Uw-generic',
+    # warn
+    'Template:Uw-generic',
 ])
 # non-exists or can't mark templates
 BLACKLIST = set([
+    # close
+    'Template:Merge approved/auto',
     # copyvio
     'Template:Copyvio/auto',
     # image
@@ -222,10 +231,12 @@ BLACKLIST = set([
     # protect
     'Template:Pp-create',
     'Template:Pp-create-repeat',
-    'Template:Pp-semi-template',
     'Template:Pp-create-userpage',
     'Template:Pp-create-vandalism',
+    'Template:Pp-extend-dispute',
+    'Template:Pp-semi-template',
     # other
+    'Template:FULLPAGENAME',
     'Template:!',
 ])
 

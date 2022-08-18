@@ -844,13 +844,13 @@ Twinkle.block.blockPresetsInfo = {
 		summary: wgULS('开放代理封禁', '開放代理封鎖'),
 		sig: '~~~~'
 	},
-	'checkuserblock': {
+	'CheckUser block': {
 		expiry: '1 week',
 		forAnonOnly: true,
 		nocreate: true,
 		hardblock: true,
 		nonstandard: true,
-		reason: '{{checkuserblock}}',
+		reason: '{{CheckUser block}}',
 		summary: wgULS('用户查核IP封禁', '使用者查核IP封鎖'),
 		sig: '~~~~'
 	},
@@ -1063,7 +1063,7 @@ Twinkle.block.blockGroups = [
 			{ label: '', value: 'range block', forAnonOnly: true },
 			{ label: '', value: 'school block', forAnonOnly: true },
 			{ label: '', value: 'blocked proxy', forAnonOnly: true },
-			{ label: '', value: 'checkuserblock', forAnonOnly: true },
+			{ label: '', value: 'CheckUser block', forAnonOnly: true },
 			{ label: '', value: 'checkuserblock-account', forRegisteredOnly: true }
 		]
 	}

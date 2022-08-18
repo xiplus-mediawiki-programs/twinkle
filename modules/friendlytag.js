@@ -969,7 +969,7 @@ Twinkle.tag.fileList = [{
 {
 	key: wgULS('清理标签', '清理標籤'),
 	value: [
-		{ label: '{{Imagewatermark}}：' + wgULS('图像包含了水印', '圖像包含了浮水印'), value: 'Imagewatermark' },
+		{ label: '{{Watermark}}：' + wgULS('图像包含了水印', '圖像包含了浮水印'), value: 'Watermark' },
 		{
 			label: '{{Rename media}}：' + wgULS('文件应该根据文件名称指引被重命名', '檔案應該根據檔案名稱指引被重新命名'),
 			value: 'Rename media',
