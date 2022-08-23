@@ -1273,7 +1273,7 @@ Twinkle.block.blockPresetsInfo = {
 		pageParam: true,
 		reason: wgULS('[[WP:VOA|纯粹破坏]]', '[[WP:VOA|純粹破壞]]'),
 		summary: wgULS('封禁通知：您的账户仅用于[[WP:VAN|破坏]]', '封鎖通知：您的帳號僅用於[[WP:VAN|破壞]]'),
-		templateName: 'uw-block'
+		templateName: 'uw-blockindef'
 	},
 	'Bot block message': {
 		expiry: 'infinity',
@@ -1720,6 +1720,8 @@ Twinkle.block.callback.change_template = function twinkleblockcallbackChangeTemp
 	// zhwiki: Apply reason from blockPresetsInfo
 	if (settings.reasonParam) {
 		form.block_reason.value = Twinkle.block.blockPresetsInfo[form.preset.value].reason || '';
+	} else {
+		form.block_reason.value = '';
 	}
 
 	// Partial block
