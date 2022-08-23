@@ -1063,7 +1063,7 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'range block': {
 		expiry: '1 week',
-		reason: '{{range block}}',
+		reason: '<!-- 請登入您的帳號，若無帳號，請閱讀 https://w.wiki/Jyi -->{{range block}}',
 		nocreate: true,
 		nonstandard: true,
 		forAnonOnly: true,
