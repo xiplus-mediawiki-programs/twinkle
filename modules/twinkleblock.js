@@ -1387,11 +1387,16 @@ Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets
 			},
 			Twinkle.block.blockPresetsInfo[item.value],
 			{
-				reason: item.label
+				reason: item.label,
+				templateName: item.value
 			}
 		);
-		if (Twinkle.block.blockPresetsInfo[item.value] !== undefined) {
-			Twinkle.block.blockPresetsInfo[newKey].templateName = item.value;
+		if (Twinkle.block.blockPresetsInfo[item.value] === undefined) {
+			Twinkle.block.blockPresetsInfo[item.value] = {
+				pageParam: true,
+				reasonParam: true,
+				custom: true
+			};
 		}
 	});
 
@@ -1497,12 +1502,27 @@ Twinkle.block.callback.filtered_block_groups = function twinkleblockCallbackFilt
 	return $.map(group, function(blockGroup) {
 		// zhwiki: Add custom reason
 		if (blockGroup.custom) {
-			blockGroup.list = $.map(Twinkle.getPref('customBlockReasonList'), function(item) {
-				return {
-					label: item.label,
-					value: item.value + '|' + item.label
-				};
-			});
+			if (show_template) {
+				var templates = $.map(Twinkle.getPref('customBlockReasonList'), function(item) {
+					if (Twinkle.block.blockPresetsInfo[item.value].custom) {
+						return item.value;
+					}
+				});
+				templates = Morebits.array.uniq(templates);
+				blockGroup.list = $.map(templates, function(template) {
+					return {
+						label: wgULS('自定义模板', '自訂模板'),
+						value: template
+					};
+				});
+			} else {
+				blockGroup.list = $.map(Twinkle.getPref('customBlockReasonList'), function(item) {
+					return {
+						label: item.label,
+						value: item.value + '|' + item.label
+					};
+				});
+			}
 		}
 
 		var list = $.map(blockGroup.list, function(blockPreset) {
