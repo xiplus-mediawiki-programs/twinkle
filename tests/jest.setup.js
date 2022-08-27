@@ -4,6 +4,10 @@ mw.config.set({
 	wgUserGroups: ['interface-admin', 'sysop', '*', 'user', 'autoconfirmed'],
 });
 
+window.wgULS = function(hans, hant) {
+	return hans;
+}
+
 require('../morebits.js');
 global.Morebits = window.Morebits;
 
