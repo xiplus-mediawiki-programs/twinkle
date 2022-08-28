@@ -1,10 +1,8 @@
-import argparse
-import html
 import os
 import re
 
+import json5
 import requests
-
 from util import findBetween
 
 # parser = argparse.ArgumentParser()
@@ -27,27 +25,34 @@ def normalizeTitle(title):
 
 
 postData = {
-    "action": "query",
-    "format": "json",
-    "prop": "redirects",
-    "generator": "embeddedin",
-    "utf8": 1,
-    "rdlimit": "max",
-    "geititle": "Template:Twinkle standard installation",
-    "geinamespace": "10",
-    "geilimit": "max"
+    'action': 'query',
+    'format': 'json',
+    'prop': 'redirects',
+    'generator': 'embeddedin',
+    'rdlimit': 'max',
+    'geititle': 'Template:Twinkle standard installation',
+    'geinamespace': '10',
+    'geilimit': 'max'
 }
-pages = requests.post('https://zh.wikipedia.org/w/api.php', data=postData).json()['query']['pages']
 markedPages = set()
-for pageid in pages:
-    page = pages[pageid]
-    if re.search(r'/(doc|sandbox)$', page['title']):
-        continue
-    markedPages.add(page['title'])
-    if 'redirects' in page:
-        for redirect in page['redirects']:
-            redirectTable[redirect['title']] = page['title']
-print(markedPages, len(markedPages))
+while True:
+    # print(postData)
+    res = requests.post('https://zh.wikipedia.org/w/api.php', data=postData).json()
+    pages = res['query']['pages']
+    for pageid in pages:
+        page = pages[pageid]
+        if re.search(r'/(doc|sandbox)$', page['title']):
+            continue
+        markedPages.add(page['title'])
+        if 'redirects' in page:
+            for redirect in page['redirects']:
+                redirectTable[redirect['title']] = page['title']
+    if 'continue' in res:
+        # print(res['continue'])
+        for key, val in res['continue'].items():
+            postData[key] = val
+    else:
+        break
 
 basedir = os.path.join(os.path.dirname(__file__), '..')
 
@@ -62,6 +67,7 @@ filenames = [
     'modules/twinkleblock.js',
     'modules/twinkleclose.js',
     'modules/twinkleconfig.js',
+    'modules/twinklecopyvio.js',
     'modules/twinklediff.js',
     'modules/twinklefluff.js',
     'modules/twinkleimage.js',
@@ -74,8 +80,6 @@ filenames = [
 
 templates = set()
 for filename in filenames:
-    print(filename)
-
     with open(os.path.join(basedir, filename), 'r', encoding='utf8') as f:
         jstext = f.read()
 
@@ -83,21 +87,17 @@ for filename in filenames:
 
     for match in matches:
         templates.add(normalizeTitle(match))
-        print('\t', normalizeTitle(match))
 
     matches = re.findall(r"'{{(?!subst:)([^#|<\[{}']+)\|?'", jstext)
     for match in matches:
         templates.add(normalizeTitle(match))
-        print('\t', normalizeTitle(match))
 
     matches = re.findall(r'"{{(?!subst:)([^#|<\[{}]+)\|?', jstext)
     for match in matches:
         templates.add(normalizeTitle(match))
-        print('\t', normalizeTitle(match))
 
 
 # modules/friendlytag.js
-print('modules/friendlytag.js')
 with open(os.path.join(basedir, 'modules/friendlytag.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
@@ -105,7 +105,6 @@ articleTags = findBetween(jstext, 'Twinkle.tag.article.tagList = [{', 'Twinkle.t
 matches = re.findall(r"tag: '(.+?)',", articleTags)
 for match in matches:
     templates.add(normalizeTitle(match))
-    print('\t', normalizeTitle(match))
 
 articleTags = findBetween(jstext, 'Twinkle.tag.fileList = [{', 'Twinkle.tag.callbacks = {')
 matches = re.findall(r"{{(.+?)}}", articleTags)
@@ -113,11 +112,9 @@ for match in matches:
     if re.search(r'重定向$', match):
         continue
     templates.add(normalizeTitle(match))
-    print('\t', normalizeTitle(match))
 
 
 # modules/friendlywelcome.js
-print('modules/friendlywelcome.js')
 with open(os.path.join(basedir, 'modules/friendlywelcome.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
@@ -125,31 +122,28 @@ tags = findBetween(jstext, 'Twinkle.welcome.templates = wgULS', 'Twinkle.welcome
 matches = re.findall(r"\n\t{3}(.+?): {", tags)
 for match in matches:
     templates.add(normalizeTitle(match))
-    print('\t', normalizeTitle(match))
 
 
 # modules/twinkleblock.js
-print('modules/twinkleblock.js')
 with open(os.path.join(basedir, 'modules/twinkleblock.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
-blockPresetsInfo = findBetween(jstext, 'Twinkle.block.blockPresetsInfo = {', 'Twinkle.block.blockGroupsUpdated = false;')
+blockPresetsInfo = findBetween(jstext, 'Twinkle.block.blockPresetsInfo =', 'Twinkle.block.transformBlockPresets =')[1:-3]
+blockPresetsInfo = re.sub(r"(reason|summary): .+?(,)?\n", r"\1: ''\2\n", blockPresetsInfo)
+blockPresetsInfo = json5.loads(blockPresetsInfo)
 
-matches = re.findall(r"'([^|\n]+?)(?:\|[^\n]+?)?': {\n", blockPresetsInfo)
-for match in matches:
-    templates.add(normalizeTitle(match))
-    print('\t', normalizeTitle(match))
+for template, info in blockPresetsInfo.items():
+    if 'templateName' not in info and '|' not in template:
+        templates.add(normalizeTitle(template))
 
 blockUserTags = findBetween(jstext, 'Twinkle.block.callback.taguserpage =', 'Twinkle.block.callback.protectuserpage =')
 
 matches = re.findall(r"case '(.+?)':", blockUserTags)
 for match in matches:
     templates.add(normalizeTitle(match))
-    print('\t', normalizeTitle(match))
 
 
 # modules/twinkleimage.js
-print('modules/twinkleimage.js')
 with open(os.path.join(basedir, 'modules/twinkleimage.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
@@ -158,15 +152,12 @@ blockPresetsInfo = findBetween(jstext, "'来源不明（CSD F3）'", "'f10_type'
 matches = re.findall(r"value: '([^\n]+?)',", blockPresetsInfo)
 for match in matches:
     templates.add(normalizeTitle(match))
-    print('\t', normalizeTitle(match))
 
     notice = 'Di-{}-notice'.format(match)
     templates.add(normalizeTitle(notice))
-    print('\t', normalizeTitle(notice))
 
 
 # modules/twinkleprotect.js
-print('modules/twinkleprotect.js')
 with open(os.path.join(basedir, 'modules/twinkleprotect.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
@@ -177,11 +168,9 @@ for match in matches:
     if match in ['unprotect']:
         continue
     templates.add(normalizeTitle(match))
-    print('\t', normalizeTitle(match))
 
 
 # modules/twinklewarn.js
-print('modules/twinklewarn.js')
 with open(os.path.join(basedir, 'modules/twinklewarn.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
@@ -195,19 +184,16 @@ for match in matches:
         for level in ['1', '2', '3', '4', '4im']:
             if 'level' + level in match:
                 templates.add(normalizeTitle(template + level))
-                print('\t', normalizeTitle(template + level))
 
 matches = re.findall(r"\n\t{2}'([^|\n]+?)': {\n\t+label", warnTemplates)
 for match in matches:
     templates.add(normalizeTitle(match))
-    print('\t', normalizeTitle(match))
 
 # end
 
 # can't found from code or core templates
 WHITELIST = set([
     # on-wiki
-    'Template:Block notice',
     'Template:Singlenotice',
     # block
     'Template:Sockpuppeteer',
@@ -234,7 +220,6 @@ BLACKLIST = set([
     'Template:Pp-create-userpage',
     'Template:Pp-create-vandalism',
     'Template:Pp-extend-dispute',
-    'Template:Pp-semi-template',
     # other
     'Template:FULLPAGENAME',
     'Template:!',
@@ -244,9 +229,26 @@ text = ''
 text += 'Unmarked pages\n'
 for template in templates - markedPages - BLACKLIST:
     text += '# [[{}]]\n'.format(template)
-text += 'Unused pages\n'
+
+text += '\nUnused blacklist\n'
+for template in BLACKLIST - templates:
+    text += '# [[{}]]\n'.format(template)
+
+text += '\nUnused pages\n'
 for template in markedPages - templates - WHITELIST:
     text += '# [[{}]]\n'.format(template)
+
+text += '\nUnused whitelist\n'
+for template in WHITELIST - markedPages:
+    text += '# [[{}]]\n'.format(template)
+
+text += '\nmarkedPages\n'
+for page in markedPages:
+    text += '# [[{}]]\n'.format(page)
+
+text += '\nredirectTable\n'
+for src, dst in redirectTable.items():
+    text += '# [[{}]] [[{}]]\n'.format(src, dst)
 
 outpath = os.path.join(basedir, 'scripts/get_templates-output.txt')
 with open(outpath, 'w', encoding='utf8') as f:
