@@ -1,0 +1,27 @@
+name: Check templates
+
+on:
+  push:
+
+  workflow_dispatch:
+
+  schedule:
+    - cron: '27 0 * * 1'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        python3 -m pip install json5
+
+    - name: Check templates
+      run: |
+        python3 scripts/get_templates.py
+        if [ $? -ne 0 ]; then
+          exit 1
+        fi

@@ -41,7 +41,7 @@ while True:
     pages = res['query']['pages']
     for pageid in pages:
         page = pages[pageid]
-        if re.search(r'/(doc|sandbox)$', page['title']):
+        if re.search(r'/(doc|sandbox)$', page['title'], flags=re.I):
             continue
         markedPages.add(page['title'])
         if 'redirects' in page:
@@ -225,22 +225,32 @@ BLACKLIST = set([
     'Template:!',
 ])
 
+anyError = False
+
 text = ''
 text += 'Unmarked pages\n'
 for template in templates - markedPages - BLACKLIST:
     text += '# [[{}]]\n'.format(template)
+    print('::error title=Unmarked pages::{}'.format(template))
+    anyError = True
 
 text += '\nUnused blacklist\n'
 for template in BLACKLIST - templates:
     text += '# [[{}]]\n'.format(template)
+    print('::error title=Unused blacklist::{}'.format(template))
+    anyError = True
 
 text += '\nUnused pages\n'
 for template in markedPages - templates - WHITELIST:
     text += '# [[{}]]\n'.format(template)
+    print('::error title=Unused pages::{}'.format(template))
+    anyError = True
 
 text += '\nUnused whitelist\n'
 for template in WHITELIST - markedPages:
     text += '# [[{}]]\n'.format(template)
+    print('::error title=Unused whitelist::{}'.format(template))
+    anyError = True
 
 text += '\nmarkedPages\n'
 for page in markedPages:
@@ -253,3 +263,6 @@ for src, dst in redirectTable.items():
 outpath = os.path.join(basedir, 'scripts/get_templates-output.txt')
 with open(outpath, 'w', encoding='utf8') as f:
     f.write(text)
+
+if anyError:
+    exit(1)
