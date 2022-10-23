@@ -26,13 +26,6 @@ Twinkle.close = function twinkleclose() {
 };
 
 Twinkle.close.addLinks = function twinklecloseAddLinks() {
-	var spanTag = function(color, content) {
-		var span = document.createElement('span');
-		span.style.color = color;
-		span.appendChild(document.createTextNode(content));
-		return span;
-	};
-
 	$('h1:has(.mw-headline),h2:has(.mw-headline),h3:has(.mw-headline),h4:has(.mw-headline),h5:has(.mw-headline),h6:has(.mw-headline)', '#bodyContent').each(function (index, current) {
 		current.setAttribute('data-section', index + 1);
 	});
