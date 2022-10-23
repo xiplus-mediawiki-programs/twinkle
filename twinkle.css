@@ -6,6 +6,12 @@
 	width: 3.24em;
 }
 
+/* twinkleclose.js */
+a.twinkle-close-button {
+	color: red;
+	font-weight: bold;
+}
+
 /* The additional box on user skin.js and twinklepreferences.js pages */
 #twinkle-config-headerbox {
 	border: 1px #f60 solid;
