@@ -61,6 +61,7 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 		var delLink = document.createElement('a');
 		delLink.className = 'twinkle-close-button';
 		delLink.href = '#';
+		delLink.setAttribute('data-section', section);
 		delLink.innerText = wgULS('关闭讨论', '關閉討論');
 		$(delLink).on('click', function() {
 			Twinkle.close.callback(title, section, pagenotexist);
@@ -694,7 +695,7 @@ Twinkle.close.callbacks = {
 
 	disableLink: function (pageobj) {
 		var params = pageobj.getCallbackParameters();
-		$('strong a[href=#' + params.section + '] span').css('color', 'grey');
+		$('a.twinkle-close-button[data-section=' + params.section + ']').addClass('twinkle-close-button-disabled');
 	}
 };
 

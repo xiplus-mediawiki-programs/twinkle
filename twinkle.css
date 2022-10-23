@@ -12,6 +12,10 @@ a.twinkle-close-button {
 	font-weight: bold;
 }
 
+a.twinkle-close-button-disabled {
+	color: gray;
+}
+
 /* The additional box on user skin.js and twinklepreferences.js pages */
 #twinkle-config-headerbox {
 	border: 1px #f60 solid;
