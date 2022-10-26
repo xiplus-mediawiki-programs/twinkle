@@ -4073,6 +4073,9 @@ Morebits.wiki.page = function(pageName, status) {
 
 		// hard error, give up
 		} else {
+			var response = ctx.saveApi.getResponse();
+			var errorData = response.error || // bc error format
+				response.errors[0].data; // html/wikitext/plaintext error format
 
 			switch (errorCode) {
 
@@ -4082,18 +4085,18 @@ Morebits.wiki.page = function(pageName, status) {
 					break;
 
 				case 'abusefilter-disallowed':
-					ctx.statusElement.error(wgULS('编辑被防滥用过滤器规则“', '編輯被防濫用過濾器規則「') + ctx.saveApi.getResponse().error.abusefilter.description + wgULS('”阻止。如果您认为您的该次编辑是有意义的，请至 Wikipedia:防滥用过滤器/错误报告 提报。', '」阻止。如果您認為您的該次編輯是有意義的，請至 Wikipedia:防濫用過濾器/錯誤報告 提報。'));
+					ctx.statusElement.error(wgULS('编辑被防滥用过滤器规则“', '編輯被防濫用過濾器規則「') + errorData.abusefilter.description + wgULS('”阻止。如果您认为您的该次编辑是有意义的，请至 Wikipedia:防滥用过滤器/错误报告 提报。', '」阻止。如果您認為您的該次編輯是有意義的，請至 Wikipedia:防濫用過濾器/錯誤報告 提報。'));
 					break;
 
 				case 'abusefilter-warning':
-					ctx.statusElement.error([ wgULS('编辑被防滥用过滤器规则“', '編輯被防濫用過濾器規則「'), ctx.saveApi.getResponse().error.abusefilter.description, wgULS('”警告，如果您仍希望做出该编辑，请尝试重新提交，根据过滤器的设置您可能可以作出此编辑。', '」警告，如果您仍希望做出該編輯，請嘗試重新提交，根據過濾器的設定您可能可以作出此編輯。') ]);
+					ctx.statusElement.error([ wgULS('编辑被防滥用过滤器规则“', '編輯被防濫用過濾器規則「'), errorData.abusefilter.description, wgULS('”警告，如果您仍希望做出该编辑，请尝试重新提交，根据过滤器的设置您可能可以作出此编辑。', '」警告，如果您仍希望做出該編輯，請嘗試重新提交，根據過濾器的設定您可能可以作出此編輯。') ]);
 					// We should provide the user with a way to automatically retry the action if they so choose -
 					// I can't see how to do this without creating a UI dependency on Morebits.wiki.page though -- TTO
 					break;
 
 				case 'spamblacklist':
 					// If multiple items are blacklisted, we only return the first
-					var spam = ctx.saveApi.getResponse().error.spamblacklist.matches[0];
+					var spam = errorData.spamblacklist.matches[0];
 					ctx.statusElement.error(wgULS('不能保存页面，因URL ', '不能儲存頁面，因URL ') + spam + wgULS(' 在垃圾链接黑名单中。', ' 在垃圾連結黑名單中。'));
 					break;
 
