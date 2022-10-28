@@ -1378,7 +1378,6 @@ Twinkle.block.transformBlockPresets = function twinkleblockTransformBlockPresets
 	// zhwiki: Merge custom reason
 	$.each(Twinkle.getPref('customBlockReasonList'), function(_, item) {
 		var newKey = item.value + '|' + item.label;
-		// eslint-disable-next-line es5/no-es6-static-methods
 		Twinkle.block.blockPresetsInfo[newKey] = Object.assign(
 			{},
 			{
