@@ -116,11 +116,13 @@ Twinkle.fluff.linkBuilder = {
 		var normLink = Twinkle.fluff.linkBuilder.buildLink('SteelBlue', '回退');
 		var vandLink = Twinkle.fluff.linkBuilder.buildLink('Red', wgULS('破坏', '破壞'));
 
-		$(normLink).click(function() {
+		$(normLink).click(function(e) {
+			e.preventDefault();
 			Twinkle.fluff.revert('norm', vandal, rev, page);
 			Twinkle.fluff.disableLinks(revNode);
 		});
-		$(vandLink).click(function() {
+		$(vandLink).click(function(e) {
+			e.preventDefault();
 			Twinkle.fluff.revert('vand', vandal, rev, page);
 			Twinkle.fluff.disableLinks(revNode);
 		});
@@ -133,7 +135,8 @@ Twinkle.fluff.linkBuilder = {
 		if (!inline) {
 			var agfNode = document.createElement('strong');
 			var agfLink = Twinkle.fluff.linkBuilder.buildLink('DarkOliveGreen', '回退（AGF）');
-			$(agfLink).click(function() {
+			$(agfLink).click(function(e) {
+				e.preventDefault();
 				Twinkle.fluff.revert('agf', vandal, rev, page);
 				// Twinkle.fluff.disableLinks(revNode); // rollbackInPlace not relevant for any inline situations
 			});
@@ -161,7 +164,8 @@ Twinkle.fluff.linkBuilder = {
 		revertToRevisionNode.style.fontWeight = 'bold';
 
 		var revertToRevisionLink = Twinkle.fluff.linkBuilder.buildLink('SaddleBrown', wgULS('恢复此版本', '恢復此版本'));
-		$(revertToRevisionLink).click(function() {
+		$(revertToRevisionLink).click(function(e) {
+			e.preventDefault();
 			Twinkle.fluff.revertToRevision(revisionRef);
 		});
 
