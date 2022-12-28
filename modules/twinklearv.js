@@ -451,7 +451,7 @@ Twinkle.arv.callback.preview = function(form) {
 	switch (input.category) {
 		case 'vip': title = 'Wikipedia:当前的破坏'; break;
 		case 'ewip': title = 'Wikipedia:管理员布告板/编辑争议'; break;
-		case 'username': title = 'Wikipedia:需要管理員注意的用戶名'; break;
+		case 'username': title = 'Wikipedia:管理员布告板/不当用户名'; break;
 		case 'spi': title = 'Wikipedia:傀儡調查/案件/' + input.sockmaster; break;
 		default: title = mw.config.get('wgPageName'); break;
 	}
@@ -752,10 +752,10 @@ Twinkle.arv.callback.evaluate = function(e) {
 			Morebits.simpleWindow.setButtonsEnabled(false);
 			Morebits.status.init(form);
 
-			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:需要管理員注意的用戶名';
+			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:管理员布告板/不当用户名';
 			Morebits.wiki.actionCompleted.notice = wgULS('报告完成', '報告完成');
 
-			var uaaPage = new Morebits.wiki.page('Wikipedia:需要管理員注意的用戶名', wgULS('处理UAA请求', '處理UAA請求'));
+			var uaaPage = new Morebits.wiki.page('Wikipedia:管理员布告板/不当用户名', wgULS('处理UAA请求', '處理UAA請求'));
 			uaaPage.setFollowRedirect(true);
 
 			uaaPage.load(function() {
