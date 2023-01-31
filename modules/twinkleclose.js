@@ -31,7 +31,12 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 	});
 
 	var selector = ':has(.mw-headline a:only-of-type):not(:has(+ div.NavFrame))';
-	var titles = $('#bodyContent').find('h2' + selector + ':not(:has(+ p + h3)), h3' + selector); // really needs to work on
+	var titles; // really needs to work on
+	if ($('.ext-discussiontools-init-section').length > 0) { // Handle discussion tools
+		titles = $('#bodyContent').find('.mw-heading2' + selector + ':not(:has(+ p + h3)) > h2, h3' + selector);
+	} else {
+		titles = $('#bodyContent').find('h2' + selector + ':not(:has(+ p + h3)), h3' + selector);
+	}
 
 	titles.each(function(key, current) {
 		var headlinehref = $(current).find('.mw-headline a').attr('href');
