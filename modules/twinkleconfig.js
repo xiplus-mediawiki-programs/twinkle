@@ -677,23 +677,23 @@ Twinkle.config.sections = [
 	},
 
 	{
-		title: wgULS('回复', '回覆'),
+		title: '通告',
 		module: 'talkback',
 		preferences: [
 			{
 				name: 'markTalkbackAsMinor',
-				label: wgULS('将回复标记为小修改', '將回覆標記為小修改'),
+				label: wgULS('将通告标记为小修改', '將通告標記為小修改'),
 				type: 'boolean'
 			},
 			{
 				name: 'insertTalkbackSignature',
-				label: wgULS('回复时加入签名', '回覆時加入簽名'),
+				label: wgULS('通告时加入签名', '通告時加入簽名'),
 				helptip: wgULS('Flow页除外。', 'Flow頁除外。'),
 				type: 'boolean'
 			},
 			{
 				name: 'talkbackHeading',
-				label: wgULS('回复所用的小节标题', '回覆所用的小節標題'),
+				label: wgULS('通告所用的小节标题', '通告所用的小節標題'),
 				type: 'string'
 			},
 			{
