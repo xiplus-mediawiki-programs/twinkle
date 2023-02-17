@@ -498,11 +498,11 @@ Twinkle.arv.callback.getReportWikitext = function(form) {
 			}
 
 			reason += '=== ' + (input.hidename ? wgULS('已隐藏用户名', '已隱藏使用者名稱') : uid) + ' ===\n';
-			reason += '* {{vandal|' + (/=/.test(uid) ? '1=' : '') + uid;
+			reason += "* '''{{vandal|" + (/=/.test(uid) ? '1=' : '') + uid;
 			if (input.hidename) {
 				reason += '|hidename=1';
 			}
-			reason += '}}\n';
+			reason += "}}'''\n";
 
 			var types = input.arvtype.map(function(v) {
 				switch (v) {
@@ -556,7 +556,7 @@ Twinkle.arv.callback.getReportWikitext = function(form) {
 				return;
 			}
 			reason += '=== ' + uid + ' ===\n';
-			reason += '* {{vandal|' + (/=/.test(uid) ? '1=' : '') + uid + '}}\n';
+			reason += "* '''{{vandal|" + (/=/.test(uid) ? '1=' : '') + uid + "}}'''\n";
 
 			var pages = $.map($('input:text[name=page]', form), function (o) {
 				return $(o).val() || null;
