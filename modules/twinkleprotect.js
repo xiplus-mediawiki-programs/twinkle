@@ -1207,7 +1207,7 @@ Twinkle.protect.callbacks = {
 			return;
 		}
 
-		var newtag = '=== [[:' + mw.config.get('wgPageName') + ']] ===' + '\n';
+		var newtag = '=== [[:' + Morebits.pageNameNorm + ']] ===' + '\n';
 		if (new RegExp('^' + mw.util.escapeRegExp(newtag).replace(/\s+/g, '\\s*'), 'm').test(text)) {
 			statusElement.error([rppLink, wgULS('已有对此页面的保护提名，取消操作。', '已有對此頁面的保護提名，取消操作。')]);
 			return;
@@ -1228,7 +1228,7 @@ Twinkle.protect.callbacks = {
 
 		words += params.typename;
 
-		newtag += '* <small>' + wgULS('当前保护状态', '目前保護狀態') + '：{{protection status|' + mw.config.get('wgPageName') + '}}</small>\n';
+		newtag += '* <small>' + wgULS('当前保护状态', '目前保護狀態') + '：{{protection status|' + Morebits.pageNameNorm + '}}</small>\n';
 		newtag += wgULS('请求', '請求') + Morebits.string.toUpperCaseFirstChar(words) + (params.reason !== '' ? '：' +
 			Morebits.string.formatReasonText(params.reason) : '。') + '--~~~~';
 
