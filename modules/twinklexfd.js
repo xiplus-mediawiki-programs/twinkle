@@ -371,6 +371,11 @@ Twinkle.xfd.callbacks = {
 				text = textNoNotMandarin;
 			}
 
+			var textNoAfc = text.replace(/{{\s*AFC submission\s*\|\s*\|[^}]*?}}\s*/ig, '');
+			if (text !== textNoAfc && confirm(wgULS('在页面上找到AFC提交模板，要移除吗？', '在頁面上找到AFC提交模板，要移除嗎？'))) {
+				text = textNoAfc;
+			}
+
 			// Mark the page as patrolled, if wanted
 			if (Twinkle.getPref('markXfdPagesAsPatrolled')) {
 				pageobj.patrol();
