@@ -2198,7 +2198,7 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 
 	var found = false;
 	var hidename = false;
-	var vipRe = new RegExp('===\\s*{{\\s*[Vv]andal\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.pageNameRegex(userName) + '\\s*(\\|\\s*hidename\\s*=[^|]+)?}}\\s*===', 'm');
+	var vipRe = new RegExp('{{\\s*[Vv]andal\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.pageNameRegex(userName) + '\\s*(\\|\\s*hidename\\s*=[^|]+)?}}', 'm');
 	for (var i = 1; i < requestList.length; i++) {
 		if (vipRe.exec(requestList[i])) {
 			hidename = /\|\s*hidename\s*=[^|]+/.test(requestList[i]);
