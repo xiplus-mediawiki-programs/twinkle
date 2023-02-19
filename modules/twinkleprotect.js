@@ -1228,7 +1228,7 @@ Twinkle.protect.callbacks = {
 
 		words += params.typename;
 
-		newtag += '* <small>' + wgULS('当前保护状态', '目前保護狀態') + '：{{protection status|' + Morebits.pageNameNorm + '}}</small>\n';
+		newtag += '* <small>' + wgULS('当前保护状态', '目前保護狀態') + '：{{protection status|' + (/=/.test(Morebits.pageNameNorm) ? '1=' : '') + Morebits.pageNameNorm + '}}</small>\n';
 		newtag += wgULS('请求', '請求') + Morebits.string.toUpperCaseFirstChar(words) + (params.reason !== '' ? '：' +
 			Morebits.string.formatReasonText(params.reason) : '。') + '--~~~~';
 
