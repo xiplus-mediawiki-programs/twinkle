@@ -124,6 +124,8 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 						// enable/disable multiple
 						cForm.multiple.disabled = !cChecked;
 						cForm.multiple.checked = false;
+						// enable requesting creation protection
+						cForm.salting.checked = false;
 
 						Twinkle.speedy.callback.modeChanged(cForm);
 
@@ -226,12 +228,19 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				event: function(event) {
 					event.stopPropagation();
 				}
-			}
-		]
-	});
-	tagOptions.append({
-		type: 'checkbox',
-		list: [
+			},
+			{
+				label: wgULS('清空页面', '清空頁面'),
+				value: 'blank',
+				name: 'blank',
+				tooltip: wgULS('在标记模板前，先清空页面，适用于严重破坏或负面生者传记等。', '在標記模板前，先清空頁面，適用於嚴重破壞或負面生者傳記等。')
+			},
+			{
+				label: wgULS('同时标记以请求白纸保护', '同時標記以請求白紙保護'),
+				value: 'salting',
+				name: 'salting',
+				tooltip: wgULS('选取后，快速删除模板后将附带 {{salt}} 标签，以请求执行删除的管理员进行白纸保护，仅在页面创建3次以上才选择此项。', '選取後，快速刪除模板後將附帶 {{salt}} 標籤，以請求執行刪除的管理員進行白紙保護，僅在頁面建立3次以上才選擇此項。')
+			},
 			{
 				label: wgULS('应用多个理由', '應用多個理由'),
 				value: 'multiple',
@@ -241,17 +250,6 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 					Twinkle.speedy.callback.modeChanged(event.target.form);
 					event.stopPropagation();
 				}
-			}
-		]
-	});
-	tagOptions.append({
-		type: 'checkbox',
-		list: [
-			{
-				label: wgULS('清空页面', '清空頁面'),
-				value: 'blank',
-				name: 'blank',
-				tooltip: wgULS('在标记模板前，先清空页面，适用于严重破坏或负面生者传记等。', '在標記模板前，先清空頁面，適用於嚴重破壞或負面生者傳記等。')
 			}
 		]
 	});
@@ -1290,6 +1288,10 @@ Twinkle.speedy.callbacks = {
 				text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, '');
 			}
 
+			if (params.requestsalt) {
+				code = '{{salt}}\n' + code;
+			}
+
 			// Generate edit summary for edit
 			var editsummary;
 			if (params.normalizeds.length > 1) {
@@ -1426,6 +1428,9 @@ Twinkle.speedy.callbacks = {
 				}
 			}
 
+			if (params.requestsalt) {
+				appendText += wgULS('；请求白纸保护', '；請求白紙保護');
+			}
 			if (initialContrib) {
 				appendText += '；通知{{user|' + initialContrib + '}}';
 			}
@@ -1704,8 +1709,6 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 		});
 	}
 
-	var blank = form.blank.checked;
-
 	var params = {
 		values: values,
 		normalizeds: normalizeds,
@@ -1713,8 +1716,9 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 		usertalk: notifyuser,
 		welcomeuser: welcomeuser,
 		lognomination: csdlog,
+		blank: form.blank.checked,
+		requestsalt: form.salting.checked,
 		templateParams: Twinkle.speedy.getParameters(form, values),
-		blank: blank
 	};
 	if (!params.templateParams) {
 		return;
