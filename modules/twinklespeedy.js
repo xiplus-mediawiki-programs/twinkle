@@ -1718,7 +1718,7 @@ Twinkle.speedy.callback.evaluateUser = function twinklespeedyCallbackEvaluateUse
 		lognomination: csdlog,
 		blank: form.blank.checked,
 		requestsalt: form.salting.checked,
-		templateParams: Twinkle.speedy.getParameters(form, values),
+		templateParams: Twinkle.speedy.getParameters(form, values)
 	};
 	if (!params.templateParams) {
 		return;
