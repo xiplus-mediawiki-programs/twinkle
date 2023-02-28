@@ -2362,7 +2362,7 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 	pageobj.setPageText(text);
 	pageobj.setEditSummary(summary);
 	pageobj.setChangeTags(Twinkle.changeTags);
-	pageobj.setWatchlist(Twinkle.getPref('watchWarnings'));
+	pageobj.setWatchlist(Twinkle.getPref('watchBlockNotices'));
 	pageobj.save();
 };
 

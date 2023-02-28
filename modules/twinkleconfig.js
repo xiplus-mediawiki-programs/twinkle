@@ -219,7 +219,7 @@ Twinkle.config.sections = [
 			// Whether to default to just blocking the /64 on or off
 			{
 				name: 'defaultToBlock64',
-				label: wgULS('', '對於IPv6地址，預設選擇封鎖/64段'),
+				label: wgULS('对于IPv6地址，默认选择封禁/64段', '對於IPv6地址，預設選擇封鎖/64段'),
 				type: 'boolean'
 			},
 
@@ -229,6 +229,16 @@ Twinkle.config.sections = [
 				name: 'defaultToPartialBlocks',
 				label: wgULS('打开封禁菜单时默认选择部分封禁', '打開封鎖選單時預設選擇部分封鎖'),
 				type: 'boolean'
+			},
+
+			// TwinkleConfig.watchBlockNotices (string)
+			// Watchlist setting for the page which has been dispatched an warning or notice
+			{
+				name: 'watchBlockNotices',
+				label: wgULS('发送封禁模板时加入用户讨论页到监视列表', '發送封鎖模板時加入使用者討論頁到監視清單'),
+				helptip: wgULS('注意：如果对方使用Flow，对应讨论串总会加到监视列表中。', '注意：如果對方使用Flow，對應討論串總會加到監視清單中。'),
+				type: 'enum',
+				enumValues: Twinkle.config.watchlistEnums
 			},
 
 			{

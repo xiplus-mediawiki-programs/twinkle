@@ -75,6 +75,7 @@ Twinkle.defaultConfig = {
 	defaultToBlock64: false,
 	defaultToPartialBlocks: false,
 	blankTalkpageOnIndefBlock: false,
+	watchBlockNotices: 'yes',
 	customBlockReasonList: [],
 
 	// Fluff (revert and rollback)
