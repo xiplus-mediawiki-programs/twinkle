@@ -1219,8 +1219,8 @@ Twinkle.block.blockPresetsInfo = {
 		expiry: '1 day',
 		nocreate: true,
 		pageParam: true,
-		reason: wgULS('屡次增加不实资料', '屢次增加不實資料'),
-		summary: wgULS('封禁通知：屡次增加不实资料', '封鎖通知：屢次增加不實資料'),
+		reason: wgULS('屡次增加没有[[WP:RS|可靠来源]]的资料', '屢次增加沒有[[WP:RS|可靠來源]]的資料'),
+		summary: wgULS('封禁通知：屡次增加没有[[WP:RS|可靠来源]]的资料', '封鎖通知：屢次增加沒有[[WP:RS|可靠來源]]的資料'),
 		templateName: 'uw-block'
 	},
 	'uw-ublock-wellknown': {
@@ -1447,7 +1447,7 @@ Twinkle.block.blockGroups = [
 			{ label: wgULS('确认为傀儡或真人傀儡 - 根据用户贡献确定', '確認為傀儡或真人傀儡 - 根據使用者貢獻確定'), value: 'sock-contribs-reg' },
 			{ label: wgULS('确认为傀儡或真人傀儡 - 用户查核确认', '確認為傀儡或真人傀儡 - 使用者查核確認'), value: 'sock-cu-reg' },
 			{ label: wgULS('滥用多个账户', '濫用多個帳號'), value: 'uw-sockblock' },
-			{ label: wgULS('屡次增加不实资料', '屢次增加不實資料'), value: 'uw-ucblock' },
+			{ label: wgULS('屡次增加没有可靠来源的资料', '屢次增加沒有可靠來源的資料'), value: 'uw-ucblock' },
 			{ label: wgULS('在条目中增加无意义文字', '在條目中增加無意義文字'), value: 'uw-npblock' },
 			{ label: wgULS('无故删除内容', '無故刪除內容'), value: 'uw-dblock' },
 			{ label: wgULS('多次加入侵犯著作权的内容', '多次加入侵犯著作權的內容'), value: 'uw-copyrightblock' },
