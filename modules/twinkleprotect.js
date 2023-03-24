@@ -1392,6 +1392,9 @@ Twinkle.protect.formatProtectionDescription = function(protectionLevels) {
 				case 'create':
 					label = wgULS('创建', '建立');
 					break;
+				case 'upload':
+					label = wgULS('上传', '上傳');
+					break;
 				default:
 					label = type;
 					break;
