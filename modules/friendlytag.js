@@ -464,7 +464,6 @@ Twinkle.tag.updateSortOrder = function(e) {
 						{ label: '{{Notability|Astro}}：' + wgULS('天体', '天體'), value: 'Astro' },
 						{ label: '{{Notability|Biographies}}：' + wgULS('人物传记', '人物傳記'), value: 'Biographies' },
 						{ label: '{{Notability|Book}}：' + wgULS('书籍', '書籍'), value: 'Book' },
-						{ label: '{{Notability|Companies}}：' + wgULS('组织与公司', '組織與公司'), value: 'Companies' },
 						{ label: '{{Notability|Cyclone}}：' + wgULS('气旋', '氣旋'), value: 'Cyclone' },
 						{ label: '{{Notability|Fiction}}：' + wgULS('虚构事物', '虛構事物'), value: 'Fiction' },
 						{ label: '{{Notability|Geographic}}：' + wgULS('地理特征', '地理特徵'), value: 'Geographic' },
@@ -472,6 +471,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 						{ label: '{{Notability|Invention}}：' + wgULS('发明、研究', '發明、研究'), value: 'Invention' },
 						{ label: '{{Notability|Music}}：' + wgULS('音乐', '音樂'), value: 'Music' },
 						{ label: '{{Notability|Numbers}}：' + wgULS('数字', '數字'), value: 'Numbers' },
+						{ label: '{{Notability|Organizations}}：' + wgULS('组织', '組織'), value: 'Organizations' },
 						{ label: '{{Notability|Property}}：' + wgULS('性质表', '性質表'), value: 'Property' },
 						{ label: '{{Notability|Traffic}}：' + '交通', value: 'Traffic' },
 						{ label: '{{Notability|Web}}：' + wgULS('网站、网络内容', '網站、網路內容') + '（非正式指引）', value: 'Web'}
