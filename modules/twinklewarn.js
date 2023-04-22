@@ -965,6 +965,10 @@ Twinkle.warn.messages = {
 			label: wgULS('消歧义页格式错误', '消歧義頁格式錯誤'),
 			summary: wgULS('提醒：消歧义页格式错误', '提醒：消歧義頁格式錯誤')
 		},
+		'uw-draft': {
+			label: wgULS('最近创建的页面被移动到草稿', '最近建立的頁面被移動到草稿'),
+			summary: wgULS('提醒：最近创建的页面被移动到草稿', '提醒：最近建立的頁面被移動到草稿')
+		},
 		'uw-editsummary': {
 			label: wgULS('没有使用编辑摘要', '沒有使用編輯摘要'),
 			summary: wgULS('提醒：没有使用编辑摘要', '提醒：沒有使用編輯摘要')
