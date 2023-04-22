@@ -174,7 +174,7 @@ for match in matches:
 with open(os.path.join(basedir, 'modules/twinklewarn.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
-warnTemplates = findBetween(jstext, 'Twinkle.warn.messages = wgULS({', 'Twinkle.warn.prev_article = null;')
+warnTemplates = findBetween(jstext, 'Twinkle.warn.messages = {', 'Twinkle.warn.prev_article = null;')
 
 matches = re.findall(r"\n\t{3}'[^|\n]+?'[\s\S]+?\n\t{3}}", warnTemplates)
 for match in matches:
