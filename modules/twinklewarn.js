@@ -1257,7 +1257,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 				var lvl = 'level' + Twinkle.warn.callbacks.autolevelParseWikitext(wikitext, params, latest)[1];
 
 				// Identical to level1, etc. above but explicitly provides the level
-				$.each(Twinkle.warn.messages.levels, function(levelGroup) {
+				$.each(Twinkle.warn.messages.levels, function(_, levelGroup) {
 					var optgroup = new Morebits.quickForm.element({
 						type: 'optgroup',
 						label: levelGroup.category
