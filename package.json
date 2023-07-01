@@ -4,6 +4,7 @@
 	"private": true,
 	"repository": "Xi-Plus/twinkle",
 	"scripts": {
+		"fix-eol": "dos2unix *.js **/*.js *.css **/*.css && git add .",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"patchtest": "node scripts/patch-test.js",
