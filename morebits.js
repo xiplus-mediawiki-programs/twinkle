@@ -460,6 +460,10 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 			if (data.disabled) {
 				node.setAttribute('disabled', 'disabled');
 			}
+			// zhwiki: Add hidden attr
+			if (data.hidden) {
+				node.setAttribute('hidden', '');
+			}
 			node.setAttribute('label', data.label);
 			node.appendChild(document.createTextNode(data.label));
 			break;
