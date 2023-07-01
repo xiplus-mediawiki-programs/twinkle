@@ -145,9 +145,11 @@ Twinkle.protect.fetchProtectionLevel = function twinkleprotectFetchProtectionLev
 		});
 
 		// Only use the log except unprotect
-		Twinkle.protect.previousProtectionLog = protectData.query.logevents.length >= 1 && protectData.query.logevents[0].action !== 'unprotect'
-			? protectData.query.logevents[0]
-			: protectData.query.logevents.length >= 2 ? protectData.query.logevents[1] : null;
+		if (protectData.query.logevents.length >= 1 && protectData.query.logevents[0].action !== 'unprotect') {
+			Twinkle.protect.previousProtectionLog = protectData.query.logevents[0];
+		} else if (protectData.query.logevents.length >= 2) {
+			Twinkle.protect.previousProtectionLog = protectData.query.logevents[1];
+		}
 
 		if (Twinkle.protect.previousProtectionLog) {
 			$.each(Twinkle.protect.previousProtectionLog.params.details, function(index, protection) {
@@ -820,13 +822,16 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			tag: input.tagtype,
 			reason: (input.tagtype === 'pp-protected' || input.tagtype === 'pp-semi-protected' || input.tagtype === 'pp-move') && input.protectReason ? input.protectReason : null,
 			showexpiry: input.actiontype === 'protect' ? input.showexpiry : null,
-			expiry: input.actiontype === 'protect' ?
-				input.editmodify ? input.editexpiry :
-					input.movemodify ? input.moveexpiry : null
-				: null,
 			small: input.small,
 			noinclude: input.noinclude
 		};
+		if (input.actiontype === 'protect') {
+			if (input.editmodify) {
+				tagparams.expiry = input.editexpiry;
+			} else if (input.movemodify) {
+				tagparams.expiry = input.moveexpiry;
+			}
+		}
 	}
 
 	var closeparams = {};
