@@ -226,6 +226,11 @@ Twinkle.close.codes = [{
 {
 	key: wgULS('其他处理方法', '其他處理方法'),
 	value: {
+		relist: {
+			label: wgULS('重新提交讨论', '重新提交討論'),
+			action: 'noop',
+			hidden: !/^Wikipedia:頁面存廢討論\/記錄\//.test(mw.config.get('wgPageName'))
+		},
 		c: {
 			label: wgULS('转交侵权', '轉交侵權'),
 			action: 'noop'
@@ -367,7 +372,8 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, noop) {
 				label: key + '：' + itemProperties.label,
 				value: key,
 				selected: itemProperties.selected,
-				disabled: Twinkle.getPref('XfdClose') !== 'all' && itemProperties.adminonly
+				disabled: Twinkle.getPref('XfdClose') !== 'all' && itemProperties.adminonly,
+				hidden: itemProperties.hidden
 			});
 			var elemRendered = container.appendChild(elem.render());
 			$(elemRendered).data('messageData', itemProperties);
@@ -667,13 +673,40 @@ Twinkle.close.callbacks = {
 		var bar = text.split('\n----\n');
 		var split = bar[0].split('\n');
 
-		text = split[0] + '\n{{delh|' + params.code + '}}\n' + split.slice(1).join('\n');
-		var reason = params.messageData.value || params.messageData.label;
-		text += '\n<hr>\n: ' + reason;
-		if (params.remark) {
-			text += '：' + Morebits.string.appendPunctuation(params.remark);
+		text = split[0] + '\n{{delh|' + params.code + '}}\n';
+		var reason;
+		if (params.code === 'relist') {
+			var date = new Morebits.date();
+			var logtitle = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
+			text += '{{Relisted}}到[[' + logtitle + '#' + params.title + ']]。';
+			reason = '重新提交到[[' + logtitle + '#' + params.title + ']]';
+
+			split[0] = split[0].replace(/^===(.+)===$/, '==$1==');
+			var relist_params = {
+				title: params.title,
+				source: pageobj.getPageName(),
+				text: split.join('\n'),
+				comment: params.remark
+			};
+			var logpage = new Morebits.wiki.page(logtitle, '重新提交');
+			logpage.setCallbackParameters(relist_params);
+			logpage.load(Twinkle.close.callbacks.relistToday);
+
+			var article_params = {
+				date: date.format('YYYY/MM/DD', 'utc')
+			};
+			var articlepage = new Morebits.wiki.page(params.title, wgULS('重新标记', '重新標記'));
+			articlepage.setCallbackParameters(article_params);
+			articlepage.load(Twinkle.close.callbacks.retaggingArticle);
 		} else {
-			text += '。';
+			text += split.slice(1).join('\n');
+			reason = params.messageData.value || params.messageData.label;
+			text += '\n<hr>\n: ' + reason;
+			if (params.remark) {
+				text += '：' + Morebits.string.appendPunctuation(params.remark);
+			} else {
+				text += '。';
+			}
 		}
 		if (!Morebits.userIsSysop) {
 			text += '{{subst:NAC}}';
@@ -696,6 +729,49 @@ Twinkle.close.callbacks = {
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(Twinkle.close.callbacks.disableLink);
+	},
+
+	relistToday: function (pageobj) {
+		var params = pageobj.getCallbackParameters();
+
+		var appendText = '\n{{safesubst:SafeAfdHead}}\n' +
+			params.text + '\n{{subst:Relist';
+		if (params.comment) {
+			appendText += '|1=' + params.comment;
+		}
+		appendText += '}}';
+
+		pageobj.setAppendText(appendText);
+		pageobj.setEditSummary('重新提交自[[' + params.source + '#' + params.title + ']]');
+		pageobj.setChangeTags(Twinkle.changeTags);
+		pageobj.setCreateOption('recreate');
+		pageobj.append();
+	},
+	retaggingArticle: function (pageobj) {
+		var statelem = pageobj.getStatusElement();
+		// defaults to /doc for lua modules, which may not exist
+		if (!pageobj.exists()) {
+			statelem.error(wgULS('页面不存在，可能已被删除', '頁面不存在，可能已被刪除'));
+			return;
+		}
+
+		var params = pageobj.getCallbackParameters();
+		var text = pageobj.getPageText();
+
+		if (/{{[rsaiftcmv]fd\s*(\|.*)?\|\s*date\s*=[^|}]*.*}}/.test(text)) {
+			text = text.replace(/({{[rsaiftcmv]fd\s*(?:\|.*)?\|\s*date\s*=)[^|}]*(.*}})/, '$1' + params.date + '$2');
+		} else {
+			Morebits.status.warn(wgULS('重新标记', '重新標記'), wgULS('找不到提删模板，重新插入', '找不到提刪模板，重新插入'));
+			// Insert tag after short description or any hatnotes
+			var wikipage = new Morebits.wikitext.page(text);
+			var tag = '{{vfd|date=' + params.date + '}}';
+			text = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
+		}
+
+		pageobj.setPageText(text);
+		pageobj.setEditSummary('重新提交到[[Wikipedia:頁面存廢討論/記錄/' + params.date + '#' + pageobj.getPageName() + ']]');
+		pageobj.setChangeTags(Twinkle.changeTags);
+		pageobj.save();
 	},
 
 	disableLink: function (pageobj) {
