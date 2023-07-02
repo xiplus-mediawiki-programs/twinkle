@@ -83,6 +83,8 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 	});
 };
 
+var date = new Morebits.date();
+
 // Keep this synchronized with {{delh}}
 Twinkle.close.codes = [{
 	key: wgULS('请求无效', '請求無效'),
@@ -236,6 +238,7 @@ Twinkle.close.codes = [{
 		relist: {
 			label: wgULS('重新提交讨论', '重新提交討論'),
 			action: 'noop',
+			disabled: mw.config.get('wgPageName') === 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc'),
 			hidden: !/^Wikipedia:頁面存廢討論\/記錄\//.test(mw.config.get('wgPageName'))
 		},
 		c: {
@@ -380,7 +383,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 				label: key + '：' + itemProperties.label,
 				value: key,
 				selected: itemProperties.selected,
-				disabled: Twinkle.getPref('XfdClose') !== 'all' && itemProperties.adminonly,
+				disabled: (Twinkle.getPref('XfdClose') !== 'all' && itemProperties.adminonly) || itemProperties.disabled,
 				hidden: itemProperties.hidden
 			});
 			var elemRendered = container.appendChild(elem.render());
