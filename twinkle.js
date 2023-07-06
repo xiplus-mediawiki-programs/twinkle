@@ -322,7 +322,7 @@ Twinkle.addPortlet = function(navigation, id, text, type, nextnodeid) {
 				outerNavClass += ' vector-menu-tabs';
 			}
 
-			innerDivClass = 'vector-menu-content';
+			innerDivClass = 'vector-menu-content vector-dropdown-content';
 			break;
 		case 'modern':
 			if (navigation !== 'mw_portlets' && navigation !== 'mw_contentwrapper') {
@@ -364,14 +364,16 @@ Twinkle.addPortlet = function(navigation, id, text, type, nextnodeid) {
 	var ul = document.createElement('ul');
 
 	if (skin === 'vector' || skin === 'vector-2022') {
+		heading.setAttribute('for', id + '-dropdown-checkbox');
 		ul.className = 'vector-menu-content-list';
-		heading.className = 'vector-menu-heading';
+		heading.className = 'vector-menu-heading vector-dropdown-label';
 
 		// add invisible checkbox to keep menu open when clicked
 		// similar to the p-cactions ("More") menu
 		if (outerNavClass.indexOf('vector-menu-dropdown') !== -1) {
 			var chkbox = document.createElement('input');
-			chkbox.className = 'vector-menu-checkbox';
+			chkbox.id = id + '-dropdown-checkbox';
+			chkbox.className = 'vector-menu-checkbox vector-dropdown-checkbox';
 			chkbox.setAttribute('type', 'checkbox');
 			chkbox.setAttribute('aria-labelledby', id + '-label');
 			outerNav.appendChild(chkbox);
