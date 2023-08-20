@@ -455,7 +455,7 @@ Twinkle.xfd.callbacks = {
 					break;
 			}
 
-			pageobj.setEditSummary('加入[[' + Morebits.pageNameNorm + ']]');
+			pageobj.setEditSummary('/* ' + Morebits.pageNameNorm + ' */ 新提案');
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setWatchlist(Twinkle.getPref('xfdWatchDiscussion'));
 			pageobj.setCreateOption('recreate');
@@ -567,7 +567,7 @@ Twinkle.xfd.callbacks = {
 			var params = pageobj.getCallbackParameters();
 
 			pageobj.setAppendText('\n{{subst:IfdItem|Filename=' + mw.config.get('wgTitle') + '|Uploader=' + params.creator + '|Reason=' + Morebits.string.formatReasonText(params.xfdreason) + '}}--~~~~');
-			pageobj.setEditSummary('加入[[' + Morebits.pageNameNorm + ']]');
+			pageobj.setEditSummary('/* ' + Morebits.pageNameNorm + ' */ 新提案');
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setWatchlist(Twinkle.getPref('xfdWatchDiscussion'));
 			pageobj.setCreateOption('recreate');

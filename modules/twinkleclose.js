@@ -688,10 +688,10 @@ Twinkle.close.callbacks = {
 		text = split[0] + '\n{{delh|' + params.code + '}}\n';
 		var reason;
 		if (params.code === 'relist') {
-			var date = new Morebits.date();
-			var logtitle = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
+			var dateStr = new Morebits.date().format('YYYY/MM/DD', 'utc');
+			var logtitle = 'Wikipedia:頁面存廢討論/記錄/' + dateStr;
 			text += '{{Relisted}}到[[' + logtitle + '#' + params.title + ']]。';
-			reason = '重新提交到[[' + logtitle + '#' + params.title + ']]';
+			reason = '重新提交到[[' + logtitle + '#' + params.title + '|' + dateStr + ']]';
 
 			split[0] = split[0].replace(/^===(.+)===$/, '==$1==');
 			var relist_params = {
@@ -724,7 +724,7 @@ Twinkle.close.callbacks = {
 			}
 
 			var article_params = {
-				date: date.format('YYYY/MM/DD', 'utc')
+				date: dateStr
 			};
 			var articlepage = new Morebits.wiki.page(params.title, wgULS('重新标记', '重新標記'));
 			articlepage.setCallbackParameters(article_params);
@@ -783,8 +783,10 @@ Twinkle.close.callbacks = {
 		}
 		appendText += '}}';
 
+		var sourceAnchor = params.source + '#' + params.title;
+		var dateStr = params.source.replace('Wikipedia:頁面存廢討論/記錄/', '');
 		pageobj.setAppendText(appendText);
-		pageobj.setEditSummary('重新提交自[[' + params.source + '#' + params.title + ']]');
+		pageobj.setEditSummary('/* ' + params.title + ' */ 重新提交自[[' + sourceAnchor + '|' + dateStr + ']]');
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('recreate');
 		pageobj.append();
