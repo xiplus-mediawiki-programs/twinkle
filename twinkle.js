@@ -28,6 +28,8 @@ if (!Morebits.userIsInGroup('autoconfirmed') && !Morebits.userIsInGroup('confirm
 var Twinkle = {};
 window.Twinkle = Twinkle;  // allow global access
 
+var conv = require('ext.gadget.HanAssist').conv;
+
 /**
  * Twinkle-specific data shared by multiple modules
  * Likely customized per installation
@@ -190,7 +192,7 @@ Twinkle.defaultConfig = {
 	// Welcome
 	topWelcomes: false,
 	watchWelcomes: 'yes',
-	welcomeHeading: wgULS('欢迎', '歡迎'),
+	welcomeHeading: conv({ hans: '欢迎', hant: '歡迎' }),
 	insertHeadings: true,
 	insertUsername: true,
 	insertSignature: true,  // sign welcome templates, where appropriate
@@ -202,8 +204,8 @@ Twinkle.defaultConfig = {
 	// Talkback
 	markTalkbackAsMinor: true,
 	insertTalkbackSignature: true,  // always sign talkback templates
-	talkbackHeading: wgULS('回复通告', '回覆通告'),
-	mailHeading: wgULS('您有新邮件！', '您有新郵件！'),
+	talkbackHeading: conv({ hans: '回复通告', hant: '回覆通告' }),
+	mailHeading: conv({ hans: '您有新邮件！', hant: '您有新郵件！' }),
 
 	// Shared
 	markSharedIPAsMinor: true
@@ -449,7 +451,7 @@ $.ajax({
 	dataType: 'text'
 })
 	.fail(function () {
-		mw.notify(wgULS('未能加载您的Twinkle参数设置', '未能載入您的Twinkle偏好設定'), {type: 'error'});
+		mw.notify(conv({ hans: '未能加载您的Twinkle参数设置', hant: '未能載入您的Twinkle偏好設定' }), { type: 'error' });
 	})
 	.done(function (optionsText) {
 
@@ -478,7 +480,7 @@ $.ajax({
 				Twinkle.prefs.optionsVersion = Twinkle.prefs.optionsVersion || 1;
 			}
 		} catch (e) {
-			mw.notify(wgULS('未能解析您的Twinkle参数设置', '未能解析您的Twinkle偏好設定'), {type: 'error'});
+			mw.notify(conv({ hans: '未能解析您的Twinkle参数设置', hant: '未能解析您的Twinkle偏好設定' }), { type: 'error' });
 		}
 	})
 	.always(function () {

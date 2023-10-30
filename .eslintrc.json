@@ -12,7 +12,8 @@
 	"globals": {
 		"mw": "readonly",
 		"wgULS": "readonly",
-		"Map": "readonly"
+		"Map": "readonly",
+		"require": "readonly" // MediaWiki ResourceLoader require()
 	},
 	"ignorePatterns": ["scripts/", "tests/", "lib/"],
 	"rules": {

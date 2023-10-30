@@ -13,6 +13,8 @@
  * Config directives in:   TwinkleConfig
  */
 
+var conv = require('ext.gadget.HanAssist').conv;
+
 Twinkle.close = function twinkleclose() {
 	if (Twinkle.getPref('XfdClose') === 'hide' || !/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(mw.config.get('wgPageName'))) {
 		return;
@@ -74,7 +76,7 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 		delLink.className = 'twinkle-close-button';
 		delLink.href = '#';
 		delLink.setAttribute('data-section', section);
-		delLink.innerText = wgULS('关闭讨论', '關閉討論');
+		delLink.innerText = conv({ hans: '关闭讨论', hant: '關閉討論' });
 		$(delLink).on('click', function() {
 			Twinkle.close.callback(title, section, parentSection, pagenotexist);
 			return false;
@@ -87,26 +89,26 @@ var date = new Morebits.date();
 
 // Keep this synchronized with {{delh}}
 Twinkle.close.codes = [{
-	key: wgULS('请求无效', '請求無效'),
+	key: conv({ hans: '请求无效', hant: '請求無效' }),
 	value: {
 		ir: {
-			label: wgULS('请求无效', '請求無效'),
+			label: conv({ hans: '请求无效', hant: '請求無效' }),
 			action: 'keep'
 		},
 		rep: {
-			label: wgULS('重复提出，无效', '重複提出，無效'),
+			label: conv({ hans: '重复提出，无效', hant: '重複提出，無效' }),
 			action: 'keep'
 		},
 		commons: {
-			label: wgULS('应在维基共享资源提请', '應在維基共享資源提請'),
+			label: conv({ hans: '应在维基共享资源提请', hant: '應在維基共享資源提請' }),
 			action: 'keep'
 		},
 		ne: {
-			label: wgULS('目标页面或文件不存在，无效', '目標頁面或檔案不存在，無效'),
+			label: conv({ hans: '目标页面或文件不存在，无效', hant: '目標頁面或檔案不存在，無效' }),
 			action: 'keep'
 		},
 		nq: {
-			label: wgULS('提删者未获取提删资格，无效', '提刪者未取得提刪資格，無效'),
+			label: conv({ hans: '提删者未获取提删资格，无效', hant: '提刪者未取得提刪資格，無效' }),
 			action: 'keep'
 		}
 	}
@@ -124,129 +126,129 @@ Twinkle.close.codes = [{
 			action: 'keep'
 		},
 		tk: {
-			label: wgULS('暂时保留，改挂维护模板（关注度等）', '暫時保留，改掛維護模板（關注度等）'),
-			value: wgULS('暂时保留', '暫時保留'),
+			label: conv({ hans: '暂时保留，改挂维护模板（关注度等）', hant: '暫時保留，改掛維護模板（關注度等）' }),
+			value: conv({ hans: '暂时保留', hant: '暫時保留' }),
 			action: 'keep'
 		},
 		rr: {
-			label: wgULS('请求理由消失', '請求理由消失'),
+			label: conv({ hans: '请求理由消失', hant: '請求理由消失' }),
 			action: 'keep',
 			selected: Twinkle.getPref('XfdClose') === 'nonadminonly'
 		},
 		dan: {
-			label: wgULS('删后重建', '刪後重建'),
+			label: conv({ hans: '删后重建', hant: '刪後重建' }),
 			action: 'keep',
 			adminonly: true
 		}
 	}
 },
 {
-	key: wgULS('删除', '刪除'),
+	key: conv({ hans: '删除', hant: '刪除' }),
 	value: {
 		d: {
-			label: wgULS('删除', '刪除'),
+			label: conv({ hans: '删除', hant: '刪除' }),
 			action: 'del',
 			adminonly: true,
 			selected: Twinkle.getPref('XfdClose') === 'all'
 		},
 		ic: {
-			label: wgULS('图像因侵权被删', '圖像因侵權被刪'),
+			label: conv({ hans: '图像因侵权被删', hant: '圖像因侵權被刪' }),
 			action: 'del',
 			adminonly: true
 		}
 	}
 },
 {
-	key: wgULS('快速删除', '快速刪除'),
+	key: conv({ hans: '快速删除', hant: '快速刪除' }),
 	value: {
 		sd: {
-			label: wgULS('快速删除', '快速刪除'),
+			label: conv({ hans: '快速删除', hant: '快速刪除' }),
 			action: 'del'
 		},
 		lssd: {
-			label: wgULS('无来源或著作权信息，快速删除', '無來源或版權資訊，快速刪除'),
+			label: conv({ hans: '无来源或著作权信息，快速删除', hant: '無來源或版權資訊，快速刪除' }),
 			action: 'del'
 		},
 		svg: {
-			label: wgULS('已改用SVG图形，快速删除', '已改用SVG圖形，快速刪除'),
+			label: conv({ hans: '已改用SVG图形，快速删除', hant: '已改用SVG圖形，快速刪除' }),
 			action: 'del'
 		},
 		nowcommons: {
-			label: wgULS('维基共享资源已提供，快速删除', '維基共享資源已提供，快速刪除'),
+			label: conv({ hans: '维基共享资源已提供，快速删除', hant: '維基共享資源已提供，快速刪除' }),
 			action: 'del'
 		},
 		drep: {
-			label: wgULS('多次被删除，条目锁定', '多次被刪除，條目鎖定'),
+			label: conv({ hans: '多次被删除，条目锁定', hant: '多次被刪除，條目鎖定' }),
 			action: 'del',
 			adminonly: true
 		}
 	}
 },
 {
-	key: wgULS('转移至其他维基计划', '轉移至其他維基計劃'),
+	key: conv({ hans: '转移至其他维基计划', hant: '轉移至其他維基計劃' }),
 	value: {
 		twc: {
-			label: wgULS('转移至维基共享资源', '轉移至維基共享資源'),
+			label: conv({ hans: '转移至维基共享资源', hant: '轉移至維基共享資源' }),
 			action: 'noop',
 			adminonly: true
 		},
 		twn: {
-			label: wgULS('转移至维基新闻', '轉移至維基新聞'),
+			label: conv({ hans: '转移至维基新闻', hant: '轉移至維基新聞' }),
 			action: 'noop',
 			adminonly: true
 		},
 		tws: {
-			label: wgULS('转移至维基文库', '轉移至維基文庫'),
+			label: conv({ hans: '转移至维基文库', hant: '轉移至維基文庫' }),
 			action: 'noop',
 			adminonly: true
 		},
 		twb: {
-			label: wgULS('转移至维基教科书', '轉移至維基教科書'),
+			label: conv({ hans: '转移至维基教科书', hant: '轉移至維基教科書' }),
 			action: 'noop',
 			adminonly: true
 		},
 		twq: {
-			label: wgULS('转移至维基语录', '轉移至維基語錄'),
+			label: conv({ hans: '转移至维基语录', hant: '轉移至維基語錄' }),
 			action: 'noop',
 			adminonly: true
 		},
 		twt: {
-			label: wgULS('转移至维基词典', '轉移至維基詞典'),
+			label: conv({ hans: '转移至维基词典', hant: '轉移至維基詞典' }),
 			action: 'noop',
 			adminonly: true
 		},
 		twv: {
-			label: wgULS('转移至维基学院', '轉移至維基學院'),
+			label: conv({ hans: '转移至维基学院', hant: '轉移至維基學院' }),
 			action: 'noop',
 			adminonly: true
 		},
 		twvoy: {
-			label: wgULS('转移至维基导游', '轉移至維基導遊'),
+			label: conv({ hans: '转移至维基导游', hant: '轉移至維基導遊' }),
 			action: 'noop',
 			adminonly: true
 		},
 		two: {
-			label: wgULS('转移至其他维基计划', '轉移至其他維基計劃'),
+			label: conv({ hans: '转移至其他维基计划', hant: '轉移至其他維基計劃' }),
 			action: 'noop',
 			adminonly: true
 		}
 	}
 },
 {
-	key: wgULS('其他处理方法', '其他處理方法'),
+	key: conv({ hans: '其他处理方法', hant: '其他處理方法' }),
 	value: {
 		relist: {
-			label: wgULS('重新提交讨论', '重新提交討論'),
+			label: conv({ hans: '重新提交讨论', hant: '重新提交討論' }),
 			action: 'noop',
 			disabled: mw.config.get('wgPageName') === 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc'),
 			hidden: !/^Wikipedia:頁面存廢討論\/記錄\//.test(mw.config.get('wgPageName'))
 		},
 		c: {
-			label: wgULS('转交侵权', '轉交侵權'),
+			label: conv({ hans: '转交侵权', hant: '轉交侵權' }),
 			action: 'noop'
 		},
 		m2ifd: {
-			label: wgULS('转送文件存废讨论', '轉送檔案存廢討論'),
+			label: conv({ hans: '转送文件存废讨论', hant: '轉送檔案存廢討論' }),
 			action: 'noop'
 		},
 		r: {
@@ -255,28 +257,28 @@ Twinkle.close.codes = [{
 			adminonly: true
 		},
 		cr: {
-			label: wgULS('分类重定向', '分類重定向'),
+			label: conv({ hans: '分类重定向', hant: '分類重定向' }),
 			action: 'keep',
 			adminonly: true
 		},
 		m: {
-			label: wgULS('移动', '移動'),
+			label: conv({ hans: '移动', hant: '移動' }),
 			action: 'keep',
 			adminonly: true
 		},
 		merge: {
-			label: wgULS('并入', '併入'),
+			label: conv({ hans: '并入', hant: '併入' }),
 			action: 'keep',
 			adminonly: true
 		},
 		mergeapproved: {
-			label: wgULS('允许并入', '允許併入'),
+			label: conv({ hans: '允许并入', hant: '允許併入' }),
 			action: 'keep',
 			adminonly: true
 		},
 		nc: {
-			label: wgULS('无共识暂时保留', '無共識暫時保留'),
-			value: wgULS('无共识', '無共識'),
+			label: conv({ hans: '无共识暂时保留', hant: '無共識暫時保留' }),
+			value: conv({ hans: '无共识', hant: '無共識' }),
 			action: 'keep'
 		}
 	}
@@ -284,16 +286,16 @@ Twinkle.close.codes = [{
 
 Twinkle.close.callback = function twinklecloseCallback(title, section, parentSection, noop) {
 	var Window = new Morebits.simpleWindow(410, 200);
-	Window.setTitle(wgULS('关闭存废讨论', '關閉存廢討論') + ' \u00B7 ' + title);
+	Window.setTitle(conv({ hans: '关闭存废讨论', hant: '關閉存廢討論' }) + ' \u00B7 ' + title);
 	Window.setScriptName('Twinkle');
-	Window.addFooterLink(wgULS('存废讨论设置', '存廢討論設定'), 'WP:TW/PREF#close');
-	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#close');
+	Window.addFooterLink(conv({ hans: '存废讨论设置', hant: '存廢討論設定' }), 'WP:TW/PREF#close');
+	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#close');
 
 	var form = new Morebits.quickForm(Twinkle.close.callback.evaluate);
 
 	form.append({
 		type: 'select',
-		label: wgULS('处理结果：', '處理結果：'),
+		label: conv({ hans: '处理结果：', hant: '處理結果：' }),
 		name: 'sub_group',
 		event: Twinkle.close.callback.change_code
 	});
@@ -301,22 +303,22 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 	form.append({
 		type: 'input',
 		name: 'sdreason',
-		label: wgULS('速删理由：', '速刪理由：'),
-		tooltip: wgULS('用于删除日志，使用{{delete}}的参数格式，例如 A1 或 A1|G1', '用於刪除日誌，使用{{delete}}的參數格式，例如 A1 或 A1|G1'),
+		label: conv({ hans: '速删理由：', hant: '速刪理由：' }),
+		tooltip: conv({ hans: '用于删除日志，使用{{delete}}的参数格式，例如 A1 或 A1|G1', hant: '用於刪除日誌，使用{{delete}}的參數格式，例如 A1 或 A1|G1' }),
 		hidden: true
 	});
 
 	form.append({
 		type: 'input',
 		name: 'remark',
-		label: wgULS('补充说明：', '補充說明：')
+		label: conv({ hans: '补充说明：', hant: '補充說明：' })
 	});
 
 	form.append({
 		type: 'checkbox',
 		list: [
 			{
-				label: wgULS('只关闭讨论，不进行其他操作', '只關閉討論，不進行其他操作'),
+				label: conv({ hans: '只关闭讨论，不进行其他操作', hant: '只關閉討論，不進行其他操作' }),
 				value: 'noop',
 				name: 'noop',
 				event: Twinkle.close.callback.change_operation,
@@ -330,10 +332,10 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 			type: 'checkbox',
 			list: [
 				{
-					label: wgULS('删除关联的讨论页', '刪除關聯的討論頁'),
+					label: conv({ hans: '删除关联的讨论页', hant: '刪除關聯的討論頁' }),
 					value: 'talkpage',
 					name: 'talkpage',
-					tooltip: wgULS('删除时附带删除此页面的讨论页。', '刪除時附帶刪除此頁面的討論頁。'),
+					tooltip: conv({ hans: '删除时附带删除此页面的讨论页。', hant: '刪除時附帶刪除此頁面的討論頁。' }),
 					checked: true,
 					event: function(event) {
 						event.stopPropagation();
@@ -346,10 +348,10 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 		type: 'checkbox',
 		list: [
 			{
-				label: wgULS('删除重定向页', '刪除重新導向頁面'),
+				label: conv({ hans: '删除重定向页', hant: '刪除重新導向頁面' }),
 				value: 'redirects',
 				name: 'redirects',
-				tooltip: wgULS('删除到此页的重定向。', '刪除到此頁的重新導向。'),
+				tooltip: conv({ hans: '删除到此页的重定向。', hant: '刪除到此頁的重新導向。' }),
 				checked: true,
 				event: function(event) {
 					event.stopPropagation();
@@ -504,7 +506,7 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 				Twinkle.close.callbacks.del(params);
 				break;
 			case 'keep':
-				var wikipedia_page = new Morebits.wiki.page(params.title, wgULS('移除存废讨论模板', '移除存廢討論模板'));
+				var wikipedia_page = new Morebits.wiki.page(params.title, conv({ hans: '移除存废讨论模板', hant: '移除存廢討論模板' }));
 				wikipedia_page.setCallbackParameters(params);
 				wikipedia_page.load(Twinkle.close.callbacks.keep);
 				break;
@@ -520,13 +522,13 @@ Twinkle.close.callbacks = {
 		var query, wikipedia_api;
 		Morebits.wiki.addCheckpoint();
 
-		var page = new Morebits.wiki.page(params.title, wgULS('删除页面', '刪除頁面'));
+		var page = new Morebits.wiki.page(params.title, conv({ hans: '删除页面', hant: '刪除頁面' }));
 
 		if (params.code === 'sd') {
 			Twinkle.speedy.callbacks.parseWikitext(params.title, '{{delete|' + params.sdreason + '}}', function(reason) {
-				reason = prompt(wgULS('输入删除理由，或点击确定以接受自动生成的：', '輸入刪除理由，或點選確定以接受自動生成的：'), reason);
+				reason = prompt(conv({ hans: '输入删除理由，或点击确定以接受自动生成的：', hant: '輸入刪除理由，或點選確定以接受自動生成的：' }), reason);
 				if (reason === null) {
-					page.getStatusElement().warn(wgULS('没有执行删除', '沒有執行刪除'));
+					page.getStatusElement().warn(conv({ hans: '没有执行删除', hant: '沒有執行刪除' }));
 					Twinkle.close.callbacks.talkend(params);
 				} else {
 					page.setEditSummary(reason);
@@ -538,7 +540,7 @@ Twinkle.close.callbacks = {
 				}
 			});
 		} else {
-			page.setEditSummary(wgULS('存废讨论通过：[[', '存廢討論通過：[[') + mw.config.get('wgPageName') + '#' + params.title + ']]');
+			page.setEditSummary(conv({ hans: '存废讨论通过：[[', hant: '存廢討論通過：[[' }) + mw.config.get('wgPageName') + '#' + params.title + ']]');
 			page.setChangeTags(Twinkle.changeTags);
 			page.deletePage(function() {
 				page.getStatusElement().info('完成');
@@ -552,7 +554,7 @@ Twinkle.close.callbacks = {
 				prop: 'redirects',
 				rdlimit: 'max' // 500 is max for normal users, 5000 for bots and sysops
 			};
-			wikipedia_api = new Morebits.wiki.api(wgULS('正在获取重定向', '正在取得重新導向'), query, Twinkle.close.callbacks.deleteRedirectsMain);
+			wikipedia_api = new Morebits.wiki.api(conv({ hans: '正在获取重定向', hant: '正在取得重新導向' }), query, Twinkle.close.callbacks.deleteRedirectsMain);
 			wikipedia_api.params = params;
 			wikipedia_api.post();
 		}
@@ -564,7 +566,7 @@ Twinkle.close.callbacks = {
 					action: 'query',
 					titles: pageTitle.toText()
 				};
-				wikipedia_api = new Morebits.wiki.api(wgULS('正在检查讨论页面是否存在', '正在檢查討論頁面是否存在'), query, Twinkle.close.callbacks.deleteTalk);
+				wikipedia_api = new Morebits.wiki.api(conv({ hans: '正在检查讨论页面是否存在', hant: '正在檢查討論頁面是否存在' }), query, Twinkle.close.callbacks.deleteTalk);
 				wikipedia_api.params = params;
 				wikipedia_api.params.talkPage = pageTitle.toText();
 				wikipedia_api.post();
@@ -582,12 +584,12 @@ Twinkle.close.callbacks = {
 			return;
 		}
 
-		var redirectDeleter = new Morebits.batchOperation(wgULS('正在删除到 ', '正在刪除到 ') + apiobj.params.title + wgULS(' 的重定向', ' 的重新導向'));
+		var redirectDeleter = new Morebits.batchOperation(conv({ hans: '正在删除到 ', hant: '正在刪除到 ' }) + apiobj.params.title + conv({ hans: ' 的重定向', hant: ' 的重新導向' }));
 		redirectDeleter.setOption('chunkSize', Twinkle.getPref('batchdeleteChunks'));
 		redirectDeleter.setPageList(pages);
 		redirectDeleter.run(function(pageName) {
-			var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('正在删除 ', '正在刪除 ') + pageName);
-			wikipedia_page.setEditSummary('[[WP:CSD#G15|G15]]: ' + wgULS('指向已删页面“', '指向已刪頁面「') + apiobj.params.title + wgULS('”的重定向', '」的重新導向'));
+			var wikipedia_page = new Morebits.wiki.page(pageName, conv({ hans: '正在删除 ', hant: '正在刪除 ' }) + pageName);
+			wikipedia_page.setEditSummary('[[WP:CSD#G15|G15]]: ' + conv({ hans: '指向已删页面“', hant: '指向已刪頁面「' }) + apiobj.params.title + conv({ hans: '”的重定向', hant: '」的重新導向' }));
 			wikipedia_page.setChangeTags(Twinkle.changeTags);
 			wikipedia_page.deletePage(redirectDeleter.workerSuccess, redirectDeleter.workerFailure);
 		});
@@ -601,8 +603,8 @@ Twinkle.close.callbacks = {
 			return;
 		}
 
-		var page = new Morebits.wiki.page(apiobj.params.talkPage, wgULS('正在删除页面 ', '正在刪除頁面 ') + apiobj.params.title + wgULS(' 的讨论页', ' 的討論頁'));
-		page.setEditSummary('[[WP:CSD#G15|G15]]: ' + wgULS('已删页面“', '已刪頁面「') + apiobj.params.title + wgULS('”的[[Wikipedia:讨论页|讨论页]]', '」的[[Wikipedia:討論頁|討論頁]]'));
+		var page = new Morebits.wiki.page(apiobj.params.talkPage, conv({ hans: '正在删除页面 ', hant: '正在刪除頁面 ' }) + apiobj.params.title + conv({ hans: ' 的讨论页', hant: ' 的討論頁' }));
+		page.setEditSummary('[[WP:CSD#G15|G15]]: ' + conv({ hans: '已删页面“', hant: '已刪頁面「' }) + apiobj.params.title + conv({ hans: '”的[[Wikipedia:讨论页|讨论页]]', hant: '」的[[Wikipedia:討論頁|討論頁]]' }));
 		page.setChangeTags(Twinkle.changeTags);
 		page.deletePage();
 	},
@@ -610,7 +612,7 @@ Twinkle.close.callbacks = {
 		var statelem = pageobj.getStatusElement();
 
 		if (!pageobj.exists()) {
-			statelem.error(wgULS('页面不存在，可能已被删除', '頁面不存在，可能已被刪除'));
+			statelem.error(conv({ hans: '页面不存在，可能已被删除', hant: '頁面不存在，可能已被刪除' }));
 			return;
 		}
 
@@ -620,7 +622,7 @@ Twinkle.close.callbacks = {
 		var pagetitle = mw.Title.newFromText(params.title);
 		if (pagetitle.getNamespaceId() % 2 === 0) {
 			var talkpagetitle = new mw.Title(pagetitle.getMainText(), pagetitle.getNamespaceId() + 1);
-			var talkpage = new Morebits.wiki.page(talkpagetitle.toString(), wgULS('标记讨论页', '標記討論頁'));
+			var talkpage = new Morebits.wiki.page(talkpagetitle.toString(), conv({ hans: '标记讨论页', hant: '標記討論頁' }));
 			var reason = params.messageData.value || params.messageData.label;
 			var vfdkept = '{{Old vfd multi|' + mw.config.get('wgPageName').split('/').slice(2).join('/') + '|' + reason + '}}\n';
 			talkpage.setPrependText(vfdkept);
@@ -644,11 +646,11 @@ Twinkle.close.callbacks = {
 			newtext = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
 		}
 		if (newtext === text) {
-			statelem.warn(wgULS('未找到存废讨论模板，可能已被移除', '未找到存廢討論模板，可能已被移除'));
+			statelem.warn(conv({ hans: '未找到存废讨论模板，可能已被移除', hant: '未找到存廢討論模板，可能已被移除' }));
 			Twinkle.close.callbacks.talkend(params);
 			return;
 		}
-		var editsummary = wgULS('存废讨论关闭：[[', '存廢討論關閉：[[') + mw.config.get('wgPageName') + '#' + params.title + ']]';
+		var editsummary = conv({ hans: '存废讨论关闭：[[', hant: '存廢討論關閉：[[' }) + mw.config.get('wgPageName') + '#' + params.title + ']]';
 
 		pageobj.setPageText(newtext);
 		pageobj.setEditSummary(editsummary);
@@ -662,7 +664,7 @@ Twinkle.close.callbacks = {
 	},
 
 	talkend: function (params) {
-		var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('关闭讨论', '關閉討論'));
+		var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), conv({ hans: '关闭讨论', hant: '關閉討論' }));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.setPageSection(params.section);
 		wikipedia_page.load(Twinkle.close.callbacks.saveTalk);
@@ -673,7 +675,7 @@ Twinkle.close.callbacks = {
 		var params = pageobj.getCallbackParameters();
 
 		if (text.indexOf('{{delh') !== -1) {
-			statelem.error(wgULS('讨论已被关闭', '討論已被關閉'));
+			statelem.error(conv({ hans: '讨论已被关闭', hant: '討論已被關閉' }));
 			return;
 		}
 
@@ -702,7 +704,7 @@ Twinkle.close.callbacks = {
 			};
 			var logpage = new Morebits.wiki.page(logtitle, '重新提交');
 			if (params.parentSection > 0) {
-				Morebits.status.info(wgULS('信息', '資訊'), wgULS('正在获取批量提删理据…', '正在取得批量提刪理據…'));
+				Morebits.status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '正在获取批量提删理据…', hant: '正在取得批量提刪理據…' }));
 				var api = new mw.Api();
 				api.get({
 					action: 'query',
@@ -726,7 +728,7 @@ Twinkle.close.callbacks = {
 			var article_params = {
 				date: dateStr
 			};
-			var articlepage = new Morebits.wiki.page(params.title, wgULS('重新标记', '重新標記'));
+			var articlepage = new Morebits.wiki.page(params.title, conv({ hans: '重新标记', hant: '重新標記' }));
 			articlepage.setCallbackParameters(article_params);
 			articlepage.load(Twinkle.close.callbacks.retaggingArticle);
 		} else {
@@ -774,7 +776,7 @@ Twinkle.close.callbacks = {
 			if (m) {
 				appendText += m[1] + '\n: ' + m[2] + '\n';
 			} else {
-				Morebits.status.warn(wgULS('信息', '資訊'), wgULS('无法解析批量提删理据', '無法解析批量提刪理據'));
+				Morebits.status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '无法解析批量提删理据', hant: '無法解析批量提刪理據' }));
 			}
 		}
 		appendText += lines.slice(1).join('\n') + '\n{{subst:Relist';
@@ -795,7 +797,7 @@ Twinkle.close.callbacks = {
 		var statelem = pageobj.getStatusElement();
 		// defaults to /doc for lua modules, which may not exist
 		if (!pageobj.exists()) {
-			statelem.error(wgULS('页面不存在，可能已被删除', '頁面不存在，可能已被刪除'));
+			statelem.error(conv({ hans: '页面不存在，可能已被删除', hant: '頁面不存在，可能已被刪除' }));
 			return;
 		}
 
@@ -805,7 +807,7 @@ Twinkle.close.callbacks = {
 		if (/{{[rsaiftcmv]fd\s*(\|.*)?\|\s*date\s*=[^|}]*.*}}/.test(text)) {
 			text = text.replace(/({{[rsaiftcmv]fd\s*(?:\|.*)?\|\s*date\s*=)[^|}]*(.*}})/, '$1' + params.date + '$2');
 		} else {
-			Morebits.status.warn(wgULS('重新标记', '重新標記'), wgULS('找不到提删模板，重新插入', '找不到提刪模板，重新插入'));
+			Morebits.status.warn(conv({ hans: '重新标记', hant: '重新標記' }), conv({ hans: '找不到提删模板，重新插入', hant: '找不到提刪模板，重新插入' }));
 			// Insert tag after short description or any hatnotes
 			var wikipage = new Morebits.wikitext.page(text);
 			var tag = '{{vfd|date=' + params.date + '}}\n';

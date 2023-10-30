@@ -14,13 +14,15 @@
  * Note:                   customised friendlytag module (for SEWP)
  */
 
+var conv = require('ext.gadget.HanAssist').conv;
+
 Twinkle.stub = function friendlytag() {
 	if (Morebits.isPageRedirect()) {
 		// Skip
 	// article/draft article tagging
 	} else if (((mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 118) && mw.config.get('wgCurRevisionId')) || (Morebits.pageNameNorm === Twinkle.getPref('sandboxPage'))) {
-		Twinkle.stub.mode = wgULS('条目', '條目');
-		Twinkle.addPortletLink(Twinkle.stub.callback, '小作品', 'friendly-tag', wgULS('标记小作品', '標記小作品'));
+		Twinkle.stub.mode = conv({ hans: '条目', hant: '條目' });
+		Twinkle.addPortletLink(Twinkle.stub.callback, '小作品', 'friendly-tag', conv({ hans: '标记小作品', hant: '標記小作品' }));
 	}
 };
 
@@ -28,8 +30,8 @@ Twinkle.stub.callback = function friendlytagCallback() {
 	var Window = new Morebits.simpleWindow(630, Twinkle.stub.mode === 'article' ? 450 : 400);
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink('小作品說明', 'Wikipedia:小作品');
-	Window.addFooterLink(wgULS('小作品设置', '小作品設定'), 'WP:TW/PREF#stub');
-	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#stub');
+	Window.addFooterLink(conv({ hans: '小作品设置', hant: '小作品設定' }), 'WP:TW/PREF#stub');
+	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#stub');
 
 	var form = new Morebits.quickForm(Twinkle.stub.callback.evaluate);
 
@@ -38,7 +40,7 @@ Twinkle.stub.callback = function friendlytagCallback() {
 			type: 'checkbox',
 			list: [
 				{
-					label: wgULS('标记页面为已巡查', '標記頁面為已巡查'),
+					label: conv({ hans: '标记页面为已巡查', hant: '標記頁面為已巡查' }),
 					value: 'patrolPage',
 					name: 'patrolPage',
 					checked: Twinkle.getPref('markStubbedPagesAsPatrolled')
@@ -50,16 +52,16 @@ Twinkle.stub.callback = function friendlytagCallback() {
 	switch (Twinkle.stub.mode) {
 		case '條目':
 		case '条目':
-			Window.setTitle(wgULS('条目小作品标记', '條目小作品標記'));
+			Window.setTitle(conv({ hans: '条目小作品标记', hant: '條目小作品標記' }));
 
 			form.append({
 				type: 'select',
 				name: 'sortorder',
-				label: wgULS('查看列表：', '檢視列表：'),
-				tooltip: wgULS('您可以在Twinkle参数设置（WP:TWPREFS）中更改此项。', '您可以在Twinkle偏好設定（WP:TWPREFS）中更改此項。'),
+				label: conv({ hans: '查看列表：', hant: '檢視列表：' }),
+				tooltip: conv({ hans: '您可以在Twinkle参数设置（WP:TWPREFS）中更改此项。', hant: '您可以在Twinkle偏好設定（WP:TWPREFS）中更改此項。' }),
 				event: Twinkle.stub.updateSortOrder,
 				list: [
-					{ type: 'option', value: 'cat', label: wgULS('按类型', '按類別'), selected: Twinkle.getPref('stubArticleSortOrder') === 'cat' },
+					{ type: 'option', value: 'cat', label: conv({ hans: '按类型', hant: '按類別' }), selected: Twinkle.getPref('stubArticleSortOrder') === 'cat' },
 					{ type: 'option', value: 'alpha', label: '按字母', selected: Twinkle.getPref('stubArticleSortOrder') === 'alpha' }
 				]
 			});
@@ -110,7 +112,7 @@ Twinkle.stub.updateSortOrder = function(e) {
 
 	// append any custom tags
 	if (Twinkle.getPref('customStubList').length) {
-		container.append({ type: 'header', label: wgULS('自定义模板', '自訂模板') });
+		container.append({ type: 'header', label: conv({ hans: '自定义模板', hant: '自訂模板' }) });
 		var customcheckboxes = [];
 		$.each(Twinkle.getPref('customStubList'), function(_, item) {
 			customcheckboxes.push(makeCheckbox(item.value, item.label));
@@ -194,87 +196,53 @@ Twinkle.stub.article = {};
 // A list of all article tags, in alphabetical order
 // To ensure tags appear in the default "categorized" view, add them to the tagCategories hash below.
 
-Twinkle.stub.article.tags = wgULS({
-	'actor-stub': '演员',
-	'asia-stub': '亚洲',
-	'bio-stub': '人物',
-	'biology-stub': '生物学',
-	'chem-stub': '化学',
-	'europe-stub': '欧洲',
-	'expand list': '未完成列表',
-	'food-stub': '食物',
-	'france-geo-stub': '法国地理',
-	'geo-stub': '地理位置',
-	'hist-stub': '历史或历史学',
-	'JP-stub': '日本',
-	'lit-stub': '文学',
-	'math-stub': '数学',
-	'med-stub': '医学',
-	'mil-stub': '军事',
-	'movie-stub': '电影',
-	'music-stub': '音乐',
-	'physics-stub': '物理学',
-	'politic-stub': '政治',
-	'religion-stub': '宗教',
-	'science-stub': '科学',
-	'sport-stub': '体育',
-	'stub': '通用小作品',
-	'switzerland-stub': '瑞士',
-	'tech-stub': '科技',
-	'transp-stub': '交通',
-	'TV-stub': '电视',
-	'UK-stub': '英国',
-	'US-bio-stub': '美国人物',
-	'US-geo-stub': '美国地理',
-	'US-stub': '美国',
-	'weather-stub': '天气和特别的天气事件'
-}, {
-	'actor-stub': '演員',
-	'asia-stub': '亞洲',
-	'bio-stub': '人物',
-	'biology-stub': '生物學',
-	'chem-stub': '化學',
-	'europe-stub': '歐洲',
-	'expand list': '未完成列表',
-	'food-stub': '食物',
-	'france-geo-stub': '法國地理',
-	'geo-stub': '地理位置',
-	'hist-stub': '歷史或歷史學',
-	'JP-stub': '日本',
-	'lit-stub': '文學',
-	'math-stub': '數學',
-	'med-stub': '醫學',
-	'mil-stub': '軍事',
-	'movie-stub': '電影',
-	'music-stub': '音樂',
-	'physics-stub': '物理學',
-	'politic-stub': '政治',
-	'religion-stub': '宗教',
-	'science-stub': '科學',
-	'sport-stub': '體育',
-	'stub': '通用小作品',
-	'switzerland-stub': '瑞士',
-	'tech-stub': '科技',
-	'transp-stub': '交通',
-	'TV-stub': '電視',
-	'UK-stub': '英國',
-	'US-bio-stub': '美國人物',
-	'US-geo-stub': '美國地理',
-	'US-stub': '美國',
-	'weather-stub': '天氣和特別的天氣事件'
-});
+Twinkle.stub.article.tags = {
+	'actor-stub': conv({ hans: '演员', hant: '演員' }),
+	'asia-stub': conv({ hans: '亚洲', hant: '亞洲' }),
+	'bio-stub': conv({ hans: '人物', hant: '人物' }),
+	'biology-stub': conv({ hans: '生物学', hant: '生物學' }),
+	'chem-stub': conv({ hans: '化学', hant: '化學' }),
+	'europe-stub': conv({ hans: '欧洲', hant: '歐洲' }),
+	'expand list': conv({ hans: '未完成列表', hant: '未完成列表' }),
+	'food-stub': conv({ hans: '食物', hant: '食物' }),
+	'france-geo-stub': conv({ hans: '法国地理', hant: '法國地理' }),
+	'geo-stub': conv({ hans: '地理位置', hant: '地理位置' }),
+	'hist-stub': conv({ hans: '历史或历史学', hant: '歷史或歷史學' }),
+	'JP-stub': conv({ hans: '日本', hant: '日本' }),
+	'lit-stub': conv({ hans: '文学', hant: '文學' }),
+	'math-stub': conv({ hans: '数学', hant: '數學' }),
+	'med-stub': conv({ hans: '医学', hant: '醫學' }),
+	'mil-stub': conv({ hans: '军事', hant: '軍事' }),
+	'movie-stub': conv({ hans: '电影', hant: '電影' }),
+	'music-stub': conv({ hans: '音乐', hant: '音樂' }),
+	'physics-stub': conv({ hans: '物理学', hant: '物理學' }),
+	'politic-stub': conv({ hans: '政治', hant: '政治' }),
+	'religion-stub': conv({ hans: '宗教', hant: '宗教' }),
+	'science-stub': conv({ hans: '科学', hant: '科學' }),
+	'sport-stub': conv({ hans: '体育', hant: '體育' }),
+	'stub': conv({ hans: '通用小作品', hant: '通用小作品' }),
+	'switzerland-stub': conv({ hans: '瑞士', hant: '瑞士' }),
+	'tech-stub': conv({ hans: '科技', hant: '科技' }),
+	'transp-stub': conv({ hans: '交通', hant: '交通' }),
+	'TV-stub': conv({ hans: '电视', hant: '電視' }),
+	'UK-stub': conv({ hans: '英国', hant: '英國' }),
+	'US-bio-stub': conv({ hans: '美国人物', hant: '美國人物' }),
+	'US-geo-stub': conv({ hans: '美国地理', hant: '美國地理' }),
+	'US-stub': conv({ hans: '美国', hant: '美國' }),
+	'weather-stub': conv({ hans: '天气和特别的天气事件', hant: '天氣和特別的天氣事件' })
+};
 
 // A list of tags in order of category
 // Tags should be in alphabetical order within the categories
 // Add new categories with discretion - the list is long enough as is!
 
-/* eslint-disable quote-props */
-Twinkle.stub.article.tagCategories = wgULS({
-	'通用模板': [
+
+Twinkle.stub.article.tagCategories = {
+	[conv({ hans: '通用模板', hant: '通用模板' })]: [
 		'stub',
 		'expand list'
 	],
-	'国家和地理': [
+	[conv({ hans: '国家和地理', hant: '國家和地理' })]: [
 		'asia-stub',
 		'europe-stub',
 		'france-geo-stub',
@@ -286,7 +254,7 @@ Twinkle.stub.article.tagCategories = wgULS({
 		'US-geo-stub',
 		'US-stub'
 	],
-	'杂项': [
+	[conv({ hans: '杂项', hant: '雜項' })]: [
 		'food-stub',
 		'hist-stub',
 		'mil-stub',
@@ -294,12 +262,12 @@ Twinkle.stub.article.tagCategories = wgULS({
 		'religion-stub',
 		'transp-stub'
 	],
-	'人物': [
+	[conv({ hans: '人物', hant: '人物' })]: [
 		'actor-stub',
 		'bio-stub',
 		'US-bio-stub'
 	],
-	'科学': [
+	[conv({ hans: '科学', hant: '科學' })]: [
 		'biology-stub',
 		'chem-stub',
 		'math-stub',
@@ -308,72 +276,20 @@ Twinkle.stub.article.tagCategories = wgULS({
 		'science-stub',
 		'weather-stub'
 	],
-	'体育': [
+	[conv({ hans: '体育', hant: '體育' })]: [
 		'sport-stub'
 	],
-	'技术': [
+	[conv({ hans: '技术', hant: '技術' })]: [
 		'tech-stub'
 	],
-	'艺术': [
+	[conv({ hans: '艺术', hant: '藝術' })]: [
 		'actor-stub',
 		'lit-stub',
 		'movie-stub',
 		'music-stub',
 		'TV-stub'
 	]
-}, {
-	'通用模板': [
-		'stub',
-		'expand list'
-	],
-	'國家和地理': [
-		'asia-stub',
-		'europe-stub',
-		'france-geo-stub',
-		'geo-stub',
-		'JP-stub',
-		'switzerland-stub',
-		'UK-stub',
-		'US-bio-stub',
-		'US-geo-stub',
-		'US-stub'
-	],
-	'雜項': [
-		'food-stub',
-		'hist-stub',
-		'mil-stub',
-		'politic-stub',
-		'religion-stub',
-		'transp-stub'
-	],
-	'人物': [
-		'actor-stub',
-		'bio-stub',
-		'US-bio-stub'
-	],
-	'科學': [
-		'biology-stub',
-		'chem-stub',
-		'math-stub',
-		'med-stub',
-		'physics-stub',
-		'science-stub',
-		'weather-stub'
-	],
-	'體育': [
-		'sport-stub'
-	],
-	'技術': [
-		'tech-stub'
-	],
-	'藝術': [
-		'actor-stub',
-		'lit-stub',
-		'movie-stub',
-		'music-stub',
-		'TV-stub'
-	]
-});
+};
 /* eslint-enable quote-props */
 
 // Tags for REDIRECTS start here
@@ -412,9 +328,12 @@ Twinkle.stub.callbacks = {
 			if (!tagRe.exec(pageText)) {
 				tags = tags.concat(params.tags[i]);
 			} else {
-				Morebits.status.info(wgULS('信息', '資訊'), wgULS('在页面上找到{{' + params.tags[i] +
-					'}}…跳过', '在頁面上找到{{' + params.tags[i] +
-					'}}…跳過'));
+				Morebits.status.info(
+					conv({ hans: '信息', hant: '資訊' }),
+					conv({
+						hans: '在页面上找到{{' + params.tags[i] + '}}…跳过',
+						hant: '在頁面上找到{{' + params.tags[i] + '}}…跳過'
+					}));
 			}
 		}
 
@@ -424,7 +343,7 @@ Twinkle.stub.callbacks = {
 		totalTags = tags.length;
 		$.each(tags, addTag);
 
-		summaryText += wgULS('标记到', '標記到') + Twinkle.stub.mode;
+		summaryText += conv({ hans: '标记到', hant: '標記到' }) + Twinkle.stub.mode;
 
 		pageobj.setPageText(pageText);
 		pageobj.setEditSummary(summaryText);
@@ -459,7 +378,7 @@ Twinkle.stub.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	}
 
 	if (!params.tags.length) {
-		alert(wgULS('必须选择至少一个标记！', '必須選擇至少一個標記！'));
+		alert(conv({ hans: '必须选择至少一个标记！', hant: '必須選擇至少一個標記！' }));
 		return;
 	}
 
@@ -467,12 +386,12 @@ Twinkle.stub.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	Morebits.status.init(form);
 
 	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
-	Morebits.wiki.actionCompleted.notice = wgULS('标记完成，将在几秒内刷新页面', '標記完成，將在幾秒內重新整理頁面');
+	Morebits.wiki.actionCompleted.notice = conv({ hans: '标记完成，将在几秒内刷新页面', hant: '標記完成，將在幾秒內重新整理頁面' });
 	if (Twinkle.stub.mode === '重定向') {
 		Morebits.wiki.actionCompleted.followRedirect = false;
 	}
 
-	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('正在标记', '正在標記') + Twinkle.stub.mode);
+	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), conv({ hans: '正在标记', hant: '正在標記' }) + Twinkle.stub.mode);
 	wikipedia_page.setCallbackParameters(params);
 	switch (Twinkle.stub.mode) {
 		case '條目':

@@ -12,27 +12,29 @@
  *                         which is local (not on Commons); all redirects
  */
 
+var conv = require('ext.gadget.HanAssist').conv;
+
 Twinkle.tag = function friendlytag() {
 	// redirect tagging
 	if (Morebits.isPageRedirect()) {
-		Twinkle.tag.mode = wgULS('重定向', '重新導向');
+		Twinkle.tag.mode = conv({ hans: '重定向', hant: '重新導向' });
 		Twinkle.tag.modeEn = 'redirect';
-		Twinkle.addPortletLink(Twinkle.tag.callback, wgULS('标记', '標記'), 'friendly-tag', wgULS('标记重定向', '標記重新導向'));
+		Twinkle.addPortletLink(Twinkle.tag.callback, conv({ hans: '标记', hant: '標記' }), 'friendly-tag', conv({ hans: '标记重定向', hant: '標記重新導向' }));
 	// file tagging
 	} else if (mw.config.get('wgNamespaceNumber') === 6 && !document.getElementById('mw-sharedupload') && document.getElementById('mw-imagepage-section-filehistory')) {
-		Twinkle.tag.mode = wgULS('文件', '檔案');
+		Twinkle.tag.mode = conv({ hans: '文件', hant: '檔案' });
 		Twinkle.tag.modeEn = 'file';
-		Twinkle.addPortletLink(Twinkle.tag.callback, wgULS('标记', '標記'), 'friendly-tag', wgULS('标记文件', '標記檔案'));
+		Twinkle.addPortletLink(Twinkle.tag.callback, conv({ hans: '标记', hant: '標記' }), 'friendly-tag', conv({ hans: '标记文件', hant: '標記檔案' }));
 	// article/draft tagging
 	} else if (([0, 118].indexOf(mw.config.get('wgNamespaceNumber')) !== -1 && mw.config.get('wgCurRevisionId')) || (Morebits.pageNameNorm === Twinkle.getPref('sandboxPage'))) {
-		Twinkle.tag.mode = wgULS('条目', '條目');
+		Twinkle.tag.mode = conv({ hans: '条目', hant: '條目' });
 		Twinkle.tag.modeEn = 'article';
 		// Can't remove tags when not viewing current version
 		Twinkle.tag.canRemove = (mw.config.get('wgCurRevisionId') === mw.config.get('wgRevisionId')) &&
 			// Disabled on latest diff because the diff slider could be used to slide
 			// away from the latest diff without causing the script to reload
 			!mw.config.get('wgDiffNewId');
-		Twinkle.addPortletLink(Twinkle.tag.callback, wgULS('标记', '標記'), 'friendly-tag', wgULS('标记条目', '標記條目'));
+		Twinkle.addPortletLink(Twinkle.tag.callback, conv({ hans: '标记', hant: '標記' }), 'friendly-tag', conv({ hans: '标记条目', hant: '標記條目' }));
 	}
 };
 
@@ -41,14 +43,14 @@ Twinkle.tag.checkedTags = [];
 Twinkle.tag.callback = function friendlytagCallback() {
 	var Window = new Morebits.simpleWindow(630, Twinkle.tag.modeEn === 'article' ? 500 : 400);
 	Window.setScriptName('Twinkle');
-	Window.addFooterLink(wgULS('标记设置', '標記設定'), 'WP:TW/PREF#tag');
-	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#tag');
+	Window.addFooterLink(conv({ hans: '标记设置', hant: '標記設定' }), 'WP:TW/PREF#tag');
+	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#tag');
 
 	var form = new Morebits.quickForm(Twinkle.tag.callback.evaluate);
 
 	form.append({
 		type: 'input',
-		label: wgULS('筛选标记列表：', '篩選標記列表：'),
+		label: conv({ hans: '筛选标记列表：', hant: '篩選標記列表：' }),
 		name: 'quickfilter',
 		size: '30',
 		event: function twinkletagquickfilter() {
@@ -89,7 +91,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 
 	switch (Twinkle.tag.modeEn) {
 		case 'article':
-			Window.setTitle(wgULS('条目维护标记', '條目維護標記'));
+			Window.setTitle(conv({ hans: '条目维护标记', hant: '條目維護標記' }));
 
 
 			// Build sorting and lookup object flatObject, which is always
@@ -112,11 +114,11 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			form.append({
 				type: 'select',
 				name: 'sortorder',
-				label: wgULS('查看列表：', '檢視列表：'),
-				tooltip: wgULS('您可以在Twinkle参数设置（WP:TWPREFS）中更改此项。', '您可以在Twinkle偏好設定（WP:TWPREFS）中更改此項。'),
+				label: conv({ hans: '查看列表：', hant: '檢視列表：' }),
+				tooltip: conv({ hans: '您可以在Twinkle参数设置（WP:TWPREFS）中更改此项。', hant: '您可以在Twinkle偏好設定（WP:TWPREFS）中更改此項。' }),
 				event: Twinkle.tag.updateSortOrder,
 				list: [
-					{ type: 'option', value: 'cat', label: wgULS('按类型', '按類別'), selected: Twinkle.getPref('tagArticleSortOrder') === 'cat' },
+					{ type: 'option', value: 'cat', label: conv({ hans: '按类型', hant: '按類別' }), selected: Twinkle.getPref('tagArticleSortOrder') === 'cat' },
 					{ type: 'option', value: 'alpha', label: '按字母', selected: Twinkle.getPref('tagArticleSortOrder') === 'alpha' }
 				]
 			});
@@ -124,7 +126,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 
 			if (!Twinkle.tag.canRemove) {
 				var divElement = document.createElement('div');
-				divElement.innerHTML = wgULS('要移除现有维护标记，请从当前条目版本中打开“标记”菜单', '要移除現有維護標記，請從目前條目版本中打開「標記」選單');
+				divElement.innerHTML = conv({ hans: '要移除现有维护标记，请从当前条目版本中打开“标记”菜单', hant: '要移除現有維護標記，請從目前條目版本中打開「標記」選單' });
 				form.append({
 					type: 'div',
 					name: 'untagnotice',
@@ -143,11 +145,13 @@ Twinkle.tag.callback = function friendlytagCallback() {
 				type: 'checkbox',
 				list: [
 					{
-						label: wgULS('如可能，合并入{{multiple issues}}', '如可能，合併入{{multiple issues}}'),
+						label: conv({ hans: '如可能，合并入{{multiple issues}}', hant: '如可能，合併入{{multiple issues}}' }),
 						value: 'group',
 						name: 'group',
-						tooltip: wgULS('如果加入{{multiple issues}}支持的三个以上的模板，所有支持的模板都会被合并入{{multiple issues}}模板中。',
-							'如果加入{{multiple issues}}支援的三個以上的模板，所有支援的模板都會被合併入{{multiple issues}}模板中。'),
+						tooltip: conv({
+							hans: '如果加入{{multiple issues}}支持的三个以上的模板，所有支持的模板都会被合并入{{multiple issues}}模板中。',
+							hant: '如果加入{{multiple issues}}支援的三個以上的模板，所有支援的模板都會被合併入{{multiple issues}}模板中。'
+						}),
 						checked: Twinkle.getPref('groupByDefault')
 					}
 				]
@@ -157,23 +161,25 @@ Twinkle.tag.callback = function friendlytagCallback() {
 				type: 'input',
 				label: '理由：',
 				name: 'reason',
-				tooltip: wgULS('附加于编辑摘要的可选理由，例如指出条目内容的哪些部分有问题或移除模板的理由，但如果理由很长则应该发表在讨论页。',
-					'附加於編輯摘要的可選理由，例如指出條目內容的哪些部分有問題或移除模板的理由，但如果理由很長則應該發表在討論頁。'),
+				tooltip: conv({
+					hans: '附加于编辑摘要的可选理由，例如指出条目内容的哪些部分有问题或移除模板的理由，但如果理由很长则应该发表在讨论页。',
+					hant: '附加於編輯摘要的可選理由，例如指出條目內容的哪些部分有問題或移除模板的理由，但如果理由很長則應該發表在討論頁。'
+				}),
 				size: '80'
 			});
 
 			break;
 
 		case 'file':
-			Window.setTitle(wgULS('文件维护标记', '檔案維護標記'));
+			Window.setTitle(conv({ hans: '文件维护标记', hant: '檔案維護標記' }));
 
 			Twinkle.tag.fileList.forEach(function(group) {
 				if (group.buildFilename) {
 					group.value.forEach(function(el) {
 						el.subgroup = {
 							type: 'input',
-							label: wgULS('替换的文件：', '替換的檔案：'),
-							tooltip: wgULS('输入替换此文件的文件名称（必填）', '輸入替換此檔案的檔案名稱（必填）'),
+							label: conv({ hans: '替换的文件：', hant: '替換的檔案：' }),
+							tooltip: conv({ hans: '输入替换此文件的文件名称（必填）', hant: '輸入替換此檔案的檔案名稱（必填）' }),
 							name: el.value.replace(/ /g, '_') + 'File'
 						};
 					});
@@ -184,13 +190,13 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			});
 
 			if (Twinkle.getPref('customFileTagList').length) {
-				form.append({ type: 'header', label: wgULS('自定义模板', '自訂模板') });
+				form.append({ type: 'header', label: conv({ hans: '自定义模板', hant: '自訂模板' }) });
 				form.append({ type: 'checkbox', name: 'tags', list: Twinkle.getPref('customFileTagList') });
 			}
 			break;
 
 		case 'redirect':
-			Window.setTitle(wgULS('重定向标记', '重新導向標記'));
+			Window.setTitle(conv({ hans: '重定向标记', hant: '重新導向標記' }));
 
 			var i = 1;
 			Twinkle.tag.redirectList.forEach(function(group) {
@@ -205,7 +211,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			});
 
 			if (Twinkle.getPref('customRedirectTagList').length) {
-				form.append({ type: 'header', label: wgULS('自定义模板', '自訂模板') });
+				form.append({ type: 'header', label: conv({ hans: '自定义模板', hant: '自訂模板' }) });
 				form.append({ type: 'checkbox', name: 'tags', list: Twinkle.getPref('customRedirectTagList') });
 			}
 			break;
@@ -220,7 +226,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 			type: 'checkbox',
 			list: [
 				{
-					label: wgULS('标记页面为已巡查', '標記頁面為已巡查'),
+					label: conv({ hans: '标记页面为已巡查', hant: '標記頁面為已巡查' }),
 					value: 'patrol',
 					name: 'patrol',
 					checked: Twinkle.getPref('markTaggedPagesAsPatrolled')
@@ -340,42 +346,42 @@ Twinkle.tag.updateSortOrder = function(e) {
 					{
 						name: 'expandLanguage',
 						type: 'input',
-						label: wgULS('外语版本语言代码（必填）：', '外語版本語言代碼（必填）：')
+						label: conv({ hans: '外语版本语言代码（必填）：', hant: '外語版本語言代碼（必填）：' })
 					},
 					{
 						type: 'checkbox',
 						list: [
 							{
 								name: 'highQualityArticle',
-								label: wgULS('高品质条目', '高品質條目')
+								label: conv({ hans: '高品质条目', hant: '高品質條目' })
 							}
 						]
 					},
 					{
 						name: 'expandLanguage2',
 						type: 'input',
-						label: wgULS('外语版本语言代码：', '外語版本語言代碼：')
+						label: conv({ hans: '外语版本语言代码：', hant: '外語版本語言代碼：' })
 					},
 					{
 						type: 'checkbox',
 						list: [
 							{
 								name: 'highQualityArticle2',
-								label: wgULS('高品质条目', '高品質條目')
+								label: conv({ hans: '高品质条目', hant: '高品質條目' })
 							}
 						]
 					},
 					{
 						name: 'expandLanguage3',
 						type: 'input',
-						label: wgULS('外语版本语言代码：', '外語版本語言代碼：')
+						label: conv({ hans: '外语版本语言代码：', hant: '外語版本語言代碼：' })
 					},
 					{
 						type: 'checkbox',
 						list: [
 							{
 								name: 'highQualityArticle3',
-								label: wgULS('高品质条目', '高品質條目')
+								label: conv({ hans: '高品质条目', hant: '高品質條目' })
 							}
 						]
 					}
@@ -386,20 +392,20 @@ Twinkle.tag.updateSortOrder = function(e) {
 					{
 						name: 'expert',
 						type: 'input',
-						label: wgULS('哪个领域的专家（必填）：', '哪個領域的專家（必填）：'),
-						tooltip: wgULS('必填，可参考 Category:需要专业人士关注的页面 使用现存的分类。', '必填，可參考 Category:需要專業人士關注的頁面 使用現存的分類。')
+						label: conv({ hans: '哪个领域的专家（必填）：', hant: '哪個領域的專家（必填）：' }),
+						tooltip: conv({ hans: '必填，可参考 Category:需要专业人士关注的页面 使用现存的分类。', hant: '必填，可參考 Category:需要專業人士關注的頁面 使用現存的分類。' })
 					},
 					{
 						name: 'expert2',
 						type: 'input',
-						label: wgULS('哪个领域的专家：', '哪個領域的專家：'),
-						tooltip: wgULS('可选，可参考 Category:需要专业人士关注的页面 使用现存的分类。', '可選，可參考 Category:需要專業人士關注的頁面 使用現存的分類。')
+						label: conv({ hans: '哪个领域的专家：', hant: '哪個領域的專家：' }),
+						tooltip: conv({ hans: '可选，可参考 Category:需要专业人士关注的页面 使用现存的分类。', hant: '可選，可參考 Category:需要專業人士關注的頁面 使用現存的分類。' })
 					},
 					{
 						name: 'expert3',
 						type: 'input',
-						label: wgULS('哪个领域的专家：', '哪個領域的專家：'),
-						tooltip: wgULS('可选，可参考 Category:需要专业人士关注的页面 使用现存的分类。', '可選，可參考 Category:需要專業人士關注的頁面 使用現存的分類。')
+						label: conv({ hans: '哪个领域的专家：', hant: '哪個領域的專家：' }),
+						tooltip: conv({ hans: '可选，可参考 Category:需要专业人士关注的页面 使用现存的分类。', hant: '可選，可參考 Category:需要專業人士關注的頁面 使用現存的分類。' })
 					}
 				];
 				break;
@@ -420,17 +426,17 @@ Twinkle.tag.updateSortOrder = function(e) {
 					{
 						name: 'mergeTarget',
 						type: 'input',
-						label: wgULS('其他条目：', '其他條目：'),
-						tooltip: wgULS('如指定多个条目，请用管道符分隔：条目甲|条目乙', '如指定多個條目，請用管道符分隔：條目甲|條目乙')
+						label: conv({ hans: '其他条目：', hant: '其他條目：' }),
+						tooltip: conv({ hans: '如指定多个条目，请用管道符分隔：条目甲|条目乙', hant: '如指定多個條目，請用管道符分隔：條目甲|條目乙' })
 					},
 					{
 						type: 'checkbox',
 						list: [
 							{
 								name: 'mergeTagOther',
-								label: '用{{' + otherTagName + wgULS('}}标记其他条目', '}}標記其他條目'),
+								label: '用{{' + otherTagName + conv({ hans: '}}标记其他条目', hant: '}}標記其他條目' }),
 								checked: true,
-								tooltip: wgULS('仅在只输入了一个条目名时可用', '僅在只輸入了一個條目名時可用')
+								tooltip: conv({ hans: '仅在只输入了一个条目名时可用', hant: '僅在只輸入了一個條目名時可用' })
 							}
 						]
 					}
@@ -439,11 +445,11 @@ Twinkle.tag.updateSortOrder = function(e) {
 					checkbox.subgroup.push({
 						name: 'mergeReason',
 						type: 'textarea',
-						label: wgULS('合并理由（会被贴上' +
-							(tag === 'Merge to' ? '其他' : '这') + '条目的讨论页）：',
-						'合併理由（會被貼上' +
-							(tag === 'Merge to' ? '其他' : '這') + '條目的討論頁）：'),
-						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。仅在只输入了一个条目名时可用。', '可選，但強烈推薦。如不需要請留空。僅在只輸入了一個條目名時可用。')
+						label: conv({
+							hans: '合并理由（会被贴上' + (tag === 'Merge to' ? '其他' : '这') + '条目的讨论页）：',
+							hant: '合併理由（會被貼上' + (tag === 'Merge to' ? '其他' : '這') + '條目的討論頁）：'
+						}),
+						tooltip: conv({ hans: '可选，但强烈推荐。如不需要请留空。仅在只输入了一个条目名时可用。', hant: '可選，但強烈推薦。如不需要請留空。僅在只輸入了一個條目名時可用。' })
 					});
 				}
 				break;
@@ -451,8 +457,8 @@ Twinkle.tag.updateSortOrder = function(e) {
 				checkbox.subgroup = {
 					name: 'missingInformation',
 					type: 'input',
-					label: wgULS('缺少的内容（必填）：', '缺少的內容（必填）：'),
-					tooltip: wgULS('必填，显示为“缺少有关……的信息。”', '必填，顯示為「缺少有關……的資訊。」')
+					label: conv({ hans: '缺少的内容（必填）：', hant: '缺少的內容（必填）：' }),
+					tooltip: conv({ hans: '必填，显示为“缺少有关……的信息。”', hant: '必填，顯示為「缺少有關……的資訊。」' })
 				};
 				break;
 			case 'Notability':
@@ -460,21 +466,21 @@ Twinkle.tag.updateSortOrder = function(e) {
 					name: 'notability',
 					type: 'select',
 					list: [
-						{ label: '{{Notability}}：' + wgULS('通用的关注度指引', '通用的關注度指引'), value: 'none' },
-						{ label: '{{Notability|Astro}}：' + wgULS('天体', '天體'), value: 'Astro' },
-						{ label: '{{Notability|Biographies}}：' + wgULS('人物传记', '人物傳記'), value: 'Biographies' },
-						{ label: '{{Notability|Book}}：' + wgULS('书籍', '書籍'), value: 'Book' },
-						{ label: '{{Notability|Cyclone}}：' + wgULS('气旋', '氣旋'), value: 'Cyclone' },
-						{ label: '{{Notability|Fiction}}：' + wgULS('虚构事物', '虛構事物'), value: 'Fiction' },
-						{ label: '{{Notability|Geographic}}：' + wgULS('地理特征', '地理特徵'), value: 'Geographic' },
-						{ label: '{{Notability|Geometry}}：' + wgULS('几何图形', '幾何圖形'), value: 'Geometry' },
-						{ label: '{{Notability|Invention}}：' + wgULS('发明、研究', '發明、研究'), value: 'Invention' },
-						{ label: '{{Notability|Music}}：' + wgULS('音乐', '音樂'), value: 'Music' },
-						{ label: '{{Notability|Numbers}}：' + wgULS('数字', '數字'), value: 'Numbers' },
-						{ label: '{{Notability|Organizations}}：' + wgULS('组织', '組織'), value: 'Organizations' },
-						{ label: '{{Notability|Property}}：' + wgULS('性质表', '性質表'), value: 'Property' },
+						{ label: '{{Notability}}：' + conv({ hans: '通用的关注度指引', hant: '通用的關注度指引' }), value: 'none' },
+						{ label: '{{Notability|Astro}}：' + conv({ hans: '天体', hant: '天體' }), value: 'Astro' },
+						{ label: '{{Notability|Biographies}}：' + conv({ hans: '人物传记', hant: '人物傳記' }), value: 'Biographies' },
+						{ label: '{{Notability|Book}}：' + conv({ hans: '书籍', hant: '書籍' }), value: 'Book' },
+						{ label: '{{Notability|Cyclone}}：' + conv({ hans: '气旋', hant: '氣旋' }), value: 'Cyclone' },
+						{ label: '{{Notability|Fiction}}：' + conv({ hans: '虚构事物', hant: '虛構事物' }), value: 'Fiction' },
+						{ label: '{{Notability|Geographic}}：' + conv({ hans: '地理特征', hant: '地理特徵' }), value: 'Geographic' },
+						{ label: '{{Notability|Geometry}}：' + conv({ hans: '几何图形', hant: '幾何圖形' }), value: 'Geometry' },
+						{ label: '{{Notability|Invention}}：' + conv({ hans: '发明、研究', hant: '發明、研究' }), value: 'Invention' },
+						{ label: '{{Notability|Music}}：' + conv({ hans: '音乐', hant: '音樂' }), value: 'Music' },
+						{ label: '{{Notability|Numbers}}：' + conv({ hans: '数字', hant: '數字' }), value: 'Numbers' },
+						{ label: '{{Notability|Organizations}}：' + conv({ hans: '组织', hant: '組織' }), value: 'Organizations' },
+						{ label: '{{Notability|Property}}：' + conv({ hans: '性质表', hant: '性質表' }), value: 'Property' },
 						{ label: '{{Notability|Traffic}}：' + '交通', value: 'Traffic' },
-						{ label: '{{Notability|Web}}：' + wgULS('网站、网络内容', '網站、網路內容') + '（非正式指引）', value: 'Web'}
+						{ label: '{{Notability|Web}}：' + conv({ hans: '网站、网络内容', hant: '網站、網路內容' }) + '（非正式指引）', value: 'Web' }
 					]
 				};
 				break;
@@ -483,13 +489,13 @@ Twinkle.tag.updateSortOrder = function(e) {
 					{
 						name: 'moveTarget',
 						type: 'input',
-						label: wgULS('新名称：', '新名稱：')
+						label: conv({ hans: '新名称：', hant: '新名稱：' })
 					},
 					{
 						name: 'moveReason',
 						type: 'textarea',
-						label: wgULS('移动理由（会被粘贴该条目的讨论页）：', '移動理由（會被貼上該條目的討論頁）：'),
-						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。', '可選，但強烈推薦。如不需要請留空。')
+						label: conv({ hans: '移动理由（会被粘贴该条目的讨论页）：', hant: '移動理由（會被貼上該條目的討論頁）：' }),
+						tooltip: conv({ hans: '可选，但强烈推荐。如不需要请留空。', hant: '可選，但強烈推薦。如不需要請留空。' })
 					}
 				];
 				break;
@@ -498,20 +504,20 @@ Twinkle.tag.updateSortOrder = function(e) {
 					{
 						name: 'target1',
 						type: 'input',
-						label: wgULS('页面名1：', '頁面名1：'),
-						tooltip: wgULS('可选。', '可選。')
+						label: conv({ hans: '页面名1：', hant: '頁面名1：' }),
+						tooltip: conv({ hans: '可选。', hant: '可選。' })
 					},
 					{
 						name: 'target2',
 						type: 'input',
-						label: wgULS('页面名2：', '頁面名2：'),
-						tooltip: wgULS('可选。', '可選。')
+						label: conv({ hans: '页面名2：', hant: '頁面名2：' }),
+						tooltip: conv({ hans: '可选。', hant: '可選。' })
 					},
 					{
 						name: 'target3',
 						type: 'input',
-						label: wgULS('页面名3：', '頁面名3：'),
-						tooltip: wgULS('可选。', '可選。')
+						label: conv({ hans: '页面名3：', hant: '頁面名3：' }),
+						tooltip: conv({ hans: '可选。', hant: '可選。' })
 					}
 				];
 				break;
@@ -521,7 +527,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 						name: 'cleanupReason',
 						type: 'input',
 						label: '需要清理的理由',
-						tooltip: wgULS('可选，但强烈推荐。如不需要请留空。', '可選，但強烈推薦。如不需要請留空。')
+						tooltip: conv({ hans: '可选，但强烈推荐。如不需要请留空。', hant: '可選，但強烈推薦。如不需要請留空。' })
 					}
 				];
 				break;
@@ -532,7 +538,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 	};
 
 	var makeCheckboxesForAlreadyPresentTags = function() {
-		container.append({ type: 'header', id: 'tagHeader0', label: wgULS('已放置的维护标记', '已放置的維護標記') });
+		container.append({ type: 'header', id: 'tagHeader0', label: conv({ hans: '已放置的维护标记', hant: '已放置的維護標記' }) });
 		var subdiv = container.append({ type: 'div', id: 'tagSubdiv0' });
 		var checkboxes = [];
 		var unCheckedTags = e.target.form.getUnchecked('existingTags');
@@ -590,7 +596,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 	} else { // alphabetical sort order
 		if (Twinkle.tag.alreadyPresentTags.length > 0) {
 			makeCheckboxesForAlreadyPresentTags();
-			container.append({ type: 'header', id: 'tagHeader1', label: wgULS('可用的维护标记', '可用的維護標記') });
+			container.append({ type: 'header', id: 'tagHeader1', label: conv({ hans: '可用的维护标记', hant: '可用的維護標記' }) });
 		}
 
 		// Avoid repeatedly resorting
@@ -610,7 +616,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 
 	// append any custom tags
 	if (Twinkle.getPref('customTagList').length) {
-		container.append({ type: 'header', label: wgULS('自定义模板', '自訂模板') });
+		container.append({ type: 'header', label: conv({ hans: '自定义模板', hant: '自訂模板' }) });
 		container.append({ type: 'checkbox', name: 'tags',
 			list: Twinkle.getPref('customTagList').map(function(el) {
 				el.checked = Twinkle.tag.checkedTags.indexOf(el.value) !== -1;
@@ -646,8 +652,8 @@ Twinkle.tag.updateSortOrder = function(e) {
 			Twinkle.tag.status.numRemoved += this.checked ? -1 : 1;
 		}
 
-		var firstPart = '加入' + Twinkle.tag.status.numAdded + wgULS('个标记', '個標記');
-		var secondPart = '移除' + Twinkle.tag.status.numRemoved + wgULS('个标记', '個標記');
+		var firstPart = '加入' + Twinkle.tag.status.numAdded + conv({ hans: '个标记', hant: '個標記' });
+		var secondPart = '移除' + Twinkle.tag.status.numRemoved + conv({ hans: '个标记', hant: '個標記' });
 		statusNode.textContent =
 			(Twinkle.tag.status.numAdded ? '  ' + firstPart : '') +
 			(Twinkle.tag.status.numRemoved ? (Twinkle.tag.status.numAdded ? '；' : '  ') + secondPart : '');
@@ -679,156 +685,156 @@ Twinkle.tag.article = {};
 // excludeMI: true indicate a tag that *does not* work inside {{multiple issues}}
 // Add new categories with discretion - the list is long enough as is!
 Twinkle.tag.article.tagList = [{
-	key: wgULS('清理和维护模板', '清理和維護模板'),
+	key: conv({ hans: '清理和维护模板', hant: '清理和維護模板' }),
 	value: [{
-		key: wgULS('常规清理', '常規清理'),
+		key: conv({ hans: '常规清理', hant: '常規清理' }),
 		value: [
-			{ tag: 'Cleanup', description: wgULS('可能需要进行清理，以符合维基百科的质量标准', '可能需要進行清理，以符合維基百科的質量標準') },
-			{ tag: 'Cleanup rewrite', description: wgULS('不符合维基百科的质量标准，需要完全重写', '不符合維基百科的質量標準，需要完全重寫') },
-			{ tag: 'Cleanup-jargon', description: wgULS('包含过多行话或专业术语，可能需要简化或提出进一步解释', '包含過多行話或專業術語，可能需要簡化或提出進一步解釋') },
-			{ tag: 'Copy edit', description: wgULS('需要编修，以确保文法、用词、语气、格式、标点等使用恰当', '需要編修，以確保文法、用詞、語氣、格式、標點等使用恰當') }
+			{ tag: 'Cleanup', description: conv({ hans: '可能需要进行清理，以符合维基百科的质量标准', hant: '可能需要進行清理，以符合維基百科的質量標準' }) },
+			{ tag: 'Cleanup rewrite', description: conv({ hans: '不符合维基百科的质量标准，需要完全重写', hant: '不符合維基百科的質量標準，需要完全重寫' }) },
+			{ tag: 'Cleanup-jargon', description: conv({ hans: '包含过多行话或专业术语，可能需要简化或提出进一步解释', hant: '包含過多行話或專業術語，可能需要簡化或提出進一步解釋' }) },
+			{ tag: 'Copy edit', description: conv({ hans: '需要编修，以确保文法、用词、语气、格式、标点等使用恰当', hant: '需要編修，以確保文法、用詞、語氣、格式、標點等使用恰當' }) }
 		]
 	},
 	{
-		key: wgULS('可能多余的内容', '可能多餘的內容'),
+		key: conv({ hans: '可能多余的内容', hant: '可能多餘的內容' }),
 		value: [
-			{ tag: 'Copypaste', description: wgULS('内容可能是从某个来源处拷贝后粘贴', '內容可能是從某個來源處拷貝後貼上') },
-			{ tag: 'External links', description: wgULS('使用外部链接的方式可能不符合维基百科的方针或指引', '使用外部連結的方式可能不符合維基百科的方針或指引') },
-			{ tag: 'Non-free', description: wgULS('可能过多或不当地使用了受著作权保护的文字、图像或多媒体文件', '可能過多或不當地使用了受版權保護的文字、圖像或多媒體檔案') }
+			{ tag: 'Copypaste', description: conv({ hans: '内容可能是从某个来源处拷贝后粘贴', hant: '內容可能是從某個來源處拷貝後貼上' }) },
+			{ tag: 'External links', description: conv({ hans: '使用外部链接的方式可能不符合维基百科的方针或指引', hant: '使用外部連結的方式可能不符合維基百科的方針或指引' }) },
+			{ tag: 'Non-free', description: conv({ hans: '可能过多或不当地使用了受著作权保护的文字、图像或多媒体文件', hant: '可能過多或不當地使用了受版權保護的文字、圖像或多媒體檔案' }) }
 		]
 	},
 	{
-		key: wgULS('结构和导言', '結構和導言'),
+		key: conv({ hans: '结构和导言', hant: '結構和導言' }),
 		value: [
-			{ tag: 'Lead too long', description: wgULS('导言部分也许过于冗长', '導言部分也許過於冗長') },
-			{ tag: 'Lead too short', description: wgULS('导言部分也许不足以概括其内容', '導言部分也許不足以概括其內容') },
-			{ tag: 'Very long', description: wgULS('可能过于冗长', '可能過於冗長') }
+			{ tag: 'Lead too long', description: conv({ hans: '导言部分也许过于冗长', hant: '導言部分也許過於冗長' }) },
+			{ tag: 'Lead too short', description: conv({ hans: '导言部分也许不足以概括其内容', hant: '導言部分也許不足以概括其內容' }) },
+			{ tag: 'Very long', description: conv({ hans: '可能过于冗长', hant: '可能過於冗長' }) }
 		]
 	},
 	{
-		key: wgULS('虚构作品相关清理', '虛構作品相關清理'),
+		key: conv({ hans: '虚构作品相关清理', hant: '虛構作品相關清理' }),
 		value: [
-			{ tag: 'In-universe', description: wgULS('使用小说故事内的观点描述一个虚构事物', '使用小說故事內的觀點描述一個虛構事物') },
-			{ tag: 'Long plot', description: wgULS('可能包含过于详细的剧情摘要', '可能包含過於詳細的劇情摘要') }
+			{ tag: 'In-universe', description: conv({ hans: '使用小说故事内的观点描述一个虚构事物', hant: '使用小說故事內的觀點描述一個虛構事物' }) },
+			{ tag: 'Long plot', description: conv({ hans: '可能包含过于详细的剧情摘要', hant: '可能包含過於詳細的劇情摘要' }) }
 		]
 	}]
 },
 {
-	key: wgULS('常规条目问题', '常規條目問題'),
+	key: conv({ hans: '常规条目问题', hant: '常規條目問題' }),
 	value: [{
 		key: '重要性和知名度',
 		value: [
-			{ tag: 'Notability', description: wgULS('可能不符合通用关注度指引', '可能不符合通用關注度指引'), excludeMI: true },  // has a subgroup with subcategories
-			{ tag: 'Notability Unreferenced', description: wgULS('可能具备关注度，但需要来源加以彰显', '可能具備關注度，但需要來源加以彰顯') }
+			{ tag: 'Notability', description: conv({ hans: '可能不符合通用关注度指引', hant: '可能不符合通用關注度指引' }), excludeMI: true },  // has a subgroup with subcategories
+			{ tag: 'Notability Unreferenced', description: conv({ hans: '可能具备关注度，但需要来源加以彰显', hant: '可能具備關注度，但需要來源加以彰顯' }) }
 		]
 	},
 	{
-		key: wgULS('写作风格', '寫作風格'),
+		key: conv({ hans: '写作风格', hant: '寫作風格' }),
 		value: [
-			{ tag: 'Advert', description: wgULS('类似广告或宣传性内容', '類似廣告或宣傳性內容') },
-			{ tag: 'Fanpov', description: wgULS('类似爱好者网页', '類似愛好者網頁') },
-			{ tag: 'How-to', description: wgULS('包含指南或教学内容', '包含指南或教學內容') },
-			{ tag: 'Inappropriate person', description: wgULS('使用不适当的第一人称和第二人称', '使用不適當的第一人稱和第二人稱') },
-			{ tag: 'Newsrelease', description: wgULS('阅读起来像是新闻稿及包含过度的宣传性语调', '閱讀起來像是新聞稿及包含過度的宣傳性語調') },
-			{ tag: 'Prose', description: wgULS('使用了日期或时间列表式记述，需要改写为连贯的叙述性文字', '使用了日期或時間列表式記述，需要改寫為連貫的敘述性文字') },
-			{ tag: 'Review', description: wgULS('阅读起来类似评论，需要清理', '閱讀起來類似評論，需要清理') },
-			{ tag: 'Tone', description: wgULS('语调或风格可能不适合百科全书的写作方式', '語調或風格可能不適合百科全書的寫作方式') }
+			{ tag: 'Advert', description: conv({ hans: '类似广告或宣传性内容', hant: '類似廣告或宣傳性內容' }) },
+			{ tag: 'Fanpov', description: conv({ hans: '类似爱好者网页', hant: '類似愛好者網頁' }) },
+			{ tag: 'How-to', description: conv({ hans: '包含指南或教学内容', hant: '包含指南或教學內容' }) },
+			{ tag: 'Inappropriate person', description: conv({ hans: '使用不适当的第一人称和第二人称', hant: '使用不適當的第一人稱和第二人稱' }) },
+			{ tag: 'Newsrelease', description: conv({ hans: '阅读起来像是新闻稿及包含过度的宣传性语调', hant: '閱讀起來像是新聞稿及包含過度的宣傳性語調' }) },
+			{ tag: 'Prose', description: conv({ hans: '使用了日期或时间列表式记述，需要改写为连贯的叙述性文字', hant: '使用了日期或時間列表式記述，需要改寫為連貫的敘述性文字' }) },
+			{ tag: 'Review', description: conv({ hans: '阅读起来类似评论，需要清理', hant: '閱讀起來類似評論，需要清理' }) },
+			{ tag: 'Tone', description: conv({ hans: '语调或风格可能不适合百科全书的写作方式', hant: '語調或風格可能不適合百科全書的寫作方式' }) }
 		]
 	},
 	{
-		key: wgULS('内容', '內容'),
+		key: conv({ hans: '内容', hant: '內容' }),
 		value: [
-			{ tag: 'Expand language', description: wgULS('可以根据其他语言版本扩展', '可以根據其他語言版本擴充') },  // these three have a subgroup with several options
+			{ tag: 'Expand language', description: conv({ hans: '可以根据其他语言版本扩展', hant: '可以根據其他語言版本擴充' }) },  // these three have a subgroup with several options
 			{ tag: 'Missing information', description: '缺少必要的信息' },  // these three have a subgroup with several options
-			{ tag: 'Substub', description: wgULS('过于短小', '過於短小'), excludeMI: true },
-			{ tag: 'Unencyclopedic', description: wgULS('可能不适合写入百科全书', '可能不適合寫入百科全書') }
+			{ tag: 'Substub', description: conv({ hans: '过于短小', hant: '過於短小' }), excludeMI: true },
+			{ tag: 'Unencyclopedic', description: conv({ hans: '可能不适合写入百科全书', hant: '可能不適合寫入百科全書' }) }
 		]
 	},
 	{
-		key: wgULS('信息和细节', '資訊和細節'),
+		key: conv({ hans: '信息和细节', hant: '資訊和細節' }),
 		value: [
-			{ tag: 'Expert needed', description: wgULS('需要精通或熟悉本主题的专业人士（专家）参与及协助编辑', '需要精通或熟悉本主題的專業人士（專家）參與及協助編輯') },
-			{ tag: 'Overly detailed', description: wgULS('包含太多过度细节内容', '包含太多過度細節內容') },
-			{ tag: 'Trivia', description: wgULS('应避免有陈列杂项、琐碎资料的部分', '應避免有陳列雜項、瑣碎資料的部分') }
+			{ tag: 'Expert needed', description: conv({ hans: '需要精通或熟悉本主题的专业人士（专家）参与及协助编辑', hant: '需要精通或熟悉本主題的專業人士（專家）參與及協助編輯' }) },
+			{ tag: 'Overly detailed', description: conv({ hans: '包含太多过度细节内容', hant: '包含太多過度細節內容' }) },
+			{ tag: 'Trivia', description: conv({ hans: '应避免有陈列杂项、琐碎资料的部分', hant: '應避免有陳列雜項、瑣碎資料的部分' }) }
 		]
 	},
 	{
-		key: wgULS('时间性', '時間性'),
+		key: conv({ hans: '时间性', hant: '時間性' }),
 		value: [
-			{ tag: 'Current', description: wgULS('记述新闻动态', '記述新聞動態'), excludeMI: true }, // Works but not intended for use in MI
-			{ tag: 'Update', description: wgULS('当前条目或章节需要更新', '當前條目或章節需要更新') }
+			{ tag: 'Current', description: conv({ hans: '记述新闻动态', hant: '記述新聞動態' }), excludeMI: true }, // Works but not intended for use in MI
+			{ tag: 'Update', description: conv({ hans: '当前条目或章节需要更新', hant: '當前條目或章節需要更新' }) }
 		]
 	},
 	{
-		key: wgULS('中立、偏见和事实准确性', '中立、偏見和事實準確性'),
+		key: conv({ hans: '中立、偏见和事实准确性', hant: '中立、偏見和事實準確性' }),
 		value: [
-			{ tag: 'Autobiography', description: wgULS('类似一篇自传，或内容主要由条目描述的当事人或组织撰写、编辑', '類似一篇自傳，或內容主要由條目描述的當事人或組織撰寫、編輯') },
-			{ tag: 'COI', description: wgULS('主要贡献者与本条目所宣扬的内容可能存在利益冲突', '主要貢獻者與本條目所宣揚的內容可能存在利益衝突') },
-			{ tag: 'Disputed', description: wgULS('内容疑欠准确，有待查证', '內容疑欠準確，有待查證') },
-			{ tag: 'Globalize', description: wgULS('仅具有一部分地区的信息或观点', '僅具有一部分地區的資訊或觀點') },
-			{ tag: 'Hoax', description: wgULS('真实性被质疑', '真實性被質疑') },
-			{ tag: 'POV', description: wgULS('中立性有争议。内容、语调可能带有明显的个人观点或地方色彩', '中立性有爭議。內容、語調可能帶有明顯的個人觀點或地方色彩') },
-			{ tag: 'Self-contradictory', description: wgULS('内容自相矛盾', '內容自相矛盾') },
-			{ tag: 'Weasel', description: wgULS('语义模棱两可而损及其中立性或准确性', '語意模棱兩可而損及其中立性或準確性') }
+			{ tag: 'Autobiography', description: conv({ hans: '类似一篇自传，或内容主要由条目描述的当事人或组织撰写、编辑', hant: '類似一篇自傳，或內容主要由條目描述的當事人或組織撰寫、編輯' }) },
+			{ tag: 'COI', description: conv({ hans: '主要贡献者与本条目所宣扬的内容可能存在利益冲突', hant: '主要貢獻者與本條目所宣揚的內容可能存在利益衝突' }) },
+			{ tag: 'Disputed', description: conv({ hans: '内容疑欠准确，有待查证', hant: '內容疑欠準確，有待查證' }) },
+			{ tag: 'Globalize', description: conv({ hans: '仅具有一部分地区的信息或观点', hant: '僅具有一部分地區的資訊或觀點' }) },
+			{ tag: 'Hoax', description: conv({ hans: '真实性被质疑', hant: '真實性被質疑' }) },
+			{ tag: 'POV', description: conv({ hans: '中立性有争议。内容、语调可能带有明显的个人观点或地方色彩', hant: '中立性有爭議。內容、語調可能帶有明顯的個人觀點或地方色彩' }) },
+			{ tag: 'Self-contradictory', description: conv({ hans: '内容自相矛盾', hant: '內容自相矛盾' }) },
+			{ tag: 'Weasel', description: conv({ hans: '语义模棱两可而损及其中立性或准确性', hant: '語意模棱兩可而損及其中立性或準確性' }) }
 		]
 	},
 	{
-		key: wgULS('可供查证和来源', '可供查證和來源'),
+		key: conv({ hans: '可供查证和来源', hant: '可供查證和來源' }),
 		value: [
-			{ tag: 'BLPdispute', description: wgULS('可能违反了维基百科关于生者传记的方针', '可能違反了維基百科關於生者傳記的方針') },
-			{ tag: 'BLPsources', description: wgULS('生者传记需要补充更多可供查证的来源', '生者傳記需要補充更多可供查證的來源') },
-			{ tag: 'BLP unsourced', description: wgULS('生者传记没有列出任何参考或来源', '生者傳記沒有列出任何參考或來源') },
-			{ tag: 'Citecheck', description: wgULS('可能包含不适用或被曲解的引用资料，部分内容的准确性无法被证实', '可能包含不適用或被曲解的引用資料，部分內容的準確性無法被證實') },
-			{ tag: 'More footnotes needed', description: wgULS('因为文内引用不足，部分字句的来源仍然不明', '因為文內引用不足，部分字句的來源仍然不明') },
-			{ tag: 'No footnotes', description: wgULS('因为没有内文引用而来源仍然不明', '因為沒有內文引用而來源仍然不明') },
-			{ tag: 'Onesource', description: wgULS('极大或完全地依赖于某个单一的来源', '極大或完全地依賴於某個單一的來源') },
-			{ tag: 'Original research', description: wgULS('可能包含原创研究或未查证内容', '可能包含原創研究或未查證內容') },
-			{ tag: 'Primarysources', description: wgULS('依赖第一手来源', '依賴第一手來源') },
-			{ tag: 'Refimprove', description: wgULS('需要补充更多来源', '需要補充更多來源') },
-			{ tag: 'Unreferenced', description: wgULS('没有列出任何参考或来源', '沒有列出任何參考或來源') }
+			{ tag: 'BLPdispute', description: conv({ hans: '可能违反了维基百科关于生者传记的方针', hant: '可能違反了維基百科關於生者傳記的方針' }) },
+			{ tag: 'BLPsources', description: conv({ hans: '生者传记需要补充更多可供查证的来源', hant: '生者傳記需要補充更多可供查證的來源' }) },
+			{ tag: 'BLP unsourced', description: conv({ hans: '生者传记没有列出任何参考或来源', hant: '生者傳記沒有列出任何參考或來源' }) },
+			{ tag: 'Citecheck', description: conv({ hans: '可能包含不适用或被曲解的引用资料，部分内容的准确性无法被证实', hant: '可能包含不適用或被曲解的引用資料，部分內容的準確性無法被證實' }) },
+			{ tag: 'More footnotes needed', description: conv({ hans: '因为文内引用不足，部分字句的来源仍然不明', hant: '因為文內引用不足，部分字句的來源仍然不明' }) },
+			{ tag: 'No footnotes', description: conv({ hans: '因为没有内文引用而来源仍然不明', hant: '因為沒有內文引用而來源仍然不明' }) },
+			{ tag: 'Onesource', description: conv({ hans: '极大或完全地依赖于某个单一的来源', hant: '極大或完全地依賴於某個單一的來源' }) },
+			{ tag: 'Original research', description: conv({ hans: '可能包含原创研究或未查证内容', hant: '可能包含原創研究或未查證內容' }) },
+			{ tag: 'Primarysources', description: conv({ hans: '依赖第一手来源', hant: '依賴第一手來源' }) },
+			{ tag: 'Refimprove', description: conv({ hans: '需要补充更多来源', hant: '需要補充更多來源' }) },
+			{ tag: 'Unreferenced', description: conv({ hans: '没有列出任何参考或来源', hant: '沒有列出任何參考或來源' }) }
 		]
 	}]
 },
 {
-	key: wgULS('具体内容问题', '具體內容問題'),
+	key: conv({ hans: '具体内容问题', hant: '具體內容問題' }),
 	value: [{
-		key: wgULS('语言', '語言'),
+		key: conv({ hans: '语言', hant: '語言' }),
 		value: [
-			{ tag: 'NotMandarin', description: wgULS('包含过多不是现代标准汉语的内容', '包含過多不是現代標準漢語的內容'), excludeMI: true },
-			{ tag: 'Rough translation', description: wgULS('翻译品质不佳', '翻譯品質不佳') }
+			{ tag: 'NotMandarin', description: conv({ hans: '包含过多不是现代标准汉语的内容', hant: '包含過多不是現代標準漢語的內容' }), excludeMI: true },
+			{ tag: 'Rough translation', description: conv({ hans: '翻译品质不佳', hant: '翻譯品質不佳' }) }
 		]
 	},
 	{
-		key: wgULS('链接', '連結'),
+		key: conv({ hans: '链接', hant: '連結' }),
 		value: [
-			{ tag: 'Dead end', description: wgULS('需要加上内部链接以构筑百科全书的链接网络', '需要加上內部連結以構築百科全書的連結網絡') },
-			{ tag: 'Orphan', description: wgULS('没有或只有很少链入页面', '沒有或只有很少連入頁面') },
-			{ tag: 'Overlinked', description: wgULS('含有过多、重复、或不必要的内部链接', '含有過多、重複、或不必要的內部連結') },
-			{ tag: 'Underlinked', description: wgULS('需要更多内部链接以构筑百科全书的链接网络', '需要更多內部連結以構築百科全書的連結網絡') }
+			{ tag: 'Dead end', description: conv({ hans: '需要加上内部链接以构筑百科全书的链接网络', hant: '需要加上內部連結以構築百科全書的連結網絡' }) },
+			{ tag: 'Orphan', description: conv({ hans: '没有或只有很少链入页面', hant: '沒有或只有很少連入頁面' }) },
+			{ tag: 'Overlinked', description: conv({ hans: '含有过多、重复、或不必要的内部链接', hant: '含有過多、重複、或不必要的內部連結' }) },
+			{ tag: 'Underlinked', description: conv({ hans: '需要更多内部链接以构筑百科全书的链接网络', hant: '需要更多內部連結以構築百科全書的連結網絡' }) }
 		]
 	},
 	{
-		key: wgULS('参考技术', '參考技術'),
+		key: conv({ hans: '参考技术', hant: '參考技術' }),
 		value: [
-			{ tag: 'Citation style', description: wgULS('引用需要进行清理', '引用需要進行清理') }
+			{ tag: 'Citation style', description: conv({ hans: '引用需要进行清理', hant: '引用需要進行清理' }) }
 		]
 	},
 	{
-		key: wgULS('分类', '分類'),
+		key: conv({ hans: '分类', hant: '分類' }),
 		value: [
-			{ tag: 'Improve categories', description: wgULS('需要更多页面分类', '需要更多頁面分類'), excludeMI: true },
-			{ tag: 'Uncategorized', description: wgULS('缺少页面分类', '缺少頁面分類'), excludeMI: true }
+			{ tag: 'Improve categories', description: conv({ hans: '需要更多页面分类', hant: '需要更多頁面分類' }), excludeMI: true },
+			{ tag: 'Uncategorized', description: conv({ hans: '缺少页面分类', hant: '缺少頁面分類' }), excludeMI: true }
 		]
 	}]
 },
 {
-	key: wgULS('合并、拆分、移动', '合併、拆分、移動'),
+	key: conv({ hans: '合并、拆分、移动', hant: '合併、拆分、移動' }),
 	value: [
-		{ tag: 'Merge from', description: wgULS('建议将页面并入本页面', '建議將頁面併入本頁面'), excludeMI: true },
-		{ tag: 'Merge to', description: wgULS('建议将此页面并入页面', '建議將此頁面併入頁面'), excludeMI: true },
-		{ tag: 'Merge', description: wgULS('建议此页面与页面合并', '建議此頁面與頁面合併'), excludeMI: true },
-		{ tag: 'Requested move', description: wgULS('建议将此页面移动到新名称', '建議將此頁面移動到新名稱'), excludeMI: true },
-		{ tag: 'Split', description: wgULS('建议将此页面分割为多个页面', '建議將此頁面分割為多個頁面'), excludeMI: true }
+		{ tag: 'Merge from', description: conv({ hans: '建议将页面并入本页面', hant: '建議將頁面併入本頁面' }), excludeMI: true },
+		{ tag: 'Merge to', description: conv({ hans: '建议将此页面并入页面', hant: '建議將此頁面併入頁面' }), excludeMI: true },
+		{ tag: 'Merge', description: conv({ hans: '建议此页面与页面合并', hant: '建議此頁面與頁面合併' }), excludeMI: true },
+		{ tag: 'Requested move', description: conv({ hans: '建议将此页面移动到新名称', hant: '建議將此頁面移動到新名稱' }), excludeMI: true },
+		{ tag: 'Split', description: conv({ hans: '建议将此页面分割为多个页面', hant: '建議將此頁面分割為多個頁面' }), excludeMI: true }
 	]
 }];
 
@@ -838,24 +844,24 @@ Twinkle.tag.article.tagList = [{
 Twinkle.tag.redirectList = [{
 	key: '常用模板',
 	value: [
-		{ tag: wgULS('合并重定向', '合併重定向'), description: wgULS('保持页面题名至相应主条目，令页面内容在合并后仍能保存其编辑历史', '保持頁面題名至相應主條目，令頁面內容在合併後仍能儲存其編輯歷史') },
-		{ tag: wgULS('简繁重定向', '簡繁重定向'), description: wgULS('引导简体至繁体，或繁体至简体', '引導簡體至繁體，或繁體至簡體') },
-		{ tag: wgULS('关注度重定向', '關注度重定向'), description: wgULS('缺乏关注度的子主题向有关注度的母主题的重定向', '缺乏關注度的子主題向有關注度的母主題的重定向') },
-		{ tag: '模板重定向', description: wgULS('指向模板的重定向页面', '指向模板的重定向頁面') },
-		{ tag: wgULS('别名重定向', '別名重定向'), description: wgULS('标题的其他名称、笔名、绰号、同义字等', '標題的其他名稱、筆名、綽號、同義字等') },
-		{ tag: wgULS('译名重定向', '譯名重定向'), description: wgULS('人物、作品等各项事物的其他翻译名称', '人物、作品等各項事物的其他翻譯名稱') },
-		{ tag: wgULS('缩写重定向', '縮寫重定向'), description: wgULS('标题缩写', '標題縮寫') },
-		{ tag: wgULS('拼写重定向', '拼寫重定向'), description: wgULS('标题的其他不同拼写', '標題的其他不同拼寫') },
-		{ tag: wgULS('错字重定向', '錯字重定向'), description: wgULS('纠正标题的常见错误拼写或误植', '糾正標題的常見錯誤拼寫或誤植') },
-		{ tag: wgULS('旧名重定向', '舊名重定向'), description: wgULS('将事物早前的名称引导至更改后的主题', '將事物早前的名稱引導至更改後的主題') },
-		{ tag: '全名重定向', description: wgULS('标题的完整或更完整名称', '標題的完整或更完整名稱') },
-		{ tag: '短名重定向', description: wgULS('完整标题名称或人物全名的部分、不完整的名称或简称', '完整標題名稱或人物全名的部分、不完整的名稱或簡稱') },
+		{ tag: conv({ hans: '合并重定向', hant: '合併重定向' }), description: conv({ hans: '保持页面题名至相应主条目，令页面内容在合并后仍能保存其编辑历史', hant: '保持頁面題名至相應主條目，令頁面內容在合併後仍能儲存其編輯歷史' }) },
+		{ tag: conv({ hans: '简繁重定向', hant: '簡繁重定向' }), description: conv({ hans: '引导简体至繁体，或繁体至简体', hant: '引導簡體至繁體，或繁體至簡體' }) },
+		{ tag: conv({ hans: '关注度重定向', hant: '關注度重定向' }), description: conv({ hans: '缺乏关注度的子主题向有关注度的母主题的重定向', hant: '缺乏關注度的子主題向有關注度的母主題的重定向' }) },
+		{ tag: '模板重定向', description: conv({ hans: '指向模板的重定向页面', hant: '指向模板的重定向頁面' }) },
+		{ tag: conv({ hans: '别名重定向', hant: '別名重定向' }), description: conv({ hans: '标题的其他名称、笔名、绰号、同义字等', hant: '標題的其他名稱、筆名、綽號、同義字等' }) },
+		{ tag: conv({ hans: '译名重定向', hant: '譯名重定向' }), description: conv({ hans: '人物、作品等各项事物的其他翻译名称', hant: '人物、作品等各項事物的其他翻譯名稱' }) },
+		{ tag: conv({ hans: '缩写重定向', hant: '縮寫重定向' }), description: conv({ hans: '标题缩写', hant: '標題縮寫' }) },
+		{ tag: conv({ hans: '拼写重定向', hant: '拼寫重定向' }), description: conv({ hans: '标题的其他不同拼写', hant: '標題的其他不同拼寫' }) },
+		{ tag: conv({ hans: '错字重定向', hant: '錯字重定向' }), description: conv({ hans: '纠正标题的常见错误拼写或误植', hant: '糾正標題的常見錯誤拼寫或誤植' }) },
+		{ tag: conv({ hans: '旧名重定向', hant: '舊名重定向' }), description: conv({ hans: '将事物早前的名称引导至更改后的主题', hant: '將事物早前的名稱引導至更改後的主題' }) },
+		{ tag: '全名重定向', description: conv({ hans: '标题的完整或更完整名称', hant: '標題的完整或更完整名稱' }) },
+		{ tag: '短名重定向', description: conv({ hans: '完整标题名称或人物全名的部分、不完整的名称或简称', hant: '完整標題名稱或人物全名的部分、不完整的名稱或簡稱' }) },
 		{ tag: '姓氏重定向', description: '人物姓氏' },
 		{ tag: '名字重定向', description: '人物人名' },
 		{ tag: '本名重定向', description: '人物本名' },
 		{
 			tag: '非中文重定向',
-			description: wgULS('非中文标题', '非中文標題'),
+			description: conv({ hans: '非中文标题', hant: '非中文標題' }),
 			subgroup: [
 				{
 					name: 'altLangFrom',
@@ -865,20 +871,20 @@ Twinkle.tag.redirectList = [{
 				}
 			]
 		},
-		{ tag: '日文重定向', description: wgULS('日语名称', '日語名稱') }
+		{ tag: '日文重定向', description: conv({ hans: '日语名称', hant: '日語名稱' }) }
 	]
 },
 {
 	key: '偶用模板',
 	value: [
-		{ tag: '角色重定向', description: wgULS('电视剧、电影、书籍等作品的角色', '電視劇、電影、書籍等作品的角色') },
-		{ tag: wgULS('章节重定向', '章節重定向'), description: wgULS('导向至较高密度组织的页面', '導向至較高密度組織的頁面') },
-		{ tag: '列表重定向', description: wgULS('导向至低密度的列表', '導向至低密度的列表') },
-		{ tag: '可能性重定向', description: wgULS('导向至当前提供内容更为详尽的目标页面', '導向至當前提供內容更為詳盡的目標頁面') },
-		{ tag: wgULS('关联字重定向', '關聯字重定向'), description: wgULS('标题名称关联字', '標題名稱關聯字') },
+		{ tag: '角色重定向', description: conv({ hans: '电视剧、电影、书籍等作品的角色', hant: '電視劇、電影、書籍等作品的角色' }) },
+		{ tag: conv({ hans: '章节重定向', hant: '章節重定向' }), description: conv({ hans: '导向至较高密度组织的页面', hant: '導向至較高密度組織的頁面' }) },
+		{ tag: '列表重定向', description: conv({ hans: '导向至低密度的列表', hant: '導向至低密度的列表' }) },
+		{ tag: '可能性重定向', description: conv({ hans: '导向至当前提供内容更为详尽的目标页面', hant: '導向至當前提供內容更為詳盡的目標頁面' }) },
+		{ tag: conv({ hans: '关联字重定向', hant: '關聯字重定向' }), description: conv({ hans: '标题名称关联字', hant: '標題名稱關聯字' }) },
 		{
-			tag: wgULS('条目请求重定向', '條目請求重定向'),
-			description: wgULS('需要独立条目的页面', '需要獨立條目的頁面'),
+			tag: conv({ hans: '条目请求重定向', hant: '條目請求重定向' }),
+			description: conv({ hans: '需要独立条目的页面', hant: '需要獨立條目的頁面' }),
 			subgroup: [
 				{
 					name: 'reqArticleLang',
@@ -894,108 +900,108 @@ Twinkle.tag.redirectList = [{
 				}
 			]
 		},
-		{ tag: wgULS('快捷方式重定向', '捷徑重定向'), description: wgULS('维基百科快捷方式', '維基百科快捷方式') }
+		{ tag: conv({ hans: '快捷方式重定向', hant: '捷徑重定向' }), description: conv({ hans: '维基百科快捷方式', hant: '維基百科快捷方式' }) }
 	]
 },
 {
-	key: wgULS('鲜用模板', '鮮用模板'),
+	key: conv({ hans: '鲜用模板', hant: '鮮用模板' }),
 	value: [
-		{ tag: wgULS('词组重定向', '詞組重定向'), description: wgULS('将词组/词组/成语指向切题的条目及恰当章节', '將詞組/詞組/成語指向切題的條目及恰當章節') },
-		{ tag: wgULS('消歧义页重定向', '消歧義頁重定向'), description: wgULS('指向消歧义页', '指向消歧義頁') },
-		{ tag: '域名重定向', description: wgULS('域名', '網域名稱') },
-		{ tag: '年代重定向', description: wgULS('于年份条目导向至年代条目', '於年份條目導向至年代條目') },
-		{ tag: wgULS('用户框模板重定向', '用戶框模板重定向'), description: wgULS('用户框模板', '用戶框模板') },
-		{ tag: '重定向模板用重定向', description: wgULS('导向至重定向模板', '導向至重定向模板') },
-		{ tag: 'EXIF重定向', description: wgULS('JPEG图像文件包含EXIF信息', 'JPEG圖檔包含EXIF資訊') }
+		{ tag: conv({ hans: '词组重定向', hant: '詞組重定向' }), description: conv({ hans: '将词组/词组/成语指向切题的条目及恰当章节', hant: '將詞組/詞組/成語指向切題的條目及恰當章節' }) },
+		{ tag: conv({ hans: '消歧义页重定向', hant: '消歧義頁重定向' }), description: conv({ hans: '指向消歧义页', hant: '指向消歧義頁' }) },
+		{ tag: '域名重定向', description: conv({ hans: '域名', hant: '網域名稱' }) },
+		{ tag: '年代重定向', description: conv({ hans: '于年份条目导向至年代条目', hant: '於年份條目導向至年代條目' }) },
+		{ tag: conv({ hans: '用户框模板重定向', hant: '用戶框模板重定向' }), description: conv({ hans: '用户框模板', hant: '用戶框模板' }) },
+		{ tag: '重定向模板用重定向', description: conv({ hans: '导向至重定向模板', hant: '導向至重定向模板' }) },
+		{ tag: 'EXIF重定向', description: conv({ hans: 'JPEG图像文件包含EXIF信息', hant: 'JPEG圖檔包含EXIF資訊' }) }
 	]
 }];
 
 // maintenance tags for FILES start here
 
 Twinkle.tag.fileList = [{
-	key: wgULS('著作权和来源问题标签', '著作權和來源問題標籤'),
+	key: conv({ hans: '著作权和来源问题标签', hant: '著作權和來源問題標籤' }),
 	value: [
 		{
-			label: '{{Non-free reduce}}：' + wgULS('非低分辨率的合理使用图像（或过长的音频剪辑等）', '非低解析度的合理使用圖像（或過長的音頻剪輯等）'), value: 'Non-free reduce'
+			label: '{{Non-free reduce}}：' + conv({ hans: '非低分辨率的合理使用图像（或过长的音频剪辑等）', hant: '非低解析度的合理使用圖像（或過長的音頻剪輯等）' }), value: 'Non-free reduce'
 		}
 	]
 },
 {
-	key: wgULS('维基共享资源相关标签', '維基共享資源相關標籤'),
+	key: conv({ hans: '维基共享资源相关标签', hant: '維基共享資源相關標籤' }),
 	value: [
 		{
-			label: '{{Copy to Wikimedia Commons}}：' + wgULS('自由著作权文件应该被移动至维基共享资源', '自由版權檔案應該被移動至維基共享資源'), value: 'Copy to Wikimedia Commons'
+			label: '{{Copy to Wikimedia Commons}}：' + conv({ hans: '自由著作权文件应该被移动至维基共享资源', hant: '自由版權檔案應該被移動至維基共享資源' }), value: 'Copy to Wikimedia Commons'
 		},
 		{
-			label: '{{Do not move to Commons}}：' + wgULS('不要移动至维基共享资源', '不要移動至維基共享資源'),
+			label: '{{Do not move to Commons}}：' + conv({ hans: '不要移动至维基共享资源', hant: '不要移動至維基共享資源' }),
 			value: 'Do not move to Commons',
 			subgroup: {
 				type: 'input',
 				name: 'DoNotMoveToCommons_reason',
 				label: '原因：',
-				tooltip: wgULS('输入不应该将该图像移动到维基共享资源的原因（必填）。', '輸入不應該將該圖像移動到維基共享資源的原因（必填）。')
+				tooltip: conv({ hans: '输入不应该将该图像移动到维基共享资源的原因（必填）。', hant: '輸入不應該將該圖像移動到維基共享資源的原因（必填）。' })
 			}
 		},
 		{
-			label: '{{Keep local}}：' + wgULS('请求在本地保留维基共享资源的文件副本', '請求在本地保留維基共享資源的檔案副本'),
+			label: '{{Keep local}}：' + conv({ hans: '请求在本地保留维基共享资源的文件副本', hant: '請求在本地保留維基共享資源的檔案副本' }),
 			value: 'Keep local',
 			subgroup: [
 				{
 					type: 'input',
 					name: 'keeplocalName',
-					label: wgULS('共享资源的不同图像名称：', '共享資源的不同圖像名稱：'),
-					tooltip: wgULS('输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀', '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首')
+					label: conv({ hans: '共享资源的不同图像名称：', hant: '共享資源的不同圖像名稱：' }),
+					tooltip: conv({ hans: '输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀', hant: '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首' })
 				},
 				{
 					type: 'input',
 					name: 'keeplocalReason',
 					label: '原因：',
-					tooltip: wgULS('输入请求在本地保留文件副本的原因（可选）：', '輸入請求在本地保留檔案副本的原因（可選）：')
+					tooltip: conv({ hans: '输入请求在本地保留文件副本的原因（可选）：', hant: '輸入請求在本地保留檔案副本的原因（可選）：' })
 				}
 			]
 		},
 		{
-			label: '{{Now Commons}}：' + wgULS('文件已被复制到维基共享资源（CSD F7）', '檔案已被複製到維基共享資源（CSD F7）'),
+			label: '{{Now Commons}}：' + conv({ hans: '文件已被复制到维基共享资源（CSD F7）', hant: '檔案已被複製到維基共享資源（CSD F7）' }),
 			value: 'Now Commons',
 			subgroup: {
 				type: 'input',
 				name: 'nowcommonsName',
-				label: wgULS('共享资源的不同图像名称：', '共享資源的不同圖像名稱：'),
-				tooltip: wgULS('输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀', '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首')
+				label: conv({ hans: '共享资源的不同图像名称：', hant: '共享資源的不同圖像名稱：' }),
+				tooltip: conv({ hans: '输入在共享资源的图像名称（如果不同于本地名称），不包括 File: 前缀', hant: '輸入在共享資源的圖像名稱（如果不同於本地名稱），不包括 File: 字首' })
 			}
 		}
 	]
 },
 {
-	key: wgULS('清理标签', '清理標籤'),
+	key: conv({ hans: '清理标签', hant: '清理標籤' }),
 	value: [
-		{ label: '{{Watermark}}：' + wgULS('图像包含了水印', '圖像包含了浮水印'), value: 'Watermark' },
+		{ label: '{{Watermark}}：' + conv({ hans: '图像包含了水印', hant: '圖像包含了浮水印' }), value: 'Watermark' },
 		{
-			label: '{{Rename media}}：' + wgULS('文件应该根据文件名称指引被重命名', '檔案應該根據檔案名稱指引被重新命名'),
+			label: '{{Rename media}}：' + conv({ hans: '文件应该根据文件名称指引被重命名', hant: '檔案應該根據檔案名稱指引被重新命名' }),
 			value: 'Rename media',
 			subgroup: [
 				{
 					type: 'input',
 					name: 'renamemediaNewname',
-					label: wgULS('新名称：', '新名稱：'),
-					tooltip: wgULS('输入图像的新名称（可选）', '輸入圖像的新名稱（可選）')
+					label: conv({ hans: '新名称：', hant: '新名稱：' }),
+					tooltip: conv({ hans: '输入图像的新名称（可选）', hant: '輸入圖像的新名稱（可選）' })
 				},
 				{
 					type: 'input',
 					name: 'renamemediaReason',
 					label: '原因：',
-					tooltip: wgULS('输入重命名的原因（可选）', '輸入重新命名的原因（可選）')
+					tooltip: conv({ hans: '输入重命名的原因（可选）', hant: '輸入重新命名的原因（可選）' })
 				}
 			]
 		},
-		{ label: '{{Should be SVG}}：' + wgULS('PNG、GIF、JPEG文件应该重制成矢量图形', 'PNG、GIF、JPEG檔案應該重製成向量圖形'), value: 'Should be SVG' }
+		{ label: '{{Should be SVG}}：' + conv({ hans: 'PNG、GIF、JPEG文件应该重制成矢量图形', hant: 'PNG、GIF、JPEG檔案應該重製成向量圖形' }), value: 'Should be SVG' }
 	]
 },
 {
-	key: wgULS('文件取代标签', '檔案取代標籤'),
+	key: conv({ hans: '文件取代标签', hant: '檔案取代標籤' }),
 	value: [
-		{ label: '{{Obsolete}}：' + wgULS('有新版本可用的过时文件', '有新版本可用的過時檔案'), value: 'Obsolete' },
-		{ label: '{{Vector version available}}：' + wgULS('有矢量图形可用的非矢量图形文件', '有向量圖形可用的非向量圖形檔案'), value: 'Vector version available' }
+		{ label: '{{Obsolete}}：' + conv({ hans: '有新版本可用的过时文件', hant: '有新版本可用的過時檔案' }), value: 'Obsolete' },
+		{ label: '{{Vector version available}}：' + conv({ hans: '有矢量图形可用的非矢量图形文件', hant: '有向量圖形可用的非向量圖形檔案' }), value: 'Vector version available' }
 	],
 	buildFilename: true
 }];
@@ -1046,7 +1052,7 @@ Twinkle.tag.callbacks = {
 			} else {
 				summaryText = '移除' + makeSentence(removedTags);
 			}
-			summaryText += wgULS('标记', '標記');
+			summaryText += conv({ hans: '标记', hant: '標記' });
 			if (params.reason) {
 				summaryText += '：' + params.reason;
 			}
@@ -1066,7 +1072,7 @@ Twinkle.tag.callbacks = {
 				// special functions for merge tags
 				if (params.mergeReason) {
 					// post the rationale on the talk page (only operates in main namespace)
-					var talkpage = new Morebits.wiki.page('Talk:' + params.discussArticle, wgULS('将理由贴进讨论页', '將理由貼進討論頁'));
+					var talkpage = new Morebits.wiki.page('Talk:' + params.discussArticle, conv({ hans: '将理由贴进讨论页', hant: '將理由貼進討論頁' }));
 					talkpage.setNewSectionText(params.mergeReason.trim() + ' ~~~~');
 					talkpage.setNewSectionTitle('请求与[[' + params.nonDiscussArticle + ']]合并');
 					talkpage.setChangeTags(Twinkle.changeTags);
@@ -1091,7 +1097,7 @@ Twinkle.tag.callbacks = {
 						talkDiscussionTitle: params.talkDiscussionTitle,
 						talkDiscussionTitleLinked: params.talkDiscussionTitleLinked
 					};
-					var otherpage = new Morebits.wiki.page(params.mergeTarget, wgULS('标记其他页面（', '標記其他頁面（') +
+					var otherpage = new Morebits.wiki.page(params.mergeTarget, conv({ hans: '标记其他页面（', hant: '標記其他頁面（' }) +
 						params.mergeTarget + '）');
 					otherpage.setCallbackParameters(newParams);
 					otherpage.load(Twinkle.tag.callbacks.article);
@@ -1105,9 +1111,9 @@ Twinkle.tag.callbacks = {
 					}
 					moveTalkpageText += '}}';
 
-					var moveTalkpage = new Morebits.wiki.page('Talk:' + params.discussArticle, wgULS('将理由贴进讨论页', '將理由貼進討論頁'));
+					var moveTalkpage = new Morebits.wiki.page('Talk:' + params.discussArticle, conv({ hans: '将理由贴进讨论页', hant: '將理由貼進討論頁' }));
 					moveTalkpage.setAppendText(moveTalkpageText);
-					moveTalkpage.setEditSummary(wgULS('请求移动', '請求移動') + (params.moveTarget ? '至[[' + params.moveTarget + ']]' : ''));
+					moveTalkpage.setEditSummary(conv({ hans: '请求移动', hant: '請求移動' }) + (params.moveTarget ? '至[[' + params.moveTarget + ']]' : ''));
 					moveTalkpage.setChangeTags(Twinkle.changeTags);
 					moveTalkpage.setCreateOption('recreate');
 					moveTalkpage.append();
@@ -1130,7 +1136,7 @@ Twinkle.tag.callbacks = {
 				return;
 			}
 
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('移除取消选择的已存在标记', '移除取消選擇的已存在標記'));
+			Morebits.status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '移除取消选择的已存在标记', hant: '移除取消選擇的已存在標記' }));
 
 			var getRedirectsFor = [];
 
@@ -1153,7 +1159,7 @@ Twinkle.tag.callbacks = {
 			}
 
 			// Remove tags which appear in page text as redirects
-			var api = new Morebits.wiki.api(wgULS('获取模板重定向', '取得模板重新導向'), {
+			var api = new Morebits.wiki.api(conv({ hans: '获取模板重定向', hant: '取得模板重新導向' }), {
 				action: 'query',
 				prop: 'linkshere',
 				titles: getRedirectsFor.join('|'),
@@ -1175,7 +1181,7 @@ Twinkle.tag.callbacks = {
 						}
 					});
 					if (!removed) {
-						Morebits.status.warn(wgULS('信息', '資訊'), wgULS('无法在页面上找到{{', '無法在頁面上找到{{') + $(page).attr('title').slice(9) + wgULS('}}…跳过', '}}…跳過'));
+						Morebits.status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '无法在页面上找到{{', hant: '無法在頁面上找到{{' }) + $(page).attr('title').slice(9) + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
 					}
 
 				});
@@ -1251,7 +1257,7 @@ Twinkle.tag.callbacks = {
 									params.discussArticle = tagName === 'Merge to' ? params.mergeTarget : mw.config.get('wgTitle');
 									// nonDiscussArticle is the article which won't have the discussion
 									params.nonDiscussArticle = tagName === 'Merge to' ? mw.config.get('wgTitle') : params.mergeTarget;
-									params.talkDiscussionTitle = wgULS('请求与', '請求與') + params.nonDiscussArticle + wgULS('合并', '合併');
+									params.talkDiscussionTitle = conv({ hans: '请求与', hant: '請求與' }) + params.nonDiscussArticle + conv({ hans: '合并', hant: '合併' });
 								}
 								currentTag += '|discuss=Talk:' + params.discussArticle + '#' + params.talkDiscussionTitle;
 							}
@@ -1326,8 +1332,8 @@ Twinkle.tag.callbacks = {
 			tagRe = new RegExp('\\{\\{' + tag + '(\\||\\}\\})', 'im');
 			// regex check for preexistence of tag can be skipped if in canRemove mode
 			if (Twinkle.tag.canRemove || !tagRe.exec(pageText)) {
-				if (tag === 'Notability' && (mw.config.get('wgNamespaceNumber') === 0 || confirm(wgULS('该页面不是条目，您仍要提报到关注度提报吗？', '該頁面不是條目，您仍要提報到關注度提報嗎？')))) {
-					var wikipedia_page = new Morebits.wiki.page('Wikipedia:关注度/提报', wgULS('加入关注度记录项', '加入關注度記錄項'));
+				if (tag === 'Notability' && (mw.config.get('wgNamespaceNumber') === 0 || confirm(conv({ hans: '该页面不是条目，您仍要提报到关注度提报吗？', hant: '該頁面不是條目，您仍要提報到關注度提報嗎？' })))) {
+					var wikipedia_page = new Morebits.wiki.page('Wikipedia:关注度/提报', conv({ hans: '加入关注度记录项', hant: '加入關注度記錄項' }));
 					wikipedia_page.setFollowRedirect(true);
 					wikipedia_page.setCallbackParameters(params);
 					wikipedia_page.load(Twinkle.tag.callbacks.notabilityList);
@@ -1343,7 +1349,7 @@ Twinkle.tag.callbacks = {
 				if (tag === 'Merge from') {
 					tags.push(tag);
 				} else {
-					Morebits.status.warn(wgULS('信息', '資訊'), wgULS('在页面上找到{{', '在頁面上找到{{') + tag + wgULS('}}…跳过', '}}…跳過'));
+					Morebits.status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '在页面上找到{{', hant: '在頁面上找到{{' }) + tag + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
 					// don't do anything else with merge tags
 					if (['Merge', 'Merge to'].indexOf(tag) !== -1) {
 						params.mergeTarget = params.mergeReason = params.mergeTagOther = null;
@@ -1363,7 +1369,7 @@ Twinkle.tag.callbacks = {
 		var miTest = /\{\{(multiple ?issues|article ?issues|mi|ai|issues|多個問題|多个问题|問題條目|问题条目|數個問題|数个问题)\s*\|[^}]+\{/im.exec(pageText);
 
 		if (miTest && groupableTags.length > 0) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('加入支持的标记入已存在的{{multiple issues}}', '加入支援的標記入已存在的{{multiple issues}}'));
+			Morebits.status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '加入支持的标记入已存在的{{multiple issues}}', hant: '加入支援的標記入已存在的{{multiple issues}}' }));
 
 			tagText = '';
 			$.each(groupableTags, addTag);
@@ -1375,7 +1381,7 @@ Twinkle.tag.callbacks = {
 			addUngroupedTags();
 
 		} else if (params.group && !miTest && (groupableExistingTags.length + groupableTags.length) >= 2) {
-			Morebits.status.info(wgULS('信息', '資訊'), wgULS('加入支持的标记入{{multiple issues}}', '加入支援的標記入{{multiple issues}}'));
+			Morebits.status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '加入支持的标记入{{multiple issues}}', hant: '加入支援的標記入{{multiple issues}}' }));
 
 			tagText += '{{Multiple issues|\n';
 
@@ -1409,7 +1415,7 @@ Twinkle.tag.callbacks = {
 				return;
 			}
 
-			var api = new Morebits.wiki.api(wgULS('获取模板重定向', '取得模板重新導向'), {
+			var api = new Morebits.wiki.api(conv({ hans: '获取模板重定向', hant: '取得模板重新導向' }), {
 				action: 'query',
 				prop: 'linkshere',
 				titles: getRedirectsFor.join('|'),
@@ -1431,7 +1437,7 @@ Twinkle.tag.callbacks = {
 						}
 					});
 					if (!found) {
-						Morebits.status.warn(wgULS('信息', '資訊'), wgULS('无法在页面上找到{{', '無法在頁面上找到{{') + $(page).attr('title').slice(9) + wgULS('}}…跳过', '}}…跳過'));
+						Morebits.status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '无法在页面上找到{{', hant: '無法在頁面上找到{{' }) + $(page).attr('title').slice(9) + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
 					}
 				});
 				addNewTagsToMI();
@@ -1466,7 +1472,7 @@ Twinkle.tag.callbacks = {
 			if (!tagRe.exec(pageText)) {
 				tags.push(params.tags[i]);
 			} else {
-				Morebits.status.warn(wgULS('信息', '資訊'), wgULS('在重定向上找到{{', '在重新導向上找到{{') + params.tags[i] + wgULS('}}…跳过', '}}…跳過'));
+				Morebits.status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '在重定向上找到{{', hant: '在重新導向上找到{{' }) + params.tags[i] + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
 			}
 		}
 
@@ -1496,7 +1502,7 @@ Twinkle.tag.callbacks = {
 		};
 
 		if (!tags.length) {
-			Morebits.status.warn(wgULS('信息', '資訊'), wgULS('没有标签可供标记', '沒有標籤可供標記'));
+			Morebits.status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '没有标签可供标记', hant: '沒有標籤可供標記' }));
 		}
 
 		tags.sort();
@@ -1522,7 +1528,7 @@ Twinkle.tag.callbacks = {
 			pageText += '\n{{Redirect category shell|' + tagText + oldPageTags + '\n}}';
 		}
 
-		summaryText += (tags.length > 0 ? wgULS('标记', '標記') : '{{Redirect category shell}}') + wgULS('到重定向', '到重新導向');
+		summaryText += (tags.length > 0 ? conv({ hans: '标记', hant: '標記' }) : '{{Redirect category shell}}') + conv({ hans: '到重定向', hant: '到重新導向' });
 
 		// avoid truncated summaries
 		if (summaryText.length > 499) {
@@ -1608,7 +1614,7 @@ Twinkle.tag.callbacks = {
 			});
 
 			if (!tagtext) {
-				pageobj.getStatusElement().warn(wgULS('用户取消操作，没什么要做的', '使用者取消操作，沒什麼要做的'));
+				pageobj.getStatusElement().warn(conv({ hans: '用户取消操作，没什么要做的', hant: '使用者取消操作，沒什麼要做的' }));
 				return;
 			}
 
@@ -1642,7 +1648,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 			return sum += params.tags.indexOf(tag) !== -1;
 		}, 0);
 		if (count > 1) {
-			var message = wgULS('请在以下标签中择一使用', '請在以下標籤中擇一使用') + '：{{' + conflicts.join('}}、{{') + '}}。';
+			var message = conv({ hans: '请在以下标签中择一使用', hant: '請在以下標籤中擇一使用' }) + '：{{' + conflicts.join('}}、{{') + '}}。';
 			message += extra ? extra : '';
 			alert(message);
 			return true;
@@ -1653,7 +1659,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	var checkParameter = function(tag, parameter, description) {
 		description = description || '理由';
 		if (params.tags.indexOf(tag) !== -1 && params[parameter].trim() === '') {
-			alert(wgULS('您必须指定', '您必須指定') + '{{' + tag + '}}的' + description + '。');
+			alert(conv({ hans: '您必须指定', hant: '您必須指定' }) + '{{' + tag + '}}的' + description + '。');
 			return true;
 		}
 	};
@@ -1669,34 +1675,34 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 
 			if ((params.tags.indexOf('Merge') !== -1) || (params.tags.indexOf('Merge from') !== -1) ||
 				(params.tags.indexOf('Merge to') !== -1)) {
-				if (checkIncompatible(['Merge', 'Merge from', 'Merge to'], wgULS('如果需要多次合并，请使用{{Merge}}并用管道符分隔条目名（但在这种情形中Twinkle不能自动标记其他条目）。', '如果需要多次合併，請使用{{Merge}}並用管道符分隔條目名（但在這種情形中Twinkle不能自動標記其他條目）。'))) {
+				if (checkIncompatible(['Merge', 'Merge from', 'Merge to'], conv({ hans: '如果需要多次合并，请使用{{Merge}}并用管道符分隔条目名（但在这种情形中Twinkle不能自动标记其他条目）。', hant: '如果需要多次合併，請使用{{Merge}}並用管道符分隔條目名（但在這種情形中Twinkle不能自動標記其他條目）。' }))) {
 					return;
 				}
 				if (!params.mergeTarget) {
-					alert(wgULS('请指定使用于merge模板中的另一个页面标题。', '請指定使用於merge模板中的另一個頁面標題。'));
+					alert(conv({ hans: '请指定使用于merge模板中的另一个页面标题。', hant: '請指定使用於merge模板中的另一個頁面標題。' }));
 					return;
 				}
 				if ((params.mergeTagOther || params.mergeReason) && params.mergeTarget.indexOf('|') !== -1) {
-					alert(wgULS('当前还不支持在一次合并中标记多个条目，与开启关于多个条目的讨论。请不要勾选“标记其他条目”并清空“理由”框后再提交。', '目前還不支援在一次合併中標記多個條目，與開啟關於多個條目的討論。請不要勾選「標記其他條目」並清空「理由」框後再提交。'));
+					alert(conv({ hans: '当前还不支持在一次合并中标记多个条目，与开启关于多个条目的讨论。请不要勾选“标记其他条目”并清空“理由”框后再提交。', hant: '目前還不支援在一次合併中標記多個條目，與開啟關於多個條目的討論。請不要勾選「標記其他條目」並清空「理由」框後再提交。' }));
 					return;
 				}
 			}
 
-			if (checkParameter('Expand language', 'expandLanguage', wgULS('语言代码', '語言代碼'))) {
+			if (checkParameter('Expand language', 'expandLanguage', conv({ hans: '语言代码', hant: '語言代碼' }))) {
 				return;
 			}
-			if (checkParameter('Missing information', 'missingInformation', wgULS('缺少的内容', '缺少的內容'))) {
+			if (checkParameter('Missing information', 'missingInformation', conv({ hans: '缺少的内容', hant: '缺少的內容' }))) {
 				return;
 			}
-			if (checkParameter('Expert needed', 'expert', wgULS('专家领域', '專家領域'))) {
+			if (checkParameter('Expert needed', 'expert', conv({ hans: '专家领域', hant: '專家領域' }))) {
 				return;
 			}
 			break;
 
 		case 'file':
 			// Silly to provide the same string to each of these
-			if (checkParameter('Obsolete', 'ObsoleteFile', wgULS('替换的文件名称', '替換的檔案名稱')) ||
-				checkParameter('Vector version available', 'Vector_version_availableFile', wgULS('替换的文件名称', '替換的檔案名稱'))) {
+			if (checkParameter('Obsolete', 'ObsoleteFile', conv({ hans: '替换的文件名称', hant: '替換的檔案名稱' })) ||
+				checkParameter('Vector version available', 'Vector_version_availableFile', conv({ hans: '替换的文件名称', hant: '替換的檔案名稱' }))) {
 				return;
 			}
 			if (checkParameter('Do not move to Commons', 'DoNotMoveToCommons_reason')) {
@@ -1715,7 +1721,7 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	// File/redirect: return if no tags selected
 	// Article: return if no tag is selected and no already present tag is deselected
 	if (params.tags.length === 0 && (Twinkle.tag.modeEn !== 'article' || params.tagsToRemove.length === 0)) {
-		alert(wgULS('必须选择至少一个标记！', '必須選擇至少一個標記！'));
+		alert(conv({ hans: '必须选择至少一个标记！', hant: '必須選擇至少一個標記！' }));
 		return;
 	}
 
@@ -1723,12 +1729,12 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	Morebits.status.init(form);
 
 	Morebits.wiki.actionCompleted.redirect = Morebits.pageNameNorm;
-	Morebits.wiki.actionCompleted.notice = wgULS('标记完成，将在几秒内刷新页面', '標記完成，將在幾秒內重新整理頁面');
+	Morebits.wiki.actionCompleted.notice = conv({ hans: '标记完成，将在几秒内刷新页面', hant: '標記完成，將在幾秒內重新整理頁面' });
 	if (Twinkle.tag.modeEn === 'redirect') {
 		Morebits.wiki.actionCompleted.followRedirect = false;
 	}
 
-	var wikipedia_page = new Morebits.wiki.page(Morebits.pageNameNorm, wgULS('正在标记', '正在標記') + Twinkle.tag.mode);
+	var wikipedia_page = new Morebits.wiki.page(Morebits.pageNameNorm, conv({ hans: '正在标记', hant: '正在標記' }) + Twinkle.tag.mode);
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.tag.callbacks[Twinkle.tag.modeEn]);
 };

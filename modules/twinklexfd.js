@@ -12,6 +12,8 @@
  * Active on:              Existing, non-special pages, except for file pages with no local (non-Commons) file which are not redirects
  */
 
+var conv = require('ext.gadget.HanAssist').conv;
+
 Twinkle.xfd = function twinklexfd() {
 	// Disable on:
 	// * special pages
@@ -22,7 +24,7 @@ Twinkle.xfd = function twinklexfd() {
 	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageContentModel') === 'flow-board' || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.isPageRedirect())))) {
 		return;
 	}
-	Twinkle.addPortletLink(Twinkle.xfd.callback, wgULS('提删', '提刪'), 'tw-xfd', wgULS('提交删除讨论', '提交刪除討論'));
+	Twinkle.addPortletLink(Twinkle.xfd.callback, conv({ hans: '提删', hant: '提刪' }), 'tw-xfd', conv({ hans: '提交删除讨论', hant: '提交刪除討論' }));
 };
 
 Twinkle.xfd.currentRationale = null;
@@ -30,7 +32,7 @@ Twinkle.xfd.currentRationale = null;
 // error callback on Morebits.status.object
 Twinkle.xfd.printRationale = function twinklexfdPrintRationale() {
 	if (Twinkle.xfd.currentRationale) {
-		Morebits.status.printUserText(Twinkle.xfd.currentRationale, wgULS('您的理由已在下方提供，如果您想重新提交，请将其复制到一新窗口中：', '您的理由已在下方提供，如果您想重新提交，請將其複製到一新視窗中：'));
+		Morebits.status.printUserText(Twinkle.xfd.currentRationale, conv({ hans: '您的理由已在下方提供，如果您想重新提交，请将其复制到一新窗口中：', hant: '您的理由已在下方提供，如果您想重新提交，請將其複製到一新視窗中：' }));
 		// only need to print the rationale once
 		Twinkle.xfd.currentRationale = null;
 	}
@@ -38,28 +40,28 @@ Twinkle.xfd.printRationale = function twinklexfdPrintRationale() {
 
 Twinkle.xfd.callback = function twinklexfdCallback() {
 	var Window = new Morebits.simpleWindow(600, 350);
-	Window.setTitle(wgULS('提交存废讨论', '提交存廢討論'));
+	Window.setTitle(conv({ hans: '提交存废讨论', hant: '提交存廢討論' }));
 	Window.setScriptName('Twinkle');
-	Window.addFooterLink(wgULS('关于存废讨论', '關於存廢討論'), 'WP:XFD');
-	Window.addFooterLink(wgULS('提删设置', '提刪設定'), 'WP:TW/PREF#xfd');
-	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#xfd');
+	Window.addFooterLink(conv({ hans: '关于存废讨论', hant: '關於存廢討論' }), 'WP:XFD');
+	Window.addFooterLink(conv({ hans: '提删设置', hant: '提刪設定' }), 'WP:TW/PREF#xfd');
+	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#xfd');
 
 	var form = new Morebits.quickForm(Twinkle.xfd.callback.evaluate);
 	var categories = form.append({
 		type: 'select',
 		name: 'category',
-		label: wgULS('提交类型：', '提交類別：'),
+		label: conv({ hans: '提交类型：', hant: '提交類別：' }),
 		event: Twinkle.xfd.callback.change_category
 	});
 	categories.append({
 		type: 'option',
-		label: wgULS('页面存废讨论', '頁面存廢討論'),
+		label: conv({ hans: '页面存废讨论', hant: '頁面存廢討論' }),
 		selected: mw.config.get('wgNamespaceNumber') === 0,  // Main namespace
 		value: 'afd'
 	});
 	categories.append({
 		type: 'option',
-		label: wgULS('文件存废讨论', '檔案存廢討論'),
+		label: conv({ hans: '文件存废讨论', hant: '檔案存廢討論' }),
 		selected: mw.config.get('wgNamespaceNumber') === 6,  // File namespace
 		value: 'ffd'
 	});
@@ -67,10 +69,10 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 		type: 'checkbox',
 		list: [
 			{
-				label: wgULS('如可能，通知页面创建者', '如可能，通知頁面建立者'),
+				label: conv({ hans: '如可能，通知页面创建者', hant: '如可能，通知頁面建立者' }),
 				value: 'notify',
 				name: 'notify',
-				tooltip: wgULS('在页面创建者讨论页上放置一通知模板。', '在頁面建立者討論頁上放置一通知模板。'),
+				tooltip: conv({ hans: '在页面创建者讨论页上放置一通知模板。', hant: '在頁面建立者討論頁上放置一通知模板。' }),
 				checked: true
 			}
 		]
@@ -92,10 +94,10 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 		form.append({
 			type: 'div',
 			label: [
-				wgULS('Twinkle不支持在页面内容模型为', 'Twinkle不支援在頁面內容模型為'),
+				conv({ hans: 'Twinkle不支持在页面内容模型为', hant: 'Twinkle不支援在頁面內容模型為' }),
 				mw.config.get('wgPageContentModel'),
-				wgULS('的页面上挂上存废讨论模板，请参见', '的頁面上掛上存廢討論模板，請參見'),
-				$('<a>').attr({ target: '_blank', href: mw.util.getUrl('WP:SPECIALSD') }).text(wgULS('手动放置模板时的注意事项', '手動放置模板時的注意事項'))[0],
+				conv({ hans: '的页面上挂上存废讨论模板，请参见', hant: '的頁面上掛上存廢討論模板，請參見' }),
+				$('<a>').attr({ target: '_blank', href: mw.util.getUrl('WP:SPECIALSD') }).text(conv({ hans: '手动放置模板时的注意事项', hant: '手動放置模板時的注意事項' }))[0],
 				'。'
 			]
 		});
@@ -136,10 +138,10 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		work_area.append({
 			type: 'textarea',
 			name: 'xfdreason',
-			label: wgULS('提删理由：', '提刪理由：'),
+			label: conv({ hans: '提删理由：', hant: '提刪理由：' }),
 			value: oldreason,
-			tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您加入签名。如果您使用批量提删功能，存废讨论页只会使用第一次提交的理由，但之后您仍需提供以用于删除通告模板的参数。', '您可以使用維基格式，Twinkle將自動為您加入簽名。如果您使用批次提刪功能，存廢討論頁只會使用第一次提交的理由，但之後您仍需提供以用於刪除通告模板的參數。'),
-			placeholder: wgULS('此值亦显示于页面的删除通告模板内，故务必提供此值，避免使用“同上”等用语。', '此值亦顯示於頁面的刪除通告模板內，故務必提供此值，避免使用「同上」等用語。')
+			tooltip: conv({ hans: '您可以使用维基格式，Twinkle将自动为您加入签名。如果您使用批量提删功能，存废讨论页只会使用第一次提交的理由，但之后您仍需提供以用于删除通告模板的参数。', hant: '您可以使用維基格式，Twinkle將自動為您加入簽名。如果您使用批次提刪功能，存廢討論頁只會使用第一次提交的理由，但之後您仍需提供以用於刪除通告模板的參數。' }),
+			placeholder: conv({ hans: '此值亦显示于页面的删除通告模板内，故务必提供此值，避免使用“同上”等用语。', hant: '此值亦顯示於頁面的刪除通告模板內，故務必提供此值，避免使用「同上」等用語。' })
 		});
 		// TODO possible future "preview" link here
 	};
@@ -148,7 +150,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		case 'afd':
 			work_area = new Morebits.quickForm.element({
 				type: 'field',
-				label: wgULS('页面存废讨论', '頁面存廢討論'),
+				label: conv({ hans: '页面存废讨论', hant: '頁面存廢討論' }),
 				name: 'work_area'
 			});
 			work_area.append({
@@ -159,14 +161,14 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 						value: 'noinclude',
 						name: 'noinclude',
 						checked: mw.config.get('wgNamespaceNumber') === 10, // Template namespace
-						tooltip: wgULS('使其不会在被包含时出现。', '使其不會在被包含時出現。')
+						tooltip: conv({ hans: '使其不会在被包含时出现。', hant: '使其不會在被包含時出現。' })
 					}
 				]
 			});
 			var afd_category = work_area.append({
 				type: 'select',
 				name: 'xfdcat',
-				label: wgULS('选择提删类型：', '選擇提刪類別：'),
+				label: conv({ hans: '选择提删类型：', hant: '選擇提刪類別：' }),
 				event: Twinkle.xfd.callback.change_afd_category
 			});
 
@@ -178,34 +180,34 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 					afd_cat = localStorage.Twinkle_afdCategory;
 				}
 			}
-			afd_category.append({ type: 'option', label: wgULS('删除', '刪除'), value: 'delete', selected: afd_cat === 'delete' });
-			afd_category.append({ type: 'option', label: wgULS('合并', '合併'), value: 'merge', selected: afd_cat === 'merge' });
-			afd_category.append({ type: 'option', label: wgULS('移动到维基词典', '移動到維基詞典'), value: 'vmd', selected: afd_cat === 'vmd' });
-			afd_category.append({ type: 'option', label: wgULS('移动到维基文库', '移動到維基文庫'), value: 'vms', selected: afd_cat === 'vms' });
-			afd_category.append({ type: 'option', label: wgULS('移动到维基教科书', '移動到維基教科書'), value: 'vmb', selected: afd_cat === 'vmb' });
-			afd_category.append({ type: 'option', label: wgULS('移动到维基语录', '移動到維基語錄'), value: 'vmq', selected: afd_cat === 'vmq' });
-			afd_category.append({ type: 'option', label: wgULS('移动到维基导游', '移動到維基導遊'), value: 'vmvoy', selected: afd_cat === 'vmvoy' });
-			afd_category.append({ type: 'option', label: wgULS('移动到维基学院', '移動到維基學院'), value: 'vmv', selected: afd_cat === 'vmv' });
+			afd_category.append({ type: 'option', label: conv({ hans: '删除', hant: '刪除' }), value: 'delete', selected: afd_cat === 'delete' });
+			afd_category.append({ type: 'option', label: conv({ hans: '合并', hant: '合併' }), value: 'merge', selected: afd_cat === 'merge' });
+			afd_category.append({ type: 'option', label: conv({ hans: '移动到维基词典', hant: '移動到維基詞典' }), value: 'vmd', selected: afd_cat === 'vmd' });
+			afd_category.append({ type: 'option', label: conv({ hans: '移动到维基文库', hant: '移動到維基文庫' }), value: 'vms', selected: afd_cat === 'vms' });
+			afd_category.append({ type: 'option', label: conv({ hans: '移动到维基教科书', hant: '移動到維基教科書' }), value: 'vmb', selected: afd_cat === 'vmb' });
+			afd_category.append({ type: 'option', label: conv({ hans: '移动到维基语录', hant: '移動到維基語錄' }), value: 'vmq', selected: afd_cat === 'vmq' });
+			afd_category.append({ type: 'option', label: conv({ hans: '移动到维基导游', hant: '移動到維基導遊' }), value: 'vmvoy', selected: afd_cat === 'vmvoy' });
+			afd_category.append({ type: 'option', label: conv({ hans: '移动到维基学院', hant: '移動到維基學院' }), value: 'vmv', selected: afd_cat === 'vmv' });
 			if (Twinkle.getPref('FwdCsdToXfd')) {
-				afd_category.append({ type: 'option', label: wgULS('转交自快速删除候选', '轉交自快速刪除候選'), value: 'fwdcsd', selected: afd_cat === 'fwdcsd' });
+				afd_category.append({ type: 'option', label: conv({ hans: '转交自快速删除候选', hant: '轉交自快速刪除候選' }), value: 'fwdcsd', selected: afd_cat === 'fwdcsd' });
 			}
-			afd_category.append({ type: 'option', label: wgULS('批量关注度提删', '批次關注度提刪'), value: 'fame', selected: afd_cat === 'fame' });
-			afd_category.append({ type: 'option', label: wgULS('批量小小作品提删', '批次小小作品提刪'), value: 'substub', selected: afd_cat === 'substub' });
-			afd_category.append({ type: 'option', label: wgULS('批量其他提删', '批次其他提刪'), value: 'batch', selected: afd_cat === 'batch' });
+			afd_category.append({ type: 'option', label: conv({ hans: '批量关注度提删', hant: '批次關注度提刪' }), value: 'fame', selected: afd_cat === 'fame' });
+			afd_category.append({ type: 'option', label: conv({ hans: '批量小小作品提删', hant: '批次小小作品提刪' }), value: 'substub', selected: afd_cat === 'substub' });
+			afd_category.append({ type: 'option', label: conv({ hans: '批量其他提删', hant: '批次其他提刪' }), value: 'batch', selected: afd_cat === 'batch' });
 
 
 			work_area.append({
 				type: 'input',
 				name: 'mergeinto',
-				label: wgULS('合并到：', '合併到：'),
+				label: conv({ hans: '合并到：', hant: '合併到：' }),
 				hidden: true
 			});
 			appendReasonBox(afd_cat);
 			work_area.append({
 				type: 'textarea',
 				name: 'fwdcsdreason',
-				label: wgULS('转交理由：', '轉交理由：'),
-				tooltip: wgULS('您可以使用维基格式，Twinkle将自动为您加入签名。', '您可以使用維基格式，Twinkle將自動為您加入簽名。'),
+				label: conv({ hans: '转交理由：', hant: '轉交理由：' }),
+				tooltip: conv({ hans: '您可以使用维基格式，Twinkle将自动为您加入签名。', hant: '您可以使用維基格式，Twinkle將自動為您加入簽名。' }),
 				hidden: true
 			});
 
@@ -219,7 +221,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		case 'ffd':
 			work_area = new Morebits.quickForm.element({
 				type: 'field',
-				label: wgULS('文件存废讨论', '檔案存廢討論'),
+				label: conv({ hans: '文件存废讨论', hant: '檔案存廢討論' }),
 				name: 'work_area'
 			});
 			appendReasonBox('ffd');
@@ -229,7 +231,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 		default:
 			work_area = new Morebits.quickForm.element({
 				type: 'field',
-				label: wgULS('未定义', '未定義'),
+				label: conv({ hans: '未定义', hant: '未定義' }),
 				name: 'work_area'
 			});
 			work_area = work_area.render();
@@ -246,7 +248,7 @@ Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdC
 	if (e.target.value === 'merge') {
 		e.target.form.mergeinto.parentElement.removeAttribute('hidden');
 		e.target.form.fwdcsdreason.parentElement.setAttribute('hidden', '');
-		e.target.form.mergeinto.previousElementSibling.innerHTML = wgULS('合并到：', '合併到：');
+		e.target.form.mergeinto.previousElementSibling.innerHTML = conv({ hans: '合并到：', hant: '合併到：' });
 	} else if (e.target.value === 'fwdcsd') {
 		e.target.form.mergeinto.parentElement.removeAttribute('hidden');
 		e.target.form.fwdcsdreason.parentElement.removeAttribute('hidden');
@@ -277,7 +279,7 @@ Twinkle.xfd.callbacks = {
 			Twinkle.xfd.callbacks.afd.taggingArticle(tagging_page);
 
 			// Adding discussion
-			var discussion_page = new Morebits.wiki.page(params.logpage, wgULS('加入讨论到当日列表', '加入討論到當日列表'));
+			var discussion_page = new Morebits.wiki.page(params.logpage, conv({ hans: '加入讨论到当日列表', hant: '加入討論到當日列表' }));
 			discussion_page.setFollowRedirect(true);
 			discussion_page.setCallbackParameters(params);
 			discussion_page.load(Twinkle.xfd.callbacks.afd.todaysList);
@@ -286,17 +288,17 @@ Twinkle.xfd.callbacks = {
 			if (params.notify) {
 				// Disallow warning yourself
 				if (params.creator === mw.config.get('wgUserName')) {
-					Morebits.status.warn(wgULS('通知页面创建者（', '通知頁面建立者（') + params.creator + '）', wgULS('您创建了该页，跳过通知', '您建立了該頁，跳過通知'));
+					Morebits.status.warn(conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + params.creator + '）', conv({ hans: '您创建了该页，跳过通知', hant: '您建立了該頁，跳過通知' }));
 					params.creator = null;
 				} else {
 					var talkPageName = 'User talk:' + params.creator;
 					Morebits.wiki.flow.check(talkPageName, function () {
-						var flowpage = new Morebits.wiki.flow(talkPageName, wgULS('通知页面创建者（', '通知頁面建立者（') + params.creator + '）');
+						var flowpage = new Morebits.wiki.flow(talkPageName, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + params.creator + '）');
 						flowpage.setTopic('页面[[:' + Morebits.pageNameNorm + ']]存废讨论通知');
 						flowpage.setContent('{{subst:AFDNote|' + Morebits.pageNameNorm + '|flow=yes}}');
 						flowpage.newTopic();
 					}, function () {
-						var usertalkpage = new Morebits.wiki.page(talkPageName, wgULS('通知页面创建者（', '通知頁面建立者（') + params.creator + '）');
+						var usertalkpage = new Morebits.wiki.page(talkPageName, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + params.creator + '）');
 						var notifytext = '\n{{subst:AFDNote|' + Morebits.pageNameNorm + '}}--~~~~';
 						usertalkpage.setAppendText(notifytext);
 						usertalkpage.setEditSummary('通知：页面[[' + Morebits.pageNameNorm + ']]存废讨论提名');
@@ -362,17 +364,17 @@ Twinkle.xfd.callbacks = {
 
 			// Then, test if there are speedy deletion-related templates on the article.
 			var textNoSd = text.replace(/\{\{\s*(db(-\w*)?|d|delete|(?:hang|hold)[- ]?on)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, '');
-			if (text !== textNoSd && confirm(wgULS('在页面上找到快速删除模板，要移除吗？', '在頁面上找到快速刪除模板，要移除嗎？'))) {
+			if (text !== textNoSd && confirm(conv({ hans: '在页面上找到快速删除模板，要移除吗？', hant: '在頁面上找到快速刪除模板，要移除嗎？' }))) {
 				text = textNoSd;
 			}
 
 			var textNoNotMandarin = text.replace(/\{\{\s*(NotMandarin|Notchinese|非中文|非現代漢語|非现代汉语|非現代標準漢語|非现代标准汉语)\s*(\|(?:\{\{[^{}]*\}\}|[^{}])*)?\}\}\s*/ig, '');
-			if (text !== textNoNotMandarin && confirm(wgULS('在页面上找到非现代标准汉语模板，要移除吗？', '在頁面上找到非現代標準漢語模板，要移除嗎？'))) {
+			if (text !== textNoNotMandarin && confirm(conv({ hans: '在页面上找到非现代标准汉语模板，要移除吗？', hant: '在頁面上找到非現代標準漢語模板，要移除嗎？' }))) {
 				text = textNoNotMandarin;
 			}
 
 			var textNoAfc = text.replace(/{{\s*AFC submission\s*\|\s*\|[^}]*?}}\s*/ig, '');
-			if (text !== textNoAfc && confirm(wgULS('在页面上找到AFC提交模板，要移除吗？', '在頁面上找到AFC提交模板，要移除嗎？'))) {
+			if (text !== textNoAfc && confirm(conv({ hans: '在页面上找到AFC提交模板，要移除吗？', hant: '在頁面上找到AFC提交模板，要移除嗎？' }))) {
 				text = textNoAfc;
 			}
 
@@ -386,7 +388,7 @@ Twinkle.xfd.callbacks = {
 			text = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
 
 			pageobj.setPageText(text);
-			pageobj.setEditSummary(wgULS('页面存废讨论：[[', '頁面存廢討論：[[') + params.logpage + '#' + Morebits.pageNameNorm + ']]');
+			pageobj.setEditSummary(conv({ hans: '页面存废讨论：[[', hant: '頁面存廢討論：[[' }) + params.logpage + '#' + Morebits.pageNameNorm + ']]');
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setWatchlist(Twinkle.getPref('xfdWatchPage'));
 			pageobj.save();
@@ -473,7 +475,7 @@ Twinkle.xfd.callbacks = {
 			params.creator = target_page.getCreator();
 
 			// Tagging page
-			var tagging_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('加入存废讨论模板到页面', '加入存廢討論模板到頁面'));
+			var tagging_page = new Morebits.wiki.page(mw.config.get('wgPageName'), conv({ hans: '加入存废讨论模板到页面', hant: '加入存廢討論模板到頁面' }));
 			tagging_page.setFollowRedirect(false);
 			tagging_page.setCallbackParameters(params);
 			tagging_page.load(Twinkle.xfd.callbacks.afd.tryTagging);
@@ -482,21 +484,21 @@ Twinkle.xfd.callbacks = {
 			var statelem = tagging_page.getStatusElement();
 			// defaults to /doc for lua modules, which may not exist
 			if (!tagging_page.exists()) {
-				statelem.error(wgULS('页面不存在，可能已被删除', '頁面不存在，可能已被刪除'));
+				statelem.error(conv({ hans: '页面不存在，可能已被删除', hant: '頁面不存在，可能已被刪除' }));
 				return;
 			}
 
 			var text = tagging_page.getPageText();
 
 			var xfd = /(?:\{\{([rsaiftcmv]fd|md1|proposed deletion)[^{}]*?\}\})/i.exec(text);
-			if (xfd && !confirm(wgULS('删除相关模板{{', '刪除相關模板{{') + xfd[1] + wgULS('}}已被置于页面中，您是否仍想继续提报？', '}}已被置於頁面中，您是否仍想繼續提報？'))) {
-				statelem.error(wgULS('页面已被提交至存废讨论。', '頁面已被提交至存廢討論。'));
+			if (xfd && !confirm(conv({ hans: '删除相关模板{{', hant: '刪除相關模板{{' }) + xfd[1] + conv({ hans: '}}已被置于页面中，您是否仍想继续提报？', hant: '}}已被置於頁面中，您是否仍想繼續提報？' }))) {
+				statelem.error(conv({ hans: '页面已被提交至存废讨论。', hant: '頁面已被提交至存廢討論。' }));
 				return;
 			}
 
 			var copyvio = /(?:\{\{\s*(copyvio)[^{}]*?\}\})/i.exec(text);
 			if (copyvio) {
-				statelem.error(wgULS('页面中已有著作权验证模板。', '頁面中已有著作權驗證模板。'));
+				statelem.error(conv({ hans: '页面中已有著作权验证模板。', hant: '頁面中已有著作權驗證模板。' }));
 				return;
 			}
 
@@ -511,7 +513,7 @@ Twinkle.xfd.callbacks = {
 			Twinkle.xfd.callbacks.ffd.taggingImage(tagging_page);
 
 			// Adding discussion
-			var wikipedia_page = new Morebits.wiki.page(params.logpage, wgULS('加入讨论到当日列表', '加入討論到當日列表'));
+			var wikipedia_page = new Morebits.wiki.page(params.logpage, conv({ hans: '加入讨论到当日列表', hant: '加入討論到當日列表' }));
 			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.xfd.callbacks.ffd.todaysList);
@@ -520,19 +522,19 @@ Twinkle.xfd.callbacks = {
 			if (params.notify) {
 				// Disallow warning yourself
 				if (params.creator === mw.config.get('wgUserName')) {
-					Morebits.status.warn(wgULS('通知页面创建者（', '通知頁面建立者（') + params.creator + '）', wgULS('您创建了该页，跳过通知', '您建立了該頁，跳過通知'));
+					Morebits.status.warn(conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + params.creator + '）', conv({ hans: '您创建了该页，跳过通知', hant: '您建立了該頁，跳過通知' }));
 					return;
 				}
 
 				var talkPageName = 'User talk:' + params.creator;
 
 				Morebits.wiki.flow.check(talkPageName, function () {
-					var flowpage = new Morebits.wiki.flow(talkPageName, wgULS('通知页面创建者（', '通知頁面建立者（') + params.creator + '）');
+					var flowpage = new Morebits.wiki.flow(talkPageName, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + params.creator + '）');
 					flowpage.setTopic('文件[[:File:' + mw.config.get('wgTitle') + ']]存废讨论通知');
 					flowpage.setContent('{{subst:idw|File:' + mw.config.get('wgTitle') + '|flow=yes}}');
 					flowpage.newTopic();
 				}, function () {
-					var usertalkpage = new Morebits.wiki.page(talkPageName, wgULS('通知页面创建者（', '通知頁面建立者（') + params.creator + '）');
+					var usertalkpage = new Morebits.wiki.page(talkPageName, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + params.creator + '）');
 					var notifytext = '\n{{subst:idw|File:' + mw.config.get('wgTitle') + '}}--~~~~';
 					usertalkpage.setAppendText(notifytext);
 					usertalkpage.setEditSummary('通知：文件[[' + Morebits.pageNameNorm + ']]存废讨论提名');
@@ -556,7 +558,7 @@ Twinkle.xfd.callbacks = {
 			var params = pageobj.getCallbackParameters();
 
 			pageobj.setPageText('{{ifd|' + Morebits.string.formatReasonText(params.xfdreason) + '|date={{subst:#time:Y/m/d}}}}\n' + text);
-			pageobj.setEditSummary(wgULS('文件存废讨论：[[', '檔案存廢討論：[[') + params.logpage + '#' + Morebits.pageNameNorm + ']]');
+			pageobj.setEditSummary(conv({ hans: '文件存废讨论：[[', hant: '檔案存廢討論：[[' }) + params.logpage + '#' + Morebits.pageNameNorm + ']]');
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setWatchlist(Twinkle.getPref('xfdWatchPage'));
 			pageobj.setCreateOption('recreate');  // it might be possible for a file to exist without a description page
@@ -582,7 +584,7 @@ Twinkle.xfd.callbacks = {
 			params.creator = target_page.getCreator();
 
 			// Tagging file
-			var tagging_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('加入存废讨论模板到文件描述页', '加入存廢討論模板到檔案描述頁'));
+			var tagging_page = new Morebits.wiki.page(mw.config.get('wgPageName'), conv({ hans: '加入存废讨论模板到文件描述页', hant: '加入存廢討論模板到檔案描述頁' }));
 			tagging_page.setFollowRedirect(false);
 			tagging_page.setCallbackParameters(params);
 			tagging_page.load(Twinkle.xfd.callbacks.ffd.tryTagging);
@@ -590,15 +592,15 @@ Twinkle.xfd.callbacks = {
 		tryTagging: function (tagging_page) {
 			var statelem = tagging_page.getStatusElement();
 			if (!tagging_page.exists()) {
-				statelem.error(wgULS('页面不存在，可能已被删除', '頁面不存在，可能已被刪除'));
+				statelem.error(conv({ hans: '页面不存在，可能已被删除', hant: '頁面不存在，可能已被刪除' }));
 				return;
 			}
 
 			var text = tagging_page.getPageText();
 
 			var xfd = /(?:\{\{([rsaiftcmv]fd|md1|proposed deletion)[^{}]*?\}\})/i.exec(text);
-			if (xfd && !confirm(wgULS('删除相关模板{{', '刪除相關模板{{') + xfd[1] + wgULS('}}已被置于页面中，您是否仍想继续提报？', '}}已被置於頁面中，您是否仍想繼續提報？'))) {
-				statelem.error(wgULS('页面已被提交至存废讨论。', '頁面已被提交至存廢討論。'));
+			if (xfd && !confirm(conv({ hans: '删除相关模板{{', hant: '刪除相關模板{{' }) + xfd[1] + conv({ hans: '}}已被置于页面中，您是否仍想继续提报？', hant: '}}已被置於頁面中，您是否仍想繼續提報？' }))) {
+				statelem.error(conv({ hans: '页面已被提交至存废讨论。', hant: '頁面已被提交至存廢討論。' }));
 				return;
 			}
 
@@ -606,62 +608,64 @@ Twinkle.xfd.callbacks = {
 		}
 	},
 	addToLog: function(params, initialContrib) {
-		var editsummary = wgULS('记录对[[', '記錄對[[') + Morebits.pageNameNorm + wgULS(']]的存废讨论提名', ']]的存廢討論提名');
+		var editsummary = conv({ hans: '记录对[[', hant: '記錄對[[' }) + Morebits.pageNameNorm + conv({ hans: ']]的存废讨论提名', hant: ']]的存廢討論提名' });
 		var usl = new Morebits.userspaceLogger(Twinkle.getPref('xfdLogPageName'));
 		usl.initialText =
-			wgULS('这是该用户使用[[WP:TW|Twinkle]]的提删模块做出的[[WP:XFD|存废讨论]]提名列表。\n\n' +
-			'如果您不再想保留此日志，请在[[' + Twinkle.getPref('configPage') + '|参数设置]]中关掉，并' +
-			'使用[[WP:CSD#O1|CSD O1]]提交快速删除。',
-			'這是該使用者使用[[WP:TW|Twinkle]]的提刪模塊做出的[[WP:XFD|存廢討論]]提名列表。\n\n' +
-			'如果您不再想保留此日誌，請在[[' + Twinkle.getPref('configPage') + '|偏好設定]]中關掉，並' +
-			'使用[[WP:CSD#O1|CSD O1]]提交快速刪除。');
+			conv({
+				hans: '这是该用户使用[[WP:TW|Twinkle]]的提删模块做出的[[WP:XFD|存废讨论]]提名列表。\n\n' +
+					'如果您不再想保留此日志，请在[[' + Twinkle.getPref('configPage') + '|参数设置]]中关掉，并' +
+					'使用[[WP:CSD#O1|CSD O1]]提交快速删除。',
+				hant: '這是該使用者使用[[WP:TW|Twinkle]]的提刪模塊做出的[[WP:XFD|存廢討論]]提名列表。\n\n' +
+					'如果您不再想保留此日誌，請在[[' + Twinkle.getPref('configPage') + '|偏好設定]]中關掉，並' +
+					'使用[[WP:CSD#O1|CSD O1]]提交快速刪除。'
+			});
 		var xfdCatName;
 		switch (params.xfdcat) {
 			case 'delete':
-				xfdCatName = wgULS('删除', '刪除');
+				xfdCatName = conv({ hans: '删除', hant: '刪除' });
 				break;
 			case 'merge':
-				xfdCatName = wgULS('合并到', '合併到');
+				xfdCatName = conv({ hans: '合并到', hant: '合併到' });
 				break;
 			case 'vmd':
-				xfdCatName = wgULS('移动到维基词典', '移動到維基詞典');
+				xfdCatName = conv({ hans: '移动到维基词典', hant: '移動到維基詞典' });
 				break;
 			case 'vms':
-				xfdCatName = wgULS('移动到维基文库', '移動到維基文庫');
+				xfdCatName = conv({ hans: '移动到维基文库', hant: '移動到維基文庫' });
 				break;
 			case 'vmb':
-				xfdCatName = wgULS('移动到维基教科书', '移動到維基教科書');
+				xfdCatName = conv({ hans: '移动到维基教科书', hant: '移動到維基教科書' });
 				break;
 			case 'vmq':
-				xfdCatName = wgULS('移动到维基语录', '移動到維基語錄');
+				xfdCatName = conv({ hans: '移动到维基语录', hant: '移動到維基語錄' });
 				break;
 			case 'vmvoy':
-				xfdCatName = wgULS('移动到维基导游', '移動到維基導遊');
+				xfdCatName = conv({ hans: '移动到维基导游', hant: '移動到維基導遊' });
 				break;
 			case 'vmv':
-				xfdCatName = wgULS('移动到维基学院', '移動到維基學院');
+				xfdCatName = conv({ hans: '移动到维基学院', hant: '移動到維基學院' });
 				break;
 			case 'fwdcsd':
-				xfdCatName = wgULS('转交自快速删除候选', '轉交自快速刪除候選');
+				xfdCatName = conv({ hans: '转交自快速删除候选', hant: '轉交自快速刪除候選' });
 				break;
 			case 'fame':
-				xfdCatName = wgULS('批量关注度提删', '批次關注度提刪');
+				xfdCatName = conv({ hans: '批量关注度提删', hant: '批次關注度提刪' });
 				break;
 			case 'substub':
-				xfdCatName = wgULS('批量小小作品提删', '批次小小作品提刪');
+				xfdCatName = conv({ hans: '批量小小作品提删', hant: '批次小小作品提刪' });
 				break;
 			case 'batch':
-				xfdCatName = wgULS('批量其他提删', '批次其他提刪');
+				xfdCatName = conv({ hans: '批量其他提删', hant: '批次其他提刪' });
 				break;
 			default:
-				xfdCatName = wgULS('文件存废讨论', '檔案存廢討論');
+				xfdCatName = conv({ hans: '文件存废讨论', hant: '檔案存廢討論' });
 				break;
 		}
 
 		// If a logged file is deleted but exists on commons, the wikilink will be blue, so provide a link to the log
 		var appendText = '# [[:' + Morebits.pageNameNorm + ']]';
 		if (mw.config.get('wgNamespaceNumber') === 6) {
-			appendText += '（[{{fullurl:Special:Log|page=' + mw.util.wikiUrlencode(mw.config.get('wgPageName')) + '}} ' + wgULS('日志', '日誌') + ']）';
+			appendText += '（[{{fullurl:Special:Log|page=' + mw.util.wikiUrlencode(mw.config.get('wgPageName')) + '}} ' + conv({ hans: '日志', hant: '日誌' }) + ']）';
 		}
 		appendText += '：' + xfdCatName;
 		if (params.xfdcat === 'merge') {
@@ -670,11 +674,11 @@ Twinkle.xfd.callbacks = {
 		appendText += '。';
 
 		if (params.xfdreason) {
-			appendText += "'''" + (params.xfdcat === 'fwdcsd' ? wgULS('原删除理据', '原刪除理據') : wgULS('理据', '理據')) + "'''：" + Morebits.string.formatReasonForLog(params.xfdreason);
+			appendText += "'''" + (params.xfdcat === 'fwdcsd' ? conv({ hans: '原删除理据', hant: '原刪除理據' }) : conv({ hans: '理据', hant: '理據' })) + "'''：" + Morebits.string.formatReasonForLog(params.xfdreason);
 			appendText = Morebits.string.appendPunctuation(appendText);
 		}
 		if (params.fwdcsdreason) {
-			appendText += "'''" + (params.xfdcat === 'fwdcsd' ? wgULS('转交理据', '轉交理據') : wgULS('理据', '理據')) + "'''：" + Morebits.string.formatReasonForLog(params.fwdcsdreason);
+			appendText += "'''" + (params.xfdcat === 'fwdcsd' ? conv({ hans: '转交理据', hant: '轉交理據' }) : conv({ hans: '理据', hant: '理據' })) + "'''：" + Morebits.string.formatReasonForLog(params.fwdcsdreason);
 			appendText = Morebits.string.appendPunctuation(appendText);
 		}
 
@@ -690,7 +694,7 @@ Twinkle.xfd.callbacks = {
 Twinkle.xfd.callback.evaluate = function(e) {
 	var params = Morebits.quickForm.getInputData(e.target);
 	if (params.xfdcat === 'merge' && params.mergeinto.trim() === '') {
-		alert(wgULS('请提供合并目标！', '請提供合併目標！'));
+		alert(conv({ hans: '请提供合并目标！', hant: '請提供合併目標！' }));
 		return;
 	}
 
@@ -715,10 +719,10 @@ Twinkle.xfd.callback.evaluate = function(e) {
 			Morebits.wiki.addCheckpoint();
 			// Updating data for the action completed event
 			Morebits.wiki.actionCompleted.redirect = params.logpage;
-			Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重新導向到討論頁');
+			Morebits.wiki.actionCompleted.notice = conv({ hans: '提名完成，重定向到讨论页', hant: '提名完成，重新導向到討論頁' });
 
 			// Lookup creation
-			target_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('获取页面创建信息', '取得頁面建立資訊'));
+			target_page = new Morebits.wiki.page(mw.config.get('wgPageName'), conv({ hans: '获取页面创建信息', hant: '取得頁面建立資訊' }));
 			target_page.setCallbackParameters(params);
 			if (mw.config.get('wgPageContentModel') === 'wikitext') {
 				target_page.setLookupNonRedirectCreator(true); // Look for author of first non-redirect revision
@@ -735,10 +739,10 @@ Twinkle.xfd.callback.evaluate = function(e) {
 			Morebits.wiki.addCheckpoint();
 			// Updating data for the action completed event
 			Morebits.wiki.actionCompleted.redirect = params.logpage;
-			Morebits.wiki.actionCompleted.notice = wgULS('提名完成，重定向到讨论页', '提名完成，重新導向到討論頁');
+			Morebits.wiki.actionCompleted.notice = conv({ hans: '提名完成，重定向到讨论页', hant: '提名完成，重新導向到討論頁' });
 
 			// Lookup creation
-			var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), wgULS('获取页面创建信息', '取得頁面建立資訊'));
+			var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), conv({ hans: '获取页面创建信息', hant: '取得頁面建立資訊' }));
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.setLookupNonRedirectCreator(true); // Look for author of first non-redirect revision
 			wikipedia_page.lookupCreation(Twinkle.xfd.callbacks.ffd.lookupCreation);

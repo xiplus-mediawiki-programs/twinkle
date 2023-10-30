@@ -12,11 +12,13 @@
  * Active on:              Non-special pages, except Wikipedia:Sandbox
  */
 
+var conv = require('ext.gadget.HanAssist').conv;
+
 Twinkle.unlink = function twinkleunlink() {
 	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageName') === Twinkle.getPref('sandboxPage') || !Morebits.userIsSysop) {
 		return;
 	}
-	Twinkle.addPortletLink(Twinkle.unlink.callback, wgULS('消链', '消連'), 'tw-unlink', wgULS('取消到本页的链接', '取消到本頁的連結'));
+	Twinkle.addPortletLink(Twinkle.unlink.callback, conv({ hans: '消链', hant: '消連' }), 'tw-unlink', conv({ hans: '取消到本页的链接', hant: '取消到本頁的連結' }));
 };
 
 // the parameter is used when invoking unlink from admin speedy
@@ -24,17 +26,17 @@ Twinkle.unlink.callback = function(presetReason) {
 	var fileSpace = mw.config.get('wgNamespaceNumber') === 6;
 
 	var Window = new Morebits.simpleWindow(600, 440);
-	Window.setTitle(wgULS('取消链入', '取消連入') + (fileSpace ? wgULS('和文件使用', '和檔案使用') : ''));
+	Window.setTitle(conv({ hans: '取消链入', hant: '取消連入' }) + (fileSpace ? conv({ hans: '和文件使用', hant: '和檔案使用' }) : ''));
 	Window.setScriptName('Twinkle');
-	Window.addFooterLink(wgULS('链入设置', '連入設定'), 'WP:TW/PREF#unlink');
-	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#unlink');
+	Window.addFooterLink(conv({ hans: '链入设置', hant: '連入設定' }), 'WP:TW/PREF#unlink');
+	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#unlink');
 
 	var form = new Morebits.quickForm(Twinkle.unlink.callback.evaluate);
 
 	// prepend some documentation: files are commented out, while any
 	// display text is preserved for links (otherwise the link itself is used)
-	var linkTextBefore = Morebits.htmlNode('code', '[[' + (fileSpace ? ':' : '') + Morebits.pageNameNorm + wgULS('|链接文字]]', '|連結文字]]'));
-	var linkTextAfter = Morebits.htmlNode('code', wgULS('链接文字', '連結文字'));
+	var linkTextBefore = Morebits.htmlNode('code', '[[' + (fileSpace ? ':' : '') + Morebits.pageNameNorm + conv({ hans: '|链接文字]]', hant: '|連結文字]]' }));
+	var linkTextAfter = Morebits.htmlNode('code', conv({ hans: '链接文字', hant: '連結文字' }));
 	var linkPlainBefore = Morebits.htmlNode('code', '[[' + Morebits.pageNameNorm + ']]');
 	var linkPlainAfter;
 	if (fileSpace) {
@@ -51,11 +53,11 @@ Twinkle.unlink.callback = function(presetReason) {
 		type: 'div',
 		style: 'margin-bottom: 0.5em',
 		label: [
-			wgULS('这个工具可以取消所有指向该页的链接（“链入”）', '這個工具可以取消所有指向該頁的連結（「連入」）') +
-				(fileSpace ? wgULS('，或通过加入<!-- -->注释标记隐藏所有对此文件的使用', '，或透過加入<!-- -->注釋標記隱藏所有對此檔案的使用') : '') +
+			conv({ hans: '这个工具可以取消所有指向该页的链接（“链入”）', hant: '這個工具可以取消所有指向該頁的連結（「連入」）' }) +
+			(fileSpace ? conv({ hans: '，或通过加入<!-- -->注释标记隐藏所有对此文件的使用', hant: '，或透過加入<!-- -->注釋標記隱藏所有對此檔案的使用' }) : '') +
 				'。例如：',
-			linkTextBefore, wgULS('将会变成', '將會變成'), linkTextAfter, '，',
-			linkPlainBefore, wgULS('将会变成', '將會變成'), linkPlainAfter, wgULS('。请小心使用。', '。請小心使用。')
+			linkTextBefore, conv({ hans: '将会变成', hant: '將會變成' }), linkTextAfter, '，',
+			linkPlainBefore, conv({ hans: '将会变成', hant: '將會變成' }), linkPlainAfter, conv({ hans: '。请小心使用。', hant: '。請小心使用。' })
 		]
 	});
 
@@ -84,14 +86,14 @@ Twinkle.unlink.callback = function(presetReason) {
 	} else {
 		query.blfilterredir = 'nonredirects';
 	}
-	var wikipedia_api = new Morebits.wiki.api(wgULS('抓取链入', '抓取連入'), query, Twinkle.unlink.callbacks.display.backlinks);
+	var wikipedia_api = new Morebits.wiki.api(conv({ hans: '抓取链入', hant: '抓取連入' }), query, Twinkle.unlink.callbacks.display.backlinks);
 	wikipedia_api.params = { form: form, Window: Window, image: fileSpace };
 	wikipedia_api.post();
 
 	var root = document.createElement('div');
 	root.style.padding = '15px';  // just so it doesn't look broken
 	Morebits.status.init(root);
-	wikipedia_api.statelem.status(wgULS('加载中…', '載入中…'));
+	wikipedia_api.statelem.status(conv({ hans: '加载中…', hant: '載入中…' }));
 	Window.setContent(root);
 	Window.display();
 };
@@ -101,7 +103,7 @@ Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event)
 	var input = Morebits.quickForm.getInputData(form);
 
 	if (!input.reason) {
-		alert(wgULS('您必须指定取消链入的理由。', '您必須指定取消連入的理由。'));
+		alert(conv({ hans: '您必须指定取消链入的理由。', hant: '您必須指定取消連入的理由。' }));
 		return;
 	}
 
@@ -109,20 +111,20 @@ Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event)
 	input.imageusage = input.imageusage || [];
 	var pages = Morebits.array.uniq(input.backlinks.concat(input.imageusage));
 	if (!pages.length) {
-		alert(wgULS('您必须至少选择一个要取消链入的页面。', '您必須至少選擇一個要取消連入的頁面。'));
+		alert(conv({ hans: '您必须至少选择一个要取消链入的页面。', hant: '您必須至少選擇一個要取消連入的頁面。' }));
 		return;
 	}
 
 	Morebits.simpleWindow.setButtonsEnabled(false);
 	Morebits.status.init(form);
 
-	var unlinker = new Morebits.batchOperation('取消' + (input.backlinks.length ? wgULS('链入', '連入') +
-			(input.imageusage.length ? wgULS('与文件使用', '與檔案使用') : '') : wgULS('文件使用', '檔案使用')));
+	var unlinker = new Morebits.batchOperation('取消' + (input.backlinks.length ? conv({ hans: '链入', hant: '連入' }) +
+		(input.imageusage.length ? conv({ hans: '与文件使用', hant: '與檔案使用' }) : '') : conv({ hans: '文件使用', hant: '檔案使用' })));
 	unlinker.setOption('preserveIndividualStatusLines', true);
 	unlinker.setPageList(pages);
 	var params = { reason: input.reason, unlinker: unlinker };
 	unlinker.run(function(pageName) {
-		var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('在页面“', '在頁面「') + pageName + wgULS('”中取消链入', '」中取消連入'));
+		var wikipedia_page = new Morebits.wiki.page(pageName, conv({ hans: '在页面“', hant: '在頁面「' }) + pageName + conv({ hans: '”中取消链入', hant: '」中取消連入' }));
 		wikipedia_page.setBotEdit(true);  // unlink considered a floody operation
 		wikipedia_page.setCallbackParameters($.extend({
 			doBacklinks: input.backlinks.indexOf(pageName) !== -1,
@@ -147,34 +149,34 @@ Twinkle.unlink.callbacks = {
 					list.push({ label: '', value: imageusage[i].title, checked: true });
 				}
 				if (!list.length) {
-					apiobj.params.form.append({ type: 'div', label: wgULS('未找到文件使用。', '未找到檔案使用。') });
+					apiobj.params.form.append({ type: 'div', label: conv({ hans: '未找到文件使用。', hant: '未找到檔案使用。' }) });
 				} else {
-					apiobj.params.form.append({ type: 'header', label: wgULS('文件使用', '檔案使用') });
+					apiobj.params.form.append({ type: 'header', label: conv({ hans: '文件使用', hant: '檔案使用' }) });
 					namespaces = [];
 					$.each(Twinkle.getPref('unlinkNamespaces'), function(k, v) {
-						namespaces.push(v === '0' ? wgULS('（条目）', '（條目）') : mw.config.get('wgFormattedNamespaces')[v]);
+						namespaces.push(v === '0' ? conv({ hans: '（条目）', hant: '（條目）' }) : mw.config.get('wgFormattedNamespaces')[v]);
 					});
 					apiobj.params.form.append({
 						type: 'div',
-						label: wgULS('已选择的命名空间：', '已選擇的命名空間：') + namespaces.join('、'),
-						tooltip: wgULS('您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]', '您可在Twinkle屬性中更改這個，請參見[[WP:TWPREFS]]')
+						label: conv({ hans: '已选择的命名空间：', hant: '已選擇的命名空間：' }) + namespaces.join('、'),
+						tooltip: conv({ hans: '您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]', hant: '您可在Twinkle屬性中更改這個，請參見[[WP:TWPREFS]]' })
 					});
 					if (response['query-continue'] && response['query-continue'].imageusage) {
 						apiobj.params.form.append({
 							type: 'div',
-							label: wgULS('显示前', '顯示前') + mw.language.convertNumber(list.length) + wgULS('个文件使用。', '個檔案使用。')
+							label: conv({ hans: '显示前', hant: '顯示前' }) + mw.language.convertNumber(list.length) + conv({ hans: '个文件使用。', hant: '個檔案使用。' })
 						});
 					}
 					apiobj.params.form.append({
 						type: 'button',
-						label: wgULS('全选', '全選'),
+						label: conv({ hans: '全选', hant: '全選' }),
 						event: function(e) {
 							$(Morebits.quickForm.getElements(e.target.form, 'imageusage')).prop('checked', true);
 						}
 					});
 					apiobj.params.form.append({
 						type: 'button',
-						label: wgULS('全不选', '全不選'),
+						label: conv({ hans: '全不选', hant: '全不選' }),
 						event: function(e) {
 							$(Morebits.quickForm.getElements(e.target.form, 'imageusage')).prop('checked', false);
 						}
@@ -196,32 +198,32 @@ Twinkle.unlink.callbacks = {
 					// Label made by Twinkle.generateBatchPageLinks
 					list.push({ label: '', value: backlinks[i].title, checked: true });
 				}
-				apiobj.params.form.append({ type: 'header', label: wgULS('链入', '連入') });
+				apiobj.params.form.append({ type: 'header', label: conv({ hans: '链入', hant: '連入' }) });
 				namespaces = [];
 				$.each(Twinkle.getPref('unlinkNamespaces'), function(k, v) {
-					namespaces.push(v === '0' ? wgULS('（条目）', '（條目）') : mw.config.get('wgFormattedNamespaces')[v]);
+					namespaces.push(v === '0' ? conv({ hans: '（条目）', hant: '（條目）' }) : mw.config.get('wgFormattedNamespaces')[v]);
 				});
 				apiobj.params.form.append({
 					type: 'div',
-					label: wgULS('已选择的命名空间：', '已選擇的命名空間：') + namespaces.join('、'),
-					tooltip: wgULS('您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]', '您可在Twinkle屬性中更改這個，請參見[[WP:TWPREFS]]')
+					label: conv({ hans: '已选择的命名空间：', hant: '已選擇的命名空間：' }) + namespaces.join('、'),
+					tooltip: conv({ hans: '您可在Twinkle属性中更改这个，请参见[[WP:TWPREFS]]', hant: '您可在Twinkle屬性中更改這個，請參見[[WP:TWPREFS]]' })
 				});
 				if (response['query-continue'] && response['query-continue'].backlinks) {
 					apiobj.params.form.append({
 						type: 'div',
-						label: wgULS('显示前', '顯示前') + mw.language.convertNumber(list.length) + wgULS('个链入。', '個連入。')
+						label: conv({ hans: '显示前', hant: '顯示前' }) + mw.language.convertNumber(list.length) + conv({ hans: '个链入。', hant: '個連入。' })
 					});
 				}
 				apiobj.params.form.append({
 					type: 'button',
-					label: wgULS('全选', '全選'),
+					label: conv({ hans: '全选', hant: '全選' }),
 					event: function(e) {
 						$(Morebits.quickForm.getElements(e.target.form, 'backlinks')).prop('checked', true);
 					}
 				});
 				apiobj.params.form.append({
 					type: 'button',
-					label: wgULS('全不选', '全不選'),
+					label: conv({ hans: '全不选', hant: '全不選' }),
 					event: function(e) {
 						$(Morebits.quickForm.getElements(e.target.form, 'backlinks')).prop('checked', false);
 					}
@@ -234,7 +236,7 @@ Twinkle.unlink.callbacks = {
 				});
 				havecontent = true;
 			} else {
-				apiobj.params.form.append({ type: 'div', label: wgULS('未找到链入。', '未找到連入。') });
+				apiobj.params.form.append({ type: 'div', label: conv({ hans: '未找到链入。', hant: '未找到連入。' }) });
 			}
 
 			if (havecontent) {
@@ -259,12 +261,12 @@ Twinkle.unlink.callbacks = {
 
 		// remove image usages
 		if (params.doImageusage) {
-			text = wikiPage.commentOutImage(mw.config.get('wgTitle'), wgULS('注释', '注釋')).getText();
+			text = wikiPage.commentOutImage(mw.config.get('wgTitle'), conv({ hans: '注释', hant: '注釋' })).getText();
 			// did we actually make any changes?
 			if (text === oldtext) {
-				warningString = wgULS('文件使用', '檔案使用');
+				warningString = conv({ hans: '文件使用', hant: '檔案使用' });
 			} else {
-				summaryText = wgULS('注释文件使用', '注釋檔案使用');
+				summaryText = conv({ hans: '注释文件使用', hant: '注釋檔案使用' });
 				oldtext = text;
 			}
 		}
@@ -274,22 +276,22 @@ Twinkle.unlink.callbacks = {
 			text = wikiPage.removeLink(Morebits.pageNameNorm).getText();
 			// did we actually make any changes?
 			if (text === oldtext) {
-				warningString = warningString ? wgULS('取消链入或文件使用', '取消連入或檔案使用') : wgULS('取消链入', '取消連入');
+				warningString = warningString ? conv({ hans: '取消链入或文件使用', hant: '取消連入或檔案使用' }) : conv({ hans: '取消链入', hant: '取消連入' });
 			} else {
-				summaryText = (summaryText ? summaryText + ' / ' : '') + wgULS('取消链结到', '取消連結到');
+				summaryText = (summaryText ? summaryText + ' / ' : '') + conv({ hans: '取消链结到', hant: '取消連結到' });
 				oldtext = text;
 			}
 		}
 
 		if (warningString) {
 			// nothing to do!
-			pageobj.getStatusElement().error(wgULS('未能在页面上找到', '未能在頁面上找到') + warningString + '。');
+			pageobj.getStatusElement().error(conv({ hans: '未能在页面上找到', hant: '未能在頁面上找到' }) + warningString + '。');
 			params.unlinker.workerFailure(pageobj);
 			return;
 		}
 
 		pageobj.setPageText(text);
-		pageobj.setEditSummary(summaryText + wgULS('“', '「') + Morebits.pageNameNorm + wgULS('”：', '」：') + params.reason);
+		pageobj.setEditSummary(summaryText + conv({ hans: '“', hant: '「' }) + Morebits.pageNameNorm + conv({ hans: '”：', hant: '」：' }) + params.reason);
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('nocreate');
 		pageobj.save(params.unlinker.workerSuccess, params.unlinker.workerFailure);
