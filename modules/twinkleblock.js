@@ -3,6 +3,7 @@
 
 (function($) {
 
+var conv = require('ext.gadget.HanAssist').conv;
 var api = new mw.Api(), relevantUserName, blockedUserName;
 var menuFormattedNamespaces = $.extend({}, mw.config.get('wgFormattedNamespaces'));
 menuFormattedNamespaces[0] = conv({ hans: '（条目）', hant: '（條目）' });
@@ -19,8 +20,6 @@ var blockActionText = {
  * Mode of invocation:     Tab ("Block")
  * Active on:              Any page with relevant user name (userspace, contribs, etc.)
  */
-
-var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.block = function twinkleblock() {
 	relevantUserName = Morebits.wiki.flow.relevantUserName(true);
