@@ -118,7 +118,7 @@ for match in matches:
 with open(os.path.join(basedir, 'modules/friendlywelcome.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
-tags = findBetween(jstext, 'Twinkle.welcome.templates = wgULS', 'Twinkle.welcome.getTemplateWikitext = ')
+tags = findBetween(jstext, 'Twinkle.welcome.templates = {', 'Twinkle.welcome.getTemplateWikitext = ')
 matches = re.findall(r"\n\t{3}(.+?): {", tags)
 for match in matches:
     templates.add(normalizeTitle(match))
