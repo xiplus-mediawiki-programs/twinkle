@@ -12,6 +12,7 @@
  * Active on:              Existing user and project pages
  */
 
+var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.batchundelete = function twinklebatchundelete() {
 	if (!Morebits.userIsSysop || !mw.config.get('wgArticleId') || (
@@ -19,21 +20,21 @@ Twinkle.batchundelete = function twinklebatchundelete() {
 		mw.config.get('wgNamespaceNumber') !== mw.config.get('wgNamespaceIds').project)) {
 		return;
 	}
-	Twinkle.addPortletLink(Twinkle.batchundelete.callback, wgULS('批复', '批復'), 'tw-batch-undel', wgULS('反删除页面', '反刪除頁面'));
+	Twinkle.addPortletLink(Twinkle.batchundelete.callback, conv({ hans: '批复', hant: '批復' }), 'tw-batch-undel', conv({ hans: '反删除页面', hant: '反刪除頁面' }));
 };
 
 Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 	var Window = new Morebits.simpleWindow(600, 400);
 	Window.setScriptName('Twinkle');
-	Window.setTitle(wgULS('批量反删除', '批次反刪除'));
-	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'WP:TW/DOC#batchundelete');
+	Window.setTitle(conv({ hans: '批量反删除', hant: '批次反刪除' }));
+	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#batchundelete');
 
 	var form = new Morebits.quickForm(Twinkle.batchundelete.callback.evaluate);
 	form.append({
 		type: 'checkbox',
 		list: [
 			{
-				label: wgULS('如果存在已删除的讨论页，也恢复', '如果存在已刪除的討論頁，也恢復'),
+				label: conv({ hans: '如果存在已删除的讨论页，也恢复', hant: '如果存在已刪除的討論頁，也恢復' }),
 				name: 'undel_talk',
 				value: 'undel_talk',
 				checked: true
@@ -61,8 +62,8 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 		titles: mw.config.get('wgPageName'),
 		gpllimit: Twinkle.getPref('batchMax')
 	};
-	var statelem = new Morebits.status(wgULS('抓取页面列表', '抓取頁面列表'));
-	var wikipedia_api = new Morebits.wiki.api(wgULS('加载中…', '載入中…'), query, function(apiobj) {
+	var statelem = new Morebits.status(conv({ hans: '抓取页面列表', hant: '抓取頁面列表' }));
+	var wikipedia_api = new Morebits.wiki.api(conv({ hans: '加载中…', hant: '載入中…' }), query, function (apiobj) {
 		var xml = apiobj.responseXML;
 		var $pages = $(xml).find('page[missing]');
 		var list = [];
@@ -73,23 +74,23 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 			var isProtected = $editprot.length > 0;
 
 			list.push({
-				label: title + (isProtected ? '（' + wgULS('全保护，', '全保護，') + ($editprot.attr('expiry') === 'infinity' ? wgULS('无限期', '無限期') : new Morebits.date($editprot.attr('expiry')).calendar('utc') + ' (UTC)' + wgULS('过期', '過期')) + '）' : ''),
+				label: title + (isProtected ? '（' + conv({ hans: '全保护，', hant: '全保護，' }) + ($editprot.attr('expiry') === 'infinity' ? conv({ hans: '无限期', hant: '無限期' }) : new Morebits.date($editprot.attr('expiry')).calendar('utc') + ' (UTC)' + conv({ hans: '过期', hant: '過期' })) + '）' : ''),
 				value: title,
 				checked: true,
 				style: isProtected ? 'color:red' : ''
 			});
 		});
-		apiobj.params.form.append({ type: 'header', label: wgULS('待恢复页面', '待恢復頁面') });
+		apiobj.params.form.append({ type: 'header', label: conv({ hans: '待恢复页面', hant: '待恢復頁面' }) });
 		apiobj.params.form.append({
 			type: 'button',
-			label: wgULS('全选', '全選'),
+			label: conv({ hans: '全选', hant: '全選' }),
 			event: function(e) {
 				$(Morebits.quickForm.getElements(e.target.form, 'pages')).prop('checked', true);
 			}
 		});
 		apiobj.params.form.append({
 			type: 'button',
-			label: wgULS('全不选', '全不選'),
+			label: conv({ hans: '全不选', hant: '全不選' }),
 			event: function(e) {
 				$(Morebits.quickForm.getElements(e.target.form, 'pages')).prop('checked', false);
 			}
@@ -111,12 +112,12 @@ Twinkle.batchundelete.callback = function twinklebatchundeleteCallback() {
 };
 
 Twinkle.batchundelete.callback.evaluate = function(event) {
-	Morebits.wiki.actionCompleted.notice = wgULS('反删除已完成', '反刪除已完成');
+	Morebits.wiki.actionCompleted.notice = conv({ hans: '反删除已完成', hant: '反刪除已完成' });
 
 	var numProtected = $(Morebits.quickForm.getElements(event.target, 'pages')).filter(function(index, element) {
 		return element.checked && element.nextElementSibling.style.color === 'red';
 	}).length;
-	if (numProtected > 0 && !confirm(wgULS('您正要反删除 ', '您正要反刪除 ') + numProtected + wgULS(' 个全保护页面，您确定吗？', ' 個全保護頁面，您確定嗎？'))) {
+	if (numProtected > 0 && !confirm(conv({ hans: '您正要反删除 ', hant: '您正要反刪除 ' }) + numProtected + conv({ hans: ' 个全保护页面，您确定吗？', hant: ' 個全保護頁面，您確定嗎？' }))) {
 		return;
 	}
 
@@ -131,12 +132,12 @@ Twinkle.batchundelete.callback.evaluate = function(event) {
 	Morebits.status.init(event.target);
 
 	if (!pages) {
-		Morebits.status.error(wgULS('错误', '錯誤'), wgULS('没什么要反删除的，取消操作', '沒什麼要反刪除的，取消操作'));
+		Morebits.status.error(conv({ hans: '错误', hant: '錯誤' }), conv({ hans: '没什么要反删除的，取消操作', hant: '沒什麼要反刪除的，取消操作' }));
 		return;
 	}
 
 
-	var pageUndeleter = new Morebits.batchOperation(wgULS('反删除页面', '反刪除頁面'));
+	var pageUndeleter = new Morebits.batchOperation(conv({ hans: '反删除页面', hant: '反刪除頁面' }));
 	pageUndeleter.setOption('chunkSize', Twinkle.getPref('batchChunks'));
 	pageUndeleter.setOption('preserveIndividualStatusLines', true);
 	pageUndeleter.setPageList(pages);
@@ -148,7 +149,7 @@ Twinkle.batchundelete.callback.evaluate = function(event) {
 			pageUndeleter: pageUndeleter
 		};
 
-		var wikipedia_page = new Morebits.wiki.page(pageName, wgULS('反删除页面', '反刪除頁面') + pageName);
+		var wikipedia_page = new Morebits.wiki.page(pageName, conv({ hans: '反删除页面', hant: '反刪除頁面' }) + pageName);
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.setEditSummary(reason + ' (批量)');
 		wikipedia_page.setChangeTags(Twinkle.changeTags);
@@ -180,7 +181,7 @@ Twinkle.batchundelete.callbacks = {
 					drvlimit: 1,
 					titles: talkpagename
 				};
-				wikipedia_api = new Morebits.wiki.api(wgULS('检查讨论页的已删版本', '檢查討論頁的已刪版本'), query, Twinkle.batchundelete.callbacks.undeleteTalk);
+				wikipedia_api = new Morebits.wiki.api(conv({ hans: '检查讨论页的已删版本', hant: '檢查討論頁的已刪版本' }), query, Twinkle.batchundelete.callbacks.undeleteTalk);
 				wikipedia_api.params = params;
 				wikipedia_api.params.talkPage = talkpagename;
 				wikipedia_api.post();
@@ -197,8 +198,8 @@ Twinkle.batchundelete.callbacks = {
 			return;
 		}
 
-		var page = new Morebits.wiki.page(apiobj.params.talkPage, wgULS('正在反删除', '正在反刪除') + apiobj.params.page + wgULS('的讨论页', '的討論頁'));
-		page.setEditSummary(wgULS('反删除“', '反刪除「') + apiobj.params.page + wgULS('”的[[Wikipedia:讨论页|讨论页]]', '」的[[Wikipedia:討論頁|討論頁]]'));
+		var page = new Morebits.wiki.page(apiobj.params.talkPage, conv({ hans: '正在反删除', hant: '正在反刪除' }) + apiobj.params.page + conv({ hans: '的讨论页', hant: '的討論頁' }));
+		page.setEditSummary(conv({ hans: '反删除“', hant: '反刪除「' }) + apiobj.params.page + conv({ hans: '”的[[Wikipedia:讨论页|讨论页]]', hant: '」的[[Wikipedia:討論頁|討論頁]]' }));
 		page.setChangeTags(Twinkle.changeTags);
 		page.undeletePage();
 	}

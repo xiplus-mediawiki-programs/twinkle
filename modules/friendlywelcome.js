@@ -13,6 +13,8 @@
  *                         contribs, etc.) and diff pages
  */
 
+var conv = require('ext.gadget.HanAssist').conv;
+
 Twinkle.welcome = function friendlywelcome() {
 	if (mw.util.getParamValue('friendlywelcome')) {
 		if (mw.util.getParamValue('friendlywelcome') === 'auto') {
@@ -55,7 +57,7 @@ Twinkle.welcome.normal = function() {
 			var welcomeNode = document.createElement('strong');
 			var welcomeLink = document.createElement('a');
 			welcomeLink.appendChild(spanTag('Black', '['));
-			welcomeLink.appendChild(spanTag('Goldenrod', wgULS('欢迎', '歡迎')));
+			welcomeLink.appendChild(spanTag('Goldenrod', conv({ hans: '欢迎', hant: '歡迎' })));
 			welcomeLink.appendChild(spanTag('Black', ']'));
 			welcomeNode.appendChild(welcomeLink);
 
@@ -87,7 +89,7 @@ Twinkle.welcome.normal = function() {
 	if (Morebits.wiki.flow.relevantUserName()) {
 		Twinkle.addPortletLink(function() {
 			Twinkle.welcome.callback(Morebits.wiki.flow.relevantUserName());
-		}, wgULS('欢迎', '歡迎'), 'friendly-welcome', wgULS('欢迎用户', '歡迎使用者'));
+		}, conv({ hans: '欢迎', hant: '歡迎' }), 'friendly-welcome', conv({ hans: '欢迎用户', hant: '歡迎使用者' }));
 	}
 };
 
@@ -103,36 +105,36 @@ Twinkle.welcome.welcomeUser = function welcomeUser() {
 
 	var userTalkPage = mw.config.get('wgFormattedNamespaces')[3] + ':' + Morebits.wiki.flow.relevantUserName();
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
-	Morebits.wiki.actionCompleted.notice = wgULS('欢迎完成，将在几秒内刷新页面', '歡迎完成，將在幾秒內重新整理頁面');
+	Morebits.wiki.actionCompleted.notice = conv({ hans: '欢迎完成，将在几秒内刷新页面', hant: '歡迎完成，將在幾秒內重新整理頁面' });
 
-	var wikipedia_page = new Morebits.wiki.page(userTalkPage, wgULS('编辑用户讨论页', '編輯使用者討論頁'));
+	var wikipedia_page = new Morebits.wiki.page(userTalkPage, conv({ hans: '编辑用户讨论页', hant: '編輯使用者討論頁' }));
 	wikipedia_page.setFollowRedirect(true);
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.welcome.callbacks.main);
 };
 
 Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
-	if (uid === mw.config.get('wgUserName') && !confirm(wgULS('您真的要欢迎您自己吗？', '您真的要歡迎您自己嗎？'))) {
+	if (uid === mw.config.get('wgUserName') && !confirm(conv({ hans: '您真的要欢迎您自己吗？', hant: '您真的要歡迎您自己嗎？' }))) {
 		return;
 	}
 
 	var Window = new Morebits.simpleWindow(600, 420);
-	Window.setTitle(wgULS('欢迎用户', '歡迎使用者'));
+	Window.setTitle(conv({ hans: '欢迎用户', hant: '歡迎使用者' }));
 	Window.setScriptName('Twinkle');
-	Window.addFooterLink(wgULS('欢迎设置', '歡迎設定'), 'WP:TW/PREF#welcome');
-	Window.addFooterLink(wgULS('Twinkle帮助', 'Twinkle說明'), 'H:TW#欢迎');
+	Window.addFooterLink(conv({ hans: '欢迎设置', hant: '歡迎設定' }), 'WP:TW/PREF#welcome');
+	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'H:TW#欢迎');
 
 	var form = new Morebits.quickForm(Twinkle.welcome.callback.evaluate);
 
 	form.append({
 		type: 'select',
 		name: 'type',
-		label: wgULS('欢迎类型：', '歡迎類別：'),
+		label: conv({ hans: '欢迎类型：', hant: '歡迎類別：' }),
 		event: Twinkle.welcome.populateWelcomeList,
 		list: [
-			{ type: 'option', value: 'standard', label: wgULS('标准欢迎', '標準歡迎'), selected: !mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName()) },
-			{ type: 'option', value: 'anonymous', label: wgULS('欢迎IP用户', '歡迎IP使用者'), selected: mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName()) },
-			{ type: 'option', value: 'nonChinese', label: wgULS('非中文欢迎', '非中文歡迎') }
+			{ type: 'option', value: 'standard', label: conv({ hans: '标准欢迎', hant: '標準歡迎' }), selected: !mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName()) },
+			{ type: 'option', value: 'anonymous', label: conv({ hans: '欢迎IP用户', hant: '歡迎IP使用者' }), selected: mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName()) },
+			{ type: 'option', value: 'nonChinese', label: conv({ hans: '非中文欢迎', hant: '非中文歡迎' }) }
 		]
 	});
 
@@ -145,9 +147,9 @@ Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
 	form.append({
 		type: 'input',
 		name: 'article',
-		label: wgULS('* 条目链接（如果模板支持）：', '* 條目連結（如果模板支援）：'),
+		label: conv({ hans: '* 条目链接（如果模板支持）：', hant: '* 條目連結（如果模板支援）：' }),
 		value: mw.util.getParamValue('vanarticle') || '',
-		tooltip: wgULS('如果模板支持则可以链接到条目，留空则不链接。支持链接的模板以星号标注。', '如果模板支援則可以連結到條目，留空則不連結。支援連結的模板以星號標註。')
+		tooltip: conv({ hans: '如果模板支持则可以链接到条目，留空则不链接。支持链接的模板以星号标注。', hant: '如果模板支援則可以連結到條目，留空則不連結。支援連結的模板以星號標註。' })
 	});
 
 	// Only displayed when the user viewing the user talk page
@@ -156,10 +158,10 @@ Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
 			type: 'checkbox',
 			list: [
 				{
-					label: wgULS('欢迎前清空用户讨论页', '歡迎前清空使用者討論頁'),
+					label: conv({ hans: '欢迎前清空用户讨论页', hant: '歡迎前清空使用者討論頁' }),
 					value: 'blank',
 					name: 'blank',
-					tooltip: wgULS('适用于用户讨论页面上仅有胡言乱语或编辑测试时。', '適用於使用者討論頁面上僅有胡言亂語或編輯測試時。')
+					tooltip: conv({ hans: '适用于用户讨论页面上仅有胡言乱语或编辑测试时。', hant: '適用於使用者討論頁面上僅有胡言亂語或編輯測試時。' })
 				}
 			]
 		});
@@ -170,7 +172,7 @@ Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
 		Twinkle.welcome.callbacks.preview(result);  // |result| is defined below
 	});
 	previewlink.style.cursor = 'pointer';
-	previewlink.textContent = wgULS('预览', '預覽');
+	previewlink.textContent = conv({ hans: '预览', hant: '預覽' });
 	form.append({ type: 'div', name: 'welcomepreview', label: [ previewlink ] });
 
 	form.append({ type: 'submit' });
@@ -191,7 +193,7 @@ Twinkle.welcome.populateWelcomeList = function(e) {
 	var container = new Morebits.quickForm.element({ type: 'fragment' });
 
 	if ((type === 'standard' || type === 'anonymous') && Twinkle.getPref('customWelcomeList').length) {
-		container.append({ type: 'header', label: wgULS('自定义欢迎模板', '自訂歡迎模板') });
+		container.append({ type: 'header', label: conv({ hans: '自定义欢迎模板', hant: '自訂歡迎模板' }) });
 		container.append({
 			type: 'radio',
 			name: 'template',
@@ -238,82 +240,41 @@ Twinkle.welcome.populateWelcomeList = function(e) {
 //   - $ARTICLE$   - replaced by an article name, if "linkedArticle" is true
 //   - $HEADER$    - adds a level 2 header (most templates already include this)
 
-/* eslint-disable quote-props */
-Twinkle.welcome.templates = wgULS({
+
+Twinkle.welcome.templates = {
 	standard: {
-		'一般欢迎模板': {
+		[conv({ hans: '一般欢迎模板', hant: '一般歡迎模板' })]: {
 			Welcome: {
-				description: '标准欢迎',
+				description: conv({ hans: '标准欢迎', hant: '標準歡迎' }),
 				syntax: '{{subst:Welcome}}'
 			}
 		},
-
-		'问题用户欢迎模板': {
+		[conv({ hans: '问题用户欢迎模板', hant: '問題使用者歡迎模板' })]: {
 			Firstarticle: {
-				description: '给第一篇条目不符条目创建指引的用户',
+				description: conv({ hans: '给第一篇条目不符条目创建指引的用户', hant: '給第一篇條目不符條目建立指引的使用者' }),
 				linkedArticle: true,
 				syntax: '{{subst:Firstarticle|1=$ARTICLE$}}'
 			}
 		}
 	},
-
 	anonymous: {
-		'匿名用户欢迎模板': {
+		[conv({ hans: '匿名用户欢迎模板', hant: '匿名使用者歡迎模板' })]: {
 			Welcomeip: {
-				description: '供匿名用户，鼓励其创建账户',
+				description: conv({ hans: '供匿名用户，鼓励其创建账户', hant: '供匿名使用者，鼓勵其建立帳戶' }),
 				syntax: '{{subst:Welcomeip}}'
 			}
 		}
 	},
-
 	nonChinese: {
-		'非中文欢迎模板': {
+		[conv({ hans: '非中文欢迎模板', hant: '非中文歡迎模板' })]: {
 			Welcomeen: {
-				description: '欢迎非中文用户',
+				description: conv({ hans: '欢迎非中文用户', hant: '歡迎非中文使用者' }),
 				linkedArticle: true,
 				syntax: '{{subst:Welcomeen|art=$ARTICLE$}}'
 			}
 		}
 	}
-
-}, {
-	standard: {
-		'一般歡迎模板': {
-			Welcome: {
-				description: '標準歡迎',
-				syntax: '{{subst:Welcome}}'
-			}
-		},
-
-		'問題使用者歡迎模板': {
-			Firstarticle: {
-				description: '給第一篇條目不符條目建立指引的使用者',
-				linkedArticle: true,
-				syntax: '{{subst:Firstarticle|1=$ARTICLE$}}'
-			}
-		}
-	},
-
-	anonymous: {
-		'匿名使用者歡迎模板': {
-			Welcomeip: {
-				description: '供匿名使用者，鼓勵其建立帳戶',
-				syntax: '{{subst:Welcomeip}}'
-			}
-		}
-	},
-
-	nonChinese: {
-		'非中文歡迎模板': {
-			Welcomeen: {
-				description: '歡迎非中文使用者',
-				linkedArticle: true,
-				syntax: '{{subst:Welcomeen|art=$ARTICLE$}}'
-			}
-		}
-	}
-
-});
+};
 /* eslint-enable quote-props */
 
 Twinkle.welcome.getTemplateWikitext = function(type, template, article) {
@@ -329,7 +290,7 @@ Twinkle.welcome.getTemplateWikitext = function(type, template, article) {
 		return properties.syntax.
 			replace('$USERNAME$', Twinkle.getPref('insertUsername') ? mw.config.get('wgUserName') : '').
 			replace('$ARTICLE$', article ? article : '').
-			replace(/\$HEADER\$\s*/, '== ' + wgULS('欢迎', '歡迎') + ' ==\n\n').
+			replace(/\$HEADER\$\s*/, '== ' + conv({ hans: '欢迎', hant: '歡迎' }) + ' ==\n\n').
 			replace('$EXTRA$', '');  // EXTRA is not implemented yet
 	}
 	return '{{subst:' + template + (article ? '|art=' + article : '') + '}}' +
@@ -339,8 +300,8 @@ Twinkle.welcome.getTemplateWikitext = function(type, template, article) {
 Twinkle.welcome.callbacks = {
 	preview: function(form) {
 		var previewDialog = new Morebits.simpleWindow(750, 400);
-		previewDialog.setTitle(wgULS('预览欢迎模板', '預覽歡迎模板'));
-		previewDialog.setScriptName(wgULS('欢迎用户', '歡迎使用者'));
+		previewDialog.setTitle(conv({ hans: '预览欢迎模板', hant: '預覽歡迎模板' }));
+		previewDialog.setScriptName(conv({ hans: '欢迎用户', hant: '歡迎使用者' }));
 		previewDialog.setModality(true);
 
 		var previewdiv = document.createElement('div');
@@ -354,7 +315,7 @@ Twinkle.welcome.callbacks = {
 
 		var submit = document.createElement('input');
 		submit.setAttribute('type', 'submit');
-		submit.setAttribute('value', wgULS('关闭', '關閉'));
+		submit.setAttribute('value', conv({ hans: '关闭', hant: '關閉' }));
 		previewDialog.addContent(submit);
 
 		previewDialog.display();
@@ -369,7 +330,7 @@ Twinkle.welcome.callbacks = {
 
 		// abort if mode is auto and form is not empty
 		if (pageobj.exists() && params.mode === 'auto') {
-			Morebits.status.info('警告', wgULS('用户讨论页不是空的，略过自动欢迎', '使用者討論頁不是空的，略過自動歡迎'));
+			Morebits.status.info('警告', conv({ hans: '用户讨论页不是空的，略过自动欢迎', hant: '使用者討論頁不是空的，略過自動歡迎' }));
 			Morebits.wiki.actionCompleted.event();
 			return;
 		}
@@ -386,7 +347,7 @@ Twinkle.welcome.callbacks = {
 			text += '\n' + welcomeText;
 		}
 
-		var summaryText = wgULS('欢迎来到维基百科！', '歡迎來到維基百科！');
+		var summaryText = conv({ hans: '欢迎来到维基百科！', hant: '歡迎來到維基百科！' });
 		pageobj.setPageText(text);
 		pageobj.setEditSummary(summaryText);
 		pageobj.setChangeTags(Twinkle.changeTags);
@@ -407,9 +368,9 @@ Twinkle.welcome.callback.evaluate = function friendlywelcomeCallbackEvaluate(e) 
 
 	var userTalkPage = mw.config.get('wgFormattedNamespaces')[3] + ':' + Morebits.wiki.flow.relevantUserName();
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
-	Morebits.wiki.actionCompleted.notice = wgULS('欢迎完成，将在几秒内刷新讨论页面', '歡迎完成，將在幾秒內重新整理討論頁面');
+	Morebits.wiki.actionCompleted.notice = conv({ hans: '欢迎完成，将在几秒内刷新讨论页面', hant: '歡迎完成，將在幾秒內重新整理討論頁面' });
 
-	var wikipedia_page = new Morebits.wiki.page(userTalkPage, wgULS('修改用户讨论页', '修改使用者討論頁'));
+	var wikipedia_page = new Morebits.wiki.page(userTalkPage, conv({ hans: '修改用户讨论页', hant: '修改使用者討論頁' }));
 	wikipedia_page.setFollowRedirect(true);
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.welcome.callbacks.main);

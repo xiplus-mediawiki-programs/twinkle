@@ -1,3 +1,4 @@
+
 // Tweak some mw.configs as needed by tests
 mw.config.set({
 	wgPageName: 'Macbeth,_King_of_Scotland',
@@ -7,6 +8,12 @@ mw.config.set({
 window.wgULS = function(hans, hant) {
 	return hans;
 }
+
+jest.mock(
+	'ext.gadget.HanAssist',
+	() => ({ conv: ({ hans }) => hans }),
+	{ virtual: true }
+);
 
 require('../morebits.js');
 global.Morebits = window.Morebits;
