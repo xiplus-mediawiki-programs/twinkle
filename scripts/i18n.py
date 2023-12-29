@@ -105,7 +105,7 @@ for filename in run_files:
     with open(full_filename, 'r', encoding='utf8') as f:
         jstext = f.read()
 
-    matches = re.findall(r"wgULS\('(.*?)',[\s\n]*?'((?:[^()]|\([^()]*?\))*?)'\)", jstext)
+    matches = re.findall(r"conv\({ hans: '(.*?)',[\s\n]*?hant: '((?:[^()]|\([^()]*?\))*?)'", jstext)
 
     text = noteTA
 
@@ -150,12 +150,15 @@ for filename in run_files:
         else:
             newregex = r'\g<1>{}\g<3>\g<4>\g<5>'.format(newtext)
         jstext = re.sub(
-            r"(wgULS\(')({})(',[\s\n]*?')({})('\))".format(re.escape(messages[idx][0]), re.escape(messages[idx][1])),
+            r"(conv\({{ hans: ')({})(',[\s\n]*?hant: ')({})(' }}\))".format(
+                re.escape(messages[idx][0]),
+                re.escape(messages[idx][1])
+            ),
             newregex,
             jstext,
         )
 
-    jstext = re.sub(r"wgULS\('(.+?)',[\s\n]*?'\1'\)", r"'\1'", jstext)
+    jstext = re.sub(r"conv\({ hans: '(.*?)',[\s\n]*?hant: '\1' }\)", r"'\1'", jstext)
 
     with open(full_filename, 'w', encoding='utf8', newline='\n') as f:
         f.write(jstext)
