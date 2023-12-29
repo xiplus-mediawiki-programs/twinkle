@@ -707,17 +707,6 @@ Twinkle.speedy.articleList = [
 		}
 	},
 	{
-		label: conv({ hans: 'A5: 条目创建时之内容即与其他现有条目内容完全相同或非常相似，且名称不适合作为其他条目之重定向。', hant: 'A5: 條目建立時之內容即與其他現有條目內容完全相同或非常相似，且名稱不適合作為其他條目之重新導向。' }),
-		value: 'a5',
-		tooltip: conv({ hans: '条目被创建时，第一个版本的内容与当时其他现存条目或其历史版本的全部或部分内容完全相同或非常相似，且这个条目的名称不适合改为重定向，就可以提送快速删除。<br>如果名称可以作为重定向，就应直接改重定向，不要提送快速删除。<br>如果是多个条目合并产生的新条目，不适用。<br>如果是从主条目拆分产生的条目，不适用；如有疑虑，应提送存废讨论处理。', hant: '條目被建立時，第一個版本的內容與當時其他現存條目或其歷史版本的全部或部分內容完全相同或非常相似，且這個條目的名稱不適合改為重新導向，就可以提送快速刪除。<br>如果名稱可以作為重新導向，就應直接改重新導向，不要提送快速刪除。<br>如果是多個條目合併產生的新條目，不適用。<br>如果是從主條目拆分產生的條目，不適用；如有疑慮，應提送存廢討論處理。' }),
-		subgroup: {
-			name: 'a5_pagename',
-			type: 'input',
-			label: conv({ hans: '现有条目名：', hant: '現有條目名：' }),
-			size: 60
-		}
-	},
-	{
 		label: conv({ hans: 'A6: 复制自其他维基百科语言版本，且完全没有翻译。', hant: 'A6: 複製自其他維基百科語言版本，且完全沒有翻譯。' }),
 		value: 'a6',
 		tooltip: conv({ hans: '如果并不是复制于任何其他的维基百科语言版本，请换用{{notmandarin}}。<br>带有{{inuse}}和{{translating}}模板的不适用。', hant: '如果並不是複製於任何其他的維基百科語言版本，請換用{{notmandarin}}。<br>帶有{{inuse}}和{{translating}}模板的不適用。' }),
@@ -851,6 +840,18 @@ Twinkle.speedy.generalList = [
 		value: 'g17',
 		tooltip: conv({ hans: '在提请快速删除前，请务必先检查并清理相关消歧义页面的链入。<br>此项不论页面是否引用消歧义模板或消歧义消息模板均适用，惟对消歧义模板及消歧义消息模板本身不适用。', hant: '在提請快速刪除前，請務必先檢查並清理相關消歧義頁面的連入。<br>此項不論頁面是否引用消歧義模板或消歧義訊息模板均適用，惟對消歧義模板及消歧義訊息模板本身不適用。' }),
 		hideInNamespaces: [ 0, 1, 2, 3, 4, 5, 118, 119 ] // main, user, project, draft and theirs talks
+	},
+	{
+		label: conv({ hans: 'G18: 条目或草稿创建时，内容即与其他现有条目或草稿或其历史版本的内容完全相同或非常相似，且名称不适合作为其他条目之重定向', hant: 'G18: 條目或草稿建立時，內容即與其他現有條目或草稿或其歷史版本的內容完全相同或非常相似，且名稱不適合作為其他條目之重新導向' }),
+		value: 'g18',
+		tooltip: conv({ hans: '条目或草稿创建时，首个版本的内容与当时其他现存条目或草稿或其历史版本的全部或部分内容完全相同或非常相似，且其名称不适合改为重定向，就可以提送快速删除。<br>如果名称可以作为重定向，就应直接改为重定向，不要提送快速删除。<br>如果是多个条目或草稿合并产生的新条目或草稿，不适用。<br>如果是从主条目或草稿拆分产生的条目或草稿，不适用；如有疑虑，应提送存废讨论处理。', hant: '條目或草稿建立時，首個版本的內容與當時其他現存條目或草稿或其歷史版本的全部或部分內容完全相同或非常相似，且其名稱不適合改為重新導向，就可以提送快速刪除。<br>如果名稱可以作為重新導向，就應直接改為重新導向，不要提送快速刪除。<br>如果是多個條目或草稿合併產生的新條目或草稿，不適用。<br>如果是從主條目或草稿拆分產生的條目或草稿，不適用；如有疑慮，應提送存廢討論處理。' }),
+		subgroup: {
+			name: 'g18_pagename',
+			type: 'input',
+			label: conv({ hans: '现有页面名：', hant: '現有頁面名：' }),
+			size: 60
+		},
+		showInNamespaces: [ 0, 2, 118 ] // main, user, draft
 	}
 ];
 
@@ -885,7 +886,7 @@ Twinkle.speedy.redirectList = [
 		tooltip: '如A→B→C→……→A。'
 	},
 	{
-		label: conv({ hans: 'R6: 移动文件而产生的重定向，且页面标题不符合文件名称指引。', hant: 'R6: 移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引。' }),
+		label: conv({ hans: 'R6: 移动文件而产生的重定向，且页面标题不符合文件名指引。', hant: 'R6: 移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引。' }),
 		value: 'r6',
 		showInNamespaces: [ 6 ] // file
 	},
@@ -918,10 +919,10 @@ Twinkle.speedy.normalizeHash = {
 	'g15': 'g15',
 	'g16': 'g16',
 	'g17': 'g17',
+	'g18': 'g18',
 	'a1': 'a1',
 	'a2': 'a2',
 	'a3': 'a3',
-	'a5': 'a5',
 	'a6': 'a6',
 	'r2': 'r2',
 	'r3': 'r3',
@@ -1470,18 +1471,6 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 				}
 				break;
 
-			case 'a5':
-				if (form['csd.a5_pagename']) {
-					var otherpage = form['csd.a5_pagename'].value;
-					if (!otherpage || !otherpage.trim()) {
-						alert(conv({ hans: 'CSD A5：请提供现有条目的名称。', hant: 'CSD A5：請提供現有條目的名稱。' }));
-						parameters = null;
-						return false;
-					}
-					currentParams.pagename = otherpage;
-				}
-				break;
-
 			case 'a6':
 				if (form['csd.a6_pagename'] && form['csd.a6_pagename'].value) {
 					currentParams.pagename = form['csd.a6_pagename'].value;
@@ -1517,6 +1506,18 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 						return false;
 					}
 					currentParams.pagename = pagename;
+				}
+				break;
+
+			case 'g18':
+				if (form['csd.g18_pagename']) {
+					var otherpage = form['csd.g18_pagename'].value;
+					if (!otherpage || !otherpage.trim()) {
+						alert(conv({ hans: 'CSD G18：请提供现有页面的名称。', hant: 'CSD G18：請提供現有頁面的名稱。' }));
+						parameters = null;
+						return false;
+					}
+					currentParams.pagename = otherpage;
 				}
 				break;
 
