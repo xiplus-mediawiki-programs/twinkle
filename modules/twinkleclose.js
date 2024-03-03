@@ -47,7 +47,7 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 	}
 
 	titles.each(function(key, current) {
-		var headlinehref = $(current).find('.mw-headline a').attr('href');
+		var headlinehref = $(current).find('.mw-headline>a').attr('href');
 		if (headlinehref === undefined) {
 			return;
 		}
