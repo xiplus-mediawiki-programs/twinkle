@@ -39,7 +39,7 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 	});
 
 	var selector = ':has(a:only-of-type):not(:has(+ div.NavFrame))';
-	var titles = $('#bodyContent').find('.mw-heading2' + selector + ':not(:has(+ p + h3)), .mw-heading3' + selector);
+	var titles = $('#bodyContent').find('.mw-heading2' + selector + ':not(:has(+ p + div.mw-heading.mw-heading3)), .mw-heading3' + selector);
 
 	titles.each(function(key, current) {
 		var $pageLink = $(current).find('h2 a, h3 a');
