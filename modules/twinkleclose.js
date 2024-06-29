@@ -29,25 +29,21 @@ Twinkle.close = function twinkleclose() {
 
 Twinkle.close.addLinks = function twinklecloseAddLinks() {
 	var prevH2Section = -1;
-	$('h1:has(.mw-headline),h2:has(.mw-headline),h3:has(.mw-headline),h4:has(.mw-headline),h5:has(.mw-headline),h6:has(.mw-headline)', '#bodyContent').each(function (index, current) {
+	$('.mw-heading.mw-heading1, .mw-heading.mw-heading2, .mw-heading.mw-heading3, .mw-heading.mw-heading4, .mw-heading.mw-heading5, .mw-heading.mw-heading6', '#bodyContent').each(function (index, current) {
 		current.setAttribute('data-section', index + 1);
-		if (current.nodeName === 'H2') {
+		if ($(current).hasClass('mw-heading2')) {
 			prevH2Section = index + 1;
 		} else {
 			current.setAttribute('data-parent-section', prevH2Section);
 		}
 	});
 
-	var selector = ':has(.mw-headline a:only-of-type):not(:has(+ div.NavFrame))';
-	var titles; // really needs to work on
-	if ($('.ext-discussiontools-init-section').length > 0) { // Handle discussion tools
-		titles = $('#bodyContent').find('.mw-heading2' + selector + ':not(:has(+ p + h3)) > h2, h3' + selector);
-	} else {
-		titles = $('#bodyContent').find('h2' + selector + ':not(:has(+ p + h3)), h3' + selector);
-	}
+	var selector = ':has(a:only-of-type):not(:has(+ div.NavFrame))';
+	var titles = $('#bodyContent').find('.mw-heading2' + selector + ':not(:has(+ p + h3)), .mw-heading3' + selector);
 
 	titles.each(function(key, current) {
-		var headlinehref = $(current).find('.mw-headline a:not(.ext-discussiontools-init-section-subscribe-link)').attr('href');
+		var $pageLink = $(current).find('h2 a, h3 a');
+		var headlinehref = $pageLink.attr('href');
 		if (headlinehref === undefined) {
 			return;
 		}
@@ -65,7 +61,7 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 		}
 		title = decodeURIComponent(title);
 		title = title.replace(/_/g, ' '); // Normalize for using in interface and summary
-		var pagenotexist = $(current).find('.mw-headline a').hasClass('new');
+		var pagenotexist = $pageLink.hasClass('new');
 		var section = current.getAttribute('data-section');
 		var parentSection = current.getAttribute('data-parent-section') || -1;
 		var node = current.getElementsByClassName('mw-editsection')[0];
