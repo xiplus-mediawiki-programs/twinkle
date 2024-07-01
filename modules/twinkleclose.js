@@ -16,7 +16,7 @@
 var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.close = function twinkleclose() {
-	if (Twinkle.getPref('XfdClose') === 'hide' || !/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(mw.config.get('wgPageName'))) {
+	if (Twinkle.getPref('XfdClose') === 'hide' || (!/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(mw.config.get('wgPageName')) && mw.config.get('wgPageName') !== 'Wikipedia:Twinkle/沙盒')) {
 		return;
 	}
 
@@ -65,6 +65,7 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 		var section = current.getAttribute('data-section');
 		var parentSection = current.getAttribute('data-parent-section') || -1;
 		var node = current.getElementsByClassName('mw-editsection')[0];
+		console.log(key, current, node);
 		var delDivider = document.createElement('span');
 		delDivider.appendChild(document.createTextNode(' | '));
 		node.insertBefore(delDivider, node.childNodes[1]);
