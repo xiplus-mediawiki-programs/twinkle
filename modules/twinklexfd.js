@@ -244,6 +244,14 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 	form.notify.disabled = false;
 };
 
+Twinkle.xfd.getAfdBatchReason = function twinklexfdGetAfdBatchReason() {
+	var previousTime = parseInt(localStorage.getItem('Twinkle_afdBatchReasonTime'));
+	if (previousTime && new Date() - new Date(previousTime) < 1000 * 60 * 60) {
+		return localStorage.getItem('Twinkle_afdBatchReasonText') || '';
+	}
+	return '';
+};
+
 Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdCategory(e) {
 	if (e.target.value === 'merge') {
 		e.target.form.mergeinto.parentElement.removeAttribute('hidden');
@@ -262,6 +270,10 @@ Twinkle.xfd.callback.change_afd_category = function twinklexfdCallbackChangeAfdC
 		e.target.form.mergeinto.parentElement.setAttribute('hidden', '');
 		e.target.form.fwdcsdreason.parentElement.setAttribute('hidden', '');
 		e.target.form.xfdreason.value = Twinkle.getPref('afdSubstubDefaultReason');
+	} else if (e.target.value === 'batch') {
+		e.target.form.mergeinto.parentElement.setAttribute('hidden', '');
+		e.target.form.fwdcsdreason.parentElement.setAttribute('hidden', '');
+		e.target.form.xfdreason.value = Twinkle.xfd.getAfdBatchReason();
 	} else {
 		e.target.form.mergeinto.parentElement.setAttribute('hidden', '');
 		e.target.form.fwdcsdreason.parentElement.setAttribute('hidden', '');
@@ -713,6 +725,10 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	var date = new Morebits.date(); // XXX: avoid use of client clock, still used by TfD, FfD and CfD
 	switch (params.category) {
 		case 'afd': // AFD
+			if (params.xfdcat === 'batch') {
+				localStorage.setItem('Twinkle_afdBatchReasonText', params.xfdreason || '');
+				localStorage.setItem('Twinkle_afdBatchReasonTime', new Date().getTime());
+			}
 			params.logpage = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
 			params.lognomination = Twinkle.getPref('logXfdNominations') && Twinkle.getPref('noLogOnXfdNomination').indexOf(params.xfdcat) === -1;
 
