@@ -38,10 +38,13 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 		}
 	});
 
-	var selector = ':has(a:only-of-type):not(:has(+ div.NavFrame))';
+	var selector = ':has(a:only-of-type)';
 	var titles = $('#bodyContent').find('.mw-heading2' + selector + ':not(:has(+ p + div.mw-heading.mw-heading3)), .mw-heading3' + selector);
 
 	titles.each(function(key, current) {
+		if ($(current).nextUntil('.mw-heading.mw-heading1, .mw-heading.mw-heading2, .mw-heading.mw-heading3, .mw-heading.mw-heading4, .mw-heading.mw-heading5, .mw-heading.mw-heading6', '.talkend').length > 0) {
+			return;
+		}
 		var $pageLink = $(current).find('h2 a, h3 a');
 		var headlinehref = $pageLink.attr('href');
 		if (headlinehref === undefined) {
