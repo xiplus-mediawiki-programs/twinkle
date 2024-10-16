@@ -584,6 +584,24 @@ Twinkle.warn.messages = {
 					label: conv({ hans: '违反中立的观点方针', hant: '違反中立的觀點方針' }),
 					summary: conv({ hans: '最后警告：违反中立的观点方针', hant: '最後警告：違反中立的觀點方針' })
 				}
+			},
+			'uw-paid': {
+				level1: {
+					label: conv({ hans: '未申报的有偿编辑', hant: '未申報的有償編輯' }),
+					summary: conv({ hans: '提醒：未申报的有偿编辑', hant: '提醒：未申報的有償編輯' })
+				},
+				level2: {
+					label: conv({ hans: '未申报的有偿编辑', hant: '未申報的有償編輯' }),
+					summary: conv({ hans: '注意：未申报的有偿编辑', hant: '注意：未申報的有償編輯' })
+				},
+				level3: {
+					label: conv({ hans: '未申报的有偿编辑', hant: '未申報的有償編輯' }),
+					summary: conv({ hans: '警告：未申报的有偿编辑', hant: '警告：未申報的有償編輯' })
+				},
+				level4: {
+					label: conv({ hans: '未申报的有偿编辑', hant: '未申報的有償編輯' }),
+					summary: conv({ hans: '最后警告：未申报的有偿编辑', hant: '最後警告：未申報的有償編輯' })
+				}
 			}
 		}
 	},
