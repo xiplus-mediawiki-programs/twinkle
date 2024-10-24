@@ -815,9 +815,13 @@ Twinkle.close.callbacks = {
 
 		var params = pageobj.getCallbackParameters();
 		var text = pageobj.getPageText();
+		
+		// HACK: match template w/ or w/o date param, and {{vfd|(reason)}} in one regex
 
-		if (/{{[rsaiftcmv]fd\s*(\|.*)?\|\s*date\s*=[^|}]*.*}}/.test(text)) {
-			text = text.replace(/({{[rsaiftcmv]fd\s*(?:\|.*)?\|\s*date\s*=)[^|}]*(.*}})/, '$1' + params.date + '$2');
+		if (/{{[rsaiftcmv]fd\s*\|\s*[^|}]*}}/is.test(text) && !/{{[rsaiftcmv]fd\s*\|\s*date\s*=/is.test(text)) {
+			text = text.replace(/({{[rsaiftcmv]fd[^|}]*)\|([^|}]*}})/is, '$1|date=' + params.date + '|$2');
+		} else if (/{{[rsaiftcmv]fd[^|}]*(?:\|[^}]*)?\|(?:[^|}]*date[^|}]*=)?(?=\d{4})[^|}]*[^}]*}}/is.test(text)) {
+			text = text.replace(/({{[rsaiftcmv]fd[^|}]*(?:\|[^}]*)?\|(?:[^|}]*date[^|}]*=)?(?=\d{4}))[^|}]*([^}]*}})/is, '$1' + params.date + '$2');
 		} else {
 			Morebits.status.warn(conv({ hans: '重新标记', hant: '重新標記' }), conv({ hans: '找不到提删模板，重新插入', hant: '找不到提刪模板，重新插入' }));
 			// Insert tag after short description or any hatnotes
