@@ -816,13 +816,20 @@ Twinkle.close.callbacks = {
 		var params = pageobj.getCallbackParameters();
 		var text = pageobj.getPageText();
 
-		if (/{{[rsaiftcmv]fd\s*(\|.*)?\|\s*date\s*=[^|}]*.*}}/.test(text)) {
-			text = text.replace(/({{[rsaiftcmv]fd\s*(?:\|.*)?\|\s*date\s*=)[^|}]*(.*}})/, '$1' + params.date + '$2');
+		// HACK: match template w/ or w/o date param, and {{vfd|(reason)}} in one regex
+
+		if (/{{[rsaiftcmv]fd\s*\|\s*[^|}]*}}/i.test(text) && !/{{[rsaiftcmv]fd\s*\|\s*date\s*=/i.test(text)) {
+			text = text.replace(/({{[rsaiftcmv]fd[^|}]*)\|([^|}]*}})/i, '$1|date=' + params.date + '|$2');
+		} else if (/{{[rsaiftcmv]fd[^|}]*(?:\|[^}]*)?\|(?:[^|}]*date[^|}]*=)?(?=\d{4})[^|}]*[^}]*}}/i.test(text)) {
+			text = text.replace(/({{[rsaiftcmv]fd[^|}]*(?:\|[^}]*)?\|(?:[^|}]*date[^|}]*=)?(?=\d{4}))[^|}]*([^}]*}})/i, '$1' + params.date + '$2');
 		} else {
 			Morebits.status.warn(conv({ hans: '重新标记', hant: '重新標記' }), conv({ hans: '找不到提删模板，重新插入', hant: '找不到提刪模板，重新插入' }));
 			// Insert tag after short description or any hatnotes
 			var wikipage = new Morebits.wikitext.page(text);
 			var tag = '{{vfd|date=' + params.date + '}}\n';
+			if (pageobj.getPageName().substring(0, 9) === 'Template:') {
+				tag = '<noinclude>' + tag + '</noinclude>';
+			}
 			text = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
 		}
 
