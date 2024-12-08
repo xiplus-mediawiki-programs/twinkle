@@ -826,6 +826,7 @@ Twinkle.close.callbacks = {
 			Morebits.status.warn(conv({ hans: '重新标记', hant: '重新標記' }), conv({ hans: '找不到提删模板，重新插入', hant: '找不到提刪模板，重新插入' }));
 			// Insert tag after short description or any hatnotes
 			var wikipage = new Morebits.wikitext.page(text);
+			var tag = '{{vfd|date=' + params.date + '}}\n';
 			if (pageobj.getPageName().substring(0, 9) === 'Template:') {
 				tag = '<noinclude>' + tag + '</noinclude>';
 			}
