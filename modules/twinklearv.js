@@ -552,7 +552,7 @@ Twinkle.arv.callback.getReportWikitext = function(form) {
 			comment = comment.trim();
 			comment = Morebits.string.appendPunctuation(comment);
 
-			reason += comment + '\n* 发现人：~~~~\n* 处理：';
+			reason += comment + '\n* 发现人：~~~~';
 			break;
 
 		// Report 3RR
@@ -581,7 +581,7 @@ Twinkle.arv.callback.getReportWikitext = function(form) {
 			comment = comment.trim();
 			comment = Morebits.string.appendPunctuation(comment);
 
-			reason += comment + '\n* 提報人：~~~~\n* 处理：';
+			reason += comment + '\n* 提報人：~~~~';
 			break;
 
 		// Report inappropriate username
