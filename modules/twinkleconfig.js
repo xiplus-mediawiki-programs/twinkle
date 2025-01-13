@@ -85,7 +85,7 @@ Twinkle.config.commonSets = {
 		delete: conv({ hans: '删除', hant: '刪除' }), merge: conv({ hans: '合并', hant: '合併' }),
 		vmd: conv({ hans: '移动到维基词典', hant: '移動到維基詞典' }), vms: conv({ hans: '移动到维基文库', hant: '移動到維基文庫' }), vmb: conv({ hans: '移动到维基教科书', hant: '移動到維基教科書' }), vmq: conv({ hans: '移动到维基语录', hant: '移動到維基語錄' }), vmvoy: conv({ hans: '移动到维基导游', hant: '移動到維基導遊' }), vmv: conv({ hans: '移动到维基学院', hant: '移動到維基學院' }),
 		fwdcsd: conv({ hans: '转交自快速删除候选', hant: '轉交自快速刪除候選' }),
-		fame: conv({ hans: '批量关注度提删', hant: '批次關注度提刪' }), substub: conv({ hans: '批量小小作品提删', hant: '批次小小作品提刪' }), batch: conv({ hans: '批量其他提删', hant: '批次其他提刪' }),
+		fame: conv({ hans: '批量收录标准提删', hant: '批次收錄標準提刪' }), substub: conv({ hans: '批量小小作品提删', hant: '批次小小作品提刪' }), batch: conv({ hans: '批量其他提删', hant: '批次其他提刪' }),
 		ffd: conv({ hans: '文件存废讨论', hant: '檔案存廢討論' })
 	},
 	xfdCriteriaDisplayOrder: [
@@ -936,7 +936,7 @@ Twinkle.config.sections = [
 
 			{
 				name: 'afdFameDefaultReason',
-				label: conv({ hans: '默认关注度提删理由', hant: '預設關注度提刪理由' }),
+				label: conv({ hans: '默认收录标准提删理由', hant: '預設收錄標準提刪理由' }),
 				helptip: conv({ hans: '用于批量提删。', hant: '用於批次提刪。' }),
 				type: 'string'
 			},

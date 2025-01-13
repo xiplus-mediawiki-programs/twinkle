@@ -191,7 +191,7 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 			if (Twinkle.getPref('FwdCsdToXfd')) {
 				afd_category.append({ type: 'option', label: conv({ hans: '转交自快速删除候选', hant: '轉交自快速刪除候選' }), value: 'fwdcsd', selected: afd_cat === 'fwdcsd' });
 			}
-			afd_category.append({ type: 'option', label: conv({ hans: '批量关注度提删', hant: '批次關注度提刪' }), value: 'fame', selected: afd_cat === 'fame' });
+			afd_category.append({ type: 'option', label: conv({ hans: '批量收录标准提删', hant: '批次收錄標準提刪' }), value: 'fame', selected: afd_cat === 'fame' });
 			afd_category.append({ type: 'option', label: conv({ hans: '批量小小作品提删', hant: '批次小小作品提刪' }), value: 'substub', selected: afd_cat === 'substub' });
 			afd_category.append({ type: 'option', label: conv({ hans: '批量其他提删', hant: '批次其他提刪' }), value: 'batch', selected: afd_cat === 'batch' });
 
@@ -448,7 +448,7 @@ Twinkle.xfd.callbacks = {
 						var appendText = '\n{{safesubst:SafeAfdHead}}\n' +
 							{
 								fame: '==30天后仍掛有{{tl|notability}}模板的條目==\n' +
-									'<span style="font-size:smaller;">(已掛[[template:notability|關注度模板]]30天)</span>',
+									'<span style="font-size:smaller;">(已掛[[Template:notability|收錄標準模板]]30天)</span>',
 								substub: '==到期篩選的小小作品==',
 								batch: '==批量提刪=='
 							}[type] + '\n' +
@@ -457,7 +457,7 @@ Twinkle.xfd.callbacks = {
 							'----\n' +
 							':{{删除}}理據：' + Morebits.string.formatReasonText(params.xfdreason) + '\n' +
 							'提报以上' + {
-							fame: '<u>关注度不足</u>条目',
+							fame: '<u>收錄標準不足</u>条目',
 							substub: '<u>小小作品</u>',
 							batch: '頁面'
 						}[type] + '的維基人及時間：<br id="no-new-title" />~~~~';
@@ -661,7 +661,7 @@ Twinkle.xfd.callbacks = {
 				xfdCatName = conv({ hans: '转交自快速删除候选', hant: '轉交自快速刪除候選' });
 				break;
 			case 'fame':
-				xfdCatName = conv({ hans: '批量关注度提删', hant: '批次關注度提刪' });
+				xfdCatName = conv({ hans: '批量收录标准提删', hant: '批次收錄標準提刪' });
 				break;
 			case 'substub':
 				xfdCatName = conv({ hans: '批量小小作品提删', hant: '批次小小作品提刪' });

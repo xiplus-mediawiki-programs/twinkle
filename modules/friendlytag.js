@@ -466,7 +466,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 					name: 'notability',
 					type: 'select',
 					list: [
-						{ label: '{{Notability}}：' + conv({ hans: '通用的关注度指引', hant: '通用的關注度指引' }), value: 'none' },
+						{ label: '{{Notability}}：' + conv({ hans: '通用的收录标准指引', hant: '通用的收錄標準指引' }), value: 'none' },
 						{ label: '{{Notability|Astro}}：' + conv({ hans: '天体', hant: '天體' }), value: 'Astro' },
 						{ label: '{{Notability|Biographies}}：' + conv({ hans: '人物传记', hant: '人物傳記' }), value: 'Biographies' },
 						{ label: '{{Notability|Book}}：' + conv({ hans: '书籍', hant: '書籍' }), value: 'Book' },
@@ -724,8 +724,8 @@ Twinkle.tag.article.tagList = [{
 	value: [{
 		key: '重要性和知名度',
 		value: [
-			{ tag: 'Notability', description: conv({ hans: '可能不符合通用关注度指引', hant: '可能不符合通用關注度指引' }), excludeMI: true },  // has a subgroup with subcategories
-			{ tag: 'Notability Unreferenced', description: conv({ hans: '可能具备关注度，但需要来源加以彰显', hant: '可能具備關注度，但需要來源加以彰顯' }) }
+			{ tag: 'Notability', description: conv({ hans: '可能不符合通用收录标准指引', hant: '可能不符合通用收錄標準指引' }), excludeMI: true },  // has a subgroup with subcategories
+			{ tag: 'Notability Unreferenced', description: conv({ hans: '可能符合收录标准，但需要来源加以彰显', hant: '可能符合收錄標準，但需要來源加以彰顯' }) }
 		]
 	},
 	{
@@ -846,7 +846,7 @@ Twinkle.tag.redirectList = [{
 	value: [
 		{ tag: conv({ hans: '合并重定向', hant: '合併重定向' }), description: conv({ hans: '保持页面题名至相应主条目，令页面内容在合并后仍能保存其编辑历史', hant: '保持頁面題名至相應主條目，令頁面內容在合併後仍能儲存其編輯歷史' }) },
 		{ tag: conv({ hans: '简繁重定向', hant: '簡繁重定向' }), description: conv({ hans: '引导简体至繁体，或繁体至简体', hant: '引導簡體至繁體，或繁體至簡體' }) },
-		{ tag: conv({ hans: '关注度重定向', hant: '關注度重定向' }), description: conv({ hans: '缺乏关注度的子主题向有关注度的母主题的重定向', hant: '缺乏關注度的子主題向有關注度的母主題的重定向' }) },
+		{ tag: conv({ hans: '收录标准重定向', hant: '收錄標準重定向' }), description: conv({ hans: '不符收录标准的子主题向符合收录标准的母主题的重定向', hant: '不符收錄標準的子主題向符合收錄標準的母主題的重定向' }) },
 		{ tag: '模板重定向', description: conv({ hans: '指向模板的重定向页面', hant: '指向模板的重定向頁面' }) },
 		{ tag: conv({ hans: '别名重定向', hant: '別名重定向' }), description: conv({ hans: '标题的其他名称、笔名、绰号、同义字等', hant: '標題的其他名稱、筆名、綽號、同義字等' }) },
 		{ tag: conv({ hans: '译名重定向', hant: '譯名重定向' }), description: conv({ hans: '人物、作品等各项事物的其他翻译名称', hant: '人物、作品等各項事物的其他翻譯名稱' }) },
@@ -1333,8 +1333,8 @@ Twinkle.tag.callbacks = {
 			tagRe = new RegExp('\\{\\{' + tag + '(\\||\\}\\})', 'im');
 			// regex check for preexistence of tag can be skipped if in canRemove mode
 			if (Twinkle.tag.canRemove || !tagRe.exec(pageText)) {
-				if (tag === 'Notability' && (mw.config.get('wgNamespaceNumber') === 0 || confirm(conv({ hans: '该页面不是条目，您仍要提报到关注度提报吗？', hant: '該頁面不是條目，您仍要提報到關注度提報嗎？' })))) {
-					var wikipedia_page = new Morebits.wiki.page('Wikipedia:关注度/提报', conv({ hans: '加入关注度记录项', hant: '加入關注度記錄項' }));
+				if (tag === 'Notability' && (mw.config.get('wgNamespaceNumber') === 0 || confirm(conv({ hans: '该页面不是条目，您仍要提报到收录标准提报吗？', hant: '該頁面不是條目，您仍要提報到收錄標準提報嗎？' })))) {
+					var wikipedia_page = new Morebits.wiki.page('Wikipedia:收錄標準/提報', conv({ hans: '加入收录标准提报记录', hant: '加入收錄標準提報記錄' }));
 					wikipedia_page.setFollowRedirect(true);
 					wikipedia_page.setCallbackParameters(params);
 					wikipedia_page.load(Twinkle.tag.callbacks.notabilityList);
