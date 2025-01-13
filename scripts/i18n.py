@@ -81,6 +81,8 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:品质;zh-hant:品質}-
 -{H|zh-hans:命名空间;zh-hant:命名空間}-
 -{H|zh-hans:表单;zh-hant:表單}-
+-{H|zh-hans:扩充;zh-hant:擴充}-
+-{H|zh-hans:文件名称;zh-hant:檔案名稱}-
 '''
 
 headers = {

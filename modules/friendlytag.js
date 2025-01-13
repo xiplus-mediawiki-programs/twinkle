@@ -744,7 +744,7 @@ Twinkle.tag.article.tagList = [{
 	{
 		key: conv({ hans: '内容', hant: '內容' }),
 		value: [
-			{ tag: 'Expand language', description: conv({ hans: '可以根据其他语言版本扩展', hant: '可以根據其他語言版本擴充' }) },  // these three have a subgroup with several options
+			{ tag: 'Expand language', description: conv({ hans: '可以根据其他语言版本扩充', hant: '可以根據其他語言版本擴充' }) },  // these three have a subgroup with several options
 			{ tag: 'Missing information', description: '缺少必要的信息' },  // these three have a subgroup with several options
 			{ tag: 'Substub', description: conv({ hans: '过于短小', hant: '過於短小' }), excludeMI: true },
 			{ tag: 'Unencyclopedic', description: conv({ hans: '可能不适合写入百科全书', hant: '可能不適合寫入百科全書' }) }
