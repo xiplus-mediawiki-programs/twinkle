@@ -457,7 +457,7 @@ Twinkle.xfd.callbacks = {
 							'----\n' +
 							':{{删除}}理據：' + Morebits.string.formatReasonText(params.xfdreason) + '\n' +
 							'提报以上' + {
-							fame: '<u>收錄標準不足</u>条目',
+							fame: '<u>不符合收錄標準</u>条目',
 							substub: '<u>小小作品</u>',
 							batch: '頁面'
 						}[type] + '的維基人及時間：<br id="no-new-title" />~~~~';
