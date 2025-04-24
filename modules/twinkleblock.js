@@ -1868,7 +1868,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				return alert(conv({ hans: '请提供傀儡账户的主账户用户名！', hant: '請提供傀儡帳號的主帳號使用者名稱！' }));
 			}
 			if (blockoptions.reason) {
-				blockoptions.reason += ' - [[User:' + params.sppUsername.trim() + ']]的傀儡';
+				blockoptions.reason += ' - [[User:' + params.sppUsername.trim() + '|' + params.sppUsername.trim() + ']]的傀儡';
 			}
 		}
 	}
