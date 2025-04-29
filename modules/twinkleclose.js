@@ -292,19 +292,6 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 
 	var form = new Morebits.quickForm(Twinkle.close.callback.evaluate);
 
-	if ($('.skin-vector-2022').length > 0) {
-		mw.notify(conv({ hans: '关闭存废讨论功能暂不支持 Vector 2022，请改用其他外观。', hant: '關閉存廢討論功能暫不支援 Vector 2022，請改用其他外觀。' }), { type: 'error' });
-		form.append({
-			type: 'div',
-			label: conv({ hans: '关闭存废讨论功能暂不支持 Vector 2022，请改用其他外观。', hant: '關閉存廢討論功能暫不支援 Vector 2022，請改用其他外觀。' })
-		});
-
-		var result2 = form.render();
-		Window.setContent(result2);
-		Window.display();
-		return;
-	}
-
 	form.append({
 		type: 'select',
 		label: conv({ hans: '处理结果：', hant: '處理結果：' }),
