@@ -839,6 +839,24 @@ Twinkle.warn.messages = {
 					label: '移除{{delete}}模板',
 					summary: conv({ hans: '最后警告：移除{{delete}}模板', hant: '最後警告：移除{{delete}}模板' })
 				}
+			},
+			'uw-disruptive': {
+				level1: {
+					label: conv({ hans: '扰乱', hant: '擾亂' }),
+					summary: conv({ hans: '提醒：扰乱', hant: '提醒：擾亂' })
+				},
+				level2: {
+					label: conv({ hans: '扰乱', hant: '擾亂' }),
+					summary: conv({ hans: '注意：扰乱', hant: '注意：擾亂' })
+				},
+				level3: {
+					label: conv({ hans: '扰乱', hant: '擾亂' }),
+					summary: conv({ hans: '警告：扰乱', hant: '警告：擾亂' })
+				},
+				level4: {
+					label: conv({ hans: '扰乱', hant: '擾亂' }),
+					summary: conv({ hans: '最后警告：扰乱', hant: '最後警告：擾亂' })
+				}
 			}
 		}
 	},
