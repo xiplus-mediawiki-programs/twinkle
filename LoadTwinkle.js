@@ -1,97 +1,97 @@
-/* eslint-disable no-console*/
+/* eslint-disable no-console */
 // 複製並修改自 https://zh.wikipedia.org/w/index.php?oldid=45972864 作者為 User:逆襲的天邪鬼
 // Adopted from https://zh.wikipedia.org/w/index.php?oldid=60075303 User:Xiplus
 // 載入自己修改的Twinkle
 
 (function () {
-	var VERSION = 'dev';
-	var PREFIX = 'User:Hamish/Twinkle/';
-	var rebuildcache = true;
-	var tests = [];
-	var siteBase = mw.config.get('wgServer') + mw.util.wikiScript('index') + '?title=';
-	var ajax = function (title) {
-		return $.ajax({
-			url:  siteBase + title + '&action=raw&ctype=text/javascript',
-			dataType: 'text'
-		});
-	};
-
-	var load = function (p) {
-		var done = function (data) {
-			if (rebuildcache || !localStorage['HamishTestTwinkle_' + p.name]) {
-				localStorage['HamishTestTwinkle_' + p.name] = data;
-			}
-		};
-		if (localStorage['HamishTestTwinkle_' + p.name] && !rebuildcache) {
-			return $.Deferred().resolve(localStorage['HamishTestTwinkle_' + p.name]);
-		}
-		if (p.test) {
-			return ajax(PREFIX + p.name).done(done);
-		}
-		return ajax('MediaWiki:Gadget-' + p.name).done(done);
-	};
-
-	var message = function (text) {
-		console.log('[HamishTestTwinkle]', text);
-//    $('#simpleSearch input[type="search"]').attr('placeHolder', text);
-	};
-
-	tests.push({ name: 'twinkle.js', test: true });
-	tests.push({ name: 'modules/twinklearv.js', test: true });
-	tests.push({ name: 'modules/twinklewarn.js', test: true });
-	tests.push({ name: 'modules/friendlyshared.js', test: true });
-	tests.push({ name: 'modules/friendlytag.js', test: true });
-	tests.push({ name: 'modules/friendlytalkback.js', test: true });
-	tests.push({ name: 'modules/twinklebatchdelete.js', test: true });
-	tests.push({ name: 'modules/twinklebatchundelete.js', test: true });
-	tests.push({ name: 'modules/twinkleblock.js', test: true });
-	tests.push({ name: 'modules/twinkleclose.js', test: true });
-	tests.push({ name: 'modules/twinkleconfig.js', test: true });
-	tests.push({ name: 'modules/twinklecopyvio.js', test: true });
-	tests.push({ name: 'modules/twinkledelimages.js', test: true });
-	tests.push({ name: 'modules/twinklediff.js', test: true });
-	tests.push({ name: 'modules/twinklefluff.js', test: true });
-	tests.push({ name: 'modules/twinkleimage.js', test: true });
-	tests.push({ name: 'modules/twinkleprotect.js', test: true });
-	tests.push({ name: 'modules/twinklespeedy.js', test: true });
-	tests.push({ name: 'modules/twinklestub.js', test: true });
-	tests.push({ name: 'modules/twinkleunlink.js', test: true });
-	tests.push({ name: 'modules/twinklexfd.js', test: true });
-	tests.push({ name: 'modules/twinklehandleemail.js', test: true });
-
-	mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.api', 'jquery.ui', 'mediawiki.language', 'ext.gadget.HanAssist', 'ext.gadget.morebits', 'ext.gadget.select2']).then((require) => {
-		var cssLink = siteBase + 'User:Hamish/Twinkle/twinkle.css&action=raw&ctype=text/css';
-		mw.loader.load(cssLink, 'text/css');
-
-		var i;
-		var finished = 0;
-		var code = [];
-
-		// all
-		message('Loading HamishTestTW...');
-		var promises = [];
-		var done = function (x) {
-			return function (data) {
-				finished++;
-				message('Loading HamishTestTW... (' + finished + '/' + tests.length + ')');
-				code[x] = data;
-			};
-		};
-		for (i = 0; i < tests.length; i++) {
-			promises.push(load(tests[i]).done(done(i)));
-		}
-		$.when.apply($, promises).done(function () {
-			localStorage.HamishTestTwinkle_version = VERSION;
-			eval(code.join('\n;\n'));
-			message('Twinkle Done');
-			var configTitle = $('#twinkle-config-titlebar');
-			if (configTitle.length) {
-				configTitle.append('--版本：HamishTest ' + localStorage.HamishTestTwinkle_version);
-				configTitle.append('<button onclick="localStorage.HamishTestTwinkle_version = \'\';location.reload();">清除快取</button>');
-			}
-		});
+var VERSION = 'dev';
+var PREFIX = 'User:Hamish/Twinkle/';
+var rebuildcache = true;
+var tests = [];
+var siteBase = mw.config.get('wgServer') + mw.util.wikiScript('index') + '?title=';
+var ajax = function (title) {
+	return $.ajax({
+		url:  siteBase + title + '&action=raw&ctype=text/javascript',
+		dataType: 'text'
 	});
+};
 
+var load = function (p) {
+	var done = function (data) {
+		if (rebuildcache || !localStorage['HamishTestTwinkle_' + p.name]) {
+			localStorage['HamishTestTwinkle_' + p.name] = data;
+		}
+	};
+	if (localStorage['HamishTestTwinkle_' + p.name] && !rebuildcache) {
+		return $.Deferred().resolve(localStorage['HamishTestTwinkle_' + p.name]);
+	}
+	if (p.test) {
+		return ajax(PREFIX + p.name).done(done);
+	}
+	return ajax('MediaWiki:Gadget-' + p.name).done(done);
+};
+
+var message = function (text) {
+	console.log('[HamishTestTwinkle]', text);
+//    $('#simpleSearch input[type="search"]').attr('placeHolder', text);
+};
+
+tests.push({ name: 'twinkle.js', test: true });
+tests.push({ name: 'modules/twinklearv.js', test: true });
+tests.push({ name: 'modules/twinklewarn.js', test: true });
+tests.push({ name: 'modules/friendlyshared.js', test: true });
+tests.push({ name: 'modules/friendlytag.js', test: true });
+tests.push({ name: 'modules/friendlytalkback.js', test: true });
+tests.push({ name: 'modules/twinklebatchdelete.js', test: true });
+tests.push({ name: 'modules/twinklebatchundelete.js', test: true });
+tests.push({ name: 'modules/twinkleblock.js', test: true });
+tests.push({ name: 'modules/twinkleclose.js', test: true });
+tests.push({ name: 'modules/twinkleconfig.js', test: true });
+tests.push({ name: 'modules/twinklecopyvio.js', test: true });
+tests.push({ name: 'modules/twinkledelimages.js', test: true });
+tests.push({ name: 'modules/twinklediff.js', test: true });
+tests.push({ name: 'modules/twinklefluff.js', test: true });
+tests.push({ name: 'modules/twinkleimage.js', test: true });
+tests.push({ name: 'modules/twinkleprotect.js', test: true });
+tests.push({ name: 'modules/twinklespeedy.js', test: true });
+tests.push({ name: 'modules/twinklestub.js', test: true });
+tests.push({ name: 'modules/twinkleunlink.js', test: true });
+tests.push({ name: 'modules/twinklexfd.js', test: true });
+tests.push({ name: 'modules/twinklehandleemail.js', test: true });
+
+// eslint-disable-next-line no-unused-vars
+mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.api', 'jquery.ui', 'mediawiki.language', 'ext.gadget.HanAssist', 'ext.gadget.morebits', 'ext.gadget.select2']).then((require) => {
+	var cssLink = siteBase + 'User:Hamish/Twinkle/twinkle.css&action=raw&ctype=text/css';
+	mw.loader.load(cssLink, 'text/css');
+
+	var i;
+	var finished = 0;
+	var code = [];
+
+	// all
+	message('Loading HamishTestTW...');
+	var promises = [];
+	var done = function (x) {
+		return function (data) {
+			finished++;
+			message('Loading HamishTestTW... (' + finished + '/' + tests.length + ')');
+			code[x] = data;
+		};
+	};
+	for (i = 0; i < tests.length; i++) {
+		promises.push(load(tests[i]).done(done(i)));
+	}
+	$.when.apply($, promises).done(function () {
+		localStorage.HamishTestTwinkle_version = VERSION;
+		eval(code.join('\n;\n'));
+		message('Twinkle Done');
+		var configTitle = $('#twinkle-config-titlebar');
+		if (configTitle.length) {
+			configTitle.append('--版本：HamishTest ' + localStorage.HamishTestTwinkle_version);
+			configTitle.append('<button onclick="localStorage.HamishTestTwinkle_version = \'\';location.reload();">清除快取</button>');
+		}
+	});
+});
 })();
 
 /*
