@@ -11,7 +11,7 @@ var tests = [];
 var siteBase = mw.config.get('wgServer') + mw.util.wikiScript('index') + '?title=';
 var ajax = function (title) {
 	return $.ajax({
-		url:  siteBase + title + '&action=raw&ctype=text/javascript',
+		url: siteBase + title + '&action=raw&ctype=text/javascript',
 		dataType: 'text'
 	});
 };
