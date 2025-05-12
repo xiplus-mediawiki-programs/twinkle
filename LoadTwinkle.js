@@ -61,8 +61,8 @@ tests.push({ name: 'modules/twinklehandleemail.js', test: true });
 
 // eslint-disable-next-line no-unused-vars
 mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.api', 'jquery.ui', 'mediawiki.language', 'ext.gadget.HanAssist', 'ext.gadget.morebits', 'ext.gadget.select2']).then((require) => {
-	var cssLink = siteBase + 'User:Hamish/Twinkle/twinkle.css&action=raw&ctype=text/css';
-	mw.loader.load(cssLink, 'text/css');
+	mw.loader.load(siteBase + 'User:Hamish/Twinkle/twinkle.css&action=raw&ctype=text/css', 'text/css');
+	mw.loader.load(siteBase + 'User:Hamish/Twinkle/twinkle-pagestyles.css&action=raw&ctype=text/css', 'text/css');
 
 	var i;
 	var finished = 0;
