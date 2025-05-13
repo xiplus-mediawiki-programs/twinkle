@@ -735,17 +735,18 @@ Twinkle.xfd.callbacks = {
 			// Fetch the uploader
 			const page = new Morebits.wiki.page(mw.config.get('wgPageName'));
 			page.lookupCreation(() => {
-				let logPageTitle = 'Wikipedia:檔案存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
 				let text = '\n{{subst:IfdItem|Filename=' + mw.config.get('wgTitle') + '|Uploader=' + page.getCreator() + '|Reason=' + Morebits.string.formatReasonText(params.xfdreason) + '}}--~~~~';
-				form.previewer.beginRender(text, logPageTitle); // Force wikitext
+				form.previewer.beginRender(text, 'WP:TW'); // Force wikitext
 				// Twinkle.xfd.callbacks.showPreview(form, category, params);
 			});
 		} else {
 			let logPageTitle = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
 			let logPage = new Morebits.wiki.page(logPageTitle);
-			let logPageText = logPage.getPageText();
-			// Twinkle.xfd.callbacks.showPreview(form, category, params);
-			form.previewer.beginRender(Twinkle.xfd.callbacks.afd.buildListText(params, logPageText).text, logPageTitle); // Force wikitext
+			logPage.load(function() {
+				let logPageText = logPage.getPageText();
+				// Twinkle.xfd.callbacks.showPreview(form, category, params);
+				form.previewer.beginRender(Twinkle.xfd.callbacks.afd.buildListText(params, logPageText).text, logPageTitle); // Force wikitext
+			});
 		}
 	}
 };
