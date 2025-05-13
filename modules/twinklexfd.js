@@ -83,11 +83,23 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 		label: '工作区',
 		name: 'work_area'
 	});
+
+	var previewLink = document.createElement('a');
+	$(previewLink).on('click', () => {
+		Twinkle.xfd.callback.preview(result); // |result| is defined below
+	});
+	previewLink.textContent = conv({ hans: '预览', hant: '預覽' });
+	previewLink.style.cursor = 'pointer';
+	form.append({ type: 'div', id: 'xfdpreview', label: [ previewLink ] });
+	form.append({ type: 'div', id: 'twinklexfd-previewbox', style: 'display: none' });
+
+
 	form.append({ type: 'submit' });
 
 	var result = form.render();
 	Window.setContent(result);
 	Window.display();
+	result.previewer = new Morebits.wiki.preview($(result).find('div#twinklexfd-previewbox').last()[0]);
 
 	if (mw.config.get('wgPageContentModel') !== 'wikitext') {
 		form = new Morebits.quickForm(Twinkle.xfd.callback.evaluate);
@@ -143,9 +155,9 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 			tooltip: conv({ hans: '您可以使用维基格式，Twinkle将自动为您加入签名。如果您使用批量提删功能，存废讨论页只会使用第一次提交的理由，但之后您仍需提供以用于删除通告模板的参数。', hant: '您可以使用維基格式，Twinkle將自動為您加入簽名。如果您使用批次提刪功能，存廢討論頁只會使用第一次提交的理由，但之後您仍需提供以用於刪除通告模板的參數。' }),
 			placeholder: conv({ hans: '此值亦显示于页面的删除通告模板内，故务必提供此值，避免使用“同上”等用语。', hant: '此值亦顯示於頁面的刪除通告模板內，故務必提供此值，避免使用「同上」等用語。' })
 		});
-		// TODO possible future "preview" link here
 	};
 
+	form.previewer.closePreview();
 	switch (value) {
 		case 'afd':
 			work_area = new Morebits.quickForm.element({
@@ -408,78 +420,17 @@ Twinkle.xfd.callbacks = {
 		todaysList: function(pageobj) {
 			var text = pageobj.getPageText();
 			var params = pageobj.getCallbackParameters();
-			var type = '';
-			var to = '';
-
-			switch (params.xfdcat) {
-				case 'vmd':
-				case 'vms':
-				case 'vmb':
-				case 'vmq':
-				case 'vmvoy':
-				case 'vmv':
-					type = 'vm';
-					to = params.xfdcat;
-					break;
-				case 'fwdcsd':
-				case 'merge':
-					to = params.mergeinto;
-					/* Fall through */
-				default:
-					type = params.xfdcat;
-					break;
-			}
-
-			var append = true;
-			switch (type) {
-				case 'fame':
-				case 'substub':
-				case 'batch':
-					var commentText = '<!-- Twinkle: User:' + mw.config.get('wgUserName') + ' 的 ' + type + ' 提刪插入點，請勿變更或移除此行，除非不再於此頁提刪 -->';
-					var newText = '===[[:' + Morebits.pageNameNorm + ']]===';
-					if (type === 'fame') {
-						newText += '\n{{Findsources|';
-						if (Morebits.pageNameNorm.indexOf('=') !== -1) {
-							newText += '1=';
-						}
-						newText += Morebits.pageNameNorm + '}}';
-					}
-					if (text.indexOf(commentText) !== -1) {
-						text = text.replace(commentText, newText + '\n\n' + commentText);
-						pageobj.setPageText(text);
-						append = false;
-					} else {
-						var appendText = '\n{{safesubst:SafeAfdHead}}\n' +
-							{
-								fame: '==30天后仍掛有{{tl|notability}}模板的條目==\n' +
-									'<span style="font-size:smaller;">(已掛[[Template:notability|收錄標準模板]]30天)</span>',
-								substub: '==到期篩選的小小作品==',
-								batch: '==批量提刪=='
-							}[type] + '\n' +
-							newText + '\n\n' +
-							commentText + '\n' +
-							'----\n' +
-							':{{删除}}理據：' + Morebits.string.formatReasonText(params.xfdreason) + '\n' +
-							'提报以上' + {
-							fame: '<u>不符合收錄標準</u>条目',
-							substub: '<u>小小作品</u>',
-							batch: '頁面'
-						}[type] + '的維基人及時間：<br id="no-new-title" />~~~~';
-						pageobj.setAppendText(appendText);
-					}
-					break;
-				default:
-					pageobj.setAppendText('\n{{subst:DRItem|Type=' + type + '|DRarticles=' + Morebits.pageNameNorm + '|Reason=' + Morebits.string.formatReasonText(params.xfdreason) + (params.fwdcsdreason.trim() !== '' ? '<br>\n轉交理由：' + params.fwdcsdreason : '') + '|To=' + to + '}}~~~~');
-					break;
-			}
+			var result = Twinkle.xfd.callbacks.afd.buildListText(params, text);
 
 			pageobj.setEditSummary('/* ' + Morebits.pageNameNorm + ' */ 新提案');
 			pageobj.setChangeTags(Twinkle.changeTags);
 			pageobj.setWatchlist(Twinkle.getPref('xfdWatchDiscussion'));
 			pageobj.setCreateOption('recreate');
-			if (append) {
+			if (result.append) {
+				pageobj.setAppendText(result.text);
 				pageobj.append();
 			} else {
+				pageobj.setPageText(result.text);
 				pageobj.save();
 			}
 			Twinkle.xfd.currentRationale = null;  // any errors from now on do not need to print the rationale, as it is safely saved on-wiki
@@ -519,6 +470,72 @@ Twinkle.xfd.callbacks = {
 			}
 
 			Twinkle.xfd.callbacks.afd.main(tagging_page);
+		},
+		buildListText: function(params, text) {
+			var type = '';
+			var to = '';
+
+			switch (params.xfdcat) {
+				case 'vmd':
+				case 'vms':
+				case 'vmb':
+				case 'vmq':
+				case 'vmvoy':
+				case 'vmv':
+					type = 'vm';
+					to = params.xfdcat;
+					break;
+				case 'fwdcsd':
+				case 'merge':
+					to = params.mergeinto;
+				/* Fall through */
+				default:
+					type = params.xfdcat;
+					break;
+			}
+
+			var append = true;
+			switch (type) {
+				case 'fame':
+				case 'substub':
+				case 'batch':
+					var commentText = '<!-- Twinkle: User:' + mw.config.get('wgUserName') + ' 的 ' + type + ' 提刪插入點，請勿變更或移除此行，除非不再於此頁提刪 -->';
+					var newText = '===[[:' + Morebits.pageNameNorm + ']]===';
+					if (type === 'fame') {
+						newText += '\n{{Findsources|';
+						if (Morebits.pageNameNorm.indexOf('=') !== -1) {
+							newText += '1=';
+						}
+						newText += Morebits.pageNameNorm + '}}';
+					}
+					if (text.indexOf(commentText) !== -1) {
+						text = text.replace(commentText, newText + '\n\n' + commentText);
+						append = false;
+					} else {
+						text = '\n{{safesubst:SafeAfdHead}}\n' +
+							{
+								fame: '==30天后仍掛有{{tl|notability}}模板的條目==\n' +
+									'<span style="font-size:smaller;">(已掛[[Template:notability|收錄標準模板]]30天)</span>',
+								substub: '==到期篩選的小小作品==',
+								batch: '==批量提刪=='
+							}[type] + '\n' +
+							newText + '\n\n' +
+							commentText + '\n' +
+							'----\n' +
+							':{{删除}}理據：' + Morebits.string.formatReasonText(params.xfdreason) + '\n' +
+							'提报以上' + {
+							fame: '<u>不符合收錄標準</u>条目',
+							substub: '<u>小小作品</u>',
+							batch: '頁面'
+						}[type] + '的維基人及時間：<br id="no-new-title" />~~~~';
+					}
+					break;
+				default:
+					text = '\n{{subst:DRItem|Type=' + type + '|DRarticles=' + Morebits.pageNameNorm + '|Reason=' + Morebits.string.formatReasonText(params.xfdreason) + (params.fwdcsdreason.trim() !== '' ? '<br>\n轉交理由：' + params.fwdcsdreason : '') + '|To=' + to + '}}~~~~';
+					break;
+			}
+
+			return { text: text, append: append };
 		}
 	},
 
@@ -704,6 +721,90 @@ Twinkle.xfd.callbacks = {
 		appendText += ' ~~~~~\n';
 		usl.changeTags = Twinkle.changeTags;
 		usl.log(appendText, editsummary);
+	},
+	getDiscussionWikitext: function(category, params) {
+		let text = '{{subst:'
+		const reasonKey = category === 'ffd' ? 'Reason' : 'text';
+		// Add a reason unconditionally, so that at least a signature is added
+		text += '|' + reasonKey + '=' + Morebits.string.formatReasonText(params.reason, true);
+
+		if (category === 'afd' || category === 'mfd') {
+			text += '|pg=' + Morebits.pageNameNorm;
+			if (category === 'afd') {
+				text += '|cat=' + params.xfdcat;
+			}
+		} else if (category === 'rfd') {
+			text += '|redirect=' + Morebits.pageNameNorm;
+		} else {
+			text += '|1=' + mw.config.get('wgTitle');
+			if (mw.config.get('wgPageContentModel') === 'Scribunto') {
+				text += '|module=Module:';
+			}
+		}
+
+		if (params.rfdtarget) {
+			text += '|target=' + params.rfdtarget + (params.section ? '#' + params.section : '');
+		} else if (params.tfdtarget) {
+			text += '|2=' + params.tfdtarget;
+		} else if (params.cfdtarget) {
+			text += '|2=' + params.cfdtarget;
+			if (params.cfdtarget2) {
+				text += '|3=' + params.cfdtarget2;
+			}
+		} else if (params.uploader) {
+			text += '|Uploader=' + params.uploader;
+		}
+
+		text += '}}';
+
+		if (category === 'rfd' || category === 'tfd' || category === 'cfd') {
+			text += '\n';
+		}
+
+		// Don't delsort if delsortCats is undefined (TFD, FFD, etc.)
+		// Don't delsort if delsortCats is an empty array (AFD where user chose no categories)
+		if (Array.isArray(params.delsortCats) && params.delsortCats.length) {
+			text += '\n{{subst:Deletion sorting/multi|' + params.delsortCats.join('|') + '|sig=~~~~}}';
+		}
+
+		return text;
+	},
+	showPreview: function(form, category, params) {
+		form.previewer.beginRender(Twinkle.xfd.callbacks.getDiscussionWikitext(category, params), 'WP:TW'); // Force wikitext
+	},
+	preview: function(form) {
+		const params = Morebits.QuickForm.getInputData(form);
+
+		const category = params.category;
+
+		// Remove CfD or TfD namespace prefixes if given
+		if (params.tfdtarget) {
+			params.tfdtarget = utils.stripNs(params.tfdtarget);
+		} else if (params.cfdtarget) {
+			params.cfdtarget = utils.stripNs(params.cfdtarget);
+			if (params.cfdtarget2) {
+				params.cfdtarget2 = utils.stripNs(params.cfdtarget2);
+			}
+		} else if (params.cfdstarget) { // Add namespace if not given (CFDS)
+			params.cfdstarget = utils.addNs(params.cfdstarget, 14);
+		}
+
+		if (category === 'ffd') {
+			// Fetch the uploader
+			const page = new Morebits.wiki.Page(mw.config.get('wgPageName'));
+			page.lookupCreation(() => {
+				params.uploader = page.getCreator();
+				Twinkle.xfd.callbacks.showPreview(form, category, params);
+			});
+		} else if (category === 'rfd') { // Find the target
+			Twinkle.xfd.callbacks.rfd.findTarget(params, (params) => {
+				Twinkle.xfd.callbacks.showPreview(form, category, params);
+			});
+		} else if (category === 'cfd') { // Swap in CfD subactions
+			Twinkle.xfd.callbacks.showPreview(form, params.xfdcat, params);
+		} else {
+			Twinkle.xfd.callbacks.showPreview(form, category, params);
+		}
 	}
 };
 
