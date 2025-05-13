@@ -740,6 +740,7 @@ Twinkle.xfd.callbacks = {
 				// Twinkle.xfd.callbacks.showPreview(form, category, params);
 			});
 		} else {
+			// Template:DRItem need to subst itself at log page
 			let logPageTitle = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
 			let logPage = new Morebits.wiki.page(logPageTitle);
 			logPage.load(function() {
