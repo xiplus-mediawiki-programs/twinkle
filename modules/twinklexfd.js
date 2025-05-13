@@ -14,6 +14,9 @@
 
 var conv = require('ext.gadget.HanAssist').conv;
 
+// move to global for preview use
+var date = new Morebits.date(); // XXX: avoid use of client clock, still used by TfD, FfD and CfD
+
 Twinkle.xfd = function twinklexfd() {
 	// Disable on:
 	// * special pages
@@ -86,7 +89,7 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 
 	var previewLink = document.createElement('a');
 	$(previewLink).on('click', () => {
-		Twinkle.xfd.callback.preview(result); // |result| is defined below
+		Twinkle.xfd.callbacks.preview(result); // |result| is defined below
 	});
 	previewLink.textContent = conv({ hans: '预览', hant: '預覽' });
 	previewLink.style.cursor = 'pointer';
@@ -722,88 +725,27 @@ Twinkle.xfd.callbacks = {
 		usl.changeTags = Twinkle.changeTags;
 		usl.log(appendText, editsummary);
 	},
-	getDiscussionWikitext: function(category, params) {
-		let text = '{{subst:'
-		const reasonKey = category === 'ffd' ? 'Reason' : 'text';
-		// Add a reason unconditionally, so that at least a signature is added
-		text += '|' + reasonKey + '=' + Morebits.string.formatReasonText(params.reason, true);
-
-		if (category === 'afd' || category === 'mfd') {
-			text += '|pg=' + Morebits.pageNameNorm;
-			if (category === 'afd') {
-				text += '|cat=' + params.xfdcat;
-			}
-		} else if (category === 'rfd') {
-			text += '|redirect=' + Morebits.pageNameNorm;
-		} else {
-			text += '|1=' + mw.config.get('wgTitle');
-			if (mw.config.get('wgPageContentModel') === 'Scribunto') {
-				text += '|module=Module:';
-			}
-		}
-
-		if (params.rfdtarget) {
-			text += '|target=' + params.rfdtarget + (params.section ? '#' + params.section : '');
-		} else if (params.tfdtarget) {
-			text += '|2=' + params.tfdtarget;
-		} else if (params.cfdtarget) {
-			text += '|2=' + params.cfdtarget;
-			if (params.cfdtarget2) {
-				text += '|3=' + params.cfdtarget2;
-			}
-		} else if (params.uploader) {
-			text += '|Uploader=' + params.uploader;
-		}
-
-		text += '}}';
-
-		if (category === 'rfd' || category === 'tfd' || category === 'cfd') {
-			text += '\n';
-		}
-
-		// Don't delsort if delsortCats is undefined (TFD, FFD, etc.)
-		// Don't delsort if delsortCats is an empty array (AFD where user chose no categories)
-		if (Array.isArray(params.delsortCats) && params.delsortCats.length) {
-			text += '\n{{subst:Deletion sorting/multi|' + params.delsortCats.join('|') + '|sig=~~~~}}';
-		}
-
-		return text;
-	},
-	showPreview: function(form, category, params) {
-		form.previewer.beginRender(Twinkle.xfd.callbacks.getDiscussionWikitext(category, params), 'WP:TW'); // Force wikitext
-	},
 	preview: function(form) {
-		const params = Morebits.QuickForm.getInputData(form);
+		// zh has only one individual template in use, no need to use 3 three funcs as en does
+		const params = Morebits.quickForm.getInputData(form);
 
 		const category = params.category;
 
-		// Remove CfD or TfD namespace prefixes if given
-		if (params.tfdtarget) {
-			params.tfdtarget = utils.stripNs(params.tfdtarget);
-		} else if (params.cfdtarget) {
-			params.cfdtarget = utils.stripNs(params.cfdtarget);
-			if (params.cfdtarget2) {
-				params.cfdtarget2 = utils.stripNs(params.cfdtarget2);
-			}
-		} else if (params.cfdstarget) { // Add namespace if not given (CFDS)
-			params.cfdstarget = utils.addNs(params.cfdstarget, 14);
-		}
-
 		if (category === 'ffd') {
 			// Fetch the uploader
-			const page = new Morebits.wiki.Page(mw.config.get('wgPageName'));
+			const page = new Morebits.wiki.page(mw.config.get('wgPageName'));
 			page.lookupCreation(() => {
-				params.uploader = page.getCreator();
-				Twinkle.xfd.callbacks.showPreview(form, category, params);
+				let logPageTitle = 'Wikipedia:檔案存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
+				let text = '\n{{subst:IfdItem|Filename=' + mw.config.get('wgTitle') + '|Uploader=' + page.getCreator() + '|Reason=' + Morebits.string.formatReasonText(params.xfdreason) + '}}--~~~~';
+				form.previewer.beginRender(text, logPageTitle); // Force wikitext
+				// Twinkle.xfd.callbacks.showPreview(form, category, params);
 			});
-		} else if (category === 'rfd') { // Find the target
-			Twinkle.xfd.callbacks.rfd.findTarget(params, (params) => {
-				Twinkle.xfd.callbacks.showPreview(form, category, params);
-			});
-		} else if (category === 'cfd') { // Swap in CfD subactions
-			Twinkle.xfd.callbacks.showPreview(form, params.xfdcat, params);
 		} else {
-			Twinkle.xfd.callbacks.showPreview(form, category, params);
+			let logPageTitle = 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc');
+			let logPage = new Morebits.wiki.page(logPageTitle);
+			let logPageText = logPage.getPageText();
+			// Twinkle.xfd.callbacks.showPreview(form, category, params);
+			form.previewer.beginRender(Twinkle.xfd.callbacks.afd.buildListText(params, logPageText).text, logPageTitle); // Force wikitext
 		}
 	}
 };
@@ -827,7 +769,6 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	}
 
 	var target_page;
-	var date = new Morebits.date(); // XXX: avoid use of client clock, still used by TfD, FfD and CfD
 	switch (params.category) {
 		case 'afd': // AFD
 			if (params.xfdcat === 'batch') {
