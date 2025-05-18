@@ -25,13 +25,13 @@ Twinkle.unlink = function twinkleunlink() {
 Twinkle.unlink.callback = function(presetReason) {
 	var fileSpace = mw.config.get('wgNamespaceNumber') === 6;
 
-	var Window = new Morebits.simpleWindow(600, 440);
+	var Window = new Morebits.SimpleWindow(600, 440);
 	Window.setTitle(conv({ hans: '取消链入', hant: '取消連入' }) + (fileSpace ? conv({ hans: '和文件使用', hant: '和檔案使用' }) : ''));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '链入设置', hant: '連入設定' }), 'WP:TW/PREF#unlink');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#unlink');
 
-	var form = new Morebits.quickForm(Twinkle.unlink.callback.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.unlink.callback.evaluate);
 
 	// prepend some documentation: files are commented out, while any
 	// display text is preserved for links (otherwise the link itself is used)
@@ -86,13 +86,13 @@ Twinkle.unlink.callback = function(presetReason) {
 	} else {
 		query.blfilterredir = 'nonredirects';
 	}
-	var wikipedia_api = new Morebits.wiki.api(conv({ hans: '抓取链入', hant: '抓取連入' }), query, Twinkle.unlink.callbacks.display.backlinks);
+	var wikipedia_api = new Morebits.wiki.Api(conv({ hans: '抓取链入', hant: '抓取連入' }), query, Twinkle.unlink.callbacks.display.backlinks);
 	wikipedia_api.params = { form: form, Window: Window, image: fileSpace };
 	wikipedia_api.post();
 
 	var root = document.createElement('div');
 	root.style.padding = '15px';  // just so it doesn't look broken
-	Morebits.status.init(root);
+	Morebits.Status.init(root);
 	wikipedia_api.statelem.status(conv({ hans: '加载中…', hant: '載入中…' }));
 	Window.setContent(root);
 	Window.display();
@@ -100,7 +100,7 @@ Twinkle.unlink.callback = function(presetReason) {
 
 Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event) {
 	var form = event.target;
-	var input = Morebits.quickForm.getInputData(form);
+	var input = Morebits.QuickForm.getInputData(form);
 
 	if (!input.reason) {
 		alert(conv({ hans: '您必须指定取消链入的理由。', hant: '您必須指定取消連入的理由。' }));
@@ -115,16 +115,16 @@ Twinkle.unlink.callback.evaluate = function twinkleunlinkCallbackEvaluate(event)
 		return;
 	}
 
-	Morebits.simpleWindow.setButtonsEnabled(false);
-	Morebits.status.init(form);
+	Morebits.SimpleWindow.setButtonsEnabled(false);
+	Morebits.Status.init(form);
 
-	var unlinker = new Morebits.batchOperation('取消' + (input.backlinks.length ? conv({ hans: '链入', hant: '連入' }) +
+	var unlinker = new Morebits.BatchOperation('取消' + (input.backlinks.length ? conv({ hans: '链入', hant: '連入' }) +
 		(input.imageusage.length ? conv({ hans: '与文件使用', hant: '與檔案使用' }) : '') : conv({ hans: '文件使用', hant: '檔案使用' })));
 	unlinker.setOption('preserveIndividualStatusLines', true);
 	unlinker.setPageList(pages);
 	var params = { reason: input.reason, unlinker: unlinker };
 	unlinker.run(function(pageName) {
-		var wikipedia_page = new Morebits.wiki.page(pageName, conv({ hans: '在页面“', hant: '在頁面「' }) + pageName + conv({ hans: '”中取消链入', hant: '」中取消連入' }));
+		var wikipedia_page = new Morebits.wiki.Page(pageName, conv({ hans: '在页面“', hant: '在頁面「' }) + pageName + conv({ hans: '”中取消链入', hant: '」中取消連入' }));
 		wikipedia_page.setBotEdit(true);  // unlink considered a floody operation
 		wikipedia_page.setCallbackParameters($.extend({
 			doBacklinks: input.backlinks.indexOf(pageName) !== -1,
@@ -171,14 +171,14 @@ Twinkle.unlink.callbacks = {
 						type: 'button',
 						label: conv({ hans: '全选', hant: '全選' }),
 						event: function(e) {
-							$(Morebits.quickForm.getElements(e.target.form, 'imageusage')).prop('checked', true);
+							$(Morebits.QuickForm.getElements(e.target.form, 'imageusage')).prop('checked', true);
 						}
 					});
 					apiobj.params.form.append({
 						type: 'button',
 						label: conv({ hans: '全不选', hant: '全不選' }),
 						event: function(e) {
-							$(Morebits.quickForm.getElements(e.target.form, 'imageusage')).prop('checked', false);
+							$(Morebits.QuickForm.getElements(e.target.form, 'imageusage')).prop('checked', false);
 						}
 					});
 					apiobj.params.form.append({
@@ -218,14 +218,14 @@ Twinkle.unlink.callbacks = {
 					type: 'button',
 					label: conv({ hans: '全选', hant: '全選' }),
 					event: function(e) {
-						$(Morebits.quickForm.getElements(e.target.form, 'backlinks')).prop('checked', true);
+						$(Morebits.QuickForm.getElements(e.target.form, 'backlinks')).prop('checked', true);
 					}
 				});
 				apiobj.params.form.append({
 					type: 'button',
 					label: conv({ hans: '全不选', hant: '全不選' }),
 					event: function(e) {
-						$(Morebits.quickForm.getElements(e.target.form, 'backlinks')).prop('checked', false);
+						$(Morebits.QuickForm.getElements(e.target.form, 'backlinks')).prop('checked', false);
 					}
 				});
 				apiobj.params.form.append({
@@ -246,15 +246,15 @@ Twinkle.unlink.callbacks = {
 			var result = apiobj.params.form.render();
 			apiobj.params.Window.setContent(result);
 
-			Morebits.quickForm.getElements(result, 'backlinks').forEach(Twinkle.generateBatchPageLinks);
-			Morebits.quickForm.getElements(result, 'imageusage').forEach(Twinkle.generateBatchPageLinks);
+			Morebits.QuickForm.getElements(result, 'backlinks').forEach(Twinkle.generateBatchPageLinks);
+			Morebits.QuickForm.getElements(result, 'imageusage').forEach(Twinkle.generateBatchPageLinks);
 
 		}
 	},
 	unlinkBacklinks: function twinkleunlinkCallbackUnlinkBacklinks(pageobj) {
 		var oldtext = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
-		var wikiPage = new Morebits.wikitext.page(oldtext);
+		var wikiPage = new Morebits.wikitext.Page(oldtext);
 
 		var summaryText = '', warningString = false;
 		var text;

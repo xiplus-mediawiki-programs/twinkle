@@ -1072,7 +1072,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 		contentdiv.appendChild(contentnotice);
 
 		// look and see if the user does in fact have any old settings in their skin JS file
-		var skinjs = new Morebits.wiki.page('User:' + mw.config.get('wgUserName') + '/' + mw.config.get('skin') + '.js');
+		var skinjs = new Morebits.wiki.Page('User:' + mw.config.get('wgUserName') + '/' + mw.config.get('skin') + '.js');
 		skinjs.setCallbackParameters(contentnotice);
 		skinjs.load(Twinkle.config.legacyPrefsNotice);
 
@@ -1433,7 +1433,7 @@ Twinkle.config.init = function twinkleconfigInit() {
 	}
 };
 
-// Morebits.wiki.page callback from init code
+// Morebits.wiki.Page callback from init code
 Twinkle.config.legacyPrefsNotice = function twinkleconfigLegacyPrefsNotice(pageobj) {
 	var text = pageobj.getPageText();
 	var contentnotice = pageobj.getCallbackParameters();
@@ -1497,7 +1497,7 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 	var curvalue = $prefbutton.data('value');
 	var curpref = $prefbutton.data('pref');
 
-	var dialog = new Morebits.simpleWindow(720, 400);
+	var dialog = new Morebits.SimpleWindow(720, 400);
 	dialog.setTitle(curpref.label);
 	dialog.setScriptName(conv({ hans: 'Twinkle参数设置', hant: 'Twinkle偏好設定' }));
 
@@ -1560,7 +1560,7 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 
 	// buttonpane buttons: [Save changes] [Reset] [Cancel]
 	var button = document.createElement('button');
-	button.setAttribute('type', 'submit');  // so Morebits.simpleWindow puts the button in the button pane
+	button.setAttribute('type', 'submit');  // so Morebits.SimpleWindow puts the button in the button pane
 	button.addEventListener('click', function() {
 		Twinkle.config.listDialog.save($prefbutton, dlgtbody);
 		dialog.close();
@@ -1568,14 +1568,14 @@ Twinkle.config.listDialog.display = function twinkleconfigListDialogDisplay(e) {
 	button.textContent = conv({ hans: '保存修改', hant: '儲存修改' });
 	dialogcontent.appendChild(button);
 	button = document.createElement('button');
-	button.setAttribute('type', 'submit');  // so Morebits.simpleWindow puts the button in the button pane
+	button.setAttribute('type', 'submit');  // so Morebits.SimpleWindow puts the button in the button pane
 	button.addEventListener('click', function() {
 		Twinkle.config.listDialog.reset($prefbutton, dlgtbody);
 	}, false);
 	button.textContent = conv({ hans: '复位', hant: '復位' });
 	dialogcontent.appendChild(button);
 	button = document.createElement('button');
-	button.setAttribute('type', 'submit');  // so Morebits.simpleWindow puts the button in the button pane
+	button.setAttribute('type', 'submit');  // so Morebits.SimpleWindow puts the button in the button pane
 	button.addEventListener('click', function() {
 		dialog.close();  // the event parameter on this function seems to be broken
 	}, false);
@@ -1702,10 +1702,10 @@ Twinkle.config.resetAllPrefs = function twinkleconfigResetAllPrefs() {
 };
 
 Twinkle.config.save = function twinkleconfigSave(e) {
-	Morebits.status.init(document.getElementById('twinkle-config-content'));
+	Morebits.Status.init(document.getElementById('twinkle-config-content'));
 
 	var userjs = mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user] + ':' + mw.config.get('wgUserName') + '/twinkleoptions.js';
-	var wikipedia_page = new Morebits.wiki.page(userjs, conv({ hans: '保存参数设置到 ', hant: '儲存偏好設定到 ' }) + userjs);
+	var wikipedia_page = new Morebits.wiki.Page(userjs, conv({ hans: '保存参数设置到 ', hant: '儲存偏好設定到 ' }) + userjs);
 	wikipedia_page.setCallbackParameters(e.target);
 	wikipedia_page.load(Twinkle.config.writePrefs);
 
@@ -1770,7 +1770,7 @@ Twinkle.config.writePrefs = function twinkleconfigWritePrefs(pageobj) {
 						case 'integer':  // read from the input box
 							userValue = parseInt(form[pref.name].value, 10);
 							if (isNaN(userValue)) {
-								Morebits.status.warn(conv({ hans: '保存', hant: '儲存' }), conv({ hans: '您为 ', hant: '您為 ' }) + pref.name + ' 指定的值（' + pref.value + conv({ hans: '）不合法，会继续保存操作，但此值将会跳过。', hant: '）不合法，會繼續儲存操作，但此值將會跳過。' }));
+								Morebits.Status.warn(conv({ hans: '保存', hant: '儲存' }), conv({ hans: '您为 ', hant: '您為 ' }) + pref.name + ' 指定的值（' + pref.value + conv({ hans: '）不合法，会继续保存操作，但此值将会跳过。', hant: '）不合法，會繼續儲存操作，但此值將會跳過。' }));
 								userValue = null;
 							}
 							break;
@@ -1867,10 +1867,10 @@ Twinkle.config.saveSuccess = function twinkleconfigSaveSuccess(pageobj) {
 	noticebox.style.fontSize = '100%';
 	noticebox.style.marginTop = '2em';
 	noticebox.innerHTML = '<p><b>' + conv({ hans: '您的Twinkle参数设置已被保存。', hant: '您的Twinkle偏好設定已被儲存。' }) + '</b></p><p>' + conv({ hans: '要看到这些更改，您可能需要', hant: '要看到這些更改，您可能需要' }) + '<a href="' + mw.util.getUrl('WP:BYPASS') + '" title="WP:BYPASS"><b>' + conv({ hans: '绕过浏览器缓存', hant: '繞過瀏覽器快取' }) + '</b></a>。</p>';
-	Morebits.status.root.appendChild(noticebox);
+	Morebits.Status.root.appendChild(noticebox);
 	var noticeclear = document.createElement('br');
 	noticeclear.style.clear = 'both';
-	Morebits.status.root.appendChild(noticeclear);
+	Morebits.Status.root.appendChild(noticeclear);
 };
 
 Twinkle.addInitCallback(Twinkle.config.init);

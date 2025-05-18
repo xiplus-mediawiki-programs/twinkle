@@ -29,14 +29,14 @@ Twinkle.talkback.callback = function() {
 		return;
 	}
 
-	var Window = new Morebits.simpleWindow(600, 350);
+	var Window = new Morebits.SimpleWindow(600, 350);
 	Window.setTitle(conv({ hans: '回复通告', hant: '回覆通告' }));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '关于{{talkback}}', hant: '關於{{talkback}}' }), 'Template:Talkback');
 	Window.addFooterLink(conv({ hans: '通告设置', hant: '通告設定' }), 'WP:TW/PREF#talkback');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#talkback');
 
-	var form = new Morebits.quickForm(Twinkle.talkback.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.talkback.evaluate);
 
 	form.append({ type: 'radio', name: 'tbtarget',
 		list: [
@@ -89,7 +89,7 @@ Twinkle.talkback.callback = function() {
 	var result = form.render();
 	Window.setContent(result);
 	Window.display();
-	result.previewer = new Morebits.wiki.preview($(result).find('div#friendlytalkback-previewbox').last()[0]);
+	result.previewer = new Morebits.wiki.Preview($(result).find('div#friendlytalkback-previewbox').last()[0]);
 
 	// We must init the
 	var evt = document.createEvent('Event');
@@ -104,7 +104,7 @@ Twinkle.talkback.callback = function() {
 		elquery: 'userjs.invalid/noTalkback',
 		ellimit: '1'
 	};
-	var wpapi = new Morebits.wiki.api(conv({ hans: '抓取退出通告信息', hant: '抓取退出通告資訊' }), query, Twinkle.talkback.callback.optoutStatus);
+	var wpapi = new Morebits.wiki.Api(conv({ hans: '抓取退出通告信息', hant: '抓取退出通告資訊' }), query, Twinkle.talkback.callback.optoutStatus);
 	wpapi.post();
 };
 
@@ -128,7 +128,7 @@ var prev_message = '';
 Twinkle.talkback.changeTarget = function(e) {
 	var value = e.target.values;
 	var root = e.target.form;
-	var old_area = Morebits.quickForm.getElements(root, 'work_area')[0];
+	var old_area = Morebits.QuickForm.getElements(root, 'work_area')[0];
 
 	if (root.section) {
 		prev_section = root.section.value;
@@ -140,7 +140,7 @@ Twinkle.talkback.changeTarget = function(e) {
 		prev_page = root.page.value;
 	}
 
-	var work_area = new Morebits.quickForm.element({
+	var work_area = new Morebits.QuickForm.Element({
 		type: 'field',
 		label: conv({ hans: '回复通告信息', hant: '回覆通告資訊' }),
 		name: 'work_area'
@@ -336,8 +336,8 @@ Twinkle.talkback.evaluate = function(e) {
 		}
 	}
 
-	Morebits.simpleWindow.setButtonsEnabled(false);
-	Morebits.status.init(form);
+	Morebits.SimpleWindow.setButtonsEnabled(false);
+	Morebits.Status.init(form);
 
 	var fullUserTalkPageName = mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user_talk] + ':' + Morebits.wiki.flow.relevantUserName();
 
@@ -355,7 +355,7 @@ Twinkle.talkback.evaluate = function(e) {
 	}, function () {
 		var text = '\n\n' + Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message)[0];
 
-		var talkpage = new Morebits.wiki.page(fullUserTalkPageName, conv({ hans: '加入回复通告', hant: '加入回覆通告' }));
+		var talkpage = new Morebits.wiki.Page(fullUserTalkPageName, conv({ hans: '加入回复通告', hant: '加入回覆通告' }));
 
 		talkpage.setEditSummary(editSummary);
 		talkpage.setChangeTags(Twinkle.changeTags);
