@@ -55,8 +55,8 @@ Twinkle.diff.evaluate = function twinklediffEvaluate(me) {
 		rvstartid: mw.config.get('wgCurRevisionId') - 1, // i.e. not the current one
 		rvuser: user
 	};
-	Morebits.status.init(document.getElementById('mw-content-text'));
-	var wikipedia_api = new Morebits.wiki.api(conv({ hans: '抓取最初贡献者信息', hant: '抓取最初貢獻者資訊' }), query, Twinkle.diff.callbacks.main);
+	Morebits.Status.init(document.getElementById('mw-content-text'));
+	var wikipedia_api = new Morebits.wiki.Api(conv({ hans: '抓取最初贡献者信息', hant: '抓取最初貢獻者資訊' }), query, Twinkle.diff.callbacks.main);
 	wikipedia_api.params = { user: user };
 	wikipedia_api.post();
 };

@@ -118,7 +118,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		return;
 	}
 	var dialog;
-	Twinkle.warn.dialog = new Morebits.simpleWindow(600, 440);
+	Twinkle.warn.dialog = new Morebits.SimpleWindow(600, 440);
 	dialog = Twinkle.warn.dialog;
 	dialog.setTitle(conv({ hans: '警告、提醒用户', hant: '警告、提醒使用者' }));
 	dialog.setScriptName('Twinkle');
@@ -126,7 +126,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	dialog.addFooterLink(conv({ hans: '警告设置', hant: '警告設定' }), 'WP:TW/PREF#warn');
 	dialog.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#warn');
 
-	var form = new Morebits.quickForm(Twinkle.warn.callback.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.warn.callback.evaluate);
 	var main_select = form.append({
 		type: 'field',
 		label: conv({ hans: '选择要发送的警告或提醒类型', hant: '選擇要傳送的警告或提醒類別' }),
@@ -196,7 +196,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	dialog.setContent(result);
 	dialog.display();
 	result.main_group.root = result;
-	result.previewer = new Morebits.wiki.preview($(result).find('div#twinklewarn-previewbox').last()[0]);
+	result.previewer = new Morebits.wiki.Preview($(result).find('div#twinklewarn-previewbox').last()[0]);
 
 	// Potential notices for staleness and missed reverts
 	var message = '';
@@ -215,7 +215,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 				rvprop: 'user'
 			};
 
-			new Morebits.wiki.api(conv({ hans: '检查您是否成功回退该页面', hant: '檢查您是否成功回退該頁面' }), query, function (apiobj) {
+			new Morebits.wiki.Api(conv({ hans: '检查您是否成功回退该页面', hant: '檢查您是否成功回退該頁面' }), query, function (apiobj) {
 				var revertUser = $(apiobj.getResponse()).find('revisions rev')[1].getAttribute('user');
 				if (revertUser && revertUser !== mw.config.get('wgUserName')) {
 					message += conv({ hans: '其他人回退了该页面，并可能已经警告该用户。', hant: '其他人回退了該頁面，並可能已經警告該使用者。' });
@@ -226,7 +226,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 
 		// Confirm edit wasn't too old for a warning
 		var checkStale = function(vantimestamp) {
-			var revDate = new Morebits.date(vantimestamp);
+			var revDate = new Morebits.Date(vantimestamp);
 			if (vantimestamp && revDate.isValid()) {
 				if (revDate.add(24, 'hours').isBefore(new Date())) {
 					message += conv({ hans: '这笔编辑是在24小时前做出的，现在警告可能已过时。', hant: '這筆編輯是在24小時前做出的，現在警告可能已過時。' });
@@ -246,7 +246,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 				rvprop: 'timestamp',
 				revids: vanrevid
 			};
-			new Morebits.wiki.api(conv({ hans: '获取版本时间戳', hant: '取得版本時間戳' }), query, function (apiobj) {
+			new Morebits.wiki.Api(conv({ hans: '获取版本时间戳', hant: '取得版本時間戳' }), query, function (apiobj) {
 				vantimestamp = $(apiobj.getResponse()).find('revisions rev').attr('timestamp');
 				checkStale(vantimestamp);
 			}).post();
@@ -259,10 +259,10 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 			action: 'query',
 			list: 'usercontribs',
 			uclimit: 1,
-			ucend: new Morebits.date().subtract(30, 'days').format('YYYY-MM-DDTHH:MM:ssZ', 'utc'),
+			ucend: new Morebits.Date().subtract(30, 'days').format('YYYY-MM-DDTHH:MM:ssZ', 'utc'),
 			ucuser: Morebits.wiki.flow.relevantUserName()
 		};
-		new Morebits.wiki.api(conv({ hans: '检查该IP用户上一笔贡献时间', hant: '檢查該IP使用者上一筆貢獻時間' }), query, function (apiobj) {
+		new Morebits.wiki.Api(conv({ hans: '检查该IP用户上一笔贡献时间', hant: '檢查該IP使用者上一筆貢獻時間' }), query, function (apiobj) {
 			if (apiobj.getResponse().query.usercontribs.length === 0) {
 				message += conv({ hans: '此IP用户上一次编辑在30日之前，现在警告可能已过时。', hant: '此IP使用者上一次編輯在30日之前，現在警告可能已過時。' });
 				$('#twinkle-warn-warning-messages').text('注意：' + message);
@@ -1208,7 +1208,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 		// due to an apparent iOS bug, we have to add an option-group to prevent truncation of text
 		// (search WT:TW archives for "Problem selecting warnings on an iPhone")
 		if (wrapInOptgroup && $.client.profile().platform === 'iphone') {
-			var wrapperOptgroup = new Morebits.quickForm.element({
+			var wrapperOptgroup = new Morebits.QuickForm.Element({
 				type: 'optgroup',
 				label: '可用模板'
 			});
@@ -1225,7 +1225,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 			var key = typeof itemKey === 'string' ? itemKey : itemProperties.value;
 			var template = key + level;
 
-			var elem = new Morebits.quickForm.element({
+			var elem = new Morebits.QuickForm.Element({
 				type: 'option',
 				label: '{{' + template + '}}: ' + (level ? itemProperties[val].label : itemProperties.label),
 				value: template
@@ -1274,7 +1274,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 			// Creates subgroup regardless of whether there is anything to place in it;
 			// leaves "Removal of deletion tags" empty for 4im
 			$.each(Twinkle.warn.messages.levels, function(_, levelGroup) {
-				var optgroup = new Morebits.quickForm.element({
+				var optgroup = new Morebits.QuickForm.Element({
 					type: 'optgroup',
 					label: levelGroup.category
 				});
@@ -1299,7 +1299,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 
 				// Identical to level1, etc. above but explicitly provides the level
 				$.each(Twinkle.warn.messages.levels, function(_, levelGroup) {
-					var optgroup = new Morebits.quickForm.element({
+					var optgroup = new Morebits.QuickForm.Element({
 						type: 'optgroup',
 						label: levelGroup.category
 					});
@@ -1328,7 +1328,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 					// Should nullify the need to catch the error in preview callback
 					e.target.root.previewer.closePreview();
 				} else {
-					var usertalk_page = new Morebits.wiki.page('User_talk:' + Morebits.wiki.flow.relevantUserName(), conv({ hans: '加载上次警告', hant: '載入上次警告' }));
+					var usertalk_page = new Morebits.wiki.Page('User_talk:' + Morebits.wiki.flow.relevantUserName(), conv({ hans: '加载上次警告', hant: '載入上次警告' }));
 					usertalk_page.setFollowRedirect(true, false);
 					usertalk_page.load(function(pageobj) {
 						Twinkle.warn.talkpageObj = pageobj; // Update talkpageObj
@@ -1367,8 +1367,8 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 
 Twinkle.warn.callback.postCategoryCleanup = function twinklewarnCallbackPostCategoryCleanup(e) {
 	// clear overridden label on article textbox
-	Morebits.quickForm.setElementTooltipVisibility(e.target.root.article, true);
-	Morebits.quickForm.resetElementLabel(e.target.root.article);
+	Morebits.QuickForm.setElementTooltipVisibility(e.target.root.article, true);
+	Morebits.QuickForm.resetElementLabel(e.target.root.article);
 	// Trigger custom label/change on main category change
 	Twinkle.warn.callback.change_subcategory(e);
 
@@ -1423,16 +1423,16 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 			e.target.form.article.value = '';
 
 			// change form labels according to the warning selected
-			Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, false);
-			Morebits.quickForm.overrideElementLabel(e.target.form.article, notLinkedArticle[value]);
+			Morebits.QuickForm.setElementTooltipVisibility(e.target.form.article, false);
+			Morebits.QuickForm.overrideElementLabel(e.target.form.article, notLinkedArticle[value]);
 		} else if (e.target.form.article.notArticle) {
 			if (Twinkle.warn.prev_article !== null) {
 				e.target.form.article.value = Twinkle.warn.prev_article;
 				Twinkle.warn.prev_article = null;
 			}
 			e.target.form.article.notArticle = false;
-			Morebits.quickForm.setElementTooltipVisibility(e.target.form.article, true);
-			Morebits.quickForm.resetElementLabel(e.target.form.article);
+			Morebits.QuickForm.setElementTooltipVisibility(e.target.form.article, true);
+			Morebits.QuickForm.resetElementLabel(e.target.form.article);
 		}
 	}
 
@@ -1449,7 +1449,7 @@ Twinkle.warn.callback.change_subcategory = function twinklewarnCallbackChangeSub
 			'明顯的違反方針應被報告給UAA。' +
 				'{{uw-username}}應只被用在邊界情況下需要與用戶討論時。</div>'
 		}));
-		$redWarning.insertAfter(Morebits.quickForm.getElementLabelObject(e.target.form.reasonGroup));
+		$redWarning.insertAfter(Morebits.QuickForm.getElementLabelObject(e.target.form.reasonGroup));
 	}
 };
 
@@ -1478,7 +1478,7 @@ Twinkle.warn.callbacks = {
 		return text;
 	},
 	showPreview: function(form, templatename) {
-		var input = Morebits.quickForm.getInputData(form);
+		var input = Morebits.QuickForm.getInputData(form);
 		// Provided on autolevel, not otherwise
 		templatename = templatename || input.sub_group;
 		var linkedarticle = input.article;
@@ -1493,7 +1493,7 @@ Twinkle.warn.callbacks = {
 	preview: function(form) {
 		if (form.main_group.value === 'autolevel') {
 			// Always get a new, updated talkpage for autolevel processing
-			var usertalk_page = new Morebits.wiki.page('User_talk:' + Morebits.wiki.flow.relevantUserName(), conv({ hans: '加载上次警告', hant: '載入上次警告' }));
+			var usertalk_page = new Morebits.wiki.Page('User_talk:' + Morebits.wiki.flow.relevantUserName(), conv({ hans: '加载上次警告', hant: '載入上次警告' }));
 			usertalk_page.setFollowRedirect(true, false);
 			// Will fail silently if the talk page is a cross-ns redirect,
 			// removal of the preview box handled when loading the menu
@@ -1533,12 +1533,12 @@ Twinkle.warn.callbacks = {
 	dateProcessing: function(wikitext) {
 		var history_re = /<!--\s?Template:([uU]w-.*?)\s?-->.*?(\d{4})年(\d{1,2})月(\d{1,2})日 \([日一二三四五六]\) (\d{1,2}):(\d{1,2}) \(UTC\)/g;
 		var history = {};
-		var latest = { date: new Morebits.date(0), type: '' };
+		var latest = { date: new Morebits.Date(0), type: '' };
 		var current;
 
 		while ((current = history_re.exec(wikitext)) !== null) {
 			var template = current[1];
-			var current_date = new Morebits.date(current[2] + '-' + current[3] + '-' + current[4] + ' ' + current[5] + ':' + current[6] + ' UTC');
+			var current_date = new Morebits.Date(current[2] + '-' + current[3] + '-' + current[4] + ' ' + current[5] + ':' + current[6] + ' UTC');
 			if (!(template in history) || history[template].isBefore(current_date)) {
 				history[template] = current_date;
 			}
@@ -1562,8 +1562,8 @@ Twinkle.warn.callbacks = {
 	* @param {Object} latest  First element of the array returned from
 	* dateProcessing. Provided here rather than processed within to avoid
 	* repeated call to dateProcessing
-	* @param {(Date|Morebits.date)} date  Date from which staleness is determined
-	* @param {Morebits.status} statelem  Status element, only used for handling error in final execution
+	* @param {(Date|Morebits.Date)} date  Date from which staleness is determined
+	* @param {Morebits.Status} statelem  Status element, only used for handling error in final execution
 	*
 	* @returns {Array} - Array that contains the full template and just the warning level
 	*/
@@ -1598,7 +1598,7 @@ Twinkle.warn.callbacks = {
 			return;
 		} else {
 			date = date || new Date();
-			var autoTimeout = new Morebits.date(latest.date.getTime()).add(parseInt(Twinkle.getPref('autolevelStaleDays'), 10), 'day');
+			var autoTimeout = new Morebits.Date(latest.date.getTime()).add(parseInt(Twinkle.getPref('autolevelStaleDays'), 10), 'day');
 			if (autoTimeout.isAfter(date)) {
 				if (level === 4) {
 					level = 4;
@@ -1659,7 +1659,7 @@ Twinkle.warn.callbacks = {
 		var latest = warningHistory[0];
 		var history = warningHistory[1];
 
-		var now = new Morebits.date(pageobj.getLoadTime());
+		var now = new Morebits.Date(pageobj.getLoadTime());
 
 		Twinkle.warn.talkpageObj = pageobj; // Update talkpageObj, just in case
 		if (params.main_group === 'autolevel') {
@@ -1675,7 +1675,7 @@ Twinkle.warn.callbacks = {
 			params.sub_group = templateAndLevel[0];
 			messageData = params.messageData['level' + templateAndLevel[1]];
 		} else if (params.sub_group in history) {
-			if (new Morebits.date(history[params.sub_group]).add(1, 'day').isAfter(now)) {
+			if (new Morebits.Date(history[params.sub_group]).add(1, 'day').isAfter(now)) {
 				if (!confirm(conv({ hans: '近24小时内一个同样的 ', hant: '近24小時內一個同樣的 ' }) + params.sub_group + conv({ hans: ' 模板已被发出。\n是否继续？', hant: ' 模板已被發出。\n是否繼續？' }))) {
 					statelem.error(conv({ hans: '用户取消', hant: '使用者取消' }));
 					return;
@@ -1764,7 +1764,7 @@ Twinkle.warn.callbacks = {
 		var warningText = Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
 			params.reason, params.main_group === 'custom');
 		if (Twinkle.getPref('showSharedIPNotice') && mw.util.isIPAddress(mw.config.get('wgTitle'))) {
-			Morebits.status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '加入共享IP说明', hant: '加入共享IP說明' }));
+			Morebits.Status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '加入共享IP说明', hant: '加入共享IP說明' }));
 			warningText += '\n{{subst:SharedIPAdvice}}';
 		}
 
@@ -1792,7 +1792,7 @@ Twinkle.warn.callbacks = {
 			if (messageData.heading) { // create new section
 				pageobj.setNewSectionTitle(messageData.heading);
 			} else {
-				Morebits.status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '未找到当月的二级标题，将创建新的', hant: '未找到當月的二級標題，將建立新的' }));
+				Morebits.Status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '未找到当月的二级标题，将创建新的', hant: '未找到當月的二級標題，將建立新的' }));
 				pageobj.setNewSectionTitle(now.monthHeader(0));
 			}
 			pageobj.setNewSectionText(warningText);
@@ -1870,7 +1870,7 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	var userTalkPage = 'User_talk:' + Morebits.wiki.flow.relevantUserName();
 
 	// reason, main_group, sub_group, article
-	var params = Morebits.quickForm.getInputData(e.target);
+	var params = Morebits.QuickForm.getInputData(e.target);
 
 	// Check that a reason was filled in if uw-username was selected
 	if (params.sub_group === 'uw-username' && !params.article) {
@@ -1912,13 +1912,13 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 		return;
 	}
 
-	Morebits.simpleWindow.setButtonsEnabled(false);
-	Morebits.status.init(e.target);
+	Morebits.SimpleWindow.setButtonsEnabled(false);
+	Morebits.Status.init(e.target);
 	Twinkle.block.fetchUserInfo(function () {
 		if (initialBlockId !== Twinkle.block.blockLogId || !!initialBlockInfo !== !!Twinkle.block.currentBlockInfo) {
 			var newBlockMessage = conv({ hans: '此用户的封禁状态发生变化，确定继续发出警告？', hant: '此使用者的封鎖狀態發生變化，確定繼續發出警告？' });
 			if (!confirm(newBlockMessage)) {
-				Morebits.status.error(conv({ hans: '警告、提醒用户', hant: '警告、提醒使用者' }), conv({ hans: '用户取消操作', hant: '使用者取消操作' }));
+				Morebits.Status.error(conv({ hans: '警告、提醒用户', hant: '警告、提醒使用者' }), conv({ hans: '用户取消操作', hant: '使用者取消操作' }));
 				return;
 			}
 		}
@@ -1930,7 +1930,7 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 			flow_page.setCallbackParameters(params);
 			Twinkle.warn.callbacks.main_flow(flow_page);
 		} else {
-			var wikipedia_page = new Morebits.wiki.page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
+			var wikipedia_page = new Morebits.wiki.Page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.setFollowRedirect(true, false);
 			wikipedia_page.load(Twinkle.warn.callbacks.main);
