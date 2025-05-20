@@ -13,7 +13,7 @@
  *                         etc.), as well as the rollback success page
  */
 
-var conv = require('ext.gadget.HanAssist').conv, initialBlockId, initialBlockInfo;
+var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.warn = function twinklewarn() {
 
@@ -117,6 +117,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		!confirm(conv({ hans: '您将要警告自己！您确定要继续吗？', hant: '您將要警告自己！您確定要繼續嗎？' }))) {
 		return;
 	}
+
 	var dialog;
 	Twinkle.warn.dialog = new Morebits.simpleWindow(600, 440);
 	dialog = Twinkle.warn.dialog;
@@ -283,10 +284,6 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	}, function () {
 		Twinkle.warn.isFlow = false;
 		init();
-	});
-	Twinkle.block.fetchUserInfo(function () {
-		initialBlockId = Twinkle.block.blockLogId;
-		initialBlockInfo = Twinkle.block.currentBlockInfo;
 	});
 };
 
@@ -1914,28 +1911,20 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 
 	Morebits.simpleWindow.setButtonsEnabled(false);
 	Morebits.status.init(e.target);
-	Twinkle.block.fetchUserInfo(function () {
-		if (initialBlockId !== Twinkle.block.blockLogId || !!initialBlockInfo !== !!Twinkle.block.currentBlockInfo) {
-			var newBlockMessage = conv({ hans: '此用户的封禁状态发生变化，确定继续发出警告？', hant: '此使用者的封鎖狀態發生變化，確定繼續發出警告？' });
-			if (!confirm(newBlockMessage)) {
-				Morebits.status.error(conv({ hans: '警告、提醒用户', hant: '警告、提醒使用者' }), conv({ hans: '用户取消操作', hant: '使用者取消操作' }));
-				return;
-			}
-		}
-		Morebits.wiki.actionCompleted.redirect = userTalkPage;
-		Morebits.wiki.actionCompleted.notice = conv({ hans: '警告完成，将在几秒后刷新', hant: '警告完成，將在幾秒後重新整理' });
 
-		if (Twinkle.warn.isFlow) {
-			var flow_page = new Morebits.wiki.flow(userTalkPage, conv({ hans: '用户Flow讨论页留言', hant: '使用者Flow討論頁留言' }));
-			flow_page.setCallbackParameters(params);
-			Twinkle.warn.callbacks.main_flow(flow_page);
-		} else {
-			var wikipedia_page = new Morebits.wiki.page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
-			wikipedia_page.setCallbackParameters(params);
-			wikipedia_page.setFollowRedirect(true, false);
-			wikipedia_page.load(Twinkle.warn.callbacks.main);
-		}
-	});
+	Morebits.wiki.actionCompleted.redirect = userTalkPage;
+	Morebits.wiki.actionCompleted.notice = conv({ hans: '警告完成，将在几秒后刷新', hant: '警告完成，將在幾秒後重新整理' });
+
+	if (Twinkle.warn.isFlow) {
+		var flow_page = new Morebits.wiki.flow(userTalkPage, conv({ hans: '用户Flow讨论页留言', hant: '使用者Flow討論頁留言' }));
+		flow_page.setCallbackParameters(params);
+		Twinkle.warn.callbacks.main_flow(flow_page);
+	} else {
+		var wikipedia_page = new Morebits.wiki.page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
+		wikipedia_page.setCallbackParameters(params);
+		wikipedia_page.setFollowRedirect(true, false);
+		wikipedia_page.load(Twinkle.warn.callbacks.main);
+	}
 };
 
 Twinkle.addInitCallback(Twinkle.warn, 'warn');
