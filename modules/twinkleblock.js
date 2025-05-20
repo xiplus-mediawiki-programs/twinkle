@@ -197,7 +197,7 @@ Twinkle.block.processUserInfo = function twinkleblockProcessUserInfo(data, fn) {
 	// If an IP is blocked *and* rangeblocked, the above finds
 	// whichever block is more recent, not necessarily correct.
 	// Three seems... unlikely
-	if (data.query.blocks.length > 1 && blockinfo.user !== relevantUserName) {
+	if (data.query.blocks.length > 1 && blockinfo.user !== Morebits.wiki.flow.relevantUserName(true)) {
 		blockinfo = data.query.blocks[1];
 	}
 	// Cache response, used when toggling /64 blocks
@@ -245,16 +245,16 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 		list: 'blocks|users|logevents',
 		letype: 'block',
 		lelimit: 2, // zhwiki: Add more details
-		letitle: 'User:' + relevantUserName,
+		letitle: 'User:' + Morebits.wiki.flow.relevantUserName(true),
 		bkprop: 'expiry|reason|flags|restrictions|range|user',
-		ususers: relevantUserName
+		ususers: Morebits.wiki.flow.relevantUserName(true)
 	};
 
 	// bkusers doesn't catch single IPs blocked as part of a range block
-	if (mw.util.isIPAddress(relevantUserName, true)) {
-		query.bkip = relevantUserName;
+	if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName(true), true)) {
+		query.bkip = Morebits.wiki.flow.relevantUserName(true);
 	} else {
-		query.bkusers = relevantUserName;
+		query.bkusers = Morebits.wiki.flow.relevantUserName(true);
 		// groupmemberships only relevant for registered users
 		query.usprop = 'groupmemberships';
 	}
