@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) {
+(function() {
 
 
 /*
@@ -424,7 +424,7 @@ Twinkle.talkback.getNoticeWikitext = function(tbtarget, page, section, message) 
 };
 
 Twinkle.addInitCallback(Twinkle.talkback, 'talkback');
-})(jQuery);
+})();
 
 
 // </nowiki>

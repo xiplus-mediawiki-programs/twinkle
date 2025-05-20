@@ -1,6 +1,6 @@
 // <nowiki>
 
-(function($) {
+(function() {
 
 
 /*
@@ -1741,5 +1741,5 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 };
 
 Twinkle.addInitCallback(Twinkle.tag, 'tag');
-})(jQuery);
+})();
 // </nowiki>

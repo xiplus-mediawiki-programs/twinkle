@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) {
+(function() {
 
 var conv = require('ext.gadget.HanAssist').conv;
 var api = new mw.Api(), relevantUserName, blockedUserName, initialTalkPageRev;
@@ -2415,7 +2415,7 @@ Twinkle.block.callback.main_flow = function twinkleblockcallbackMain(flowobj) {
 };
 
 Twinkle.addInitCallback(Twinkle.block, 'block');
-})(jQuery);
+})();
 
 
 // </nowiki>

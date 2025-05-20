@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) {
+(function() {
 
 
 /*
@@ -1442,7 +1442,7 @@ Twinkle.protect.formatProtectionDescription = function(protectionLevels) {
 };
 
 Twinkle.addInitCallback(Twinkle.protect, 'protect');
-})(jQuery);
+})();
 
 
 // </nowiki>

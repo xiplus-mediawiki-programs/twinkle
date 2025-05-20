@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) { // eslint-disable-line no-unused-vars
+(function() { // eslint-disable-line no-unused-vars
 
 
 /*
@@ -232,7 +232,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 };
 
 Twinkle.addInitCallback(Twinkle.copyvio, 'copyvio');
-})(jQuery);
+})();
 
 
 // </nowiki>

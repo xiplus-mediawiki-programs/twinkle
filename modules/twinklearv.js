@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) {
+(function() {
 
 
 /*
@@ -810,7 +810,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 };
 
 Twinkle.addInitCallback(Twinkle.arv, 'arv');
-})(jQuery);
+})();
 
 
 // </nowiki>

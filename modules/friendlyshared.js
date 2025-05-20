@@ -200,7 +200,7 @@ Twinkle.shared.callback.evaluate = function friendlysharedCallbackEvaluate(e) {
 };
 
 Twinkle.addInitCallback(Twinkle.shared, 'shared');
-})(jQuery);
+})();
 
 
 // </nowiki>

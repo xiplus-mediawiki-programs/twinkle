@@ -34,7 +34,7 @@
  */
 
 
-(function (window, document, $) { // Wrap entire file with anonymous function
+(function () {
 
 /** @lends Morebits */
 var Morebits = {};
@@ -6527,7 +6527,7 @@ Morebits.wiki.Page = Morebits.wiki.page;
 Morebits.wiki.Preview = Morebits.wiki.preview;
 Morebits.wikitext.Page = Morebits.wikitext.page;
 
-}(window, document, jQuery)); // End wrap with anonymous function
+}());
 
 
 /**

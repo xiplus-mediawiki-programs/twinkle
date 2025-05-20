@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) {
+(function() {
 
 
 /*
@@ -833,7 +833,7 @@ Twinkle.close.callbacks = {
 };
 
 Twinkle.addInitCallback(Twinkle.close, 'close');
-})(jQuery);
+})();
 
 
 // </nowiki>

@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) { // eslint-disable-line no-unused-vars
+(function() { // eslint-disable-line no-unused-vars
 
 
 /*
@@ -308,7 +308,7 @@ Twinkle.image.callbacks = {
 };
 
 Twinkle.addInitCallback(Twinkle.image, 'image');
-})(jQuery);
+})();
 
 
 // </nowiki>

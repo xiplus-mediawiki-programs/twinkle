@@ -1,6 +1,6 @@
 // <nowiki>
 
-(function($) {
+(function() {
 
 
 /*
@@ -815,7 +815,7 @@ Twinkle.fluff.formatSummary = function(builtInString, userName, customString) {
 };
 
 Twinkle.addInitCallback(Twinkle.fluff, 'fluff');
-})(jQuery);
+})();
 
 
 // </nowiki>

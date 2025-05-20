@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) {
+(function() {
 
 
 /*
@@ -377,7 +377,7 @@ Twinkle.welcome.callback.evaluate = function friendlywelcomeCallbackEvaluate(e) 
 };
 
 Twinkle.addInitCallback(Twinkle.welcome, 'welcome');
-})(jQuery);
+})();
 
 
 // </nowiki>
