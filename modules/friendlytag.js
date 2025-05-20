@@ -1298,11 +1298,17 @@ Twinkle.tag.callbacks = {
 							currentTag += '|reason=' + params.cleanupReason;
 						}
 						break;
+					case 'Unreliable sources':
+						currentTag += '|date={{subst:#time:Y/m/d}}}}\n';
+						break;
 					default:
 						break;
 				}
 
-				currentTag += '|time={{subst:#time:c}}}}\n';
+				// {{Unreliable sources}} use `date` to sort, and we complete it above
+				if (tagName !== 'Unreliable sources') {
+					currentTag += '|time={{subst:#time:c}}}}\n';
+				}
 				tagText += currentTag;
 			}
 		};
