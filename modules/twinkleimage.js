@@ -30,6 +30,7 @@ Twinkle.image.callback = function twinkleimageCallback() {
 	Window.addFooterLink(conv({ hans: '快速删除方针', hant: '快速刪除方針' }), 'WP:CSD');
 	Window.addFooterLink(conv({ hans: '图权设置', hant: '圖權設定' }), 'WP:TW/PREF#image');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#image');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.quickForm(Twinkle.image.callback.evaluate);
 	form.append({

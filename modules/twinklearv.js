@@ -44,6 +44,7 @@ Twinkle.arv.callback = function (uid, isIP) {
 	Window.addFooterLink('SPI', 'WP:SPI');
 	Window.addFooterLink(conv({ hans: '告状设置', hant: '告狀設定' }), 'WP:TW/PREF#arv');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'H:TW#告狀');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.quickForm(Twinkle.arv.callback.evaluate);
 	var categories = form.append({

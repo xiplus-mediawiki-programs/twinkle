@@ -45,7 +45,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '标记设置', hant: '標記設定' }), 'WP:TW/PREF#tag');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#tag');
-
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 	var form = new Morebits.quickForm(Twinkle.tag.callback.evaluate);
 
 	form.append({
