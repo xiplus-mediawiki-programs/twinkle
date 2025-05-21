@@ -90,6 +90,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 	dialog.addFooterLink(conv({ hans: '常见错误', hant: '常見錯誤' }), 'Wikipedia:管理员错误自查表/快速删除');
 	dialog.addFooterLink(conv({ hans: '速删设置', hant: '速刪設定' }), 'WP:TW/PREF#speedy');
 	dialog.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#speedy');
+	dialog.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.quickForm(callbackfunc, Twinkle.getPref('speedySelectionStyle') === 'radioClick' ? 'change' : null);
 	if (Morebits.userIsSysop) {

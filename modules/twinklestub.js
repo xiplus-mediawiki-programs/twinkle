@@ -32,6 +32,7 @@ Twinkle.stub.callback = function friendlytagCallback() {
 	Window.addFooterLink('小作品說明', 'Wikipedia:小作品');
 	Window.addFooterLink(conv({ hans: '小作品设置', hant: '小作品設定' }), 'WP:TW/PREF#stub');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#stub');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.quickForm(Twinkle.stub.callback.evaluate);
 
