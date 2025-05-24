@@ -4,7 +4,7 @@
 (function($) {
 
 var conv = require('ext.gadget.HanAssist').conv;
-var api = new mw.Api(), relevantUserName, blockedUserName;
+var api = new mw.Api(), relevantUserName, blockedUserName, initialTalkPageRev;
 var menuFormattedNamespaces = $.extend({}, mw.config.get('wgFormattedNamespaces'));
 menuFormattedNamespaces[0] = conv({ hans: '（条目）', hant: '（條目）' });
 var blockActionText = {
@@ -185,6 +185,17 @@ Twinkle.block.callback = function twinkleblockCallback() {
 			result.actiontype[0].dispatchEvent(evt);
 		}
 	});
+
+	api.get({
+		action: 'query',
+		prop: 'revisions',
+		titles: 'User_talk:' + Morebits.wiki.flow.relevantUserName(true),
+		rvprop: 'ids',
+		rvlimit: 1,
+		format: 'json'
+	}).then(function(data) {
+		initialTalkPageRev = Object.keys(data.query.pages)[0] === '-1' ? null : data.query.pages[Object.keys(data.query.pages)[0]].revisions[0].revid;
+	});
 };
 
 // Store fetched user data, only relevant if switching IPv6 to a /64
@@ -197,7 +208,7 @@ Twinkle.block.processUserInfo = function twinkleblockProcessUserInfo(data, fn) {
 	// If an IP is blocked *and* rangeblocked, the above finds
 	// whichever block is more recent, not necessarily correct.
 	// Three seems... unlikely
-	if (data.query.blocks.length > 1 && blockinfo.user !== relevantUserName) {
+	if (data.query.blocks.length > 1 && blockinfo.user !== Morebits.wiki.flow.relevantUserName(true)) {
 		blockinfo = data.query.blocks[1];
 	}
 	// Cache response, used when toggling /64 blocks
@@ -245,16 +256,16 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 		list: 'blocks|users|logevents',
 		letype: 'block',
 		lelimit: 2, // zhwiki: Add more details
-		letitle: 'User:' + relevantUserName,
+		letitle: 'User:' + Morebits.wiki.flow.relevantUserName(true),
 		bkprop: 'expiry|reason|flags|restrictions|range|user',
-		ususers: relevantUserName
+		ususers: Morebits.wiki.flow.relevantUserName(true)
 	};
 
 	// bkusers doesn't catch single IPs blocked as part of a range block
-	if (mw.util.isIPAddress(relevantUserName, true)) {
-		query.bkip = relevantUserName;
+	if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName(true), true)) {
+		query.bkip = Morebits.wiki.flow.relevantUserName(true);
 	} else {
-		query.bkusers = relevantUserName;
+		query.bkusers = Morebits.wiki.flow.relevantUserName(true);
 		// groupmemberships only relevant for registered users
 		query.usprop = 'groupmemberships';
 	}
@@ -1905,7 +1916,6 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		// boolean-flipped options
 		blockoptions.anononly = blockoptions.hardblock ? undefined : true;
 		blockoptions.allowusertalk = blockoptions.disabletalk ? undefined : true;
-
 		/*
 		  Check if block status changed while processing the form.
 
@@ -1938,7 +1948,11 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			list: 'blocks|logevents',
 			letype: 'block',
 			lelimit: 1,
-			letitle: 'User:' + blockoptions.user
+			letitle: 'User:' + blockoptions.user,
+			prop: 'revisions',
+			titles: 'User_talk:' + Morebits.wiki.flow.relevantUserName(true),
+			rvprop: 'ids',
+			rvlimit: 1
 		};
 		// bkusers doesn't catch single IPs blocked as part of a range block
 		if (mw.util.isIPAddress(blockoptions.user, true)) {
@@ -1952,6 +1966,12 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			query.type = 'userrights';
 		}
 		api.get(query).then(function(data) {
+			// using twinkle to reblock can cause a user talk page edit, thus check first
+			var currentTalkPageRev = Object.keys(data.query.pages)[0] === '-1' ? null : data.query.pages[Object.keys(data.query.pages)[0]].revisions[0].revid;
+			if (currentTalkPageRev !== initialTalkPageRev && !confirm(conv({ hans: '用户讨论页已被修改，其他管理员可能已处理，是否继续？', hant: '使用者討論頁已被修改，其他管理員可能已處理，是否繼續？' }))) {
+				Morebits.status.error(conv({ hans: '执行封禁', hant: '執行封鎖' }), conv({ hans: '用户取消操作', hant: '使用者取消操作' }));
+				return;
+			}
 			var block = data.query.blocks[0];
 			// As with the initial data fetch, if an IP is blocked
 			// *and* rangeblocked, this would only grab whichever
@@ -1994,7 +2014,6 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				}
 				blockoptions.reblock = 1; // Writing over a block will fail otherwise
 			}
-
 			var groupsCanBeRemoved = [
 				'autoreviewer',
 				'confirmed',
