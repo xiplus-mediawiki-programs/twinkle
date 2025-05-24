@@ -45,6 +45,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '标记设置', hant: '標記設定' }), 'WP:TW/PREF#tag');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#tag');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.QuickForm(Twinkle.tag.callback.evaluate);
 
@@ -791,7 +792,8 @@ Twinkle.tag.article.tagList = [{
 			{ tag: 'Original research', description: conv({ hans: '可能包含原创研究或未查证内容', hant: '可能包含原創研究或未查證內容' }) },
 			{ tag: 'Primarysources', description: conv({ hans: '依赖第一手来源', hant: '依賴第一手來源' }) },
 			{ tag: 'Refimprove', description: conv({ hans: '需要补充更多来源', hant: '需要補充更多來源' }) },
-			{ tag: 'Unreferenced', description: conv({ hans: '没有列出任何参考或来源', hant: '沒有列出任何參考或來源' }) }
+			{ tag: 'Unreferenced', description: conv({ hans: '没有列出任何参考或来源', hant: '沒有列出任何參考或來源' }) },
+			{ tag: 'Unreliable sources', description: conv({ hans: '使用的来源可能不可靠', hant: '使用的來源可能不可靠' }) }
 		]
 	}]
 },

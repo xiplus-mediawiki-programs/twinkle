@@ -45,6 +45,7 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 	Window.addFooterLink(conv({ hans: '关于存废讨论', hant: '關於存廢討論' }), 'WP:XFD');
 	Window.addFooterLink(conv({ hans: '提删设置', hant: '提刪設定' }), 'WP:TW/PREF#xfd');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#xfd');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.QuickForm(Twinkle.xfd.callback.evaluate);
 	var categories = form.append({

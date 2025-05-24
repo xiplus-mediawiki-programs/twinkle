@@ -123,6 +123,7 @@ Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '欢迎设置', hant: '歡迎設定' }), 'WP:TW/PREF#welcome');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'H:TW#欢迎');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.QuickForm(Twinkle.welcome.callback.evaluate);
 

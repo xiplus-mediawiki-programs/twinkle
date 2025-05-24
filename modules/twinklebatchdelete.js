@@ -37,6 +37,7 @@ Twinkle.batchdelete.callback = function twinklebatchdeleteCallback() {
 	Window.setTitle(conv({ hans: '批量删除', hant: '批次刪除' }));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#batchdelete');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.QuickForm(Twinkle.batchdelete.callback.evaluate);
 	form.append({

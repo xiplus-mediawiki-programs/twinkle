@@ -38,6 +38,7 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 	Window.addFooterLink(conv({ hans: '保护方针', hant: '保護方針' }), 'WP:PROT');
 	Window.addFooterLink(conv({ hans: '保护设置', hant: '保護設定' }), 'WP:TW/PREF#protect');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#protect');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.QuickForm(Twinkle.protect.callback.evaluate);
 	var actionfield = form.append({

@@ -37,6 +37,7 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 	Window.addFooterLink(conv({ hans: '常见错误', hant: '常見錯誤' }), 'Wikipedia:管理员错误自查表/侵权处理');
 	Window.addFooterLink(conv({ hans: '侵权设置', hant: '侵權設定' }), 'WP:TW/PREF#copyvio');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#copyvio');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.QuickForm(Twinkle.copyvio.callback.evaluate);
 	form.append({
