@@ -535,6 +535,8 @@ Twinkle.load = function () {
 	if (isVector && Twinkle.getPref('portletType') === 'menu' && $('#p-twinkle').length === 0) {
 		$('#p-cactions').css('margin-right', 'initial');
 	}
+
+	mw.hook('twinkle.loaded').fire(Twinkle);
 };
 
 /** Twinkle-specific utility functions shared by multiple modules */
