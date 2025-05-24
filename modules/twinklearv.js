@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) {
+(function() {
 
 
 /*
@@ -34,7 +34,7 @@ Twinkle.arv.callback = function (uid, isIP) {
 		return;
 	}
 
-	var Window = new Morebits.simpleWindow(600, 500);
+	var Window = new Morebits.SimpleWindow(600, 500);
 	Window.setTitle(conv({ hans: '报告用户给管理人员', hant: '報告使用者給管理人員' }));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink('VIP', 'WP:VIP');
@@ -46,7 +46,7 @@ Twinkle.arv.callback = function (uid, isIP) {
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'H:TW#告狀');
 	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
-	var form = new Morebits.quickForm(Twinkle.arv.callback.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.arv.callback.evaluate);
 	var categories = form.append({
 		type: 'select',
 		name: 'category',
@@ -109,7 +109,7 @@ Twinkle.arv.callback = function (uid, isIP) {
 	} else {
 		query.bkusers = uid;
 	}
-	new Morebits.wiki.api(conv({ hans: '检查用户的封禁状态', hant: '檢查使用者的封鎖狀態' }), query, function (apiobj) {
+	new Morebits.wiki.Api(conv({ hans: '检查用户的封禁状态', hant: '檢查使用者的封鎖狀態' }), query, function (apiobj) {
 		var blocklist = apiobj.getResponse().query.blocks;
 		if (blocklist.length) {
 			var block = blocklist[0];
@@ -169,7 +169,7 @@ Twinkle.arv.callback.set_sockmaster = function twinklearvCallbackSetSockmaster(s
 Twinkle.arv.callback.changeCategory = function (e) {
 	var value = e.target.value;
 	var root = e.target.form;
-	var old_area = Morebits.quickForm.getElements(root, 'work_area')[0];
+	var old_area = Morebits.QuickForm.getElements(root, 'work_area')[0];
 	var work_area = null;
 	var previewlink = document.createElement('a');
 	previewlink.style.cursor = 'pointer';
@@ -182,7 +182,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 		case 'aiv':
 		/* falls through */
 		default:
-			work_area = new Morebits.quickForm.element({
+			work_area = new Morebits.QuickForm.Element({
 				type: 'field',
 				label: conv({ hans: '报告用户破坏', hant: '報告使用者破壞' }),
 				name: 'work_area'
@@ -281,7 +281,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			old_area.parentNode.replaceChild(work_area, old_area);
 			break;
 		case 'ewip':
-			work_area = new Morebits.quickForm.element({
+			work_area = new Morebits.QuickForm.Element({
 				type: 'field',
 				label: conv({ hans: '报告编辑争议', hant: '報告編輯爭議' }),
 				name: 'work_area'
@@ -307,7 +307,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			old_area.parentNode.replaceChild(work_area, old_area);
 			break;
 		case 'username':
-			work_area = new Morebits.quickForm.element({
+			work_area = new Morebits.QuickForm.Element({
 				type: 'field',
 				label: conv({ hans: '报告不当用户名', hant: '報告不當使用者名稱' }),
 				name: 'work_area'
@@ -378,7 +378,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			break;
 
 		case 'spi':
-			work_area = new Morebits.quickForm.element({
+			work_area = new Morebits.QuickForm.Element({
 				type: 'field',
 				label: conv({ hans: '发起傀儡调查', hant: '發起傀儡調查' }),
 				name: 'work_area'
@@ -440,12 +440,12 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			work_area = work_area.render();
 			$('input:text[name=sockpuppet]', work_area).first().val(root.uid.value);
 			old_area.parentNode.replaceChild(work_area, old_area);
-			root.spinoticepreviewer = new Morebits.wiki.preview($(work_area).find('#twinklearv-spinoticebox').last()[0]);
+			root.spinoticepreviewer = new Morebits.wiki.Preview($(work_area).find('#twinklearv-spinoticebox').last()[0]);
 			Twinkle.arv.callback.spi_notice(root, root.uid.value);
 			Twinkle.arv.callback.set_sockmaster(root.uid.value);
 			break;
 	}
-	root.previewer = new Morebits.wiki.preview($(work_area).find('#twinklearv-previewbox').last()[0]);
+	root.previewer = new Morebits.wiki.Preview($(work_area).find('#twinklearv-previewbox').last()[0]);
 };
 
 Twinkle.arv.callback.preview = function(form) {
@@ -453,7 +453,7 @@ Twinkle.arv.callback.preview = function(form) {
 	if (reason === undefined) {
 		return;
 	}
-	var input = Morebits.quickForm.getInputData(form);
+	var input = Morebits.QuickForm.getInputData(form);
 	var title;
 	switch (input.category) {
 		case 'vip': title = 'Wikipedia:当前的破坏'; break;
@@ -466,7 +466,7 @@ Twinkle.arv.callback.preview = function(form) {
 };
 
 Twinkle.arv.callback.getReportWikitext = function(form) {
-	var input = Morebits.quickForm.getInputData(form);
+	var input = Morebits.QuickForm.getInputData(form);
 	var reason = '';
 	var comment = '';
 	var uid = input.uid;
@@ -672,7 +672,7 @@ Twinkle.arv.callback.getReportWikitext = function(form) {
 
 Twinkle.arv.callback.evaluate = function(e) {
 	var form = e.target;
-	var input = Morebits.quickForm.getInputData(form);
+	var input = Morebits.QuickForm.getInputData(form);
 	var uid = input.uid;
 	var reason;
 
@@ -692,13 +692,13 @@ Twinkle.arv.callback.evaluate = function(e) {
 				summary = conv({ hans: '报告一名用户', hant: '報告一名使用者' });
 			}
 
-			Morebits.simpleWindow.setButtonsEnabled(false);
-			Morebits.status.init(form);
+			Morebits.SimpleWindow.setButtonsEnabled(false);
+			Morebits.Status.init(form);
 
 			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:当前的破坏';
 			Morebits.wiki.actionCompleted.notice = conv({ hans: '报告完成', hant: '報告完成' });
 
-			var aivPage = new Morebits.wiki.page('Wikipedia:当前的破坏', conv({ hans: '处理VIP请求', hant: '處理VIP請求' }));
+			var aivPage = new Morebits.wiki.Page('Wikipedia:当前的破坏', conv({ hans: '处理VIP请求', hant: '處理VIP請求' }));
 			aivPage.setFollowRedirect(true);
 
 			aivPage.load(function() {
@@ -708,7 +708,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				// check if user has already been reported
 				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
 					aivPage.getStatusElement().error(conv({ hans: '报告已存在，将不会加入新的', hant: '報告已存在，將不會加入新的' }));
-					Morebits.status.printUserText(reason[1], conv({ hans: '您输入的评论已在下方提供，您可以将其加入到', hant: '您輸入的評論已在下方提供，您可以將其加入到' }) + $aivLink + conv({ hans: '已存在的小节中：', hant: '已存在的小節中：' }));
+					Morebits.Status.printUserText(reason[1], conv({ hans: '您输入的评论已在下方提供，您可以将其加入到', hant: '您輸入的評論已在下方提供，您可以將其加入到' }) + $aivLink + conv({ hans: '已存在的小节中：', hant: '已存在的小節中：' }));
 					return;
 				}
 				aivPage.setPageSection(0);
@@ -728,13 +728,13 @@ Twinkle.arv.callback.evaluate = function(e) {
 
 			summary = conv({ hans: '报告', hant: '報告' }) + '[[Special:Contributions/' + uid + '|' + uid + ']]';
 
-			Morebits.simpleWindow.setButtonsEnabled(false);
-			Morebits.status.init(form);
+			Morebits.SimpleWindow.setButtonsEnabled(false);
+			Morebits.Status.init(form);
 
 			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:管理员布告板/编辑争议';
 			Morebits.wiki.actionCompleted.notice = conv({ hans: '报告完成', hant: '報告完成' });
 
-			var ewipPage = new Morebits.wiki.page('Wikipedia:管理员布告板/编辑争议', conv({ hans: '处理EWIP请求', hant: '處理EWIP請求' }));
+			var ewipPage = new Morebits.wiki.Page('Wikipedia:管理员布告板/编辑争议', conv({ hans: '处理EWIP请求', hant: '處理EWIP請求' }));
 			ewipPage.setFollowRedirect(true);
 
 			ewipPage.load(function() {
@@ -744,7 +744,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				// check if user has already been reported
 				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
 					ewipPage.getStatusElement().error(conv({ hans: '报告已存在，将不会加入新的', hant: '報告已存在，將不會加入新的' }));
-					Morebits.status.printUserText(reason[1], conv({ hans: '您输入的评论已在下方提供，您可以将其加入到', hant: '您輸入的評論已在下方提供，您可以將其加入到' }) + $ewipLink + conv({ hans: '已存在的小节中：', hant: '已存在的小節中：' }));
+					Morebits.Status.printUserText(reason[1], conv({ hans: '您输入的评论已在下方提供，您可以将其加入到', hant: '您輸入的評論已在下方提供，您可以將其加入到' }) + $ewipLink + conv({ hans: '已存在的小节中：', hant: '已存在的小節中：' }));
 					return;
 				}
 				ewipPage.setPageSection(0);
@@ -760,13 +760,13 @@ Twinkle.arv.callback.evaluate = function(e) {
 		case 'username':
 			reason = Twinkle.arv.callback.getReportWikitext(form);
 
-			Morebits.simpleWindow.setButtonsEnabled(false);
-			Morebits.status.init(form);
+			Morebits.SimpleWindow.setButtonsEnabled(false);
+			Morebits.Status.init(form);
 
 			Morebits.wiki.actionCompleted.redirect = 'Wikipedia:管理员布告板/不当用户名';
 			Morebits.wiki.actionCompleted.notice = conv({ hans: '报告完成', hant: '報告完成' });
 
-			var uaaPage = new Morebits.wiki.page('Wikipedia:管理员布告板/不当用户名', conv({ hans: '处理UAA请求', hant: '處理UAA請求' }));
+			var uaaPage = new Morebits.wiki.Page('Wikipedia:管理员布告板/不当用户名', conv({ hans: '处理UAA请求', hant: '處理UAA請求' }));
 			uaaPage.setFollowRedirect(true);
 
 			uaaPage.load(function() {
@@ -776,7 +776,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				if (new RegExp('\\{\\{\\s*user-uaa\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.string.escapeRegExp(uid) + '\\s*(\\||\\})').test(text)) {
 					uaaPage.getStatusElement().error(conv({ hans: '用户已被列入。', hant: '使用者已被列入。' }));
 					var $uaaLink = '<a target="_blank" href="/wiki/WP:UAA">WP:UAA</a>';
-					Morebits.status.printUserText(reason[1], conv({ hans: '您输入的评论已在下方提供，您可以将其手工加入', hant: '您輸入的評論已在下方提供，您可以將其手工加入' }) + $uaaLink + conv({ hans: '上该用户的报告中：', hant: '上該使用者的報告中：' }));
+					Morebits.Status.printUserText(reason[1], conv({ hans: '您输入的评论已在下方提供，您可以将其手工加入', hant: '您輸入的評論已在下方提供，您可以將其手工加入' }) + $uaaLink + conv({ hans: '上该用户的报告中：', hant: '上該使用者的報告中：' }));
 					return;
 				}
 				uaaPage.getStatusElement().status(conv({ hans: '加入新报告…', hant: '加入新報告…' }));
@@ -791,15 +791,15 @@ Twinkle.arv.callback.evaluate = function(e) {
 		case 'spi':
 			reason = Twinkle.arv.callback.getReportWikitext(form);
 
-			Morebits.simpleWindow.setButtonsEnabled(false);
-			Morebits.status.init(form);
+			Morebits.SimpleWindow.setButtonsEnabled(false);
+			Morebits.Status.init(form);
 
 			var reportpage = 'Wikipedia:傀儡調查/案件/' + input.sockmaster;
 
 			Morebits.wiki.actionCompleted.redirect = reportpage;
 			Morebits.wiki.actionCompleted.notice = conv({ hans: '报告完成', hant: '報告完成' });
 
-			var spiPage = new Morebits.wiki.page(reportpage, conv({ hans: '抓取讨论页面', hant: '抓取討論頁面' }));
+			var spiPage = new Morebits.wiki.Page(reportpage, conv({ hans: '抓取讨论页面', hant: '抓取討論頁面' }));
 			spiPage.setFollowRedirect(true);
 			spiPage.setEditSummary(conv({ hans: '加入新提报', hant: '加入新提報' }));
 			spiPage.setChangeTags(Twinkle.changeTags);
@@ -811,7 +811,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 };
 
 Twinkle.addInitCallback(Twinkle.arv, 'arv');
-})(jQuery);
+})();
 
 
 // </nowiki>

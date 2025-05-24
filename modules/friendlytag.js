@@ -1,6 +1,6 @@
 // <nowiki>
 
-(function($) {
+(function() {
 
 
 /*
@@ -41,12 +41,13 @@ Twinkle.tag = function friendlytag() {
 Twinkle.tag.checkedTags = [];
 
 Twinkle.tag.callback = function friendlytagCallback() {
-	var Window = new Morebits.simpleWindow(630, Twinkle.tag.modeEn === 'article' ? 500 : 400);
+	var Window = new Morebits.SimpleWindow(630, Twinkle.tag.modeEn === 'article' ? 500 : 400);
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '标记设置', hant: '標記設定' }), 'WP:TW/PREF#tag');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#tag');
 	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
-	var form = new Morebits.quickForm(Twinkle.tag.callback.evaluate);
+
+	var form = new Morebits.QuickForm(Twinkle.tag.callback.evaluate);
 
 	form.append({
 		type: 'input',
@@ -318,7 +319,7 @@ Twinkle.tag.callback = function friendlytagCallback() {
 
 	} else {
 		// Redirects and files: Add a link to each template's description page
-		Morebits.quickForm.getElements(result, 'tags').forEach(generateLinks);
+		Morebits.QuickForm.getElements(result, 'tags').forEach(generateLinks);
 	}
 };
 
@@ -332,7 +333,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 	var sortorder = e.target.value;
 	Twinkle.tag.checkedTags = form.getChecked('tags');
 
-	var container = new Morebits.quickForm.element({ type: 'fragment' });
+	var container = new Morebits.QuickForm.Element({ type: 'fragment' });
 
 	// function to generate a checkbox, with appropriate subgroup if needed
 	var makeCheckbox = function(tag, description) {
@@ -640,8 +641,8 @@ Twinkle.tag.updateSortOrder = function(e) {
 	$workarea.find('h5:not(:first-child)').css({ 'margin-top': '1em' });
 	$workarea.find('div').filter(':has(span.quickformDescription)').css({ 'margin-top': '0.4em' });
 
-	Morebits.quickForm.getElements(form, 'existingTags').forEach(generateLinks);
-	Morebits.quickForm.getElements(form, 'tags').forEach(generateLinks);
+	Morebits.QuickForm.getElements(form, 'existingTags').forEach(generateLinks);
+	Morebits.QuickForm.getElements(form, 'tags').forEach(generateLinks);
 
 	// tally tags added/removed, update statusNode text
 	var statusNode = document.getElementById('tw-tag-status');
@@ -662,7 +663,7 @@ Twinkle.tag.updateSortOrder = function(e) {
 
 /**
  * Adds a link to each template's description page
- * @param {Morebits.quickForm.element} checkbox  associated with the template
+ * @param {Morebits.QuickForm.Element} checkbox  associated with the template
  */
 var generateLinks = function(checkbox) {
 	var link = Morebits.htmlNode('a', '>');
@@ -1073,7 +1074,7 @@ Twinkle.tag.callbacks = {
 				// special functions for merge tags
 				if (params.mergeReason) {
 					// post the rationale on the talk page (only operates in main namespace)
-					var talkpage = new Morebits.wiki.page('Talk:' + params.discussArticle, conv({ hans: '将理由贴进讨论页', hant: '將理由貼進討論頁' }));
+					var talkpage = new Morebits.wiki.Page('Talk:' + params.discussArticle, conv({ hans: '将理由贴进讨论页', hant: '將理由貼進討論頁' }));
 					talkpage.setNewSectionText(params.mergeReason.trim() + ' ~~~~');
 					talkpage.setNewSectionTitle('请求与[[' + params.nonDiscussArticle + ']]合并');
 					talkpage.setChangeTags(Twinkle.changeTags);
@@ -1098,7 +1099,7 @@ Twinkle.tag.callbacks = {
 						talkDiscussionTitle: params.talkDiscussionTitle,
 						talkDiscussionTitleLinked: params.talkDiscussionTitleLinked
 					};
-					var otherpage = new Morebits.wiki.page(params.mergeTarget, conv({ hans: '标记其他页面（', hant: '標記其他頁面（' }) +
+					var otherpage = new Morebits.wiki.Page(params.mergeTarget, conv({ hans: '标记其他页面（', hant: '標記其他頁面（' }) +
 						params.mergeTarget + '）');
 					otherpage.setCallbackParameters(newParams);
 					otherpage.load(Twinkle.tag.callbacks.article);
@@ -1112,7 +1113,7 @@ Twinkle.tag.callbacks = {
 					}
 					moveTalkpageText += '}}';
 
-					var moveTalkpage = new Morebits.wiki.page('Talk:' + params.discussArticle, conv({ hans: '将理由贴进讨论页', hant: '將理由貼進討論頁' }));
+					var moveTalkpage = new Morebits.wiki.Page('Talk:' + params.discussArticle, conv({ hans: '将理由贴进讨论页', hant: '將理由貼進討論頁' }));
 					moveTalkpage.setAppendText(moveTalkpageText);
 					moveTalkpage.setEditSummary(conv({ hans: '请求移动', hant: '請求移動' }) + (params.moveTarget ? '至[[' + params.moveTarget + ']]' : ''));
 					moveTalkpage.setChangeTags(Twinkle.changeTags);
@@ -1137,7 +1138,7 @@ Twinkle.tag.callbacks = {
 				return;
 			}
 
-			Morebits.status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '移除取消选择的已存在标记', hant: '移除取消選擇的已存在標記' }));
+			Morebits.Status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '移除取消选择的已存在标记', hant: '移除取消選擇的已存在標記' }));
 
 			var getRedirectsFor = [];
 
@@ -1160,7 +1161,7 @@ Twinkle.tag.callbacks = {
 			}
 
 			// Remove tags which appear in page text as redirects
-			var api = new Morebits.wiki.api(conv({ hans: '获取模板重定向', hant: '取得模板重新導向' }), {
+			var api = new Morebits.wiki.Api(conv({ hans: '获取模板重定向', hant: '取得模板重新導向' }), {
 				action: 'query',
 				prop: 'linkshere',
 				titles: getRedirectsFor.join('|'),
@@ -1182,7 +1183,7 @@ Twinkle.tag.callbacks = {
 						}
 					});
 					if (!removed) {
-						Morebits.status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '无法在页面上找到{{', hant: '無法在頁面上找到{{' }) + $(page).attr('title').slice(9) + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
+						Morebits.Status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '无法在页面上找到{{', hant: '無法在頁面上找到{{' }) + $(page).attr('title').slice(9) + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
 					}
 
 				});
@@ -1316,7 +1317,7 @@ Twinkle.tag.callbacks = {
 
 			// Insert tag after short description or any hatnotes,
 			// as well as deletion/protection-related templates
-			var wikipage = new Morebits.wikitext.page(pageText);
+			var wikipage = new Morebits.wikitext.Page(pageText);
 			var templatesAfter = Twinkle.hatnoteRegex +
 				// Protection templates
 				'pp|pp-.*?|' +
@@ -1335,7 +1336,7 @@ Twinkle.tag.callbacks = {
 			// regex check for preexistence of tag can be skipped if in canRemove mode
 			if (Twinkle.tag.canRemove || !tagRe.exec(pageText)) {
 				if (tag === 'Notability' && (mw.config.get('wgNamespaceNumber') === 0 || confirm(conv({ hans: '该页面不是条目，您仍要提报到收录标准提报吗？', hant: '該頁面不是條目，您仍要提報到收錄標準提報嗎？' })))) {
-					var wikipedia_page = new Morebits.wiki.page('Wikipedia:收錄標準/提報', conv({ hans: '加入收录标准提报记录', hant: '加入收錄標準提報記錄' }));
+					var wikipedia_page = new Morebits.wiki.Page('Wikipedia:收錄標準/提報', conv({ hans: '加入收录标准提报记录', hant: '加入收錄標準提報記錄' }));
 					wikipedia_page.setFollowRedirect(true);
 					wikipedia_page.setCallbackParameters(params);
 					wikipedia_page.load(Twinkle.tag.callbacks.notabilityList);
@@ -1351,7 +1352,7 @@ Twinkle.tag.callbacks = {
 				if (tag === 'Merge from') {
 					tags.push(tag);
 				} else {
-					Morebits.status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '在页面上找到{{', hant: '在頁面上找到{{' }) + tag + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
+					Morebits.Status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '在页面上找到{{', hant: '在頁面上找到{{' }) + tag + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
 					// don't do anything else with merge tags
 					if (['Merge', 'Merge to'].indexOf(tag) !== -1) {
 						params.mergeTarget = params.mergeReason = params.mergeTagOther = null;
@@ -1371,7 +1372,7 @@ Twinkle.tag.callbacks = {
 		var miTest = /\{\{(multiple ?issues|article ?issues|mi|ai|issues|多個問題|多个问题|問題條目|问题条目|數個問題|数个问题)\s*\|[^}]+\{/im.exec(pageText);
 
 		if (miTest && groupableTags.length > 0) {
-			Morebits.status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '加入支持的标记入已存在的{{multiple issues}}', hant: '加入支援的標記入已存在的{{multiple issues}}' }));
+			Morebits.Status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '加入支持的标记入已存在的{{multiple issues}}', hant: '加入支援的標記入已存在的{{multiple issues}}' }));
 
 			tagText = '';
 			$.each(groupableTags, addTag);
@@ -1383,7 +1384,7 @@ Twinkle.tag.callbacks = {
 			addUngroupedTags();
 
 		} else if (params.group && !miTest && (groupableExistingTags.length + groupableTags.length) >= 2) {
-			Morebits.status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '加入支持的标记入{{multiple issues}}', hant: '加入支援的標記入{{multiple issues}}' }));
+			Morebits.Status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '加入支持的标记入{{multiple issues}}', hant: '加入支援的標記入{{multiple issues}}' }));
 
 			tagText += '{{Multiple issues|\n';
 
@@ -1417,7 +1418,7 @@ Twinkle.tag.callbacks = {
 				return;
 			}
 
-			var api = new Morebits.wiki.api(conv({ hans: '获取模板重定向', hant: '取得模板重新導向' }), {
+			var api = new Morebits.wiki.Api(conv({ hans: '获取模板重定向', hant: '取得模板重新導向' }), {
 				action: 'query',
 				prop: 'linkshere',
 				titles: getRedirectsFor.join('|'),
@@ -1439,7 +1440,7 @@ Twinkle.tag.callbacks = {
 						}
 					});
 					if (!found) {
-						Morebits.status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '无法在页面上找到{{', hant: '無法在頁面上找到{{' }) + $(page).attr('title').slice(9) + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
+						Morebits.Status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '无法在页面上找到{{', hant: '無法在頁面上找到{{' }) + $(page).attr('title').slice(9) + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
 					}
 				});
 				addNewTagsToMI();
@@ -1474,7 +1475,7 @@ Twinkle.tag.callbacks = {
 			if (!tagRe.exec(pageText)) {
 				tags.push(params.tags[i]);
 			} else {
-				Morebits.status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '在重定向上找到{{', hant: '在重新導向上找到{{' }) + params.tags[i] + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
+				Morebits.Status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '在重定向上找到{{', hant: '在重新導向上找到{{' }) + params.tags[i] + conv({ hans: '}}…跳过', hant: '}}…跳過' }));
 			}
 		}
 
@@ -1504,7 +1505,7 @@ Twinkle.tag.callbacks = {
 		};
 
 		if (!tags.length) {
-			Morebits.status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '没有标签可供标记', hant: '沒有標籤可供標記' }));
+			Morebits.Status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '没有标签可供标记', hant: '沒有標籤可供標記' }));
 		}
 
 		tags.sort();
@@ -1639,7 +1640,7 @@ Twinkle.tag.callbacks = {
 
 Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 	var form = e.target;
-	var params = Morebits.quickForm.getInputData(form);
+	var params = Morebits.QuickForm.getInputData(form);
 
 
 	// Validation
@@ -1727,8 +1728,8 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		return;
 	}
 
-	Morebits.simpleWindow.setButtonsEnabled(false);
-	Morebits.status.init(form);
+	Morebits.SimpleWindow.setButtonsEnabled(false);
+	Morebits.Status.init(form);
 
 	Morebits.wiki.actionCompleted.redirect = Morebits.pageNameNorm;
 	Morebits.wiki.actionCompleted.notice = conv({ hans: '标记完成，将在几秒内刷新页面', hant: '標記完成，將在幾秒內重新整理頁面' });
@@ -1736,11 +1737,11 @@ Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		Morebits.wiki.actionCompleted.followRedirect = false;
 	}
 
-	var wikipedia_page = new Morebits.wiki.page(Morebits.pageNameNorm, conv({ hans: '正在标记', hant: '正在標記' }) + Twinkle.tag.mode);
+	var wikipedia_page = new Morebits.wiki.Page(Morebits.pageNameNorm, conv({ hans: '正在标记', hant: '正在標記' }) + Twinkle.tag.mode);
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.tag.callbacks[Twinkle.tag.modeEn]);
 };
 
 Twinkle.addInitCallback(Twinkle.tag, 'tag');
-})(jQuery);
+})();
 // </nowiki>

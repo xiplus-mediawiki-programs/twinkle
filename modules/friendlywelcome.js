@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) {
+(function() {
 
 
 /*
@@ -94,7 +94,7 @@ Twinkle.welcome.normal = function() {
 };
 
 Twinkle.welcome.welcomeUser = function welcomeUser() {
-	Morebits.status.init(document.getElementById('mw-content-text'));
+	Morebits.Status.init(document.getElementById('mw-content-text'));
 	$('#catlinks').remove();
 
 	var params = {
@@ -107,7 +107,7 @@ Twinkle.welcome.welcomeUser = function welcomeUser() {
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
 	Morebits.wiki.actionCompleted.notice = conv({ hans: '欢迎完成，将在几秒内刷新页面', hant: '歡迎完成，將在幾秒內重新整理頁面' });
 
-	var wikipedia_page = new Morebits.wiki.page(userTalkPage, conv({ hans: '编辑用户讨论页', hant: '編輯使用者討論頁' }));
+	var wikipedia_page = new Morebits.wiki.Page(userTalkPage, conv({ hans: '编辑用户讨论页', hant: '編輯使用者討論頁' }));
 	wikipedia_page.setFollowRedirect(true);
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.welcome.callbacks.main);
@@ -118,14 +118,14 @@ Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
 		return;
 	}
 
-	var Window = new Morebits.simpleWindow(600, 420);
+	var Window = new Morebits.SimpleWindow(600, 420);
 	Window.setTitle(conv({ hans: '欢迎用户', hant: '歡迎使用者' }));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '欢迎设置', hant: '歡迎設定' }), 'WP:TW/PREF#welcome');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'H:TW#欢迎');
 	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
-	var form = new Morebits.quickForm(Twinkle.welcome.callback.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.welcome.callback.evaluate);
 
 	form.append({
 		type: 'select',
@@ -191,7 +191,7 @@ Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
 Twinkle.welcome.populateWelcomeList = function(e) {
 	var type = e.target.value;
 
-	var container = new Morebits.quickForm.element({ type: 'fragment' });
+	var container = new Morebits.QuickForm.Element({ type: 'fragment' });
 
 	if ((type === 'standard' || type === 'anonymous') && Twinkle.getPref('customWelcomeList').length) {
 		container.append({ type: 'header', label: conv({ hans: '自定义欢迎模板', hant: '自訂歡迎模板' }) });
@@ -300,7 +300,7 @@ Twinkle.welcome.getTemplateWikitext = function(type, template, article) {
 
 Twinkle.welcome.callbacks = {
 	preview: function(form) {
-		var previewDialog = new Morebits.simpleWindow(750, 400);
+		var previewDialog = new Morebits.SimpleWindow(750, 400);
 		previewDialog.setTitle(conv({ hans: '预览欢迎模板', hant: '預覽歡迎模板' }));
 		previewDialog.setScriptName(conv({ hans: '欢迎用户', hant: '歡迎使用者' }));
 		previewDialog.setModality(true);
@@ -310,8 +310,8 @@ Twinkle.welcome.callbacks = {
 		previewdiv.style.fontSize = 'small';
 		previewDialog.setContent(previewdiv);
 
-		var previewer = new Morebits.wiki.preview(previewdiv);
-		var input = Morebits.quickForm.getInputData(form);
+		var previewer = new Morebits.wiki.Preview(previewdiv);
+		var input = Morebits.QuickForm.getInputData(form);
 		previewer.beginRender(Twinkle.welcome.getTemplateWikitext(input.type, input.template, input.article), 'User talk:' + Morebits.wiki.flow.relevantUserName()); // Force wikitext/correct username
 
 		var submit = document.createElement('input');
@@ -331,7 +331,7 @@ Twinkle.welcome.callbacks = {
 
 		// abort if mode is auto and form is not empty
 		if (pageobj.exists() && params.mode === 'auto') {
-			Morebits.status.info('警告', conv({ hans: '用户讨论页不是空的，略过自动欢迎', hant: '使用者討論頁不是空的，略過自動歡迎' }));
+			Morebits.Status.info('警告', conv({ hans: '用户讨论页不是空的，略过自动欢迎', hant: '使用者討論頁不是空的，略過自動歡迎' }));
 			Morebits.wiki.actionCompleted.event();
 			return;
 		}
@@ -361,24 +361,24 @@ Twinkle.welcome.callbacks = {
 Twinkle.welcome.callback.evaluate = function friendlywelcomeCallbackEvaluate(e) {
 	var form = e.target;
 
-	var params = Morebits.quickForm.getInputData(form); // : type, template, article
+	var params = Morebits.QuickForm.getInputData(form); // : type, template, article
 	params.mode = 'manual';
 
-	Morebits.simpleWindow.setButtonsEnabled(false);
-	Morebits.status.init(form);
+	Morebits.SimpleWindow.setButtonsEnabled(false);
+	Morebits.Status.init(form);
 
 	var userTalkPage = mw.config.get('wgFormattedNamespaces')[3] + ':' + Morebits.wiki.flow.relevantUserName();
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
 	Morebits.wiki.actionCompleted.notice = conv({ hans: '欢迎完成，将在几秒内刷新讨论页面', hant: '歡迎完成，將在幾秒內重新整理討論頁面' });
 
-	var wikipedia_page = new Morebits.wiki.page(userTalkPage, conv({ hans: '修改用户讨论页', hant: '修改使用者討論頁' }));
+	var wikipedia_page = new Morebits.wiki.Page(userTalkPage, conv({ hans: '修改用户讨论页', hant: '修改使用者討論頁' }));
 	wikipedia_page.setFollowRedirect(true);
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.welcome.callbacks.main);
 };
 
 Twinkle.addInitCallback(Twinkle.welcome, 'welcome');
-})(jQuery);
+})();
 
 
 // </nowiki>

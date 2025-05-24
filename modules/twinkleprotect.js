@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) {
+(function() {
 
 
 /*
@@ -31,7 +31,7 @@ Twinkle.protect = function twinkleprotect() {
 };
 
 Twinkle.protect.callback = function twinkleprotectCallback() {
-	var Window = new Morebits.simpleWindow(620, 530);
+	var Window = new Morebits.SimpleWindow(620, 530);
 	Window.setTitle(Morebits.userIsSysop ? conv({ hans: '施行或请求保护页面', hant: '施行或請求保護頁面' }) : conv({ hans: '请求保护页面', hant: '請求保護頁面' }));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '保护模板', hant: '保護模板' }), 'Template:Protection templates');
@@ -40,7 +40,7 @@ Twinkle.protect.callback = function twinkleprotectCallback() {
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#protect');
 	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
-	var form = new Morebits.quickForm(Twinkle.protect.callback.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.protect.callback.evaluate);
 	var actionfield = form.append({
 		type: 'field',
 		label: conv({ hans: '操作类型', hant: '操作類別' })
@@ -187,20 +187,20 @@ Twinkle.protect.callback.showLogAndCurrentProtectInfo = function twinkleprotectC
 			);
 		}
 
-		Morebits.status.init($('div[name="hasprotectlog"] span')[0]);
-		Morebits.status.warn(
+		Morebits.Status.init($('div[name="hasprotectlog"] span')[0]);
+		Morebits.Status.warn(
 			currentlyProtected
 				? conv({ hans: '先前保护', hant: '先前保護' })
 				: [
 					conv({ hans: '此页面曾在', hant: '此頁面曾在' }),
-					$('<b>' + new Morebits.date(Twinkle.protect.previousProtectionLog.timestamp).calendar('utc') + '</b>')[0],
+					$('<b>' + new Morebits.Date(Twinkle.protect.previousProtectionLog.timestamp).calendar('utc') + '</b>')[0],
 					'被' + Twinkle.protect.previousProtectionLog.user + conv({ hans: '保护', hant: '保護' }) + '：'
 				].concat(Twinkle.protect.formatProtectionDescription(Twinkle.protect.previousProtectionLevels)),
 			$linkMarkup[0]
 		);
 	}
 
-	Morebits.status.init($('div[name="currentprot"] span')[0]);
+	Morebits.Status.init($('div[name="currentprot"] span')[0]);
 	var protectionNode = [], statusLevel = 'info';
 
 	protectionNode = Twinkle.protect.formatProtectionDescription(Twinkle.protect.currentProtectionLevels);
@@ -208,7 +208,7 @@ Twinkle.protect.callback.showLogAndCurrentProtectInfo = function twinkleprotectC
 		statusLevel = 'warn';
 	}
 
-	Morebits.status[statusLevel](conv({ hans: '当前保护等级', hant: '目前保護等級' }), protectionNode);
+	Morebits.Status[statusLevel](conv({ hans: '当前保护等级', hant: '目前保護等級' }), protectionNode);
 };
 
 Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAction(e) {
@@ -218,7 +218,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 
 	switch (e.target.values) {
 		case 'protect':
-			field_preset = new Morebits.quickForm.element({ type: 'field', label: conv({ hans: '默认', hant: '預設' }), name: 'field_preset' });
+			field_preset = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '默认', hant: '預設' }), name: 'field_preset' });
 			field_preset.append({
 				type: 'select',
 				name: 'category',
@@ -227,7 +227,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				list: mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypesAdmin : Twinkle.protect.protectionTypesCreate
 			});
 
-			field2 = new Morebits.quickForm.element({ type: 'field', label: conv({ hans: '保护选项', hant: '保護選項' }), name: 'field2' });
+			field2 = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '保护选项', hant: '保護選項' }), name: 'field2' });
 			field2.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
 			field2.append({ type: 'div', name: 'hasprotectlog', label: ' ' });
 			// for existing pages
@@ -345,7 +345,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			}
 			/* falls through */
 		case 'tag':
-			field1 = new Morebits.quickForm.element({ type: 'field', label: conv({ hans: '标记选项', hant: '標記選項' }), name: 'field1' });
+			field1 = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '标记选项', hant: '標記選項' }), name: 'field1' });
 			field1.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
 			field1.append({ type: 'div', name: 'hasprotectlog', label: ' ' });
 			field1.append({
@@ -381,7 +381,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			break;
 
 		case 'request':
-			field_preset = new Morebits.quickForm.element({ type: 'field', label: conv({ hans: '保护类型', hant: '保護類別' }), name: 'field_preset' });
+			field_preset = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '保护类型', hant: '保護類別' }), name: 'field_preset' });
 			field_preset.append({
 				type: 'select',
 				name: 'category',
@@ -390,7 +390,7 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 				list: mw.config.get('wgArticleId') ? Twinkle.protect.protectionTypes : Twinkle.protect.protectionTypesCreate
 			});
 
-			field1 = new Morebits.quickForm.element({ type: 'field', label: conv({ hans: '选项', hant: '選項' }), name: 'field1' });
+			field1 = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '选项', hant: '選項' }), name: 'field1' });
 			field1.append({ type: 'div', name: 'currentprot', label: ' ' });  // holds the current protection level, as filled out by the async callback
 			field1.append({ type: 'div', name: 'hasprotectlog', label: ' ' });
 			field1.append({
@@ -817,7 +817,7 @@ Twinkle.protect.callback.changePreset = function twinkleprotectCallbackChangePre
 
 Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 	var form = e.target;
-	var input = Morebits.quickForm.getInputData(form);
+	var input = Morebits.QuickForm.getInputData(form);
 
 	var tagparams;
 	if (input.actiontype === 'tag' || (input.actiontype === 'protect' && mw.config.get('wgArticleId') && mw.config.get('wgPageContentModel') !== 'Scribunto')) {
@@ -886,7 +886,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 					Twinkle.protect.callbacks.taggingPageInitial(tagparams);
 				}
 				if (closeparams && closeparams.type) {
-					var rppPage = new Morebits.wiki.page('Wikipedia:请求保护页面', conv({ hans: '关闭请求', hant: '關閉請求' }));
+					var rppPage = new Morebits.wiki.Page('Wikipedia:请求保护页面', conv({ hans: '关闭请求', hant: '關閉請求' }));
 					rppPage.setFollowRedirect(true);
 					rppPage.setCallbackParameters(closeparams);
 					rppPage.load(Twinkle.protect.callbacks.closeRequest);
@@ -894,7 +894,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			};
 
 			var protectIt = function twinkleprotectCallbackProtectIt(next) {
-				thispage = new Morebits.wiki.page(mw.config.get('wgPageName'), conv({ hans: '保护页面', hant: '保護頁面' }));
+				thispage = new Morebits.wiki.Page(mw.config.get('wgPageName'), conv({ hans: '保护页面', hant: '保護頁面' }));
 				var anyExtendProtection = false;
 				if (mw.config.get('wgArticleId')) {
 					if (input.editmodify) {
@@ -938,8 +938,8 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				}
 
 				if (!statusInited) {
-					Morebits.simpleWindow.setButtonsEnabled(false);
-					Morebits.status.init(form);
+					Morebits.SimpleWindow.setButtonsEnabled(false);
+					Morebits.Status.init(form);
 					statusInited = true;
 				}
 
@@ -958,8 +958,8 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 		case 'tag':
 			// apply a protection template
 
-			Morebits.simpleWindow.setButtonsEnabled(false);
-			Morebits.status.init(form);
+			Morebits.SimpleWindow.setButtonsEnabled(false);
+			Morebits.Status.init(form);
 
 			Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 			Morebits.wiki.actionCompleted.followRedirect = false;
@@ -1073,8 +1073,8 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 				expiry: input.expiry
 			};
 
-			Morebits.simpleWindow.setButtonsEnabled(false);
-			Morebits.status.init(form);
+			Morebits.SimpleWindow.setButtonsEnabled(false);
+			Morebits.Status.init(form);
 
 			var rppName = 'Wikipedia:请求保护页面';
 
@@ -1082,7 +1082,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			Morebits.wiki.actionCompleted.redirect = rppName;
 			Morebits.wiki.actionCompleted.notice = conv({ hans: '提名完成，重定向到讨论页', hant: '提名完成，重新導向到討論頁' });
 
-			var rppPage = new Morebits.wiki.page(rppName, conv({ hans: '请求保护页面', hant: '請求保護頁面' }));
+			var rppPage = new Morebits.wiki.Page(rppName, conv({ hans: '请求保护页面', hant: '請求保護頁面' }));
 			rppPage.setFollowRedirect(true);
 			rppPage.setCallbackParameters(rppparams);
 			rppPage.load(Twinkle.protect.callbacks.fileRequest);
@@ -1096,7 +1096,7 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 Twinkle.protect.callbacks = {
 	taggingPageInitial: function(tagparams) {
 		if (tagparams.tag === 'noop') {
-			Morebits.status.info(conv({ hans: '应用保护模板', hant: '應用保護模板' }), conv({ hans: '没什么要做的', hant: '沒什麼要做的' }));
+			Morebits.Status.info(conv({ hans: '应用保护模板', hant: '應用保護模板' }), conv({ hans: '没什么要做的', hant: '沒什麼要做的' }));
 			return;
 		}
 
@@ -1106,7 +1106,7 @@ Twinkle.protect.callbacks = {
 			flowpage.setCallbackParameters(tagparams);
 			flowpage.viewHeader(Twinkle.protect.callbacks.taggingFlowPage);
 		}, function () {
-			var protectedPage = new Morebits.wiki.page(pageName, conv({ hans: '标记页面', hant: '標記頁面' }));
+			var protectedPage = new Morebits.wiki.Page(pageName, conv({ hans: '标记页面', hant: '標記頁面' }));
 			protectedPage.setCallbackParameters(tagparams);
 			protectedPage.load(Twinkle.protect.callbacks.taggingPage);
 		});
@@ -1141,7 +1141,7 @@ Twinkle.protect.callbacks = {
 				if (!text.match(/{{(?:Redirect[ _]category shell|Rcat[ _]shell|This[ _]is a redirect|多种类型重定向|多種類型重定向|多種類型重新導向|多种类型重新导向|R0|其他重定向|RCS|Redirect[ _]shell)/i)) {
 					text = text.replace(/#(?:redirect|重定向|重新導向) ?(\[\[.*?\]\])(.*)/i, '#REDIRECT $1$2\n\n{{' + tag + '}}');
 				} else {
-					Morebits.status.info('已存在Redirect category shell', conv({ hans: '没什么可做的', hant: '沒什麼可做的' }));
+					Morebits.Status.info('已存在Redirect category shell', conv({ hans: '没什么可做的', hant: '沒什麼可做的' }));
 					return;
 				}
 			} else {
@@ -1157,7 +1157,7 @@ Twinkle.protect.callbacks = {
 				}
 
 				// Insert tag after short description or any hatnotes
-				var wikipage = new Morebits.wikitext.page(text);
+				var wikipage = new Morebits.wikitext.Page(text);
 				text = wikipage.insertAfterTemplates(tag, Twinkle.hatnoteRegex).getText();
 			}
 			summary = '加入{{' + params.tag + '}}';
@@ -1279,7 +1279,7 @@ Twinkle.protect.callbacks = {
 				if (Twinkle.protect.watched !== true && watchPref !== 'default' && watchPref !== 'yes') {
 					watch_query.expiry = watchPref;
 				}
-				new Morebits.wiki.api(conv({ hans: '将请求保护的页面加入到监视列表', hant: '將請求保護的頁面加入到監視清單' }), watch_query).post();
+				new Morebits.wiki.Api(conv({ hans: '将请求保护的页面加入到监视列表', hant: '將請求保護的頁面加入到監視清單' }), watch_query).post();
 			}
 		});
 	},
@@ -1429,7 +1429,7 @@ Twinkle.protect.formatProtectionDescription = function(protectionLevels) {
 			if (Morebits.string.isInfinity(settings.expiry)) {
 				protectionNode.push(conv({ hans: '（无限期）', hant: '（無限期）' }));
 			} else {
-				protectionNode.push(conv({ hans: '（过期：', hant: '（過期：' }) + new Morebits.date(settings.expiry).calendar('utc') + '）');
+				protectionNode.push(conv({ hans: '（过期：', hant: '（過期：' }) + new Morebits.Date(settings.expiry).calendar('utc') + '）');
 			}
 			if (settings.cascade) {
 				protectionNode.push(conv({ hans: '（连锁）', hant: '（連鎖）' }));
@@ -1443,7 +1443,7 @@ Twinkle.protect.formatProtectionDescription = function(protectionLevels) {
 };
 
 Twinkle.addInitCallback(Twinkle.protect, 'protect');
-})(jQuery);
+})();
 
 
 // </nowiki>

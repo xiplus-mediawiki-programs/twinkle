@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) { // eslint-disable-line no-unused-vars
+(function() { // eslint-disable-line no-unused-vars
 
 
 /*
@@ -31,7 +31,7 @@ Twinkle.copyvio = function twinklecopyvio() {
 };
 
 Twinkle.copyvio.callback = function twinklecopyvioCallback() {
-	var Window = new Morebits.simpleWindow(600, 350);
+	var Window = new Morebits.SimpleWindow(600, 350);
 	Window.setTitle(conv({ hans: '提报侵权页面', hant: '提報侵權頁面' }));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '常见错误', hant: '常見錯誤' }), 'Wikipedia:管理员错误自查表/侵权处理');
@@ -39,7 +39,7 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#copyvio');
 	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
-	var form = new Morebits.quickForm(Twinkle.copyvio.callback.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.copyvio.callback.evaluate);
 	form.append({
 		type: 'textarea',
 		label: conv({ hans: '侵权来源：', hant: '侵權來源：' }),
@@ -98,11 +98,11 @@ Twinkle.copyvio.callbacks = {
 			Twinkle.copyvio.callbacks.taggingArticle(pageobj);
 
 			// Contributor specific edits
-			var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'));
+			var wikipedia_page = new Morebits.wiki.Page(mw.config.get('wgPageName'));
 			wikipedia_page.setCallbackParameters(pageobj.getCallbackParameters());
 			wikipedia_page.lookupCreation(Twinkle.copyvio.callbacks.main);
 		} else {
-			Morebits.status.error(conv({ hans: '错误', hant: '錯誤' }), conv({ hans: '页面已经标记侵权，请人工确认是否已经提报。', hant: '頁面已經標記侵權，請人工確認是否已經提報。' }));
+			Morebits.Status.error(conv({ hans: '错误', hant: '錯誤' }), conv({ hans: '页面已经标记侵权，请人工确认是否已经提报。', hant: '頁面已經標記侵權，請人工確認是否已經提報。' }));
 		}
 	},
 	main: function(pageobj) {
@@ -111,7 +111,7 @@ Twinkle.copyvio.callbacks = {
 		var initialContrib = pageobj.getCreator();
 
 		// Adding discussion
-		var wikipedia_page = new Morebits.wiki.page(params.logpage, conv({ hans: '加入侵权记录项', hant: '加入侵權記錄項' }));
+		var wikipedia_page = new Morebits.wiki.Page(params.logpage, conv({ hans: '加入侵权记录项', hant: '加入侵權記錄項' }));
 		wikipedia_page.setFollowRedirect(true);
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.copyvio.callbacks.copyvioList);
@@ -126,7 +126,7 @@ Twinkle.copyvio.callbacks = {
 				flowpage.setContent(content);
 				flowpage.newTopic();
 			}, function () {
-				var usertalkpage = new Morebits.wiki.page('User talk:' + initialContrib, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + initialContrib + '）');
+				var usertalkpage = new Morebits.wiki.Page('User talk:' + initialContrib, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + initialContrib + '）');
 				var notifytext = '\n{{subst:CopyvioNotice|' + mw.config.get('wgPageName') + '}}';
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary(conv({ hans: '通知：页面[[', hant: '通知：頁面[[' }) + mw.config.get('wgPageName') + conv({ hans: ']]疑似侵犯著作权', hant: ']]疑似侵犯版權' }));
@@ -203,7 +203,7 @@ Twinkle.copyvio.callbacks = {
 
 
 Twinkle.copyvio.callback.evaluate = function(e) {
-	var params = Morebits.quickForm.getInputData(e.target);
+	var params = Morebits.QuickForm.getInputData(e.target);
 
 	if (!params.source.trim()) {
 		alert(conv({ hans: '请指定侵权来源', hant: '請指定侵權來源' }));
@@ -214,8 +214,8 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 		return;
 	}
 
-	Morebits.simpleWindow.setButtonsEnabled(false);
-	Morebits.status.init(e.target);
+	Morebits.SimpleWindow.setButtonsEnabled(false);
+	Morebits.Status.init(e.target);
 
 	params.logpage = 'Wikipedia:頁面存廢討論/疑似侵權';
 
@@ -225,7 +225,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 	Morebits.wiki.actionCompleted.notice = conv({ hans: '提报完成，将在几秒内刷新页面', hant: '提報完成，將在幾秒內重新整理頁面' });
 
 	// Tagging file
-	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), conv({ hans: '加入侵权模板到页面', hant: '加入侵權模板到頁面' }));
+	var wikipedia_page = new Morebits.wiki.Page(mw.config.get('wgPageName'), conv({ hans: '加入侵权模板到页面', hant: '加入侵權模板到頁面' }));
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.copyvio.callbacks.tryTagging);
 
@@ -233,7 +233,7 @@ Twinkle.copyvio.callback.evaluate = function(e) {
 };
 
 Twinkle.addInitCallback(Twinkle.copyvio, 'copyvio');
-})(jQuery);
+})();
 
 
 // </nowiki>

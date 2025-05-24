@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) {
+(function() {
 
 var conv = require('ext.gadget.HanAssist').conv;
 var api = new mw.Api(), relevantUserName, blockedUserName, initialTalkPageRev;
@@ -41,7 +41,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	Twinkle.block.field_block_options = {};
 	Twinkle.block.field_template_options = {};
 
-	var Window = new Morebits.simpleWindow(650, 530);
+	var Window = new Morebits.SimpleWindow(650, 530);
 	// need to be verbose about who we're blocking
 	Window.setTitle(conv({ hans: '封禁或向', hant: '封鎖或向' }) + relevantUserName + conv({ hans: '发出封禁模板', hant: '發出封鎖模板' }));
 	Window.setScriptName('Twinkle');
@@ -51,7 +51,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#block');
 	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
-	var form = new Morebits.quickForm(Twinkle.block.callback.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.block.callback.evaluate);
 	var actionfield = form.append({
 		type: 'field',
 		label: conv({ hans: '操作类型', hant: '操作類別' })
@@ -160,9 +160,9 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	Twinkle.block.fetchUserInfo(function() {
 		if (Twinkle.block.isRegistered) {
 			var $form = $(result);
-			Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=tag]').parent(), true);
+			Morebits.QuickForm.setElementVisibility($form.find('[name=actiontype][value=tag]').parent(), true);
 			if (Morebits.userIsSysop) {
-				Morebits.quickForm.setElementVisibility($form.find('[name=actiontype][value=protect]').parent(), true);
+				Morebits.QuickForm.setElementVisibility($form.find('[name=actiontype][value=protect]').parent(), true);
 			}
 		}
 
@@ -274,8 +274,8 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 	api.get(query).then(function(data) {
 		Twinkle.block.processUserInfo(data, fn);
 	}, function(msg) {
-		Morebits.status.init($('div[name="currentblock"] span').last()[0]);
-		Morebits.status.warn(conv({ hans: '抓取用户信息出错', hant: '抓取使用者資訊出錯' }), msg);
+		Morebits.Status.init($('div[name="currentblock"] span').last()[0]);
+		Morebits.Status.warn(conv({ hans: '抓取用户信息出错', hant: '抓取使用者資訊出錯' }), msg);
 	});
 };
 
@@ -402,7 +402,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	Twinkle.block.callback.saveFieldset($('[name=field_unblock_options]'));
 
 	if (blockBox) {
-		field_preset = new Morebits.quickForm.element({ type: 'field', label: conv({ hans: '默认', hant: '預設' }), name: 'field_preset' });
+		field_preset = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '默认', hant: '預設' }), name: 'field_preset' });
 		field_preset.append({
 			type: 'select',
 			name: 'preset',
@@ -411,7 +411,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			list: Twinkle.block.callback.filtered_block_groups(blockGroup)
 		});
 
-		field_block_options = new Morebits.quickForm.element({ type: 'field', label: conv({ hans: '封禁选项', hant: '封鎖選項' }), name: 'field_block_options' });
+		field_block_options = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '封禁选项', hant: '封鎖選項' }), name: 'field_block_options' });
 		field_block_options.append({ type: 'div', name: 'currentblock', label: ' ' });
 		field_block_options.append({ type: 'div', name: 'hasblocklog', label: ' ' });
 		field_block_options.append({
@@ -616,7 +616,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	}
 
 	if (templateBox) {
-		field_template_options = new Morebits.quickForm.element({ type: 'field', label: conv({ hans: '模板选项', hant: '模板選項' }), name: 'field_template_options' });
+		field_template_options = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '模板选项', hant: '模板選項' }), name: 'field_template_options' });
 		field_template_options.append({
 			type: 'select',
 			name: 'template',
@@ -709,7 +709,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	}
 
 	if (tagBox) {
-		field_tag_options = new Morebits.quickForm.element({ type: 'field', label: conv({ hans: '标记用户页', hant: '標記使用者頁面' }), name: 'field_tag_options' });
+		field_tag_options = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '标记用户页', hant: '標記使用者頁面' }), name: 'field_tag_options' });
 
 		field_tag_options.append({
 			type: 'checkbox',
@@ -796,7 +796,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	}
 
 	if (unblockBox) {
-		field_unblock_options = new Morebits.quickForm.element({ type: 'field', label: conv({ hans: '解除封禁选项', hant: '解除封鎖選項' }), name: 'field_unblock_options' });
+		field_unblock_options = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '解除封禁选项', hant: '解除封鎖選項' }), name: 'field_unblock_options' });
 
 		field_unblock_options.append({
 			type: 'textarea',
@@ -899,7 +899,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 	if (field_template_options) {
 		oldfield = $form.find('fieldset[name="field_template_options"]')[0];
 		oldfield.parentNode.replaceChild(field_template_options.render(), oldfield);
-		e.target.form.root.previewer = new Morebits.wiki.preview($(e.target.form.root).find('#twinkleblock-previewbox').last()[0]);
+		e.target.form.root.previewer = new Morebits.wiki.Preview($(e.target.form.root).find('#twinkleblock-previewbox').last()[0]);
 	} else {
 		$form.find('fieldset[name="field_template_options"]').hide();
 	}
@@ -924,7 +924,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		// true for a user, single ip block, or the exact range for a range block
 		var sameUser = blockedUserName === relevantUserName;
 
-		Morebits.status.init($('div[name="currentblock"] span').last()[0]);
+		Morebits.Status.init($('div[name="currentblock"] span').last()[0]);
 		var statusStr = relevantUserName + '已被' + (Twinkle.block.currentBlockInfo.partial === '' ? conv({ hans: '部分封禁', hant: '部分封鎖' }) : conv({ hans: '全站封禁', hant: '全站封鎖' }));
 
 		// Range blocked
@@ -941,8 +941,8 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 
 		if (Twinkle.block.currentBlockInfo.expiry === 'infinity') {
 			statusStr += conv({ hans: '（无限期）', hant: '（無限期）' });
-		} else if (new Morebits.date(Twinkle.block.currentBlockInfo.expiry).isValid()) {
-			statusStr += conv({ hans: '（终止于', hant: '（終止於' }) + new Morebits.date(Twinkle.block.currentBlockInfo.expiry).calendar('utc') + '）';
+		} else if (new Morebits.Date(Twinkle.block.currentBlockInfo.expiry).isValid()) {
+			statusStr += conv({ hans: '（终止于', hant: '（終止於' }) + new Morebits.Date(Twinkle.block.currentBlockInfo.expiry).calendar('utc') + '）';
 		}
 
 
@@ -959,7 +959,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			infoStr += conv({ hans: '加上额外的', hant: '加上額外的' }) + (partialBox ? '部分' : '') + conv({ hans: '封禁。', hant: '封鎖。' });
 		}
 
-		Morebits.status.warn(statusStr, infoStr);
+		Morebits.Status.warn(statusStr, infoStr);
 
 		// Default to the current block conditions on intial form generation
 		Twinkle.block.callback.update_form(e, Twinkle.block.currentBlockInfo);
@@ -979,18 +979,18 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				blockAction = lastBlockAction.action === 'unblock' ? Twinkle.block.blockLog[1] : lastBlockAction;
 
 			blockloginfo.push('此' + (Morebits.ip.isRange(relevantUserName) ? conv({ hans: 'IP范围', hant: 'IP範圍' }) : conv({ hans: '用户', hant: '使用者' })) + '曾在');
-			blockloginfo.push($('<b>' + new Morebits.date(blockAction.timestamp).calendar('utc') + '</b>')[0]);
+			blockloginfo.push($('<b>' + new Morebits.Date(blockAction.timestamp).calendar('utc') + '</b>')[0]);
 			blockloginfo.push('被' + blockAction.user + conv({ hans: '封禁', hant: '封鎖' }));
 			blockloginfo.push($('<b>' + Morebits.string.formatTime(blockAction.params.duration) + '</b>')[0]);
 			if (lastBlockAction.action === 'unblock') {
-				blockloginfo.push('，' + new Morebits.date(lastBlockAction.timestamp).calendar('utc') + '解封');
+				blockloginfo.push('，' + new Morebits.Date(lastBlockAction.timestamp).calendar('utc') + '解封');
 			} else { // block or reblock
-				blockloginfo.push('，' + new Morebits.date(blockAction.params.expiry).calendar('utc') + conv({ hans: '过期', hant: '過期' }));
+				blockloginfo.push('，' + new Morebits.Date(blockAction.params.expiry).calendar('utc') + conv({ hans: '过期', hant: '過期' }));
 			}
 		}
 
-		Morebits.status.init($('div[name="hasblocklog"] span').last()[0]);
-		Morebits.status.warn(blockloginfo, $blockloglink[0]);
+		Morebits.Status.init($('div[name="hasblocklog"] span').last()[0]);
+		Morebits.Status.warn(blockloginfo, $blockloglink[0]);
 	}
 
 	// Make sure all the fields are correct based on initial defaults
@@ -1604,9 +1604,9 @@ Twinkle.block.callback.change_preset = function twinkleblockCallbackChangePreset
 Twinkle.block.callback.change_expiry = function twinkleblockCallbackChangeExpiry(e) {
 	var expiry = e.target.form.expiry;
 	if (e.target.value === 'custom') {
-		Morebits.quickForm.setElementVisibility(expiry.parentNode, true);
+		Morebits.QuickForm.setElementVisibility(expiry.parentNode, true);
 	} else {
-		Morebits.quickForm.setElementVisibility(expiry.parentNode, false);
+		Morebits.QuickForm.setElementVisibility(expiry.parentNode, false);
 		expiry.value = e.target.value;
 	}
 };
@@ -1649,9 +1649,9 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 
 		form.expiry.value = expiry;
 		if (form.expiry_preset.value === 'custom') {
-			Morebits.quickForm.setElementVisibility(form.expiry.parentNode, true);
+			Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, true);
 		} else {
-			Morebits.quickForm.setElementVisibility(form.expiry.parentNode, false);
+			Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, false);
 		}
 	}
 
@@ -1743,20 +1743,20 @@ Twinkle.block.callback.change_template = function twinkleblockcallbackChangeTemp
 		if (Twinkle.block.prev_template_expiry) {
 			form.expiry.value = Twinkle.block.prev_template_expiry;
 		}
-		Morebits.quickForm.setElementVisibility(form.notalk.parentNode, !settings.nonstandard);
+		Morebits.QuickForm.setElementVisibility(form.notalk.parentNode, !settings.nonstandard);
 		// Partial
-		Morebits.quickForm.setElementVisibility(form.noemail_template.parentNode, partialBox);
-		Morebits.quickForm.setElementVisibility(form.nocreate_template.parentNode, partialBox);
+		Morebits.QuickForm.setElementVisibility(form.noemail_template.parentNode, partialBox);
+		Morebits.QuickForm.setElementVisibility(form.nocreate_template.parentNode, partialBox);
 	} else if (templateBox) { // Only present if block && template forms both visible
-		Morebits.quickForm.setElementVisibility(
+		Morebits.QuickForm.setElementVisibility(
 			form.blank_duration.parentNode,
 			!settings.indefinite && !settings.nonstandard
 		);
 	}
 
 	// Only particularly relevant if template form is present
-	Morebits.quickForm.setElementVisibility(form.article.parentNode, settings && !!settings.pageParam);
-	Morebits.quickForm.setElementVisibility(form.block_reason.parentNode, settings && !!settings.reasonParam);
+	Morebits.QuickForm.setElementVisibility(form.article.parentNode, settings && !!settings.pageParam);
+	Morebits.QuickForm.setElementVisibility(form.block_reason.parentNode, settings && !!settings.reasonParam);
 
 	// zhwiki: Apply reason from blockPresetsInfo
 	if (settings.reasonParam) {
@@ -1766,7 +1766,7 @@ Twinkle.block.callback.change_template = function twinkleblockcallbackChangeTemp
 	}
 
 	// Partial block
-	Morebits.quickForm.setElementVisibility(form.area.parentNode, partialBox && !blockBox);
+	Morebits.QuickForm.setElementVisibility(form.area.parentNode, partialBox && !blockBox);
 
 	form.root.previewer.closePreview();
 };
@@ -1796,7 +1796,7 @@ Twinkle.block.callback.preview = function twinkleblockcallbackPreview(form) {
 };
 
 Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
-	var params = Morebits.quickForm.getInputData(e.target);
+	var params = Morebits.QuickForm.getInputData(e.target);
 
 	var $form = $(e.target),
 		toBlock = $form.find('[name=actiontype][value=block]').is(':checked'),
@@ -1907,9 +1907,9 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			return alert(conv({ hans: '请提供封禁理由！', hant: '請提供封鎖理由！' }));
 		}
 
-		Morebits.simpleWindow.setButtonsEnabled(false);
-		Morebits.status.init(e.target);
-		var statusElement = new Morebits.status(conv({ hans: '执行封禁', hant: '執行封鎖' }));
+		Morebits.SimpleWindow.setButtonsEnabled(false);
+		Morebits.Status.init(e.target);
+		var statusElement = new Morebits.Status(conv({ hans: '执行封禁', hant: '執行封鎖' }));
 		blockoptions.action = 'block';
 
 		blockoptions.user = relevantUserName;
@@ -1970,7 +1970,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			// using twinkle to reblock can cause a user talk page edit, thus check first
 			var currentTalkPageRev = Object.keys(data.query.pages)[0] === '-1' ? null : data.query.pages[Object.keys(data.query.pages)[0]].revisions[0].revid;
 			if (currentTalkPageRev !== initialTalkPageRev && !confirm(conv({ hans: '用户讨论页已被修改，其他管理员可能已处理，是否继续？', hant: '使用者討論頁已被修改，其他管理員可能已處理，是否繼續？' }))) {
-				Morebits.status.error(conv({ hans: '执行封禁', hant: '執行封鎖' }), conv({ hans: '用户取消操作', hant: '使用者取消操作' }));
+				Morebits.Status.error(conv({ hans: '执行封禁', hant: '執行封鎖' }), conv({ hans: '用户取消操作', hant: '使用者取消操作' }));
 				return;
 			}
 			var block = data.query.blocks[0];
@@ -2000,17 +2000,17 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 					if (logevents.params.duration === 'infinity') {
 						logExpiry = conv({ hans: '无限期', hant: '無限期' });
 					} else {
-						var expiryDate = new Morebits.date(logevents.params.expiry);
+						var expiryDate = new Morebits.Date(logevents.params.expiry);
 						logExpiry += (expiryDate.isBefore(new Date()) ? conv({ hans: '过期于', hant: '過期於' }) : '直到') + expiryDate.calendar();
 					}
 				} else { // no duration, action=unblock, just show timestamp
-					logExpiry = '於' + new Morebits.date(logevents.timestamp).calendar();
+					logExpiry = '於' + new Morebits.Date(logevents.timestamp).calendar();
 				}
 				message += '由' + logevents.user + conv({ hans: '以“', hant: '以「' }) + logevents.comment + conv({ hans: '”', hant: '」' }) +
 					blockActionText[logevents.action] + logExpiry + conv({ hans: '，你想要以你的设置变更封禁吗？', hant: '，你想要以你的設定變更封鎖嗎？' });
 
 				if (!confirm(message)) {
-					Morebits.status.info(conv({ hans: '执行封禁', hant: '執行封鎖' }), conv({ hans: '用户取消操作', hant: '使用者取消操作' }));
+					Morebits.Status.info(conv({ hans: '执行封禁', hant: '執行封鎖' }), conv({ hans: '用户取消操作', hant: '使用者取消操作' }));
 					return;
 				}
 				blockoptions.reblock = 1; // Writing over a block will fail otherwise
@@ -2037,19 +2037,19 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			// execute block
 			blockoptions.tags = Twinkle.changeTags;
 			blockoptions.token = mw.user.tokens.get('csrfToken');
-			var mbApi = new Morebits.wiki.api(conv({ hans: '执行封禁', hant: '執行封鎖' }), blockoptions, function () {
+			var mbApi = new Morebits.wiki.Api(conv({ hans: '执行封禁', hant: '執行封鎖' }), blockoptions, function () {
 				statusElement.info('完成');
 				if (toWarn) {
 					Twinkle.block.callback.issue_template(templateoptions);
 				}
 				if (toClosevip) {
-					var vipPage = new Morebits.wiki.page('Wikipedia:当前的破坏', conv({ hans: '关闭请求', hant: '關閉請求' }));
+					var vipPage = new Morebits.wiki.Page('Wikipedia:当前的破坏', conv({ hans: '关闭请求', hant: '關閉請求' }));
 					vipPage.setFollowRedirect(true);
 					vipPage.setCallbackParameters(blockoptions);
 					vipPage.load(Twinkle.block.callback.closeRequest);
 				}
 				if (groupsToBeRemoved.length > 0) {
-					var rightStatusElement = new Morebits.status(conv({ hans: '移除权限', hant: '移除權限' }));
+					var rightStatusElement = new Morebits.Status(conv({ hans: '移除权限', hant: '移除權限' }));
 					if (confirm(conv({ hans: '该用户有以下权限：', hant: '該使用者有以下權限：' }) + groupsToBeRemoved.join('、') + conv({ hans: '，您是否想要同时移除这些权限？', hant: '，您是否想要同時移除這些權限？' }))) {
 						var revokeOptions = {
 							action: 'userrights',
@@ -2059,7 +2059,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 							token: data.query.tokens.userrightstoken,
 							tags: Twinkle.changeTags
 						};
-						var mrApi = new Morebits.wiki.api(conv({ hans: '移除权限', hant: '移除權限' }), revokeOptions, function () {
+						var mrApi = new Morebits.wiki.Api(conv({ hans: '移除权限', hant: '移除權限' }), revokeOptions, function () {
 							rightStatusElement.info('已移除' + groupsToBeRemoved.join('、'));
 						});
 						mrApi.post();
@@ -2071,16 +2071,16 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			mbApi.post();
 		});
 	} else if (toWarn) {
-		Morebits.simpleWindow.setButtonsEnabled(false);
+		Morebits.SimpleWindow.setButtonsEnabled(false);
 
-		Morebits.status.init(e.target);
+		Morebits.Status.init(e.target);
 		Twinkle.block.callback.issue_template(templateoptions);
 	}
 	if (toTag || toProtect) {
-		Morebits.simpleWindow.setButtonsEnabled(false);
-		Morebits.status.init(e.target);
+		Morebits.SimpleWindow.setButtonsEnabled(false);
+		Morebits.Status.init(e.target);
 		var userPage = 'User:' + Morebits.wiki.flow.relevantUserName(true);
-		var wikipedia_page = new Morebits.wiki.page(userPage, conv({ hans: '标记或保护用户页', hant: '標記或保護使用者頁面' }));
+		var wikipedia_page = new Morebits.wiki.Page(userPage, conv({ hans: '标记或保护用户页', hant: '標記或保護使用者頁面' }));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.block.callback.taguserpage);
 	}
@@ -2089,15 +2089,15 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			return alert(conv({ hans: '请提供解除封禁理由！', hant: '請提供解除封鎖理由！' }));
 		}
 
-		Morebits.simpleWindow.setButtonsEnabled(false);
-		Morebits.status.init(e.target);
-		var unblockStatusElement = new Morebits.status(conv({ hans: '执行解除封禁', hant: '執行解除封鎖' }));
+		Morebits.SimpleWindow.setButtonsEnabled(false);
+		Morebits.Status.init(e.target);
+		var unblockStatusElement = new Morebits.Status(conv({ hans: '执行解除封禁', hant: '執行解除封鎖' }));
 		unblockoptions.action = 'unblock';
 		unblockoptions.user = Morebits.wiki.flow.relevantUserName(true);
 		// execute unblock
 		unblockoptions.tags = Twinkle.changeTags;
 		unblockoptions.token = mw.user.tokens.get('csrfToken');
-		var unblockMbApi = new Morebits.wiki.api(conv({ hans: '执行解除封禁', hant: '執行解除封鎖' }), unblockoptions, function () {
+		var unblockMbApi = new Morebits.wiki.Api(conv({ hans: '执行解除封禁', hant: '執行解除封鎖' }), unblockoptions, function () {
 			unblockStatusElement.info('完成');
 		});
 		unblockMbApi.post();
@@ -2160,7 +2160,7 @@ Twinkle.block.callback.taguserpage = function twinkleblockCallbackTagUserpage(pa
 		pageobj.setEditSummary(conv({ hans: '标记被永久封禁的用户页', hant: '標記被永久封鎖的使用者頁面' }));
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.save(function() {
-			Morebits.status.info(conv({ hans: '标记用户页', hant: '標記使用者頁面' }), '完成');
+			Morebits.Status.info(conv({ hans: '标记用户页', hant: '標記使用者頁面' }), '完成');
 			statelem.status(conv({ hans: '正在保护页面', hant: '正在保護頁面' }));
 			pageobj.load(Twinkle.block.callback.protectuserpage);
 		});
@@ -2183,7 +2183,7 @@ Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUse
 		pageobj.setEditSummary(conv({ hans: '被永久封禁的用户页', hant: '被永久封鎖的使用者頁面' }));
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.protect(function() {
-			Morebits.status.info(conv({ hans: '保护用户页', hant: '保護使用者頁面' }), pageobj.exists() ? conv({ hans: '已全保护', hant: '已全保護' }) : conv({ hans: '已白纸保护', hant: '已白紙保護' }));
+			Morebits.Status.info(conv({ hans: '保护用户页', hant: '保護使用者頁面' }), pageobj.exists() ? conv({ hans: '已全保护', hant: '已全保護' }) : conv({ hans: '已白纸保护', hant: '已白紙保護' }));
 			statelem.info('全部完成');
 		});
 	} else {
@@ -2213,7 +2213,7 @@ Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTempla
 		flowpage.setCallbackParameters(params);
 		Twinkle.block.callback.main_flow(flowpage);
 	}, function () {
-		var wikipedia_page = new Morebits.wiki.page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
+		var wikipedia_page = new Morebits.wiki.Page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.block.callback.main);
 	});
@@ -2353,14 +2353,14 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params) {
 
 Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 	var params = pageobj.getCallbackParameters(),
-		date = new Morebits.date(pageobj.getLoadTime()),
+		date = new Morebits.Date(pageobj.getLoadTime()),
 		messageData = params.messageData,
 		text;
 
 	params.indefinite = Morebits.string.isInfinity(params.expiry);
 
 	if (Twinkle.getPref('blankTalkpageOnIndefBlock') && params.template !== 'uw-lblock' && params.indefinite) {
-		Morebits.status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '根据参数设置清空讨论页并为日期创建新2级标题', hant: '根據偏好設定清空討論頁並為日期建立新2級標題' }));
+		Morebits.Status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '根据参数设置清空讨论页并为日期创建新2级标题', hant: '根據偏好設定清空討論頁並為日期建立新2級標題' }));
 		text = date.monthHeader() + '\n';
 	} else {
 		text = pageobj.getPageText();
@@ -2379,7 +2379,7 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 		}
 
 		if (!dateHeaderRegexResult || dateHeaderRegexResult.index !== lastHeaderIndex) {
-			Morebits.status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '未找到当月的二级标题，将创建新的', hant: '未找到當月的二級標題，將建立新的' }));
+			Morebits.Status.info(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '未找到当月的二级标题，将创建新的', hant: '未找到當月的二級標題，將建立新的' }));
 			text += date.monthHeader() + '\n';
 		}
 	}
@@ -2416,7 +2416,7 @@ Twinkle.block.callback.main_flow = function twinkleblockcallbackMain(flowobj) {
 };
 
 Twinkle.addInitCallback(Twinkle.block, 'block');
-})(jQuery);
+})();
 
 
 // </nowiki>

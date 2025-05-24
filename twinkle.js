@@ -18,7 +18,7 @@
 
 /* global Morebits */
 
-(function (window, document, $) { // Wrap with anonymous function
+(function () {
 
 // Check if account is experienced enough to use Twinkle
 if (!Morebits.userIsInGroup('autoconfirmed') && !Morebits.userIsInGroup('confirmed')) {
@@ -508,7 +508,7 @@ Twinkle.load = function () {
 	}
 
 	// Set custom Api-User-Agent header, for server-side logging purposes
-	Morebits.wiki.api.setApiUserAgent('Twinkle~zh (' + mw.config.get('wgWikiID') + ')');
+	Morebits.wiki.Api.setApiUserAgent('Twinkle~zh (' + mw.config.get('wgWikiID') + ')');
 
 	Twinkle.disabledModules = Twinkle.getPref('disabledModules').concat(Twinkle.getPref('disabledSysopModules'));
 
@@ -556,6 +556,6 @@ Twinkle.generateBatchPageLinks = function (checkbox) {
 	$checkbox.next().prepend([link, ' ']);
 };
 
-}(window, document, jQuery)); // End wrap with anonymous function
+}());
 
 // </nowiki>

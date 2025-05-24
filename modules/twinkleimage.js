@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) { // eslint-disable-line no-unused-vars
+(function() { // eslint-disable-line no-unused-vars
 
 
 /*
@@ -24,7 +24,7 @@ Twinkle.image = function twinkleimage() {
 };
 
 Twinkle.image.callback = function twinkleimageCallback() {
-	var Window = new Morebits.simpleWindow(600, 330);
+	var Window = new Morebits.SimpleWindow(600, 330);
 	Window.setTitle(conv({ hans: '文件快速删除候选', hant: '檔案快速刪除候選' }));
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '快速删除方针', hant: '快速刪除方針' }), 'WP:CSD');
@@ -32,7 +32,7 @@ Twinkle.image.callback = function twinkleimageCallback() {
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#image');
 	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
-	var form = new Morebits.quickForm(Twinkle.image.callback.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.image.callback.evaluate);
 	form.append({
 		type: 'checkbox',
 		list: [
@@ -182,14 +182,14 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		}
 		params.f10_type = f10_type;
 	}
-	Morebits.simpleWindow.setButtonsEnabled(false);
-	Morebits.status.init(event.target);
+	Morebits.SimpleWindow.setButtonsEnabled(false);
+	Morebits.Status.init(event.target);
 
 	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 	Morebits.wiki.actionCompleted.notice = conv({ hans: '标记完成', hant: '標記完成' });
 
 	// Tagging image
-	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), conv({ hans: '加入删除标记', hant: '加入刪除標記' }));
+	var wikipedia_page = new Morebits.wiki.Page(mw.config.get('wgPageName'), conv({ hans: '加入删除标记', hant: '加入刪除標記' }));
 	wikipedia_page.setCallbackParameters(params);
 	wikipedia_page.load(Twinkle.image.callbacks.taggingImage);
 
@@ -206,7 +206,7 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		if (type !== 'orphaned fair use') {
 			var noteData = document.createElement('pre');
 			noteData.appendChild(document.createTextNode('{{subst:Uploadvionotice|' + Morebits.pageNameNorm + '}}--~~~~'));
-			Morebits.status.info('提示', [conv({ hans: '这些内容应贴进上传者对话页：', hant: '這些內容應貼進上傳者討論頁：' }), document.createElement('br'), noteData]);
+			Morebits.Status.info('提示', [conv({ hans: '这些内容应贴进上传者对话页：', hant: '這些內容應貼進上傳者討論頁：' }), document.createElement('br'), noteData]);
 		}
 	}
 };
@@ -220,7 +220,7 @@ Twinkle.image.callbacks = {
 		text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, '');
 		// Adding discussion
 		if (params.type !== 'orphaned fair use') {
-			var wikipedia_page = new Morebits.wiki.page('Wikipedia:檔案存廢討論/快速刪除提報', conv({ hans: '加入快速删除记录项', hant: '加入快速刪除記錄項' }));
+			var wikipedia_page = new Morebits.wiki.Page('Wikipedia:檔案存廢討論/快速刪除提報', conv({ hans: '加入快速删除记录项', hant: '加入快速刪除記錄項' }));
 			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
 			wikipedia_page.load(Twinkle.image.callbacks.imageList);
@@ -277,7 +277,7 @@ Twinkle.image.callbacks = {
 				flowpage.setContent('{{subst:Di-' + params.templatename + '-notice|1=' + Morebits.pageNameNorm + '}}');
 				flowpage.newTopic();
 			}, function () {
-				var usertalkpage = new Morebits.wiki.page(talkPageName, conv({ hans: '通知上传者（', hant: '通知上傳者（' }) + initialContrib + '）');
+				var usertalkpage = new Morebits.wiki.Page(talkPageName, conv({ hans: '通知上传者（', hant: '通知上傳者（' }) + initialContrib + '）');
 				var notifytext = '\n{{subst:Di-' + params.templatename + '-notice|1=' + Morebits.pageNameNorm + '}}--~~~~';
 				usertalkpage.setAppendText(notifytext);
 				usertalkpage.setEditSummary(conv({ hans: '通知：文件[[', hant: '通知：檔案[[' }) + Morebits.pageNameNorm + conv({ hans: ']]快速删除提名', hant: ']]快速刪除提名' }));
@@ -309,7 +309,7 @@ Twinkle.image.callbacks = {
 };
 
 Twinkle.addInitCallback(Twinkle.image, 'image');
-})(jQuery);
+})();
 
 
 // </nowiki>

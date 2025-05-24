@@ -1,7 +1,7 @@
 // <nowiki>
 
 
-(function($) {
+(function() {
 
 
 /*
@@ -27,14 +27,14 @@ Twinkle.stub = function friendlytag() {
 };
 
 Twinkle.stub.callback = function friendlytagCallback() {
-	var Window = new Morebits.simpleWindow(630, Twinkle.stub.mode === 'article' ? 450 : 400);
+	var Window = new Morebits.SimpleWindow(630, Twinkle.stub.mode === 'article' ? 450 : 400);
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink('小作品說明', 'Wikipedia:小作品');
 	Window.addFooterLink(conv({ hans: '小作品设置', hant: '小作品設定' }), 'WP:TW/PREF#stub');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#stub');
 	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
-	var form = new Morebits.quickForm(Twinkle.stub.callback.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.stub.callback.evaluate);
 
 	if (document.getElementsByClassName('patrollink').length) {
 		form.append({
@@ -99,7 +99,7 @@ Twinkle.stub.updateSortOrder = function(e) {
 		Twinkle.stub.checkedTags = [];
 	}
 
-	var container = new Morebits.quickForm.element({ type: 'fragment' });
+	var container = new Morebits.QuickForm.Element({ type: 'fragment' });
 
 	// function to generate a checkbox, with appropriate subgroup if needed
 	var makeCheckbox = function(tag, description) {
@@ -178,7 +178,7 @@ Twinkle.stub.updateSortOrder = function(e) {
 	$workarea.find('div').filter(':has(span.quickformDescription)').css({ 'margin-top': '0.4em' });
 
 	// add a link to each template's description page
-	$.each(Morebits.quickForm.getElements(e.target.form, 'articleTags'), function(index, checkbox) {
+	$.each(Morebits.QuickForm.getElements(e.target.form, 'articleTags'), function(index, checkbox) {
 		var $checkbox = $(checkbox);
 		var link = Morebits.htmlNode('a', '>');
 		link.setAttribute('class', 'tag-template-link');
@@ -329,7 +329,7 @@ Twinkle.stub.callbacks = {
 			if (!tagRe.exec(pageText)) {
 				tags = tags.concat(params.tags[i]);
 			} else {
-				Morebits.status.info(
+				Morebits.Status.info(
 					conv({ hans: '信息', hant: '資訊' }),
 					conv({
 						hans: '在页面上找到{{' + params.tags[i] + '}}…跳过',
@@ -383,8 +383,8 @@ Twinkle.stub.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		return;
 	}
 
-	Morebits.simpleWindow.setButtonsEnabled(false);
-	Morebits.status.init(form);
+	Morebits.SimpleWindow.setButtonsEnabled(false);
+	Morebits.Status.init(form);
 
 	Morebits.wiki.actionCompleted.redirect = mw.config.get('wgPageName');
 	Morebits.wiki.actionCompleted.notice = conv({ hans: '标记完成，将在几秒内刷新页面', hant: '標記完成，將在幾秒內重新整理頁面' });
@@ -392,7 +392,7 @@ Twinkle.stub.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 		Morebits.wiki.actionCompleted.followRedirect = false;
 	}
 
-	var wikipedia_page = new Morebits.wiki.page(mw.config.get('wgPageName'), conv({ hans: '正在标记', hant: '正在標記' }) + Twinkle.stub.mode);
+	var wikipedia_page = new Morebits.wiki.Page(mw.config.get('wgPageName'), conv({ hans: '正在标记', hant: '正在標記' }) + Twinkle.stub.mode);
 	wikipedia_page.setCallbackParameters(params);
 	switch (Twinkle.stub.mode) {
 		case '條目':
@@ -412,7 +412,7 @@ Twinkle.stub.callback.evaluate = function friendlytagCallbackEvaluate(e) {
 };
 
 Twinkle.addInitCallback(Twinkle.stub, 'stub');
-})(jQuery);
+})();
 
 
 // </nowiki>
