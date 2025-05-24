@@ -125,6 +125,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	dialog.addFooterLink(conv({ hans: '选择警告级别', hant: '選擇警告級別' }), 'WP:WARN');
 	dialog.addFooterLink(conv({ hans: '警告设置', hant: '警告設定' }), 'WP:TW/PREF#warn');
 	dialog.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#warn');
+	dialog.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.quickForm(Twinkle.warn.callback.evaluate);
 	var main_select = form.append({

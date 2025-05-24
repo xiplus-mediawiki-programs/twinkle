@@ -289,6 +289,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '存废讨论设置', hant: '存廢討論設定' }), 'WP:TW/PREF#close');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#close');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
 	var form = new Morebits.quickForm(Twinkle.close.callback.evaluate);
 
