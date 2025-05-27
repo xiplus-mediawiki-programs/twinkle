@@ -1874,12 +1874,12 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 	var params = Morebits.QuickForm.getInputData(e.target);
 
 	// Check that a reason was filled in if uw-username was selected
-	if (params.sub_group === 'uw-username' && !params.article) {
-		alert(conv({ hans: '必须给{{uw-username}}提供理由。', hant: '必須給{{uw-username}}提供理由。' }));
-		return;
-	}
-
-	if (params.article) {
+	if (params.sub_group === 'uw-username') {
+		if (!params.article) {
+			alert(conv({ hans: '必须给{{uw-username}}提供理由。', hant: '必須給{{uw-username}}提供理由。' }));
+			return;
+		}
+	} else if (params.article) {
 		if (/https?:\/\//.test(params.article)) {
 			alert(conv({ hans: '“页面链接”不能使用网址。', hant: '「頁面連結」不能使用網址。' }));
 			return;
