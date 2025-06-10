@@ -15,7 +15,7 @@
 var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.unlink = function twinkleunlink() {
-	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageName') === Twinkle.getPref('sandboxPage') || !Morebits.userIsSysop) {
+	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageName') === Twinkle.getPref('sandboxPage')) {
 		return;
 	}
 	Twinkle.addPortletLink(Twinkle.unlink.callback, conv({ hans: '消链', hant: '消連' }), 'tw-unlink', conv({ hans: '取消到本页的链接', hant: '取消到本頁的連結' }));
