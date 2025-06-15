@@ -784,6 +784,9 @@ Twinkle.xfd.callback.evaluate = function(e) {
 			if (Twinkle.getPref('xfdContinueBatch') && ['fame', 'substub', 'batch'].includes(params.xfdcat)) {
 				localStorage.setItem('Twinkle_afdBatchToContinue', params.xfdcat);
 				localStorage.setItem('Twinkle_afdBatchToContinueTime', new Date().getTime());
+			} else {
+				localStorage.removeItem('Twinkle_afdBatchToContinue');
+				localStorage.removeItem('Twinkle_afdBatchToContinueTime');
 			}
 			if (params.xfdcat === 'batch') {
 				localStorage.setItem('Twinkle_afdBatchReasonText', params.xfdreason || '');
