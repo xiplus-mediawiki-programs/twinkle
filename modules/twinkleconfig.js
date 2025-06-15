@@ -946,8 +946,14 @@ Twinkle.config.sections = [
 				label: conv({ hans: '默认小小作品提删理由', hant: '預設小小作品提刪理由' }),
 				helptip: conv({ hans: '用于批量提删。', hant: '用於批次提刪。' }),
 				type: 'string'
-			}
+			},
 
+			{
+				name: 'xfdContinueBatch',
+				label: conv({ hans: '继续上一次批量操作', hant: '繼續上一次批量操作' }),
+				helptip: conv({ hans: '检测到上一次批量操作未完成时，忽略“默认提删类型”的设置，继续上次的批量操作。', hant: '檢測到上一次批量操作未完成時，忽略「預設提刪類別」的設置，繼續上次的批量操作。' }),
+				type: 'boolean'
+			}
 		]
 	},
 

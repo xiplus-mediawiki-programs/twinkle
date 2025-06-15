@@ -185,14 +185,17 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 				event: Twinkle.xfd.callback.change_afd_category
 			});
 
-			var afd_cat = 'delete';
-			if (Twinkle.getPref('afdDefaultCategory') === 'same') {
+			var afd_cat;
+			if (Twinkle.getPref('xfdContinueBatch')) {
+				afd_cat = Twinkle.xfd.getBatchToContinue() || 'delete';
+			} else if (Twinkle.getPref('afdDefaultCategory') === 'same') {
 				if (localStorage.Twinkle_afdCategory === undefined) {
 					localStorage.Twinkle_afdCategory = 'delete';
 				} else {
 					afd_cat = localStorage.Twinkle_afdCategory;
 				}
 			}
+
 			afd_category.append({ type: 'option', label: conv({ hans: '删除', hant: '刪除' }), value: 'delete', selected: afd_cat === 'delete' });
 			afd_category.append({ type: 'option', label: conv({ hans: '合并', hant: '合併' }), value: 'merge', selected: afd_cat === 'merge' });
 			afd_category.append({ type: 'option', label: conv({ hans: '移动到维基词典', hant: '移動到維基詞典' }), value: 'vmd', selected: afd_cat === 'vmd' });
@@ -261,6 +264,14 @@ Twinkle.xfd.getAfdBatchReason = function twinklexfdGetAfdBatchReason() {
 	var previousTime = parseInt(localStorage.getItem('Twinkle_afdBatchReasonTime'));
 	if (previousTime && new Date() - new Date(previousTime) < 1000 * 60 * 60) {
 		return localStorage.getItem('Twinkle_afdBatchReasonText') || '';
+	}
+	return '';
+};
+
+Twinkle.xfd.getBatchToContinue = function twinklexfdBatchToContinue() {
+	var previousBatchTime = parseInt(localStorage.getItem('Twinkle_afdBatchToContinueTime'));
+	if (previousBatchTime && new Date() - new Date(previousBatchTime) < 1000 * 60 * 60) {
+		return localStorage.getItem('Twinkle_afdBatchToContinue') || '';
 	}
 	return '';
 };
@@ -770,6 +781,13 @@ Twinkle.xfd.callback.evaluate = function(e) {
 	var date = new Morebits.Date(); // XXX: avoid use of client clock, still used by TfD, FfD and CfD
 	switch (params.category) {
 		case 'afd': // AFD
+			if (Twinkle.getPref('xfdContinueBatch') && ['fame', 'substub', 'batch'].includes(params.xfdcat)) {
+				localStorage.setItem('Twinkle_afdBatchToContinue', params.xfdcat);
+				localStorage.setItem('Twinkle_afdBatchToContinueTime', new Date().getTime());
+			} else {
+				localStorage.removeItem('Twinkle_afdBatchToContinue');
+				localStorage.removeItem('Twinkle_afdBatchToContinueTime');
+			}
 			if (params.xfdcat === 'batch') {
 				localStorage.setItem('Twinkle_afdBatchReasonText', params.xfdreason || '');
 				localStorage.setItem('Twinkle_afdBatchReasonTime', new Date().getTime());
