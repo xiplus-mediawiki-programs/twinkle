@@ -942,7 +942,7 @@ Twinkle.speedy.normalizeHash = {
 	'o1': 'o1',
 	'o3': 'o3',
 	'o4': 'o4',
-	'o7': 'o7',
+	'o7': 'o7'
 };
 
 Twinkle.speedy.callbacks = {
@@ -1478,10 +1478,10 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 					currentParams.pagename = form['csd.a6_pagename'].value;
 				}
 				break;
-			
+
 			case 'a7':
 				if (form['csd.a7_pagename']) {
-					var pagename = form['csd.a7_pagename'].value;
+					let pagename = form['csd.a7_pagename'].value;
 					if (!pagename || !pagename.trim()) {
 						alert(conv({ hans: 'CSD A7：请提供原存废讨论位置。', hant: 'CSD A7：請提供原存廢討論位置。' }));
 						parameters = null;
@@ -1490,7 +1490,7 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 					currentParams.pagename = pagename;
 				}
 				break;
-			
+
 			case 'g5':
 				if (form['csd.g5_1']) {
 					var deldisc = form['csd.g5_1'].value;
