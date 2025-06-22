@@ -352,13 +352,9 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 	}
 
 	switch (namespace) {
-		case 0:  // article and pseudo namespace
+		case 0:  // article
 			work_area.append({ type: 'header', label: conv({ hans: '条目', hant: '條目' }) });
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.articleList, mode) });
-			if (/^(MOS|LTA):/.test(mw.config.get('wgPageName')) && !Morebits.isPageRedirect()) { // pseudo namespace
-				work_area.append({ type: 'header', label: conv({ hans: '伪命名空间', hant: '偽命名空間' }) });
-				work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.pseudoNSList, mode) });
-			}
 			break;
 
 		case 2:  // user
@@ -612,14 +608,6 @@ Twinkle.speedy.customRationale = [
 	}
 ];
 
-Twinkle.speedy.pseudoNSList = [
-	{
-		label: conv({ hans: 'O8. 在伪命名空间中创建的非重定向页', hant: 'O8. 在偽命名空間中建立的非重新導向頁面' }),
-		value: 'o8',
-		tooltip: conv({ hans: '伪命名空间仅能用于重定向。如可以移动到合适的名称，请将页面移动到合适的名称，否则请使用此款快速删除。若页面明显是一个条目，则不适用此款快速删除。', hant: '偽命名空間僅能用於重新導向。如可以移動到合適的名稱，請將頁面移動到合適的名稱，否則請使用此款快速刪除。若頁面明顯是一個條目，則不適用此款快速刪除。' })
-	}
-];
-
 Twinkle.speedy.fileList = [
 	{
 		label: conv({ hans: 'F1: 重复的文件（完全相同或缩小），而且不再被条目使用', hant: 'F1: 重複的檔案（完全相同或縮小），而且不再被條目使用' }),
@@ -687,7 +675,7 @@ Twinkle.speedy.fileList = [
 
 Twinkle.speedy.articleList = [
 	{
-		label: conv({ hans: 'A1: 内容空泛（包括但不限于没有定义）。', hant: 'A1: 內容空泛（包括但不限於沒有定義）。' }),
+		label: conv({ hans: 'A1: 内容空泛（包括但不限于没有定义）', hant: 'A1: 內容空泛（包括但不限於沒有定義）' }),
 		value: 'a1',
 		tooltip: conv({ hans: '条目的内容笼统，或甚至根本没有提及条目主体，使条目不能用以区分其他事物。例如：“他是一个很有趣的人，他创建了工厂和庄园。并且，顺便提一下，他的妻子也很好。”<br>“内容空泛”与“没有实际内容”的分别在于：后者乃是与主题完全无关，或是不知所云；前者可以与主题有一定关系，但没有明确描述主题（包括但不限于没有对主题作基本定义）；前者同时包含后者。', hant: '條目的內容籠統，或甚至根本沒有提及條目主體，使條目不能用以區分其他事物。例如：「他是一個很有趣的人，他建立了工廠和莊園。並且，順便提一下，他的妻子也很好。」<br>「內容空泛」與「沒有實際內容」的分別在於：後者乃是與主題完全無關，或是不知所云；前者可以與主題有一定關係，但沒有明確描述主題（包括但不限於沒有對主題作基本定義）；前者同時包含後者。' })
 	},
@@ -697,18 +685,19 @@ Twinkle.speedy.articleList = [
 		tooltip: conv({ hans: '请注意：有些维基人创建条目时会分开多次保存，请避免删除有人正在编辑的页面。<br>带有{{inuse}}模板的不适用。', hant: '請注意：有些維基人建立條目時會分開多次儲存，請避免刪除有人正在編輯的頁面。<br>帶有{{inuse}}模板的不適用。' })
 	},
 	{
-		label: conv({ hans: 'A3: 复制自其他中文维基计划，或是与其他中文维基计划内容相同的文章。', hant: 'A3: 複製自其他中文維基計劃，或是與其他中文維基計劃內容相同的文章。' }),
+		label: conv({ hans: 'A3: 复制自其他中文维基项目，或是与其他中文维基项目内容相同的文章', hant: 'A3: 複製自其他中文維基專案，或是與其他中文維基專案內容相同的文章' }),
+		tooltip: conv({ hans: '其他“维基项目”指的是：维基词典、维基教科书、维基语录、维基文库、维基物种、维基新闻、维基孵育场、维基学院等，但并不包括与中文维基百科其他条目内容重复之状况。', hant: '其他「維基專案」指的是：維基詞典、維基教科書、維基語錄、維基文庫、維基物種、維基新聞、維基孵育場、維基學院等，但並不包括與中文維基百科其他條目內容重複之狀況。' }),
 		value: 'a3',
 		subgroup: {
 			name: 'a3_pagename',
 			type: 'input',
 			label: conv({ hans: '现有条目名：', hant: '現有條目名：' }),
-			tooltip: conv({ hans: '请加上跨 wiki 前缀。不自动加上链接，若需要请自行加上[[]]。', hant: '請加上跨 wiki 字首。不自動加上連結，若需要請自行加上[[]]。' }),
+			tooltip: conv({ hans: '请加上跨 wiki 前缀。不自动加上链接，若需要请自行加上[[]]', hant: '請加上跨 wiki 字首。不自動加上連結，若需要請自行加上[[]]' }),
 			size: 60
 		}
 	},
 	{
-		label: conv({ hans: 'A6: 复制自其他维基百科语言版本，且完全没有翻译。', hant: 'A6: 複製自其他維基百科語言版本，且完全沒有翻譯。' }),
+		label: conv({ hans: 'A6: 复制自其他维基百科语言版本，且完全没有翻译', hant: 'A6: 複製自其他維基百科語言版本，且完全沒有翻譯' }),
 		value: 'a6',
 		tooltip: conv({ hans: '如果并不是复制于任何其他的维基百科语言版本，请换用{{notmandarin}}。<br>带有{{inuse}}和{{translating}}模板的不适用。', hant: '如果並不是複製於任何其他的維基百科語言版本，請換用{{notmandarin}}。<br>帶有{{inuse}}和{{translating}}模板的不適用。' }),
 		subgroup: {
@@ -718,28 +707,39 @@ Twinkle.speedy.articleList = [
 			tooltip: conv({ hans: '请加上跨 wiki 前缀。不自动加上链接，若需要请自行加上[[]]。', hant: '請加上跨 wiki 字首。不自動加上連結，若需要請自行加上[[]]。' }),
 			size: 60
 		}
+	},
+	{
+		label: conv({ hans: 'A7：因收录标准问题被删除而又被重建的条目', hant: 'A7：因收錄標準問題被刪除而又被重建的條目' }),
+		value: 'a7',
+		tooltip: conv({ hans: '该内容之前必须是经存废讨论删除，且删除理由包括未满足收录标准的要求，而重新创建后的版本明显同样未满足收录标准的要求且并未列出任何旧版本中未曾出现的可靠来源。如有疑虑，请提交存废讨论或存废复核。', hant: '該內容之前必須是經存廢討論刪除，且刪除理由包括未滿足收錄標準的要求，而重新創建後的版本明顯同樣未滿足收錄標準的要求且並未列出任何舊版本中未曾出現的可靠來源。如有疑慮，請提交存廢討論或存廢覆核。' }),
+		subgroup: {
+			name: 'a7_pagename',
+			type: 'input',
+			label: conv({ hans: '原存废讨论位置：', hant: '原存廢討論位置：' }),
+			size: 60
+		}
 	}
 ];
 
 Twinkle.speedy.categoryList = [
 	{
-		label: conv({ hans: 'O4: 空的分类（没有条目也没有子分类）。', hant: 'O4: 空的分類（沒有條目也沒有子分類）。' }),
+		label: conv({ hans: 'O4: 空分类', hant: 'O4: 空分類' }),
 		value: 'o4',
-		tooltip: conv({ hans: '不适用于Category:不要删除的分类中的空分类。', hant: '不適用於Category:不要刪除的分類中的空分類。' })
+		tooltip: conv({ hans: '该分类无收录任何页面或子分类。<br>不适用于Category:不要删除的分类中的空分类。', hant: '該分類無收錄任何頁面或子分類。<br>不適用於Category:不要刪除的分類中的空分類。' })
 	}
 ];
 
 Twinkle.speedy.draftList = [
 	{
-		label: conv({ hans: 'O7: 废弃草稿。', hant: 'O7: 廢棄草稿。' }),
+		label: conv({ hans: 'O7: 废弃草稿', hant: 'O7: 廢棄草稿' }),
 		value: 'o7',
-		tooltip: conv({ hans: '任何六个月内无编辑的草稿。', hant: '任何六個月內無編輯的草稿。' })
+		tooltip: conv({ hans: '任何六个月内无编辑的草稿命名空间页面。', hant: '任何六個月內無編輯的草稿命名空間頁面。' })
 	}
 ];
 
 Twinkle.speedy.userList = [
 	{
-		label: conv({ hans: 'O1: 用户请求删除自己的用户页或其子页面。', hant: 'O1: 使用者請求刪除自己的使用者頁面或其子頁面。' }),
+		label: conv({ hans: 'O1: 用户请求删除自己的用户页或其子页面', hant: 'O1: 使用者請求刪除自己的使用者頁面或其子頁面' }),
 		value: 'o1',
 		tooltip: conv({ hans: '除了自己的用户页，只要是移动而来的页面，皆须附有合理原因。', hant: '除了自己的使用者頁面，只要是移動而來的頁面，皆須附有合理原因。' })
 	}
@@ -747,7 +747,7 @@ Twinkle.speedy.userList = [
 
 Twinkle.speedy.usertalkList = [
 	{
-		label: conv({ hans: 'O3: 已超过一个月未有编辑动作的匿名（IP）用户的用户讨论页', hant: 'O3: 已超過一個月未有編輯動作的匿名（IP）使用者的使用者討論頁' }),
+		label: conv({ hans: 'O3: 已超过一个月未有编辑动作的IP用户的用户讨论页，且已完成存档', hant: 'O3: 已超過一個月未有編輯動作的IP用戶的用戶討論頁，且已完成存檔' }),
 		value: 'o3',
 		tooltip: conv({ hans: '避免给使用同一IP地址的用户带来混淆。<br>不适用于用户讨论页的存档页面。', hant: '避免給使用同一IP位址的使用者帶來混淆。<br>不適用於使用者討論頁的存檔頁面。' })
 	}
@@ -767,9 +767,9 @@ Twinkle.speedy.generalList = [
 		hideInNamespaces: [ 2, 3 ] // user, user talk
 	},
 	{
-		label: conv({ hans: 'G3: 纯粹破坏，包括但不限于明显的恶作剧、错误信息、人身攻击等', hant: 'G3: 純粹破壞，包括但不限於明顯的惡作劇、錯誤資訊、人身攻擊等' }),
+		label: conv({ hans: 'G3: 明显扰乱的非建设性页面', hant: 'G3: 明顯擾亂的非建設性頁面' }),
 		value: 'g3',
-		tooltip: conv({ hans: '包括明显的错误信息、明显的恶作剧、信息明显错误的图片，以及清理移动破坏时留下的重定向。', hant: '包括明顯的錯誤資訊、明顯的惡作劇、資訊明顯錯誤的圖片，以及清理移動破壞時留下的重新導向。' })
+		tooltip: conv({ hans: '包括但不限于明显的错误信息、信息明显错误的图片、人身攻击、清理移动破坏时留下的重定向等。', hant: '包括但不限於明顯的錯誤資訊、資訊明顯錯誤的圖片、人身攻擊、清理移動破壞時留下的重新導向等。' })
 	},
 	{
 		label: conv({ hans: 'G5: 曾经根据页面存废讨论<s>、侵权审核</s>或文件存废讨论结果删除后又重新创建的内容，而有关内容与已删除版本相同或非常相似，无论标题是否相同', hant: 'G5: 曾經根據頁面存廢討論<s>、侵權審核</s>或檔案存廢討論結果刪除後又重新建立的內容，而有關內容與已刪除版本相同或非常相似，無論標題是否相同' }),
@@ -825,7 +825,7 @@ Twinkle.speedy.generalList = [
 		hideInNamespaces: [ 1, 2, 3, 5, 7, 9, 11, 13, 15, 101, 118, 119, 829 ] // all talk, user, draft
 	},
 	{
-		label: conv({ hans: 'G14: 超过两周没有进行任何翻译的非现代标准汉语页面', hant: 'G14: 超過兩週沒有進行任何翻譯的非現代標準漢語頁面' }),
+		label: conv({ hans: 'G14: 逾14天没有翻译的非现代标准汉语页面', hant: 'G14: 逾14天沒有翻譯的非現代標準漢語頁面' }),
 		value: 'g14',
 		tooltip: conv({ hans: '包括所有未翻译的外语、汉语方言以及文言文。<br>此项仅适用于条目、项目、维基专题、使用说明和主题命名空间。', hant: '包括所有未翻譯的外語、漢語方言以及文言文。<br>此項僅適用於條目、計畫、維基專題、使用說明和主題命名空間。' }),
 		hideWhenUser: true,
@@ -843,9 +843,9 @@ Twinkle.speedy.generalList = [
 		hideInNamespaces: [ 0, 1, 2, 3, 4, 5, 118, 119 ] // main, user, project, draft and theirs talks
 	},
 	{
-		label: conv({ hans: 'G18: 条目或草稿创建时，内容即与其他现有条目或草稿或其历史版本的内容完全相同或非常相似，且名称不适合作为其他条目之重定向', hant: 'G18: 條目或草稿建立時，內容即與其他現有條目或草稿或其歷史版本的內容完全相同或非常相似，且名稱不適合作為其他條目之重新導向' }),
+		label: conv({ hans: 'G18: 与现有页面或其历史版本重复的页面', hant: 'G18: 與現有頁面或其歷史版本重複的頁面' }),
 		value: 'g18',
-		tooltip: conv({ hans: '条目或草稿创建时，首个版本的内容与当时其他现存条目或草稿或其历史版本的全部或部分内容完全相同或非常相似，且其名称不适合改为重定向，就可以提送快速删除。<br>如果名称可以作为重定向，就应直接改为重定向，不要提送快速删除。<br>如果是多个条目或草稿合并产生的新条目或草稿，不适用。<br>如果是从主条目或草稿拆分产生的条目或草稿，不适用；如有疑虑，应提送存废讨论处理。', hant: '條目或草稿建立時，首個版本的內容與當時其他現存條目或草稿或其歷史版本的全部或部分內容完全相同或非常相似，且其名稱不適合改為重新導向，就可以提送快速刪除。<br>如果名稱可以作為重新導向，就應直接改為重新導向，不要提送快速刪除。<br>如果是多個條目或草稿合併產生的新條目或草稿，不適用。<br>如果是從主條目或草稿拆分產生的條目或草稿，不適用；如有疑慮，應提送存廢討論處理。' }),
+		tooltip: conv({ hans: '条目或草稿创建时，首个版本的内容与当时其他现存条目或草稿或其历史版本的全部或部分内容完全相同或非常相似，且其名称不适合改为重定向，就可以提送快速删除。<br>除非另有所指，否则“页面”指条目、模板与草稿，其中“草稿”指所有位于草稿命名空间的页面及所有位于用户命名空间且含{{AFC submission}}的页面。<br>如果名称可以作为重定向，就应直接改为重定向，不要提送快速删除。<br>如果是多个条目或草稿合并产生的新条目或草稿，不适用。<br>如果是从主条目或草稿拆分产生的条目或草稿，不适用；如有疑虑，应提送存废讨论处理。', hant: '條目或草稿建立時，首個版本的內容與當時其他現存條目或草稿或其歷史版本的全部或部分內容完全相同或非常相似，且其名稱不適合改為重新導向，就可以提送快速刪除。<br>除非另有所指，否則「頁面」指條目、模板與草稿，其中「草稿」指所有位於草稿命名空間的頁面及所有位於用戶命名空間且含{{AFC submission}}的頁面。<br>如果名稱可以作為重新導向，就應直接改為重新導向，不要提送快速刪除。<br>如果是多個條目或草稿合併產生的新條目或草稿，不適用。<br>如果是從主條目或草稿拆分產生的條目或草稿，不適用；如有疑慮，應提送存廢討論處理。' }),
 		subgroup: {
 			name: 'g18_pagename',
 			type: 'input',
@@ -858,13 +858,13 @@ Twinkle.speedy.generalList = [
 
 Twinkle.speedy.redirectList = [
 	{
-		label: conv({ hans: 'R2: 跨命名空间重定向。', hant: 'R2: 跨命名空間重新導向。' }),
+		label: conv({ hans: 'R2: 跨命名空间重定向', hant: 'R2: 跨命名空間重新導向' }),
 		value: 'r2',
 		tooltip: conv({ hans: '适用于条目命名空间和草稿命名空间。<br>社群同意设立的伪命名空间不适用。<br>草稿重定向速删前，请确保草稿已经完成其作用，且其历史已移动到相应的正式页面。', hant: '適用於條目命名空間和草稿命名空間。<br>社群同意設立的偽命名空間不適用。<br>草稿重新導向速刪前，請確保草稿已經完成其作用，且其歷史已移動到相應的正式頁面。' }),
 		showInNamespaces: [ 0, 118 ] // main, draft
 	},
 	{
-		label: conv({ hans: 'R3: 格式错误，或明显笔误的重定向。', hant: 'R3: 格式錯誤，或明顯筆誤的重新導向。' }),
+		label: conv({ hans: 'R3: 格式错误，或明显笔误的重定向', hant: 'R3: 格式錯誤，或明顯筆誤的重新導向' }),
 		value: 'r3',
 		tooltip: conv({ hans: '非一眼能看出的拼写错误和翻译或标题用字的争议应交由存废讨论处理。<br>将常见的拼写错误名称重定向至正确名称页面，可使百科用户纵使在查找文章时拼写错误，也能够找到寻求的文章。可参阅WP:重定向#何时用重定向？。<br>如重定向名称与导向目标名称（或其相关名称）仅存在合理的大小写差异及／或重定向名称为导向目标名称（或其相关名称）的ASCII字母表述的形式（例如Kurt Godel重定向至Kurt Gödel），不视为存在任何拼写错误。如有对相关大小写差异是否合理的争议，应交由存废讨论处理。<br>因类推简化字未收录至《通用规范汉字表》导致的繁简混杂情形，或系统无法自动进行繁简处理的情形，则不适用。', hant: '非一眼能看出的拼寫錯誤和翻譯或標題用字的爭議應交由存廢討論處理。<br>將常見的拼寫錯誤名稱重新導向至正確名稱頁面，可使百科使用者縱使在尋找文章時拼寫錯誤，也能夠找到尋求的文章。可參閱WP:重新導向#何時用重新導向？。<br>如重新導向名稱與導向目標名稱（或其相關名稱）僅存在合理的大小寫差異及／或重新導向名稱為導向目標名稱（或其相關名稱）的ASCII字母表述的形式（例如Kurt Godel重新導向至Kurt Gödel），不視為存在任何拼寫錯誤。如有對相關大小寫差異是否合理的爭議，應交由存廢討論處理。<br>因類推簡化字未收錄至《通用規範漢字表》導致的繁簡混雜情形，或系統無法自動進行繁簡處理的情形，則不適用。' }),
 		subgroup: {
@@ -882,12 +882,12 @@ Twinkle.speedy.redirectList = [
 		hideSubgroupWhenSysop: true
 	},
 	{
-		label: conv({ hans: 'R5: 指向本身或循环的重定向。', hant: 'R5: 指向本身或循環的重新導向。' }),
+		label: conv({ hans: 'R5: 指向本身或循环的重定向', hant: 'R5: 指向本身或循環的重新導向' }),
 		value: 'r5',
 		tooltip: '如A→B→C→……→A。'
 	},
 	{
-		label: conv({ hans: 'R6: 移动文件而产生的重定向，且页面标题不符合文件名指引。', hant: 'R6: 移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引。' }),
+		label: conv({ hans: 'R6: 移动文件而产生的重定向，且页面标题不符合文件名指引', hant: 'R6: 移動檔案而產生的重新導向，且頁面標題不符合檔案名稱指引' }),
 		value: 'r6',
 		showInNamespaces: [ 6 ] // file
 	},
@@ -898,9 +898,9 @@ Twinkle.speedy.redirectList = [
 		showInNamespaces: [ 0 ] // main
 	},
 	{
-		label: conv({ hans: 'R8: 带有“(消歧义)”字样，且无链入的重定向。', hant: 'R8: 帶有「(消歧義)」字樣，且無連入的重新導向。' }),
+		label: conv({ hans: 'R8: 带有“(消歧义)”字样的重定向', hant: 'R8: 帶有「(消歧義)」字樣的重新導向' }),
 		value: 'r8',
-		tooltip: conv({ hans: '若重定向页与导向目标页同样带有“(消歧义)”字样，且两者的标题仅存在繁简／地区词差异，则不适用。<br在提请快速删除前，请务必先检查并清理（如适用）相关重定向的链入。<br>如有用户对应否使用消歧义及消歧义的方式存在未解决的争议，则应交由存废讨论处理。', hant: '若重新導向頁面與導向目標頁同樣帶有「(消歧義)」字樣，且兩者的標題僅存在繁簡／地區詞差異，則不適用。<br在提請快速刪除前，請務必先檢查並清理（如適用）相關重新導向的連入。<br>如有使用者對應否使用消歧義及消歧義的方式存在未解決的爭議，則應交由存廢討論處理。' })
+		tooltip: conv({ hans: '包括无链入以及并非指向消歧义页面的重定向。<br>若重定向页与导向目标页同样带有“(消歧义)”字样，且两者的标题仅存在繁简／地区词差异，则不适用。<br在提请快速删除前，请务必先检查并清理（如适用）相关重定向的链入。<br>如有用户对应否使用消歧义及消歧义的方式存在未解决的争议，则应交由存废讨论处理。', hant: '包括無鏈入以及並非指向消歧義頁面的重新導向。<br>若重新導向頁與導向目標頁同樣帶有「(消歧義)」字樣，且兩者的標題僅存在繁簡／地區詞差異，則不適用。<br>在提請快速刪除前，請務必先檢查並清理（如適用）相關重新導向的連入。<br>如有使用者對應否使用消歧義及消歧義的方式存在未解決的爭議，則應交由存廢討論處理。' })
 	}
 ];
 
@@ -926,6 +926,7 @@ Twinkle.speedy.normalizeHash = {
 	'a2': 'a2',
 	'a3': 'a3',
 	'a6': 'a6',
+	'a7': 'a7',
 	'r2': 'r2',
 	'r3': 'r3',
 	'r5': 'r5',
@@ -941,8 +942,7 @@ Twinkle.speedy.normalizeHash = {
 	'o1': 'o1',
 	'o3': 'o3',
 	'o4': 'o4',
-	'o7': 'o7',
-	'o8': 'o8'
+	'o7': 'o7'
 };
 
 Twinkle.speedy.callbacks = {
@@ -1476,6 +1476,18 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 			case 'a6':
 				if (form['csd.a6_pagename'] && form['csd.a6_pagename'].value) {
 					currentParams.pagename = form['csd.a6_pagename'].value;
+				}
+				break;
+
+			case 'a7':
+				if (form['csd.a7_pagename']) {
+					let pagename = form['csd.a7_pagename'].value;
+					if (!pagename || !pagename.trim()) {
+						alert(conv({ hans: 'CSD A7：请提供原存废讨论位置。', hant: 'CSD A7：請提供原存廢討論位置。' }));
+						parameters = null;
+						return false;
+					}
+					currentParams.pagename = pagename;
 				}
 				break;
 
