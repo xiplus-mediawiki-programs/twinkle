@@ -11,13 +11,19 @@
 		"server": "node scripts/server.js",
 		"sync": "perl scripts/sync.pl",
 		"test": "jest",
-		"deployall": "perl scripts/sync.pl --mode=deploy --all"
+		"deploy": "node scripts/deploy.js",
+		"deployall": "node scripts/deploy.js -y"
 	},
 	"devDependencies": {
-		"eslint": "^8.39.0",
-		"jest": "^29.5.0",
-		"jest-environment-jsdom": "^29.5.0",
+		"chalk": "^4.1.2",
+		"commander": "^14.0.0",
+		"diff": "^8.0.2",
+		"eslint-config-wikimedia": "^0.28.2",
+		"fs-extra": "^11.3.0",
+		"jest": "^29.7.0",
+		"jest-environment-jsdom": "^29.7.0",
 		"mock-mediawiki": "^1.4.0",
-		"mwn": "^1.11.5"
+		"mwn": "^3.0.1",
+		"simple-git": "^3.28.0"
 	}
 }
