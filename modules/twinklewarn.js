@@ -628,12 +628,12 @@ Twinkle.warn.messages = {
 			},
 			'uw-error': {
 				level1: {
-					label: conv({ hans: '故意加入不实内容', hant: '故意加入不實內容' }),
-					summary: conv({ hans: '提醒：故意加入不实内容', hant: '提醒：故意加入不實內容' })
+					label: conv({ hans: '加入不实内容', hant: '加入不實內容' }),
+					summary: conv({ hans: '提醒：加入不实内容', hant: '提醒：加入不實內容' })
 				},
 				level2: {
-					label: conv({ hans: '故意加入不实内容', hant: '故意加入不實內容' }),
-					summary: conv({ hans: '注意：故意加入不实内容', hant: '注意：故意加入不實內容' })
+					label: conv({ hans: '加入不实内容', hant: '加入不實內容' }),
+					summary: conv({ hans: '注意：加入不实内容', hant: '注意：加入不實內容' })
 				},
 				level3: {
 					label: conv({ hans: '故意加入不实内容', hant: '故意加入不實內容' }),
