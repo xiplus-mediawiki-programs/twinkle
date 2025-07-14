@@ -29,30 +29,48 @@ Twinkle.close = function twinkleclose() {
 
 Twinkle.close.addLinks = function twinklecloseAddLinks() {
 	var prevH2Section = -1;
+	var childSections = {};
 	$('.mw-heading.mw-heading1, .mw-heading.mw-heading2, .mw-heading.mw-heading3, .mw-heading.mw-heading4, .mw-heading.mw-heading5, .mw-heading.mw-heading6', '#bodyContent').each(function (index, current) {
 		current.setAttribute('data-section', index + 1);
 		if ($(current).hasClass('mw-heading2')) {
 			prevH2Section = index + 1;
+			childSections[index + 1] = [];
 		} else {
+			if (prevH2Section === index - 1) {
+				$('.mw-heading2[data-section="' + prevH2Section + '"]').attr('data-batch-section', '1');
+			}
 			current.setAttribute('data-parent-section', prevH2Section);
+			childSections[prevH2Section].push(current);
 		}
 	});
 
 	var selector = ':has(a:only-of-type)';
-	var titles = $('#bodyContent').find('.mw-heading2' + selector + ':not(:has(+ p + div.mw-heading.mw-heading3)), .mw-heading3' + selector);
+
+	// init add links to all sections but deny partly below
+	var titles = $('#bodyContent').find('.mw-heading2' + selector + ', .mw-heading3' + selector);
 
 	titles.each(function(key, current) {
 		if ($(current).nextUntil('.mw-heading.mw-heading1, .mw-heading.mw-heading2, .mw-heading.mw-heading3, .mw-heading.mw-heading4, .mw-heading.mw-heading5, .mw-heading.mw-heading6', '.talkend').length > 0) {
 			return;
 		}
 		var $pageLink = $(current).find('h2 a, h3 a');
-		var headlinehref = $pageLink.attr('href');
+		var isBatchSection = current.hasAttribute('data-batch-section');
+		if (isBatchSection &&
+			childSections[$(current).attr('data-section')].filter(function(section) {
+				return $(section).nextUntil('.mw-heading', '.talkend').length === 0;
+			}).length === 0) {
+			return;
+		}
+		var headlinehref = isBatchSection ? '' : $pageLink.attr('href'); // manually define for batch sections
 		if (headlinehref === undefined) {
 			return;
 		}
 		var title = null;
 		if (headlinehref.indexOf('redlink=1') !== -1) {
 			title = headlinehref.slice(19, -22);
+		} else if (isBatchSection) {
+			// id could be added a suffix sequence nbr, use w/ caution
+			title = $(current).find('h2').attr('id');
 		} else {
 			var m = headlinehref.match(/\/wiki\/([^?]+)/, '$1');
 			if (m !== null) {
@@ -67,6 +85,7 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 		var pagenotexist = $pageLink.hasClass('new');
 		var section = current.getAttribute('data-section');
 		var parentSection = current.getAttribute('data-parent-section') || -1;
+		var childSection = childSections[section];
 		var node = current.getElementsByClassName('mw-editsection')[0];
 		var delDivider = document.createElement('span');
 		delDivider.appendChild(document.createTextNode(' | '));
@@ -77,7 +96,7 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 		delLink.setAttribute('data-section', section);
 		delLink.innerText = conv({ hans: '关闭讨论', hant: '關閉討論' });
 		$(delLink).on('click', function() {
-			Twinkle.close.callback(title, section, parentSection, pagenotexist);
+			Twinkle.close.callback(title, section, parentSection, pagenotexist, childSection);
 			return false;
 		});
 		node.insertBefore(delLink, node.childNodes[1]);
@@ -283,7 +302,7 @@ Twinkle.close.codes = [{
 	}
 }];
 
-Twinkle.close.callback = function twinklecloseCallback(title, section, parentSection, noop) {
+Twinkle.close.callback = function twinklecloseCallback(title, section, parentSection, noop, childSections) {
 	var Window = new Morebits.SimpleWindow(410, 200);
 	Window.setTitle(conv({ hans: '关闭存废讨论', hant: '關閉存廢討論' }) + ' \u00B7 ' + title);
 	Window.setScriptName('Twinkle');
@@ -327,7 +346,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 		]
 	});
 
-	if (new mw.Title(title).namespace % 2 === 0 && new mw.Title(title).namespace !== 2) {  // hide option for user pages, to avoid accidentally deleting user talk page
+	if ((childSections && childSections.length > 0) || (new mw.Title(title).namespace % 2 === 0 && new mw.Title(title).namespace !== 2)) {  // hide option for user pages, to avoid accidentally deleting user talk page
 		form.append({
 			type: 'checkbox',
 			list: [
@@ -360,6 +379,42 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 		]
 	});
 
+	// batch section
+	if (childSections && childSections.length > 0) {
+		Window.setHeight(400);
+		form.append({ type: 'header', label: conv({ hans: '待关闭页面', hant: '待關閉頁面' }) });
+		form.append({
+			type: 'button',
+			label: conv({ hans: '全选', hant: '全選' }),
+			event: function() {
+				$('input[name="pages"]').prop('checked', true);
+			}
+		});
+		form.append({
+			type: 'button',
+			label: conv({ hans: '全不选', hant: '全不選' }),
+			event: function() {
+				$('input[name="pages"]').prop('checked', false);
+			}
+		});
+		form.append({
+			type: 'checkbox',
+			name: 'pages',
+			shiftClickSupport: true,
+			list: childSections
+				.filter(function(section) { // only show unclosed sections
+					return $(section).nextUntil('.mw-heading', '.talkend').length === 0;
+				})
+				.map(function(section) {
+					return {
+						// a page should only exist once in afd list, otherwise .id will get _2 hence failure
+						label: $(section).find('h3').attr('id').replace(/_/g, ' '),
+						value: $(section).find('h3').attr('id').replace(/ /g, '_'),
+						checked: true
+					};
+				})
+		});
+	}
 	form.append({ type: 'submit' });
 
 	var result = form.render();
@@ -372,7 +427,8 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 		title: title,
 		section: parseInt(section),
 		parentSection: parseInt(parentSection),
-		noop: noop
+		noop: noop,
+		childSections: childSections
 	};
 	$(result).data('resultData', resultData);
 	// worker function to create the combo box entries
@@ -481,6 +537,19 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 	var noop = e.target.noop.checked;
 	var talkpage = e.target.talkpage && e.target.talkpage.checked;
 	var redirects = e.target.redirects.checked;
+	var selectedPages = [];
+	if (resultData.childSections && e.target.getChecked('pages').length > 0) {
+		var checkedPages = e.target.getChecked('pages');
+		resultData.childSections.forEach(function(section) {
+			var h3 = $(section).find('h3');
+			if (h3.length && checkedPages.includes(h3.attr('id').replace(/ /g, '_'))) {
+				selectedPages.push({
+					title: h3.attr('id'),
+					section: section.getAttribute('data-section')
+				});
+			}
+		});
+	}
 	var params = {
 		title: resultData.title,
 		code: code,
@@ -490,7 +559,9 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 		parentSection: resultData.parentSection,
 		messageData: messageData,
 		talkpage: talkpage,
-		redirects: redirects
+		redirects: redirects,
+		selectedPages: selectedPages,
+		isBatch: selectedPages.length > 0
 	};
 
 	Morebits.SimpleWindow.setButtonsEnabled(false);
@@ -498,7 +569,11 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 
 	Morebits.wiki.actionCompleted.notice = '操作完成';
 
-	if (noop || messageData.action === 'noop') {
+	if (params.isBatch) {
+		// to achieve batch reason, avoid api query
+		params.lastSection = resultData.childSections[resultData.childSections.length - 1].getAttribute('data-section');
+		Twinkle.close.callbacks.batchProcess(params);
+	} else if (noop || messageData.action === 'noop') {
 		Twinkle.close.callbacks.talkend(params);
 	} else {
 		switch (messageData.action) {
@@ -518,6 +593,190 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 };
 
 Twinkle.close.callbacks = {
+	batchProcess: function(params) {
+		Morebits.Status.info(conv({ hans: '批量操作', hant: '批次操作' }), conv({ hans: '开始操作 ', hant: '開始操作 ' }) + params.selectedPages.length + conv({ hans: ' 个页面', hant: ' 個頁面' }));
+
+		var promiseChain = params.selectedPages.reduce(function(chain, page) {
+			return chain.then(function() {
+				if (params.noop || params.messageData.action === 'noop') {
+					return Promise.resolve();
+				}
+
+				return new Promise(function(resolve, reject) {
+					var pageParams = {
+						title: page.title,
+						code: params.code,
+						remark: params.remark,
+						sdreason: params.sdreason,
+						section: page.section,
+						messageData: params.messageData,
+						talkpage: params.talkpage,
+						redirects: params.redirects,
+						isBatch: true
+					};
+
+					try {
+						switch (params.messageData.action) {
+							// XXX: Morebits.BatchOperation?
+							case 'del':
+								Twinkle.close.callbacks.del(pageParams);
+								resolve();
+								break;
+							case 'keep':
+								var wikipedia_page = new Morebits.wiki.Page(
+									pageParams.title,
+									conv({ hans: '移除存废讨论模板', hant: '移除存廢討論模板' })
+								);
+								wikipedia_page.setCallbackParameters(pageParams);
+								wikipedia_page.load(Twinkle.close.callbacks.keep);
+								resolve();
+								break;
+							default:
+								reject(new Error('未定义的操作类型: ' + params.code));
+						}
+					} catch (error) {
+						reject(error);
+					}
+				});
+			});
+		}, Promise.resolve());
+
+		promiseChain.then(function() {
+			Morebits.Status.info(conv({ hans: '页面操作完成', hant: '頁面操作完成' }), conv({ hans: '开始关闭讨论...', hant: '開始關閉討論...' }));
+			Twinkle.close.callbacks.batchTalkend(params);
+		}).catch(function(error) {
+			Morebits.Status.error(conv({ hans: '批量操作出错', hant: '批量操作出錯' }), error.message || error);
+		});
+	},
+
+	batchTalkend: function(params) {
+		var wikipedia_page = new Morebits.wiki.Page(mw.config.get('wgPageName'), conv({ hans: '批量关闭讨论', hant: '批量關閉討論' }));
+		wikipedia_page.setCallbackParameters(params);
+		wikipedia_page.load(Twinkle.close.callbacks.batchSaveTalk);
+	},
+
+	batchSaveTalk: function(pageobj) {
+		var statelem = pageobj.getStatusElement();
+		var text = pageobj.getPageText();
+		var params = pageobj.getCallbackParameters();
+		var originalText = text;
+		var sectionParsedText = text.split(/(?=\n==+.+==+\s*\n)/);
+		var reason, relistText, dateStr, logtitle, buildReason;
+		if (params.code === 'relist') {
+			dateStr = new Morebits.Date().format('YYYY/MM/DD', 'utc');
+			logtitle = 'Wikipedia:頁面存廢討論/記錄/' + dateStr;
+			reason = '重新提交到[[' + logtitle + '#' + params.title + '|' + dateStr + ']]';
+			relistText = [sectionParsedText[params.section]];
+			buildReason = true;
+		} else {
+			reason = params.messageData.value || params.messageData.label;
+		}
+
+
+		params.selectedPages.forEach(function(page) {
+			var sectionText = sectionParsedText[page.section];
+
+			var sbegin = sectionText.indexOf('<section begin=backlog />') !== -1;
+			var send = sectionText.indexOf('<section end=backlog />') !== -1;
+			sectionText = sectionText.replace('\n<section begin=backlog />', '');
+			sectionText = sectionText.replace('\n<section end=backlog />', '');
+
+			var bar = sectionText.split('\n----\n');
+			var split = bar[0].split('\n');
+
+			var closedSection = '\n' + split[1] + '\n{{delh|' + params.code + '}}\n';
+
+			if (params.code === 'relist') {
+				closedSection += '{{Relisted}}到[[' + logtitle + '#' + page.title + ']]。';
+				relistText.push(sectionParsedText[page.section].replace(/<!-- Twinkle:.+-->\n?/, ''));
+				var relistedPage = new Morebits.wiki.Page(page.title, conv({ hans: '重新标记', hant: '重新標記' }));
+				relistedPage.setCallbackParameters({ date: dateStr });
+				relistedPage.load(Twinkle.close.callbacks.retaggingArticle);
+				if (page.section === params.lastSection) {
+					buildReason = false;
+				}
+			} else {
+				closedSection += split.slice(2).join('\n');
+				closedSection += '\n<hr>\n: ' + reason;
+				if (params.remark) {
+					closedSection += '：' + Morebits.string.appendPunctuation(params.remark);
+				} else {
+					closedSection += '。';
+				}
+			}
+
+			if (!Morebits.userIsSysop) {
+				closedSection += '{{subst:NAC}}';
+			}
+			closedSection += '--~~~~\n{{delf}}';
+
+			if (bar[1]) {
+				closedSection += '\n----\n' + bar.slice(1).join('\n----\n');
+			}
+			if (send) {
+				closedSection += '\n<section end=backlog />';
+			}
+			if (sbegin) {
+				closedSection += '\n<section begin=backlog />';
+			}
+
+			sectionParsedText[page.section] = closedSection;
+		});
+
+		if (sectionParsedText.join('') === originalText) {
+			statelem.warn(conv({ hans: '未找到需要关闭的讨论', hant: '未找到需要關閉的討論' }));
+			return;
+		}
+
+
+		if (params.code === 'relist') {
+			var logpage = new Morebits.wiki.Page(logtitle, conv({ hans: '批量重新提交', hant: '批次重新提交' }));
+			logpage.load(function(pageobj) {
+				if (buildReason) {
+					// parse batch reason if last section is not a section to relist
+					var lastSection = sectionParsedText[params.lastSection];
+					var bar = lastSection.split('\n----\n');
+					var comment = bar[bar.length - 1];
+					var m = comment.match(/({{[删刪]除}}理據.*)\n:?\s*(提[报報]以上.*)/);
+					if (m) {
+						relistText.push('\n----\n' + m[1] + '\n: ' + m[2] + '\n');
+					} else {
+						Morebits.Status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '无法解析批量提删理据', hant: '無法解析批次提刪理據' }));
+						return;
+					}
+				}
+
+				var appendText = '\n{{safesubst:SafeAfdHead}}\n' + relistText.join('') + '\n';
+				appendText += '{{subst:Relist';
+				if (params.remark) {
+					appendText += '|1=' + params.remark;
+				}
+				appendText += '}}';
+
+				// see relistToday for more readable summary
+				var summarySection = params.title.indexOf('_') !== -1 ? params.title.split('_')[0] : params.title;
+				var relistSummary = '/* ' + summarySection + ' */ 重新提交自[[' + pageobj.getPageName() + '#' + params.title + '|' + pageobj.getPageName().replace('Wikipedia:頁面存廢討論/記錄/', '') + ']]';
+				pageobj.setAppendText(appendText);
+				pageobj.setEditSummary(relistSummary);
+				pageobj.setChangeTags(Twinkle.changeTags);
+				pageobj.setCreateOption('recreate');
+				pageobj.append();
+			});
+		}
+
+		pageobj.setPageText(sectionParsedText.join(''));
+		pageobj.setEditSummary(reason + '（' + params.selectedPages.length + '個討論）');
+		pageobj.setChangeTags(Twinkle.changeTags);
+		pageobj.setCreateOption('nocreate');
+		pageobj.save(function() {
+			params.selectedPages.forEach(function(page) {
+				$('a.twinkle-close-button[data-section=' + page.section + ']').addClass('twinkle-close-button-disabled');
+			});
+			$('a.twinkle-close-button[data-section=' + params.section + ']').addClass('twinkle-close-button-disabled');
+			Morebits.Status.info(conv({ hans: '批量处理完成', hant: '批次處理完成' }), conv({ hans: '成功关闭 ', hant: '成功關閉 ' }) + params.selectedPages.length + conv({ hans: ' 个讨论', hant: ' 個討論' }));
+		});
+	},
+
 	del: function (params) {
 		var query, wikipedia_api;
 		Morebits.wiki.addCheckpoint();
@@ -529,13 +788,17 @@ Twinkle.close.callbacks = {
 				reason = prompt(conv({ hans: '输入删除理由，或点击确定以接受自动生成的：', hant: '輸入刪除理由，或點選確定以接受自動生成的：' }), reason);
 				if (reason === null) {
 					page.getStatusElement().warn(conv({ hans: '没有执行删除', hant: '沒有執行刪除' }));
-					Twinkle.close.callbacks.talkend(params);
+					if (!params.isBatch) {
+						Twinkle.close.callbacks.talkend(params);
+					}
 				} else {
 					page.setEditSummary(reason);
 					page.setChangeTags(Twinkle.changeTags);
 					page.deletePage(function() {
 						page.getStatusElement().info('完成');
-						Twinkle.close.callbacks.talkend(params);
+						if (!params.isBatch) {
+							Twinkle.close.callbacks.talkend(params);
+						}
 					});
 				}
 			});
@@ -544,7 +807,9 @@ Twinkle.close.callbacks = {
 			page.setChangeTags(Twinkle.changeTags);
 			page.deletePage(function() {
 				page.getStatusElement().info('完成');
-				Twinkle.close.callbacks.talkend(params);
+				if (!params.isBatch) {
+					Twinkle.close.callbacks.talkend(params);
+				}
 			});
 		}
 		if (params.redirects) {
@@ -647,7 +912,9 @@ Twinkle.close.callbacks = {
 		}
 		if (newtext === text) {
 			statelem.warn(conv({ hans: '未找到存废讨论模板，可能已被移除', hant: '未找到存廢討論模板，可能已被移除' }));
-			Twinkle.close.callbacks.talkend(params);
+			if (!params.isBatch) {
+				Twinkle.close.callbacks.talkend(params);
+			}
 			return;
 		}
 		var editsummary = conv({ hans: '存废讨论关闭：[[', hant: '存廢討論關閉：[[' }) + mw.config.get('wgPageName') + '#' + params.title + ']]';
@@ -656,7 +923,7 @@ Twinkle.close.callbacks = {
 		pageobj.setEditSummary(editsummary);
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('nocreate');
-		pageobj.save(Twinkle.close.callbacks.keepComplete);
+		pageobj.save(params.isBatch ? null : Twinkle.close.callbacks.keepComplete);
 	},
 	keepComplete: function (pageobj) {
 		var params = pageobj.getCallbackParameters();
