@@ -772,7 +772,7 @@ Twinkle.close.callbacks = {
 		if (params.batchText) {
 			var bar = params.batchText.split('\n----\n');
 			var comment = bar[bar.length - 1];
-			var m = comment.match(/({{[删刪]除}}理據.*)\n(提[报報]以上.*)/);
+			var m = comment.match(/({{[删刪]除}}理據.*)\n:?\s*(提[报報]以上.*)/);
 			if (m) {
 				appendText += m[1] + '\n: ' + m[2] + '\n';
 			} else {
