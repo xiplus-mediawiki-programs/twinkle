@@ -47,7 +47,7 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 		}
 		var $pageLink = $(current).find('h2 a, h3 a');
 		var headlinehref = $pageLink.attr('href');
-		if (headlinehref === undefined) {
+		if (headlinehref === undefined && !$(current).next().hasClass('mw-heading3')) {
 			return;
 		}
 		var title = null;
