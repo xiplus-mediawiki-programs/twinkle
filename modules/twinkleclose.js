@@ -808,8 +808,8 @@ Twinkle.close.callbacks = {
 
 		if (/{{[rsaiftcmv]fd\s*\|\s*[^|}]*}}/i.test(text) && !/{{[rsaiftcmv]fd\s*\|\s*date\s*=/i.test(text)) {
 			text = text.replace(/({{[rsaiftcmv]fd[^|}]*)\|([^|}]*}})/i, '$1|date=' + params.date + '|$2');
-		} else if (/{{[rsaiftcmv]fd[^|}]*(?:\|[^}]*)?\|(?:[^|}]*date[^|}]*=)?(?=\d{4})[^|}]*[^}]*}}/i.test(text)) {
-			text = text.replace(/({{[rsaiftcmv]fd[^|}]*(?:\|[^}]*)?\|(?:[^|}]*date[^|}]*=)?(?=\d{4}))[^|}]*([^}]*}})/i, '$1' + params.date + '$2');
+		} else if (/{{[rsaiftcmv]fd\s*(\|.*)?\|\s*date\s*=[^|}]*.*}}/i.test(text)) {
+			text = text.replace(/({{[rsaiftcmv]fd\s*(?:\|.*)?\|\s*date\s*=)[^|}]*(.*}})/i, '$1' + params.date + '$2');
 		} else {
 			Morebits.Status.warn(conv({ hans: '重新标记', hant: '重新標記' }), conv({ hans: '找不到提删模板，重新插入', hant: '找不到提刪模板，重新插入' }));
 			// Insert tag after short description or any hatnotes
