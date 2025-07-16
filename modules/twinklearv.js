@@ -257,7 +257,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					}
 				]
 			});
-			if (!mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName(true))) {
+			if (!mw.util.isIPAddress(mw.config.get('wgRelevantUserName'))) {
 				work_area.append({
 					type: 'checkbox',
 					list: [

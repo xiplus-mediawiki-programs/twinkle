@@ -101,7 +101,7 @@ Twinkle.talkback.callback = function() {
 	var query = {
 		action: 'query',
 		prop: 'extlinks',
-		titles: 'User talk:' + Morebits.wiki.flow.relevantUserName(),
+		titles: 'User talk:' + mw.config.get('wgRelevantUserName'),
 		elquery: 'userjs.invalid/noTalkback',
 		ellimit: '1'
 	};
@@ -340,7 +340,7 @@ Twinkle.talkback.evaluate = function(e) {
 	Morebits.SimpleWindow.setButtonsEnabled(false);
 	Morebits.Status.init(form);
 
-	var fullUserTalkPageName = mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user_talk] + ':' + Morebits.wiki.flow.relevantUserName();
+	var fullUserTalkPageName = mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user_talk] + ':' + mw.config.get('wgRelevantUserName');
 
 	Morebits.wiki.actionCompleted.redirect = fullUserTalkPageName;
 	Morebits.wiki.actionCompleted.notice = conv({ hans: '回复通告完成，将在几秒内刷新页面', hant: '回覆通告完成，將在幾秒內重新整理頁面' });
@@ -373,7 +373,7 @@ Twinkle.talkback.preview = function(form) {
 	}
 
 	var noticetext = Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message)[0];
-	form.previewer.beginRender(noticetext, 'User_talk:' + Morebits.wiki.flow.relevantUserName()); // Force wikitext/correct username
+	form.previewer.beginRender(noticetext, 'User_talk:' + mw.config.get('wgRelevantUserName')); // Force wikitext/correct username
 };
 
 Twinkle.talkback.getNoticeWikitext = function(tbtarget, page, section, message) {

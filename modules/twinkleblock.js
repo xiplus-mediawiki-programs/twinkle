@@ -112,14 +112,14 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	  wgRelevantUserName since this depends entirely on the original user.
 	  In theory, we shouldn't use Morebits.ip.get64 here since since we want
 	  to exclude functionally-equivalent /64s.  That'd be:
-	  // if (mw.util.isIPv6Address(Morebits.wiki.flow.relevantUserName(true), true) &&
-	  // (mw.util.isIPv6Address(Morebits.wiki.flow.relevantUserName(true)) || parseInt(Morebits.wiki.flow.relevantUserName(true).replace(/^(.+?)\/?(\d{1,3})?$/, '$2'), 10) > 64)) {
+	  // if (mw.util.isIPv6Address(mw.config.get('wgRelevantUserName'), true) &&
+	  // (mw.util.isIPv6Address(mw.config.get('wgRelevantUserName')) || parseInt(mw.config.get('wgRelevantUserName').replace(/^(.+?)\/?(\d{1,3})?$/, '$2'), 10) > 64)) {
 	  In practice, though, since functionally-equivalent ranges are
 	  (mis)treated as separate by MediaWiki's logging ([[phab:T146628]]),
 	  using Morebits.ip.get64 provides a modicum of relief in thise case.
 	*/
-	var sixtyFour = Morebits.ip.get64(Morebits.wiki.flow.relevantUserName(true));
-	if (sixtyFour && sixtyFour !== Morebits.wiki.flow.relevantUserName(true)) {
+	var sixtyFour = Morebits.ip.get64(mw.config.get('wgRelevantUserName'));
+	if (sixtyFour && sixtyFour !== mw.config.get('wgRelevantUserName')) {
 		var block64field = form.append({
 			type: 'field',
 			label: conv({ hans: '转换为/64段封禁', hant: '轉換為/64段封鎖' }),
@@ -139,7 +139,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 				checked: Twinkle.getPref('defaultToBlock64'),
 				label: conv({ hans: '改成封禁/64', hant: '改成封鎖/64' }),
 				value: 'block64',
-				tooltip: Morebits.ip.isRange(Morebits.wiki.flow.relevantUserName(true)) ? conv({ hans: '将不会发送模板通知。', hant: '將不會發送模板通知。' }) : conv({ hans: '任何模板将会发送给原始IP：', hant: '任何模板將會發送給原始IP：' }) + Morebits.wiki.flow.relevantUserName(true)
+				tooltip: Morebits.ip.isRange(mw.config.get('wgRelevantUserName')) ? conv({ hans: '将不会发送模板通知。', hant: '將不會發送模板通知。' }) : conv({ hans: '任何模板将会发送给原始IP：', hant: '任何模板將會發送給原始IP：' }) + mw.config.get('wgRelevantUserName')
 			}]
 		});
 	}
@@ -190,7 +190,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	api.get({
 		action: 'query',
 		prop: 'revisions',
-		titles: 'User_talk:' + Morebits.wiki.flow.relevantUserName(true),
+		titles: 'User_talk:' + mw.config.get('wgRelevantUserName'),
 		rvprop: 'ids',
 		rvlimit: 1,
 		format: 'json'
@@ -209,7 +209,7 @@ Twinkle.block.processUserInfo = function twinkleblockProcessUserInfo(data, fn) {
 	// If an IP is blocked *and* rangeblocked, the above finds
 	// whichever block is more recent, not necessarily correct.
 	// Three seems... unlikely
-	if (data.query.blocks.length > 1 && blockinfo.user !== Morebits.wiki.flow.relevantUserName(true)) {
+	if (data.query.blocks.length > 1 && blockinfo.user !== mw.config.get('wgRelevantUserName')) {
 		blockinfo = data.query.blocks[1];
 	}
 	// Cache response, used when toggling /64 blocks
@@ -257,16 +257,16 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 		list: 'blocks|users|logevents',
 		letype: 'block',
 		lelimit: 2, // zhwiki: Add more details
-		letitle: 'User:' + Morebits.wiki.flow.relevantUserName(true),
+		letitle: 'User:' + mw.config.get('wgRelevantUserName'),
 		bkprop: 'expiry|reason|flags|restrictions|range|user',
-		ususers: Morebits.wiki.flow.relevantUserName(true)
+		ususers: mw.config.get('wgRelevantUserName')
 	};
 
 	// bkusers doesn't catch single IPs blocked as part of a range block
-	if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName(true), true)) {
-		query.bkip = Morebits.wiki.flow.relevantUserName(true);
+	if (mw.util.isIPAddress(mw.config.get('wgRelevantUserName'), true)) {
+		query.bkip = mw.config.get('wgRelevantUserName');
 	} else {
-		query.bkusers = Morebits.wiki.flow.relevantUserName(true);
+		query.bkusers = mw.config.get('wgRelevantUserName');
 		// groupmemberships only relevant for registered users
 		query.usprop = 'groupmemberships';
 	}
@@ -295,13 +295,13 @@ Twinkle.block.callback.change_block64 = function twinkleblockCallbackChangeBlock
 	// Single IPv6, or IPv6 range smaller than a /64
 	var priorName = relevantUserName;
 	if ($block64.is(':checked')) {
-		relevantUserName = Morebits.ip.get64(Morebits.wiki.flow.relevantUserName(true));
+		relevantUserName = Morebits.ip.get64(mw.config.get('wgRelevantUserName'));
 	} else {
-		relevantUserName = Morebits.wiki.flow.relevantUserName(true);
+		relevantUserName = mw.config.get('wgRelevantUserName');
 	}
 	// No templates for ranges, but if the original user is a single IP, offer the option
 	// (done separately in Twinkle.block.callback.issue_template)
-	var originalIsRange = Morebits.ip.isRange(Morebits.wiki.flow.relevantUserName(true));
+	var originalIsRange = Morebits.ip.isRange(mw.config.get('wgRelevantUserName'));
 	$form.find('[name=actiontype][value=template]').prop('disabled', originalIsRange).prop('checked', !originalIsRange);
 
 	// Refetch/reprocess user info then regenerate the main content
@@ -1951,7 +1951,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			lelimit: 1,
 			letitle: 'User:' + blockoptions.user,
 			prop: 'revisions',
-			titles: 'User_talk:' + Morebits.wiki.flow.relevantUserName(true),
+			titles: 'User_talk:' + mw.config.get('wgRelevantUserName'),
 			rvprop: 'ids',
 			rvlimit: 1
 		};
@@ -2079,7 +2079,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	if (toTag || toProtect) {
 		Morebits.SimpleWindow.setButtonsEnabled(false);
 		Morebits.Status.init(e.target);
-		var userPage = 'User:' + Morebits.wiki.flow.relevantUserName(true);
+		var userPage = 'User:' + mw.config.get('wgRelevantUserName');
 		var wikipedia_page = new Morebits.wiki.Page(userPage, conv({ hans: '标记或保护用户页', hant: '標記或保護使用者頁面' }));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.load(Twinkle.block.callback.taguserpage);
@@ -2093,7 +2093,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		Morebits.Status.init(e.target);
 		var unblockStatusElement = new Morebits.Status(conv({ hans: '执行解除封禁', hant: '執行解除封鎖' }));
 		unblockoptions.action = 'unblock';
-		unblockoptions.user = Morebits.wiki.flow.relevantUserName(true);
+		unblockoptions.user = mw.config.get('wgRelevantUserName');
 		// execute unblock
 		unblockoptions.tags = Twinkle.changeTags;
 		unblockoptions.token = mw.user.tokens.get('csrfToken');
@@ -2218,7 +2218,7 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 	var params = vipPage.getCallbackParameters();
 	var text = vipPage.getPageText();
 	var statusElement = vipPage.getStatusElement();
-	var userName = Morebits.wiki.flow.relevantUserName(true);
+	var userName = mw.config.get('wgRelevantUserName');
 
 	var expiryText = Morebits.string.formatTime(params.expiry);
 	var comment = '{{Blocked|' + (Morebits.string.isInfinity(params.expiry) ? 'indef' : expiryText) + '}}。';
@@ -2393,20 +2393,6 @@ Twinkle.block.callback.main = function twinkleblockcallbackMain(pageobj) {
 	pageobj.setChangeTags(Twinkle.changeTags);
 	pageobj.setWatchlist(Twinkle.getPref('watchBlockNotices'));
 	pageobj.save();
-};
-
-Twinkle.block.callback.main_flow = function twinkleblockcallbackMain(flowobj) {
-	var params = flowobj.getCallbackParameters();
-
-	params.indefinite = (/indef|infinity|never|\*|max/).test(params.expiry);
-	params.expiry = typeof params.template_expiry !== 'undefined' ? params.template_expiry : params.expiry;
-
-	var title = params.usertalk_summary;
-	var content = Twinkle.block.callback.getBlockNoticeWikitext(params, true);
-
-	flowobj.setTopic(title);
-	flowobj.setContent(content);
-	flowobj.newTopic();
 };
 
 Twinkle.addInitCallback(Twinkle.block, 'block');
