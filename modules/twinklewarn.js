@@ -17,7 +17,7 @@ var conv = require('ext.gadget.HanAssist').conv, initialBlockId, initialBlockInf
 
 Twinkle.warn = function twinklewarn() {
 
-	if (Morebits.wiki.flow.relevantUserName()) {
+	if (mw.config.get('wgRelevantUserName')) {
 		Twinkle.addPortletLink(Twinkle.warn.callback, '警告', 'tw-warn', conv({ hans: '警告或提醒用户', hant: '警告或提醒使用者' }));
 		if (Twinkle.getPref('autoMenuAfterRollback') &&
 			mw.config.get('wgNamespaceNumber') === 3 &&
@@ -113,7 +113,7 @@ Twinkle.warn.makeVandalTalkLink = function($vandalTalkLink, pagename) {
 Twinkle.warn.dialog = null;
 
 Twinkle.warn.callback = function twinklewarnCallback() {
-	if (Morebits.wiki.flow.relevantUserName() === mw.config.get('wgUserName') &&
+	if (mw.config.get('wgRelevantUserName') === mw.config.get('wgUserName') &&
 		!confirm(conv({ hans: '您将要警告自己！您确定要继续吗？', hant: '您將要警告自己！您確定要繼續嗎？' }))) {
 		return;
 	}
@@ -1868,7 +1868,7 @@ Twinkle.warn.callbacks = {
 };
 
 Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
-	var userTalkPage = 'User_talk:' + Morebits.wiki.flow.relevantUserName();
+	var userTalkPage = 'User_talk:' + mw.config.get('wgRelevantUserName');
 
 	// reason, main_group, sub_group, article
 	var params = Morebits.QuickForm.getInputData(e.target);
@@ -1926,16 +1926,10 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 		Morebits.wiki.actionCompleted.redirect = userTalkPage;
 		Morebits.wiki.actionCompleted.notice = conv({ hans: '警告完成，将在几秒后刷新', hant: '警告完成，將在幾秒後重新整理' });
 
-		if (Twinkle.warn.isFlow) {
-			var flow_page = new Morebits.wiki.flow(userTalkPage, conv({ hans: '用户Flow讨论页留言', hant: '使用者Flow討論頁留言' }));
-			flow_page.setCallbackParameters(params);
-			Twinkle.warn.callbacks.main_flow(flow_page);
-		} else {
-			var wikipedia_page = new Morebits.wiki.Page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
-			wikipedia_page.setCallbackParameters(params);
-			wikipedia_page.setFollowRedirect(true, false);
-			wikipedia_page.load(Twinkle.warn.callbacks.main);
-		}
+		var wikipedia_page = new Morebits.wiki.Page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
+		wikipedia_page.setCallbackParameters(params);
+		wikipedia_page.setFollowRedirect(true, false);
+		wikipedia_page.load(Twinkle.warn.callbacks.main);
 	});
 };
 

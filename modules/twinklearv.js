@@ -15,7 +15,7 @@
 var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.arv = function twinklearv() {
-	var username = Morebits.wiki.flow.relevantUserName(true);
+	var username = mw.config.get('wgRelevantUserName');
 	if (!username) {
 		return;
 	}

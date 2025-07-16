@@ -17,11 +17,10 @@ var conv = require('ext.gadget.HanAssist').conv;
 Twinkle.xfd = function twinklexfd() {
 	// Disable on:
 	// * special pages
-	// * Flow pages
 	// * non-existent pages
 	// * files on Commons, whether there is a local page or not (unneeded local pages of files on Commons are eligible for CSD F2)
 	// * file pages without actual files (these are eligible for CSD G8)
-	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageContentModel') === 'flow-board' || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.isPageRedirect())))) {
+	if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.wiki.isPageRedirect())))) {
 		return;
 	}
 	Twinkle.addPortletLink(Twinkle.xfd.callback, conv({ hans: '提删', hant: '提刪' }), 'tw-xfd', conv({ hans: '提交删除讨论', hant: '提交刪除討論' }));

@@ -23,9 +23,8 @@ var conv = require('ext.gadget.HanAssist').conv;
 Twinkle.speedy = function twinklespeedy() {
 	// Disable on:
 	// * special pages
-	// * Flow pages
 	// * non-existent pages
-	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageContentModel') === 'flow-board' || !mw.config.get('wgArticleId')) {
+	if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
 		return;
 	}
 
@@ -1357,33 +1356,26 @@ Twinkle.speedy.callbacks = {
 
 					} else {
 						var talkPageName = 'User talk:' + initialContrib;
-						Morebits.wiki.flow.check(talkPageName, function () {
-							var flowpage = new Morebits.wiki.flow(talkPageName, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + initialContrib + '）');
-							flowpage.setTopic('[[:' + Morebits.pageNameNorm + ']]的快速删除通知');
-							flowpage.setContent('{{subst:db-notice|target=' + Morebits.pageNameNorm + '|flow=yes}}');
-							flowpage.newTopic();
-						}, function() {
-							var usertalkpage = new Morebits.wiki.Page(talkPageName, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + initialContrib + '）'),
-								notifytext;
+						var usertalkpage = new Morebits.wiki.Page(talkPageName, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + initialContrib + '）'),
+							notifytext;
 
-							notifytext = '\n{{subst:db-notice|target=' + Morebits.pageNameNorm;
-							notifytext += (params.welcomeuser ? '' : '|nowelcome=yes') + '}}--~~~~';
+						notifytext = '\n{{subst:db-notice|target=' + Morebits.pageNameNorm;
+						notifytext += (params.welcomeuser ? '' : '|nowelcome=yes') + '}}--~~~~';
 
-							var editsummary = '通知：';
-							if (params.normalizeds.indexOf('g12') === -1) {  // no article name in summary for G10 deletions
-								editsummary += '页面[[' + Morebits.pageNameNorm + ']]';
-							} else {
-								editsummary += '一攻击性页面';
-							}
-							editsummary += '快速删除提名';
+						var editsummary = '通知：';
+						if (params.normalizeds.indexOf('g12') === -1) {  // no article name in summary for G10 deletions
+							editsummary += '页面[[' + Morebits.pageNameNorm + ']]';
+						} else {
+							editsummary += '一攻击性页面';
+						}
+						editsummary += '快速删除提名';
 
-							usertalkpage.setAppendText(notifytext);
-							usertalkpage.setEditSummary(editsummary);
-							usertalkpage.setChangeTags(Twinkle.changeTags);
-							usertalkpage.setCreateOption('recreate');
-							usertalkpage.setFollowRedirect(true, false);
-							usertalkpage.append();
-						});
+						usertalkpage.setAppendText(notifytext);
+						usertalkpage.setEditSummary(editsummary);
+						usertalkpage.setChangeTags(Twinkle.changeTags);
+						usertalkpage.setCreateOption('recreate');
+						usertalkpage.setFollowRedirect(true, false);
+						usertalkpage.append();
 					}
 
 					// add this nomination to the user's userspace log, if the user has enabled it

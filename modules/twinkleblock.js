@@ -22,7 +22,7 @@ var blockActionText = {
  */
 
 Twinkle.block = function twinkleblock() {
-	relevantUserName = Morebits.wiki.flow.relevantUserName(true);
+	relevantUserName = mw.config.get('wgRelevantUserName');
 	// should show on Contributions or Block pages, anywhere there's a relevant user
 	// Ignore ranges wider than the CIDR limit
 	// zhwiki: Enable for non-admins
@@ -2194,7 +2194,7 @@ Twinkle.block.callback.protectuserpage = function twinkleblockCallbackProtectUse
 Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTemplate(formData) {
 	// Use wgRelevantUserName to ensure the block template goes to a single IP and not to the
 	// "talk page" of an IP range (which does not exist)
-	var userTalkPage = 'User_talk:' + Morebits.wiki.flow.relevantUserName(true);
+	var userTalkPage = 'User_talk:' + mw.config.get('wgRelevantUserName');
 
 	var params = $.extend(formData, {
 		messageData: Twinkle.block.blockPresetsInfo[formData.template],
@@ -2208,15 +2208,9 @@ Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTempla
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
 	Morebits.wiki.actionCompleted.notice = conv({ hans: '完成，将在几秒后加载用户讨论页', hant: '完成，將在幾秒後載入使用者討論頁' });
 
-	Morebits.wiki.flow.check(userTalkPage, function () {
-		var flowpage = new Morebits.wiki.flow(userTalkPage, conv({ hans: '用户Flow讨论页留言', hant: '使用者Flow討論頁留言' }));
-		flowpage.setCallbackParameters(params);
-		Twinkle.block.callback.main_flow(flowpage);
-	}, function () {
-		var wikipedia_page = new Morebits.wiki.Page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
-		wikipedia_page.setCallbackParameters(params);
-		wikipedia_page.load(Twinkle.block.callback.main);
-	});
+	var wikipedia_page = new Morebits.wiki.Page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
+	wikipedia_page.setCallbackParameters(params);
+	wikipedia_page.load(Twinkle.block.callback.main);
 
 };
 
