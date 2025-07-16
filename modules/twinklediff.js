@@ -15,7 +15,7 @@
 var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.diff = function twinklediff() {
-	if (mw.config.get('wgNamespaceNumber') < 0 || mw.config.get('wgPageContentModel') === 'flow-board' || !mw.config.get('wgArticleId')) {
+	if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
 		return;
 	}
 	Twinkle.addPortletLink(mw.util.getUrl(mw.config.get('wgPageName'), { diff: 'cur', oldid: 'prev' }), conv({ hans: '最后', hant: '最後' }), 'tw-lastdiff', conv({ hans: '显示最后修改', hant: '顯示最後修改' }));
