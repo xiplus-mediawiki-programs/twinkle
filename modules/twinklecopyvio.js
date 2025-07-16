@@ -24,9 +24,6 @@ Twinkle.copyvio = function twinklecopyvio() {
 	if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId') || (mw.config.get('wgNamespaceNumber') === 6 && (document.getElementById('mw-sharedupload') || (!document.getElementById('mw-imagepage-section-filehistory') && !Morebits.isPageRedirect())))) {
 		return;
 	}
-	if (mw.config.get('wgPageContentModel') === 'flow-board') {
-		return;
-	}
 	Twinkle.addPortletLink(Twinkle.copyvio.callback, conv({ hans: '侵权', hant: '侵權' }), 'tw-copyvio', conv({ hans: '提报侵权页面', hant: '提報侵權頁面' }), '');
 };
 
@@ -118,24 +115,15 @@ Twinkle.copyvio.callbacks = {
 
 		// Notification to first contributor
 		if (params.notify) {
-			Morebits.wiki.flow.check('User talk:' + initialContrib, function () {
-				var flowpage = new Morebits.wiki.flow('User talk:' + initialContrib, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + initialContrib + '）');
-				var topic = '您建立的页面[[' + mw.config.get('wgPageName') + ']]可能侵犯版权';
-				var content = '{{subst:CopyvioNotice|' + mw.config.get('wgPageName') + '|flow=yes}}';
-				flowpage.setTopic(topic);
-				flowpage.setContent(content);
-				flowpage.newTopic();
-			}, function () {
-				var usertalkpage = new Morebits.wiki.Page('User talk:' + initialContrib, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + initialContrib + '）');
-				var notifytext = '\n{{subst:CopyvioNotice|' + mw.config.get('wgPageName') + '}}';
-				usertalkpage.setAppendText(notifytext);
-				usertalkpage.setEditSummary(conv({ hans: '通知：页面[[', hant: '通知：頁面[[' }) + mw.config.get('wgPageName') + conv({ hans: ']]疑似侵犯著作权', hant: ']]疑似侵犯版權' }));
-				usertalkpage.setChangeTags(Twinkle.changeTags);
-				usertalkpage.setCreateOption('recreate');
-				usertalkpage.setWatchlist(Twinkle.getPref('copyvioWatchUser'));
-				usertalkpage.setFollowRedirect(true, false);
-				usertalkpage.append();
-			});
+			var usertalkpage = new Morebits.wiki.Page('User talk:' + initialContrib, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + initialContrib + '）');
+			var notifytext = '\n{{subst:CopyvioNotice|' + mw.config.get('wgPageName') + '}}';
+			usertalkpage.setAppendText(notifytext);
+			usertalkpage.setEditSummary(conv({ hans: '通知：页面[[', hant: '通知：頁面[[' }) + mw.config.get('wgPageName') + conv({ hans: ']]疑似侵犯著作权', hant: ']]疑似侵犯版權' }));
+			usertalkpage.setChangeTags(Twinkle.changeTags);
+			usertalkpage.setCreateOption('recreate');
+			usertalkpage.setWatchlist(Twinkle.getPref('copyvioWatchUser'));
+			usertalkpage.setFollowRedirect(true, false);
+			usertalkpage.append();
 		}
 	},
 	taggingArticle: function(pageobj) {

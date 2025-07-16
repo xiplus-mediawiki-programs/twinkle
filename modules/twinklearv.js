@@ -15,7 +15,7 @@
 var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.arv = function twinklearv() {
-	var username = Morebits.wiki.flow.relevantUserName(true);
+	var username = mw.config.get('wgRelevantUserName');
 	if (!username) {
 		return;
 	}
@@ -257,7 +257,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 					}
 				]
 			});
-			if (!mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName(true))) {
+			if (!mw.util.isIPAddress(mw.config.get('wgRelevantUserName'))) {
 				work_area.append({
 					type: 'checkbox',
 					list: [
