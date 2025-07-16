@@ -35,9 +35,12 @@ postData = {
     'geilimit': 'max'
 }
 markedPages = set()
+HEADERS = {
+        'User-Agent': 'Twinkle/1.0 (https://github.com/xiplus-mediawiki-programs/twinkle; huangxuanyuxiplus@gmail.com)'
+    }
 while True:
     # print(postData)
-    res = requests.post('https://zh.wikipedia.org/w/api.php', data=postData).json()
+    res = requests.post('https://zh.wikipedia.org/w/api.php', data=postData, headers=HEADERS).json()
     pages = res['query']['pages']
     for pageid in pages:
         page = pages[pageid]
