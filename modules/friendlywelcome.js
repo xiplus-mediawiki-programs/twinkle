@@ -37,7 +37,7 @@ Twinkle.welcome.auto = function() {
 };
 
 Twinkle.welcome.semiauto = function() {
-	Twinkle.welcome.callback(Morebits.wiki.flow.relevantUserName());
+	Twinkle.welcome.callback(mw.config.get('wgRelevantUserName'));
 };
 
 Twinkle.welcome.normal = function() {
@@ -86,9 +86,9 @@ Twinkle.welcome.normal = function() {
 			}
 		}
 	}
-	if (Morebits.wiki.flow.relevantUserName()) {
+	if (mw.config.get('wgRelevantUserName')) {
 		Twinkle.addPortletLink(function() {
-			Twinkle.welcome.callback(Morebits.wiki.flow.relevantUserName());
+			Twinkle.welcome.callback(mw.config.get('wgRelevantUserName'));
 		}, conv({ hans: '欢迎', hant: '歡迎' }), 'friendly-welcome', conv({ hans: '欢迎用户', hant: '歡迎使用者' }));
 	}
 };
@@ -103,7 +103,7 @@ Twinkle.welcome.welcomeUser = function welcomeUser() {
 		mode: 'auto'
 	};
 
-	var userTalkPage = mw.config.get('wgFormattedNamespaces')[3] + ':' + Morebits.wiki.flow.relevantUserName();
+	var userTalkPage = mw.config.get('wgFormattedNamespaces')[3] + ':' + mw.config.get('wgRelevantUserName');
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
 	Morebits.wiki.actionCompleted.notice = conv({ hans: '欢迎完成，将在几秒内刷新页面', hant: '歡迎完成，將在幾秒內重新整理頁面' });
 
@@ -133,8 +133,8 @@ Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
 		label: conv({ hans: '欢迎类型：', hant: '歡迎類別：' }),
 		event: Twinkle.welcome.populateWelcomeList,
 		list: [
-			{ type: 'option', value: 'standard', label: conv({ hans: '标准欢迎', hant: '標準歡迎' }), selected: !mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName()) },
-			{ type: 'option', value: 'anonymous', label: conv({ hans: '欢迎IP用户', hant: '歡迎IP使用者' }), selected: mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName()) },
+			{ type: 'option', value: 'standard', label: conv({ hans: '标准欢迎', hant: '標準歡迎' }), selected: !mw.util.isIPAddress(mw.config.get('wgRelevantUserName')) },
+			{ type: 'option', value: 'anonymous', label: conv({ hans: '欢迎IP用户', hant: '歡迎IP使用者' }), selected: mw.util.isIPAddress(mw.config.get('wgRelevantUserName')) },
 			{ type: 'option', value: 'nonChinese', label: conv({ hans: '非中文欢迎', hant: '非中文歡迎' }) }
 		]
 	});
@@ -154,7 +154,7 @@ Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
 	});
 
 	// Only displayed when the user viewing the user talk page
-	if (mw.config.get('wgNamespaceNumber') === 3 && mw.config.get('wgTitle') === Morebits.wiki.flow.relevantUserName()) {
+	if (mw.config.get('wgNamespaceNumber') === 3 && mw.config.get('wgTitle') === mw.config.get('wgRelevantUserName')) {
 		form.append({
 			type: 'checkbox',
 			list: [
@@ -312,7 +312,7 @@ Twinkle.welcome.callbacks = {
 
 		var previewer = new Morebits.wiki.Preview(previewdiv);
 		var input = Morebits.QuickForm.getInputData(form);
-		previewer.beginRender(Twinkle.welcome.getTemplateWikitext(input.type, input.template, input.article), 'User talk:' + Morebits.wiki.flow.relevantUserName()); // Force wikitext/correct username
+		previewer.beginRender(Twinkle.welcome.getTemplateWikitext(input.type, input.template, input.article), 'User talk:' + mw.config.get('wgRelevantUserName')); // Force wikitext/correct username
 
 		var submit = document.createElement('input');
 		submit.setAttribute('type', 'submit');
@@ -367,7 +367,7 @@ Twinkle.welcome.callback.evaluate = function friendlywelcomeCallbackEvaluate(e) 
 	Morebits.SimpleWindow.setButtonsEnabled(false);
 	Morebits.Status.init(form);
 
-	var userTalkPage = mw.config.get('wgFormattedNamespaces')[3] + ':' + Morebits.wiki.flow.relevantUserName();
+	var userTalkPage = mw.config.get('wgFormattedNamespaces')[3] + ':' + mw.config.get('wgRelevantUserName');
 	Morebits.wiki.actionCompleted.redirect = userTalkPage;
 	Morebits.wiki.actionCompleted.notice = conv({ hans: '欢迎完成，将在几秒内刷新讨论页面', hant: '歡迎完成，將在幾秒內重新整理討論頁面' });
 
