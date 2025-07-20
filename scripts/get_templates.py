@@ -5,6 +5,10 @@ import json5
 import requests
 from util import findBetween
 
+HEADERS = {
+    'User-Agent': 'Twinkle/1.0 (https://github.com/xiplus-mediawiki-programs/twinkle)'
+}
+
 # parser = argparse.ArgumentParser()
 # parser.add_argument('mode', type=int, choices=[1, 2])
 # args = parser.parse_args()
@@ -37,7 +41,7 @@ postData = {
 markedPages = set()
 while True:
     # print(postData)
-    res = requests.post('https://zh.wikipedia.org/w/api.php', data=postData).json()
+    res = requests.post('https://zh.wikipedia.org/w/api.php', data=postData, headers=HEADERS).json()
     pages = res['query']['pages']
     for pageid in pages:
         page = pages[pageid]
