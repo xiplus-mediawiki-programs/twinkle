@@ -137,7 +137,7 @@ Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
 		event: Twinkle.welcome.populateWelcomeList,
 		list: [
 			{ type: 'option', value: 'standard', label: conv({ hans: '标准欢迎', hant: '標準歡迎' }), selected: !isAnonUser },
-			{ type: 'option', value: 'anonymous', label: conv({ hans: '欢迎IP用户', hant: '歡迎IP使用者' }), selected: isAnonUser },
+			{ type: 'option', value: 'anonymous', label: conv({ hans: '欢迎非注册用户', hant: '歡迎非註冊使用者' }), selected: isAnonUser },
 			{ type: 'option', value: 'nonChinese', label: conv({ hans: '非中文欢迎', hant: '非中文歡迎' }) }
 		]
 	});
