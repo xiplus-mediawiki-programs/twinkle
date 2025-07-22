@@ -127,14 +127,17 @@ Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
 
 	var form = new Morebits.QuickForm(Twinkle.welcome.callback.evaluate);
 
+	var relevantUserName = mw.config.get('wgRelevantUserName');
+	var isAnonUser = mw.util.isTemporaryUser(relevantUserName) || mw.util.isIPAddress(relevantUserName);
+
 	form.append({
 		type: 'select',
 		name: 'type',
 		label: conv({ hans: '欢迎类型：', hant: '歡迎類別：' }),
 		event: Twinkle.welcome.populateWelcomeList,
 		list: [
-			{ type: 'option', value: 'standard', label: conv({ hans: '标准欢迎', hant: '標準歡迎' }), selected: !mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName()) },
-			{ type: 'option', value: 'anonymous', label: conv({ hans: '欢迎IP用户', hant: '歡迎IP使用者' }), selected: mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName()) },
+			{ type: 'option', value: 'standard', label: conv({ hans: '标准欢迎', hant: '標準歡迎' }), selected: !isAnonUser },
+			{ type: 'option', value: 'anonymous', label: conv({ hans: '欢迎非注册用户', hant: '歡迎非註冊使用者' }), selected: isAnonUser },
 			{ type: 'option', value: 'nonChinese', label: conv({ hans: '非中文欢迎', hant: '非中文歡迎' }) }
 		]
 	});
