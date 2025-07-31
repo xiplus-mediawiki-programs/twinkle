@@ -238,7 +238,6 @@ Twinkle.config.sections = [
 			{
 				name: 'watchBlockNotices',
 				label: conv({ hans: '发送封禁模板时加入用户讨论页到监视列表', hant: '發送封鎖模板時加入使用者討論頁到監視清單' }),
-				helptip: conv({ hans: '注意：如果对方使用Flow，对应讨论串总会加到监视列表中。', hant: '注意：如果對方使用Flow，對應討論串總會加到監視清單中。' }),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
 			},
@@ -700,7 +699,6 @@ Twinkle.config.sections = [
 			{
 				name: 'insertTalkbackSignature',
 				label: conv({ hans: '通告时加入签名', hant: '通告時加入簽名' }),
-				helptip: conv({ hans: 'Flow页除外。', hant: 'Flow頁除外。' }),
 				type: 'boolean'
 			},
 			{
@@ -781,7 +779,6 @@ Twinkle.config.sections = [
 			{
 				name: 'watchWarnings',
 				label: conv({ hans: '警告时加入用户讨论页到监视列表', hant: '警告時加入使用者討論頁到監視清單' }),
-				helptip: conv({ hans: '注意：如果对方使用Flow，对应讨论串总会加到监视列表中。', hant: '注意：如果對方使用Flow，對應討論串總會加到監視清單中。' }),
 				type: 'enum',
 				enumValues: Twinkle.config.watchlistEnums
 			},

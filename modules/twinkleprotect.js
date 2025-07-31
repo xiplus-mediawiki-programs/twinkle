@@ -21,11 +21,6 @@ Twinkle.protect = function twinkleprotect() {
 		return;
 	}
 
-	// 如果是Flow讨论版而且是“Topic:”开头的帖子则不显示
-	if (mw.config.get('wgPageContentModel') === 'flow-board' && mw.config.get('wgPageName').indexOf('Topic:') === 0) {
-		return;
-	}
-
 	Twinkle.addPortletLink(Twinkle.protect.callback, conv({ hans: '保护', hant: '保護' }), 'tw-rpp',
 		Morebits.userIsSysop ? conv({ hans: '保护页面', hant: '保護頁面' }) : conv({ hans: '请求保护页面', hant: '請求保護頁面' }));
 };
@@ -1101,15 +1096,9 @@ Twinkle.protect.callbacks = {
 		}
 
 		var pageName = mw.config.get('wgPageName');
-		Morebits.wiki.flow.check(pageName, function () {
-			var flowpage = new Morebits.wiki.flow(pageName, conv({ hans: '标记Flow页描述', hant: '標記Flow頁描述' }));
-			flowpage.setCallbackParameters(tagparams);
-			flowpage.viewHeader(Twinkle.protect.callbacks.taggingFlowPage);
-		}, function () {
-			var protectedPage = new Morebits.wiki.Page(pageName, conv({ hans: '标记页面', hant: '標記頁面' }));
-			protectedPage.setCallbackParameters(tagparams);
-			protectedPage.load(Twinkle.protect.callbacks.taggingPage);
-		});
+		var protectedPage = new Morebits.wiki.Page(pageName, conv({ hans: '标记页面', hant: '標記頁面' }));
+		protectedPage.setCallbackParameters(tagparams);
+		protectedPage.load(Twinkle.protect.callbacks.taggingPage);
 	},
 	getTaggedPage: function(params, text) {
 		var tag, summary;
@@ -1185,19 +1174,6 @@ Twinkle.protect.callbacks = {
 		protectedPage.suppressProtectWarning(); // no need to let admins know they are editing through protection
 		protectedPage.save();
 	},
-	taggingFlowPage: function(flowpage) {
-		var params = flowpage.getCallbackParameters();
-		var text = flowpage.getHeader();
-		var newVersion = Twinkle.protect.callbacks.getTaggedPage(params, text);
-		if (typeof newVersion === 'undefined') {
-			flowpage.getStatusElement().info('完成');
-			return;
-		}
-
-		flowpage.setHeader(newVersion.text);
-		flowpage.editHeader();
-	},
-
 	fileRequest: function(rppPage) {
 		var params = rppPage.getCallbackParameters();
 		var text = rppPage.getPageText();

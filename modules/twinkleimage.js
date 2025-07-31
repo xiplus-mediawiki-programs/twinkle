@@ -271,22 +271,15 @@ Twinkle.image.callbacks = {
 			pageobj.getStatusElement().warn('您（' + initialContrib + conv({ hans: '）创建了该页，跳过通知', hant: '）建立了該頁，跳過通知' }));
 		} else {
 			var talkPageName = 'User talk:' + initialContrib;
-			Morebits.wiki.flow.check(talkPageName, function () {
-				var flowpage = new Morebits.wiki.flow(talkPageName, conv({ hans: '通知上传者（', hant: '通知上傳者（' }) + initialContrib + '）');
-				flowpage.setTopic(conv({ hans: '文件[[', hant: '檔案[[' }) + Morebits.pageNameNorm + conv({ hans: ']]的快速删除通知', hant: ']]的快速刪除通知' }));
-				flowpage.setContent('{{subst:Di-' + params.templatename + '-notice|1=' + Morebits.pageNameNorm + '}}');
-				flowpage.newTopic();
-			}, function () {
-				var usertalkpage = new Morebits.wiki.Page(talkPageName, conv({ hans: '通知上传者（', hant: '通知上傳者（' }) + initialContrib + '）');
-				var notifytext = '\n{{subst:Di-' + params.templatename + '-notice|1=' + Morebits.pageNameNorm + '}}--~~~~';
-				usertalkpage.setAppendText(notifytext);
-				usertalkpage.setEditSummary(conv({ hans: '通知：文件[[', hant: '通知：檔案[[' }) + Morebits.pageNameNorm + conv({ hans: ']]快速删除提名', hant: ']]快速刪除提名' }));
-				usertalkpage.setChangeTags(Twinkle.changeTags);
-				usertalkpage.setCreateOption('recreate');
-				usertalkpage.setWatchlist(Twinkle.getPref('deliWatchUser'));
-				usertalkpage.setFollowRedirect(true, false);
-				usertalkpage.append();
-			});
+			var usertalkpage = new Morebits.wiki.Page(talkPageName, conv({ hans: '通知上传者（', hant: '通知上傳者（' }) + initialContrib + '）');
+			var notifytext = '\n{{subst:Di-' + params.templatename + '-notice|1=' + Morebits.pageNameNorm + '}}--~~~~';
+			usertalkpage.setAppendText(notifytext);
+			usertalkpage.setEditSummary(conv({ hans: '通知：文件[[', hant: '通知：檔案[[' }) + Morebits.pageNameNorm + conv({ hans: ']]快速删除提名', hant: ']]快速刪除提名' }));
+			usertalkpage.setChangeTags(Twinkle.changeTags);
+			usertalkpage.setCreateOption('recreate');
+			usertalkpage.setWatchlist(Twinkle.getPref('deliWatchUser'));
+			usertalkpage.setFollowRedirect(true, false);
+			usertalkpage.append();
 		}
 
 		// add this nomination to the user's userspace log, if the user has enabled it
