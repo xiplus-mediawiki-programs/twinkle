@@ -7,6 +7,28 @@ var conv = require('ext.gadget.HanAssist').conv;
 var api = new mw.Api(), relevantUserName, blockedUserName, initialTalkPageRev;
 var menuFormattedNamespaces = $.extend({}, mw.config.get('wgFormattedNamespaces'));
 menuFormattedNamespaces[0] = conv({ hans: '（条目）', hant: '（條目）' });
+var actionOptions = [
+	{
+		type: 'option',
+		label: conv({ hans: '上传文件（包括覆盖文件）', hant: '上傳檔案（包括覆蓋檔案）' }),
+		value: 'upload'
+	},
+	{
+		type: 'option',
+		label: conv({ hans: '移动页面及文件', hant: '移動頁面及檔案' }),
+		value: 'move'
+	},
+	{
+		type: 'option',
+		label: conv({ hans: '创建新页面及上传新文件', hant: '建立新頁面及上傳新檔案' }),
+		value: 'create'
+	},
+	{
+		type: 'option',
+		label: conv({ hans: '发送感谢', hant: '發送感謝' }),
+		value: 'thanks'
+	}
+];
 var blockActionText = {
 	block: conv({ hans: '封禁', hant: '封鎖' }),
 	reblock: conv({ hans: '重新封禁', hant: '重新封鎖' }),
@@ -469,6 +491,16 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 					ns.append({ type: 'option', label: name, value: number });
 				}
 			});
+
+			field_block_options.append({
+				type: 'select',
+				multiple: true,
+				name: 'actionrestrictions',
+				label: conv({ hans: '操作封禁', hant: '操作封鎖' }),
+				value: '',
+				tooltip: conv({ hans: '指定封禁的操作类型。', hant: '指定封鎖的操作類型。' }),
+				list: actionOptions
+			});
 		}
 
 		var blockoptions = [
@@ -877,6 +909,16 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			placeholder: conv({ hans: '选择要禁止用户编辑的命名空间', hant: '選擇要禁止使用者編輯的命名空間' })
 		});
 
+		$form.find('[name=actionrestrictions]').select2({
+			width: '100%',
+			matcher: Morebits.select2.matchers.wordBeginning,
+			language: {
+				searching: Morebits.select2.queryInterceptor
+			},
+			templateResult: Morebits.select2.highlightSearchMatches,
+			placeholder: conv({ hans: '选择要封禁的操作', hant: '選擇要封鎖的操作' })
+		});
+
 		mw.util.addCSS(
 			// Reduce padding
 			'.select2-results .select2-results__option { padding-top: 1px; padding-bottom: 1px; }' +
@@ -894,6 +936,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		// Clear select2 options
 		$form.find('[name=pagerestrictions]').val(null).trigger('change');
 		$form.find('[name=namespacerestrictions]').val(null).trigger('change');
+		$form.find('[name=actionrestictions]').val(null).trigger('change');
 	}
 
 	if (field_template_options) {
@@ -1687,12 +1730,13 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 	if (form.pagerestrictions) {
 		var $pageSelect = $(form).find('[name=pagerestrictions]');
 		var $namespaceSelect = $(form).find('[name=namespacerestrictions]');
-
+		var $actionSelect = $(form).find('[name=actionrestrictions]');
 		// Respect useInitialOptions by clearing data when switching presets
 		// In practice, this will always clear, since no partial presets use it
 		if (!data.useInitialOptions) {
 			$pageSelect.val(null).trigger('change');
 			$namespaceSelect.val(null).trigger('change');
+			$actionSelect.val(null).trigger('change');
 		}
 
 		// Add any preset options; in practice, just used for prior block settings
@@ -1713,6 +1757,9 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 			}
 			if (data.restrictions.namespaces) {
 				$namespaceSelect.val($namespaceSelect.val().concat(data.restrictions.namespaces)).trigger('change');
+			}
+			if (data.restrictions.actions) {
+				$actionSelect.val($actionSelect.val().concat(data.restrictions.actions)).trigger('change');
 			}
 		}
 	}
@@ -1785,6 +1832,7 @@ Twinkle.block.callback.preview = function twinkleblockcallbackPreview(form) {
 		partial: $(form).find('[name=actiontype][value=partial]').is(':checked'),
 		pagerestrictions: $(form.pagerestrictions).val() || [],
 		namespacerestrictions: $(form.namespacerestrictions).val() || [],
+		actionrestrictions: $(form.actionrestrictions).val() || [],
 		noemail: form.noemail.checked || (form.noemail_template ? form.noemail_template.checked : false),
 		nocreate: form.nocreate.checked || (form.nocreate_template ? form.nocreate_template.checked : false),
 		area: form.area.value
@@ -1832,9 +1880,12 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	}
 	templateoptions.pagerestrictions = $form.find('[name=pagerestrictions]').val() || [];
 	templateoptions.namespacerestrictions = $form.find('[name=namespacerestrictions]').val() || [];
+	templateoptions.actionrestrictions = $form.find('[name=actionrestrictions]').val() || [];
+
 	// Format for API here rather than in saveFieldset
 	blockoptions.pagerestrictions = templateoptions.pagerestrictions.join('|');
 	blockoptions.namespacerestrictions = templateoptions.namespacerestrictions.join('|');
+	blockoptions.actionrestrictions = templateoptions.actionrestrictions.join('|');
 
 	// use block settings as warn options where not supplied
 	templateoptions.summary = templateoptions.summary || blockoptions.reason;
@@ -1890,10 +1941,10 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			if (blockoptions.disabletalk && blockoptions.namespacerestrictions.indexOf('3') === -1) {
 				return alert(conv({ hans: '部分封禁无法阻止编辑自己的讨论页，除非也封禁了User talk命名空间！', hant: '部分封鎖無法阻止編輯自己的討論頁，除非也封鎖了User talk命名空間！' }));
 			}
-			if (!blockoptions.namespacerestrictions && !blockoptions.pagerestrictions) {
+			if (!blockoptions.namespacerestrictions && !blockoptions.pagerestrictions && !blockoptions.actionrestrictions) {
 				if (!blockoptions.noemail && !blockoptions.nocreate) { // Blank entries technically allowed [[phab:T208645]]
 					return alert(conv({ hans: '没有选择页面或命名空间，也没有停用电子邮件或禁止创建账户；请选择至少一个选项以应用部分封禁！', hant: '沒有選擇頁面或命名空間，也沒有停用電子郵件或禁止建立帳號；請選擇至少一個選項以應用部分封鎖！' }));
-				} else if (!confirm(conv({ hans: '您将要进行封禁，但没有阻止任何页面或命名空间的编辑，确定要继续？', hant: '您將要進行封鎖，但沒有阻止任何頁面或命名空間的編輯，確定要繼續？' }))) {
+				} else if (!confirm(conv({ hans: '您将要进行封禁，但既没有阻止任何页面或命名空间的编辑也没有封禁任何操作，确定要继续？', hant: '您將要進行封鎖，但既沒有阻止任何頁面或命名空間的編輯也沒有封鎖任何操作，確定要繼續？' }))) {
 					return;
 				}
 			}
@@ -2301,7 +2352,7 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params) {
 		// Currently, all partial block templates are "standard"
 		// Building the template, however, takes a fair bit of logic
 		if (params.partial) {
-			if (params.pagerestrictions.length || params.namespacerestrictions.length) {
+			if (params.pagerestrictions.length || params.namespacerestrictions.length || params.actionrestrictions.length) {
 				var makeSentence = function (array) {
 					if (array.length < 3) {
 						return array.join('和');
@@ -2314,8 +2365,10 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params) {
 				if (params.pagerestrictions.length) {
 					text += '頁面（' + makeSentence(params.pagerestrictions.map(function(p) {
 						return '[[:' + p + ']]';
-					}));
-					text += params.namespacerestrictions.length ? '）和某些' : '）';
+					})) + '）';
+					if (params.namespacerestrictions.length || params.actionrestrictions.length) {
+						text += '和某些';
+					}
 				}
 				if (params.namespacerestrictions.length) {
 					// 1 => Talk, 2 => User, etc.
@@ -2323,6 +2376,18 @@ Twinkle.block.callback.getBlockNoticeWikitext = function(params) {
 						return menuFormattedNamespaces[id];
 					});
 					text += conv({ hans: '[[Wikipedia:命名空间|命名空间]]（', hant: '[[Wikipedia:命名空間|命名空間]]（' }) + makeSentence(namespaceNames) + '）';
+					if (params.actionrestrictions.length) {
+						text += '和某些';
+					}
+				}
+				if (params.actionrestrictions.length) {
+					var actionNames = params.actionrestrictions.map(function(action) {
+						var actionOption = actionOptions.find(function(opt) {
+							return opt.value === action;
+						});
+						return actionOption ? actionOption.label : action;
+					});
+					text += '操作（' + makeSentence(actionNames) + '）';
 				}
 			} else if (params.area) {
 				text += '|area=' + params.area;
