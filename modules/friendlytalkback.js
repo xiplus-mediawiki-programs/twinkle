@@ -17,7 +17,7 @@ var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.talkback = function() {
 
-	if (!Morebits.wiki.flow.relevantUserName()) {
+	if (!Morebits.relevantUserName()) {
 		return;
 	}
 
@@ -25,7 +25,7 @@ Twinkle.talkback = function() {
 };
 
 Twinkle.talkback.callback = function() {
-	if (Morebits.wiki.flow.relevantUserName() === mw.config.get('wgUserName') && !confirm(conv({ hans: '您寂寞到了要自己通告自己的程度么？', hant: '您寂寞到了要自己通告自己的程度麼？' }))) {
+	if (Morebits.relevantUserName() === mw.config.get('wgUserName') && !confirm(conv({ hans: '您寂寞到了要自己通告自己的程度么？', hant: '您寂寞到了要自己通告自己的程度麼？' }))) {
 		return;
 	}
 
@@ -101,7 +101,7 @@ Twinkle.talkback.callback = function() {
 	var query = {
 		action: 'query',
 		prop: 'extlinks',
-		titles: 'User talk:' + Morebits.wiki.flow.relevantUserName(),
+		titles: 'User talk:' + Morebits.relevantUserName(),
 		elquery: 'userjs.invalid/noTalkback',
 		ellimit: '1'
 	};
@@ -114,7 +114,7 @@ Twinkle.talkback.optout = '';
 Twinkle.talkback.callback.optoutStatus = function(apiobj) {
 	var $el = $(apiobj.getXML()).find('el');
 	if ($el.length) {
-		Twinkle.talkback.optout = Morebits.wiki.flow.relevantUserName() + conv({ hans: '不希望收到回复通告', hant: '不希望收到回覆通告' });
+		Twinkle.talkback.optout = Morebits.relevantUserName() + conv({ hans: '不希望收到回复通告', hant: '不希望收到回覆通告' });
 		var url = $el.text();
 		var reason = mw.util.getParamValue('reason', url);
 		Twinkle.talkback.optout += reason ? '：' + Morebits.string.appendPunctuation(reason) : '。';
@@ -340,32 +340,21 @@ Twinkle.talkback.evaluate = function(e) {
 	Morebits.SimpleWindow.setButtonsEnabled(false);
 	Morebits.Status.init(form);
 
-	var fullUserTalkPageName = mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user_talk] + ':' + Morebits.wiki.flow.relevantUserName();
+	var fullUserTalkPageName = mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceIds').user_talk] + ':' + Morebits.relevantUserName();
 
 	Morebits.wiki.actionCompleted.redirect = fullUserTalkPageName;
 	Morebits.wiki.actionCompleted.notice = conv({ hans: '回复通告完成，将在几秒内刷新页面', hant: '回覆通告完成，將在幾秒內重新整理頁面' });
 
-	Morebits.wiki.flow.check(fullUserTalkPageName, function () {
-		var data = Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message);
-		var title = data[1], content = data[2];
+	var text = '\n\n' + Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message)[0];
+	var talkpage = new Morebits.wiki.Page(fullUserTalkPageName, conv({ hans: '加入回复通告', hant: '加入回覆通告' }));
 
-		var flowpage = new Morebits.wiki.flow(fullUserTalkPageName, conv({ hans: '加入回复通告', hant: '加入回覆通告' }));
-		flowpage.setTopic(title);
-		flowpage.setContent(content);
-		flowpage.newTopic();
-	}, function () {
-		var text = '\n\n' + Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message)[0];
-
-		var talkpage = new Morebits.wiki.Page(fullUserTalkPageName, conv({ hans: '加入回复通告', hant: '加入回覆通告' }));
-
-		talkpage.setEditSummary(editSummary);
-		talkpage.setChangeTags(Twinkle.changeTags);
-		talkpage.setAppendText(text);
-		talkpage.setCreateOption('recreate');
-		talkpage.setMinorEdit(Twinkle.getPref('markTalkbackAsMinor'));
-		talkpage.setFollowRedirect(true);
-		talkpage.append();
-	});
+	talkpage.setEditSummary(editSummary);
+	talkpage.setChangeTags(Twinkle.changeTags);
+	talkpage.setAppendText(text);
+	talkpage.setCreateOption('recreate');
+	talkpage.setMinorEdit(Twinkle.getPref('markTalkbackAsMinor'));
+	talkpage.setFollowRedirect(true);
+	talkpage.append();
 };
 
 Twinkle.talkback.preview = function(form) {
@@ -384,7 +373,7 @@ Twinkle.talkback.preview = function(form) {
 	}
 
 	var noticetext = Twinkle.talkback.getNoticeWikitext(tbtarget, page, section, message)[0];
-	form.previewer.beginRender(noticetext, 'User_talk:' + Morebits.wiki.flow.relevantUserName()); // Force wikitext/correct username
+	form.previewer.beginRender(noticetext, 'User_talk:' + Morebits.relevantUserName()); // Force wikitext/correct username
 };
 
 Twinkle.talkback.getNoticeWikitext = function(tbtarget, page, section, message) {

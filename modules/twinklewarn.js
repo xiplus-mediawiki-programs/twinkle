@@ -17,7 +17,7 @@ var conv = require('ext.gadget.HanAssist').conv, initialBlockId, initialBlockInf
 
 Twinkle.warn = function twinklewarn() {
 
-	if (Morebits.wiki.flow.relevantUserName()) {
+	if (Morebits.relevantUserName()) {
 		Twinkle.addPortletLink(Twinkle.warn.callback, '警告', 'tw-warn', conv({ hans: '警告或提醒用户', hant: '警告或提醒使用者' }));
 		if (Twinkle.getPref('autoMenuAfterRollback') &&
 			mw.config.get('wgNamespaceNumber') === 3 &&
@@ -113,7 +113,7 @@ Twinkle.warn.makeVandalTalkLink = function($vandalTalkLink, pagename) {
 Twinkle.warn.dialog = null;
 
 Twinkle.warn.callback = function twinklewarnCallback() {
-	if (Morebits.wiki.flow.relevantUserName() === mw.config.get('wgUserName') &&
+	if (Morebits.relevantUserName() === mw.config.get('wgUserName') &&
 		!confirm(conv({ hans: '您将要警告自己！您确定要继续吗？', hant: '您將要警告自己！您確定要繼續嗎？' }))) {
 		return;
 	}
@@ -254,14 +254,14 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		}
 	}
 
-	if (mw.util.isIPAddress(Morebits.wiki.flow.relevantUserName())) {
+	if (mw.util.isIPAddress(Morebits.relevantUserName())) {
 		query = {
 			format: 'json',
 			action: 'query',
 			list: 'usercontribs',
 			uclimit: 1,
 			ucend: new Morebits.Date().subtract(30, 'days').format('YYYY-MM-DDTHH:MM:ssZ', 'utc'),
-			ucuser: Morebits.wiki.flow.relevantUserName()
+			ucuser: Morebits.relevantUserName()
 		};
 		new Morebits.wiki.Api(conv({ hans: '检查该IP用户上一笔贡献时间', hant: '檢查該IP使用者上一筆貢獻時間' }), query, function (apiobj) {
 			if (apiobj.getResponse().query.usercontribs.length === 0) {
@@ -278,13 +278,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		result.main_group.dispatchEvent(evt);
 	};
 
-	Morebits.wiki.flow.check('User_talk:' + Morebits.wiki.flow.relevantUserName(), function () {
-		Twinkle.warn.isFlow = true;
-		init();
-	}, function () {
-		Twinkle.warn.isFlow = false;
-		init();
-	});
+	init();
 	Twinkle.block.fetchUserInfo(function () {
 		initialBlockId = Twinkle.block.blockLogId;
 		initialBlockInfo = Twinkle.block.currentBlockInfo;
@@ -1318,9 +1312,17 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 			if (Twinkle.warn.talkpageObj) {
 				autolevelProc();
 			} else {
-				if (Twinkle.warn.isFlow) {
+				var usertalk_page = new Morebits.wiki.Page('User_talk:' + Morebits.relevantUserName(), conv({ hans: '加载上次警告', hant: '載入上次警告' }));
+				usertalk_page.setFollowRedirect(true, false);
+				usertalk_page.load(function(pageobj) {
+					Twinkle.warn.talkpageObj = pageobj; // Update talkpageObj
+					autolevelProc();
+				}, function() {
+					// Catch and warn if the talkpage can't load,
+					// most likely because it's a cross-namespace redirect
+					// Supersedes the typical $autolevelMessage added in autolevelParseWikitext
 					var $noTalkPageNode = $('<strong/>', {
-						text: conv({ hans: '结构式讨论（Flow）不支持自动选择警告层级，请手动选择层级。', hant: '結構式討論（Flow）不支援自動選擇警告層級，請手動選擇層級。' }),
+						text: conv({ hans: '无法加载用户讨论页，这可能是因为它是跨命名空间重定向，自动选择警告级别将不会运作。', hant: '無法載入使用者討論頁，這可能是因為它是跨命名空間重新導向，自動選擇警告級別將不會運作。' }),
 						id: 'twinkle-warn-autolevel-message',
 						css: {color: 'red' }
 					});
@@ -1328,27 +1330,7 @@ Twinkle.warn.callback.change_category = function twinklewarnCallbackChangeCatego
 					// If a preview was opened while in a different mode, close it
 					// Should nullify the need to catch the error in preview callback
 					e.target.root.previewer.closePreview();
-				} else {
-					var usertalk_page = new Morebits.wiki.Page('User_talk:' + Morebits.wiki.flow.relevantUserName(), conv({ hans: '加载上次警告', hant: '載入上次警告' }));
-					usertalk_page.setFollowRedirect(true, false);
-					usertalk_page.load(function(pageobj) {
-						Twinkle.warn.talkpageObj = pageobj; // Update talkpageObj
-						autolevelProc();
-					}, function() {
-						// Catch and warn if the talkpage can't load,
-						// most likely because it's a cross-namespace redirect
-						// Supersedes the typical $autolevelMessage added in autolevelParseWikitext
-						var $noTalkPageNode = $('<strong/>', {
-							text: conv({ hans: '无法加载用户讨论页，这可能是因为它是跨命名空间重定向，自动选择警告级别将不会运作。', hant: '無法載入使用者討論頁，這可能是因為它是跨命名空間重新導向，自動選擇警告級別將不會運作。' }),
-							id: 'twinkle-warn-autolevel-message',
-							css: {color: 'red' }
-						});
-						$noTalkPageNode.insertBefore($('#twinkle-warn-warning-messages'));
-						// If a preview was opened while in a different mode, close it
-						// Should nullify the need to catch the error in preview callback
-						e.target.root.previewer.closePreview();
-					});
-				}
+				});
 			}
 			break;
 		default:
@@ -1488,13 +1470,13 @@ Twinkle.warn.callbacks = {
 		templatetext = Twinkle.warn.callbacks.getWarningWikitext(templatename, linkedarticle,
 			input.reason, input.main_group === 'custom');
 
-		form.previewer.beginRender(templatetext, 'User_talk:' + Morebits.wiki.flow.relevantUserName() + (Twinkle.warn.isFlow ? '/Wikitext' : '')); // Force wikitext/correct username
+		form.previewer.beginRender(templatetext, 'User_talk:' + Morebits.relevantUserName());
 	},
 	// Just a pass-through unless the autolevel option was selected
 	preview: function(form) {
 		if (form.main_group.value === 'autolevel') {
 			// Always get a new, updated talkpage for autolevel processing
-			var usertalk_page = new Morebits.wiki.Page('User_talk:' + Morebits.wiki.flow.relevantUserName(), conv({ hans: '加载上次警告', hant: '載入上次警告' }));
+			var usertalk_page = new Morebits.wiki.Page('User_talk:' + Morebits.relevantUserName(), conv({ hans: '加载上次警告', hant: '載入上次警告' }));
 			usertalk_page.setFollowRedirect(true, false);
 			// Will fail silently if the talk page is a cross-ns redirect,
 			// removal of the preview box handled when loading the menu
@@ -1613,13 +1595,13 @@ Twinkle.warn.callbacks = {
 							click: function() {
 								Morebits.wiki.actionCompleted.redirect = null;
 								Twinkle.warn.dialog.close();
-								Twinkle.arv.callback(Morebits.wiki.flow.relevantUserName());
+								Twinkle.arv.callback(Morebits.relevantUserName());
 								$('input[name=page]').val(params.article); // Target page
 								$('input[value=final]').prop('checked', true); // Vandalism after final
 							}
 						});
 						var statusNode = $('<div/>', {
-							text: Morebits.wiki.flow.relevantUserName() + conv({ hans: '最后收到了一个层级4警告（', hant: '最後收到了一個層級4警告（' }) + latest.type + conv({ hans: '），所以将其报告给管理人员会比较好；', hant: '），所以將其報告給管理人員會比較好；' }),
+							text: Morebits.relevantUserName() + conv({ hans: '最后收到了一个层级4警告（', hant: '最後收到了一個層級4警告（' }) + latest.type + conv({ hans: '），所以将其报告给管理人员会比较好；', hant: '），所以將其報告給管理人員會比較好；' }),
 							css: {color: 'red' }
 						});
 						statusNode.append($link[0]);
@@ -1799,76 +1781,11 @@ Twinkle.warn.callbacks = {
 			pageobj.setNewSectionText(warningText);
 			pageobj.newSection();
 		}
-	},
-	main_flow: function (flowobj) {
-		var params = flowobj.getCallbackParameters();
-		var messageData = params.messageData;
-
-		// build the edit summary
-		// Function to handle generation of summary prefix for custom templates
-		var customProcess = function(template) {
-			template = template.split('|')[0];
-			var prefix;
-			switch (template.substr(-1)) {
-				case '1':
-					prefix = '提醒';
-					break;
-				case '2':
-					prefix = '注意';
-					break;
-				case '3':
-					prefix = '警告';
-					break;
-				case '4':
-					prefix = conv({ hans: '最后警告', hant: '最後警告' });
-					break;
-				case 'm':
-					if (template.substr(-3) === '4im') {
-						prefix = '唯一警告';
-						break;
-					}
-					// falls through
-				default:
-					prefix = '提醒';
-					break;
-			}
-			return prefix + '：' + Morebits.string.toUpperCaseFirstChar(messageData.label);
-		};
-
-		var topic;
-		if (messageData.heading) {
-			topic = messageData.heading;
-		} else {
-			// Normalize kitchensink to the 1-4im style
-			if (params.main_group === 'kitchensink' && !/^D+$/.test(params.sub_group)) {
-				var sub = params.sub_group.substr(-1);
-				if (sub === 'm') {
-					sub = params.sub_group.substr(-3);
-				}
-				// Don't overwrite uw-3rr, technically unnecessary
-				if (/\d/.test(sub)) {
-					params.main_group = 'level' + sub;
-				}
-			}
-			// singlet || level1-4im, no need to /^\D+$/.test(params.main_group)
-			topic = messageData.summary || (messageData[params.main_group] && messageData[params.main_group].summary);
-			// Not in Twinkle.warn.messages, assume custom template
-			if (!topic) {
-				topic = customProcess(params.sub_group);
-			}
-		}
-
-		var content = Twinkle.warn.callbacks.getWarningWikitext(params.sub_group, params.article,
-			params.reason, params.main_group === 'custom', true);
-
-		flowobj.setTopic(topic);
-		flowobj.setContent(content);
-		flowobj.newTopic();
 	}
 };
 
 Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
-	var userTalkPage = 'User_talk:' + Morebits.wiki.flow.relevantUserName();
+	var userTalkPage = 'User_talk:' + Morebits.relevantUserName();
 
 	// reason, main_group, sub_group, article
 	var params = Morebits.QuickForm.getInputData(e.target);
@@ -1926,16 +1843,10 @@ Twinkle.warn.callback.evaluate = function twinklewarnCallbackEvaluate(e) {
 		Morebits.wiki.actionCompleted.redirect = userTalkPage;
 		Morebits.wiki.actionCompleted.notice = conv({ hans: '警告完成，将在几秒后刷新', hant: '警告完成，將在幾秒後重新整理' });
 
-		if (Twinkle.warn.isFlow) {
-			var flow_page = new Morebits.wiki.flow(userTalkPage, conv({ hans: '用户Flow讨论页留言', hant: '使用者Flow討論頁留言' }));
-			flow_page.setCallbackParameters(params);
-			Twinkle.warn.callbacks.main_flow(flow_page);
-		} else {
-			var wikipedia_page = new Morebits.wiki.Page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
-			wikipedia_page.setCallbackParameters(params);
-			wikipedia_page.setFollowRedirect(true, false);
-			wikipedia_page.load(Twinkle.warn.callbacks.main);
-		}
+		var wikipedia_page = new Morebits.wiki.Page(userTalkPage, conv({ hans: '用户讨论页修改', hant: '使用者討論頁修改' }));
+		wikipedia_page.setCallbackParameters(params);
+		wikipedia_page.setFollowRedirect(true, false);
+		wikipedia_page.load(Twinkle.warn.callbacks.main);
 	});
 };
 
