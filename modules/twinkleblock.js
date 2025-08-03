@@ -2198,7 +2198,7 @@ Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTempla
 
 	var params = $.extend(formData, {
 		messageData: Twinkle.block.blockPresetsInfo[formData.template],
-		usertalk_summary: Twinkle.block.blockPresetsInfo[formData.preset || formData.template].summary, // zhwiki
+		usertalk_summary: Twinkle.block.blockPresetsInfo[formData.template].summary, // zhwiki
 		reason: Twinkle.block.field_template_options.block_reason,
 		disabletalk: Twinkle.block.field_template_options.notalk,
 		noemail: Twinkle.block.field_template_options.noemail_template,
