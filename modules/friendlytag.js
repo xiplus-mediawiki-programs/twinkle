@@ -1113,7 +1113,7 @@ Twinkle.tag.callbacks = {
 					}
 					moveTalkpageText += '}}';
 
-					var moveTalkpage = new Morebits.wiki.Page('Talk:' + params.discussArticle, conv({ hans: '将理由贴进讨论页', hant: '將理由貼進討論頁' }));
+					var moveTalkpage = new Morebits.wiki.Page(params.discussArticle, conv({ hans: '将理由贴进讨论页', hant: '將理由貼進討論頁' }));
 					moveTalkpage.setAppendText(moveTalkpageText);
 					moveTalkpage.setEditSummary(conv({ hans: '请求移动', hant: '請求移動' }) + (params.moveTarget ? '至[[' + params.moveTarget + ']]' : ''));
 					moveTalkpage.setChangeTags(Twinkle.changeTags);
@@ -1278,7 +1278,8 @@ Twinkle.tag.callbacks = {
 						if (params.moveTarget) {
 							// normalize the move target for now and later
 							params.moveTarget = Morebits.string.toUpperCaseFirstChar(params.moveTarget.replace(/_/g, ' '));
-							params.discussArticle = mw.config.get('wgTitle');
+							var discussArticleLink = $('#ca-talk a').attr('href');
+							params.discussArticle = decodeURIComponent(discussArticleLink.match(/((Draft_)?[Tt]alk:[^&]*)/)[1]);
 							currentTag += '|' + params.moveTarget;
 						}
 						break;
