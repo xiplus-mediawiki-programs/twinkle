@@ -749,9 +749,9 @@ Twinkle.speedy.draftList = [
 
 Twinkle.speedy.userList = [
 	{
-		label: conv({ hans: 'O1: 用户请求删除自己的用户页或其子页面', hant: 'O1: 使用者請求刪除自己的使用者頁面或其子頁面' }),
+		label: conv({ hans: 'O1: 用户请求删除自己的用户页或用户子页面', hant: 'O1: 使用者請求刪除自己的使用者頁面或使用者子頁面' }),
 		value: 'o1',
-		tooltip: conv({ hans: '除了自己的用户页，只要是移动而来的页面，皆须附有合理原因。', hant: '除了自己的使用者頁面，只要是移動而來的頁面，皆須附有合理原因。' })
+		tooltip: conv({ hans: '如果页面曾位于该用户的用户命名空间（User）外，提请须附有合理原因。', hant: '如果頁面曾位於該用戶的用戶命名空間（User）外，提請須附有合理原因。' })
 	}
 ];
 
