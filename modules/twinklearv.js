@@ -787,7 +787,6 @@ Twinkle.arv.callback.evaluate = function(e) {
 			var uaaPage = new Morebits.wiki.Page('Wikipedia:管理员布告板/不当用户名', conv({ hans: '处理UAA请求', hant: '處理UAA請求' }));
 			uaaPage.setFollowRedirect(true);
 
-
 			uaaPage.load(function() {
 				var text = uaaPage.getPageText();
 
