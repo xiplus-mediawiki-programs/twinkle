@@ -768,7 +768,15 @@ Twinkle.close.callbacks = {
 		var params = pageobj.getCallbackParameters();
 
 		var lines = params.text.replace(/<!-- Twinkle:.+-->\n?/, '').trim().split('\n');
+
+		var findsourcesPos = lines.findIndex(line => line.includes('{{Findsources'));
+		// we assume that no one will leave msg between title and {{Findsources}}, or some msgs will disappear
+		// and on a basis of that, actually we can use ... ? 2 : 1 here
+		var slicePos = findsourcesPos !== -1 ? findsourcesPos + 1 : 1;
 		var appendText = '\n{{safesubst:SafeAfdHead}}\n' + lines[0] + '\n';
+		if (findsourcesPos !== -1) {
+			appendText += lines[findsourcesPos] + '\n\n';
+		}
 		if (params.batchText) {
 			var bar = params.batchText.split('\n----\n');
 			var comment = bar[bar.length - 1];
@@ -779,7 +787,7 @@ Twinkle.close.callbacks = {
 				Morebits.Status.warn(conv({ hans: '信息', hant: '資訊' }), conv({ hans: '无法解析批量提删理据', hant: '無法解析批量提刪理據' }));
 			}
 		}
-		appendText += lines.slice(1).join('\n') + '\n{{subst:Relist';
+		appendText += lines.slice(slicePos).join('\n') + '\n{{subst:Relist';
 		if (params.comment) {
 			appendText += '|1=' + params.comment;
 		}
