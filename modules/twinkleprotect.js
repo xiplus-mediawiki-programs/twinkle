@@ -257,7 +257,6 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 						if (e.target.value === 'custom') {
 							Twinkle.protect.doCustomExpiry(e.target);
 						}
-						$('input[name=small]', $(e.target).closest('form'))[0].checked = e.target.selectedIndex >= 4; // 1 month
 					},
 					// default expiry selection (2 days) is conditionally set in Twinkle.protect.callback.changePreset
 					list: Twinkle.protect.protectionLengths
@@ -353,11 +352,6 @@ Twinkle.protect.callback.changeAction = function twinkleprotectCallbackChangeAct
 			field1.append({
 				type: 'checkbox',
 				list: [
-					{
-						name: 'small',
-						label: conv({ hans: '使用图标（small=yes）', hant: '使用圖示（small=yes）' }),
-						tooltip: conv({ hans: '将给模板加上|small=yes参数，显示成右上角的一把挂锁。', hant: '將給模板加上|small=yes參數，顯示成右上角的一把掛鎖。' })
-					},
 					{
 						name: 'noinclude',
 						label: conv({ hans: '用&lt;noinclude&gt;包裹保护模板', hant: '用&lt;noinclude&gt;包裹保護模板' }),
@@ -474,7 +468,7 @@ Twinkle.protect.formevents = {
 		e.target.form.createexpiry.disabled = e.target.value === 'all';
 	},
 	tagtype: function twinkleprotectFormTagtypeEvent(e) {
-		e.target.form.small.disabled = e.target.form.noinclude.disabled = e.target.form.showexpiry.disabled = (e.target.value === 'none') || (e.target.value === 'noop');
+		e.target.form.noinclude.disabled = e.target.form.showexpiry.disabled = (e.target.value === 'none') || (e.target.value === 'noop');
 	}
 };
 
@@ -820,7 +814,6 @@ Twinkle.protect.callback.evaluate = function twinkleprotectCallbackEvaluate(e) {
 			tag: input.tagtype,
 			reason: (input.tagtype === 'pp-protected' || input.tagtype === 'pp-semi-protected' || input.tagtype === 'pp-move') && input.protectReason ? input.protectReason : null,
 			showexpiry: input.actiontype === 'protect' ? input.showexpiry : null,
-			small: input.small,
 			noinclude: input.noinclude
 		};
 		if (input.actiontype === 'protect') {
@@ -1120,9 +1113,6 @@ Twinkle.protect.callbacks = {
 			}
 			if (params.showexpiry && params.expiry && !Morebits.string.isInfinity(params.expiry)) {
 				tag += '|expiry={{subst:#time:c|' + params.expiry + '}}';
-			}
-			if (params.small) {
-				tag += '|small=yes';
 			}
 
 			if (/^\s*#(?:redirect|重定向|重新導向)/i.test(text)) { // redirect page
