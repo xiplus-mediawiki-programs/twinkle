@@ -317,8 +317,8 @@ Twinkle.batchdelete.deletereasonlist = [
 		value: conv({ hans: '[[Wikipedia:CSD#F10|F10]]: 可被替代的非自由著作权文件', hant: '[[Wikipedia:CSD#F10|F10]]: 可被替代的非自由版權檔案' })
 	},
 	{
-		label: conv({ hans: 'O1: 用户请求删除自己的用户页或其子页面', hant: 'O1: 使用者請求刪除自己的使用者頁面或其子頁面' }),
-		value: conv({ hans: '[[Wikipedia:CSD#O1|O1]]: 用户请求删除自己的[[Help:用户页|用户页]]或其子页面。', hant: '[[Wikipedia:CSD#O1|O1]]: 使用者請求刪除自己的[[Help:用户页|使用者頁面]]或其子頁面。' })
+		label: conv({ hans: 'U1: 用户请求删除自己的用户页或其子页面', hant: 'U1: 使用者請求刪除自己的使用者頁面或其子頁面' }),
+		value: conv({ hans: '[[Wikipedia:CSD#U1|U1]]: 用户请求删除自己的[[Help:用户页|用户页]]或其子页面。', hant: '[[Wikipedia:CSD#U1|U1]]: 使用者請求刪除自己的[[Help:用户页|使用者頁面]]或其子頁面。' })
 	},
 	{
 		label: conv({ hans: 'O4: 空的分类（没有条目也没有子分类）', hant: 'O4: 空的分類（沒有條目也沒有子分類）' }),

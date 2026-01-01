@@ -361,13 +361,6 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.userList, mode) });
 			break;
 
-		case 3:  // user talk
-			if (mw.util.isIPAddress(mw.config.get('wgRelevantUserName'))) {
-				work_area.append({ type: 'header', label: conv({ hans: '用户讨论页', hant: '使用者討論頁' }) });
-				work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.usertalkList, mode) });
-			}
-			break;
-
 		case 6:  // file
 			work_area.append({ type: 'header', label: conv({ hans: '文件', hant: '檔案' }) });
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.fileList, mode) });
@@ -742,7 +735,7 @@ Twinkle.speedy.categoryList = [
 	{
 		label: conv({ hans: 'O4: 空分类', hant: 'O4: 空分類' }),
 		value: 'o4',
-		tooltip: conv({ hans: '该分类无收录任何页面或子分类。<br>不适用于Category:不要删除的分类中的空分类。', hant: '該分類無收錄任何頁面或子分類。<br>不適用於Category:不要刪除的分類中的空分類。' })
+		tooltip: conv({ hans: '该分类无收录任何页面或子分类。<br>不适用于Category:不要删除的分类中的空分类。<br>如对分类去留存在争议，应移交页面存废讨论处理。此准则亦不适用已移交页面存废讨论且正在讨论中的分类。', hant: '該分類無收錄任何頁面或子分類。<br>不適用於Category:不要刪除的分類中的空分類。<br>如對分類去留存在爭議，應移交頁面存廢討論處理。此準則亦不適用已移交頁面存廢討論且正在討論中的分類。' })
 	}
 ];
 
@@ -750,23 +743,20 @@ Twinkle.speedy.draftList = [
 	{
 		label: conv({ hans: 'O7: 废弃草稿', hant: 'O7: 廢棄草稿' }),
 		value: 'o7',
-		tooltip: conv({ hans: '任何六个月内无编辑的草稿命名空间页面。', hant: '任何六個月內無編輯的草稿命名空間頁面。' })
+		tooltip: conv({ hans: '任何六个月内无编辑的草稿命名空间页面。<br>若相关编辑为机器人编辑或属维护性操作，相关编辑应视同不存在。', hant: '任何六個月內無編輯的草稿命名空間頁面。<br>若相關編輯為機械人編輯或屬維護性操作，相關編輯應視同不存在。' })
 	}
 ];
 
 Twinkle.speedy.userList = [
 	{
-		label: conv({ hans: 'O1: 用户请求删除自己的用户页或用户子页面', hant: 'O1: 使用者請求刪除自己的使用者頁面或使用者子頁面' }),
-		value: 'o1',
+		label: conv({ hans: 'U1: 用户请求删除自己的用户页或用户子页面', hant: 'U1: 使用者請求刪除自己的使用者頁面或使用者子頁面' }),
+		value: 'u1',
 		tooltip: conv({ hans: '如果页面曾位于该用户的用户命名空间（User）外，提请须附有合理原因。', hant: '如果頁面曾位於該用戶的用戶命名空間（User）外，提請須附有合理原因。' })
-	}
-];
-
-Twinkle.speedy.usertalkList = [
+	},
 	{
-		label: conv({ hans: 'O3: 已超过一个月未有编辑动作的IP用户的用户讨论页，且已完成存档', hant: 'O3: 已超過一個月未有編輯動作的IP用戶的用戶討論頁，且已完成存檔' }),
-		value: 'o3',
-		tooltip: conv({ hans: '避免给使用同一IP地址的用户带来混淆。<br>不适用于用户讨论页的存档页面。', hant: '避免給使用同一IP位址的使用者帶來混淆。<br>不適用於使用者討論頁的存檔頁面。' })
+		label: conv({ hans: 'U2: 用户不存在', hant: 'U2:  用戶不存在' }),
+		value: 'u2',
+		tooltip: conv({ hans: '不存在对应的本地注册用户，也不存在对应的临时账户的用户自治空间页面。<br>已被全域隐藏的用户在此条视为不存在的用户。<br>其他维基媒体基金会项目的注册用户如无对应本地账户，其用户自治空间页面亦适用此条。', hant: '不存在對應的本地註冊用戶，也不存在對應的臨時帳戶的用戶自治空間頁面。<br>已被全域隱藏的用戶在此條視為不存在的用戶。<br>其他維基媒體基金會項目的註冊用戶如無對應本地帳戶，其用戶自治空間頁面亦適用此條。' })
 	}
 ];
 
@@ -971,8 +961,8 @@ Twinkle.speedy.normalizeHash = {
 	'f5': 'f5',
 	'f6': 'f6',
 	'f7': 'f7',
-	'o1': 'o1',
-	'o3': 'o3',
+	'u1': 'u1',
+	'u2': 'u2',
 	'o4': 'o4',
 	'o7': 'o7'
 };
@@ -1089,7 +1079,7 @@ Twinkle.speedy.callbacks = {
 			// delete talk page
 			if (params.deleteTalkPage &&
 					params.normalized !== 'f7' &&
-					params.normalized !== 'o1' &&
+					params.normalized !== 'u1' &&
 					!document.getElementById('ca-talk').classList.contains('new')) {
 				var talkpage = new Morebits.wiki.Page(mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceNumber') + 1] + ':' + mw.config.get('wgTitle'), conv({ hans: '删除讨论页', hant: '刪除討論頁' }));
 				talkpage.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 已删除页面“' + Morebits.pageNameNorm + '”的讨论页');
@@ -1433,7 +1423,7 @@ Twinkle.speedy.callbacks = {
 			usl.initialText =
 				'这是该用户使用[[WP:TW|Twinkle]]的速删模块做出的[[WP:CSD|快速删除]]提名列表。\n\n' +
 				'如果您不再想保留此日志，请在[[' + Twinkle.getPref('configPage') + '|参数设置]]中关掉，并' +
-				'使用[[WP:CSD#O1|CSD O1]]提交快速删除。' +
+				'使用[[WP:CSD#U1|CSD U1]]提交快速删除。' +
 				(Morebits.userIsSysop ? '\n\n此日志并不记录用Twinkle直接执行的删除。' : '');
 
 			var appendText = '# [[:' + Morebits.pageNameNorm + ']]：';

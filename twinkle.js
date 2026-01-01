@@ -121,7 +121,7 @@ Twinkle.defaultConfig = {
 	speedyWindowWidth: 800,
 	logSpeedyNominations: false,
 	speedyLogPageName: 'CSD日志',
-	noLogOnSpeedyNomination: [ 'o1' ],
+	noLogOnSpeedyNomination: [ 'u1' ],
 	enlargeG11Input: false,
 
 	// Unlink
