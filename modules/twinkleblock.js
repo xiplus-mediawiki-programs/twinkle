@@ -1764,7 +1764,7 @@ Twinkle.block.callback.validateTempAccountExpiry = function twinkleblockCallback
 			var unit = match[2].toLowerCase();
 			blockExpiryDate = new Date(now.getTime() + (num * durationMs[unit]));
 		} else {
-			// if dount, accept
+			// if doubt, accept
 			return true;
 		}
 	}
