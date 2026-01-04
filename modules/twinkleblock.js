@@ -243,7 +243,7 @@ Twinkle.block.processUserInfo = function twinkleblockProcessUserInfo(data, fn) {
 			return e.group;
 		}).indexOf('bot') !== -1;
 
-		Twinkle.block.isTempAccount = !!userinfo.groups && userinfo.groups.indexOf('temp') !== -1;
+		Twinkle.block.isTempAccount = mw.util.isTemporaryUser(relevantUserName);
 		if (Twinkle.block.isTempAccount && userinfo.registration) {
 			var registrationDate = new Date(userinfo.registration);
 			Twinkle.block.tempAccountRegistration = registrationDate;
