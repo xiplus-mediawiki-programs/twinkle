@@ -328,7 +328,7 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 	} else {
 		query.bkusers = Morebits.relevantUserName(true);
 		// groupmemberships only relevant for registered users
-		query.usprop = 'groupmemberships|registration|groups';
+		query.usprop = 'groupmemberships|registration';
 	}
 
 	api.get(query).then(function(data) {
