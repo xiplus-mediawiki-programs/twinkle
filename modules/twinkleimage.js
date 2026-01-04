@@ -63,7 +63,12 @@ Twinkle.image.callback = function twinkleimageCallback() {
 			{
 				label: conv({ hans: '未知著作权或著作权无法被查证（CSD F4）', hant: '未知著作權或著作權無法被查證（CSD F4）' }),
 				value: 'no license',
-				tooltip: conv({ hans: '本文件缺少著作权信息，或声称的著作权信息无法被查证', hant: '本檔案缺少著作權資訊，或聲稱的著作權資訊無法被查證' })
+				tooltip: conv({ hans: '本文件缺少著作权信息，或声称的著作权信息无法被查证', hant: '本檔案缺少著作權資訊，或聲稱的著作權資訊無法被查證' }),
+				subgroup: {
+					name: 'f4_comment',
+					type: 'textarea',
+					label: conv({ hans: '可选的说明：', hant: '可選的說明：' })
+				}
 			},
 			{
 				label: conv({ hans: '来源不明（CSD F3）且未知著作权或著作权无法被查证（CSD F4）', hant: '來源不明（CSD F3）且未知著作權或著作權無法被查證（CSD F4）' }),
@@ -76,9 +81,9 @@ Twinkle.image.callback = function twinkleimageCallback() {
 				tooltip: conv({ hans: '本文件为非自由著作权且没有被条目使用', hant: '本檔案為非自由著作權且沒有被條目使用' })
 			},
 			{
-				label: conv({ hans: '明显侵权之文件（CSD F8）', hant: '明顯侵權之檔案（CSD F8）' }),
+				label: conv({ hans: '上传者宣称拥有文件，但文件可在其他来源找到（CSD F8）', hant: '上載者宣稱擁有檔案，但檔案可在其他來源找到（CSD F8）' }),
 				value: 'no permission',
-				tooltip: conv({ hans: '上传者宣称拥有，而在其他来源找到的文件。或从侵权的来源获取的文件。', hant: '上傳者宣稱擁有，而在其他來源找到的檔案。或從侵權的來源取得的檔案。' }),
+				tooltip: conv({ hans: '涉及版权欺诈的商业图片机构不视为有效的「其他来源」。', hant: '涉及版權欺詐的商業圖片機構不視為有效的「其他來源」。' }),
 				subgroup: {
 					name: 'f8_source',
 					type: 'textarea',
@@ -171,6 +176,9 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		normalized: csdcrit,
 		lognomination: lognomination
 	};
+	if (csdcrit === 'f4') {
+		params.f4_comment = event.target['type.f4_comment'].value;
+	}
 	if (csdcrit === 'f8') {
 		params.f8_source = event.target['type.f8_source'].value;
 	}
@@ -230,6 +238,9 @@ Twinkle.image.callbacks = {
 		switch (params.type) {
 			case 'orphaned fair use':
 				tag = '{{subst:orphaned fair use}}\n';
+				break;
+			case 'no license':
+				tag = '{{subst:' + params.templatename + '/auto|1=' + (params.f4_comment ? params.f4_comment.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^*])/gm, '* $1').replace(/^\* $/m, '') : '') + '}}\n';
 				break;
 			case 'no permission':
 				tag = '{{subst:' + params.templatename + '/auto|1=' + params.f8_source.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^*])/gm, '* $1').replace(/^\* $/m, '') + '}}\n';
