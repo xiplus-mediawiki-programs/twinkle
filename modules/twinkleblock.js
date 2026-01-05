@@ -242,8 +242,21 @@ Twinkle.block.processUserInfo = function twinkleblockProcessUserInfo(data, fn) {
 		Twinkle.block.userIsBot = !!userinfo.groupmemberships && userinfo.groupmemberships.map(function(e) {
 			return e.group;
 		}).indexOf('bot') !== -1;
+
+		Twinkle.block.isTempAccount = mw.util.isTemporaryUser(relevantUserName);
+		if (Twinkle.block.isTempAccount && userinfo.registration) {
+			var registrationDate = new Date(userinfo.registration);
+			Twinkle.block.tempAccountRegistration = registrationDate;
+			Twinkle.block.tempAccountExpiry = new Date(registrationDate.getTime() + (90 * 24 * 60 * 60 * 1000));
+		} else {
+			Twinkle.block.tempAccountRegistration = null;
+			Twinkle.block.tempAccountExpiry = null;
+		}
 	} else {
 		Twinkle.block.userIsBot = false;
+		Twinkle.block.isTempAccount = false;
+		Twinkle.block.tempAccountRegistration = null;
+		Twinkle.block.tempAccountExpiry = null;
 	}
 
 	if (blockinfo) {
@@ -290,7 +303,7 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 	} else {
 		query.bkusers = Morebits.relevantUserName(true);
 		// groupmemberships only relevant for registered users
-		query.usprop = 'groupmemberships';
+		query.usprop = 'groupmemberships|registration';
 	}
 
 	api.get(query).then(function(data) {
@@ -441,24 +454,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			name: 'expiry_preset',
 			label: conv({ hans: '过期时间：', hant: '過期時間：' }),
 			event: Twinkle.block.callback.change_expiry,
-			list: [
-				{ label: conv({ hans: '自定义', hant: '自訂' }), value: 'custom', selected: true },
-				{ label: conv({ hans: '无限期', hant: '無限期' }), value: 'infinity' },
-				{ label: conv({ hans: '3小时', hant: '3小時' }), value: '3 hours' },
-				{ label: conv({ hans: '12小时', hant: '12小時' }), value: '12 hours' },
-				{ label: '1天', value: '1 day' },
-				{ label: conv({ hans: '31小时', hant: '31小時' }), value: '31 hours' },
-				{ label: '2天', value: '2 days' },
-				{ label: '3天', value: '3 days' },
-				{ label: conv({ hans: '1周', hant: '1週' }), value: '1 week' },
-				{ label: conv({ hans: '2周', hant: '2週' }), value: '2 weeks' },
-				{ label: conv({ hans: '1个月', hant: '1個月' }), value: '1 month' },
-				{ label: conv({ hans: '3个月', hant: '3個月' }), value: '3 months' },
-				{ label: conv({ hans: '6个月', hant: '6個月' }), value: '6 months' },
-				{ label: '1年', value: '1 year' },
-				{ label: '2年', value: '2 years' },
-				{ label: '3年', value: '3 years' }
-			]
+			list: Twinkle.block.callback.generateExpiryList()
 		});
 		field_block_options.append({
 			type: 'input',
@@ -467,6 +463,14 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			tooltip: conv({ hans: '您可以使用相对时间，如“1 minute”或“19 days”；或绝对时间，“yyyymmddhhmm”（如“200602011405”是2006年2月1日14:05 UTC。）', hant: '您可以使用相對時間，如「1 minute」或「19 days」；或絕對時間，「yyyymmddhhmm」（如「200602011405」是2006年2月1日14:05 UTC。）' }),
 			value: Twinkle.block.field_block_options.expiry || Twinkle.block.field_template_options.template_expiry
 		});
+
+		if (Twinkle.block.isTempAccount && Twinkle.block.tempAccountExpiry) {
+			field_block_options.append({
+				type: 'div',
+				name: 'tempaccountinfo',
+				label: conv({ hans: '临时账号到期时间：', hant: '臨時帳號到期時間：' }) + Twinkle.block.tempAccountExpiry.toLocaleString()
+			});
+		}
 
 		if (partialBox) { // Partial block
 			field_block_options.append({
@@ -1644,14 +1648,139 @@ Twinkle.block.callback.change_preset = function twinkleblockCallbackChangePreset
 	}
 };
 
+Twinkle.block.callback.generateExpiryList = function twinkleblockCallbackGenerateExpiryList() {
+	var allOptions = [
+		{ label: conv({ hans: '自定义', hant: '自訂' }), value: 'custom', selected: true },
+		{ label: conv({ hans: '无限期', hant: '無限期' }), value: 'infinity' },
+		{ label: conv({ hans: '3小时', hant: '3小時' }), value: '3 hours' },
+		{ label: conv({ hans: '12小时', hant: '12小時' }), value: '12 hours' },
+		{ label: '1天', value: '1 day' },
+		{ label: conv({ hans: '31小时', hant: '31小時' }), value: '31 hours' },
+		{ label: '2天', value: '2 days' },
+		{ label: '3天', value: '3 days' },
+		{ label: conv({ hans: '1周', hant: '1週' }), value: '1 week' },
+		{ label: conv({ hans: '2周', hant: '2週' }), value: '2 weeks' },
+		{ label: conv({ hans: '1个月', hant: '1個月' }), value: '1 month' },
+		{ label: conv({ hans: '3个月', hant: '3個月' }), value: '3 months' },
+		{ label: conv({ hans: '6个月', hant: '6個月' }), value: '6 months' },
+		{ label: '1年', value: '1 year' },
+		{ label: '2年', value: '2 years' },
+		{ label: '3年', value: '3 years' }
+	];
+
+	// not a temp account: all options
+	if (!Twinkle.block.isTempAccount || !Twinkle.block.tempAccountExpiry) {
+		return allOptions;
+	}
+
+	// temp account: filter options
+	var now = new Date();
+	var tempExpiry = Twinkle.block.tempAccountExpiry;
+	var remainingMs = tempExpiry.getTime() - now.getTime();
+
+	var durationMs = {
+		'3 hours': 3 * 60 * 60 * 1000,
+		'12 hours': 12 * 60 * 60 * 1000,
+		'1 day': 24 * 60 * 60 * 1000,
+		'31 hours': 31 * 60 * 60 * 1000,
+		'2 days': 2 * 24 * 60 * 60 * 1000,
+		'3 days': 3 * 24 * 60 * 60 * 1000,
+		'1 week': 7 * 24 * 60 * 60 * 1000,
+		'2 weeks': 14 * 24 * 60 * 60 * 1000,
+		'1 month': 30 * 24 * 60 * 60 * 1000,
+		'3 months': 90 * 24 * 60 * 60 * 1000,
+		'6 months': 180 * 24 * 60 * 60 * 1000,
+		'1 year': 365 * 24 * 60 * 60 * 1000,
+		'2 years': 2 * 365 * 24 * 60 * 60 * 1000,
+		'3 years': 3 * 365 * 24 * 60 * 60 * 1000
+	};
+
+	var filteredOptions = allOptions.filter(function(opt) {
+		if (opt.value === 'custom') {
+			return true;
+		}
+
+		if (opt.value === 'infinity') {
+			return false;
+		}
+
+		var duration = durationMs[opt.value];
+		if (duration) {
+			return duration <= remainingMs;
+		}
+		return true;
+	});
+
+	filteredOptions.splice(1, 0, {
+		label: conv({ hans: '无限期（事实上）', hant: '無限期（事實上）' }),
+		value: 'tempaccountindefinity'
+	});
+
+	return filteredOptions;
+};
+
 Twinkle.block.callback.change_expiry = function twinkleblockCallbackChangeExpiry(e) {
 	var expiry = e.target.form.expiry;
 	if (e.target.value === 'custom') {
 		Morebits.QuickForm.setElementVisibility(expiry.parentNode, true);
+	} else if (e.target.value === 'tempaccountindefinity') {
+		Morebits.QuickForm.setElementVisibility(expiry.parentNode, false);
+		expiry.value = Twinkle.block.tempAccountExpiry.toGMTString();
 	} else {
 		Morebits.QuickForm.setElementVisibility(expiry.parentNode, false);
 		expiry.value = e.target.value;
 	}
+};
+
+Twinkle.block.callback.validateTempAccountExpiry = function twinkleblockCallbackValidateTempAccountExpiry(expiryValue) {
+	if (!Twinkle.block.isTempAccount || !Twinkle.block.tempAccountExpiry) {
+		return true;
+	}
+
+	var now = new Date();
+	var blockExpiryDate;
+
+	if (Morebits.string.isInfinity(expiryValue)) {
+		blockExpiryDate = new Date(8640000000000000); // Max date
+	} else if (Date.parse(expiryValue)) {
+		blockExpiryDate = new Date(expiryValue);
+	} else {
+		// relative time
+		var durationMs = {
+			hours: 60 * 60 * 1000,
+			hour: 60 * 60 * 1000,
+			days: 24 * 60 * 60 * 1000,
+			day: 24 * 60 * 60 * 1000,
+			weeks: 7 * 24 * 60 * 60 * 1000,
+			week: 7 * 24 * 60 * 60 * 1000,
+			months: 30 * 24 * 60 * 60 * 1000,
+			month: 30 * 24 * 60 * 60 * 1000,
+			years: 365 * 24 * 60 * 60 * 1000,
+			year: 365 * 24 * 60 * 60 * 1000
+		};
+		var match = expiryValue.match(/(\d+)\s*(hours?|days?|weeks?|months?|years?)/i);
+		if (match) {
+			var num = parseInt(match[1], 10);
+			var unit = match[2].toLowerCase();
+			blockExpiryDate = new Date(now.getTime() + (num * durationMs[unit]));
+		} else {
+			// if doubt, accept
+			return true;
+		}
+	}
+
+	if (blockExpiryDate > Twinkle.block.tempAccountExpiry) {
+		var registrationStr = Twinkle.block.tempAccountRegistration.toLocaleString();
+		var expiryStr = Twinkle.block.tempAccountExpiry.toLocaleString();
+		var message = conv({
+			hans: '该临时账号于' + registrationStr + '创建，即于' + expiryStr + '到期，为避免不必要地占据封禁列表，建议不要设定超过到期时间的封禁期限。\n是否继续设置本期限？',
+			hant: '該臨時帳號於' + registrationStr + '創建，即於' + expiryStr + '到期，為避免不必要地佔據封鎖列表，建議不要設定超過到期時間的封鎖期限。\n是否繼續設置本期限？'
+		});
+		if (!confirm(message)) {
+			return Twinkle.block.tempAccountExpiry.toGMTString();
+		}
+	}
+	return true;
 };
 
 Twinkle.block.seeAlsos = [];
@@ -1683,18 +1812,24 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 
 	// don't override original expiry if useInitialOptions is set
 	if (!data.useInitialOptions) {
-		if (Date.parse(expiry)) {
+		if (Twinkle.block.isTempAccount && Twinkle.block.tempAccountExpiry && Morebits.string.isInfinity(expiry)) {
+			expiry = Twinkle.block.tempAccountExpiry.toGMTString();
+			form.expiry_preset.value = 'tempaccountindefinity';
+			form.expiry.value = expiry;
+			Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, false);
+		} else if (Date.parse(expiry)) {
 			expiry = new Date(expiry).toGMTString();
 			form.expiry_preset.value = 'custom';
-		} else {
-			form.expiry_preset.value = data.expiry || 'custom';
-		}
-
-		form.expiry.value = expiry;
-		if (form.expiry_preset.value === 'custom') {
+			form.expiry.value = expiry;
 			Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, true);
 		} else {
-			Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, false);
+			form.expiry_preset.value = data.expiry || 'custom';
+			form.expiry.value = expiry;
+			if (form.expiry_preset.value === 'custom') {
+				Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, true);
+			} else {
+				Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, false);
+			}
 		}
 	}
 
@@ -1954,6 +2089,14 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		} else if (Morebits.string.isInfinity(blockoptions.expiry) && !Twinkle.block.isRegistered) {
 			return alert(conv({ hans: '禁止无限期封禁IP地址！', hant: '禁止無限期封鎖IP位址！' }));
 		}
+
+		if (Twinkle.block.isTempAccount && Twinkle.block.tempAccountExpiry) {
+			var validationResult = Twinkle.block.callback.validateTempAccountExpiry(blockoptions.expiry);
+			if (validationResult !== true) {
+				blockoptions.expiry = validationResult;
+			}
+		}
+
 		if (!blockoptions.reason) {
 			return alert(conv({ hans: '请提供封禁理由！', hant: '請提供封鎖理由！' }));
 		}
