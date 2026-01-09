@@ -242,8 +242,46 @@ Twinkle.block.processUserInfo = function twinkleblockProcessUserInfo(data, fn) {
 		Twinkle.block.userIsBot = !!userinfo.groupmemberships && userinfo.groupmemberships.map(function(e) {
 			return e.group;
 		}).indexOf('bot') !== -1;
+		var advancedGroups = {
+			'abusefilter': conv({ hans: '过滤器编辑者', hant: '過濾器編輯者' }),
+			'abusefilter-helper': conv({ hans: '过滤器助理', hant: '過濾器助理' }),
+			'accountcreator': conv({ hans: '大量账号创建者', hant: '大量賬號創建者' }),
+			'autoreviewer': '巡查豁免者',
+			'confirmed': conv({ hans: '确认用户', hant: '確認用戶' }),
+			'electionclerk': conv({ hans: '选举助理', hant: '選舉助理' }),
+			'event-organizer': conv({ hans: '活动组织者', hant: '活動組織者' }),
+			'filemover': conv({ hans: '文件移动员', hant: '檔案移動員' }),
+			'ipblock-exempt': conv({ hans: 'IP封禁豁免', hant: 'IP封鎖豁免' }),
+			'ipblock-exempt-grantor': conv({ hans: 'IP封禁豁免权授予者', hant: 'IP封鎖豁免權授予者' }),
+			'massmessage-sender': conv({ hans: '大量消息发送者', hant: '大量訊息傳送者' }),
+			'patroller': conv({ hans: '巡查员', hant: '巡查員' }),
+			'rollbacker': conv({ hans: '回退员', hant: '回退員' }),
+			'templateeditor': conv({ hans: '模板编辑员', hant: '模板編輯員' }),
+			'temporary-account-viewer': conv({ hans: '临时账户IP查看者', hant: '臨時帳號IP檢視者' }),
+			'transwiki': conv({ hans: '跨维基导入者', hant: '跨維基匯入者' })
+		};
+		Twinkle.block.userAdvancedGroups = userinfo.groupmemberships
+			? userinfo.groupmemberships.filter(function(e) {
+				return Object.prototype.hasOwnProperty.call(advancedGroups, e.group);
+			}).map(function(e) {
+				return advancedGroups[e.group];
+			})
+			: [];
+		Twinkle.block.isTempAccount = mw.util.isTemporaryUser(Morebits.relevantUserName(true));
+		if (Twinkle.block.isTempAccount && userinfo.registration) {
+			var registrationDate = new Morebits.Date(userinfo.registration);
+			Twinkle.block.tempAccountRegistration = registrationDate;
+			Twinkle.block.tempAccountExpiry = new Morebits.Date(registrationDate.getTime() + (90 * 24 * 60 * 60 * 1000));
+		} else {
+			Twinkle.block.tempAccountRegistration = null;
+			Twinkle.block.tempAccountExpiry = null;
+		}
 	} else {
 		Twinkle.block.userIsBot = false;
+		Twinkle.block.userAdvancedGroups = [];
+		Twinkle.block.isTempAccount = false;
+		Twinkle.block.tempAccountRegistration = null;
+		Twinkle.block.tempAccountExpiry = null;
 	}
 
 	if (blockinfo) {
@@ -290,7 +328,7 @@ Twinkle.block.fetchUserInfo = function twinkleblockFetchUserInfo(fn) {
 	} else {
 		query.bkusers = Morebits.relevantUserName(true);
 		// groupmemberships only relevant for registered users
-		query.usprop = 'groupmemberships';
+		query.usprop = 'groupmemberships|registration';
 	}
 
 	api.get(query).then(function(data) {
@@ -436,29 +474,13 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		field_block_options = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '封禁选项', hant: '封鎖選項' }), name: 'field_block_options' });
 		field_block_options.append({ type: 'div', name: 'currentblock', label: ' ' });
 		field_block_options.append({ type: 'div', name: 'hasblocklog', label: ' ' });
+		field_block_options.append({ type: 'div', name: 'tempaccountexpiry', label: ' ' });
 		field_block_options.append({
 			type: 'select',
 			name: 'expiry_preset',
 			label: conv({ hans: '过期时间：', hant: '過期時間：' }),
 			event: Twinkle.block.callback.change_expiry,
-			list: [
-				{ label: conv({ hans: '自定义', hant: '自訂' }), value: 'custom', selected: true },
-				{ label: conv({ hans: '无限期', hant: '無限期' }), value: 'infinity' },
-				{ label: conv({ hans: '3小时', hant: '3小時' }), value: '3 hours' },
-				{ label: conv({ hans: '12小时', hant: '12小時' }), value: '12 hours' },
-				{ label: '1天', value: '1 day' },
-				{ label: conv({ hans: '31小时', hant: '31小時' }), value: '31 hours' },
-				{ label: '2天', value: '2 days' },
-				{ label: '3天', value: '3 days' },
-				{ label: conv({ hans: '1周', hant: '1週' }), value: '1 week' },
-				{ label: conv({ hans: '2周', hant: '2週' }), value: '2 weeks' },
-				{ label: conv({ hans: '1个月', hant: '1個月' }), value: '1 month' },
-				{ label: conv({ hans: '3个月', hant: '3個月' }), value: '3 months' },
-				{ label: conv({ hans: '6个月', hant: '6個月' }), value: '6 months' },
-				{ label: '1年', value: '1 year' },
-				{ label: '2年', value: '2 years' },
-				{ label: '3年', value: '3 years' }
-			]
+			list: Twinkle.block.callback.generateExpiryList()
 		});
 		field_block_options.append({
 			type: 'input',
@@ -554,6 +576,15 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			name: 'closevip',
 			value: '1'
 		});
+
+		if (Twinkle.block.userAdvancedGroups.length > 0) {
+			blockoptions.push({
+				label: conv({ hans: '申请解除权限：', hant: '申請解除權限：' }) + Twinkle.block.userAdvancedGroups.join('、'),
+				name: 'rfdr',
+				tooltip: conv({ hans: '若认为有审视其所持权限的需要，可将其提报', hant: '若認為有審視其所持權限的需要，可將其提報' }),
+				value: '1'
+			});
+		}
 
 		field_block_options.append({
 			type: 'checkbox',
@@ -1041,6 +1072,16 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		Twinkle.block.callback.change_preset(e);
 	} else if (templateBox) {
 		Twinkle.block.callback.change_template(e);
+	}
+
+	if (Twinkle.block.isTempAccount && Twinkle.block.tempAccountExpiry) {
+		var valid = Twinkle.block.tempAccountExpiry.getTime() - new Date().getTime();
+		Morebits.Status.init($('div[name="tempaccountexpiry"] span').last()[0]);
+		if (valid > 0) {
+			Morebits.Status.info(conv({ hans: '临时账号到期时间', hant: '臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.calendar('utc'));
+		} else {
+			Morebits.Status.warn(conv({ hans: '（已过期）临时账号到期时间', hant: '（已過期）臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.calendar('utc'));
+		}
 	}
 };
 
@@ -1644,14 +1685,139 @@ Twinkle.block.callback.change_preset = function twinkleblockCallbackChangePreset
 	}
 };
 
+Twinkle.block.callback.generateExpiryList = function twinkleblockCallbackGenerateExpiryList() {
+	var allOptions = [
+		{ label: conv({ hans: '自定义', hant: '自訂' }), value: 'custom', selected: true },
+		{ label: conv({ hans: '无限期', hant: '無限期' }), value: 'infinity' },
+		{ label: conv({ hans: '3小时', hant: '3小時' }), value: '3 hours' },
+		{ label: conv({ hans: '12小时', hant: '12小時' }), value: '12 hours' },
+		{ label: '1天', value: '1 day' },
+		{ label: conv({ hans: '31小时', hant: '31小時' }), value: '31 hours' },
+		{ label: '2天', value: '2 days' },
+		{ label: '3天', value: '3 days' },
+		{ label: conv({ hans: '1周', hant: '1週' }), value: '1 week' },
+		{ label: conv({ hans: '2周', hant: '2週' }), value: '2 weeks' },
+		{ label: conv({ hans: '1个月', hant: '1個月' }), value: '1 month' },
+		{ label: conv({ hans: '3个月', hant: '3個月' }), value: '3 months' },
+		{ label: conv({ hans: '6个月', hant: '6個月' }), value: '6 months' },
+		{ label: '1年', value: '1 year' },
+		{ label: '2年', value: '2 years' },
+		{ label: '3年', value: '3 years' }
+	];
+
+	// not a temp account: all options
+	if (!Twinkle.block.isTempAccount || !Twinkle.block.tempAccountExpiry) {
+		return allOptions;
+	}
+
+	// temp account: filter options
+	var now = new Date();
+	var tempExpiry = Twinkle.block.tempAccountExpiry;
+	var remainingMs = tempExpiry.getTime() - now.getTime();
+
+	var durationMs = {
+		'3 hours': 3 * 60 * 60 * 1000,
+		'12 hours': 12 * 60 * 60 * 1000,
+		'1 day': 24 * 60 * 60 * 1000,
+		'31 hours': 31 * 60 * 60 * 1000,
+		'2 days': 2 * 24 * 60 * 60 * 1000,
+		'3 days': 3 * 24 * 60 * 60 * 1000,
+		'1 week': 7 * 24 * 60 * 60 * 1000,
+		'2 weeks': 14 * 24 * 60 * 60 * 1000,
+		'1 month': 30 * 24 * 60 * 60 * 1000,
+		'3 months': 90 * 24 * 60 * 60 * 1000,
+		'6 months': 180 * 24 * 60 * 60 * 1000,
+		'1 year': 365 * 24 * 60 * 60 * 1000,
+		'2 years': 2 * 365 * 24 * 60 * 60 * 1000,
+		'3 years': 3 * 365 * 24 * 60 * 60 * 1000
+	};
+
+	var filteredOptions = allOptions.filter(function(opt) {
+		if (opt.value === 'custom') {
+			return true;
+		}
+
+		if (opt.value === 'infinity') {
+			return false;
+		}
+
+		var duration = durationMs[opt.value];
+		if (duration) {
+			return duration <= remainingMs;
+		}
+		return true;
+	});
+
+	filteredOptions.splice(1, 0, {
+		label: conv({ hans: '无限期（事实上）', hant: '無限期（事實上）' }),
+		value: 'tempaccountindefinity'
+	});
+
+	return filteredOptions;
+};
+
 Twinkle.block.callback.change_expiry = function twinkleblockCallbackChangeExpiry(e) {
 	var expiry = e.target.form.expiry;
 	if (e.target.value === 'custom') {
 		Morebits.QuickForm.setElementVisibility(expiry.parentNode, true);
+	} else if (e.target.value === 'tempaccountindefinity') {
+		Morebits.QuickForm.setElementVisibility(expiry.parentNode, false);
+		expiry.value = Twinkle.block.tempAccountExpiry.toGMTString();
 	} else {
 		Morebits.QuickForm.setElementVisibility(expiry.parentNode, false);
 		expiry.value = e.target.value;
 	}
+};
+
+Twinkle.block.callback.validateTempAccountExpiry = function twinkleblockCallbackValidateTempAccountExpiry(expiryValue) {
+	if (!Twinkle.block.isTempAccount || !Twinkle.block.tempAccountExpiry) {
+		return true;
+	}
+
+	var now = new Date();
+	var blockExpiryDate;
+
+	if (Morebits.string.isInfinity(expiryValue)) {
+		blockExpiryDate = new Date(8640000000000000); // Max date
+	} else if (Date.parse(expiryValue)) {
+		blockExpiryDate = new Date(expiryValue);
+	} else {
+		// relative time
+		var durationMs = {
+			hours: 60 * 60 * 1000,
+			hour: 60 * 60 * 1000,
+			days: 24 * 60 * 60 * 1000,
+			day: 24 * 60 * 60 * 1000,
+			weeks: 7 * 24 * 60 * 60 * 1000,
+			week: 7 * 24 * 60 * 60 * 1000,
+			months: 30 * 24 * 60 * 60 * 1000,
+			month: 30 * 24 * 60 * 60 * 1000,
+			years: 365 * 24 * 60 * 60 * 1000,
+			year: 365 * 24 * 60 * 60 * 1000
+		};
+		var match = expiryValue.match(/(\d+)\s*(hours?|days?|weeks?|months?|years?)/i);
+		if (match) {
+			var num = parseInt(match[1], 10);
+			var unit = match[2].toLowerCase();
+			blockExpiryDate = new Date(now.getTime() + (num * durationMs[unit]));
+		} else {
+			// if doubt, accept
+			return true;
+		}
+	}
+
+	if (blockExpiryDate > Twinkle.block.tempAccountExpiry) {
+		var registrationStr = Twinkle.block.tempAccountRegistration.calendar('utc');
+		var expiryStr = Twinkle.block.tempAccountExpiry.calendar('utc');
+		var message = conv({
+			hans: '该临时账号于' + registrationStr + '创建，即于' + expiryStr + '到期，为避免不必要地占据封禁列表，建议不要设定超过到期时间的封禁期限。\n是否继续设置本期限？',
+			hant: '該臨時帳號於' + registrationStr + '創建，即於' + expiryStr + '到期，為避免不必要地佔據封鎖列表，建議不要設定超過到期時間的封鎖期限。\n是否繼續設置本期限？'
+		});
+		if (!confirm(message)) {
+			return Twinkle.block.tempAccountExpiry.toGMTString();
+		}
+	}
+	return true;
 };
 
 Twinkle.block.seeAlsos = [];
@@ -1683,18 +1849,24 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 
 	// don't override original expiry if useInitialOptions is set
 	if (!data.useInitialOptions) {
-		if (Date.parse(expiry)) {
+		if (Twinkle.block.isTempAccount && Twinkle.block.tempAccountExpiry && Morebits.string.isInfinity(expiry)) {
+			expiry = Twinkle.block.tempAccountExpiry.toGMTString();
+			form.expiry_preset.value = 'tempaccountindefinity';
+			form.expiry.value = expiry;
+			Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, false);
+		} else if (Date.parse(expiry)) {
 			expiry = new Date(expiry).toGMTString();
 			form.expiry_preset.value = 'custom';
-		} else {
-			form.expiry_preset.value = data.expiry || 'custom';
-		}
-
-		form.expiry.value = expiry;
-		if (form.expiry_preset.value === 'custom') {
+			form.expiry.value = expiry;
 			Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, true);
 		} else {
-			Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, false);
+			form.expiry_preset.value = data.expiry || 'custom';
+			form.expiry.value = expiry;
+			if (form.expiry_preset.value === 'custom') {
+				Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, true);
+			} else {
+				Morebits.QuickForm.setElementVisibility(form.expiry.parentNode, false);
+			}
 		}
 	}
 
@@ -1712,7 +1884,7 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 		if (data.useInitialOptions && data[el.name] === undefined) {
 			return;
 		}
-		if (el.name === 'closevip') {
+		if (['closevip', 'rfdr'].includes(el.name)) {
 			return;
 		}
 
@@ -1864,6 +2036,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	unblockoptions = Twinkle.block.field_unblock_options;
 
 	var toClosevip = !!blockoptions.closevip;
+	var toRfdr = !!blockoptions.rfdr;
 
 	templateoptions = Twinkle.block.field_template_options;
 
@@ -1873,6 +2046,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	// remove extraneous
 	delete blockoptions.expiry_preset;
 	delete blockoptions.closevip;
+	delete blockoptions.rfdr;
 
 	// Partial API requires this to be gone, not false or 0
 	if (toPartial) {
@@ -1954,6 +2128,14 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 		} else if (Morebits.string.isInfinity(blockoptions.expiry) && !Twinkle.block.isRegistered) {
 			return alert(conv({ hans: '禁止无限期封禁IP地址！', hant: '禁止無限期封鎖IP位址！' }));
 		}
+
+		if (Twinkle.block.isTempAccount && Twinkle.block.tempAccountExpiry) {
+			var validationResult = Twinkle.block.callback.validateTempAccountExpiry(blockoptions.expiry);
+			if (validationResult !== true) {
+				blockoptions.expiry = validationResult;
+			}
+		}
+
 		if (!blockoptions.reason) {
 			return alert(conv({ hans: '请提供封禁理由！', hant: '請提供封鎖理由！' }));
 		}
@@ -2035,7 +2217,6 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				block = data.query.blocks[1];
 			}
 			var logevents = data.query.logevents[0];
-			var user = data.query.users ? data.query.users[0] : null;
 			var logid = data.query.logevents.length ? logevents.logid : false;
 
 			if (logid !== Twinkle.block.blockLogId || !!block !== !!Twinkle.block.currentBlockInfo) {
@@ -2066,24 +2247,6 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				}
 				blockoptions.reblock = 1; // Writing over a block will fail otherwise
 			}
-			var groupsCanBeRemoved = [
-				'autoreviewer',
-				'confirmed',
-				'eventparticipant',
-				'filemover',
-				'ipblock-exempt',
-				'massmessage-sender',
-				'patroller',
-				'rollbacker',
-				'templateeditor',
-				'transwiki'
-			];
-			var groupsToBeRemoved = [];
-			if (user && Morebits.string.isInfinity(blockoptions.expiry)) {
-				groupsToBeRemoved = user.groups.filter(function (group) {
-					return groupsCanBeRemoved.indexOf(group) > -1;
-				});
-			}
 
 			// execute block
 			blockoptions.tags = Twinkle.changeTags;
@@ -2099,24 +2262,11 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 					vipPage.setCallbackParameters(blockoptions);
 					vipPage.load(Twinkle.block.callback.closeRequest);
 				}
-				if (groupsToBeRemoved.length > 0) {
-					var rightStatusElement = new Morebits.Status(conv({ hans: '移除权限', hant: '移除權限' }));
-					if (confirm(conv({ hans: '该用户有以下权限：', hant: '該使用者有以下權限：' }) + groupsToBeRemoved.join('、') + conv({ hans: '，您是否想要同时移除这些权限？', hant: '，您是否想要同時移除這些權限？' }))) {
-						var revokeOptions = {
-							action: 'userrights',
-							user: blockoptions.user,
-							remove: groupsToBeRemoved.join('|'),
-							reason: conv({ hans: '用户已被无限期封禁', hant: '使用者已被無限期封鎖' }),
-							token: data.query.tokens.userrightstoken,
-							tags: Twinkle.changeTags
-						};
-						var mrApi = new Morebits.wiki.Api(conv({ hans: '移除权限', hant: '移除權限' }), revokeOptions, function () {
-							rightStatusElement.info('已移除' + groupsToBeRemoved.join('、'));
-						});
-						mrApi.post();
-					} else {
-						rightStatusElement.error(conv({ hans: '用户取消操作。', hant: '使用者取消操作。' }));
-					}
+				if (toRfdr) {
+					var rfdrPage = new Morebits.wiki.Page('Wikipedia:申请解除权限', conv({ hans: '提报解除权限', hant: '提報解除權限' }));
+					rfdrPage.setFollowRedirect(true);
+					rfdrPage.setCallbackParameters(blockoptions);
+					rfdrPage.load(Twinkle.block.callback.addRevokeReport);
 				}
 			});
 			mbApi.post();
@@ -2271,10 +2421,19 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 	var statusElement = vipPage.getStatusElement();
 	var userName = Morebits.relevantUserName(true);
 
-	var expiryText = Morebits.string.formatTime(params.expiry);
+	var expiryText;
+	if (Twinkle.block.tempAccountExpiry && params.expiry === Twinkle.block.tempAccountExpiry.toGMTString()) {
+		expiryText = conv({ hans: '至临时账号过期（' + new Morebits.Date(Twinkle.block.tempAccountExpiry.toGMTString()).calendar('utc') + '）', hant: '至臨時帳號過期（' + new Morebits.Date(Twinkle.block.tempAccountExpiry.toGMTString()).calendar('utc') + '）' });
+	} else {
+		expiryText = Morebits.string.formatTime(params.expiry);
+		if (expiryText === params.expiry) {
+			expiryText = '至' + expiryText;
+		}
+	}
+
 	var comment = '{{Blocked|' + (Morebits.string.isInfinity(params.expiry) ? 'indef' : expiryText) + '}}。';
 
-	var requestList = text.split(/(?=\n===.+===\s*\n)/);
+	var requestList = text.split(/(?=\n==.+==\s*\n)/);
 
 	var found = false;
 	var hidename = false;
@@ -2319,6 +2478,51 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 	vipPage.setChangeTags(Twinkle.changeTags);
 	vipPage.setPageText(text);
 	vipPage.save();
+};
+
+Twinkle.block.callback.addRevokeReport = function twinkleblockCallbackAddRevokeReport(reportPage) {
+	var params = reportPage.getCallbackParameters();
+	var text = reportPage.getPageText();
+	var statusElement = reportPage.getStatusElement();
+
+	var sectionHeader = /^==\s*已封禁或除权用户复审\s*==$/m;
+	var sectionMatch = sectionHeader.exec(text);
+
+	if (!sectionMatch) {
+		statusElement.error(conv({ hans: '未找到“已封禁或除权用户复审”章节', hant: '未找到「已封禁或除權使用者複審」章節' }));
+		return;
+	}
+
+	var blockTypeText = params.partial ? '被部分封鎖' : '被封鎖';
+	var reportContent = '\n===' + params.user + '===\n' +
+		'*{{vandal|' + params.user + '}}\n' +
+		'*{{Status|新提案}}\n' +
+		'*需複審或解除之權限：' + Twinkle.block.userAdvancedGroups.join('、') + '\n' +
+		('*理由：使用者已因<no' + 'wiki>' + (params.reason || '').replaceAll(/\[\[([^\]]+)\]\]/g, '</no' + 'wiki>[[$1]]<no' + 'wiki>')).replace(new RegExp('<no' + 'wiki></no' + 'wiki>'), '') + blockTypeText + '</no' + 'wiki>，請覆核考慮是否為之除權。\n' +
+		'*提報人：~~~~\n';
+	var sectionStartIndex = sectionMatch.index + sectionMatch[0].length;
+	var remainingText = text.substring(sectionStartIndex);
+	var nextSectionMatch = /^==\s*[^=]+\s*==$/m.exec(remainingText);
+
+	var insertPosition;
+	if (nextSectionMatch) {
+		insertPosition = sectionStartIndex + nextSectionMatch.index;
+	} else {
+		insertPosition = text.length;
+	}
+
+	var newText = text.substring(0, insertPosition).trimRight() + '\n' + reportContent + '\n' + text.substring(insertPosition);
+
+	var summary = '/* ' + params.user + ' */ ' + conv({ hans: '提报解除权限请求', hant: '提報解除權限請求' });
+
+	var userTalkPage = 'User_talk:' + params.user;
+	Morebits.wiki.actionCompleted.redirect = userTalkPage;
+	Morebits.wiki.actionCompleted.notice = conv({ hans: '完成，将在几秒后加载用户讨论页', hant: '完成，將在幾秒後載入使用者討論頁' });
+
+	reportPage.setEditSummary(summary);
+	reportPage.setChangeTags(Twinkle.changeTags);
+	reportPage.setPageText(newText);
+	reportPage.save();
 };
 
 Twinkle.block.callback.getBlockNoticeWikitext = function(params) {

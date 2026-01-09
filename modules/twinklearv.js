@@ -16,7 +16,8 @@ var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.arv = function twinklearv() {
 	var username = Morebits.relevantUserName(true);
-	if (!username) {
+	// disable report of IP addresses, range is ok
+	if (!username || mw.util.isIPAddress(username)) {
 		return;
 	}
 
@@ -307,74 +308,92 @@ Twinkle.arv.callback.changeCategory = function (e) {
 			old_area.parentNode.replaceChild(work_area, old_area);
 			break;
 		case 'username':
-			work_area = new Morebits.QuickForm.Element({
-				type: 'field',
-				label: conv({ hans: '报告不当用户名', hant: '報告不當使用者名稱' }),
-				name: 'work_area'
-			});
-			work_area.append({
-				type: 'header',
-				label: conv({ hans: '不当用户名类型', hant: '不當使用者名稱類別' }),
-				tooltip: conv({
-					hans: '维基百科不允许使用带有误导性、宣传性、侮辱性或破坏性的用户名。此外，使用域名及邮箱地址的用户名亦被禁止。这些准则俱应应用至用户名及签名。在其他语言中不当的用户名或通过错拼、替代、暗示、拆字或任何间接方法达成的非妥当用户名同样视为违规。', hant:
-						'維基百科不允許使用帶有誤導性、宣傳性、侮辱性或破壞性的使用者名稱。此外，使用域名及電子信箱位址的使用者名稱亦被禁止。這些準則俱應應用至使用者名稱及簽名。在其他語言中不當的使用者名稱或通過錯拼、替代、暗示、拆字或任何間接方法達成的非妥當使用者名稱同樣視為違規。'
-				})
-			});
-			work_area.append({
-				type: 'checkbox',
-				name: 'arvtype',
-				list: [
-					{
-						label: conv({ hans: '误导性用户名', hant: '誤導性使用者名稱' }),
-						value: conv({ hans: '误导性', hant: '誤導性' }),
+			// Check if the user is 0 contribs
+			var noContribs;
+			new mw.Api().get({
+				action: 'query',
+				list: 'users',
+				ususers: root.uid.value,
+				usprop: 'editcount',
+				format: 'json'
+			}).then(function(data) {
+				noContribs = !data.query.users[0].editcount;
+				if (noContribs && !confirm(conv({ hans: '用户没有任何编辑。\n根据方针规定，除确认为傀儡或多次遭受骚扰外，不应报告。\n是否继续？', hant: '使用者沒有任何編輯。\n根據方針規定，除確認為傀儡或多次遭受騷擾外，不應報告。\n是否繼續？' }))) {
+					Morebits.Status.init(root);
+					Morebits.Status.error(conv({ hans: '报告用户给管理人员', hant: '報告使用者給管理人員' }), conv({ hans: '用户取消操作', hant: '使用者取消操作' }));
+				} else {
+					work_area = new Morebits.QuickForm.Element({
+						type: 'field',
+						label: conv({ hans: '报告不当用户名', hant: '報告不當使用者名稱' }),
+						name: 'work_area'
+					});
+					work_area.append({
+						type: 'header',
+						label: conv({ hans: '不当用户名类型', hant: '不當使用者名稱類別' }),
 						tooltip: conv({
-							hans: '误导性用户名隐含着与贡献者相关或误导他人的事情。例如︰不实观点、暗示账户拥有特定权限或暗示该账户并非由一人拥有而是由一个组群、一个项目或一个集体运作。', hant:
-								'誤導性使用者名稱隱含著與貢獻者相關或誤導他人的事情。例如︰不實觀點、暗示帳戶擁有特定權限或暗示該帳戶並非由一人擁有而是由一個群組、一個計畫或一個集體運作。'
+							hans: '维基百科不允许使用带有误导性、宣传性、侮辱性或破坏性的用户名。此外，使用域名及邮箱地址的用户名亦被禁止。这些准则俱应应用至用户名及签名。在其他语言中不当的用户名或通过错拼、替代、暗示、拆字或任何间接方法达成的非妥当用户名同样视为违规。', hant:
+						'維基百科不允許使用帶有誤導性、宣傳性、侮辱性或破壞性的使用者名稱。此外，使用域名及電子信箱位址的使用者名稱亦被禁止。這些準則俱應應用至使用者名稱及簽名。在其他語言中不當的使用者名稱或通過錯拼、替代、暗示、拆字或任何間接方法達成的非妥當使用者名稱同樣視為違規。'
 						})
-					},
-					{
-						label: conv({ hans: '宣传性用户名', hant: '宣傳性使用者名稱' }),
-						value: conv({ hans: '宣传性', hant: '宣傳性' }),
-						tooltip: conv({ hans: '宣传性用户名会于维基百科上起推销一个组群或一间公司的作用。', hant: '宣傳性使用者名稱會於維基百科上起推銷一個群組或一間公司的作用。' })
-					},
-					{
-						label: conv({ hans: '暗示并非由一人拥有', hant: '暗示並非由一人擁有' }),
-						value: 'shared',
-						tooltip: conv({ hans: '每个维基账户只可以代表个人（容许一些例外情况），所有与他人分享账户的行为（包括分享账户密码）均被禁止。', hant: '每個維基帳戶只可以代表個人（容許一些例外情況），所有與他人分享帳戶的行為（包括分享帳戶密碼）均被禁止。' })
-					},
-					{
-						label: conv({ hans: '侮辱性用户名', hant: '侮辱性使用者名稱' }),
-						value: '侮辱性',
-						tooltip: conv({ hans: '侮辱性用户名令协调编辑变得困难，甚至无可能。', hant: '侮辱性使用者名稱令協調編輯變得困難，甚至無可能。' })
-					},
-					{
-						label: conv({ hans: '破坏性用户名', hant: '破壞性使用者名稱' }),
-						value: conv({ hans: '破坏性', hant: '破壞性' }),
-						tooltip: conv({ hans: '破坏性用户名包括人身攻击、伪冒他人或其他一切有着清晰可见的破坏维基百科意图的用户名。', hant: '破壞性使用者名稱包括人身攻擊、偽冒他人或其他一切有著清晰可見的破壞維基百科意圖的使用者名稱。' })
-					}
-				]
+					});
+					work_area.append({
+						type: 'checkbox',
+						name: 'arvtype',
+						list: [
+							{
+								label: conv({ hans: '误导性用户名', hant: '誤導性使用者名稱' }),
+								value: conv({ hans: '误导性', hant: '誤導性' }),
+								tooltip: conv({
+									hans: '误导性用户名隐含着与贡献者相关或误导他人的事情。例如︰不实观点、暗示账户拥有特定权限或暗示该账户并非由一人拥有而是由一个组群、一个项目或一个集体运作。', hant:
+								'誤導性使用者名稱隱含著與貢獻者相關或誤導他人的事情。例如︰不實觀點、暗示帳戶擁有特定權限或暗示該帳戶並非由一人擁有而是由一個群組、一個計畫或一個集體運作。'
+								})
+							},
+							{
+								label: conv({ hans: '宣传性用户名', hant: '宣傳性使用者名稱' }),
+								value: conv({ hans: '宣传性', hant: '宣傳性' }),
+								tooltip: conv({ hans: '宣传性用户名会于维基百科上起推销一个组群或一间公司的作用。', hant: '宣傳性使用者名稱會於維基百科上起推銷一個群組或一間公司的作用。' })
+							},
+							{
+								label: conv({ hans: '暗示并非由一人拥有', hant: '暗示並非由一人擁有' }),
+								value: 'shared',
+								tooltip: conv({ hans: '每个维基账户只可以代表个人（容许一些例外情况），所有与他人分享账户的行为（包括分享账户密码）均被禁止。', hant: '每個維基帳戶只可以代表個人（容許一些例外情況），所有與他人分享帳戶的行為（包括分享帳戶密碼）均被禁止。' })
+							},
+							{
+								label: conv({ hans: '侮辱性用户名', hant: '侮辱性使用者名稱' }),
+								value: '侮辱性',
+								tooltip: conv({ hans: '侮辱性用户名令协调编辑变得困难，甚至无可能。', hant: '侮辱性使用者名稱令協調編輯變得困難，甚至無可能。' })
+							},
+							{
+								label: conv({ hans: '破坏性用户名', hant: '破壞性使用者名稱' }),
+								value: conv({ hans: '破坏性', hant: '破壞性' }),
+								tooltip: conv({ hans: '破坏性用户名包括人身攻击、伪冒他人或其他一切有着清晰可见的破坏维基百科意图的用户名。', hant: '破壞性使用者名稱包括人身攻擊、偽冒他人或其他一切有著清晰可見的破壞維基百科意圖的使用者名稱。' })
+							}
+						]
+					});
+					work_area.append({
+						type: 'checkbox',
+						list: [
+							{
+								label: conv({ hans: '在页面上隐藏用户名（需监督的用户名请勿于站内报告，勾选此项并不构成能在站内报告的理由）', hant: '在頁面上隱藏使用者名稱（需監督的使用者名稱請勿於站內報告，勾選此項並不構成能在站內報告的理由）' }),
+								tooltip: conv({ hans: '若用户名不当请勾选此项，注意：请考虑私下联系管理员处理。', hant: '若使用者名稱不當請勾選此項，注意：請考慮私下聯絡管理員處理。' }),
+								name: 'hidename',
+								value: 'hidename'
+							}
+						],
+						style: 'font-weight: bold;'
+					});
+					work_area.append({
+						type: 'textarea',
+						name: 'reason',
+						label: conv({ hans: '评论：', hant: '評論：' })
+					});
+					work_area.append({ type: 'div', id: 'arvpreview', label: [ previewlink ] });
+					work_area.append({ type: 'div', id: 'twinklearv-previewbox', style: 'display: none' });
+					work_area = work_area.render();
+					old_area.parentNode.replaceChild(work_area, old_area);
+				}
+
 			});
-			work_area.append({
-				type: 'checkbox',
-				list: [
-					{
-						label: conv({ hans: '在页面上隐藏用户名（需监督的用户名请勿于站内报告，勾选此项并不构成能在站内报告的理由）', hant: '在頁面上隱藏使用者名稱（需監督的使用者名稱請勿於站內報告，勾選此項並不構成能在站內報告的理由）' }),
-						tooltip: conv({ hans: '若用户名不当请勾选此项，注意：请考虑私下联系管理员处理。', hant: '若使用者名稱不當請勾選此項，注意：請考慮私下聯絡管理員處理。' }),
-						name: 'hidename',
-						value: 'hidename'
-					}
-				],
-				style: 'font-weight: bold;'
-			});
-			work_area.append({
-				type: 'textarea',
-				name: 'reason',
-				label: conv({ hans: '评论：', hant: '評論：' })
-			});
-			work_area.append({ type: 'div', id: 'arvpreview', label: [ previewlink ] });
-			work_area.append({ type: 'div', id: 'twinklearv-previewbox', style: 'display: none' });
-			work_area = work_area.render();
-			old_area.parentNode.replaceChild(work_area, old_area);
+
 			break;
 
 		case 'spi':
@@ -504,7 +523,7 @@ Twinkle.arv.callback.getReportWikitext = function(form) {
 				return;
 			}
 
-			reason += '=== ' + (input.hidename ? conv({ hans: '已隐藏用户名', hant: '已隱藏使用者名稱' }) : uid) + ' ===\n';
+			reason += '== ' + (input.hidename ? conv({ hans: '已隐藏用户名', hant: '已隱藏使用者名稱' }) : uid) + ' ==\n';
 			reason += "* '''{{vandal|" + (/=/.test(uid) ? '1=' : '') + uid;
 			if (input.hidename) {
 				reason += '|hidename=1';
@@ -562,7 +581,7 @@ Twinkle.arv.callback.getReportWikitext = function(form) {
 				alert(conv({ hans: '您必须指定理由', hant: '您必須指定理由' }));
 				return;
 			}
-			reason += '=== ' + uid + ' ===\n';
+			reason += '== ' + uid + ' ==\n';
 			reason += "* '''{{vandal|" + (/=/.test(uid) ? '1=' : '') + uid + "}}'''\n";
 
 			var pages = $.map($('input:text[name=page]', form), function (o) {
@@ -706,7 +725,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				var $aivLink = '<a target="_blank" href="/wiki/WP:VIP">WP:VIP</a>';
 
 				// check if user has already been reported
-				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
+				if (new RegExp('==\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*==').test(text)) {
 					aivPage.getStatusElement().error(conv({ hans: '报告已存在，将不会加入新的', hant: '報告已存在，將不會加入新的' }));
 					Morebits.Status.printUserText(reason[1], conv({ hans: '您输入的评论已在下方提供，您可以将其加入到', hant: '您輸入的評論已在下方提供，您可以將其加入到' }) + $aivLink + conv({ hans: '已存在的小节中：', hant: '已存在的小節中：' }));
 					return;
@@ -742,7 +761,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				var $ewipLink = '<a target="_blank" href="/wiki/WP:EWIP">WP:EWIP</a>';
 
 				// check if user has already been reported
-				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
+				if (new RegExp('==\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*==').test(text)) {
 					ewipPage.getStatusElement().error(conv({ hans: '报告已存在，将不会加入新的', hant: '報告已存在，將不會加入新的' }));
 					Morebits.Status.printUserText(reason[1], conv({ hans: '您输入的评论已在下方提供，您可以将其加入到', hant: '您輸入的評論已在下方提供，您可以將其加入到' }) + $ewipLink + conv({ hans: '已存在的小节中：', hant: '已存在的小節中：' }));
 					return;

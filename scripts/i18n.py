@@ -67,6 +67,7 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:分辨率;zh-hant:解析度}-
 -{H|zh-hans:类型;zh-hant:類別}-
 -{H|zh-hans:账户;zh-hant:帳號}-
+-{H|zh-hans:账户;zh-hant:帳戶}-
 -{H|zh-hans:已在运行;zh-hant:已在執行}-
 -{H|zh-hans:当前;zh-hant:目前}-
 -{H|zh-hans:最近更改;zh-hant:近期變更}-
@@ -83,6 +84,11 @@ noteTA = '''{{NoteTA
 -{H|zh-hans:表单;zh-hant:表單}-
 -{H|zh-hans:扩充;zh-hant:擴充}-
 -{H|zh-hans:文件名称;zh-hant:檔案名稱}-
+-{H|zh-hans:设置;zh-hant:設定}-
+-{H|zh-hans:变更;zh-hant:變更}-
+-{H|zh-hans:标签页;zh-hant:分頁}-
+-{H|zh-hans:抓取;zh-hant:擷取}-
+-{H|zh-hans:数据源;zh-hant:資料來源}-
 '''
 
 headers = {

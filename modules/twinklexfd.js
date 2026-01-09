@@ -314,6 +314,9 @@ Twinkle.xfd.callbacks = {
 				if (params.creator === mw.config.get('wgUserName')) {
 					Morebits.Status.warn(conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + params.creator + '）', conv({ hans: '您创建了该页，跳过通知', hant: '您建立了該頁，跳過通知' }));
 					params.creator = null;
+				} else if (mw.util.isIPAddress(params.creator)) {
+					Morebits.Status.info(conv({ hans: '通知页面创建者：IP用户创建了该页，跳过通知', hant: '通知頁面建立者：IP使用者建立了該頁，跳過通知' }));
+					params.creator = null;
 				} else {
 					var talkPageName = 'User talk:' + params.creator;
 					var usertalkpage = new Morebits.wiki.Page(talkPageName, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + params.creator + '）');
@@ -633,10 +636,10 @@ Twinkle.xfd.callbacks = {
 			conv({
 				hans: '这是该用户使用[[WP:TW|Twinkle]]的提删模块做出的[[WP:XFD|存废讨论]]提名列表。\n\n' +
 					'如果您不再想保留此日志，请在[[' + Twinkle.getPref('configPage') + '|参数设置]]中关掉，并' +
-					'使用[[WP:CSD#O1|CSD O1]]提交快速删除。',
+					'使用[[WP:CSD#U1|CSD U1]]提交快速删除。',
 				hant: '這是該使用者使用[[WP:TW|Twinkle]]的提刪模塊做出的[[WP:XFD|存廢討論]]提名列表。\n\n' +
 					'如果您不再想保留此日誌，請在[[' + Twinkle.getPref('configPage') + '|偏好設定]]中關掉，並' +
-					'使用[[WP:CSD#O1|CSD O1]]提交快速刪除。'
+					'使用[[WP:CSD#U1|CSD U1]]提交快速刪除。'
 			});
 		var xfdCatName;
 		switch (params.xfdcat) {

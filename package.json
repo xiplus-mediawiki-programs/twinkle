@@ -19,5 +19,12 @@
 		"jest-environment-jsdom": "^29.5.0",
 		"mock-mediawiki": "^1.4.0",
 		"mwn": "^1.11.5"
+	},
+	"dependencies": {
+		"chalk": "^4.1.2",
+		"commander": "^15.0.0",
+		"diff": "^9.0.0",
+		"fs-extra": "^11.3.5",
+		"simple-git": "^3.36.0"
 	}
 }

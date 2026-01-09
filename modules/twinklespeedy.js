@@ -361,19 +361,17 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.userList, mode) });
 			break;
 
-		case 3:  // user talk
-			if (mw.util.isIPAddress(mw.config.get('wgRelevantUserName'))) {
-				work_area.append({ type: 'header', label: conv({ hans: '用户讨论页', hant: '使用者討論頁' }) });
-				work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.usertalkList, mode) });
-			}
-			break;
-
 		case 6:  // file
 			work_area.append({ type: 'header', label: conv({ hans: '文件', hant: '檔案' }) });
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.fileList, mode) });
 			if (!Twinkle.speedy.mode.isSysop(mode)) {
 				work_area.append({ type: 'div', label: conv({ hans: '标记CSD F3、F4、F6、F8、F9、F10，请使用Twinkle的“图权”功能。', hant: '標記CSD F3、F4、F6、F8、F9、F10，請使用Twinkle的「圖權」功能。' }) });
 			}
+			break;
+
+		case 10:
+			work_area.append({ type: 'header', label: conv({ hans: '模板', hant: '模板' }) });
+			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.templateModuleList, mode) });
 			break;
 
 		case 14:  // category
@@ -384,6 +382,11 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 		case 118:  // draft
 			work_area.append({ type: 'header', label: '草稿' });
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.draftList, mode) });
+			break;
+
+		case 828:  // module, work only on delete
+			work_area.append({ type: 'header', label: conv({ hans: '模块', hant: '模組' }) });
+			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.templateModuleList, mode) });
 			break;
 
 		default:
@@ -609,14 +612,15 @@ Twinkle.speedy.customRationale = [
 
 Twinkle.speedy.fileList = [
 	{
-		label: conv({ hans: 'F1: 重复的文件（完全相同或缩小），而且不再被条目使用', hant: 'F1: 重複的檔案（完全相同或縮小），而且不再被條目使用' }),
+		label: conv({ hans: 'F1: 与中文维基百科的既有文件重复的文件', hant: 'F1: 與中文維基百科的既有檔案重複的檔案' }),
 		value: 'f1',
 		subgroup: {
 			name: 'f1_filename',
 			type: 'input',
 			label: conv({ hans: '与此文件相同的文件名：', hant: '與此檔案相同的檔名：' }),
 			tooltip: conv({ hans: '可不含“File:”前缀。', hant: '可不含「File:」字首。' })
-		}
+		},
+		tooltip: conv({ hans: '文件的内容与中文维基百科的既有文件的内容重复，而且文件的大小与既有文件相同或小于既有文件。<br>如果重复的文件的大小大于既有文件，此条不适用。', hant: '檔案的內容與中文維基百科的既有檔案的內容重複，而且檔案的大小與既有檔案相同或小於既有檔案。<br>如果重複的檔案的大小大於既有檔案，此條不適用。' })
 	},
 	{
 		label: conv({ hans: 'F3: 来源不明的文件', hant: 'F3: 來源不明的檔案' }),
@@ -626,20 +630,22 @@ Twinkle.speedy.fileList = [
 	{
 		label: conv({ hans: 'F4: 著作权不明的非自由著作权文件', hant: 'F4: 著作權不明的非自由著作權檔案' }),
 		value: 'f4',
-		hideWhenUser: true
+		hideWhenUser: true,
+		tooltip: conv({ hans: '「版权不明」包括但不限于下列情况：<br>1.版权未知；<br>2.版权无法被查证；及<br>3.文件宣称依据某自由版权协定发布，但不见该自由协定的声明。', hant: '「版權不明」包括但不限於下列情況：<br>1.版權未知；<br>2.版權無法被查證；及<br>3.檔案宣稱依據某自由版權協定發佈，但不見該自由協定的聲明。' })
 	},
 	{
-		label: conv({ hans: 'F5: 被高清晰度或SVG文件取代的图片', hant: 'F5: 被高解析度或SVG檔案取代的圖片' }),
+		label: conv({ hans: 'F5: 存在更高质量的版本的图片', hant: 'F5: 存在更高質素的版本的圖片' }),
 		value: 'f5',
 		subgroup: {
 			name: 'f5_filename',
 			type: 'input',
 			label: conv({ hans: '新文件名：', hant: '新檔名：' }),
 			tooltip: conv({ hans: '可不含“File:”前缀。', hant: '可不含「File:」字首。' })
-		}
+		},
+		tooltip: conv({ hans: '图片的内容与其他中文维基百科或维基共享资源的图片的内容重复，而且：<br>1.图片的分辨率比其他中文维基百科或维基共享资源的图片为低；或<br>图片并非可缩放向量图形（SVG），而其他中文维基百科或维基共享资源的图片为可缩放向量图形。', hant: '圖片的內容與其他中文維基百科或維基共享資源的圖片的內容重複，而且：<br>1.圖片的解像度比其他中文維基百科或維基共享資源的圖片為低；或<br>圖片並非可縮放向量圖形（SVG），而其他中文維基百科或維基共享資源的圖片為可縮放向量圖形。' })
 	},
 	{
-		label: conv({ hans: 'F6: 没有被条目使用的非自由著作权文件', hant: 'F6: 沒有被條目使用的非自由著作權檔案' }),
+		label: conv({ hans: 'F6: 未被条目使用的非自由著作权文件', hant: 'F6: 未被條目使用的非自由著作權檔案' }),
 		value: 'f6',
 		hideWhenUser: true
 	},
@@ -653,39 +659,43 @@ Twinkle.speedy.fileList = [
 			value: Morebits.pageNameNorm,
 			tooltip: conv({ hans: '如与本文件名相同则可留空，可不含“File:”前缀。', hant: '如與本檔名相同則可留空，可不含「File:」字首。' })
 		},
-		hideWhenMultiple: true
+		hideWhenMultiple: true,
+		tooltip: conv({ hans: '不要求文件的名称、大小与维基共享资源的文件的名称、大小须完全相同。<br>下列情况不适用此条：<br>1.文件的名称与维基共享资源的文件的名称重复，但文件的内容与维基共享资源的文件的内容并不相同；<br>2.维基共享资源的文件存在版权争议，例如（应）被提交至删除请求等。', hant: '不要求檔案的名稱、大小與維基共享資源的檔案的名稱、大小須完全相同。<br>下列情況不適用此條：<br>1.檔案的名稱與維基共享資源的檔案的名稱重複，但檔案的內容與維基共享資源的檔案的內容並不相同；<br>2.維基共享資源的檔案存在版權爭議，例如（應）被提交至刪除請求等。' })
 	},
 	{
-		label: conv({ hans: 'F8: 明显侵权之文件', hant: 'F8: 明顯侵權之檔案' }),
+		label: conv({ hans: 'F8: 上传者宣称拥有文件，但文件可在其他来源找到。', hant: 'F8: 上載者宣稱擁有檔案，但檔案可在其他來源找到。' }),
 		value: 'f8',
-		hideWhenUser: true
+		hideWhenUser: true,
+		tooltip: conv({ hans: '涉及版权欺诈的商业图片机构不视为有效的“其他来源”', hant: '涉及版權欺詐的商業圖片機構不視為有效的「其他來源」' })
 	},
 	{
-		label: conv({ hans: 'F9: 没有填写任何合理使用依据的非自由著作权文件', hant: 'F9: 沒有填寫任何合理使用依據的非自由著作權檔案' }),
+		label: conv({ hans: 'F9: 未填写任何合理使用依据的非自由著作权文件', hant: 'F9: 未填寫任何合理使用依據的非自由著作權檔案' }),
 		value: 'f9',
-		hideWhenUser: true
+		hideWhenUser: true,
+		tooltip: conv({ hans: '空白的合理使用依据模板（如{{Non-free use rationale}}）不视为有效的合理使用依据。<br>具备有争议但完整的合理使用依据的文件不适用。<br>存在任何条目的合理使用依据的文件不适用；应将文件自使用文件但未提供合理使用依据的页面中移除。', hant: '空白的合理使用依據模板（如{{Non-free use rationale}}）不視為有效的合理使用依據。<br>具備有爭議但完整的合理使用依據的檔案不適用。<br>存在任何條目的合理使用依據的檔案不適用；應將檔案自使用檔案但未提供合理使用依據的頁面中移除。' })
 	},
 	{
 		label: conv({ hans: 'F10: 可被替代的非自由著作权文件', hant: 'F10: 可被替代的非自由著作權檔案' }),
 		value: 'f10',
-		hideWhenUser: true
+		hideWhenUser: true,
+		tooltip: conv({ hans: '文件仅用于描述、识别或评论文件中展示的事物，或仅用作插图（没有和文件内容相关的评论），且满足以下四个条件之一：<br>1.有其他自由版权文件展示相同的事物。<br>2.文件描述的是在世或假定在世人物、仍然存在的建筑、室外雕塑或仍然在售的商品，且预计自行拍摄的照片不受他人版权保护。<br>3.文件为可自行绘制的地图或图表。<br>4.文件来自商业图片机构（如Getty），但涉及版权欺诈的商业图片机构不适用。<br>如果给出了其他合理使用依据（如用于评论文件本身），此条不适用。如对文件的可替代性存在争议，应交文件存废讨论处理。<br>不适用于正在或曾经由文件存废讨论处理过的文件。', hant: '檔案僅用於描述、辨識或評論檔案中展示的事物，或僅用作插圖（沒有和檔案內容相關的評論），且滿足以下四個條件之一：<br>1.有其他自由版權檔案展示相同的事物。<br>2.檔案描述的是在世或假定在世人物、仍然存在的建築、室外雕塑或仍然在售的商品，且預計自行拍攝的相片不受他人版權保護。<br>3.檔案為可自行繪製的地圖或圖表。<br>4.檔案來自商業圖片機構（如Getty），但涉及版權欺詐的商業圖片機構不適用。<br>如果給出了其他合理使用依據（如用於評論檔案本身），此條不適用。如對檔案的可替代性存在爭議，應交檔案存廢討論處理。<br>不適用於正在或曾經由檔案存廢討論處理過的檔案。' })
 	}
 ];
 
 Twinkle.speedy.articleList = [
 	{
-		label: conv({ hans: 'A1: 内容空泛（包括但不限于没有定义）', hant: 'A1: 內容空泛（包括但不限於沒有定義）' }),
+		label: conv({ hans: 'A1: 内容空泛', hant: 'A1: 內容空泛' }),
 		value: 'a1',
-		tooltip: conv({ hans: '条目的内容笼统，或甚至根本没有提及条目主体，使条目不能用以区分其他事物。例如：“他是一个很有趣的人，他创建了工厂和庄园。并且，顺便提一下，他的妻子也很好。”<br>“内容空泛”与“没有实际内容”的分别在于：后者乃是与主题完全无关，或是不知所云；前者可以与主题有一定关系，但没有明确描述主题（包括但不限于没有对主题作基本定义）；前者同时包含后者。', hant: '條目的內容籠統，或甚至根本沒有提及條目主體，使條目不能用以區分其他事物。例如：「他是一個很有趣的人，他建立了工廠和莊園。並且，順便提一下，他的妻子也很好。」<br>「內容空泛」與「沒有實際內容」的分別在於：後者乃是與主題完全無關，或是不知所云；前者可以與主題有一定關係，但沒有明確描述主題（包括但不限於沒有對主題作基本定義）；前者同時包含後者。' })
+		tooltip: conv({ hans: '条目缺乏足够的背景信息，使读者无法清楚辨识条目的主题。例如：<br>「他是拥有红色汽车且风趣幽默的人。他使人大笑。」<br>此项条款一般仅适用于非常短的条目。<br>如果标题或条目上包括但不限于链接等任何信息允许用户借助包括但不限于网络搜索等途径找到有关该主题的更多有效信息，以尝试有效扩充或改写该条目，依据此项条款提请快速删除可能并不合适。<br>如果条目在最近几分钟创建，请勿依据此项条款提请快速删除。', hant: '條目缺乏足夠的背景資訊，使讀者無法清楚辨識條目的主題。例如：<br>「他是擁有紅色汽車且風趣幽默的人。他使人大笑。」<br>此項條款一般僅適用於非常短的條目。<br>如果標題或條目上包括但不限於連結等任何資訊允許用戶藉助包括但不限於網絡搜尋等途徑找到有關該主題的更多有效資訊，以嘗試有效擴充或改寫該條目，依據此項條款提請快速刪除可能並不合適。<br>如果條目在最近幾分鐘建立，請勿依據此項條款提請快速刪除。' })
 	},
 	{
-		label: conv({ hans: 'A2: 内容只包括外部链接、参见、图书参考、分类、模板、跨语言链接的条目', hant: 'A2: 內容只包括外部連結、參見、圖書參考、分類、模板、跨語言連結的條目' }),
+		label: conv({ hans: 'A2: 无有效内容的条目', hant: 'A2: 無有效內容的條目' }),
 		value: 'a2',
-		tooltip: conv({ hans: '请注意：有些维基人创建条目时会分开多次保存，请避免删除有人正在编辑的页面。<br>带有{{inuse}}模板的不适用。', hant: '請注意：有些維基人建立條目時會分開多次儲存，請避免刪除有人正在編輯的頁面。<br>帶有{{inuse}}模板的不適用。' })
+		tooltip: conv({ hans: '条目只包括外部链接、参见、图书参考、分类、模板、跨语言链接等非有效内容。<br>请注意：有些维基人创建条目时会分开多次保存，请避免删除有人正在编辑的页面。<br>消歧义页、重定向与软重定向页面不属于条目，故不适用。<br>带有{{inuse}}模板的不适用。', hant: '條目只包括外部連結、參見、圖書參考、分類、模板、跨語言連結等非有效內容。<br>請注意：有些維基人建立條目時會分開多次儲存，請避免刪除有人正在編輯的頁面。<br>消歧義頁、重新導向與軟重新導向頁面不屬於條目，故不適用。<br>帶有{{inuse}}模板的不適用。' })
 	},
 	{
-		label: conv({ hans: 'A3: 复制自其他中文维基项目，或是与其他中文维基项目内容相同的文章', hant: 'A3: 複製自其他中文維基專案，或是與其他中文維基專案內容相同的文章' }),
-		tooltip: conv({ hans: '其他“维基项目”指的是：维基词典、维基教科书、维基语录、维基文库、维基物种、维基新闻、维基孵育场、维基学院等，但并不包括与中文维基百科其他条目内容重复之状况。', hant: '其他「維基專案」指的是：維基詞典、維基教科書、維基語錄、維基文庫、維基物種、維基新聞、維基孵育場、維基學院等，但並不包括與中文維基百科其他條目內容重複之狀況。' }),
+		label: conv({ hans: 'A3: 与其他中文维基项目的主内容页面或其历史版本重复的条目', hant: 'A3: 與其他中文維基項目的主內容頁面或其歷史版本重複的條目' }),
+		tooltip: conv({ hans: '条目符合下列所有情形：<br>1.其首个版本的内容与当时其他中文维基项目的现存主内容页面或其历史版本的全部或部分内容完全相同或非常相似；<br>2.其当前版本的内容与其首个版本的全部或部分内容完全相同或非常相似；且<br>3.其名称不适合改为重定向。<br>此条的其他“维基项目”指维基词典、维基教科书、维基语录、维基文库、维基物种、维基新闻、维基孵育场、维基学院等，但不包括维基百科。与其他中文维基百科条目重复的条目应由A5处理。', hant: '條目符合下列所有情形：<br>1.其首個版本的內容與當時其他中文維基專案的現存主內容頁面或其歷史版本的全部或部分內容完全相同或非常相似；<br>2.其當前版本的內容與其首個版本的全部或部分內容完全相同或非常相似；且<br>3.其名稱不適合改為重新導向。<br>此條的其他「維基專案」指維基詞典、維基教科書、維基語錄、維基文庫、維基物種、維基新聞、維基孵育場、維基學院等，但不包括維基百科。與其他中文維基百科條目重複的條目應由A5處理。' }),
 		value: 'a3',
 		subgroup: {
 			name: 'a3_pagename',
@@ -707,18 +717,6 @@ Twinkle.speedy.articleList = [
 		}
 	},
 	{
-		label: conv({ hans: 'A6: 复制自其他维基百科语言版本，且完全没有翻译', hant: 'A6: 複製自其他維基百科語言版本，且完全沒有翻譯' }),
-		value: 'a6',
-		tooltip: conv({ hans: '如果并不是复制于任何其他的维基百科语言版本，请换用{{notmandarin}}。<br>带有{{inuse}}和{{translating}}模板的不适用。', hant: '如果並不是複製於任何其他的維基百科語言版本，請換用{{notmandarin}}。<br>帶有{{inuse}}和{{translating}}模板的不適用。' }),
-		subgroup: {
-			name: 'a6_pagename',
-			type: 'input',
-			label: conv({ hans: '现有条目名：', hant: '現有條目名：' }),
-			tooltip: conv({ hans: '请加上跨 wiki 前缀。不自动加上链接，若需要请自行加上[[]]。', hant: '請加上跨 wiki 字首。不自動加上連結，若需要請自行加上[[]]。' }),
-			size: 60
-		}
-	},
-	{
 		label: conv({ hans: 'A7：因收录标准问题被删除而又被重建的条目', hant: 'A7：因收錄標準問題被刪除而又被重建的條目' }),
 		value: 'a7',
 		tooltip: conv({ hans: '该内容之前必须是经存废讨论删除，且删除理由包括未满足收录标准的要求，而重新创建后的版本明显同样未满足收录标准的要求且并未列出任何旧版本中未曾出现的可靠来源。如有疑虑，请提交存废讨论或存废复核。', hant: '該內容之前必須是經存廢討論刪除，且刪除理由包括未滿足收錄標準的要求，而重新創建後的版本明顯同樣未滿足收錄標準的要求且並未列出任何舊版本中未曾出現的可靠來源。如有疑慮，請提交存廢討論或存廢覆核。' }),
@@ -728,14 +726,24 @@ Twinkle.speedy.articleList = [
 			label: conv({ hans: '原存废讨论位置：', hant: '原存廢討論位置：' }),
 			size: 60
 		}
+	},
+	{
+		label: conv({ hans: 'A8: 未翻译', hant: 'A8: 未翻譯' }),
+		value: 'a8',
+		tooltip: conv({ hans: '条目完全未用现代中文书面语撰写，适用情形包括外语、文言文与非官话白话文等。<br>带有{{in use}}模板者；或属于新闻动态的条目（无论是否带有{{current}}或类似模板）不适用。<br>如条目的名称适合改为重定向，则应改为重定向。<br>若条目满足草稿化的条件，且无其他构成快速删除条件的问题，则应考虑优先选择草稿化，而非快速删除。', hant: '條目完全未用現代中文書面語撰寫，適用情形包括外語、文言文與非官話白話文等。<br>帶有{{in use}}模板者；或屬於新聞動態的條目（無論是否帶有{{current}}或類似模板）不適用。<br>如條目的名稱適合改為重新導向，則應改為重新導向。<br>若條目滿足草稿化的條件，且無其他構成快速刪除條件的問題，則應考慮優先選擇草稿化，而非快速刪除。' })
 	}
 ];
 
 Twinkle.speedy.categoryList = [
 	{
-		label: conv({ hans: 'O4: 空分类', hant: 'O4: 空分類' }),
-		value: 'o4',
-		tooltip: conv({ hans: '该分类无收录任何页面或子分类。<br>不适用于Category:不要删除的分类中的空分类。', hant: '該分類無收錄任何頁面或子分類。<br>不適用於Category:不要刪除的分類中的空分類。' })
+		label: conv({ hans: 'C1: 空分类', hant: 'C1: 空分類' }),
+		value: 'c1',
+		tooltip: conv({ hans: '该分类无收录任何页面或子分类。<br>不适用于Category:不要删除的分类中的空分类。<br>如对分类去留存在争议，应移交页面存废讨论处理。此准则亦不适用已移交页面存废讨论且正在讨论中的分类。', hant: '該分類無收錄任何頁面或子分類。<br>不適用於Category:不要刪除的分類中的空分類。<br>如對分類去留存在爭議，應移交頁面存廢討論處理。此準則亦不適用已移交頁面存廢討論且正在討論中的分類。' })
+	},
+	{
+		label: conv({ hans: 'C2: 无用维护分类', hant: 'C2: 無用維護分類' }),
+		value: 'c2',
+		tooltip: conv({ hans: '该维护分类不可能再被使用，包括但不限于下列情况：<br>带日期限定的空维护分类（如Category:自2024年12月主题不满足收录标准的条目）；<br>不再被模板使用的追踪分类；<br>Category:维基用户疑似分身的空子分类。<br>空维护分类不等同于无用维护分类，无用维护分类须在可预见的未来为空分类，而非仅当下为空分类。如果不肯定维护分类是否仍为模板所用，请先向创建该分类者查询或在模板讨论页发起讨论。', hant: '該維護分類不可能再被使用，包括但不限於下列情況：<br>帶日期限定的空維護分類（如Category:自2024年12月主題不滿足收錄標準的條目）；<br>不再被模板使用的追蹤分類；<br>Category:維基用戶疑似分身的空子分類。<br>空維護分類不等同於無用維護分類，無用維護分類須在可預見的未來為空分類，而非僅當下為空分類。如果不肯定維護分類是否仍為模板所用，請先向建立該分類者查詢或在模板討論頁發起討論。' })
 	}
 ];
 
@@ -743,23 +751,33 @@ Twinkle.speedy.draftList = [
 	{
 		label: conv({ hans: 'O7: 废弃草稿', hant: 'O7: 廢棄草稿' }),
 		value: 'o7',
-		tooltip: conv({ hans: '任何六个月内无编辑的草稿命名空间页面。', hant: '任何六個月內無編輯的草稿命名空間頁面。' })
+		tooltip: conv({ hans: '任何六个月内无编辑的草稿命名空间页面。<br>若相关编辑为机器人编辑或属维护性操作，相关编辑应视同不存在。', hant: '任何六個月內無編輯的草稿命名空間頁面。<br>若相關編輯為機械人編輯或屬維護性操作，相關編輯應視同不存在。' })
+	}
+];
+
+Twinkle.speedy.templateModuleList = [
+	{
+		label: conv({ hans: 'O9: 无用的模板与模块子页面', hant: 'O9: 無用的模板與模組子頁面' }),
+		value: 'o9',
+		tooltip: conv({ hans: '包括但不限于下列情况：<br>不被模板／模块自身使用的模板／模块文档；<br>不被模板自身引用的“/core”子页面；<br>非必须的{{Taxonomy}}模板子页面，一般为创建方式错误或相关分类单元被弃用所导致。<br>下列情况不适用此条：<br>“/testcases”与“/sandbox”子页面；<br>Template:沙盒与Module:沙盒的子页面；<br>悬挂{{O9-exempt}}模板的页面。', hant: '包括但不限於下列情況：<br>不被模板／模組自身使用的模板／模組文件；不被模板自身引用的「/core」子頁面；<br>非必須的{{Taxonomy}}模板子頁面，一般為建立方式錯誤或相關分類單元被棄用所導致。<br>下列情況不適用此條<br>「/testcases」與「/sandbox」子頁面； <br>Template:沙盒與Module:沙盒的子頁面；<br>懸掛{{O9-exempt}}模板的頁面。<br>'})
 	}
 ];
 
 Twinkle.speedy.userList = [
 	{
-		label: conv({ hans: 'O1: 用户请求删除自己的用户页或用户子页面', hant: 'O1: 使用者請求刪除自己的使用者頁面或使用者子頁面' }),
-		value: 'o1',
+		label: conv({ hans: 'U1: 用户请求删除自己的用户页或用户子页面', hant: 'U1: 使用者請求刪除自己的使用者頁面或使用者子頁面' }),
+		value: 'u1',
 		tooltip: conv({ hans: '如果页面曾位于该用户的用户命名空间（User）外，提请须附有合理原因。', hant: '如果頁面曾位於該用戶的用戶命名空間（User）外，提請須附有合理原因。' })
-	}
-];
-
-Twinkle.speedy.usertalkList = [
+	},
 	{
-		label: conv({ hans: 'O3: 已超过一个月未有编辑动作的IP用户的用户讨论页，且已完成存档', hant: 'O3: 已超過一個月未有編輯動作的IP用戶的用戶討論頁，且已完成存檔' }),
-		value: 'o3',
-		tooltip: conv({ hans: '避免给使用同一IP地址的用户带来混淆。<br>不适用于用户讨论页的存档页面。', hant: '避免給使用同一IP位址的使用者帶來混淆。<br>不適用於使用者討論頁的存檔頁面。' })
+		label: conv({ hans: 'U2: 用户不存在', hant: 'U2:  用戶不存在' }),
+		value: 'u2',
+		tooltip: conv({ hans: '不存在对应的本地注册用户，也不存在对应的临时账户的用户自治空间页面。<br>已被全域隐藏的用户在此条视为不存在的用户。<br>其他维基媒体基金会项目的注册用户如无对应本地账户，其用户自治空间页面亦适用此条。', hant: '不存在對應的本地註冊用戶，也不存在對應的臨時帳戶的用戶自治空間頁面。<br>已被全域隱藏的用戶在此條視為不存在的用戶。<br>其他維基媒體基金會項目的註冊用戶如無對應本地帳戶，其用戶自治空間頁面亦適用此條。' })
+	},
+	{
+		label: conv({ hans: 'U3: 没有或非常少有效贡献的用户的已废弃用户子页面', hant: 'U3: 沒有或非常少有效貢獻的用戶的已廢棄用戶子頁面' }),
+		value: 'u3',
+		tooltip: conv({ hans: '用户没有或非常少在用户自治空间以外的页面编辑，而其用户子页面已至少6个月未被编辑。<br>若相关编辑为机器人编辑或属维护性操作，相关编辑应视同不存在。<br>用户的多重账户的贡献、用户子页面视为主账户的贡献、用户子页面。<br>不适用于重新导向页面、.js页面与.css页面。<br>显然作草稿之用且内容有意义的页面应移动至草稿命名空间，而非删除。', hant: '用戶沒有或非常少在用戶自治空間以外的頁面編輯，而其用戶子頁面已至少6個月未被編輯。<br>若相關編輯為機械人編輯或屬維護性操作，相關編輯應視同不存在。<br>用戶的多重帳戶的貢獻、用戶子頁面視為主帳戶的貢獻、用戶子頁面。<br>不適用於重新導向頁面、.js頁面與.css頁面。<br>顯然作草稿之用且內容有意義的頁面應移動至草稿命名空間，而非刪除。' })
 	}
 ];
 
@@ -782,7 +800,7 @@ Twinkle.speedy.generalList = [
 		tooltip: conv({ hans: '包括但不限于明显的错误信息、信息明显错误的图片、人身攻击、清理移动破坏时留下的重定向等。', hant: '包括但不限於明顯的錯誤資訊、資訊明顯錯誤的圖片、人身攻擊、清理移動破壞時留下的重新導向等。' })
 	},
 	{
-		label: conv({ hans: 'G5: 经存废讨论程序被删除而又被重建的内容', hant: 'G5: 經存廢討論程序被刪除而又被重建的內容' }),
+		label: conv({ hans: 'G5: 经存废讨论或复核程序被删除而又被重建的内容', hant: 'G5: 經存廢討論或覆核程序被刪除而又被重建的內容' }),
 		value: 'g5',
 		tooltip: conv({ hans: '页面此前根据页面存废讨论、侵权审核或文件存废讨论的结果而删除，并在删除后被重建，而页面重建后：<br>1.其首个版本的内容与被删除的版本的全部或部分内容完全相同或非常相似；且<br>2.其当前版本的内容与其首个版本的全部或部分内容完全相同或非常相似。<br>该内容如与被删除的版本明显不同或其现时的内容已不再适用此前页面存废讨论或文件存废讨论中提出的删除理由，而提删者认为需要删除，请交到页面存废讨论、文件存废讨论或存废复核请求如果提删者对此不肯定，请先联系上次执行删除的管理人员。<br>不适用于根据存废复核结果被恢复或允许重建的内容。在某些情况下，重新创建的条目有机会发展，那么不应提交快速删除，而应该提交存废复核或存废讨论重新评核。', hant: '頁面此前根據頁面存廢討論、侵權審核或檔案存廢討論的結果而刪除，並在刪除後被重建，而頁面重建後：<br>1.其首個版本的內容與被刪除的版本的全部或部分內容完全相同或非常相似；且<br>2.其當前版本的內容與其首個版本的全部或部分內容完全相同或非常相似。<br>該內容如與被刪除的版本明顯不同或其現時的內容已不再適用此前頁面存廢討論或文件存廢討論中提出的刪除理由，而提刪者認為需要刪除，請交到頁面存廢討論、文件存廢討論或存廢複核請求如果提刪者對此不肯定，請先聯繫上次執行刪除的管理人員。<br>不適用於根據存廢複核結果被恢復或允許重建的內容。在某些情況下，重新創建的條目有機會發展，那麼不應提交快速刪除，而應該提交存廢複核或存廢討論重新評核。' }),
 		subgroup: [
@@ -826,7 +844,7 @@ Twinkle.speedy.generalList = [
 	{
 		label: conv({ hans: 'G12: 未列明可靠来源且语调负面的生者传记', hant: 'G12: 未列明可靠來源且語調負面的生者傳記' }),
 		value: 'g12',
-		tooltip: conv({ hans: '“列明”指至少一个列出的来源可直接支撑条目中的任何信息，并与其中的断言相匹配。<br>如有用户对条目中列出的来源是否属于可靠来源提出合理异议，则应交由存废讨论处理。<br>注意是未列明可靠来源且语调负面，须2项均符合方适用此项。', hant: '「列明」指至少一個列出的來源可直接支撐條目中的任何資訊，並與其中的斷言相匹配。<br>如有使用者對條目中列出的來源是否屬於可靠來源提出合理異議，則應交由存廢討論處理。<br>注意是未列明可靠來源且語調負面，須2項均符合方適用此項。' })
+		tooltip: conv({ hans: '“列明”指至少一个列出的来源可直接支撑页面中的任何信息，并与其中的断言相匹配。<br>如有用户对页面中列出的来源是否属于可靠来源提出合理异议，则应交由存废讨论处理。<br>注意是未列明可靠来源且语调负面，须2项均符合方适用此项。', hant: '「列明」指至少一個列出的來源可直接支撐頁面中的任何資訊，並與其中的斷言相匹配。<br>如有使用者對頁面中列出的來源是否屬於可靠來源提出合理異議，則應交由存廢討論處理。<br>注意是未列明可靠來源且語調負面，須2項均符合方適用此項。' })
 	},
 	{
 		label: conv({ hans: 'G13: 翻译拙劣', hant: 'G13: 翻譯拙劣' }),
@@ -835,27 +853,20 @@ Twinkle.speedy.generalList = [
 		hideInNamespaces: [ 1, 2, 3, 5, 7, 9, 11, 13, 15, 101, 118, 119, 829 ] // all talk, user, draft
 	},
 	{
-		label: conv({ hans: 'G14: 逾14天没有翻译的非现代标准汉语页面', hant: 'G14: 逾14天沒有翻譯的非現代標準漢語頁面' }),
-		value: 'g14',
-		tooltip: conv({ hans: '包括所有未翻译的外语、汉语方言以及文言文。<br>此项仅适用于条目、项目、维基专题、使用说明和主题命名空间。', hant: '包括所有未翻譯的外語、漢語方言以及文言文。<br>此項僅適用於條目、計畫、維基專題、使用說明和主題命名空間。' }),
-		hideWhenUser: true,
-		showInNamespaces: [ 0, 4, 12, 100, 102 ] // main, wikipedia, help, portal, wikiproject
-	},
-	{
-		label: conv({ hans: 'G15: 孤立页面，比如没有主页面的讨论页、指向空页面的重定向等', hant: 'G15: 孤立頁面，比如沒有主頁面的討論頁、指向空頁面的重新導向等' }),
+		label: conv({ hans: 'G15: 孤立页面', hant: 'G15: 孤立頁面' }),
 		value: 'g15',
-		tooltip: conv({ hans: '包括以下几种类型：<br>1. 没有对应文件的文件页面；<br>2. 没有对应母页面的子页面，用户页子页面除外；<br>3. 指向不存在页面的重定向；<br>4. 没有对应内容页面的讨论页（包括用户子页面讨论页），但讨论页存档（包括用户讨论页子页面）除外；<br>5. 不存在对应的注册用户，也不存在对应的临时账号的用户自治空间页面，localhost对应IP用户的用户页、IP用户的用户讨论页及其存档、随用户更名产生的重定向除外。<br>请在删除时注意有无将内容移至他处的必要。<br>不包括在主页面挂有{{CSD Placeholder}}模板的讨论页。', hant: '包括以下幾種類型：<br>1. 沒有對應檔案的檔案頁面；<br>2. 沒有對應母頁面的子頁面，使用者頁面子頁面除外；<br>3. 指向不存在頁面的重新導向；<br>4. 沒有對應內容頁面的討論頁（包括使用者子頁面討論頁），但討論頁存檔（包括使用者討論頁子頁面）除外；<br>5. 不存在對應的註冊使用者，也不存在對應的臨時帳戶的使用者自治空間頁面，localhost對應IP使用者的使用者頁面、IP使用者的使用者討論頁及其存檔、隨使用者更名產生的重新導向除外。<br>請在刪除時注意有無將內容移至他處的必要。<br>不包括在主頁面掛有{{CSD Placeholder}}模板的討論頁。' })
-	},
-	{
-		label: conv({ hans: 'G17: 位于不恰当的命名空间的消歧义页面', hant: 'G17: 位於不恰當的命名空間的消歧義頁面' }),
-		value: 'g17',
-		tooltip: conv({ hans: '在提请快速删除前，请务必先检查并清理相关消歧义页面的链入。<br>此项不论页面是否引用消歧义模板或消歧义消息模板均适用，惟对消歧义模板及消歧义消息模板本身不适用。', hant: '在提請快速刪除前，請務必先檢查並清理相關消歧義頁面的連入。<br>此項不論頁面是否引用消歧義模板或消歧義訊息模板均適用，惟對消歧義模板及消歧義訊息模板本身不適用。' }),
-		hideInNamespaces: [ 0, 1, 2, 3, 4, 5, 118, 119 ] // main, user, project, draft and theirs talks
+		tooltip: conv({ hans: '依附于不存在或已删除页面或文件的页面。包括但不限于下列情形：<br>1.没有对应内容页面的讨论页；<br>2.没有对应母页面的子页面；<br>3.没有对应本地文件的文件页面；<br>4.指向不存在页面的重定向；<br>5.对应页面已被删除或解除白纸保护的编辑提示。', hant: '依附於不存在或已刪除頁面或檔案的頁面。包括但不限於下列情形：<br>1.沒有對應內容頁面的討論頁；<br>2.沒有對應母頁面的子頁面；<br>3.沒有對應本地檔案的檔案頁面；<br>4.指向不存在頁面的重新導向；<br>5.對應頁面已被刪除或解除白紙保護的編輯提示。' })
 	},
 	{
 		label: conv({ hans: 'G19: 被草稿化而又被重建的页面', hant: 'G19: 被草稿化而又被重建的頁面' }),
 		value: 'g19',
-		tooltip: conv({ hans: '因为不满足维基百科对于内容的质量要求而被移动至用户命名空间或草稿命名空间作草稿之用，但其内容被以剪贴移动的方式再度发布至用户命名空间与草稿命名空间之外的页面。<br>草稿”指：所有位于用户命名空间且含{{AFC submission}}的页面、所有位于用户命名空间且显然作草稿之用的页面及所有位于草稿命名空间的页面<br>此条不要求页面被草稿化前与被再度发布后所在的命名空间必须为同一命名空间。', hant: '因為不滿足維基百科對於內容的品質要求而被移動至使用者命名空間或草稿命名空間作草稿之用，但其內容被以剪貼移動的方式再度發布至使用者命名空間與草稿命名空間之外的頁面。<br>草稿」指：所有位於使用者命名空間且含{{AFC submission}}的頁面、所有位於使用者命名空間且顯然作草稿之用的頁面及所有位於草稿命名空間的頁面<br>此條不要求頁面被草稿化前與被再度發布後所在的命名空間必須為同一命名空間。' }),
+		tooltip: conv({ hans: '因为不满足维基百科对于内容的质量要求而被草稿化，但其内容被以剪贴移动的方式再度发布至用户命名空间与草稿命名空间之外的页面。<br>此条不要求页面被草稿化前与被再度发布后所在的命名空间必须为同一命名空间。', hant: '因為不滿足維基百科對於內容的質素要求而被草稿化，但其內容被以剪貼移動的方式再度發佈至用戶命名空間與草稿命名空間之外的頁面。<br>此條不要求頁面被草稿化前與被再度發布後所在的命名空間必須為同一命名空間。' }),
+		subgroup: {
+			name: 'g19_pagename',
+			type: 'input',
+			label: conv({ hans: '草稿页面名：', hant: '草稿頁面名：' }),
+			size: 60
+		},
 		hideInNamespaces: [ 2, 3, 118, 119 ] // user, user talk, draft, draft talk
 	},
 	{
@@ -907,9 +918,9 @@ Twinkle.speedy.redirectList = [
 		showInNamespaces: [ 6 ] // file
 	},
 	{
-		label: conv({ hans: 'R8: 带有“(消歧义)”字样的重定向', hant: 'R8: 帶有「(消歧義)」字樣的重新導向' }),
+		label: conv({ hans: 'R8: 不指向（类似）消歧义页面的消歧义重定向', hant: 'R8: 不指向（類似）消歧義頁面的消歧義重新導向' }),
 		value: 'r8',
-		tooltip: conv({ hans: '包括无内部链入以及并非指向消歧义页面的重定向。<br>若重定向页与导向目标页同样带有“(消歧义)”字样，且两者的标题仅存在繁简／地区词差异，则不适用。<br在提请快速删除前，请务必先检查并清理（如适用）相关重定向的链入。<br>如有用户对应否使用消歧义及消歧义的方式存在未解决的争议，则应交由存废讨论处理。', hant: '包括無內部鏈入以及並非指向消歧義頁面的重新導向。<br>若重新導向頁與導向目標頁同樣帶有「(消歧義)」字樣，且兩者的標題僅存在繁簡／地區詞差異，則不適用。<br>在提請快速刪除前，請務必先檢查並清理（如適用）相關重新導向的連入。<br>如有使用者對應否使用消歧義及消歧義的方式存在未解決的爭議，則應交由存廢討論處理。' })
+		tooltip: conv({ hans: '页面标题的结尾带有“消歧义”字样，但并不指向消歧义页面，也不指向有类似于消歧义功能的页面（如同类索引、列表）。', hant: '頁面標題的結尾帶有「消歧義」字樣，但並不指向消歧義頁面，也不指向有類似於消歧義功能的頁面（如同類索引、列表）。' })
 	},
 	{
 		label: conv({ hans: 'R9: 导向目标明显未介绍名称所指事物的重定向', hant: 'R9: 導向目標明顯未介紹名稱所指事物的重新導向' }),
@@ -938,10 +949,8 @@ Twinkle.speedy.normalizeHash = {
 	'g11': 'g11',
 	'g12': 'g12',
 	'g13': 'g13',
-	'g14': 'g14',
 	'g15': 'g15',
 	'g16': 'g16',
-	'g17': 'g17',
 	'g19': 'g19',
 	'g20': 'g20',
 	'g21': 'g21',
@@ -949,8 +958,8 @@ Twinkle.speedy.normalizeHash = {
 	'a2': 'a2',
 	'a3': 'a3',
 	'a5': 'a5',
-	'a6': 'a6',
 	'a7': 'a7',
+	'a8': 'a8',
 	'r2': 'r2',
 	'r3': 'r3',
 	'r5': 'r5',
@@ -964,10 +973,13 @@ Twinkle.speedy.normalizeHash = {
 	'f5': 'f5',
 	'f6': 'f6',
 	'f7': 'f7',
-	'o1': 'o1',
-	'o3': 'o3',
-	'o4': 'o4',
-	'o7': 'o7'
+	'u1': 'u1',
+	'u2': 'u2',
+	'u3': 'u3',
+	'c1': 'c1',
+	'c2': 'c2',
+	'o7': 'o7',
+	'o9': 'o9'
 };
 
 Twinkle.speedy.callbacks = {
@@ -1082,7 +1094,7 @@ Twinkle.speedy.callbacks = {
 			// delete talk page
 			if (params.deleteTalkPage &&
 					params.normalized !== 'f7' &&
-					params.normalized !== 'o1' &&
+					params.normalized !== 'u1' &&
 					!document.getElementById('ca-talk').classList.contains('new')) {
 				var talkpage = new Morebits.wiki.Page(mw.config.get('wgFormattedNamespaces')[mw.config.get('wgNamespaceNumber') + 1] + ':' + mw.config.get('wgTitle'), conv({ hans: '删除讨论页', hant: '刪除討論頁' }));
 				talkpage.setEditSummary('[[WP:CSD#G15|G15]]: 孤立页面: 已删除页面“' + Morebits.pageNameNorm + '”的讨论页');
@@ -1380,6 +1392,10 @@ Twinkle.speedy.callbacks = {
 						Morebits.Status.warn(conv({ hans: '通知页面创建者：由机器人创建，跳过通知', hant: '通知頁面建立者：由機器人建立，跳過通知' }));
 						initialContrib = null;
 
+					} else if (mw.util.isIPAddress(initialContrib)) {
+						Morebits.Status.info(conv({ hans: '通知页面创建者：IP用户创建了该页，跳过通知', hant: '通知頁面建立者：IP使用者建立了該頁，跳過通知' }));
+						initialContrib = null;
+
 					} else {
 						var talkPageName = 'User talk:' + initialContrib;
 						var usertalkpage = new Morebits.wiki.Page(talkPageName, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + initialContrib + '）'),
@@ -1426,7 +1442,7 @@ Twinkle.speedy.callbacks = {
 			usl.initialText =
 				'这是该用户使用[[WP:TW|Twinkle]]的速删模块做出的[[WP:CSD|快速删除]]提名列表。\n\n' +
 				'如果您不再想保留此日志，请在[[' + Twinkle.getPref('configPage') + '|参数设置]]中关掉，并' +
-				'使用[[WP:CSD#O1|CSD O1]]提交快速删除。' +
+				'使用[[WP:CSD#U1|CSD U1]]提交快速删除。' +
 				(Morebits.userIsSysop ? '\n\n此日志并不记录用Twinkle直接执行的删除。' : '');
 
 			var appendText = '# [[:' + Morebits.pageNameNorm + ']]：';
@@ -1503,12 +1519,6 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 				}
 				break;
 
-			case 'a6':
-				if (form['csd.a6_pagename'] && form['csd.a6_pagename'].value) {
-					currentParams.pagename = form['csd.a6_pagename'].value;
-				}
-				break;
-
 			case 'a7':
 				if (form['csd.a7_pagename']) {
 					let pagename = form['csd.a7_pagename'].value;
@@ -1550,6 +1560,18 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 						return false;
 					}
 					currentParams.pagename = pagename;
+				}
+				break;
+
+			case 'g19':
+				if (form['csd.g19_pagename']) {
+					var draftpage = form['csd.g19_pagename'].value;
+					if (!draftpage || !draftpage.trim()) {
+						alert(conv({ hans: 'CSD G19：请提供草稿页面的名称。', hant: 'CSD G19：請提供草稿頁面的名稱。' }));
+						parameters = null;
+						return false;
+					}
+					currentParams.pagename = draftpage;
 				}
 				break;
 
