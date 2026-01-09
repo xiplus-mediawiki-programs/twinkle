@@ -2839,6 +2839,14 @@ Morebits.wiki.page = function(pageName, status) {
 			}
 		}
 
+		// do not edit legacy ip user talk pages
+		if (new mw.Title(ctx.pageName).namespace === 3) {
+			if (mw.util.isIPAddress(new mw.Title(ctx.pageName).getMainText())) {
+				ctx.statusElement.info(conv({ hans: '旧式IP的用户讨论页，跳过。', hant: '舊式IP的使用者討論頁，跳過。' }));
+				return;
+			}
+		}
+
 		// shouldn't happen if canUseMwUserToken === true
 		if (ctx.fullyProtected && !ctx.suppressProtectWarning &&
 			!confirm(
