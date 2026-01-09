@@ -449,6 +449,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		field_block_options = new Morebits.QuickForm.Element({ type: 'field', label: conv({ hans: '封禁选项', hant: '封鎖選項' }), name: 'field_block_options' });
 		field_block_options.append({ type: 'div', name: 'currentblock', label: ' ' });
 		field_block_options.append({ type: 'div', name: 'hasblocklog', label: ' ' });
+		field_block_options.append({ type: 'div', name: 'tempaccountexpiry', label: ' ' });
 		field_block_options.append({
 			type: 'select',
 			name: 'expiry_preset',
@@ -463,14 +464,6 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			tooltip: conv({ hans: '您可以使用相对时间，如“1 minute”或“19 days”；或绝对时间，“yyyymmddhhmm”（如“200602011405”是2006年2月1日14:05 UTC。）', hant: '您可以使用相對時間，如「1 minute」或「19 days」；或絕對時間，「yyyymmddhhmm」（如「200602011405」是2006年2月1日14:05 UTC。）' }),
 			value: Twinkle.block.field_block_options.expiry || Twinkle.block.field_template_options.template_expiry
 		});
-
-		if (Twinkle.block.isTempAccount && Twinkle.block.tempAccountExpiry) {
-			field_block_options.append({
-				type: 'div',
-				name: 'tempaccountinfo',
-				label: conv({ hans: '临时账号到期时间：', hant: '臨時帳號到期時間：' }) + Twinkle.block.tempAccountExpiry.toLocaleString()
-			});
-		}
 
 		if (partialBox) { // Partial block
 			field_block_options.append({
@@ -1045,6 +1038,16 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		Twinkle.block.callback.change_preset(e);
 	} else if (templateBox) {
 		Twinkle.block.callback.change_template(e);
+	}
+
+	if (Twinkle.block.isTempAccount && Twinkle.block.tempAccountExpiry) {
+		var valid = Twinkle.block.tempAccountExpiry.getTime() - new Date().getTime();
+		Morebits.Status.init($('div[name="tempaccountexpiry"] span').last()[0]);
+		if (valid > 0) {
+			Morebits.Status.info(conv({ hans: '临时账号到期时间', hant: '臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.toLocaleString());
+		} else {
+			Morebits.Status.warn(conv({ hans: '（已过期）临时账号到期时间', hant: '（已過期）臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.toLocaleString());
+		}
 	}
 };
 
