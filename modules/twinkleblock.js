@@ -269,9 +269,9 @@ Twinkle.block.processUserInfo = function twinkleblockProcessUserInfo(data, fn) {
 			: [];
 		Twinkle.block.isTempAccount = mw.util.isTemporaryUser(relevantUserName);
 		if (Twinkle.block.isTempAccount && userinfo.registration) {
-			var registrationDate = new Date(userinfo.registration);
+			var registrationDate = new Morebits.Date(userinfo.registration);
 			Twinkle.block.tempAccountRegistration = registrationDate;
-			Twinkle.block.tempAccountExpiry = new Date(registrationDate.getTime() + (90 * 24 * 60 * 60 * 1000));
+			Twinkle.block.tempAccountExpiry = new Morebits.Date(registrationDate.getTime() + (90 * 24 * 60 * 60 * 1000));
 		} else {
 			Twinkle.block.tempAccountRegistration = null;
 			Twinkle.block.tempAccountExpiry = null;
@@ -1078,9 +1078,9 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		var valid = Twinkle.block.tempAccountExpiry.getTime() - new Date().getTime();
 		Morebits.Status.init($('div[name="tempaccountexpiry"] span').last()[0]);
 		if (valid > 0) {
-			Morebits.Status.info(conv({ hans: '临时账号到期时间', hant: '臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.toLocaleString());
+			Morebits.Status.info(conv({ hans: '临时账号到期时间', hant: '臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.calendar('utc'));
 		} else {
-			Morebits.Status.warn(conv({ hans: '（已过期）临时账号到期时间', hant: '（已過期）臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.toLocaleString());
+			Morebits.Status.warn(conv({ hans: '（已过期）临时账号到期时间', hant: '（已過期）臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.calendar('utc'));
 		}
 	}
 };
@@ -1807,8 +1807,8 @@ Twinkle.block.callback.validateTempAccountExpiry = function twinkleblockCallback
 	}
 
 	if (blockExpiryDate > Twinkle.block.tempAccountExpiry) {
-		var registrationStr = Twinkle.block.tempAccountRegistration.toLocaleString();
-		var expiryStr = Twinkle.block.tempAccountExpiry.toLocaleString();
+		var registrationStr = Twinkle.block.tempAccountRegistration.calendar('utc');
+		var expiryStr = Twinkle.block.tempAccountExpiry.calendar('utc');
 		var message = conv({
 			hans: '该临时账号于' + registrationStr + '创建，即于' + expiryStr + '到期，为避免不必要地占据封禁列表，建议不要设定超过到期时间的封禁期限。\n是否继续设置本期限？',
 			hant: '該臨時帳號於' + registrationStr + '創建，即於' + expiryStr + '到期，為避免不必要地佔據封鎖列表，建議不要設定超過到期時間的封鎖期限。\n是否繼續設置本期限？'
