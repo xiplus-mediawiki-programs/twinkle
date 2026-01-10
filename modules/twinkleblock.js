@@ -2150,7 +2150,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 						return advancedGroups[group];
 					}).join('、');
 					if (confirm(conv({ hans: '该用户持有', hant: '該使用者持有' }) + groupNames + conv({ hans: '权限，根据解除权限方针的规定，应一并提报解除权限请求供其他用户复审。\n是否提报？', hant: '權限，根據解除權限方針的規定，應一併提報解除權限請求供其他使用者複審。\n是否提報？' }))) {
-						var reportPage = new Morebits.wiki.Page('Wikipedia:申请解除权限', conv({ hans: '提报解除权限', hant: '提報解除權限' }));
+						var reportPage = new Morebits.wiki.Page('Wikipedia:申请解除权限', conv({ hans: '申请解除权限页修改', hant: '申請解除權限頁修改' }));
 						reportPage.setFollowRedirect(true);
 						reportPage.setCallbackParameters({
 							user: blockoptions.user,
