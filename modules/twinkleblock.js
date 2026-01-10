@@ -2066,24 +2066,6 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				}
 				blockoptions.reblock = 1; // Writing over a block will fail otherwise
 			}
-			var groupsCanBeRemoved = [
-				'autoreviewer',
-				'confirmed',
-				'eventparticipant',
-				'filemover',
-				'ipblock-exempt',
-				'massmessage-sender',
-				'patroller',
-				'rollbacker',
-				'templateeditor',
-				'transwiki'
-			];
-			var groupsToBeRemoved = [];
-			if (user && Morebits.string.isInfinity(blockoptions.expiry)) {
-				groupsToBeRemoved = user.groups.filter(function (group) {
-					return groupsCanBeRemoved.indexOf(group) > -1;
-				});
-			}
 
 			// execute block
 			blockoptions.tags = Twinkle.changeTags;
@@ -2098,25 +2080,6 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 					vipPage.setFollowRedirect(true);
 					vipPage.setCallbackParameters(blockoptions);
 					vipPage.load(Twinkle.block.callback.closeRequest);
-				}
-				if (groupsToBeRemoved.length > 0) {
-					var rightStatusElement = new Morebits.Status(conv({ hans: '移除权限', hant: '移除權限' }));
-					if (confirm(conv({ hans: '该用户有以下权限：', hant: '該使用者有以下權限：' }) + groupsToBeRemoved.join('、') + conv({ hans: '，您是否想要同时移除这些权限？', hant: '，您是否想要同時移除這些權限？' }))) {
-						var revokeOptions = {
-							action: 'userrights',
-							user: blockoptions.user,
-							remove: groupsToBeRemoved.join('|'),
-							reason: conv({ hans: '用户已被无限期封禁', hant: '使用者已被無限期封鎖' }),
-							token: data.query.tokens.userrightstoken,
-							tags: Twinkle.changeTags
-						};
-						var mrApi = new Morebits.wiki.Api(conv({ hans: '移除权限', hant: '移除權限' }), revokeOptions, function () {
-							rightStatusElement.info('已移除' + groupsToBeRemoved.join('、'));
-						});
-						mrApi.post();
-					} else {
-						rightStatusElement.error(conv({ hans: '用户取消操作。', hant: '使用者取消操作。' }));
-					}
 				}
 
 				// check for advanced rights to report for revocation
