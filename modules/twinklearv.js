@@ -317,7 +317,7 @@ Twinkle.arv.callback.changeCategory = function (e) {
 				format: 'json'
 			}).then(function(data) {
 				noContribs = !data.query.users[0].editcount;
-				if (!noContribs && !confirm(conv({ hans: '用户没有任何编辑。\n根据方针规定，除确认为傀儡或多次遭受骚扰外，不应报告。\n是否继续？', hant: '使用者沒有任何編輯。\n根據方針規定，除確認為傀儡或多次遭受騷擾外，不應報告。\n是否繼續？' }))) {
+				if (noContribs && !confirm(conv({ hans: '用户没有任何编辑。\n根据方针规定，除确认为傀儡或多次遭受骚扰外，不应报告。\n是否继续？', hant: '使用者沒有任何編輯。\n根據方針規定，除確認為傀儡或多次遭受騷擾外，不應報告。\n是否繼續？' }))) {
 					Morebits.Status.init(root);
 					Morebits.Status.error(conv({ hans: '报告用户给管理人员', hant: '報告使用者給管理人員' }), conv({ hans: '用户取消操作', hant: '使用者取消操作' }));
 				} else {
