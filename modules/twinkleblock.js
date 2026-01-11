@@ -2271,7 +2271,12 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 	var statusElement = vipPage.getStatusElement();
 	var userName = Morebits.relevantUserName(true);
 
+	// add prefix for custom dates in summary and comment
 	var expiryText = Morebits.string.formatTime(params.expiry);
+	if (expiryText === params.expiry) {
+		expiryText = '至' + expiryText;
+	}
+
 	var comment = '{{Blocked|' + (Morebits.string.isInfinity(params.expiry) ? 'indef' : expiryText) + '}}。';
 
 	var requestList = text.split(/(?=\n===.+===\s*\n)/);
