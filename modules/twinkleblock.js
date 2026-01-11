@@ -2421,7 +2421,12 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 	var statusElement = vipPage.getStatusElement();
 	var userName = Morebits.relevantUserName(true);
 
-	var expiryText = Morebits.string.formatTime(params.expiry);
+	var expiryText;
+	if (Twinkle.block.tempAccountExpiry && params.expiry === Twinkle.block.tempAccountExpiry.toGMTString()) {
+		expiryText = conv({ hans: ' 至临时账号过期', hant: ' 至臨時帳號過期' });
+	} else {
+		expiryText = Morebits.string.formatTime(params.expiry);
+	}
 	var comment = '{{Blocked|' + (Morebits.string.isInfinity(params.expiry) ? 'indef' : expiryText) + '}}。';
 
 	var requestList = text.split(/(?=\n===.+===\s*\n)/);
