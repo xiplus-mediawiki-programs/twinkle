@@ -2423,7 +2423,7 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 
 	var expiryText;
 	if (Twinkle.block.tempAccountExpiry && params.expiry === Twinkle.block.tempAccountExpiry.toGMTString()) {
-		expiryText = conv({ hans: ' 至临时账号过期', hant: ' 至臨時帳號過期' });
+		expiryText = conv({ hans: '至临时账号过期（' + new Morebits.Date(Twinkle.block.tempAccountExpiry.toGMTString()).calendar('utc') + '）', hant: '至臨時帳號過期（' + new Morebits.Date(Twinkle.block.tempAccountExpiry.toGMTString()).calendar('utc') + '）' });
 	} else {
 		expiryText = Morebits.string.formatTime(params.expiry);
 	}
