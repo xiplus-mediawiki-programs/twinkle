@@ -242,8 +242,34 @@ Twinkle.block.processUserInfo = function twinkleblockProcessUserInfo(data, fn) {
 		Twinkle.block.userIsBot = !!userinfo.groupmemberships && userinfo.groupmemberships.map(function(e) {
 			return e.group;
 		}).indexOf('bot') !== -1;
+		var advancedGroups = {
+			'abusefilter': conv({ hans: '过滤器编辑者', hant: '過濾器編輯者' }),
+			'abusefilter-helper': conv({ hans: '过滤器助理', hant: '過濾器助理' }),
+			'accountcreator': conv({ hans: '大量账号创建者', hant: '大量賬號創建者' }),
+			'autoreviewer': '巡查豁免者',
+			'confirmed': conv({ hans: '确认用户', hant: '確認用戶' }),
+			'electionclerk': conv({ hans: '选举助理', hant: '選舉助理' }),
+			'event-organizer': conv({ hans: '活动组织者', hant: '活動組織者' }),
+			'filemover': conv({ hans: '文件移动员', hant: '檔案移動員' }),
+			'ipblock-exempt': conv({ hans: 'IP封禁豁免', hant: 'IP封鎖豁免' }),
+			'ipblock-exempt-grantor': conv({ hans: 'IP封禁豁免权授予者', hant: 'IP封鎖豁免權授予者' }),
+			'massmessage-sender': conv({ hans: '大量消息发送者', hant: '大量訊息傳送者' }),
+			'patroller': conv({ hans: '巡查员', hant: '巡查員' }),
+			'rollbacker': conv({ hans: '回退员', hant: '回退員' }),
+			'templateeditor': conv({ hans: '模板编辑员', hant: '模板編輯員' }),
+			'temporary-account-viewer': conv({ hans: '临时账户IP查看者', hant: '臨時帳號IP檢視者' }),
+			'transwiki': conv({ hans: '跨维基导入者', hant: '跨維基匯入者' })
+		};
+		Twinkle.block.userAdvancedGroups = userinfo.groupmemberships
+			? userinfo.groupmemberships.filter(function(e) {
+				return Object.prototype.hasOwnProperty.call(advancedGroups, e.group);
+			}).map(function(e) {
+				return advancedGroups[e.group];
+			})
+			: [];
 	} else {
 		Twinkle.block.userIsBot = false;
+		Twinkle.block.userAdvancedGroups = [];
 	}
 
 	if (blockinfo) {
@@ -554,6 +580,15 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			name: 'closevip',
 			value: '1'
 		});
+
+		if (Twinkle.block.userAdvancedGroups.length > 0) {
+			blockoptions.push({
+				checked: true,
+				label: conv({ hans: '申请解除权限：', hant: '申請解除權限：' }) + Twinkle.block.userAdvancedGroups.join('、'),
+				name: 'rfdr',
+				value: '1'
+			});
+		}
 
 		field_block_options.append({
 			type: 'checkbox',
@@ -1712,7 +1747,7 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 		if (data.useInitialOptions && data[el.name] === undefined) {
 			return;
 		}
-		if (el.name === 'closevip') {
+		if (['closevip', 'rfdr'].includes(el.name)) {
 			return;
 		}
 
@@ -1864,6 +1899,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	unblockoptions = Twinkle.block.field_unblock_options;
 
 	var toClosevip = !!blockoptions.closevip;
+	var toRfdr = !!blockoptions.rfdr;
 
 	templateoptions = Twinkle.block.field_template_options;
 
@@ -1873,6 +1909,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	// remove extraneous
 	delete blockoptions.expiry_preset;
 	delete blockoptions.closevip;
+	delete blockoptions.rfdr;
 
 	// Partial API requires this to be gone, not false or 0
 	if (toPartial) {
@@ -2035,7 +2072,6 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				block = data.query.blocks[1];
 			}
 			var logevents = data.query.logevents[0];
-			var user = data.query.users ? data.query.users[0] : null;
 			var logid = data.query.logevents.length ? logevents.logid : false;
 
 			if (logid !== Twinkle.block.blockLogId || !!block !== !!Twinkle.block.currentBlockInfo) {
@@ -2066,24 +2102,6 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				}
 				blockoptions.reblock = 1; // Writing over a block will fail otherwise
 			}
-			var groupsCanBeRemoved = [
-				'autoreviewer',
-				'confirmed',
-				'eventparticipant',
-				'filemover',
-				'ipblock-exempt',
-				'massmessage-sender',
-				'patroller',
-				'rollbacker',
-				'templateeditor',
-				'transwiki'
-			];
-			var groupsToBeRemoved = [];
-			if (user && Morebits.string.isInfinity(blockoptions.expiry)) {
-				groupsToBeRemoved = user.groups.filter(function (group) {
-					return groupsCanBeRemoved.indexOf(group) > -1;
-				});
-			}
 
 			// execute block
 			blockoptions.tags = Twinkle.changeTags;
@@ -2099,24 +2117,11 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 					vipPage.setCallbackParameters(blockoptions);
 					vipPage.load(Twinkle.block.callback.closeRequest);
 				}
-				if (groupsToBeRemoved.length > 0) {
-					var rightStatusElement = new Morebits.Status(conv({ hans: '移除权限', hant: '移除權限' }));
-					if (confirm(conv({ hans: '该用户有以下权限：', hant: '該使用者有以下權限：' }) + groupsToBeRemoved.join('、') + conv({ hans: '，您是否想要同时移除这些权限？', hant: '，您是否想要同時移除這些權限？' }))) {
-						var revokeOptions = {
-							action: 'userrights',
-							user: blockoptions.user,
-							remove: groupsToBeRemoved.join('|'),
-							reason: conv({ hans: '用户已被无限期封禁', hant: '使用者已被無限期封鎖' }),
-							token: data.query.tokens.userrightstoken,
-							tags: Twinkle.changeTags
-						};
-						var mrApi = new Morebits.wiki.Api(conv({ hans: '移除权限', hant: '移除權限' }), revokeOptions, function () {
-							rightStatusElement.info('已移除' + groupsToBeRemoved.join('、'));
-						});
-						mrApi.post();
-					} else {
-						rightStatusElement.error(conv({ hans: '用户取消操作。', hant: '使用者取消操作。' }));
-					}
+				if (toRfdr) {
+					var rfdrPage = new Morebits.wiki.Page('Wikipedia:申请解除权限', conv({ hans: '提报解除权限', hant: '提報解除權限' }));
+					rfdrPage.setFollowRedirect(true);
+					rfdrPage.setCallbackParameters(blockoptions);
+					rfdrPage.load(Twinkle.block.callback.addRevokeReport);
 				}
 			});
 			mbApi.post();
@@ -2319,6 +2324,51 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 	vipPage.setChangeTags(Twinkle.changeTags);
 	vipPage.setPageText(text);
 	vipPage.save();
+};
+
+Twinkle.block.callback.addRevokeReport = function twinkleblockCallbackAddRevokeReport(reportPage) {
+	var params = reportPage.getCallbackParameters();
+	var text = reportPage.getPageText();
+	var statusElement = reportPage.getStatusElement();
+
+	var sectionHeader = /^==\s*已封禁或除权用户复审\s*==$/m;
+	var sectionMatch = sectionHeader.exec(text);
+
+	if (!sectionMatch) {
+		statusElement.error(conv({ hans: '未找到“已封禁或除权用户复审”章节', hant: '未找到「已封禁或除權使用者複審」章節' }));
+		return;
+	}
+
+	var blockTypeText = params.partial ? '被部分封鎖' : '被封鎖';
+	var reportContent = '\n===' + params.user + '===\n' +
+		'*{{vandal|' + params.user + '}}\n' +
+		'*{{Status|新提案}}\n' +
+		'*需複審或解除之權限：' + Twinkle.block.userAdvancedGroups.join('、') + '\n' +
+		'*理由：使用者已因' + (params.reason || '') + blockTypeText + '，請覆核考慮是否為之除權。\n' +
+		'*提報人：~~~~\n';
+	var sectionStartIndex = sectionMatch.index + sectionMatch[0].length;
+	var remainingText = text.substring(sectionStartIndex);
+	var nextSectionMatch = /^==\s*[^=]+\s*==$/m.exec(remainingText);
+
+	var insertPosition;
+	if (nextSectionMatch) {
+		insertPosition = sectionStartIndex + nextSectionMatch.index;
+	} else {
+		insertPosition = text.length;
+	}
+
+	var newText = text.substring(0, insertPosition).trimRight() + '\n' + reportContent + '\n' + text.substring(insertPosition);
+
+	var summary = '/* ' + params.user + ' */ ' + conv({ hans: '提报解除权限请求', hant: '提報解除權限請求' });
+
+	var userTalkPage = 'User_talk:' + params.user;
+	Morebits.wiki.actionCompleted.redirect = userTalkPage;
+	Morebits.wiki.actionCompleted.notice = conv({ hans: '完成，将在几秒后加载用户讨论页', hant: '完成，將在幾秒後載入使用者討論頁' });
+
+	reportPage.setEditSummary(summary);
+	reportPage.setChangeTags(Twinkle.changeTags);
+	reportPage.setPageText(newText);
+	reportPage.save();
 };
 
 Twinkle.block.callback.getBlockNoticeWikitext = function(params) {
