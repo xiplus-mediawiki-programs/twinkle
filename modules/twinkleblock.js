@@ -2072,7 +2072,6 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 				block = data.query.blocks[1];
 			}
 			var logevents = data.query.logevents[0];
-			var user = data.query.users ? data.query.users[0] : null;
 			var logid = data.query.logevents.length ? logevents.logid : false;
 
 			if (logid !== Twinkle.block.blockLogId || !!block !== !!Twinkle.block.currentBlockInfo) {
