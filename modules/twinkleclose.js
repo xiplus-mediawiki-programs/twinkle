@@ -455,26 +455,21 @@ Twinkle.close.callback.change_code = function twinklecloseCallbackChangeCode(e) 
 			redirects.disabled = true;
 		}
 	} else {
-		noop.checked = false;
-		noop.disabled = false;
-		if (messageData.action === 'keep') {
+		var isKeepAction = messageData.action === 'keep';
+		if (Morebits.userIsSysop) {
+			noop.checked = false;
+			noop.disabled = false;
 			if (talkpage) {
-				talkpage.checked = false;
-				talkpage.disabled = true;
+				talkpage.checked = !isKeepAction;
+				talkpage.disabled = isKeepAction;
 			}
 			if (redirects) {
-				redirects.checked = false;
-				redirects.disabled = true;
+				redirects.checked = !isKeepAction;
+				redirects.disabled = isKeepAction;
 			}
 		} else {
-			if (talkpage) {
-				talkpage.checked = true;
-				talkpage.disabled = false;
-			}
-			if (redirects) {
-				redirects.checked = true;
-				redirects.disabled = false;
-			}
+			noop.checked = !isKeepAction;
+			noop.disabled = !isKeepAction;
 		}
 		if (sdreason) {
 			if (e.target.value === 'sd') {
