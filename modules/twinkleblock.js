@@ -267,7 +267,7 @@ Twinkle.block.processUserInfo = function twinkleblockProcessUserInfo(data, fn) {
 				return advancedGroups[e.group];
 			})
 			: [];
-		Twinkle.block.isTempAccount = mw.util.isTemporaryUser(blockinfo.user);
+		Twinkle.block.isTempAccount = mw.util.isTemporaryUser(relevantUserName);
 		if (Twinkle.block.isTempAccount && userinfo.registration) {
 			var registrationDate = new Morebits.Date(userinfo.registration);
 			Twinkle.block.tempAccountRegistration = registrationDate;
