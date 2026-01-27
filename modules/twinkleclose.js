@@ -300,13 +300,15 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 		event: Twinkle.close.callback.change_code
 	});
 
-	form.append({
-		type: 'input',
-		name: 'sdreason',
-		label: conv({ hans: '速删理由：', hant: '速刪理由：' }),
-		tooltip: conv({ hans: '用于删除日志，使用{{delete}}的参数格式，例如 A1 或 A1|G1', hant: '用於刪除日誌，使用{{delete}}的參數格式，例如 A1 或 A1|G1' }),
-		hidden: true
-	});
+	if (Morebits.userIsSysop) {
+		form.append({
+			type: 'input',
+			name: 'sdreason',
+			label: conv({ hans: '速删理由：', hant: '速刪理由：' }),
+			tooltip: conv({ hans: '用于删除日志，使用{{delete}}的参数格式，例如 A1 或 A1|G1', hant: '用於刪除日誌，使用{{delete}}的參數格式，例如 A1 或 A1|G1' }),
+			hidden: true
+		});
+	}
 
 	form.append({
 		type: 'input',
@@ -327,15 +329,32 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 		]
 	});
 
-	if (new mw.Title(title).namespace % 2 === 0 && new mw.Title(title).namespace !== 2) {  // hide option for user pages, to avoid accidentally deleting user talk page
+	if (Morebits.userIsSysop) {
+		if (new mw.Title(title).namespace % 2 === 0 && new mw.Title(title).namespace !== 2) {  // hide option for user pages, to avoid accidentally deleting user talk page
+			form.append({
+				type: 'checkbox',
+				list: [
+					{
+						label: conv({ hans: '删除关联的讨论页', hant: '刪除關聯的討論頁' }),
+						value: 'talkpage',
+						name: 'talkpage',
+						tooltip: conv({ hans: '删除时附带删除此页面的讨论页。', hant: '刪除時附帶刪除此頁面的討論頁。' }),
+						checked: true,
+						event: function(event) {
+							event.stopPropagation();
+						}
+					}
+				]
+			});
+		}
 		form.append({
 			type: 'checkbox',
 			list: [
 				{
-					label: conv({ hans: '删除关联的讨论页', hant: '刪除關聯的討論頁' }),
-					value: 'talkpage',
-					name: 'talkpage',
-					tooltip: conv({ hans: '删除时附带删除此页面的讨论页。', hant: '刪除時附帶刪除此頁面的討論頁。' }),
+					label: conv({ hans: '删除重定向页', hant: '刪除重新導向頁面' }),
+					value: 'redirects',
+					name: 'redirects',
+					tooltip: conv({ hans: '删除到此页的重定向。', hant: '刪除到此頁的重新導向。' }),
 					checked: true,
 					event: function(event) {
 						event.stopPropagation();
@@ -344,21 +363,6 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 			]
 		});
 	}
-	form.append({
-		type: 'checkbox',
-		list: [
-			{
-				label: conv({ hans: '删除重定向页', hant: '刪除重新導向頁面' }),
-				value: 'redirects',
-				name: 'redirects',
-				tooltip: conv({ hans: '删除到此页的重定向。', hant: '刪除到此頁的重新導向。' }),
-				checked: true,
-				event: function(event) {
-					event.stopPropagation();
-				}
-			}
-		]
-	});
 
 	form.append({ type: 'submit' });
 
@@ -436,6 +440,7 @@ Twinkle.close.callback.change_code = function twinklecloseCallbackChangeCode(e) 
 	var resultData = $(e.target.form).data('resultData');
 	var messageData = $(e.target).find('option[value="' + e.target.value + '"]').data('messageData');
 	var noop = e.target.form.noop;
+	var sdreason = e.target.form.sdreason;
 	var talkpage = e.target.form.talkpage;
 	var redirects = e.target.form.redirects;
 	if (resultData.noop || messageData.action === 'noop') {
@@ -445,30 +450,33 @@ Twinkle.close.callback.change_code = function twinklecloseCallbackChangeCode(e) 
 			talkpage.checked = false;
 			talkpage.disabled = true;
 		}
-		redirects.checked = false;
-		redirects.disabled = true;
-	} else {
-		noop.checked = false;
-		noop.disabled = false;
-		if (messageData.action === 'keep') {
-			if (talkpage) {
-				talkpage.checked = false;
-				talkpage.disabled = true;
-			}
+		if (redirects) {
 			redirects.checked = false;
 			redirects.disabled = true;
-		} else {
-			if (talkpage) {
-				talkpage.checked = true;
-				talkpage.disabled = false;
-			}
-			redirects.checked = true;
-			redirects.disabled = false;
 		}
-		if (e.target.value === 'sd') {
-			e.target.form.sdreason.parentElement.removeAttribute('hidden');
+	} else {
+		var isKeepAction = messageData.action === 'keep';
+		if (Morebits.userIsSysop) {
+			noop.checked = false;
+			noop.disabled = false;
+			if (talkpage) {
+				talkpage.checked = !isKeepAction;
+				talkpage.disabled = isKeepAction;
+			}
+			if (redirects) {
+				redirects.checked = !isKeepAction;
+				redirects.disabled = isKeepAction;
+			}
 		} else {
-			e.target.form.sdreason.parentElement.setAttribute('hidden', '');
+			noop.checked = !isKeepAction;
+			noop.disabled = !isKeepAction;
+		}
+		if (sdreason) {
+			if (e.target.value === 'sd') {
+				sdreason.parentElement.removeAttribute('hidden');
+			} else {
+				sdreason.parentElement.setAttribute('hidden', '');
+			}
 		}
 	}
 
@@ -479,13 +487,14 @@ Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
 	var resultData = $(e.target).data('resultData');
 	var messageData = $(e.target.sub_group).find('option[value="' + code + '"]').data('messageData');
 	var noop = e.target.noop.checked;
+	var sdreason = e.target.sdreason ? e.target.sdreason.value : '';
 	var talkpage = e.target.talkpage && e.target.talkpage.checked;
-	var redirects = e.target.redirects.checked;
+	var redirects = e.target.redirects && e.target.redirects.checked;
 	var params = {
 		title: resultData.title,
 		code: code,
 		remark: e.target.remark.value,
-		sdreason: e.target.sdreason.value,
+		sdreason: sdreason,
 		section: resultData.section,
 		parentSection: resultData.parentSection,
 		messageData: messageData,
