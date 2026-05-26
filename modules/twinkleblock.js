@@ -251,7 +251,6 @@ Twinkle.block.processUserInfo = function twinkleblockProcessUserInfo(data, fn) {
 			'electionclerk': conv({ hans: '选举助理', hant: '選舉助理' }),
 			'event-organizer': conv({ hans: '活动组织者', hant: '活動組織者' }),
 			'filemover': conv({ hans: '文件移动员', hant: '檔案移動員' }),
-			'ipblock-exempt': conv({ hans: 'IP封禁豁免', hant: 'IP封鎖豁免' }),
 			'ipblock-exempt-grantor': conv({ hans: 'IP封禁豁免权授予者', hant: 'IP封鎖豁免權授予者' }),
 			'massmessage-sender': conv({ hans: '大量消息发送者', hant: '大量訊息傳送者' }),
 			'patroller': conv({ hans: '巡查员', hant: '巡查員' }),
