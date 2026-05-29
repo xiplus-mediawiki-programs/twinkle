@@ -523,7 +523,7 @@ Twinkle.arv.callback.getReportWikitext = function(form) {
 				return;
 			}
 
-			reason += '=== ' + (input.hidename ? conv({ hans: '已隐藏用户名', hant: '已隱藏使用者名稱' }) : uid) + ' ===\n';
+			reason += '== ' + (input.hidename ? conv({ hans: '已隐藏用户名', hant: '已隱藏使用者名稱' }) : uid) + ' ==\n';
 			reason += "* '''{{vandal|" + (/=/.test(uid) ? '1=' : '') + uid;
 			if (input.hidename) {
 				reason += '|hidename=1';
@@ -581,7 +581,7 @@ Twinkle.arv.callback.getReportWikitext = function(form) {
 				alert(conv({ hans: '您必须指定理由', hant: '您必須指定理由' }));
 				return;
 			}
-			reason += '=== ' + uid + ' ===\n';
+			reason += '== ' + uid + ' ==\n';
 			reason += "* '''{{vandal|" + (/=/.test(uid) ? '1=' : '') + uid + "}}'''\n";
 
 			var pages = $.map($('input:text[name=page]', form), function (o) {
@@ -725,7 +725,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				var $aivLink = '<a target="_blank" href="/wiki/WP:VIP">WP:VIP</a>';
 
 				// check if user has already been reported
-				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
+				if (new RegExp('==\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*==').test(text)) {
 					aivPage.getStatusElement().error(conv({ hans: '报告已存在，将不会加入新的', hant: '報告已存在，將不會加入新的' }));
 					Morebits.Status.printUserText(reason[1], conv({ hans: '您输入的评论已在下方提供，您可以将其加入到', hant: '您輸入的評論已在下方提供，您可以將其加入到' }) + $aivLink + conv({ hans: '已存在的小节中：', hant: '已存在的小節中：' }));
 					return;
@@ -761,7 +761,7 @@ Twinkle.arv.callback.evaluate = function(e) {
 				var $ewipLink = '<a target="_blank" href="/wiki/WP:EWIP">WP:EWIP</a>';
 
 				// check if user has already been reported
-				if (new RegExp('===\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*===').test(text)) {
+				if (new RegExp('==\\s*\\{\\{\\s*(?:[Vv]andal)\\s*\\|\\s*(?:1=)?\\s*' + Morebits.string.escapeRegExp(uid) + '\\s*\\}\\}\\s*==').test(text)) {
 					ewipPage.getStatusElement().error(conv({ hans: '报告已存在，将不会加入新的', hant: '報告已存在，將不會加入新的' }));
 					Morebits.Status.printUserText(reason[1], conv({ hans: '您输入的评论已在下方提供，您可以将其加入到', hant: '您輸入的評論已在下方提供，您可以將其加入到' }) + $ewipLink + conv({ hans: '已存在的小节中：', hant: '已存在的小節中：' }));
 					return;
