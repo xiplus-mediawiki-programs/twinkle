@@ -2433,7 +2433,7 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 
 	var comment = '{{Blocked|' + (Morebits.string.isInfinity(params.expiry) ? 'indef' : expiryText) + '}}。';
 
-	var requestList = text.split(/(?=\n===.+===\s*\n)/);
+	var requestList = text.split(/(?=\n==.+==\s*\n)/);
 
 	var found = false;
 	var hidename = false;
