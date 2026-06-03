@@ -321,8 +321,8 @@ Twinkle.batchdelete.deletereasonlist = [
 		value: conv({ hans: '[[Wikipedia:CSD#U1|U1]]: 用户请求删除自己的[[Help:用户页|用户页]]或其子页面。', hant: '[[Wikipedia:CSD#U1|U1]]: 使用者請求刪除自己的[[Help:用户页|使用者頁面]]或其子頁面。' })
 	},
 	{
-		label: conv({ hans: 'O4: 空的分类（没有条目也没有子分类）', hant: 'O4: 空的分類（沒有條目也沒有子分類）' }),
-		value: conv({ hans: '[[Wikipedia:CSD#O4|O4]]: 空的分类（没有条目也没有子分类）。', hant: '[[Wikipedia:CSD#O4|O4]]: 空的分類（沒有條目也沒有子分類）。' })
+		label: conv({ hans: 'C1: 空分类', hant: 'C1： 空分類' }),
+		value: conv({ hans: '[[Wikipedia:CSD#C1|C1]]: 空分类。', hant: '[[Wikipedia:CSD#C1|C1]]: 空分類。' })
 	},
 	{
 		label: conv({ hans: 'O7: 废弃草稿', hant: 'O7: 廢棄草稿' }),
