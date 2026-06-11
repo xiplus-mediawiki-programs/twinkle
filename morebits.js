@@ -2185,7 +2185,7 @@ Morebits.date.prototype = new Proxy(Morebits.date.prototype, {
 			};
 		}
 		return Reflect.get(target, p, receiver);
-	},
+	}
 });
 
 
