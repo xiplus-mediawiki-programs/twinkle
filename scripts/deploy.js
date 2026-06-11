@@ -2,7 +2,7 @@
 
 const path = require('path');
 const { program } = require('commander');
-const { Mwn } = require('mwn');
+const { mwn } = require('mwn');
 const chalk = require('chalk');
 const { createTwoFilesPatch } = require('diff');
 const fs = require('fs-extra');
@@ -24,32 +24,33 @@ program
     .parse(process.argv);
 
 const GADGET_FILES = [
-    'src/twinkle.js',
-    'src/twinkle.css',
-    'src/twinkle-pagestyles.css',
-    'src/morebits.js',
-    'src/morebits.css',
+    'twinkle.js',
+    'twinkle.css',
+    'twinkle-pagestyles.css',
+    'morebits.js',
+    'morebits.css',
     'lib/select2.min.js',
     'lib/select2.min.css',
-    'src/modules/twinklearv.js',
-    'src/modules/twinklebatchdelete.js',
-    'src/modules/twinklebatchprotect.js',
-    'src/modules/twinklebatchundelete.js',
-    'src/modules/twinkleblock.js',
-    'src/modules/twinkleconfig.js',
-    'src/modules/twinkledeprod.js',
-    'src/modules/twinklediff.js',
-    'src/modules/twinkleimage.js',
-    'src/modules/twinkleprod.js',
-    'src/modules/twinkleprotect.js',
-    'src/modules/twinklerollback.js',
-    'src/modules/twinklespeedy.js',
-    'src/modules/twinkletag.js',
-    'src/modules/twinkletalkback.js',
-    'src/modules/twinkleunlink.js',
-    'src/modules/twinklewarn.js',
-    'src/modules/twinklewelcome.js',
-    'src/modules/twinklexfd.js'
+    'modules/twinklearv.js',
+    'modules/twinklebatchdelete.js',
+    'modules/twinklebatchundelete.js',
+    'modules/twinkleblock.js',
+    'modules/twinkleclose.js',
+    'modules/twinkleconfig.js',
+    'modules/twinklecopyvio.js',
+    'modules/twinklediff.js',
+    'modules/twinklefluff.js',
+    'modules/twinkleimage.js',
+    'modules/twinkleprotect.js',
+    'modules/twinklespeedy.js',
+    'modules/twinklestub.js',
+    'modules/twinkleunlink.js',
+    'modules/twinklewarn.js',
+    'modules/twinklexfd.js',
+    'modules/friendlyshared.js',
+    'modules/friendlytag.js',
+    'modules/friendlywelcome.js',
+    'modules/friendlytalkback.js'
 ];
 
 const DEFAULT_CONF = {
