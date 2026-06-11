@@ -2498,7 +2498,7 @@ Twinkle.block.callback.addRevokeReport = function twinkleblockCallbackAddRevokeR
 		'*{{vandal|' + params.user + '}}\n' +
 		'*{{Status|新提案}}\n' +
 		'*需複審或解除之權限：' + Twinkle.block.userAdvancedGroups.join('、') + '\n' +
-		'*理由：使用者已因' + (params.reason || '') + blockTypeText + '，請覆核考慮是否為之除權。\n' +
+		('*理由：使用者已因<nowiki>' + (params.reason || '').replaceAll(/\[\[([^\]]+)\]\]/g, '</nowiki>[[$1]]<nowiki>')).replace(/<nowiki><\/nowiki>/, '') + blockTypeText + '</nowiki>，請覆核考慮是否為之除權。\n' +
 		'*提報人：~~~~\n';
 	var sectionStartIndex = sectionMatch.index + sectionMatch[0].length;
 	var remainingText = text.substring(sectionStartIndex);
