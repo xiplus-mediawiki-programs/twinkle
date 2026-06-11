@@ -2174,13 +2174,18 @@ Morebits.date.prototype = {
 };
 
 // Allow native Date.prototype methods to be used on Morebits.date objects
-Object.getOwnPropertyNames(Date.prototype).forEach(function(func) {
-	// Exclude methods that collide with PageTriage's Date.js external, which clobbers native Date: [[phab:T268513]]
-	if (['add', 'getDayName', 'getMonthName'].indexOf(func) === -1) {
-		Morebits.date.prototype[func] = function() {
-			return this._d[func].apply(this._d, Array.prototype.slice.call(arguments));
-		};
-	}
+// 由於我們不保證 Date 物件沒有被覆蓋或不標準實現
+// 以至於原本的 Object.getOwnPropertyNames 拿不到所需屬性
+// 因此改成使用 Proxy 動態抽取
+Morebits.date.prototype = new Proxy(Morebits.date.prototype, {
+	get(target, p, receiver) {
+		if (!Reflect.has(target, p) && typeof Date.prototype[p] === 'function') {
+			target[p] = function(...args) {
+				return this._d[p].apply(this._d, args);
+			};
+		}
+		return Reflect.get(target, p, receiver);
+	},
 });
 
 
