@@ -218,7 +218,7 @@ async function main() {
     // Login
     let bot;
     try {
-        bot = await Mwn.init({
+        bot = await mwn.init({
             apiUrl: apiUrl,
             userAgent: 'deploy.js (https://github.com/wikimedia-gadgets/twinkle) (mwn)',
             username: conf.username,
