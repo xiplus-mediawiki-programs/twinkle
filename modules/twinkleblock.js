@@ -103,8 +103,8 @@ Twinkle.block.callback = function twinkleblockCallback() {
 				tooltip: conv({ hans: '如果执行封禁的管理员忘记发出封禁模板，或你封禁了用户而没有给其发出模板，则你可以用此来发出合适的模板。勾选部分封禁以使用部分封禁模板。', hant: '如果執行封鎖的管理員忘記發出封鎖模板，或你封鎖了使用者而沒有給其發出模板，則你可以用此來發出合適的模板。勾選部分封鎖以使用部分封鎖模板。' }),
 				// Disallow when viewing the block dialog on an IP range
 				hidden: !Morebits.userIsSysop,
-				checked: Morebits.userIsSysop && !Morebits.ip.isRange(relevantUserName),
-				disabled: Morebits.ip.isRange(relevantUserName)
+				checked: Morebits.userIsSysop && !Morebits.ip.isRange(relevantUserName) && !mw.util.isIPAddress(relevantUserName, false),
+				disabled: Morebits.ip.isRange(relevantUserName) || mw.util.isIPAddress(relevantUserName, false)
 			},
 			{
 				label: conv({ hans: '标记用户页', hant: '標記使用者頁面' }),

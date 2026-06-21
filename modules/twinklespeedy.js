@@ -121,8 +121,8 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 						cForm.openusertalk.checked = false;
 
 						// enable/disable notify checkbox
-						cForm.notify.disabled = !cChecked;
-						cForm.notify.checked = cChecked;
+						cForm.notify.disabled = !cChecked || mw.util.isIPAddress(Morebits.relevantUserName());
+						cForm.notify.checked = cChecked && !mw.util.isIPAddress(Morebits.relevantUserName());
 						// enable/disable multiple
 						cForm.multiple.disabled = !cChecked;
 						cForm.multiple.checked = false;
@@ -226,7 +226,8 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				value: 'notify',
 				name: 'notify',
 				tooltip: conv({ hans: '一个通知模板将会被加入创建者的讨论页，如果您启用了该理据的通知。', hant: '一個通知模板將會被加入建立者的討論頁，如果您啟用了該理據的通知。' }),
-				checked: !Morebits.userIsSysop || !(Twinkle.speedy.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete')),
+				checked: !Morebits.userIsSysop || !(Twinkle.speedy.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete') || mw.util.isIPAddress(Morebits.relevantUserName())),
+				disabled: mw.util.isIPAddress(Morebits.relevantUserName()),
 				event: function(event) {
 					event.stopPropagation();
 				}

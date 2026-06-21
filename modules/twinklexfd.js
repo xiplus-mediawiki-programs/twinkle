@@ -73,7 +73,8 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 				value: 'notify',
 				name: 'notify',
 				tooltip: conv({ hans: '在页面创建者讨论页上放置一通知模板。', hant: '在頁面建立者討論頁上放置一通知模板。' }),
-				checked: true
+				checked: !mw.util.isIPAddress(Morebits.relevantUserName()),
+				disabled: mw.util.isIPAddress(Morebits.relevantUserName())
 			}
 		]
 	}
@@ -252,8 +253,8 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 	}
 
 	// Return to checked state when switching
-	form.notify.checked = true;
-	form.notify.disabled = false;
+	form.notify.checked = !mw.util.isIPAddress(Morebits.relevantUserName());
+	form.notify.disabled = mw.util.isIPAddress(Morebits.relevantUserName());
 };
 
 Twinkle.xfd.getAfdBatchReason = function twinklexfdGetAfdBatchReason() {
