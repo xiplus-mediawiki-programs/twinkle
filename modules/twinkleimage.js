@@ -41,8 +41,7 @@ Twinkle.image.callback = function twinkleimageCallback() {
 				value: 'notify',
 				name: 'notify',
 				tooltip: conv({ hans: '如果您在标记同一用户的很多文件，请取消此复选框以避免发送过多消息。CSD F6永远不会通知。', hant: '如果您在標記同一使用者的很多檔案，請取消此核取方塊以避免發送過多訊息。CSD F6永遠不會通知。' }),
-				checked: Twinkle.getPref('notifyUserOnDeli') && !mw.util.isIPAddress(Morebits.relevantUserName()),
-				disabled: mw.util.isIPAddress(Morebits.relevantUserName())
+				checked: Twinkle.getPref('notifyUserOnDeli')
 			}
 		]
 	}
@@ -281,6 +280,8 @@ Twinkle.image.callbacks = {
 		// disallow warning yourself
 		if (initialContrib === mw.config.get('wgUserName')) {
 			pageobj.getStatusElement().warn('您（' + initialContrib + conv({ hans: '）创建了该页，跳过通知', hant: '）建立了該頁，跳過通知' }));
+		} else if (mw.util.isIPAddress(initialContrib)) {
+			pageobj.getStatusElement().info(conv({ hans: 'IP用户创建了该页，跳过通知。', hant: 'IP使用者建立了該頁，跳過通知。' }));
 		} else {
 			var talkPageName = 'User talk:' + initialContrib;
 			var usertalkpage = new Morebits.wiki.Page(talkPageName, conv({ hans: '通知上传者（', hant: '通知上傳者（' }) + initialContrib + '）');

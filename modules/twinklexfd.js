@@ -73,8 +73,7 @@ Twinkle.xfd.callback = function twinklexfdCallback() {
 				value: 'notify',
 				name: 'notify',
 				tooltip: conv({ hans: '在页面创建者讨论页上放置一通知模板。', hant: '在頁面建立者討論頁上放置一通知模板。' }),
-				checked: !mw.util.isIPAddress(Morebits.relevantUserName()),
-				disabled: mw.util.isIPAddress(Morebits.relevantUserName())
+				checked: true
 			}
 		]
 	}
@@ -253,8 +252,8 @@ Twinkle.xfd.callback.change_category = function twinklexfdCallbackChangeCategory
 	}
 
 	// Return to checked state when switching
-	form.notify.checked = !mw.util.isIPAddress(Morebits.relevantUserName());
-	form.notify.disabled = mw.util.isIPAddress(Morebits.relevantUserName());
+	form.notify.checked = true;
+	form.notify.disabled = false;
 };
 
 Twinkle.xfd.getAfdBatchReason = function twinklexfdGetAfdBatchReason() {
@@ -314,6 +313,9 @@ Twinkle.xfd.callbacks = {
 				// Disallow warning yourself
 				if (params.creator === mw.config.get('wgUserName')) {
 					Morebits.Status.warn(conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + params.creator + '）', conv({ hans: '您创建了该页，跳过通知', hant: '您建立了該頁，跳過通知' }));
+					params.creator = null;
+				} else if (mw.util.isIPAddress(params.creator)) {
+					Morebits.Status.info(conv({ hans: '通知页面创建者：IP用户创建了该页，跳过通知', hant: '通知頁面建立者：IP使用者建立了該頁，跳過通知' }));
 					params.creator = null;
 				} else {
 					var talkPageName = 'User talk:' + params.creator;
