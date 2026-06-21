@@ -2839,9 +2839,9 @@ Morebits.wiki.page = function(pageName, status) {
 			}
 		}
 
-		// do not edit legacy ip user talk pages
+		// do not edit legacy ip user talk pages, but csd request ok
 		if (new mw.Title(ctx.pageName).namespace === 3) {
-			if (mw.util.isIPAddress(new mw.Title(ctx.pageName).getMainText())) {
+			if (mw.util.isIPAddress(new mw.Title(ctx.pageName).getMainText()) && !/[请請]求(\[\[WP:CSD\|)?快速[删刪]除/.test(ctx.editSummary)) {
 				ctx.statusElement.info(conv({ hans: '旧式IP的用户讨论页，跳过。', hant: '舊式IP的使用者討論頁，跳過。' }));
 				return;
 			}
