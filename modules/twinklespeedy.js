@@ -117,8 +117,8 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 						cForm.delmultiple.disabled = cChecked;
 						cForm.delmultiple.checked = false;
 						// enable/disable open talk page checkbox
-						cForm.openusertalk.disabled = cChecked;
-						cForm.openusertalk.checked = false;
+						cForm.openusertalk.disabled = cChecked || mw.util.isIPAddress(Morebits.relevantUserName());
+						cForm.openusertalk.checked = false && !mw.util.isIPAddress(Morebits.relevantUserName());
 
 						// enable/disable notify checkbox
 						cForm.notify.disabled = !cChecked;
