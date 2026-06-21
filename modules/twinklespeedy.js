@@ -863,6 +863,12 @@ Twinkle.speedy.generalList = [
 		label: conv({ hans: 'G19: 被草稿化而又被重建的页面', hant: 'G19: 被草稿化而又被重建的頁面' }),
 		value: 'g19',
 		tooltip: conv({ hans: '因为不满足维基百科对于内容的质量要求而被草稿化，但其内容被以剪贴移动的方式再度发布至用户命名空间与草稿命名空间之外的页面。<br>此条不要求页面被草稿化前与被再度发布后所在的命名空间必须为同一命名空间。', hant: '因為不滿足維基百科對於內容的質素要求而被草稿化，但其內容被以剪貼移動的方式再度發佈至用戶命名空間與草稿命名空間之外的頁面。<br>此條不要求頁面被草稿化前與被再度發布後所在的命名空間必須為同一命名空間。' }),
+		subgroup: {
+			name: 'g19_pagename',
+			type: 'input',
+			label: conv({ hans: '草稿页面名：', hant: '草稿頁面名：' }),
+			size: 60
+		},
 		hideInNamespaces: [ 2, 3, 118, 119 ] // user, user talk, draft, draft talk
 	},
 	{
@@ -1559,6 +1565,18 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 						return false;
 					}
 					currentParams.pagename = pagename;
+				}
+				break;
+
+			case 'g19':
+				if (form['csd.g19_pagename']) {
+					var draftpage = form['csd.g19_pagename'].value;
+					if (!draftpage || !draftpage.trim()) {
+						alert(conv({ hans: 'CSD G19：请提供草稿页面的名称。', hant: 'CSD G19：請提供草稿頁面的名稱。' }));
+						parameters = null;
+						return false;
+					}
+					currentParams.pagename = draftpage;
 				}
 				break;
 
