@@ -117,12 +117,12 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 						cForm.delmultiple.disabled = cChecked;
 						cForm.delmultiple.checked = false;
 						// enable/disable open talk page checkbox
-						cForm.openusertalk.disabled = cChecked || mw.util.isIPAddress(Morebits.relevantUserName());
-						cForm.openusertalk.checked = false && !mw.util.isIPAddress(Morebits.relevantUserName());
+						cForm.openusertalk.disabled = cChecked;
+						cForm.openusertalk.checked = false;
 
 						// enable/disable notify checkbox
-						cForm.notify.disabled = !cChecked;
-						cForm.notify.checked = cChecked;
+						cForm.notify.disabled = !cChecked || mw.util.isIPAddress(Morebits.relevantUserName());
+						cForm.notify.checked = cChecked && !mw.util.isIPAddress(Morebits.relevantUserName());
 						// enable/disable multiple
 						cForm.multiple.disabled = !cChecked;
 						cForm.multiple.checked = false;
