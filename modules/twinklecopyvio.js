@@ -75,7 +75,8 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 				value: 'notify',
 				name: 'notify',
 				tooltip: conv({ hans: '在页面创建者讨论页上放置一通知模板。', hant: '在頁面建立者討論頁上放置一通知模板。' }),
-				checked: true
+				checked: !mw.util.isIPAddress(Morebits.relevantUserName()),
+				disabled: mw.util.isIPAddress(Morebits.relevantUserName())
 			}
 		]
 	});
