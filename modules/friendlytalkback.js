@@ -17,7 +17,7 @@ var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.talkback = function() {
 
-	if (!Morebits.relevantUserName()) {
+	if (!Morebits.relevantUserName() || mw.util.isIPAddress(Morebits.relevantUserName())) {
 		return;
 	}
 

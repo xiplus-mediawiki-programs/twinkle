@@ -16,7 +16,8 @@ var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.arv = function twinklearv() {
 	var username = Morebits.relevantUserName(true);
-	if (!username) {
+	// disable report of IP addresses, range is ok
+	if (!username || mw.util.isIPAddress(username)) {
 		return;
 	}
 

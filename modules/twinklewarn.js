@@ -17,7 +17,7 @@ var conv = require('ext.gadget.HanAssist').conv, initialBlockId, initialBlockInf
 
 Twinkle.warn = function twinklewarn() {
 
-	if (Morebits.relevantUserName()) {
+	if (Morebits.relevantUserName() && !mw.util.isIPAddress(Morebits.relevantUserName())) {
 		Twinkle.addPortletLink(Twinkle.warn.callback, '警告', 'tw-warn', conv({ hans: '警告或提醒用户', hant: '警告或提醒使用者' }));
 		if (Twinkle.getPref('autoMenuAfterRollback') &&
 			mw.config.get('wgNamespaceNumber') === 3 &&

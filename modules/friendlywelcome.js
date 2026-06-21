@@ -88,7 +88,7 @@ Twinkle.welcome.normal = function() {
 	}
 	if (Morebits.relevantUserName()) {
 		Twinkle.addPortletLink(function() {
-			Twinkle.welcome.callback(Morebits.relevantUserName());
+			Twinkle.welcome.callback(Morebits.relevantUserName() && !mw.util.isIPAddress(Morebits.relevantUserName()));
 		}, conv({ hans: '欢迎', hant: '歡迎' }), 'friendly-welcome', conv({ hans: '欢迎用户', hant: '歡迎使用者' }));
 	}
 };
