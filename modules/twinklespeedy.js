@@ -121,8 +121,8 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 						cForm.openusertalk.checked = false;
 
 						// enable/disable notify checkbox
-						cForm.notify.disabled = !cChecked || mw.util.isIPAddress(Morebits.relevantUserName());
-						cForm.notify.checked = cChecked && !mw.util.isIPAddress(Morebits.relevantUserName());
+						cForm.notify.disabled = !cChecked;
+						cForm.notify.checked = cChecked;
 						// enable/disable multiple
 						cForm.multiple.disabled = !cChecked;
 						cForm.multiple.checked = false;
@@ -226,8 +226,7 @@ Twinkle.speedy.initDialog = function twinklespeedyInitDialog(callbackfunc) {
 				value: 'notify',
 				name: 'notify',
 				tooltip: conv({ hans: '一个通知模板将会被加入创建者的讨论页，如果您启用了该理据的通知。', hant: '一個通知模板將會被加入建立者的討論頁，如果您啟用了該理據的通知。' }),
-				checked: !Morebits.userIsSysop || !(Twinkle.speedy.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete') || mw.util.isIPAddress(Morebits.relevantUserName())),
-				disabled: mw.util.isIPAddress(Morebits.relevantUserName()),
+				checked: !Morebits.userIsSysop || !(Twinkle.speedy.hasCSD || Twinkle.getPref('deleteSysopDefaultToDelete')),
 				event: function(event) {
 					event.stopPropagation();
 				}
@@ -1394,6 +1393,10 @@ Twinkle.speedy.callbacks = {
 					// quick hack to prevent excessive unwanted notifications. Should actually be configurable on recipient page...
 					} else if (initialContrib === 'A2093064-bot' && params.normalizeds[0] === 'g15') {
 						Morebits.Status.warn(conv({ hans: '通知页面创建者：由机器人创建，跳过通知', hant: '通知頁面建立者：由機器人建立，跳過通知' }));
+						initialContrib = null;
+
+					} else if (mw.util.isIPAddress(initialContrib)) {
+						Morebits.Status.info(conv({ hans: '通知页面创建者：IP用户创建了该页，跳过通知', hant: '通知頁面建立者：IP使用者建立了該頁，跳過通知' }));
 						initialContrib = null;
 
 					} else {

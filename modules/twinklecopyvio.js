@@ -75,8 +75,7 @@ Twinkle.copyvio.callback = function twinklecopyvioCallback() {
 				value: 'notify',
 				name: 'notify',
 				tooltip: conv({ hans: '在页面创建者讨论页上放置一通知模板。', hant: '在頁面建立者討論頁上放置一通知模板。' }),
-				checked: !mw.util.isIPAddress(Morebits.relevantUserName()),
-				disabled: mw.util.isIPAddress(Morebits.relevantUserName())
+				checked: true
 			}
 		]
 	});
@@ -117,14 +116,18 @@ Twinkle.copyvio.callbacks = {
 		// Notification to first contributor
 		if (params.notify) {
 			var usertalkpage = new Morebits.wiki.Page('User talk:' + initialContrib, conv({ hans: '通知页面创建者（', hant: '通知頁面建立者（' }) + initialContrib + '）');
-			var notifytext = '\n{{subst:CopyvioNotice|' + mw.config.get('wgPageName') + '}}';
-			usertalkpage.setAppendText(notifytext);
-			usertalkpage.setEditSummary(conv({ hans: '通知：页面[[', hant: '通知：頁面[[' }) + mw.config.get('wgPageName') + conv({ hans: ']]疑似侵犯著作权', hant: ']]疑似侵犯版權' }));
-			usertalkpage.setChangeTags(Twinkle.changeTags);
-			usertalkpage.setCreateOption('recreate');
-			usertalkpage.setWatchlist(Twinkle.getPref('copyvioWatchUser'));
-			usertalkpage.setFollowRedirect(true, false);
-			usertalkpage.append();
+			if (mw.util.isIPAddress(initialContrib, false)) {
+				usertalkpage.getStatusElement().info(conv({ hans: 'IP用户创建了该页，跳过通知。', hant: 'IP使用者建立了該頁，跳過通知。' }));
+			} else {
+				var notifytext = '\n{{subst:CopyvioNotice|' + mw.config.get('wgPageName') + '}}';
+				usertalkpage.setAppendText(notifytext);
+				usertalkpage.setEditSummary(conv({ hans: '通知：页面[[', hant: '通知：頁面[[' }) + mw.config.get('wgPageName') + conv({ hans: ']]疑似侵犯著作权', hant: ']]疑似侵犯版權' }));
+				usertalkpage.setChangeTags(Twinkle.changeTags);
+				usertalkpage.setCreateOption('recreate');
+				usertalkpage.setWatchlist(Twinkle.getPref('copyvioWatchUser'));
+				usertalkpage.setFollowRedirect(true, false);
+				usertalkpage.append();
+			}
 		}
 	},
 	taggingArticle: function(pageobj) {
