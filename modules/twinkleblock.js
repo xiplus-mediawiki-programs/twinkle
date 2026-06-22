@@ -579,9 +579,9 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 
 		if (Twinkle.block.userAdvancedGroups.length > 0) {
 			blockoptions.push({
-				checked: true,
 				label: conv({ hans: '申请解除权限：', hant: '申請解除權限：' }) + Twinkle.block.userAdvancedGroups.join('、'),
 				name: 'rfdr',
+				tooltip: conv({ hans: '若认为有审视其所持权限的需要，可将其提报', hant: '若認為有審視其所持權限的需要，可將其提報' }),
 				value: '1'
 			});
 		}
