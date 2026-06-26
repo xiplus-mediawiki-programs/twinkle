@@ -36,7 +36,7 @@ Twinkle.config.commonSets = {
 	csdCriteria: {
 		db: conv({ hans: '自定义理由', hant: '自訂理由' }),
 		g1: 'G1', g2: 'G2', g3: 'G3', g5: 'G5', g10: 'G10', g11: 'G11', g12: 'G12', g13: 'G13', g15: 'G15', g16: 'G16', g19: 'G19', g20: 'G20', g21: 'G21',
-		a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a6: 'A6', a7: 'A7', a8: 'A8',
+		a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a7: 'A7', a8: 'A8',
 		u1: 'U1', u2: 'U2', u3: 'U3',
 		c1: 'C1', c2: 'C2',
 		o7: 'O7', o9: 'O9',
@@ -46,7 +46,7 @@ Twinkle.config.commonSets = {
 	csdCriteriaDisplayOrder: [
 		'db',
 		'g1', 'g2', 'g3', 'g5', 'g10', 'g11', 'g12', 'g13', 'g15', 'g16', 'g19', 'g20', 'g21',
-		'a1', 'a2', 'a3', 'a5', 'a6', 'a7', 'a8',
+		'a1', 'a2', 'a3', 'a5', 'a7', 'a8',
 		'u1', 'u2', 'u3',
 		'c1', 'c2',
 		'o7', 'o9',
@@ -56,7 +56,7 @@ Twinkle.config.commonSets = {
 	csdCriteriaNotification: {
 		db: conv({ hans: '自定义理由', hant: '自訂理由' }),
 		g1: 'G1', g2: 'G2', g3: 'G3', g5: 'G5', g10: 'G10', g11: 'G11', g12: 'G12', g13: 'G13', g15: 'G15', g16: 'G16', g19: 'G19', g20: 'G20', g21: 'G21',
-		a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a6: 'A6', a7: 'A7', a8: 'A8',
+		a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a7: 'A7', a8: 'A8',
 		u1: 'U1', u2: 'U2', u3: 'U3',
 		c1: 'C1', c2: 'C2',
 		o7: 'O7', o9: 'O9',
@@ -66,7 +66,7 @@ Twinkle.config.commonSets = {
 	csdCriteriaNotificationDisplayOrder: [
 		'db',
 		'g1', 'g2', 'g3', 'g5', 'g10', 'g11', 'g12', 'g13', 'g15', 'g16', 'g19', 'g20', 'g21',
-		'a1', 'a2', 'a3', 'a5', 'a6', 'a7', 'a8',
+		'a1', 'a2', 'a3', 'a5', 'a7', 'a8',
 		'u1', 'u2', 'u3',
 		'c1', 'c2',
 		'o7', 'o9',
@@ -76,7 +76,7 @@ Twinkle.config.commonSets = {
 	csdAndDICriteria: {
 		db: conv({ hans: '自定义理由', hant: '自訂理由' }),
 		g1: 'G1', g2: 'G2', g3: 'G3', g5: 'G5', g10: 'G10', g11: 'G11', g12: 'G12', g13: 'G13', g15: 'G15', g16: 'G16', g19: 'G19', g20: 'G20', g21: 'G21',
-		a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a6: 'A6', a7: 'A7', a8: 'A8',
+		a1: 'A1', a2: 'A2', a3: 'A3', a5: 'A5', a7: 'A7', a8: 'A8',
 		u1: 'U1', u2: 'U2', u3: 'U3',
 		c1: 'C1', c2: 'C2',
 		o7: 'O7', o9: 'O9',
@@ -86,7 +86,7 @@ Twinkle.config.commonSets = {
 	csdAndDICriteriaDisplayOrder: [
 		'db',
 		'g1', 'g2', 'g3', 'g5', 'g10', 'g11', 'g12', 'g13', 'g15', 'g16', 'g19', 'g20', 'g21',
-		'a1', 'a2', 'a3', 'a5', 'a6', 'a7', 'a8',
+		'a1', 'a2', 'a3', 'a5', 'a7', 'a8',
 		'u1', 'u2', 'u3',
 		'c1', 'c2',
 		'o7', 'o9',
