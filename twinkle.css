@@ -11,7 +11,7 @@
  * In skin vector-2022, open the TW menu when mouse hovers over it. Credit to
  * [[en:User:Nardog]] for this fix.
  */
-#p-twinkle:hover > .vector-menu-content {
+#p-twinkle:hover>.vector-menu-content {
 	opacity: 1;
 	visibility: visible;
 	height: auto;
@@ -42,6 +42,11 @@ a.twinkle-close-button-disabled {
 	width: 80%;
 	border-width: 2px;
 }
+
+body.skin-vector-2022 #p-twinkle {
+	display: flex;
+}
+
 
 /* skin-specific js */
 #twinkle-config-headerbox.config-userskin-box {
