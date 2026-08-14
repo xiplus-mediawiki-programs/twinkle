@@ -30,6 +30,3 @@ node_modules/
 npm-debug.log*
 __pycache__/
 scripts/*output.txt
-
-# VSCode
-.history
