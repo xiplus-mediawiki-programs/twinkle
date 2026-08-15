@@ -519,6 +519,24 @@ Twinkle.warn.messages = {
 					label: conv({ hans: '违反两岸四地用语、朝鲜半岛用语等相关规定', hant: '違反兩岸四地用語、朝鮮半島用語等相關規定' }),
 					summary: conv({ hans: '唯一警告：违反两岸四地用语、朝鲜半岛用语等相关规定', hant: '唯一警告：違反兩岸四地用語、朝鮮半島用語等相關規定' })
 				}
+			},
+			'uw-ai': {
+				level1: {
+					label: conv({ hans: '使用AI/大语言模型生成内容', hant: '使用AI/大語言模型生成內容' }),
+					summary: conv({ hans: '提醒：使用AI生成内容', hant: '提醒：使用AI生成內容' })
+				},
+				level2: {
+					label: conv({ hans: '使用AI/大语言模型生成内容', hant: '使用AI/大語言模型生成內容' }),
+					summary: conv({ hans: '注意：使用AI生成内容', hant: '注意：使用AI生成內容' })
+				},
+				level3: {
+					label: conv({ hans: '使用AI/大语言模型生成内容', hant: '使用AI/大語言模型生成內容' }),
+					summary: conv({ hans: '警告：使用AI生成内容', hant: '警告：使用AI生成內容' })
+				},
+				level4: {
+					label: conv({ hans: '使用AI/大语言模型生成内容', hant: '使用AI/大語言模型生成內容' }),
+					summary: conv({ hans: '最后警告：使用AI生成内容', hant: '最後警告：使用AI生成內容' })
+				}
 			}
 		}
 	},
