@@ -369,6 +369,11 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 			}
 			break;
 
+		case 10:
+			work_area.append({ type: 'header', label: conv({ hans: '模板', hant: '模板' }) });
+			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.templateModuleList, mode) });
+			break;
+
 		case 14:  // category
 			work_area.append({ type: 'header', label: conv({ hans: '分类', hant: '分類' }) });
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.categoryList, mode) });
@@ -377,6 +382,11 @@ Twinkle.speedy.callback.modeChanged = function twinklespeedyCallbackModeChanged(
 		case 118:  // draft
 			work_area.append({ type: 'header', label: '草稿' });
 			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.draftList, mode) });
+			break;
+
+		case 828:  // module, work only on delete
+			work_area.append({ type: 'header', label: conv({ hans: '模块', hant: '模組' }) });
+			work_area.append({ type: radioOrCheckbox, name: 'csd', list: Twinkle.speedy.generateCsdList(Twinkle.speedy.templateModuleList, mode) });
 			break;
 
 		default:
