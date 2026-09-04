@@ -68,9 +68,6 @@ Twinkle.close.addLinks = function twinklecloseAddLinks() {
 		var section = current.getAttribute('data-section');
 		var parentSection = current.getAttribute('data-parent-section') || -1;
 		var node = current.getElementsByClassName('mw-editsection')[0];
-		var delDivider = document.createElement('span');
-		delDivider.appendChild(document.createTextNode(' | '));
-		node.insertBefore(delDivider, node.childNodes[1]);
 		var delLink = document.createElement('a');
 		delLink.className = 'twinkle-close-button';
 		delLink.href = '#';
