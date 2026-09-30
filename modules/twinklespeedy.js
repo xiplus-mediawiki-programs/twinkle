@@ -757,9 +757,15 @@ Twinkle.speedy.draftList = [
 
 Twinkle.speedy.templateModuleList = [
 	{
-		label: conv({ hans: 'O9: 无用的模板与模块子页面', hant: 'O9: 無用的模板與模組子頁面' }),
+		label: conv({ hans: 'O9: 无用的模板子页面与模块子页面', hant: 'O9: 無用的模板子頁面與模組子頁面' }),
 		value: 'o9',
-		tooltip: conv({ hans: '包括但不限于下列情况：<br>不被模板／模块自身使用的模板／模块文档；<br>不被模板自身引用的“/core”子页面；<br>非必须的{{Taxonomy}}模板子页面，一般为创建方式错误或相关分类单元被弃用所导致。<br>下列情况不适用此条：<br>“/testcases”与“/sandbox”子页面；<br>Template:沙盒与Module:沙盒的子页面；<br>悬挂{{O9-exempt}}模板的页面。', hant: '包括但不限於下列情況：<br>不被模板／模組自身使用的模板／模組文件；不被模板自身引用的「/core」子頁面；<br>非必須的{{Taxonomy}}模板子頁面，一般為建立方式錯誤或相關分類單元被棄用所導致。<br>下列情況不適用此條<br>「/testcases」與「/sandbox」子頁面； <br>Template:沙盒與Module:沙盒的子頁面；<br>懸掛{{O9-exempt}}模板的頁面。<br>'})
+		tooltip: conv({ hans: '包括下列或同类情形：<br>1.已被其他页面取代的模板文档或模块文档“/doc”子页面，且该子页面对模板或模块的说明不如替代页面全面或与其相当；<br>2.非必须的{{Taxonomy}}模板子页面，一般为创建方式错误或相关分类单元被弃用所导致。<br>下列情况不适用此条：<br>“/testcases”与“/sandbox”子页面；<br>Template:沙盒与Module:沙盒的子页面；<br>悬挂{{O9-exempt}}模板的页面。', hant: '包括下列或同類情形：<br>1.已被其他頁面取代的模板文件或模組文件「/doc」子頁面，且該子頁面對模板或模組的說明不如替代頁面全面或與其相當；<br>2.非必須的{{Taxonomy}}模板子頁面，一般為建立方式錯誤或相關分類單元被棄用所導致。<br>下列情況不適用此條<br>「/testcases」與「/sandbox」子頁面； <br>Template:沙盒與Module:沙盒的子頁面；<br>懸掛{{O9-exempt}}模板的頁面。<br>'}),
+		subgroup: {
+			name: 'o9_rationale',
+			type: 'input',
+			label: conv({ hans: '可选的解释：', hant: '可選的解釋：' }),
+			size: 60
+		}
 	}
 ];
 
@@ -1625,6 +1631,12 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 							currentParams['1'] = 'File:' + filename;
 						}
 					}
+				}
+				break;
+
+			case 'o9':
+				if (form['csd.o9_rationale'] && form['csd.o9_rationale'].value) {
+					currentParams.rationale = form['csd.o9_rationale'].value;
 				}
 				break;
 
