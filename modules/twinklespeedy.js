@@ -878,7 +878,26 @@ Twinkle.speedy.generalList = [
 	{
 		label: conv({ hans: 'G21: 极有可能使用大型语言模型生成且明显缺乏人工校对的页面', hant: 'G21: 極有可能使用大型語言模型生成且明顯缺乏人工校對的頁面' }),
 		value: 'g21',
-		tooltip: conv({ hans: '任何页面呈现出下列一条或多条征象，令读者可合理怀疑页面为LLM生成并缺乏人工校对，可提请快速删除。任何理性的编者读过一遍即应识别并修正下列问题内容，因此不论是否确实由LLM生成均可提请快速删除：<br>1.页面内容在不合理的地方含有针对使用AI者的指示或说明<br>2.虚假的参考文献<br>3.完全无意义的参考文献<br>上述列出的征象应为非常明确且强烈的信号，此外还有一些较为主观、依赖自由心证、且难以排除可能是不熟悉规则的编者的无心之失的征象。这些主观特征可以用来强化提请快速删除的证据，但是不应作为提请快速删除的唯一证据。', hant: '任何頁面呈現出下列一條或多條徵象，令讀者可合理懷疑頁面為LLM生成並缺乏人工校對，可提請快速刪除。任何理性的編者讀過一遍即應識別並修正下列問題內容，因此不論是否確實由LLM生成均可提請快速刪除：<br>1.頁面內容在不合理的地方含有針對使用AI者的指示或說明<br>2.虛假的參考文獻<br>3.完全無意義的參考文獻<br>上述列出的徵象應為非常明確且強烈的信號，此外還有一些較為主觀、依賴自由心證、且難以排除可能是不熟悉規則的編者的無心之失的徵象。這些主觀特徵可以用來強化提請快速刪除的證據，但是不應作為提請快速刪除的唯一證據。' })
+		tooltip: conv({ hans: '任何页面呈现出下列一条或多条征象，令读者可合理怀疑页面为LLM生成并缺乏人工校对，可提请快速删除。任何理性的编者读过一遍即应识别并修正下列问题内容，因此不论是否确实由LLM生成均可提请快速删除：<br>1.页面内容在不合理的地方含有针对使用AI者的指示或说明<br>2.虚假的参考文献<br>3.完全无意义的参考文献<br>上述列出的征象应为非常明确且强烈的信号，此外还有一些较为主观、依赖自由心证、且难以排除可能是不熟悉规则的编者的无心之失的征象。这些主观特征可以用来强化提请快速删除的证据，但是不应作为提请快速删除的唯一证据。', hant: '任何頁面呈現出下列一條或多條徵象，令讀者可合理懷疑頁面為LLM生成並缺乏人工校對，可提請快速刪除。任何理性的編者讀過一遍即應識別並修正下列問題內容，因此不論是否確實由LLM生成均可提請快速刪除：<br>1.頁面內容在不合理的地方含有針對使用AI者的指示或說明<br>2.虛假的參考文獻<br>3.完全無意義的參考文獻<br>上述列出的徵象應為非常明確且強烈的信號，此外還有一些較為主觀、依賴自由心證、且難以排除可能是不熟悉規則的編者的無心之失的徵象。這些主觀特徵可以用來強化提請快速刪除的證據，但是不應作為提請快速刪除的唯一證據。' }),
+		subgroup: [
+			{
+				name: 'g21_rationale',
+				type: 'checkbox',
+				label: conv({ hans: '符合的特征：', hant: '符合的特徵：' }),
+				list: [
+					{ label: conv({ hans: '页面内容在不合理的地方含有针对使用AI者的指示或说明', hant: '頁面內容在不合理的地方含有針對使用AI者的指示或說明' }), value: '页面内容在不合理的地方含有针对使用AI者的指示或说明' },
+					{ label: conv({ hans: '虚假的参考文献', hant: '虛假的參考文獻' }), value: '虚假的参考文献' },
+					{ label: conv({ hans: '完全无意义的参考文献', hant: '完全無意義的參考文獻' }), value: '完全无意义的参考文献' }
+				]
+			},
+			{
+				name: 'g21_fyi',
+				type: 'textarea',
+				label: conv({ hans: '符合特征的具体位置和解释：', hant: '符合特徵的具體位置和进一步解釋：' }),
+				rows: 3,
+				tooltip: conv({ hans: '请指出符合上述特征的具体位置，并在必要时解释为何符合该特征。', hant: '請指出符合上述特徵的具體位置，並在必要時解釋為何符合該特徵。' })
+			}
+		]
 	}
 ];
 
@@ -996,6 +1015,8 @@ Twinkle.speedy.callbacks = {
 				for (var i in parameters) {
 					if (typeof parameters[i] === 'string') {
 						code += '|' + parameters[i];
+					} else if (typeof parameters[i] === 'object' && i === 'g21_rationale') {
+						code += '|' + Object.values(parameters[i]).join('、');
 					}
 				}
 				$.extend(params.utparams, Twinkle.speedy.getUserTalkParameters(norm, parameters));
@@ -1010,6 +1031,8 @@ Twinkle.speedy.callbacks = {
 			for (i in parameters) {
 				if (typeof parameters[i] === 'string') {
 					code += '|' + parameters[i];
+				} else if (typeof parameters[i] === 'object' && i === 'g21_rationale') {
+					code += '|' + Object.values(parameters[i]).join('、');
 				}
 			}
 			code += '}}';
@@ -1575,6 +1598,23 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 				}
 				break;
 
+			case 'g21':
+				var g21Rationale = form.getChecked('csd.g21_rationale', 'checkbox');
+				if (g21Rationale.length === 0) {
+					alert(conv({ hans: 'CSD G21：请指明符合哪一项特征。', hant: 'CSD G21：請指明符合哪一項特徵。' }));
+					parameters = null;
+					return false;
+				}
+
+				if (!form['csd.g21_fyi'] || !form['csd.g21_fyi'].value.trim()) {
+					alert(conv({ hans: 'CSD G21：请指出具体位置，并在必要时做出解释。', hant: 'CSD G21：請指出具體位置，並在必要時作出解釋。' }));
+					parameters = null;
+					return false;
+				}
+
+				currentParams.g21_rationale = g21Rationale;
+				currentParams.g21_fyi = form['csd.g21_fyi'].value;
+				break;
 			case 'f1':
 				if (form['csd.f1_filename']) {
 					redimage = form['csd.f1_filename'].value;
