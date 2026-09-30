@@ -858,18 +858,6 @@ Twinkle.speedy.generalList = [
 		tooltip: conv({ hans: '依附于不存在或已删除页面或文件的页面。包括但不限于下列情形：<br>1.没有对应内容页面的讨论页；<br>2.没有对应母页面的子页面；<br>3.没有对应本地文件的文件页面；<br>4.指向不存在页面的重定向；<br>5.对应页面已被删除或解除白纸保护的编辑提示。', hant: '依附於不存在或已刪除頁面或檔案的頁面。包括但不限於下列情形：<br>1.沒有對應內容頁面的討論頁；<br>2.沒有對應母頁面的子頁面；<br>3.沒有對應本地檔案的檔案頁面；<br>4.指向不存在頁面的重新導向；<br>5.對應頁面已被刪除或解除白紙保護的編輯提示。' })
 	},
 	{
-		label: conv({ hans: 'G19: 被草稿化而又被重建的页面', hant: 'G19: 被草稿化而又被重建的頁面' }),
-		value: 'g19',
-		tooltip: conv({ hans: '因为不满足维基百科对于内容的质量要求而被草稿化，但其内容被以剪贴移动的方式再度发布至用户命名空间与草稿命名空间之外的页面。<br>此条不要求页面被草稿化前与被再度发布后所在的命名空间必须为同一命名空间。', hant: '因為不滿足維基百科對於內容的質素要求而被草稿化，但其內容被以剪貼移動的方式再度發佈至用戶命名空間與草稿命名空間之外的頁面。<br>此條不要求頁面被草稿化前與被再度發布後所在的命名空間必須為同一命名空間。' }),
-		subgroup: {
-			name: 'g19_pagename',
-			type: 'input',
-			label: conv({ hans: '草稿页面名：', hant: '草稿頁面名：' }),
-			size: 60
-		},
-		hideInNamespaces: [ 2, 3, 118, 119 ] // user, user talk, draft, draft talk
-	},
-	{
 		label: conv({ hans: 'G20: 未经同意以剪贴移动的方式发布的新草稿', hant: 'G20: 未經同意以剪貼移動的方式發布的新草稿' }),
 		value: 'g20',
 		tooltip: conv({ hans: '草稿未经主要实际贡献者明确同意，以剪贴移动的方式发布至用户命名空间与草稿命名空间之外，而本身属最近创建、经历持续修订或经历重大修订，并且未满足CC BY-SA 4.0协议条款“署名”的要求或由主要实际贡献者提出删除，并附有合理原因。<br>草稿”指：所有位于用户命名空间且含{{AFC submission}}的页面、所有位于用户命名空间且显然作草稿之用的页面及所有位于草稿命名空间的页面<br>如果主要实际贡献者多于一人，“主要实际贡献者明确同意”指所有主要实际贡献者均明确同意，而“主要实际贡献者提出删除”则指任何至少一位主要实际贡献者提出删除。', hant: '草稿未經主要實際貢獻者明確同意，以剪貼移動的方式發布至使用者命名空間與草稿命名空間之外，而本身屬最近建立、經歷持續修訂或經歷重大修訂，並且未滿足CC BY-SA 4.0協議條款「署名」的要求或由主要實際貢獻者提出刪除，並附有合理原因。<br>草稿」指：所有位於使用者命名空間且含{{AFC submission}}的頁面、所有位於使用者命名空間且顯然作草稿之用的頁面及所有位於草稿命名空間的頁面<br>如果主要實際貢獻者多於一人，「主要實際貢獻者明確同意」指所有主要實際貢獻者均明確同意，而「主要實際貢獻者提出刪除」則指任何至少一位主要實際貢獻者提出刪除。' }),
@@ -970,7 +958,6 @@ Twinkle.speedy.normalizeHash = {
 	'g13': 'g13',
 	'g15': 'g15',
 	'g16': 'g16',
-	'g19': 'g19',
 	'g20': 'g20',
 	'g21': 'g21',
 	'a1': 'a1',
@@ -1583,18 +1570,6 @@ Twinkle.speedy.getParameters = function twinklespeedyGetParameters(form, values)
 						return false;
 					}
 					currentParams.pagename = pagename;
-				}
-				break;
-
-			case 'g19':
-				if (form['csd.g19_pagename']) {
-					var draftpage = form['csd.g19_pagename'].value;
-					if (!draftpage || !draftpage.trim()) {
-						alert(conv({ hans: 'CSD G19：请提供草稿页面的名称。', hant: 'CSD G19：請提供草稿頁面的名稱。' }));
-						parameters = null;
-						return false;
-					}
-					currentParams.pagename = draftpage;
 				}
 				break;
 
