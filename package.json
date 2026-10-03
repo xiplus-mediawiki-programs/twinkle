@@ -12,7 +12,8 @@
 		"sync": "perl scripts/sync.pl",
 		"test": "jest",
 		"deployall": "perl scripts/sync.pl --mode=deploy --all",
-		"deploy": "node scripts/deploy.js"
+		"deploy": "node scripts/deploy.js",
+		"start": "node scripts/dev-server.js"
 	},
 	"devDependencies": {
 		"chalk": "^4.1.2",
