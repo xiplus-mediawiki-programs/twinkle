@@ -673,9 +673,9 @@ Twinkle.rollback.callbacks = {
 				break;
 		}
 
-		if ((Twinkle.getPref('confirmOnFluff') ||
+		if ((Twinkle.getPref('confirmOnRollback') ||
 			// Mobile user agent taken from [[en:MediaWiki:Gadget-confirmationRollback-mobile.js]]
-			(Twinkle.getPref('confirmOnMobileFluff') && /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|Opera Mini/i.test(navigator.userAgent))) &&
+			(Twinkle.getPref('confirmOnMobileRollback') && /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|Opera Mini/i.test(navigator.userAgent))) &&
 			!userHasAlreadyConfirmedAction && !confirm(conv({ hans: '回退页面：您确定吗？', hant: '回退頁面：您確定嗎？' }))) {
 			statelem.error(conv({ hans: '用户取消操作。', hant: '使用者取消操作。' }));
 			return;
