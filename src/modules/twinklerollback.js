@@ -465,7 +465,7 @@ Twinkle.rollback.callbacks = {
 			return;
 		}
 
-		var summary = Twinkle.rollback.formatSummary(conv({ hans: '回退到由$USER做出的修订版本', hant: '回退到由$USER做出的修訂版本' }) + revertToRevID,
+		var summary = Twinkle.rollback.formatSummary(conv({ hans: '回退到由$USER做出的修订版本', hant: '回退到由$USER做出的修訂版本' }) + '[[Special:PermaLink/' + revertToRevID + '|' + revertToRevID + ']]',
 			revertToUserHidden ? null : revertToUser, optional_summary);
 
 		var query = {
