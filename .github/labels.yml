@@ -16,10 +16,10 @@
   - src/modules/twinkleconfig.js
 "Module: copyvio":
   - src/modules/twinklecopyvio.js
-"Module: fluff":
-  - src/modules/twinklefluff.js
 "Module: protect":
   - src/modules/twinkleprotect.js
+"Module: rollback":
+  - src/modules/twinklerollback.js
 "Module: speedy":
   - src/modules/twinklespeedy.js
   - src/modules/twinkleimage.js

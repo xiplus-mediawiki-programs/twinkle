@@ -70,7 +70,7 @@ function createTestLoader(changedFiles) {
 		${importLine('src/modules/twinkleconfig.js')}
 		${importLine('src/modules/twinklecopyvio.js')}
 		${importLine('src/modules/twinklediff.js')}
-		${importLine('src/modules/twinklefluff.js')}
+		${importLine('src/modules/twinklerollback.js')}
 		${importLine('src/modules/twinkleimage.js')}
 		${importLine('src/modules/twinkleprotect.js')}
 		${importLine('src/modules/twinklespeedy.js')}

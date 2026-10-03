@@ -61,9 +61,9 @@ The script will parse the latest on-wiki edit summary for last deployed commit h
 [MediaWiki:Gadget-twinkleconfig.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkleconfig.js
 [MediaWiki:Gadget-twinklecopyvio.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklecopyvio.js
 [MediaWiki:Gadget-twinklediff.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklediff.js
-[MediaWiki:Gadget-twinklefluff.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklefluff.js
 [MediaWiki:Gadget-twinkleimage.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkleimage.js
 [MediaWiki:Gadget-twinkleprotect.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkleprotect.js
+[MediaWiki:Gadget-twinklerollback.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklerollback.js
 [MediaWiki:Gadget-twinklespeedy.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklespeedy.js
 [MediaWiki:Gadget-twinklestub.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklestub.js
 [MediaWiki:Gadget-twinkletag.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkletag.js
@@ -96,9 +96,9 @@ Each Twinkle module and dependency lives on the wiki as a separate file. The lis
 - `src/modules/twinkleconfig.js` &rarr; [MediaWiki:Gadget-twinkleconfig.js][]
 - `src/modules/twinklecopyvio.js` &rarr; [MediaWiki:Gadget-twinklecopyvio.js][]
 - `src/modules/twinklediff.js` &rarr; [MediaWiki:Gadget-twinklediff.js][]
-- `src/modules/twinklefluff.js` &rarr; [MediaWiki:Gadget-twinklefluff.js][]
 - `src/modules/twinkleimage.js` &rarr; [MediaWiki:Gadget-twinkleimage.js][]
 - `src/modules/twinkleprotect.js` &rarr; [MediaWiki:Gadget-twinkleprotect.js][]
+- `src/modules/twinklerollback.js` &rarr; [MediaWiki:Gadget-twinklerollback.js][]
 - `src/modules/twinklespeedy.js` &rarr; [MediaWiki:Gadget-twinklespeedy.js][]
 - `src/modules/twinklestub.js` &rarr; [MediaWiki:Gadget-twinklestub.js][]
 - `src/modules/twinkletag.js` &rarr; [MediaWiki:Gadget-twinkletag.js][]
