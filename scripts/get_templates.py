@@ -63,8 +63,8 @@ basedir = os.path.join(os.path.dirname(__file__), '..')
 filenames = [
     'twinkle.js',
     'morebits.js',
-    'modules/friendlytag.js',
-    'modules/friendlytalkback.js',
+    'modules/twinkletag.js',
+    'modules/twinkletalkback.js',
     'modules/twinklearv.js',
     'modules/twinklebatchdelete.js',
     'modules/twinklebatchundelete.js',
@@ -101,8 +101,8 @@ for filename in filenames:
         templates.add(normalizeTitle(match))
 
 
-# modules/friendlytag.js
-with open(os.path.join(basedir, 'modules/friendlytag.js'), 'r', encoding='utf8') as f:
+# modules/twinkletag.js
+with open(os.path.join(basedir, 'modules/twinkletag.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
 articleTags = findBetween(jstext, 'Twinkle.tag.article.tagList = [{', 'Twinkle.tag.redirectList = [{')
@@ -118,8 +118,8 @@ for match in matches:
     templates.add(normalizeTitle(match))
 
 
-# modules/friendlywelcome.js
-with open(os.path.join(basedir, 'modules/friendlywelcome.js'), 'r', encoding='utf8') as f:
+# modules/twinklewelcome.js
+with open(os.path.join(basedir, 'modules/twinklewelcome.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
 tags = findBetween(jstext, 'Twinkle.welcome.templates = {', 'Twinkle.welcome.getTemplateWikitext = ')

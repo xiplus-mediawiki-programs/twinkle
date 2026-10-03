@@ -59,9 +59,9 @@ function createTestLoader(changedFiles) {
 		${importLine('twinkle.js')}
 
 	}).then(function() {
-		${importLine('modules/friendlytag.js')}
-		${importLine('modules/friendlytalkback.js')}
-		${importLine('modules/friendlywelcome.js')}
+		${importLine('modules/twinkletag.js')}
+		${importLine('modules/twinkletalkback.js')}
+		${importLine('modules/twinklewelcome.js')}
 		${importLine('modules/twinklearv.js')}
 		${importLine('modules/twinklebatchdelete.js')}
 		${importLine('modules/twinklebatchundelete.js')}

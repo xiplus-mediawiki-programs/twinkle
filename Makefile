@@ -1,9 +1,9 @@
 all:
 
-modules = modules/friendlyshared.js \
-		  modules/friendlytag.js \
-		  modules/friendlytalkback.js \
-		  modules/friendlywelcome.js \
+modules = modules/twinkleshared.js \
+		  modules/twinkletag.js \
+		  modules/twinkletalkback.js \
+		  modules/twinklewelcome.js \
 		  modules/twinklearv.js \
 		  modules/twinklebatchdelete.js \
 		  modules/twinklebatchundelete.js \

@@ -6,11 +6,10 @@
 
 /*
  ****************************************
- *** friendlytalkback.js: Talkback module
+ *** twinkletalkback.js: Talkback module
  ****************************************
  * Mode of invocation:     Tab ("TB")
  * Active on:              Any page with relevant user name (userspace, contribs, etc.)
- * Config directives in:   FriendlyConfig
  */
 
 var conv = require('ext.gadget.HanAssist').conv;
@@ -21,7 +20,7 @@ Twinkle.talkback = function() {
 		return;
 	}
 
-	Twinkle.addPortletLink(Twinkle.talkback.callback, '通告', 'friendly-talkback', conv({ hans: '回复通告', hant: '回覆通告' }));
+	Twinkle.addPortletLink(Twinkle.talkback.callback, '通告', 'twinkle-talkback', conv({ hans: '回复通告', hant: '回覆通告' }));
 };
 
 Twinkle.talkback.callback = function() {
@@ -83,14 +82,14 @@ Twinkle.talkback.callback = function() {
 	previewlink.style.cursor = 'pointer';
 	previewlink.textContent = conv({ hans: '预览', hant: '預覽' });
 	form.append({ type: 'div', id: 'talkbackpreview', label: [ previewlink ] });
-	form.append({ type: 'div', id: 'friendlytalkback-previewbox', style: 'display: none' });
+	form.append({ type: 'div', id: 'twinkletalkback-previewbox', style: 'display: none' });
 
 	form.append({ type: 'submit' });
 
 	var result = form.render();
 	Window.setContent(result);
 	Window.display();
-	result.previewer = new Morebits.wiki.Preview($(result).find('div#friendlytalkback-previewbox').last()[0]);
+	result.previewer = new Morebits.wiki.Preview($(result).find('div#twinkletalkback-previewbox').last()[0]);
 
 	// We must init the
 	var evt = document.createEvent('Event');

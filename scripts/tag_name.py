@@ -6,7 +6,7 @@ import requests
 
 from util import findBetween
 
-FILENAME = '../modules/friendlytag.js'
+FILENAME = '../modules/twinkletag.js'
 with open(FILENAME, 'r', encoding='utf8') as f:
     jstext = f.read()
 

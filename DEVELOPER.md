@@ -35,12 +35,12 @@ Each Twinkle module and dependency lives on the wiki as a separate file. The lis
 - `modules/twinklebatchundelete.js` &rarr; [MediaWiki:Gadget-twinklebatchundelete.js][]
 - `modules/twinklewarn.js` &rarr; [MediaWiki:Gadget-twinklewarn.js][]
 - `modules/twinklespeedy.js` &rarr; [MediaWiki:Gadget-twinklespeedy.js][]
-- `modules/friendlyshared.js` &rarr; [MediaWiki:Gadget-friendlyshared.js][]
+- `modules/twinkleshared.js` &rarr; [MediaWiki:Gadget-twinkleshared.js][]
 - `modules/twinklediff.js` &rarr; [MediaWiki:Gadget-twinklediff.js][]
 - `modules/twinkleunlink.js` &rarr; [MediaWiki:Gadget-twinkleunlink.js][]
-- `modules/friendlytag.js` &rarr; [MediaWiki:Gadget-friendlytag.js][]
+- `modules/twinkletag.js` &rarr; [MediaWiki:Gadget-twinkletag.js][]
 - `modules/twinkledeprod.js` &rarr; [MediaWiki:Gadget-twinkledeprod.js][]
-- `modules/friendlywelcome.js` &rarr; [MediaWiki:Gadget-friendlywelcome.js][]
+- `modules/twinklewelcome.js` &rarr; [MediaWiki:Gadget-twinklewelcome.js][]
 - `modules/twinklexfd.js` &rarr; [MediaWiki:Gadget-twinklexfd.js][]
 - `modules/twinklebatchdelete.js` &rarr; [MediaWiki:Gadget-twinklebatchdelete.js][]
 - `modules/twinklebatchprotect.js` &rarr; [MediaWiki:Gadget-twinklebatchprotect.js][]
@@ -48,7 +48,7 @@ Each Twinkle module and dependency lives on the wiki as a separate file. The lis
 - `modules/twinklefluff.js` &rarr; [MediaWiki:Gadget-twinklefluff.js][]
 - `modules/twinkleprotect.js` &rarr; [MediaWiki:Gadget-twinkleprotect.js][]
 - `modules/twinklearv.js` &rarr; [MediaWiki:Gadget-twinklearv.js][]
-- `modules/friendlytalkback.js` &rarr; [MediaWiki:Gadget-friendlytalkback.js][]
+- `modules/twinkletalkback.js` &rarr; [MediaWiki:Gadget-twinkletalkback.js][]
 - `modules/twinkleblock.js` &rarr; [MediaWiki:Gadget-twinkleblock.js][]
 - `modules/twinkleclose.js` &rarr; [MediaWiki:Gadget-twinkleclose.js][]
 - `modules/twinklecopyvio.js` &rarr; [MediaWiki:Gadget-twinklecopyvio.js][]
@@ -113,12 +113,12 @@ The `--base` flag operates as a *prefix*; note the presence of the trailing `/`.
 [MediaWiki:Gadget-twinklebatchundelete.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklebatchundelete.js
 [MediaWiki:Gadget-twinklewarn.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklewarn.js
 [MediaWiki:Gadget-twinklespeedy.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklespeedy.js
-[MediaWiki:Gadget-friendlyshared.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-friendlyshared.js
+[MediaWiki:Gadget-twinkleshared.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkleshared.js
 [MediaWiki:Gadget-twinklediff.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklediff.js
 [MediaWiki:Gadget-twinkleunlink.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkleunlink.js
-[MediaWiki:Gadget-friendlytag.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-friendlytag.js
+[MediaWiki:Gadget-twinkletag.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkletag.js
 [MediaWiki:Gadget-twinkledeprod.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkledeprod.js
-[MediaWiki:Gadget-friendlywelcome.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-friendlywelcome.js
+[MediaWiki:Gadget-twinklewelcome.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklewelcome.js
 [MediaWiki:Gadget-twinklexfd.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklexfd.js
 [MediaWiki:Gadget-twinklebatchdelete.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklebatchdelete.js
 [MediaWiki:Gadget-twinklebatchprotect.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklebatchprotect.js
@@ -126,7 +126,7 @@ The `--base` flag operates as a *prefix*; note the presence of the trailing `/`.
 [MediaWiki:Gadget-twinklefluff.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklefluff.js
 [MediaWiki:Gadget-twinkleprotect.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkleprotect.js
 [MediaWiki:Gadget-twinklearv.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklearv.js
-[MediaWiki:Gadget-friendlytalkback.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-friendlytalkback.js
+[MediaWiki:Gadget-twinkletalkback.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkletalkback.js
 [MediaWiki:Gadget-twinkleblock.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkleblock.js
 [MediaWiki:Gadget-twinkleclose.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkleclose.js
 [MediaWiki:Gadget-twinklecopyvio.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklecopyvio.js
