@@ -180,7 +180,7 @@ async function main() {
             .map(f => f.trim())
             .filter(Boolean)
             // Normalize file paths to be relative to the repo root
-			.map(f => path.relative(repoRoot, path.resolve(process.cwd(), f)))
+			.map(f => path.relative(repoRoot, path.resolve(process.cwd(), f)).replace(/\\/g, '/'))
             .filter(f => GADGET_FILES.includes(f));
     } else {
         files = [...GADGET_FILES];
