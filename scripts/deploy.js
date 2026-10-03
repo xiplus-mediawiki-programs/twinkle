@@ -259,8 +259,10 @@ async function main() {
             continue;
         }
 
-        const fileText = await fs.readFile(path.join(repoRoot, file), 'utf8');
-        const wpText = (wikiPage.revisions?.[0]?.content ?? '') + '\n';
+		const normalize = s => s.replace(/\r\n/g, '\n').trimEnd();
+
+        const fileText = normalize(await fs.readFile(path.join(repoRoot, file), 'utf8'));
+		const wpText = normalize(wikiPage.revisions?.[0]?.content ?? '');
         const oldSummary = wikiPage.revisions?.[0]?.comment || '';
         const oldTimestamp = wikiPage.revisions?.[0]?.timestamp || '';
         const oldUser = wikiPage.revisions?.[0]?.user || '';
