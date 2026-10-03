@@ -51,7 +51,6 @@ tests.push({ name: 'twinkle.js', test: true });
 tests.push({ name: 'select2.min.js', test: true });
 tests.push({ name: 'modules/twinklearv.js', test: true });
 tests.push({ name: 'modules/twinklewarn.js', test: true });
-tests.push({ name: 'modules/twinkleshared.js', test: true });
 tests.push({ name: 'modules/twinkletag.js', test: true });
 tests.push({ name: 'modules/twinkletalkback.js', test: true });
 tests.push({ name: 'modules/twinklewelcome.js', test: true });

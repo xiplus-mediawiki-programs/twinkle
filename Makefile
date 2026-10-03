@@ -1,7 +1,6 @@
 all:
 
-modules = modules/twinkleshared.js \
-		  modules/twinkletag.js \
+modules = modules/twinkletag.js \
 		  modules/twinkletalkback.js \
 		  modules/twinklewelcome.js \
 		  modules/twinklearv.js \

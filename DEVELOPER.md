@@ -35,7 +35,6 @@ Each Twinkle module and dependency lives on the wiki as a separate file. The lis
 - `modules/twinklebatchundelete.js` &rarr; [MediaWiki:Gadget-twinklebatchundelete.js][]
 - `modules/twinklewarn.js` &rarr; [MediaWiki:Gadget-twinklewarn.js][]
 - `modules/twinklespeedy.js` &rarr; [MediaWiki:Gadget-twinklespeedy.js][]
-- `modules/twinkleshared.js` &rarr; [MediaWiki:Gadget-twinkleshared.js][]
 - `modules/twinklediff.js` &rarr; [MediaWiki:Gadget-twinklediff.js][]
 - `modules/twinkleunlink.js` &rarr; [MediaWiki:Gadget-twinkleunlink.js][]
 - `modules/twinkletag.js` &rarr; [MediaWiki:Gadget-twinkletag.js][]
@@ -113,7 +112,6 @@ The `--base` flag operates as a *prefix*; note the presence of the trailing `/`.
 [MediaWiki:Gadget-twinklebatchundelete.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklebatchundelete.js
 [MediaWiki:Gadget-twinklewarn.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklewarn.js
 [MediaWiki:Gadget-twinklespeedy.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklespeedy.js
-[MediaWiki:Gadget-twinkleshared.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkleshared.js
 [MediaWiki:Gadget-twinklediff.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinklediff.js
 [MediaWiki:Gadget-twinkleunlink.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkleunlink.js
 [MediaWiki:Gadget-twinkletag.js]: https://zh.wikipedia.org/wiki/MediaWiki:Gadget-twinkletag.js

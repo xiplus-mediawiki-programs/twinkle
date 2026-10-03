@@ -475,7 +475,6 @@ twinkle.js
   modules/twinkleunlink.js
   modules/twinklewarn.js
   modules/twinklexfd.js
-  modules/twinkleshared.js
   modules/twinkletag.js
   modules/twinkletalkback.js
   modules/twinklewelcome.js
