@@ -61,25 +61,25 @@ while True:
 basedir = os.path.join(os.path.dirname(__file__), '..')
 
 filenames = [
-    'twinkle.js',
-    'morebits.js',
-    'modules/friendlytag.js',
-    'modules/friendlytalkback.js',
-    'modules/twinklearv.js',
-    'modules/twinklebatchdelete.js',
-    'modules/twinklebatchundelete.js',
-    'modules/twinkleblock.js',
-    'modules/twinkleclose.js',
-    'modules/twinkleconfig.js',
-    'modules/twinklecopyvio.js',
-    'modules/twinklediff.js',
-    'modules/twinklefluff.js',
-    'modules/twinkleimage.js',
-    'modules/twinkleprotect.js',
-    'modules/twinklespeedy.js',
-    'modules/twinkleunlink.js',
-    'modules/twinklewarn.js',
-    'modules/twinklexfd.js',
+    'src/twinkle.js',
+    'src/morebits.js',
+    'src/modules/twinkletag.js',
+    'src/modules/twinkletalkback.js',
+    'src/modules/twinklearv.js',
+    'src/modules/twinklebatchdelete.js',
+    'src/modules/twinklebatchundelete.js',
+    'src/modules/twinkleblock.js',
+    'src/modules/twinkleclose.js',
+    'src/modules/twinkleconfig.js',
+    'src/modules/twinklecopyvio.js',
+    'src/modules/twinklediff.js',
+    'src/modules/twinkleimage.js',
+    'src/modules/twinkleprotect.js',
+    'src/modules/twinklerollback.js',
+    'src/modules/twinklespeedy.js',
+    'src/modules/twinkleunlink.js',
+    'src/modules/twinklewarn.js',
+    'src/modules/twinklexfd.js',
 ]
 
 templates = set()
@@ -101,8 +101,8 @@ for filename in filenames:
         templates.add(normalizeTitle(match))
 
 
-# modules/friendlytag.js
-with open(os.path.join(basedir, 'modules/friendlytag.js'), 'r', encoding='utf8') as f:
+# src/modules/twinkletag.js
+with open(os.path.join(basedir, 'src/modules/twinkletag.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
 articleTags = findBetween(jstext, 'Twinkle.tag.article.tagList = [{', 'Twinkle.tag.redirectList = [{')
@@ -118,8 +118,8 @@ for match in matches:
     templates.add(normalizeTitle(match))
 
 
-# modules/friendlywelcome.js
-with open(os.path.join(basedir, 'modules/friendlywelcome.js'), 'r', encoding='utf8') as f:
+# src/modules/twinklewelcome.js
+with open(os.path.join(basedir, 'src/modules/twinklewelcome.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
 tags = findBetween(jstext, 'Twinkle.welcome.templates = {', 'Twinkle.welcome.getTemplateWikitext = ')
@@ -128,8 +128,8 @@ for match in matches:
     templates.add(normalizeTitle(match))
 
 
-# modules/twinkleblock.js
-with open(os.path.join(basedir, 'modules/twinkleblock.js'), 'r', encoding='utf8') as f:
+# src/modules/twinkleblock.js
+with open(os.path.join(basedir, 'src/modules/twinkleblock.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
 blockPresetsInfo = findBetween(jstext, 'Twinkle.block.blockPresetsInfo =', 'Twinkle.block.transformBlockPresets =')[1:-3]
@@ -147,8 +147,8 @@ for match in matches:
     templates.add(normalizeTitle(match))
 
 
-# modules/twinkleimage.js
-with open(os.path.join(basedir, 'modules/twinkleimage.js'), 'r', encoding='utf8') as f:
+# src/modules/twinkleimage.js
+with open(os.path.join(basedir, 'src/modules/twinkleimage.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
 blockPresetsInfo = findBetween(jstext, "'来源不明（CSD F3）'", "'f10_type'")
@@ -161,8 +161,8 @@ for match in matches:
     templates.add(normalizeTitle(notice))
 
 
-# modules/twinkleprotect.js
-with open(os.path.join(basedir, 'modules/twinkleprotect.js'), 'r', encoding='utf8') as f:
+# src/modules/twinkleprotect.js
+with open(os.path.join(basedir, 'src/modules/twinkleprotect.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
 blockPresetsInfo = findBetween(jstext, 'Twinkle.protect.protectionTypesAdmin = [', 'Twinkle.protect.protectionPresetsInfo = {')
@@ -174,8 +174,8 @@ for match in matches:
     templates.add(normalizeTitle(match))
 
 
-# modules/twinklewarn.js
-with open(os.path.join(basedir, 'modules/twinklewarn.js'), 'r', encoding='utf8') as f:
+# src/modules/twinklewarn.js
+with open(os.path.join(basedir, 'src/modules/twinklewarn.js'), 'r', encoding='utf8') as f:
     jstext = f.read()
 
 warnTemplates = findBetween(jstext, 'Twinkle.warn.messages = {', 'Twinkle.warn.prev_article = null;')

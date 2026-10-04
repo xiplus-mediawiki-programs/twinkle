@@ -5,7 +5,7 @@
 
 /*
  ****************************************
- *** friendlytag.js: Tag module
+ *** twinkletag.js: Tag module
  ****************************************
  * Mode of invocation:     Tab ("Tag")
  * Active on:              Existing articles and drafts; file pages with a corresponding file
@@ -14,17 +14,17 @@
 
 var conv = require('ext.gadget.HanAssist').conv;
 
-Twinkle.tag = function friendlytag() {
+Twinkle.tag = function twinkletag() {
 	// redirect tagging
 	if (Morebits.isPageRedirect()) {
 		Twinkle.tag.mode = conv({ hans: '重定向', hant: '重新導向' });
 		Twinkle.tag.modeEn = 'redirect';
-		Twinkle.addPortletLink(Twinkle.tag.callback, conv({ hans: '标记', hant: '標記' }), 'friendly-tag', conv({ hans: '标记重定向', hant: '標記重新導向' }));
+		Twinkle.addPortletLink(Twinkle.tag.callback, conv({ hans: '标记', hant: '標記' }), 'twinkle-tag', conv({ hans: '标记重定向', hant: '標記重新導向' }));
 	// file tagging
 	} else if (mw.config.get('wgNamespaceNumber') === 6 && !document.getElementById('mw-sharedupload') && document.getElementById('mw-imagepage-section-filehistory')) {
 		Twinkle.tag.mode = conv({ hans: '文件', hant: '檔案' });
 		Twinkle.tag.modeEn = 'file';
-		Twinkle.addPortletLink(Twinkle.tag.callback, conv({ hans: '标记', hant: '標記' }), 'friendly-tag', conv({ hans: '标记文件', hant: '標記檔案' }));
+		Twinkle.addPortletLink(Twinkle.tag.callback, conv({ hans: '标记', hant: '標記' }), 'twinkle-tag', conv({ hans: '标记文件', hant: '標記檔案' }));
 	// article/draft tagging
 	} else if (([0, 118].indexOf(mw.config.get('wgNamespaceNumber')) !== -1 && mw.config.get('wgCurRevisionId')) || (Morebits.pageNameNorm === Twinkle.getPref('sandboxPage'))) {
 		Twinkle.tag.mode = conv({ hans: '条目', hant: '條目' });
@@ -34,13 +34,13 @@ Twinkle.tag = function friendlytag() {
 			// Disabled on latest diff because the diff slider could be used to slide
 			// away from the latest diff without causing the script to reload
 			!mw.config.get('wgDiffNewId');
-		Twinkle.addPortletLink(Twinkle.tag.callback, conv({ hans: '标记', hant: '標記' }), 'friendly-tag', conv({ hans: '标记条目', hant: '標記條目' }));
+		Twinkle.addPortletLink(Twinkle.tag.callback, conv({ hans: '标记', hant: '標記' }), 'twinkle-tag', conv({ hans: '标记条目', hant: '標記條目' }));
 	}
 };
 
 Twinkle.tag.checkedTags = [];
 
-Twinkle.tag.callback = function friendlytagCallback() {
+Twinkle.tag.callback = function twinkletagCallback() {
 	var Window = new Morebits.SimpleWindow(630, Twinkle.tag.modeEn === 'article' ? 500 : 400);
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink(conv({ hans: '标记设置', hant: '標記設定' }), 'WP:TW/PREF#tag');
@@ -1553,7 +1553,7 @@ Twinkle.tag.callbacks = {
 
 	},
 
-	file: function friendlytagCallbacksFile(pageobj) {
+	file: function twinkletagCallbacksFile(pageobj) {
 		var text = pageobj.getPageText();
 		var params = pageobj.getCallbackParameters();
 		var summary = '加入';
@@ -1639,7 +1639,7 @@ Twinkle.tag.callbacks = {
 	}
 };
 
-Twinkle.tag.callback.evaluate = function friendlytagCallbackEvaluate(e) {
+Twinkle.tag.callback.evaluate = function twinkletagCallbackEvaluate(e) {
 	var form = e.target;
 	var params = Morebits.QuickForm.getInputData(form);
 

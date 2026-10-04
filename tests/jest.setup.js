@@ -15,7 +15,7 @@ jest.mock(
 	{ virtual: true }
 );
 
-require('../morebits.js');
+require('../src/morebits.js');
 global.Morebits = window.Morebits;
 
 global.assert = require('assert');

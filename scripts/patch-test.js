@@ -38,7 +38,7 @@ function createTestLoader(changedFiles) {
 		}
 		if (file.endsWith('.js')) {
 			importsCount++;
-			if (file.startsWith('modules/')) {
+			if (file.startsWith('src/modules/')) {
 				return `mw.loader.getScript('${server}/${file}');`;
 			}
 			return `return mw.loader.getScript('${server}/${file}');`;
@@ -59,25 +59,25 @@ function createTestLoader(changedFiles) {
 		${importLine('twinkle.js')}
 
 	}).then(function() {
-		${importLine('modules/friendlytag.js')}
-		${importLine('modules/friendlytalkback.js')}
-		${importLine('modules/friendlywelcome.js')}
-		${importLine('modules/twinklearv.js')}
-		${importLine('modules/twinklebatchdelete.js')}
-		${importLine('modules/twinklebatchundelete.js')}
-		${importLine('modules/twinkleblock.js')}
-		${importLine('modules/twinkleclose.js')}
-		${importLine('modules/twinkleconfig.js')}
-		${importLine('modules/twinklecopyvio.js')}
-		${importLine('modules/twinklediff.js')}
-		${importLine('modules/twinklefluff.js')}
-		${importLine('modules/twinkleimage.js')}
-		${importLine('modules/twinkleprotect.js')}
-		${importLine('modules/twinklespeedy.js')}
-		${importLine('modules/twinklestub.js')}
-		${importLine('modules/twinkleunlink.js')}
-		${importLine('modules/twinklewarn.js')}
-		${importLine('modules/twinklexfd.js')}
+		${importLine('src/modules/twinkletag.js')}
+		${importLine('src/modules/twinkletalkback.js')}
+		${importLine('src/modules/twinklewelcome.js')}
+		${importLine('src/modules/twinklearv.js')}
+		${importLine('src/modules/twinklebatchdelete.js')}
+		${importLine('src/modules/twinklebatchundelete.js')}
+		${importLine('src/modules/twinkleblock.js')}
+		${importLine('src/modules/twinkleclose.js')}
+		${importLine('src/modules/twinkleconfig.js')}
+		${importLine('src/modules/twinklecopyvio.js')}
+		${importLine('src/modules/twinklediff.js')}
+		${importLine('src/modules/twinklerollback.js')}
+		${importLine('src/modules/twinkleimage.js')}
+		${importLine('src/modules/twinkleprotect.js')}
+		${importLine('src/modules/twinklespeedy.js')}
+		${importLine('src/modules/twinklestub.js')}
+		${importLine('src/modules/twinkleunlink.js')}
+		${importLine('src/modules/twinklewarn.js')}
+		${importLine('src/modules/twinklexfd.js')}
 	});`.replace(/^\t/mg, '').replace(/^\s*$/mg, '');
 
 	fs.writeFileSync('./scripts/patch-test-loader.js', jsLoaderSource, console.log);
