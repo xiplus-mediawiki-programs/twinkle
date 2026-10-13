@@ -16,271 +16,682 @@
 var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.close = function twinkleclose() {
-	if (Twinkle.getPref('XfdClose') === 'hide' || !/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(mw.config.get('wgPageName'))) {
+	var pageName = mw.config.get('wgPageName');
+	if (pageName !== 'Wikipedia:请求保护页面' &&
+		pageName !== 'Wikipedia:当前的破坏' &&
+		(Twinkle.getPref('XfdClose') === 'hide' || !/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(pageName))) {
 		return;
 	}
 
 	mw.hook('wikipage.content').add(function(item) {
 		if (item.attr('id') === 'mw-content-text') {
-			Twinkle.close.addLinks();
+			Twinkle.close.addLinks.main(pageName);
 		}
 	});
 };
 
-Twinkle.close.addLinks = function twinklecloseAddLinks() {
-	var prevH2Section = -1;
-	$('.mw-heading.mw-heading1, .mw-heading.mw-heading2, .mw-heading.mw-heading3, .mw-heading.mw-heading4, .mw-heading.mw-heading5, .mw-heading.mw-heading6', '#bodyContent').each(function (index, current) {
-		current.setAttribute('data-section', index + 1);
-		if ($(current).hasClass('mw-heading2')) {
-			prevH2Section = index + 1;
-		} else {
-			current.setAttribute('data-parent-section', prevH2Section);
-		}
-	});
+Twinkle.close.addLinks = {
+	getSectionId: function(heading) {
+		var href = $(heading).find('.mw-editsection a[href*="section="]').first().attr('href');
+		var section = href && mw.util.getParamValue('section', href);
+		return /^\d+$/.test(section || '') ? Number(section) : null;
+	},
 
-	var selector = ':has(a:only-of-type)';
-	var titles = $('#bodyContent').find('.mw-heading2' + selector + ':not(:has(+ p + div.mw-heading.mw-heading3)), .mw-heading3' + selector);
-
-	titles.each(function(key, current) {
-		if ($(current).nextUntil('.mw-heading.mw-heading1, .mw-heading.mw-heading2, .mw-heading.mw-heading3, .mw-heading.mw-heading4, .mw-heading.mw-heading5, .mw-heading.mw-heading6', '.talkend').length > 0) {
-			return;
+	addCloseLink: function(heading, text, onClick) {
+		var node = heading.getElementsByClassName('mw-editsection')[0];
+		if (!node) {
+			return null;
 		}
-		var $pageLink = $(current).find('h2 a, h3 a');
-		var headlinehref = $pageLink.attr('href');
-		if (headlinehref === undefined) {
-			return;
-		}
-		var title = null;
-		if (headlinehref.indexOf('redlink=1') !== -1) {
-			title = headlinehref.slice(19, -22);
-		} else {
-			var m = headlinehref.match(/\/wiki\/([^?]+)/, '$1');
-			if (m !== null) {
-				title = m[1];
-			}
-		}
-		if (title === null) {
-			return;
-		}
-		title = decodeURIComponent(title);
-		title = title.replace(/_/g, ' '); // Normalize for using in interface and summary
-		var pagenotexist = $pageLink.hasClass('new');
-		var section = current.getAttribute('data-section');
-		var parentSection = current.getAttribute('data-parent-section') || -1;
-		var node = current.getElementsByClassName('mw-editsection')[0];
-		var delLink = document.createElement('a');
-		delLink.className = 'twinkle-close-button';
-		delLink.href = '#';
-		delLink.setAttribute('data-section', section);
-		delLink.innerText = conv({ hans: '关闭讨论', hant: '關閉討論' });
-		$(delLink).on('click', function() {
-			Twinkle.close.callback(title, section, parentSection, pagenotexist);
+		var link = document.createElement('a');
+		link.className = 'twinkle-close-button ';
+		link.href = '#';
+		link.innerText = text;
+		$(link).on('click', function() {
+			onClick(link);
 			return false;
 		});
-		node.insertBefore(delLink, node.childNodes[1]);
-	});
+		node.insertBefore(link, node.childNodes[1]);
+		return link;
+	},
+
+	main: function(pageName) {
+		switch (true) {
+			case /^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(pageName):
+				var prevH2Section = -1;
+				var headings = '.mw-heading.mw-heading1, .mw-heading.mw-heading2, .mw-heading.mw-heading3, ' +
+		'.mw-heading.mw-heading4, .mw-heading.mw-heading5, .mw-heading.mw-heading6';
+				$(headings, '#bodyContent').each(function(index, current) {
+					current.setAttribute('data-section', index + 1);
+					if ($(current).hasClass('mw-heading2')) {
+						prevH2Section = index + 1;
+					} else {
+						current.setAttribute('data-parent-section', prevH2Section);
+					}
+				});
+
+				var selector = ':has(a:only-of-type)';
+				var titles = $('#bodyContent').find('.mw-heading2' + selector + ':not(:has(+ p + div.mw-heading.mw-heading3)), .mw-heading3' + selector);
+
+				titles.each(function(key, current) {
+					if ($(current).nextUntil(headings, '.talkend').length > 0) {
+						return;
+					}
+					var $pageLink = $(current).find('h2 a, h3 a');
+					var headlinehref = $pageLink.attr('href');
+					if (headlinehref === undefined) {
+						return;
+					}
+					var title = null;
+					if (headlinehref.indexOf('redlink=1') !== -1) {
+						title = headlinehref.slice(19, -22);
+					} else {
+						var m = headlinehref.match(/\/wiki\/([^?]+)/);
+						if (m !== null) {
+							title = m[1];
+						}
+					}
+					if (title === null) {
+						return;
+					}
+					title = decodeURIComponent(title).replace(/_/g, ' '); // Normalize for using in interface and summary
+					var pagenotexist = $pageLink.hasClass('new');
+					var section = current.getAttribute('data-section');
+					var parentSection = current.getAttribute('data-parent-section') || -1;
+
+					var link = Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭讨论', hant: '關閉討論' }), function() {
+						Twinkle.close.callback.xfd(title, section, parentSection, pagenotexist);
+					});
+					if (link) {
+						link.setAttribute('data-section', section);
+					}
+				});
+				break;
+			case pageName === 'Wikipedia:请求保护页面':
+				$('#bodyContent').find('.mw-heading2, .mw-heading3').each(function(key, current) {
+					if (!$(current).hasClass('mw-heading3')) {
+						return;
+					}
+
+					var title = $(current).find('h3').first().text();
+					var sectionid = Twinkle.close.addLinks.getSectionId(current);
+					if (sectionid === null) {
+						return;
+					}
+
+					Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭', hant: '關閉' }), function() {
+						Twinkle.close.callback.request(title, sectionid, 'rfpp');
+					});
+				});
+				break;
+			case pageName === 'Wikipedia:当前的破坏':
+				$('#bodyContent').find('.mw-heading2').each(function(key, current) {
+					var title = $(current).find('h2').first().text();
+					var sectionid = Twinkle.close.addLinks.getSectionId(current);
+					if (sectionid === null) {
+						return;
+					}
+
+					Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭', hant: '關閉' }), function() {
+						Twinkle.close.callback.request(title, sectionid, 'vip');
+					});
+				});
+				break;
+			default:
+				break;
+		}
+	}
 };
 
 var date = new Morebits.Date();
 
-// Keep this synchronized with {{delh}}
-Twinkle.close.codes = [{
-	key: conv({ hans: '请求无效', hant: '請求無效' }),
-	value: {
-		ir: {
-			label: conv({ hans: '请求无效', hant: '請求無效' }),
-			action: 'keep'
-		},
-		rep: {
-			label: conv({ hans: '重复提出，无效', hant: '重複提出，無效' }),
-			action: 'keep'
-		},
-		commons: {
-			label: conv({ hans: '应在维基共享资源提请', hant: '應在維基共享資源提請' }),
-			action: 'keep'
-		},
-		ne: {
-			label: conv({ hans: '目标页面或文件不存在，无效', hant: '目標頁面或檔案不存在，無效' }),
-			action: 'keep'
-		},
-		nq: {
-			label: conv({ hans: '提删者未获取提删资格，无效', hant: '提刪者未取得提刪資格，無效' }),
-			action: 'keep'
+Twinkle.close.codes = {
+	// Keep this synchronized with {{delh}}
+	xfd: [{
+		key: conv({ hans: '请求无效', hant: '請求無效' }),
+		value: {
+			ir: {
+				label: conv({ hans: '请求无效', hant: '請求無效' }),
+				action: 'keep'
+			},
+			rep: {
+				label: conv({ hans: '重复提出，无效', hant: '重複提出，無效' }),
+				action: 'keep'
+			},
+			commons: {
+				label: conv({ hans: '应在维基共享资源提请', hant: '應在維基共享資源提請' }),
+				action: 'keep'
+			},
+			ne: {
+				label: conv({ hans: '目标页面或文件不存在，无效', hant: '目標頁面或檔案不存在，無效' }),
+				action: 'keep'
+			},
+			nq: {
+				label: conv({ hans: '提删者未获取提删资格，无效', hant: '提刪者未取得提刪資格，無效' }),
+				action: 'keep'
+			}
+		}
+	},
+	{
+		key: '保留',
+		value: {
+			k: {
+				label: '保留',
+				action: 'keep',
+				adminonly: true
+			},
+			sk: {
+				label: '快速保留',
+				action: 'keep'
+			},
+			tk: {
+				label: conv({ hans: '暂时保留，改挂维护模板（收录标准等）', hant: '暫時保留，改掛維護模板（收錄標準等）' }),
+				value: conv({ hans: '暂时保留', hant: '暫時保留' }),
+				action: 'keep'
+			},
+			rr: {
+				label: conv({ hans: '请求理由消失', hant: '請求理由消失' }),
+				action: 'keep',
+				selected: Twinkle.getPref('XfdClose') === 'nonadminonly'
+			},
+			dan: {
+				label: conv({ hans: '删后重建', hant: '刪後重建' }),
+				action: 'keep',
+				adminonly: true
+			}
+		}
+	},
+	{
+		key: conv({ hans: '删除', hant: '刪除' }),
+		value: {
+			d: {
+				label: conv({ hans: '删除', hant: '刪除' }),
+				action: 'del',
+				adminonly: true,
+				selected: Twinkle.getPref('XfdClose') === 'all'
+			},
+			ic: {
+				label: conv({ hans: '图像因侵权被删', hant: '圖像因侵權被刪' }),
+				action: 'del',
+				adminonly: true
+			}
+		}
+	},
+	{
+		key: conv({ hans: '快速删除', hant: '快速刪除' }),
+		value: {
+			sd: {
+				label: conv({ hans: '快速删除', hant: '快速刪除' }),
+				action: 'del'
+			},
+			lssd: {
+				label: conv({ hans: '无来源或著作权信息，快速删除', hant: '無來源或版權資訊，快速刪除' }),
+				action: 'del'
+			},
+			svg: {
+				label: conv({ hans: '已改用SVG图形，快速删除', hant: '已改用SVG圖形，快速刪除' }),
+				action: 'del'
+			},
+			nowcommons: {
+				label: conv({ hans: '维基共享资源已提供，快速删除', hant: '維基共享資源已提供，快速刪除' }),
+				action: 'del'
+			},
+			drep: {
+				label: conv({ hans: '多次被删除，条目锁定', hant: '多次被刪除，條目鎖定' }),
+				action: 'del',
+				adminonly: true
+			}
+		}
+	},
+	{
+		key: conv({ hans: '转移至其他维基计划', hant: '轉移至其他維基計劃' }),
+		value: {
+			twc: {
+				label: conv({ hans: '转移至维基共享资源', hant: '轉移至維基共享資源' }),
+				action: 'noop',
+				adminonly: true
+			},
+			twn: {
+				label: conv({ hans: '转移至维基新闻', hant: '轉移至維基新聞' }),
+				action: 'noop',
+				adminonly: true
+			},
+			tws: {
+				label: conv({ hans: '转移至维基文库', hant: '轉移至維基文庫' }),
+				action: 'noop',
+				adminonly: true
+			},
+			twb: {
+				label: conv({ hans: '转移至维基教科书', hant: '轉移至維基教科書' }),
+				action: 'noop',
+				adminonly: true
+			},
+			twq: {
+				label: conv({ hans: '转移至维基语录', hant: '轉移至維基語錄' }),
+				action: 'noop',
+				adminonly: true
+			},
+			twt: {
+				label: conv({ hans: '转移至维基词典', hant: '轉移至維基詞典' }),
+				action: 'noop',
+				adminonly: true
+			},
+			twv: {
+				label: conv({ hans: '转移至维基学院', hant: '轉移至維基學院' }),
+				action: 'noop',
+				adminonly: true
+			},
+			twvoy: {
+				label: conv({ hans: '转移至维基导游', hant: '轉移至維基導遊' }),
+				action: 'noop',
+				adminonly: true
+			},
+			two: {
+				label: conv({ hans: '转移至其他维基计划', hant: '轉移至其他維基計劃' }),
+				action: 'noop',
+				adminonly: true
+			}
+		}
+	},
+	{
+		key: conv({ hans: '其他处理方法', hant: '其他處理方法' }),
+		value: {
+			relist: {
+				label: conv({ hans: '重新提交讨论', hant: '重新提交討論' }),
+				action: 'noop',
+				disabled: mw.config.get('wgPageName') === 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc'),
+				hidden: !/^Wikipedia:頁面存廢討論\/記錄\//.test(mw.config.get('wgPageName'))
+			},
+			c: {
+				label: conv({ hans: '转交侵权', hant: '轉交侵權' }),
+				action: 'noop'
+			},
+			m2ifd: {
+				label: conv({ hans: '转送文件存废讨论', hant: '轉送檔案存廢討論' }),
+				action: 'noop'
+			},
+			r: {
+				label: '重定向',
+				action: 'keep',
+				adminonly: true
+			},
+			cr: {
+				label: conv({ hans: '分类重定向', hant: '分類重定向' }),
+				action: 'keep',
+				adminonly: true
+			},
+			m: {
+				label: conv({ hans: '移动', hant: '移動' }),
+				action: 'keep',
+				adminonly: true
+			},
+			merge: {
+				label: conv({ hans: '并入', hant: '併入' }),
+				action: 'keep',
+				adminonly: true
+			},
+			mergeapproved: {
+				label: conv({ hans: '允许并入', hant: '允許併入' }),
+				action: 'keep',
+				adminonly: true
+			},
+			nc: {
+				label: conv({ hans: '无共识暂时保留', hant: '無共識暫時保留' }),
+				value: conv({ hans: '无共识', hant: '無共識' }),
+				action: 'keep'
+			}
 		}
 	}
-},
-{
-	key: '保留',
-	value: {
-		k: {
-			label: '保留',
-			action: 'keep',
-			adminonly: true
-		},
-		sk: {
-			label: '快速保留',
-			action: 'keep'
-		},
-		tk: {
-			label: conv({ hans: '暂时保留，改挂维护模板（收录标准等）', hant: '暫時保留，改掛維護模板（收錄標準等）' }),
-			value: conv({ hans: '暂时保留', hant: '暫時保留' }),
-			action: 'keep'
-		},
-		rr: {
-			label: conv({ hans: '请求理由消失', hant: '請求理由消失' }),
-			action: 'keep',
-			selected: Twinkle.getPref('XfdClose') === 'nonadminonly'
-		},
-		dan: {
-			label: conv({ hans: '删后重建', hant: '刪後重建' }),
-			action: 'keep',
-			adminonly: true
+	],
+	// {{RFPP}}, as both bot and Twinkle itself will handle the closing of requests
+	// not providing all the done options including marking as done by other sysop, same for VIP
+	rfpp: [{
+		key: conv({ hans: '拒绝', hant: '拒絕' }),
+		value: {
+			pf: {
+				label: conv({ hans: '拒绝，暂时不需要改变目前的保护等级', hant: '拒絕，暫時不需要改變目前的保護等級' })
+			},
+			nea: {
+				label: conv({ hans: '拒绝，近期没有足够的扰乱性行为使该页被保护', hant: '拒絕，近期沒有足夠的擾亂性行為使該頁被保護' })
+			},
+			co: {
+				label: conv({ hans: '拒绝，此请求保护可能会额外影响一些正在改善此页的用户', hant: '拒絕，此請求保護可能會額外影響一些正在改善此頁的使用者' })
+			},
+			aiv: {
+				label: conv({ hans: '拒绝，请恰当地警告用户，如继续请将用户报告至当前的破坏', hant: '拒絕，請恰當地警告使用者，如繼續請將使用者回報至當前的破壞' })
+			},
+			np: {
+				label: conv({ hans: '拒绝，不会做出预见性的保护', hant: '拒絕，不會做出預見性的保護' })
+			},
+			nhr: {
+				label: conv({ hans: '拒绝，模板未有足够的使用量以使其成为高风险模板', hant: '拒絕，模板未有足夠的使用量以使其成為高風險模板' })
+			},
+			dr: {
+				label: conv({ hans: '拒绝，内容争议。请使用条目的讨论页或以其他形式解决争论', hant: '拒絕，內容爭議。請使用條目的討論頁或以其他形式解決爭論' })
+			},
+			ut: {
+				label: conv({ hans: '拒绝，除非遇到了严重或持续的破坏，否则用户讨论页不会被保护', hant: '拒絕，除非遇到了嚴重或持續的破壞，否則使用者討論頁不會被保護' })
+			},
+			bot: {
+				label: conv({ hans: '拒绝，实际情况可能并非如此（仅用于拒绝机器人的过度提报）', hant: '拒絕，實際情況可能並非如此（僅用於拒絕機器人的過度提報）' })
+			}
 		}
-	}
-},
-{
-	key: conv({ hans: '删除', hant: '刪除' }),
-	value: {
-		d: {
-			label: conv({ hans: '删除', hant: '刪除' }),
-			action: 'del',
-			adminonly: true,
-			selected: Twinkle.getPref('XfdClose') === 'all'
-		},
-		ic: {
-			label: conv({ hans: '图像因侵权被删', hant: '圖像因侵權被刪' }),
-			action: 'del',
-			adminonly: true
+	},
+	{
+		key: conv({ hans: '解除保护', hant: '解除保護' }),
+		value: {
+			au: {
+				label: conv({ hans: '已解除保护', hant: '已解除保護' })
+			},
+			nu: {
+				label: conv({ hans: '未解除保护', hant: '未解除保護' })
+			},
+			cr: {
+				label: conv({ hans: '未解除保护，请在草稿页创建条目有可靠来源的版本，完成后请重新提交请求或寻求管理员帮助', hant: '未解除保護，請在草稿頁建立條目有可靠來源的版本，完成後請重新提交請求或尋求管理員協助' })
+			},
+			er: {
+				label: conv({ hans: '未解除保护，请在编辑请求以请求对受保护页面进行特定的更改', hant: '未解除保護，請在編輯請求以請求對受保護頁面進行特定的更改' })
+			}
 		}
-	}
-},
-{
-	key: conv({ hans: '快速删除', hant: '快速刪除' }),
-	value: {
-		sd: {
-			label: conv({ hans: '快速删除', hant: '快速刪除' }),
-			action: 'del'
-		},
-		lssd: {
-			label: conv({ hans: '无来源或著作权信息，快速删除', hant: '無來源或版權資訊，快速刪除' }),
-			action: 'del'
-		},
-		svg: {
-			label: conv({ hans: '已改用SVG图形，快速删除', hant: '已改用SVG圖形，快速刪除' }),
-			action: 'del'
-		},
-		nowcommons: {
-			label: conv({ hans: '维基共享资源已提供，快速删除', hant: '維基共享資源已提供，快速刪除' }),
-			action: 'del'
-		},
-		drep: {
-			label: conv({ hans: '多次被删除，条目锁定', hant: '多次被刪除，條目鎖定' }),
-			action: 'del',
-			adminonly: true
+	},
+	{
+		key: conv({ hans: '其他处理方法', hant: '其他處理方法' }),
+		value: {
+			ch: {
+				label: conv({ hans: '正在检查以确定是否需要保护', hant: '正在檢查以確定是否需要保護' })
+			},
+			no: {
+				label: conv({ hans: '未完成', hant: '未完成' })
+			},
+			b: {
+				label: conv({ hans: '用户已被封禁', hant: '使用者已被封鎖' })
+			},
+			tb: {
+				label: conv({ hans: '用户已被重新封禁，并禁止其编辑自己的讨论页', hant: '使用者已被重新封鎖，並禁止其編輯自己的討論頁' })
+			},
+			ap: {
+				label: conv({ hans: '已保护', hant: '已保護' })
+			},
+			q: {
+				label: conv({ hans: '问题', hant: '問題' })
+			},
+			n: {
+				label: conv({ hans: '备注：', hant: '備註：' })
+			},
+			w: {
+				label: conv({ hans: '请求者取消', hant: '請求者取消' })
+			},
+			ew: {
+				label: conv({ hans: '考虑举报3RR，这可能是一两个用户间的编辑战', hant: '考慮回報3RR，這可能是一兩個使用者間的編輯戰' })
+			}
 		}
-	}
-},
-{
-	key: conv({ hans: '转移至其他维基计划', hant: '轉移至其他維基計劃' }),
-	value: {
-		twc: {
-			label: conv({ hans: '转移至维基共享资源', hant: '轉移至維基共享資源' }),
-			action: 'noop',
-			adminonly: true
-		},
-		twn: {
-			label: conv({ hans: '转移至维基新闻', hant: '轉移至維基新聞' }),
-			action: 'noop',
-			adminonly: true
-		},
-		tws: {
-			label: conv({ hans: '转移至维基文库', hant: '轉移至維基文庫' }),
-			action: 'noop',
-			adminonly: true
-		},
-		twb: {
-			label: conv({ hans: '转移至维基教科书', hant: '轉移至維基教科書' }),
-			action: 'noop',
-			adminonly: true
-		},
-		twq: {
-			label: conv({ hans: '转移至维基语录', hant: '轉移至維基語錄' }),
-			action: 'noop',
-			adminonly: true
-		},
-		twt: {
-			label: conv({ hans: '转移至维基词典', hant: '轉移至維基詞典' }),
-			action: 'noop',
-			adminonly: true
-		},
-		twv: {
-			label: conv({ hans: '转移至维基学院', hant: '轉移至維基學院' }),
-			action: 'noop',
-			adminonly: true
-		},
-		twvoy: {
-			label: conv({ hans: '转移至维基导游', hant: '轉移至維基導遊' }),
-			action: 'noop',
-			adminonly: true
-		},
-		two: {
-			label: conv({ hans: '转移至其他维基计划', hant: '轉移至其他維基計劃' }),
-			action: 'noop',
-			adminonly: true
+	}],
+	// {{VIP}}
+	vip: [{
+		key: conv({ hans: '拒绝', hant: '拒絕' }),
+		value: {
+			dc: {
+				label: conv({ hans: '拒绝', hant: '拒絕' })
+			},
+			nv: {
+				label: conv({ hans: '编辑并非破坏。请确保其最近编辑构成破坏后再重新提报', hant: '編輯並非破壞。請確保其最近編輯構成破壞後再重新提報' })
+			},
+			b: {
+				label: conv({ hans: '拒绝，实际情况可能并非如此（机器人）', hant: '拒絕，實際情況可能並非如此（機器人）' })
+			},
+			fp: {
+				label: conv({ hans: '错误提报，编辑并非破坏（机器人）', hant: '錯誤提報，編輯並非破壞（機器人）' })
+			},
+			c: {
+				label: conv({ hans: '编辑争议。请考虑解决争议，或提报至EWIP', hant: '編輯爭議。請考慮解決爭議，或提報至EWIP' })
+			},
+			np: {
+				label: conv({ hans: '封禁乃用以预防破坏而非惩罚', hant: '封鎖乃用以預防破壞而非懲罰' })
+			},
+			s: {
+				label: conv({ hans: '疑似共享IP，由多人共用', hant: '疑似共享IP，由多人共用' })
+			},
+			in: {
+				label: conv({ hans: '注意：IP位址不适合实施永久封禁，请参阅封禁方针', hant: '注意：IP位址不適合實施永久封鎖，請參閱封鎖方針' })
+			}
 		}
-	}
-},
-{
-	key: conv({ hans: '其他处理方法', hant: '其他處理方法' }),
-	value: {
-		relist: {
-			label: conv({ hans: '重新提交讨论', hant: '重新提交討論' }),
-			action: 'noop',
-			disabled: mw.config.get('wgPageName') === 'Wikipedia:頁面存廢討論/記錄/' + date.format('YYYY/MM/DD', 'utc'),
-			hidden: !/^Wikipedia:頁面存廢討論\/記錄\//.test(mw.config.get('wgPageName'))
-		},
-		c: {
-			label: conv({ hans: '转交侵权', hant: '轉交侵權' }),
-			action: 'noop'
-		},
-		m2ifd: {
-			label: conv({ hans: '转送文件存废讨论', hant: '轉送檔案存廢討論' }),
-			action: 'noop'
-		},
-		r: {
-			label: '重定向',
-			action: 'keep',
-			adminonly: true
-		},
-		cr: {
-			label: conv({ hans: '分类重定向', hant: '分類重定向' }),
-			action: 'keep',
-			adminonly: true
-		},
-		m: {
-			label: conv({ hans: '移动', hant: '移動' }),
-			action: 'keep',
-			adminonly: true
-		},
-		merge: {
-			label: conv({ hans: '并入', hant: '併入' }),
-			action: 'keep',
-			adminonly: true
-		},
-		mergeapproved: {
-			label: conv({ hans: '允许并入', hant: '允許併入' }),
-			action: 'keep',
-			adminonly: true
-		},
-		nc: {
-			label: conv({ hans: '无共识暂时保留', hant: '無共識暫時保留' }),
-			value: conv({ hans: '无共识', hant: '無共識' }),
-			action: 'keep'
+	},
+	{
+		key: '警告',
+		value: {
+			w: {
+				label: conv({ hans: '用户已被警告', hant: '使用者已被警告' })
+			},
+			i: {
+				label: conv({ hans: '近期编辑不足以用于判断是否封禁用户', hant: '近期編輯不足以用於判斷是否封鎖使用者' })
+			},
+			f: {
+				label: conv({ hans: '最后警告后无编辑。如用户继续进行破坏，请回报', hant: '最後警告後無編輯。如使用者繼續進行破壞，請回報' })
+			},
+			nesw: {
+				label: conv({ hans: '警告后无编辑。如用户在获充分警告后继续进行破坏，请回报', hant: '警告後無編輯。如使用者在獲充分警告後繼續進行破壞，請回報' })
+			},
+			onlywarn: {
+				label: conv({ hans: '最近警告不当，4im层级仅适用于严重破坏', hant: '最近警告不當，4im層級僅適用於嚴重破壞' })
+			},
+			ns: {
+				label: conv({ hans: '未获充分警告。如用户已获充分警告并继续进行破坏，请回报', hant: '未獲充分警告。如使用者已獲充分警告並繼續進行破壞，請回報' })
+			}
 		}
-	}
-}];
+	},
+	{
+		key: '其他程序',
+		value: {
+			ew: {
+				label: conv({ hans: '此页仅处理破坏，请转此处提报编辑战', hant: '此頁僅處理破壞，請轉此處提報編輯戰' })
+			},
+			a: {
+				label: conv({ hans: '此页仅处理破坏，请转此处提报争议', hant: '此頁僅處理破壞，請轉此處提報爭議' })
+			},
+			u: {
+				label: conv({ hans: '此页仅处理破坏，请转此处提报不当用户名', hant: '此頁僅處理破壞，請轉此處提報不當使用者名稱' })
+			},
+			r: {
+				label: conv({ hans: '此页仅处理破坏，请转此处提报保护页面', hant: '此頁僅處理破壞，請轉此處提報保護頁面' })
+			},
+			sp: {
+				label: conv({ hans: '此页仅处理破坏，请转此处提报用户核查', hant: '此頁僅處理破壞，請轉此處提報使用者核查' })
+			}
+		}
+	},
+	{
+		key: conv({ hans: '陈旧报告', hant: '陳舊報告' }),
+		value: {
+			e: {
+				label: conv({ hans: '陈旧报告，用户已停止编辑/用户近期已没有编辑X', hant: '陳舊報告，使用者已停止編輯/使用者近期已沒有編輯X' })
+			},
+			sn: {
+				label: conv({ hans: '报告即时但现已陈旧，用户最后破坏距今已有X。如用户再次进行破坏，请回报', hant: '報告即時但現已陳舊，使用者最後破壞距今已有X。如使用者再次進行破壞，請回報' })
+			},
+			ow: {
+				label: conv({ hans: '陈旧警告，最近警告于Y以前发出', hant: '陳舊警告，最近警告於Y以前發出' })
+			}
+		}
+	},
+	{
+		key: conv({ hans: '其他处理方法', hant: '其他處理方法' }),
+		value: {
+			chk: {
+				label: conv({ hans: '检查中', hant: '檢查中' })
+			},
+			m: {
+				label: conv({ hans: '将关注此用户', hant: '將關注此使用者' })
+			},
+			p: {
+				label: conv({ hans: '已保护页面', hant: '已保護頁面' })
+			},
+			d: {
+				label: conv({ hans: '已删除页面', hant: '已刪除頁面' })
+			},
+			n: {
+				label: conv({ hans: '注意', hant: '注意' })
+			},
+			q: {
+				label: conv({ hans: '问题', hant: '問題' })
+			}
+		}
+	}]
+};
 
-Twinkle.close.callback = function twinklecloseCallback(title, section, parentSection, noop) {
+Twinkle.close.callback = {};
+
+Twinkle.close.callback.request = function twinklecloseCallbackRequest(title, section, request_type) {
+	var Window = new Morebits.SimpleWindow(request_type === 'rfpp' ? 650 : 600, 350);
+	Window.setTitle(conv({ hans: '关闭请求', hant: '關閉請求' }) + ' · ' + title);
+	Window.setScriptName('Twinkle');
+	if (request_type === 'rfpp') {
+		Window.addFooterLink(conv({ hans: '保护方针', hant: '保護方針' }), 'WP:PROT');
+	} else {
+		Window.addFooterLink(conv({ hans: '封禁方针', hant: '封鎖方針' }), 'WP:BLOCK');
+	}
+	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#close');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見' }), 'WT:TW');
+
+	var form = new Morebits.QuickForm(Twinkle.close.callback.request.evaluate);
+
+	form.append({
+		type: 'select',
+		label: conv({ hans: '处理：', hant: '處理：' }),
+		name: 'sub_group',
+		event: function(e) {
+			if (['ow', 'sn', 'e'].includes(e.target.value)) {
+				Morebits.QuickForm.setElementVisibility(e.target.form.last_seen.parentNode, true);
+			} else {
+				Morebits.QuickForm.setElementVisibility(e.target.form.last_seen.parentNode, false);
+				e.target.form.last_seen.value = '';
+			}
+		}
+	});
+
+	form.append({
+		type: 'input',
+		name: 'last_seen',
+		label: conv({ hans: '最后编辑于：', hant: '最後編輯於：' })
+	});
+
+	form.append({
+		type: 'input',
+		name: 'remark',
+		label: conv({ hans: '补充说明：', hant: '補充說明：' })
+	});
+
+
+	form.append({ type: 'submit' });
+
+	var result = form.render();
+	Window.setContent(result);
+	Window.display();
+
+
+	var sub_group = result.getElementsByTagName('select')[0];
+
+	var resultData = {
+		title: title,
+		section: section,
+		request_type: request_type
+	};
+	$(result).data('resultData', resultData);
+	var createEntries = function(contents, container) {
+		$.each(contents, function(itemKey, itemProperties) {
+			var key = typeof itemKey === 'string' ? itemKey : itemProperties.value;
+
+			var elem = new Morebits.QuickForm.Element({
+				type: 'option',
+				label: key + '：' + itemProperties.label,
+				value: key
+				// selected, disabled, hidden?
+			});
+			var elemRendered = container.appendChild(elem.render());
+			$(elemRendered).data('messageData', itemProperties);
+		});
+	};
+
+	var codes = request_type === 'rfpp' ? Twinkle.close.codes.rfpp : Twinkle.close.codes.vip;
+	codes.forEach(function(group) {
+		var optgroup = new Morebits.QuickForm.Element({
+			type: 'optgroup',
+			label: group.key
+		});
+		optgroup = optgroup.render();
+		sub_group.appendChild(optgroup);
+		// create the options
+		createEntries(group.value, optgroup);
+	});
+
+	var evt = document.createEvent('Event');
+	evt.initEvent('change', true, true);
+	result.sub_group.dispatchEvent(evt);
+};
+
+
+Twinkle.close.callback.request.evaluate = function twinklecloseCallbackRequestEvaluate(e) {
+	var code = e.target.sub_group.value;
+	var resultData = $(e.target).data('resultData');
+	var messageData = $(e.target.sub_group).find('option[value="' + code + '"]').data('messageData');
+
+	if (['ow', 'sn', 'e'].includes(code) && !e.target.last_seen.value) {
+		alert(conv({ hans: '请填写最后编辑时间', hant: '請填寫最後編輯時間' }));
+		return;
+	}
+
+	if (['q', 'n', 'no', 'dc'].includes(code) && !e.target.remark.value) {
+		alert(conv({ hans: '请填写补充说明', hant: '請填寫補充說明' }));
+		return;
+	}
+	var params = {
+		title: resultData.title,
+		section: resultData.section,
+		request_type: resultData.request_type,
+		code: code,
+		messageData: messageData,
+		last_seen: e.target.last_seen.value,
+		remark: e.target.remark.value
+	};
+	if (!Number.isInteger(params.section)) {
+		alert(conv({ hans: '无法确定请求所在的章节，请刷新页面后重试。', hant: '無法確定請求所在的章節，請重新整理頁面後重試。' }));
+		return;
+	}
+	Morebits.Status.init(e.target);
+	var page = new Morebits.wiki.Page(mw.config.get('wgPageName'), conv({ hans: '关闭请求', hant: '關閉請求' }));
+	page.setCallbackParameters(params);
+	page.setPageSection(params.section);
+	page.load(Twinkle.close.callback.request.save);
+	Morebits.SimpleWindow.setButtonsEnabled(false);
+};
+
+Twinkle.close.callback.request.save = function twinklecloseCallbackRequestSave(pageobj) {
+	var params = pageobj.getCallbackParameters();
+	var statelem = pageobj.getStatusElement();
+	var text = pageobj.getPageText().trim();
+	var template = '{{' + params.request_type.toUpperCase() + '|' + params.code;
+
+	if (params.last_seen) {
+		template += '|' + params.last_seen;
+	}
+	template += '}}';
+	if (params.remark) {
+		template += '：' + Morebits.string.appendPunctuation(params.remark);
+	}
+
+	if (params.request_type === 'rfpp') {
+		text += '\n: ' + template + '--~~~~';
+	} else {
+		text += '\n* 处理：' + template + '--~~~~';
+	}
+
+	pageobj.setPageText(text);
+	pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label);
+	pageobj.setChangeTags(Twinkle.changeTags);
+	pageobj.save(function() {
+		statelem.info(conv({ hans: '完成', hant: '完成' }));
+	});
+};
+
+Twinkle.close.callback.xfd = function twinklecloseCallbackXfd(title, section, parentSection, noop) {
 	var Window = new Morebits.SimpleWindow(410, 200);
 	Window.setTitle(conv({ hans: '关闭存废讨论', hant: '關閉存廢討論' }) + ' \u00B7 ' + title);
 	Window.setScriptName('Twinkle');
@@ -288,13 +699,13 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#close');
 	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見'}), 'WT:TW');
 
-	var form = new Morebits.QuickForm(Twinkle.close.callback.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.close.callback.xfd.evaluate);
 
 	form.append({
 		type: 'select',
 		label: conv({ hans: '处理结果：', hant: '處理結果：' }),
 		name: 'sub_group',
-		event: Twinkle.close.callback.change_code
+		event: Twinkle.close.callback.xfd.change_code
 	});
 
 	if (Morebits.userIsSysop) {
@@ -320,7 +731,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 				label: conv({ hans: '只关闭讨论，不进行其他操作', hant: '只關閉討論，不進行其他操作' }),
 				value: 'noop',
 				name: 'noop',
-				event: Twinkle.close.callback.change_operation,
+				event: Twinkle.close.callback.xfd.change_operation,
 				checked: noop
 			}
 		]
@@ -394,7 +805,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 		});
 	};
 
-	Twinkle.close.codes.forEach(function(group) {
+	Twinkle.close.codes.xfd.forEach(function(group) {
 		var optgroup = new Morebits.QuickForm.Element({
 			type: 'optgroup',
 			label: group.key
@@ -410,7 +821,7 @@ Twinkle.close.callback = function twinklecloseCallback(title, section, parentSec
 	result.sub_group.dispatchEvent(evt);
 };
 
-Twinkle.close.callback.change_operation = function twinklecloseCallbackChangeOperation(e) {
+Twinkle.close.callback.xfd.change_operation = function twinklecloseCallbackXfdChangeOperation(e) {
 	var noop = e.target.checked;
 	var code = e.target.form.sub_group.value;
 	var messageData = $(e.target.form.sub_group).find('option[value="' + code + '"]').data('messageData');
@@ -433,7 +844,7 @@ Twinkle.close.callback.change_operation = function twinklecloseCallbackChangeOpe
 	}
 };
 
-Twinkle.close.callback.change_code = function twinklecloseCallbackChangeCode(e) {
+Twinkle.close.callback.xfd.change_code = function twinklecloseCallbackXfdChangeCode(e) {
 	var resultData = $(e.target.form).data('resultData');
 	var messageData = $(e.target).find('option[value="' + e.target.value + '"]').data('messageData');
 	var noop = e.target.form.noop;
@@ -479,7 +890,7 @@ Twinkle.close.callback.change_code = function twinklecloseCallbackChangeCode(e) 
 
 };
 
-Twinkle.close.callback.evaluate = function twinklecloseCallbackEvaluate(e) {
+Twinkle.close.callback.xfd.evaluate = function twinklecloseCallbackXfdEvaluate(e) {
 	var code = e.target.sub_group.value;
 	var resultData = $(e.target).data('resultData');
 	var messageData = $(e.target.sub_group).find('option[value="' + code + '"]').data('messageData');
