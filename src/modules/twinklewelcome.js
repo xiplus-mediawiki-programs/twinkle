@@ -6,7 +6,7 @@
 
 /*
  ****************************************
- *** friendlywelcome.js: Welcome module
+ *** twinklewelcome.js: Welcome module
  ****************************************
  * Mode of invocation:     Tab ("Wel"), or from links on diff pages
  * Active on:              Any page with relevant user name (userspace,
@@ -15,9 +15,9 @@
 
 var conv = require('ext.gadget.HanAssist').conv;
 
-Twinkle.welcome = function friendlywelcome() {
-	if (mw.util.getParamValue('friendlywelcome')) {
-		if (mw.util.getParamValue('friendlywelcome') === 'auto') {
+Twinkle.welcome = function twinklewelcome() {
+	if (mw.util.getParamValue('twinklewelcome')) {
+		if (mw.util.getParamValue('twinklewelcome') === 'auto') {
 			Twinkle.welcome.auto();
 		} else {
 			Twinkle.welcome.semiauto();
@@ -66,7 +66,7 @@ Twinkle.welcome.normal = function() {
 
 				var oWelcomeNode = welcomeNode.cloneNode(true);
 				oWelcomeNode.firstChild.setAttribute('href', oHref + '&' + $.param({
-					friendlywelcome: Twinkle.getPref('quickWelcomeMode') === 'auto' ? 'auto' : 'norm',
+					twinklewelcome: Twinkle.getPref('quickWelcomeMode') === 'auto' ? 'auto' : 'norm',
 					vanarticle: Morebits.pageNameNorm
 				}));
 				$oList[0].parentNode.parentNode.appendChild(document.createTextNode(' '));
@@ -78,7 +78,7 @@ Twinkle.welcome.normal = function() {
 
 				var nWelcomeNode = welcomeNode.cloneNode(true);
 				nWelcomeNode.firstChild.setAttribute('href', nHref + '&' + $.param({
-					friendlywelcome: Twinkle.getPref('quickWelcomeMode') === 'auto' ? 'auto' : 'norm',
+					twinklewelcome: Twinkle.getPref('quickWelcomeMode') === 'auto' ? 'auto' : 'norm',
 					vanarticle: Morebits.pageNameNorm
 				}));
 				$nList[0].parentNode.parentNode.appendChild(document.createTextNode(' '));
@@ -89,7 +89,7 @@ Twinkle.welcome.normal = function() {
 	if (Morebits.relevantUserName() && !mw.util.isIPAddress(Morebits.relevantUserName())) {
 		Twinkle.addPortletLink(function() {
 			Twinkle.welcome.callback(Morebits.relevantUserName());
-		}, conv({ hans: '欢迎', hant: '歡迎' }), 'friendly-welcome', conv({ hans: '欢迎用户', hant: '歡迎使用者' }));
+		}, conv({ hans: '欢迎', hant: '歡迎' }), 'twinkle-welcome', conv({ hans: '欢迎用户', hant: '歡迎使用者' }));
 	}
 };
 
@@ -113,7 +113,7 @@ Twinkle.welcome.welcomeUser = function welcomeUser() {
 	wikipedia_page.load(Twinkle.welcome.callbacks.main);
 };
 
-Twinkle.welcome.callback = function friendlywelcomeCallback(uid) {
+Twinkle.welcome.callback = function twinklewelcomeCallback(uid) {
 	if (uid === mw.config.get('wgUserName') && !confirm(conv({ hans: '您真的要欢迎您自己吗？', hant: '您真的要歡迎您自己嗎？' }))) {
 		return;
 	}
@@ -361,7 +361,7 @@ Twinkle.welcome.callbacks = {
 	}
 };
 
-Twinkle.welcome.callback.evaluate = function friendlywelcomeCallbackEvaluate(e) {
+Twinkle.welcome.callback.evaluate = function twinklewelcomeCallbackEvaluate(e) {
 	var form = e.target;
 
 	var params = Morebits.QuickForm.getInputData(form); // : type, template, article

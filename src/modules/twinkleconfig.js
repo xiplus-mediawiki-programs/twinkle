@@ -196,7 +196,7 @@ Twinkle.config.sections = [
 				label: conv({ hans: '关闭指定的Twinkle模块', hant: '關閉指定的Twinkle模組' }),
 				helptip: conv({ hans: '您在此选择的功能将无法使用，取消选择以重新启用功能。', hant: '您在此選擇的功能將無法使用，取消選擇以重新啟用功能。' }),
 				type: 'set',
-				setValues: { arv: conv({ hans: '告状', hant: '告狀' }), warn: '警告', block: conv({ hans: '封禁', hant: '封鎖' }), welcome: conv({ hans: '欢迎', hant: '歡迎' }), talkback: '通告', speedy: conv({ hans: '速删', hant: '速刪' }), copyvio: conv({ hans: '侵权', hant: '侵權' }), xfd: conv({ hans: '提删', hant: '提刪' }), image: conv({ hans: '图权', hant: '圖權' }), protect: conv({ hans: '保护', hant: '保護' }), tag: conv({ hans: '标记', hant: '標記' }), stub: '小作品', diff: conv({ hans: '差异', hant: '差異' }), unlink: conv({ hans: '链入', hant: '連入' }), fluff: '回退' }
+				setValues: { arv: conv({ hans: '告状', hant: '告狀' }), warn: '警告', block: conv({ hans: '封禁', hant: '封鎖' }), welcome: conv({ hans: '欢迎', hant: '歡迎' }), talkback: '通告', speedy: conv({ hans: '速删', hant: '速刪' }), copyvio: conv({ hans: '侵权', hant: '侵權' }), xfd: conv({ hans: '提删', hant: '提刪' }), image: conv({ hans: '图权', hant: '圖權' }), protect: conv({ hans: '保护', hant: '保護' }), tag: conv({ hans: '标记', hant: '標記' }), stub: '小作品', diff: conv({ hans: '差异', hant: '差異' }), unlink: conv({ hans: '链入', hant: '連入' }), rollback: '回退' }
 			},
 
 			// Twinkle.config.disabledSysopModules (array)
@@ -325,8 +325,8 @@ Twinkle.config.sections = [
 	},
 
 	{
-		title: '回退',  // twinklefluff module
-		module: 'fluff',
+		title: '回退',
+		module: 'rollback',
 		preferences: [
 		// TwinkleConfig.autoMenuAfterRollback (bool)
 		// Option to automatically open the warning menu if the user talk page is opened post-reversion
@@ -400,14 +400,14 @@ Twinkle.config.sections = [
 			},
 
 			{
-				name: 'confirmOnFluff',
+				name: 'confirmOnRollback',
 				label: conv({ hans: '回退前要求确认（所有设备）', hant: '回退前要求確認（所有裝置）' }),
 				helptip: conv({ hans: '对于使用移动设备的用户，或者意志不坚定的。', hant: '對於使用行動裝置的使用者，或者意志不堅定的。' }),
 				type: 'boolean'
 			},
 
 			{
-				name: 'confirmOnMobileFluff',
+				name: 'confirmOnMobileRollback',
 				label: conv({ hans: '回退前要求确认（仅移动设备）', hant: '回退前要求確認（僅行動裝置）' }),
 				helptip: conv({ hans: '避免在移动设备意外执行回退。', hant: '避免在行動裝置意外執行回退。' }),
 				type: 'boolean'
@@ -1034,7 +1034,7 @@ Twinkle.config.sections = [
 				name: 'portletNext',
 				type: 'string'
 			},
-			// twinklefluff.js: defines how many revision to query maximum, maximum possible is 50, default is 50
+			// twinklerollback.js: defines how many revision to query maximum, maximum possible is 50, default is 50
 			{
 				name: 'revertMaxRevisions',
 				type: 'integer'
