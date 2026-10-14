@@ -17,15 +17,21 @@ var conv = require('ext.gadget.HanAssist').conv;
 
 Twinkle.close = function twinkleclose() {
 	var pageName = mw.config.get('wgPageName');
-	if (pageName !== 'Wikipedia:请求保护页面' &&
-		pageName !== 'Wikipedia:当前的破坏' &&
-		(Twinkle.getPref('XfdClose') === 'hide' || !/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(pageName))) {
+	var addLinks;
+	if (/^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(pageName)) {
+		addLinks = Twinkle.getPref('XfdClose') !== 'hide' && Twinkle.close.addLinks.xfd;
+	} else if (pageName === 'Wikipedia:请求保护页面') {
+		addLinks = Twinkle.getPref('RfppClose') !== 'hide' && Twinkle.close.addLinks.rfpp;
+	} else if (pageName === 'Wikipedia:当前的破坏') {
+		addLinks = Twinkle.getPref('VipClose') !== 'hide' && Twinkle.close.addLinks.vip;
+	}
+	if (!addLinks) {
 		return;
 	}
 
 	mw.hook('wikipage.content').add(function(item) {
 		if (item.attr('id') === 'mw-content-text') {
-			Twinkle.close.addLinks.main(pageName);
+			addLinks();
 		}
 	});
 };
@@ -54,91 +60,81 @@ Twinkle.close.addLinks = {
 		return link;
 	},
 
-	main: function(pageName) {
-		switch (true) {
-			case /^Wikipedia:(頁面|檔案)存廢討論\/記錄\/\d+\/\d+\/\d+$/.test(pageName):
-				var prevH2Section = -1;
-				var headings = '.mw-heading.mw-heading1, .mw-heading.mw-heading2, .mw-heading.mw-heading3, ' +
+	xfd: function() {
+		var prevH2Section = -1;
+		var headings = '.mw-heading.mw-heading1, .mw-heading.mw-heading2, .mw-heading.mw-heading3, ' +
 		'.mw-heading.mw-heading4, .mw-heading.mw-heading5, .mw-heading.mw-heading6';
-				$(headings, '#bodyContent').each(function(index, current) {
-					current.setAttribute('data-section', index + 1);
-					if ($(current).hasClass('mw-heading2')) {
-						prevH2Section = index + 1;
-					} else {
-						current.setAttribute('data-parent-section', prevH2Section);
-					}
-				});
+		$(headings, '#bodyContent').each(function(index, current) {
+			current.setAttribute('data-section', index + 1);
+			if ($(current).hasClass('mw-heading2')) {
+				prevH2Section = index + 1;
+			} else {
+				current.setAttribute('data-parent-section', prevH2Section);
+			}
+		});
 
-				var selector = ':has(a:only-of-type)';
-				var titles = $('#bodyContent').find('.mw-heading2' + selector + ':not(:has(+ p + div.mw-heading.mw-heading3)), .mw-heading3' + selector);
+		var selector = ':has(a:only-of-type)';
+		var titles = $('#bodyContent').find('.mw-heading2' + selector + ':not(:has(+ p + div.mw-heading.mw-heading3)), .mw-heading3' + selector);
 
-				titles.each(function(key, current) {
-					if ($(current).nextUntil(headings, '.talkend').length > 0) {
-						return;
-					}
-					var $pageLink = $(current).find('h2 a, h3 a');
-					var headlinehref = $pageLink.attr('href');
-					if (headlinehref === undefined) {
-						return;
-					}
-					var title = null;
-					if (headlinehref.indexOf('redlink=1') !== -1) {
-						title = headlinehref.slice(19, -22);
-					} else {
-						var m = headlinehref.match(/\/wiki\/([^?]+)/);
-						if (m !== null) {
-							title = m[1];
-						}
-					}
-					if (title === null) {
-						return;
-					}
-					title = decodeURIComponent(title).replace(/_/g, ' '); // Normalize for using in interface and summary
-					var pagenotexist = $pageLink.hasClass('new');
-					var section = current.getAttribute('data-section');
-					var parentSection = current.getAttribute('data-parent-section') || -1;
+		titles.each(function(key, current) {
+			if ($(current).nextUntil(headings, '.talkend').length > 0) {
+				return;
+			}
+			var $pageLink = $(current).find('h2 a, h3 a');
+			var headlinehref = $pageLink.attr('href');
+			if (headlinehref === undefined) {
+				return;
+			}
+			var title = null;
+			if (headlinehref.indexOf('redlink=1') !== -1) {
+				title = headlinehref.slice(19, -22);
+			} else {
+				var m = headlinehref.match(/\/wiki\/([^?]+)/);
+				if (m !== null) {
+					title = m[1];
+				}
+			}
+			if (title === null) {
+				return;
+			}
+			title = decodeURIComponent(title).replace(/_/g, ' '); // Normalize for using in interface and summary
+			var pagenotexist = $pageLink.hasClass('new');
+			var section = current.getAttribute('data-section');
+			var parentSection = current.getAttribute('data-parent-section') || -1;
 
-					var link = Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭讨论', hant: '關閉討論' }), function() {
-						Twinkle.close.callback.xfd(title, section, parentSection, pagenotexist);
-					});
-					if (link) {
-						link.setAttribute('data-section', section);
-					}
-				});
-				break;
-			case pageName === 'Wikipedia:请求保护页面':
-				$('#bodyContent').find('.mw-heading2, .mw-heading3').each(function(key, current) {
-					if (!$(current).hasClass('mw-heading3')) {
-						return;
-					}
+			var link = Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭讨论', hant: '關閉討論' }), function() {
+				Twinkle.close.callback.xfd(title, section, parentSection, pagenotexist);
+			});
+			if (link) {
+				link.setAttribute('data-section', section);
+			}
+		});
+	},
 
-					var title = $(current).find('h3').first().text();
-					var sectionid = Twinkle.close.addLinks.getSectionId(current);
-					if (sectionid === null) {
-						return;
-					}
+	rfpp: function() {
+		$('#bodyContent').find('.mw-heading3').each(function(key, current) {
+			var title = $(current).find('h3').first().text();
+			var sectionid = Twinkle.close.addLinks.getSectionId(current);
+			if (sectionid === null) {
+				return;
+			}
+			Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭', hant: '關閉' }), function() {
+				Twinkle.close.callback.rfpp(title, sectionid);
+			});
+		});
+	},
 
-					Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭', hant: '關閉' }), function() {
-						Twinkle.close.callback.request(title, sectionid, 'rfpp');
-					});
-				});
-				break;
-			case pageName === 'Wikipedia:当前的破坏':
-				$('#bodyContent').find('.mw-heading2').each(function(key, current) {
-					var title = $(current).find('h2').first().text();
-					var sectionid = Twinkle.close.addLinks.getSectionId(current);
-					if (sectionid === null) {
-						return;
-					}
-
-					Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭', hant: '關閉' }), function() {
-						Twinkle.close.callback.request(title, sectionid, 'vip');
-					});
-				});
-				break;
-			default:
-				break;
-		}
+	vip: function() {
+		$('#bodyContent').find('.mw-heading2').each(function(key, current) {
+			var title = $(current).find('h2').first().text();
+			var sectionid = Twinkle.close.addLinks.getSectionId(current);
+			if (sectionid === null) {
+				return;
+			}
+			Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭', hant: '關閉' }), function() {
+				Twinkle.close.callback.vip(title, sectionid);
+			});
+		});
 	}
 };
 
@@ -539,19 +535,137 @@ Twinkle.close.codes = {
 
 Twinkle.close.callback = {};
 
-Twinkle.close.callback.request = function twinklecloseCallbackRequest(title, section, request_type) {
-	var Window = new Morebits.SimpleWindow(request_type === 'rfpp' ? 650 : 600, 350);
+Twinkle.close.callback.rfpp = function twinklecloseCallbackRfpp(title, section) {
+	var Window = new Morebits.SimpleWindow(650, 350);
 	Window.setTitle(conv({ hans: '关闭请求', hant: '關閉請求' }) + ' · ' + title);
 	Window.setScriptName('Twinkle');
-	if (request_type === 'rfpp') {
-		Window.addFooterLink(conv({ hans: '保护方针', hant: '保護方針' }), 'WP:PROT');
-	} else {
-		Window.addFooterLink(conv({ hans: '封禁方针', hant: '封鎖方針' }), 'WP:BLOCK');
-	}
+	Window.addFooterLink(conv({ hans: '保护方针', hant: '保護方針' }), 'WP:PROT');
 	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#close');
 	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見' }), 'WT:TW');
 
-	var form = new Morebits.QuickForm(Twinkle.close.callback.request.evaluate);
+	var form = new Morebits.QuickForm(Twinkle.close.callback.rfpp.evaluate);
+
+	form.append({
+		type: 'select',
+		label: conv({ hans: '处理：', hant: '處理：' }),
+		name: 'sub_group'
+	});
+
+	form.append({
+		type: 'input',
+		name: 'remark',
+		label: conv({ hans: '补充说明：', hant: '補充說明：' })
+	});
+
+
+	form.append({ type: 'submit' });
+
+	var result = form.render();
+	Window.setContent(result);
+	Window.display();
+
+
+	var sub_group = result.getElementsByTagName('select')[0];
+
+	var resultData = {
+		title: title,
+		section: section
+	};
+	$(result).data('resultData', resultData);
+	var createEntries = function(contents, container) {
+		$.each(contents, function(itemKey, itemProperties) {
+			var key = typeof itemKey === 'string' ? itemKey : itemProperties.value;
+
+			var elem = new Morebits.QuickForm.Element({
+				type: 'option',
+				label: key + '：' + itemProperties.label,
+				value: key
+				// selected, disabled, hidden?
+			});
+			var elemRendered = container.appendChild(elem.render());
+			$(elemRendered).data('messageData', itemProperties);
+		});
+	};
+
+	Twinkle.close.codes.rfpp.forEach(function(group) {
+		var optgroup = new Morebits.QuickForm.Element({
+			type: 'optgroup',
+			label: group.key
+		});
+		optgroup = optgroup.render();
+		sub_group.appendChild(optgroup);
+		// create the options
+		createEntries(group.value, optgroup);
+	});
+
+	var evt = document.createEvent('Event');
+	evt.initEvent('change', true, true);
+	result.sub_group.dispatchEvent(evt);
+};
+
+
+Twinkle.close.callback.rfpp.evaluate = function twinklecloseCallbackRfppEvaluate(e) {
+	var code = e.target.sub_group.value;
+	var resultData = $(e.target).data('resultData');
+	var messageData = $(e.target.sub_group).find('option[value="' + code + '"]').data('messageData');
+
+	if (['q', 'n', 'no'].includes(code) && !e.target.remark.value) {
+		alert(conv({ hans: '请填写补充说明', hant: '請填寫補充說明' }));
+		return;
+	}
+	var params = {
+		title: resultData.title,
+		section: resultData.section,
+		code: code,
+		messageData: messageData,
+		last_seen: e.target.last_seen.value,
+		remark: e.target.remark.value
+	};
+	if (!Number.isInteger(params.section)) {
+		alert(conv({ hans: '无法确定请求所在的章节，请刷新页面后重试。', hant: '無法確定請求所在的章節，請重新整理頁面後重試。' }));
+		return;
+	}
+	Morebits.Status.init(e.target);
+	var page = new Morebits.wiki.Page(mw.config.get('wgPageName'), conv({ hans: '关闭请求', hant: '關閉請求' }));
+	page.setCallbackParameters(params);
+	page.setPageSection(params.section);
+	page.load(Twinkle.close.callback.rfpp.save);
+	Morebits.SimpleWindow.setButtonsEnabled(false);
+};
+
+Twinkle.close.callback.rfpp.save = function twinklecloseCallbackRfppSave(pageobj) {
+	var params = pageobj.getCallbackParameters();
+	var statelem = pageobj.getStatusElement();
+	var text = pageobj.getPageText().trim();
+	var template = '{{RFPP|' + params.code;
+
+	if (params.last_seen) {
+		template += '|' + params.last_seen;
+	}
+	template += '}}';
+	if (params.remark) {
+		template += '：' + Morebits.string.appendPunctuation(params.remark);
+	}
+
+	text += '\n: ' + template + '--~~~~';
+
+	pageobj.setPageText(text);
+	pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label);
+	pageobj.setChangeTags(Twinkle.changeTags);
+	pageobj.save(function() {
+		statelem.info(conv({ hans: '完成', hant: '完成' }));
+	});
+};
+
+Twinkle.close.callback.vip = function twinklecloseCallbackVip(title, section) {
+	var Window = new Morebits.SimpleWindow(600, 350);
+	Window.setTitle(conv({ hans: '关闭请求', hant: '關閉請求' }) + ' · ' + title);
+	Window.setScriptName('Twinkle');
+	Window.addFooterLink(conv({ hans: '封禁方针', hant: '封鎖方針' }), 'WP:BLOCK');
+	Window.addFooterLink(conv({ hans: 'Twinkle帮助', hant: 'Twinkle說明' }), 'WP:TW/DOC#close');
+	Window.addFooterLink(conv({ hans: '反馈意见', hant: '回報意見' }), 'WT:TW');
+
+	var form = new Morebits.QuickForm(Twinkle.close.callback.vip.evaluate);
 
 	form.append({
 		type: 'select',
@@ -579,73 +693,50 @@ Twinkle.close.callback.request = function twinklecloseCallbackRequest(title, sec
 		label: conv({ hans: '补充说明：', hant: '補充說明：' })
 	});
 
-
 	form.append({ type: 'submit' });
 
 	var result = form.render();
 	Window.setContent(result);
 	Window.display();
-
-
 	var sub_group = result.getElementsByTagName('select')[0];
-
-	var resultData = {
-		title: title,
-		section: section,
-		request_type: request_type
-	};
-	$(result).data('resultData', resultData);
-	var createEntries = function(contents, container) {
-		$.each(contents, function(itemKey, itemProperties) {
+	$(result).data('resultData', { title: title, section: section });
+	Twinkle.close.codes.vip.forEach(function(group) {
+		var optgroup = new Morebits.QuickForm.Element({
+			type: 'optgroup',
+			label: group.key
+		}).render();
+		sub_group.appendChild(optgroup);
+		$.each(group.value, function(itemKey, itemProperties) {
 			var key = typeof itemKey === 'string' ? itemKey : itemProperties.value;
-
 			var elem = new Morebits.QuickForm.Element({
 				type: 'option',
 				label: key + '：' + itemProperties.label,
 				value: key
-				// selected, disabled, hidden?
 			});
-			var elemRendered = container.appendChild(elem.render());
-			$(elemRendered).data('messageData', itemProperties);
+			var rendered = optgroup.appendChild(elem.render());
+			$(rendered).data('messageData', itemProperties);
 		});
-	};
-
-	var codes = request_type === 'rfpp' ? Twinkle.close.codes.rfpp : Twinkle.close.codes.vip;
-	codes.forEach(function(group) {
-		var optgroup = new Morebits.QuickForm.Element({
-			type: 'optgroup',
-			label: group.key
-		});
-		optgroup = optgroup.render();
-		sub_group.appendChild(optgroup);
-		// create the options
-		createEntries(group.value, optgroup);
 	});
-
 	var evt = document.createEvent('Event');
 	evt.initEvent('change', true, true);
 	result.sub_group.dispatchEvent(evt);
 };
 
-
-Twinkle.close.callback.request.evaluate = function twinklecloseCallbackRequestEvaluate(e) {
+Twinkle.close.callback.vip.evaluate = function twinklecloseCallbackVipEvaluate(e) {
 	var code = e.target.sub_group.value;
 	var resultData = $(e.target).data('resultData');
 	var messageData = $(e.target.sub_group).find('option[value="' + code + '"]').data('messageData');
-
 	if (['ow', 'sn', 'e'].includes(code) && !e.target.last_seen.value) {
 		alert(conv({ hans: '请填写最后编辑时间', hant: '請填寫最後編輯時間' }));
 		return;
 	}
-
-	if (['q', 'n', 'no', 'dc'].includes(code) && !e.target.remark.value) {
+	if (['q', 'n', 'dc'].includes(code) && !e.target.remark.value) {
 		alert(conv({ hans: '请填写补充说明', hant: '請填寫補充說明' }));
 		return;
 	}
 	var params = {
 		title: resultData.title,
 		section: resultData.section,
-		request_type: resultData.request_type,
 		code: code,
 		messageData: messageData,
 		last_seen: e.target.last_seen.value,
@@ -659,16 +750,15 @@ Twinkle.close.callback.request.evaluate = function twinklecloseCallbackRequestEv
 	var page = new Morebits.wiki.Page(mw.config.get('wgPageName'), conv({ hans: '关闭请求', hant: '關閉請求' }));
 	page.setCallbackParameters(params);
 	page.setPageSection(params.section);
-	page.load(Twinkle.close.callback.request.save);
+	page.load(Twinkle.close.callback.vip.save);
 	Morebits.SimpleWindow.setButtonsEnabled(false);
 };
 
-Twinkle.close.callback.request.save = function twinklecloseCallbackRequestSave(pageobj) {
+Twinkle.close.callback.vip.save = function twinklecloseCallbackVipSave(pageobj) {
 	var params = pageobj.getCallbackParameters();
 	var statelem = pageobj.getStatusElement();
 	var text = pageobj.getPageText().trim();
-	var template = '{{' + params.request_type.toUpperCase() + '|' + params.code;
-
+	var template = '{{VIP|' + params.code;
 	if (params.last_seen) {
 		template += '|' + params.last_seen;
 	}
@@ -676,13 +766,7 @@ Twinkle.close.callback.request.save = function twinklecloseCallbackRequestSave(p
 	if (params.remark) {
 		template += '：' + Morebits.string.appendPunctuation(params.remark);
 	}
-
-	if (params.request_type === 'rfpp') {
-		text += '\n: ' + template + '--~~~~';
-	} else {
-		text += '\n* 处理：' + template + '--~~~~';
-	}
-
+	text += '\n* 处理：' + template + '--~~~~';
 	pageobj.setPageText(text);
 	pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label);
 	pageobj.setChangeTags(Twinkle.changeTags);
