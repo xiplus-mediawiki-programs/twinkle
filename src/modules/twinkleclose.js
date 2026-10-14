@@ -653,6 +653,7 @@ Twinkle.close.callback.rfpp.save = function twinklecloseCallbackRfppSave(pageobj
 	pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label);
 	pageobj.setChangeTags(Twinkle.changeTags);
 	pageobj.save(function() {
+		Twinkle.close.callbacks.disableLink(pageobj);
 		statelem.info(conv({ hans: '完成', hant: '完成' }));
 	});
 };
@@ -771,6 +772,7 @@ Twinkle.close.callback.vip.save = function twinklecloseCallbackVipSave(pageobj) 
 	pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label);
 	pageobj.setChangeTags(Twinkle.changeTags);
 	pageobj.save(function() {
+		Twinkle.close.callbacks.disableLink(pageobj);
 		statelem.info(conv({ hans: '完成', hant: '完成' }));
 	});
 };
