@@ -239,14 +239,32 @@ switch (mw.config.get('skin')) {
 
 Twinkle.getPref = function twinkleGetPref(name) {
 	if (typeof Twinkle.prefs === 'object' && Twinkle.prefs[name] !== undefined) {
-		return Twinkle.prefs[name];
+		var pref = Twinkle.prefs[name];
+		if (name === 'disabledModules' || name === 'disabledSysopModules') {
+			return pref.map(function(module) {
+				return module === 'fluff' ? 'rollback' : module;
+			});
+		}
+		return pref;
 	}
 	// Old preferences format, used before twinkleoptions.js was a thing
 	if (typeof window.TwinkleConfig === 'object' && window.TwinkleConfig[name] !== undefined) {
-		return window.TwinkleConfig[name];
+		var configPref = window.TwinkleConfig[name];
+		if (name === 'disabledModules' || name === 'disabledSysopModules') {
+			return configPref.map(function(module) {
+				return module === 'fluff' ? 'rollback' : module;
+			});
+		}
+		return configPref;
 	}
 	if (typeof window.FriendlyConfig === 'object' && window.FriendlyConfig[name] !== undefined) {
-		return window.FriendlyConfig[name];
+		var friendlyPref = window.FriendlyConfig[name];
+		if (name === 'disabledModules' || name === 'disabledSysopModules') {
+			return friendlyPref.map(function(module) {
+				return module === 'fluff' ? 'rollback' : module;
+			});
+		}
+		return friendlyPref;
 	}
 
 	// Backwards compatibility code because we renamed confirmOnFluff to confirmOnRollback, and confirmOnMobileFluff to confirmOnMobileRollback
