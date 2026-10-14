@@ -961,7 +961,7 @@ Twinkle.config.sections = [
 	},
 
 	{
-		title: conv({ hans: '关闭存废讨论', hant: '關閉存廢討論' }),
+		title: conv({ hans: '关闭讨论和请求', hant: '關閉討論和請求' }),
 		module: 'close',
 		preferences: [
 			{
@@ -970,6 +970,20 @@ Twinkle.config.sections = [
 				helptip: conv({ hans: '请确保您充分了解[[Wikipedia:关闭存废讨论指引]]才开启此功能。', hant: '請確保您充分了解[[Wikipedia:關閉存廢討論指引]]才開啟此功能。' }),
 				type: 'enum',
 				enumValues: { hide: conv({ hans: '不显示', hant: '不顯示' }), nonadminonly: conv({ hans: '只包含非管理员可使用选项', hant: '只包含非管理員可使用選項' }), all: conv({ hans: '显示所有选项', hant: '顯示所有選項' }) }
+			},
+			{
+				name: 'RfppClose',
+				label: conv({ hans: '在请求保护页面显示关闭请求按钮', hant: '在請求保護頁面顯示關閉請求按鈕' }),
+				helptip: conv({ hans: 'Twinkle会在执行保护页面时自动关闭请求，此功能仅可使用除执行保护页面外的其他处理来关闭请求。', hant: 'Twinkle會在執行保護頁面時自動關閉請求，此功能僅可使用除執行保護頁面外的其他處理來關閉請求。' }),
+				type: 'enum',
+				enumValues: { hide: conv({ hans: '不显示', hant: '不顯示' }), all: conv({ hans: '显示', hant: '顯示' }) }
+			},
+			{
+				name: 'VipClose',
+				label: conv({ hans: '在当前的破坏显示关闭请求按钮', hant: '在當前的破壞顯示關閉請求按鈕' }),
+				helptip: conv({ hans: 'Twinkle会在封禁时自动关闭请求，此功能仅可使用除封禁外的其他处理来关闭请求。', hant: 'Twinkle會在執行封鎖時自動關閉請求，此功能僅可使用除執行封鎖外的其他處理來關閉請求。' }),
+				type: 'enum',
+				enumValues: { hide: conv({ hans: '不显示', hant: '不顯示' }), all: conv({ hans: '显示', hant: '顯示' }) }
 			}
 		]
 
