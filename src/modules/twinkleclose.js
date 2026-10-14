@@ -6,10 +6,10 @@
 
 /*
  ****************************************
- *** twinkleclose.js: XFD closing module
+ *** twinkleclose.js: Request-closing module
  ****************************************
  * Mode of invocation:     Links after section heading
- * Active on:              AfD dated archive pages
+ * Active on:              AfD dated archive pages, RFPP, VIP
  * Config directives in:   TwinkleConfig
  */
 
