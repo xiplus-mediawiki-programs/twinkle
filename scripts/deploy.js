@@ -258,7 +258,7 @@ async function main() {
         let wikiPage;
         try {
             wikiPage = await bot.read(page, {
-                rvprop: ['content', 'comment'],
+                rvprop: ['content', 'comment', 'timestamp', 'user'],
                 redirects: false,
             });
         } catch (e) {
@@ -305,7 +305,7 @@ async function main() {
         let summary = await buildEditSummary(page, file, oldSummary, oldTimestamp, oldUser, conf);
         try {
             await bot.save(page, fileText, summary, {
-                basetimestamp: wikiPage?.revisions?.[0]?.timestamp,
+                basetimestamp: oldTimestamp,
                 nocreate: !conf.create
             });
             console.log(chalk.green(`\t${file} successfully deployed to ${page}`));
