@@ -51,12 +51,12 @@ function createTestLoader(changedFiles) {
 
 	let jsLoaderSource = `// Wait for Twinkle gadget to load, so that we can then overwrite it
 	mw.loader.using('ext.gadget.Twinkle').then(function() {
-		${importLine('morebits.css')}
-		${importLine('morebits.js')}
+		${importLine('src/morebits.css')}
+		${importLine('src/morebits.js')}
 
 	}).then(function() {
-		${importLine('twinkle.css')}
-		${importLine('twinkle.js')}
+		${importLine('src/twinkle.css')}
+		${importLine('src/twinkle.js')}
 
 	}).then(function() {
 		${importLine('src/modules/twinkletag.js')}
