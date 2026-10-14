@@ -62,7 +62,7 @@ tests.push({ name: 'modules/twinkleconfig.js', test: true });
 tests.push({ name: 'modules/twinklecopyvio.js', test: true });
 tests.push({ name: 'modules/twinkledelimages.js', test: true });
 tests.push({ name: 'modules/twinklediff.js', test: true });
-tests.push({ name: 'modules/twinklefluff.js', test: true });
+tests.push({ name: 'modules/twinklerollback.js', test: true });
 tests.push({ name: 'modules/twinkleimage.js', test: true });
 tests.push({ name: 'modules/twinkleprotect.js', test: true });
 tests.push({ name: 'modules/twinklespeedy.js', test: true });
