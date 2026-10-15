@@ -36,30 +36,36 @@ Twinkle.close = function twinkleclose() {
 	});
 };
 
+Twinkle.close.getSectionId = function twinklecloseGetSectionId(heading) {
+	var href = $(heading).find('.mw-editsection a[href*="section="]').first().attr('href');
+	var section = href && mw.util.getParamValue('section', href);
+	return /^\d+$/.test(section || '') ? Number(section) : null;
+};
+
+Twinkle.close.addCloseLink = function twinklecloseAddCloseLink(heading, section, text, onClick) {
+	var node = heading.getElementsByClassName('mw-editsection')[0];
+	if (!node) {
+		return null;
+	}
+	var link = document.createElement('a');
+	link.className = 'twinkle-close-button ';
+	link.href = '#';
+	link.setAttribute('data-section', section);
+	link.innerText = text;
+	$(link).on('click', function() {
+		onClick();
+		return false;
+	});
+	node.insertBefore(link, node.childNodes[1]);
+	return link;
+};
+
+Twinkle.close.disableLink = function twinklecloseDisableLink(pageobj) {
+	var params = pageobj.getCallbackParameters();
+	$('a.twinkle-close-button[data-section=' + params.section + ']').addClass('twinkle-close-button-disabled');
+};
+
 Twinkle.close.addLinks = {
-	getSectionId: function(heading) {
-		var href = $(heading).find('.mw-editsection a[href*="section="]').first().attr('href');
-		var section = href && mw.util.getParamValue('section', href);
-		return /^\d+$/.test(section || '') ? Number(section) : null;
-	},
-
-	addCloseLink: function(heading, text, onClick) {
-		var node = heading.getElementsByClassName('mw-editsection')[0];
-		if (!node) {
-			return null;
-		}
-		var link = document.createElement('a');
-		link.className = 'twinkle-close-button ';
-		link.href = '#';
-		link.innerText = text;
-		$(link).on('click', function() {
-			onClick(link);
-			return false;
-		});
-		node.insertBefore(link, node.childNodes[1]);
-		return link;
-	},
-
 	xfd: function() {
 		var prevH2Section = -1;
 		var headings = '.mw-heading.mw-heading1, .mw-heading.mw-heading2, .mw-heading.mw-heading3, ' +
@@ -102,23 +108,20 @@ Twinkle.close.addLinks = {
 			var section = current.getAttribute('data-section');
 			var parentSection = current.getAttribute('data-parent-section') || -1;
 
-			var link = Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭讨论', hant: '關閉討論' }), function() {
+			Twinkle.close.addCloseLink(current, section, conv({ hans: '关闭讨论', hant: '關閉討論' }), function() {
 				Twinkle.close.callback.xfd(title, section, parentSection, pagenotexist);
 			});
-			if (link) {
-				link.setAttribute('data-section', section);
-			}
 		});
 	},
 
 	rfpp: function() {
 		$('#bodyContent').find('.mw-heading3').each(function(key, current) {
 			var title = $(current).find('h3').first().text();
-			var sectionid = Twinkle.close.addLinks.getSectionId(current);
+			var sectionid = Twinkle.close.getSectionId(current);
 			if (sectionid === null) {
 				return;
 			}
-			Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭', hant: '關閉' }), function() {
+			Twinkle.close.addCloseLink(current, sectionid, conv({ hans: '关闭', hant: '關閉' }), function() {
 				Twinkle.close.callback.rfpp(title, sectionid);
 			});
 		});
@@ -127,11 +130,11 @@ Twinkle.close.addLinks = {
 	vip: function() {
 		$('#bodyContent').find('.mw-heading2').each(function(key, current) {
 			var title = $(current).find('h2').first().text();
-			var sectionid = Twinkle.close.addLinks.getSectionId(current);
+			var sectionid = Twinkle.close.getSectionId(current);
 			if (sectionid === null) {
 				return;
 			}
-			Twinkle.close.addLinks.addCloseLink(current, conv({ hans: '关闭', hant: '關閉' }), function() {
+			Twinkle.close.addCloseLink(current, sectionid, conv({ hans: '关闭', hant: '關閉' }), function() {
 				Twinkle.close.callback.vip(title, sectionid);
 			});
 		});
@@ -533,6 +536,45 @@ Twinkle.close.codes = {
 	}]
 };
 
+Twinkle.close.verifySection = function twinklecloseVerifySection(pageobj, onMatch) {
+	var params = pageobj.getCallbackParameters();
+	var origRevId = mw.config.get('wgRevisionId');
+	if (origRevId && Number(pageobj.getCurrentID()) === Number(origRevId)) {
+		onMatch();
+		return;
+	}
+	var statelem = pageobj.getStatusElement();
+	var loadedText = pageobj.getPageText().trim();
+	var loadedHeading = loadedText.split('\n')[0].trim();
+	if (!origRevId || !loadedHeading) {
+		statelem.error(conv({ hans: '页面已变更，请刷新。', hant: '頁面已變更，請重新整理' }));
+		return;
+	}
+	var query = {
+		action: 'query',
+		prop: 'revisions',
+		revids: origRevId,
+		rvprop: 'content',
+		rvslots: 'main',
+		rvsection: params.section,
+		format: 'json'
+	};
+	var api = new Morebits.wiki.Api(conv({ hans: '检查变更…', hant: '檢查變更…' }), query, function(apiobj) {
+		var pages = apiobj.getResponse().query && apiobj.getResponse().query.pages;
+		var rev = pages && pages[0] && pages[0].revisions && pages[0].revisions[0];
+		var origText = rev && rev.slots && rev.slots.main && rev.slots.main.content;
+		var origHeading = origText ? origText.trim().split('\n')[0].trim() : null;
+		var origVandal = origText && origText.match(/\{\{\s*vandal\s*\|[^}]+\}\}/i);
+		var loadedVandal = loadedText.match(/\{\{\s*vandal\s*\|[^}]+\}\}/i);
+		if (!origHeading || origHeading !== loadedHeading || (origVandal && (!loadedVandal || origVandal[0] !== loadedVandal[0]))) {
+			statelem.error(conv({ hans: '页面已变更，请刷新', hant: '頁面已變更，請重新整理' }));
+			return;
+		}
+		onMatch();
+	}, statelem);
+	api.post();
+};
+
 Twinkle.close.callback = {};
 
 Twinkle.close.callback.rfpp = function twinklecloseCallbackRfpp(title, section) {
@@ -580,7 +622,6 @@ Twinkle.close.callback.rfpp = function twinklecloseCallbackRfpp(title, section) 
 				type: 'option',
 				label: key + '：' + itemProperties.label,
 				value: key
-				// selected, disabled, hidden?
 			});
 			var elemRendered = container.appendChild(elem.render());
 			$(elemRendered).data('messageData', itemProperties);
@@ -597,10 +638,6 @@ Twinkle.close.callback.rfpp = function twinklecloseCallbackRfpp(title, section) 
 		// create the options
 		createEntries(group.value, optgroup);
 	});
-
-	var evt = document.createEvent('Event');
-	evt.initEvent('change', true, true);
-	result.sub_group.dispatchEvent(evt);
 };
 
 
@@ -618,7 +655,6 @@ Twinkle.close.callback.rfpp.evaluate = function twinklecloseCallbackRfppEvaluate
 		section: resultData.section,
 		code: code,
 		messageData: messageData,
-		last_seen: e.target.last_seen.value,
 		remark: e.target.remark.value
 	};
 	if (!Number.isInteger(params.section)) {
@@ -629,33 +665,8 @@ Twinkle.close.callback.rfpp.evaluate = function twinklecloseCallbackRfppEvaluate
 	var page = new Morebits.wiki.Page(mw.config.get('wgPageName'), conv({ hans: '关闭请求', hant: '關閉請求' }));
 	page.setCallbackParameters(params);
 	page.setPageSection(params.section);
-	page.load(Twinkle.close.callback.rfpp.save);
+	page.load(Twinkle.close.callbacks.rfpp);
 	Morebits.SimpleWindow.setButtonsEnabled(false);
-};
-
-Twinkle.close.callback.rfpp.save = function twinklecloseCallbackRfppSave(pageobj) {
-	var params = pageobj.getCallbackParameters();
-	var statelem = pageobj.getStatusElement();
-	var text = pageobj.getPageText().trim();
-	var template = '{{RFPP|' + params.code;
-
-	if (params.last_seen) {
-		template += '|' + params.last_seen;
-	}
-	template += '}}';
-	if (params.remark) {
-		template += '：' + Morebits.string.appendPunctuation(params.remark);
-	}
-
-	text += '\n: ' + template + '--~~~~';
-
-	pageobj.setPageText(text);
-	pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label);
-	pageobj.setChangeTags(Twinkle.changeTags);
-	pageobj.save(function() {
-		Twinkle.close.callbacks.disableLink(pageobj);
-		statelem.info(conv({ hans: '完成', hant: '完成' }));
-	});
 };
 
 Twinkle.close.callback.vip = function twinklecloseCallbackVip(title, section) {
@@ -751,30 +762,8 @@ Twinkle.close.callback.vip.evaluate = function twinklecloseCallbackVipEvaluate(e
 	var page = new Morebits.wiki.Page(mw.config.get('wgPageName'), conv({ hans: '关闭请求', hant: '關閉請求' }));
 	page.setCallbackParameters(params);
 	page.setPageSection(params.section);
-	page.load(Twinkle.close.callback.vip.save);
+	page.load(Twinkle.close.callbacks.vip);
 	Morebits.SimpleWindow.setButtonsEnabled(false);
-};
-
-Twinkle.close.callback.vip.save = function twinklecloseCallbackVipSave(pageobj) {
-	var params = pageobj.getCallbackParameters();
-	var statelem = pageobj.getStatusElement();
-	var text = pageobj.getPageText().trim();
-	var template = '{{VIP|' + params.code;
-	if (params.last_seen) {
-		template += '|' + params.last_seen;
-	}
-	template += '}}';
-	if (params.remark) {
-		template += '：' + Morebits.string.appendPunctuation(params.remark);
-	}
-	text += '\n* 处理：' + template + '--~~~~';
-	pageobj.setPageText(text);
-	pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label);
-	pageobj.setChangeTags(Twinkle.changeTags);
-	pageobj.save(function() {
-		Twinkle.close.callbacks.disableLink(pageobj);
-		statelem.info(conv({ hans: '完成', hant: '完成' }));
-	});
 };
 
 Twinkle.close.callback.xfd = function twinklecloseCallbackXfd(title, section, parentSection, noop) {
@@ -1002,16 +991,16 @@ Twinkle.close.callback.xfd.evaluate = function twinklecloseCallbackXfdEvaluate(e
 	Morebits.wiki.actionCompleted.notice = '操作完成';
 
 	if (noop || messageData.action === 'noop') {
-		Twinkle.close.callbacks.talkend(params);
+		Twinkle.close.callbacks.xfd.talkend(params);
 	} else {
 		switch (messageData.action) {
 			case 'del':
-				Twinkle.close.callbacks.del(params);
+				Twinkle.close.callbacks.xfd.del(params);
 				break;
 			case 'keep':
 				var wikipedia_page = new Morebits.wiki.Page(params.title, conv({ hans: '移除存废讨论模板', hant: '移除存廢討論模板' }));
 				wikipedia_page.setCallbackParameters(params);
-				wikipedia_page.load(Twinkle.close.callbacks.keep);
+				wikipedia_page.load(Twinkle.close.callbacks.xfd.keep);
 				break;
 			default:
 				alert('Twinkle.close：未定义 ' + code);
@@ -1020,7 +1009,53 @@ Twinkle.close.callback.xfd.evaluate = function twinklecloseCallbackXfdEvaluate(e
 	}
 };
 
-Twinkle.close.callbacks = {
+Twinkle.close.callbacks = {};
+
+Twinkle.close.callbacks.rfpp = function twinklecloseCallbacksRfpp(pageobj) {
+	Twinkle.close.verifySection(pageobj, function() {
+		var params = pageobj.getCallbackParameters();
+		var text = pageobj.getPageText().trim();
+		var template = '{{RFPP|' + params.code + '}}';
+		if (params.remark) {
+			template += '：' + Morebits.string.appendPunctuation(params.remark);
+		}
+
+		text += '\n: ' + template + '--~~~~';
+
+		pageobj.setPageText(text);
+		pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label);
+		pageobj.setChangeTags(Twinkle.changeTags);
+		pageobj.save(Twinkle.close.disableLink);
+	});
+};
+
+Twinkle.close.callbacks.vip = function twinklecloseCallbacksVip(pageobj) {
+	Twinkle.close.verifySection(pageobj, function() {
+		var params = pageobj.getCallbackParameters();
+		var text = pageobj.getPageText().trim();
+		var template = '{{VIP|' + params.code;
+		if (params.last_seen) {
+			template += '|' + params.last_seen;
+		}
+		template += '}}';
+		if (params.remark) {
+			template += '：' + Morebits.string.appendPunctuation(params.remark);
+		}
+		var reply = template + '--~~~~';
+		var newText = text.replace(/^(\*\s*[处處]理[：:])[ \t]*(?:<!--[^\n]*?-->)?[ \t]*$/m, function(_, prefix) {
+			return prefix + reply;
+		});
+		if (newText === text) {
+			newText = text + '\n* 處理：' + reply;
+		}
+		pageobj.setPageText(newText);
+		pageobj.setEditSummary('/* ' + params.title + ' */ ' + params.messageData.label);
+		pageobj.setChangeTags(Twinkle.changeTags);
+		pageobj.save(Twinkle.close.disableLink);
+	});
+};
+
+Twinkle.close.callbacks.xfd = {
 	del: function (params) {
 		var query, wikipedia_api;
 		Morebits.wiki.addCheckpoint();
@@ -1032,13 +1067,13 @@ Twinkle.close.callbacks = {
 				reason = prompt(conv({ hans: '输入删除理由，或点击确定以接受自动生成的：', hant: '輸入刪除理由，或點選確定以接受自動生成的：' }), reason);
 				if (reason === null) {
 					page.getStatusElement().warn(conv({ hans: '没有执行删除', hant: '沒有執行刪除' }));
-					Twinkle.close.callbacks.talkend(params);
+					Twinkle.close.callbacks.xfd.talkend(params);
 				} else {
 					page.setEditSummary(reason);
 					page.setChangeTags(Twinkle.changeTags);
 					page.deletePage(function() {
 						page.getStatusElement().info('完成');
-						Twinkle.close.callbacks.talkend(params);
+						Twinkle.close.callbacks.xfd.talkend(params);
 					});
 				}
 			});
@@ -1047,7 +1082,7 @@ Twinkle.close.callbacks = {
 			page.setChangeTags(Twinkle.changeTags);
 			page.deletePage(function() {
 				page.getStatusElement().info('完成');
-				Twinkle.close.callbacks.talkend(params);
+				Twinkle.close.callbacks.xfd.talkend(params);
 			});
 		}
 		if (params.redirects) {
@@ -1057,7 +1092,7 @@ Twinkle.close.callbacks = {
 				prop: 'redirects',
 				rdlimit: 'max' // 500 is max for normal users, 5000 for bots and sysops
 			};
-			wikipedia_api = new Morebits.wiki.Api(conv({ hans: '正在获取重定向', hant: '正在取得重新導向' }), query, Twinkle.close.callbacks.deleteRedirectsMain);
+			wikipedia_api = new Morebits.wiki.Api(conv({ hans: '正在获取重定向', hant: '正在取得重新導向' }), query, Twinkle.close.callbacks.xfd.deleteRedirectsMain);
 			wikipedia_api.params = params;
 			wikipedia_api.post();
 		}
@@ -1069,7 +1104,7 @@ Twinkle.close.callbacks = {
 					action: 'query',
 					titles: pageTitle.toText()
 				};
-				wikipedia_api = new Morebits.wiki.Api(conv({ hans: '正在检查讨论页面是否存在', hant: '正在檢查討論頁面是否存在' }), query, Twinkle.close.callbacks.deleteTalk);
+				wikipedia_api = new Morebits.wiki.Api(conv({ hans: '正在检查讨论页面是否存在', hant: '正在檢查討論頁面是否存在' }), query, Twinkle.close.callbacks.xfd.deleteTalk);
 				wikipedia_api.params = params;
 				wikipedia_api.params.talkPage = pageTitle.toText();
 				wikipedia_api.post();
@@ -1150,7 +1185,7 @@ Twinkle.close.callbacks = {
 		}
 		if (newtext === text) {
 			statelem.warn(conv({ hans: '未找到存废讨论模板，可能已被移除', hant: '未找到存廢討論模板，可能已被移除' }));
-			Twinkle.close.callbacks.talkend(params);
+			Twinkle.close.callbacks.xfd.talkend(params);
 			return;
 		}
 		var editsummary = conv({ hans: '存废讨论关闭：[[', hant: '存廢討論關閉：[[' }) + mw.config.get('wgPageName') + '#' + params.title + ']]';
@@ -1159,18 +1194,18 @@ Twinkle.close.callbacks = {
 		pageobj.setEditSummary(editsummary);
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('nocreate');
-		pageobj.save(Twinkle.close.callbacks.keepComplete);
+		pageobj.save(Twinkle.close.callbacks.xfd.keepComplete);
 	},
 	keepComplete: function (pageobj) {
 		var params = pageobj.getCallbackParameters();
-		Twinkle.close.callbacks.talkend(params);
+		Twinkle.close.callbacks.xfd.talkend(params);
 	},
 
 	talkend: function (params) {
 		var wikipedia_page = new Morebits.wiki.Page(mw.config.get('wgPageName'), conv({ hans: '关闭讨论', hant: '關閉討論' }));
 		wikipedia_page.setCallbackParameters(params);
 		wikipedia_page.setPageSection(params.section);
-		wikipedia_page.load(Twinkle.close.callbacks.saveTalk);
+		wikipedia_page.load(Twinkle.close.callbacks.xfd.saveTalk);
 	},
 	saveTalk: function (pageobj) {
 		var statelem = pageobj.getStatusElement();
@@ -1221,11 +1256,11 @@ Twinkle.close.callbacks = {
 					var content = data.query.pages[0].revisions[0].content;
 					relist_params.batchText = content;
 					logpage.setCallbackParameters(relist_params);
-					logpage.load(Twinkle.close.callbacks.relistToday);
+					logpage.load(Twinkle.close.callbacks.xfd.relistToday);
 				});
 			} else {
 				logpage.setCallbackParameters(relist_params);
-				logpage.load(Twinkle.close.callbacks.relistToday);
+				logpage.load(Twinkle.close.callbacks.xfd.relistToday);
 			}
 
 			var article_params = {
@@ -1233,7 +1268,7 @@ Twinkle.close.callbacks = {
 			};
 			var articlepage = new Morebits.wiki.Page(params.title, conv({ hans: '重新标记', hant: '重新標記' }));
 			articlepage.setCallbackParameters(article_params);
-			articlepage.load(Twinkle.close.callbacks.retaggingArticle);
+			articlepage.load(Twinkle.close.callbacks.xfd.retaggingArticle);
 		} else {
 			text += split.slice(1).join('\n');
 			reason = params.messageData.value || params.messageData.label;
@@ -1264,7 +1299,7 @@ Twinkle.close.callbacks = {
 		pageobj.setEditSummary('/* ' + params.title + ' */ ' + reason);
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setCreateOption('nocreate');
-		pageobj.save(Twinkle.close.callbacks.disableLink);
+		pageobj.save(Twinkle.close.disableLink);
 	},
 
 	relistToday: function (pageobj) {
@@ -1336,11 +1371,6 @@ Twinkle.close.callbacks = {
 		pageobj.setEditSummary('重新提交到[[Wikipedia:頁面存廢討論/記錄/' + params.date + '#' + pageobj.getPageName() + ']]');
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.save();
-	},
-
-	disableLink: function (pageobj) {
-		var params = pageobj.getCallbackParameters();
-		$('a.twinkle-close-button[data-section=' + params.section + ']').addClass('twinkle-close-button-disabled');
 	}
 };
 
