@@ -1406,8 +1406,8 @@ Twinkle.block.blockPresetsInfo = {
 		expiry: '1 day',
 		nocreate: true,
 		reasonParam: true,
-		reason: conv({ hans: '[[WP:POINT|为了阐释观点而扰乱维基百科]]', hant: '[[WP:POINT|為了闡釋觀點而擾亂維基百科]]' }),
-		summary: conv({ hans: '封禁通知：[[WP:POINT|为了阐释观点而扰乱维基百科]]', hant: '封鎖通知：[[WP:POINT|為了闡釋觀點而擾亂維基百科]]' }),
+		reason: conv({ hans: '[[WP:POINT|违心自证]]，构成扰乱', hant: '[[WP:POINT|違心自證]]，構成擾亂' }),
+		summary: conv({ hans: '封禁通知：[[WP:POINT|违心自证]]，构成扰乱', hant: '封鎖通知：[[WP:POINT|違心自證]]，構成擾亂' }),
 		templateName: 'uw-block'
 	},
 	'game-block': {
@@ -1537,7 +1537,7 @@ Twinkle.block.blockGroups = [
 			{ label: conv({ hans: '违反回退不过三原则', hant: '違反回退不過三原則' }), value: 'uw-3block' },
 			{ label: conv({ hans: '无礼的行为、人身攻击', hant: '無禮的行為、人身攻擊' }), value: 'uw-pablock' },
 			{ label: conv({ hans: '骚扰用户', hant: '騷擾使用者' }), value: 'uw-hblock' },
-			{ label: conv({ hans: '为了阐释观点而扰乱维基百科', hant: '為了闡釋觀點而擾亂維基百科' }), value: 'point-block' },
+			{ label: conv({ hans: '违心自证，构成扰乱', hant: '違心自證，構成擾亂' }), value: 'point-block' },
 			{ label: conv({ hans: '游戏维基规则', hant: '遊戲維基規則' }), value: 'game-block' },
 			{ label: conv({ hans: '确认为傀儡或真人傀儡 - 根据用户贡献确定', hant: '確認為傀儡或真人傀儡 - 根據使用者貢獻確定' }), value: 'sock-contribs-anon' },
 			{ label: conv({ hans: '确认为傀儡或真人傀儡 - 用户查核确认', hant: '確認為傀儡或真人傀儡 - 使用者查核確認' }), value: 'sock-contribs-anon' },
