@@ -10,23 +10,22 @@
  ****************************************
  * Mode of invocation:     Tab ("Stub")
  * Active on:              Existing articles
- * Config directives in:   FriendlyConfig
- * Note:                   customised friendlytag module (for SEWP)
+ * Note:                   customised twinkletag module (for SEWP)
  */
 
 var conv = require('ext.gadget.HanAssist').conv;
 
-Twinkle.stub = function friendlytag() {
+Twinkle.stub = function twinkletag() {
 	if (Morebits.isPageRedirect()) {
 		// Skip
 	// article/draft article tagging
 	} else if (((mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 118) && mw.config.get('wgCurRevisionId')) || (Morebits.pageNameNorm === Twinkle.getPref('sandboxPage'))) {
 		Twinkle.stub.mode = conv({ hans: '条目', hant: '條目' });
-		Twinkle.addPortletLink(Twinkle.stub.callback, '小作品', 'friendly-tag', conv({ hans: '标记小作品', hant: '標記小作品' }));
+		Twinkle.addPortletLink(Twinkle.stub.callback, '小作品', 'twinkle-tag', conv({ hans: '标记小作品', hant: '標記小作品' }));
 	}
 };
 
-Twinkle.stub.callback = function friendlytagCallback() {
+Twinkle.stub.callback = function twinkletagCallback() {
 	var Window = new Morebits.SimpleWindow(630, Twinkle.stub.mode === 'article' ? 450 : 400);
 	Window.setScriptName('Twinkle');
 	Window.addFooterLink('小作品說明', 'Wikipedia:小作品');
@@ -306,7 +305,7 @@ Twinkle.stub.callbacks = {
 		// Remove tags that become superfluous with this action
 		var pageText = pageobj.getPageText();
 
-		var addTag = function friendlytagAddTag(tagIndex, tagName) {
+		var addTag = function twinkletagAddTag(tagIndex, tagName) {
 
 			pageText += '\n{{' + tagName + '}}';
 
@@ -360,7 +359,7 @@ Twinkle.stub.callbacks = {
 	}
 };
 
-Twinkle.stub.callback.evaluate = function friendlytagCallbackEvaluate(e) {
+Twinkle.stub.callback.evaluate = function twinkletagCallbackEvaluate(e) {
 	var form = e.target;
 	var params = {};
 	if (form.patrolPage) {

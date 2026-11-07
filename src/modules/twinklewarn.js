@@ -22,7 +22,7 @@ Twinkle.warn = function twinklewarn() {
 		if (Twinkle.getPref('autoMenuAfterRollback') &&
 			mw.config.get('wgNamespaceNumber') === 3 &&
 			mw.util.getParamValue('vanarticle') &&
-			!mw.util.getParamValue('friendlywelcome') &&
+			!mw.util.getParamValue('twinklewelcome') &&
 			!mw.util.getParamValue('noautowarn')) {
 			Twinkle.warn.callback();
 		}
@@ -205,7 +205,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 	var vanrevid = mw.util.getParamValue('vanarticlerevid');
 	if (vanrevid) {
 		// If you tried reverting, check if *you* actually reverted
-		if (!mw.util.getParamValue('noautowarn') && mw.util.getParamValue('vanarticle')) { // Via fluff link
+		if (!mw.util.getParamValue('noautowarn') && mw.util.getParamValue('vanarticle')) { // Via rollback link
 			query = {
 				action: 'query',
 				titles: mw.util.getParamValue('vanarticle'),
@@ -237,7 +237,7 @@ Twinkle.warn.callback = function twinklewarnCallback() {
 		};
 
 		var vantimestamp = mw.util.getParamValue('vantimestamp');
-		// Provided from a fluff module-based revert, no API lookup necessary
+		// If from a rollback module-based revert, no API lookup necessary
 		if (vantimestamp) {
 			checkStale(vantimestamp);
 		} else {
