@@ -62,6 +62,9 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	Twinkle.block.currentBlockInfo = undefined;
 	Twinkle.block.field_block_options = {};
 	Twinkle.block.field_template_options = {};
+	Twinkle.block.seeAlsos = {};
+	Twinkle.block.seeAlsoComment = '';
+	Twinkle.block.reportLinks = {};
 
 	var Window = new Morebits.SimpleWindow(650, 530);
 	// need to be verbose about who we're blocking
@@ -179,6 +182,55 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	Window.display();
 	result.root = result;
 
+	var reportPages = [
+		{
+			title: 'Wikipedia:当前的破坏',
+			label: conv({ hans: '当前的破坏提报', hant: '當前的破壞提報' }),
+			linkLabel: 'VIP'
+		},
+		{
+			title: 'Wikipedia:管理员布告板/其他不当行为',
+			label: conv({ hans: '其他不当行为提报', hant: '其他不當行為提報' }),
+			linkLabel: 'ANM'
+		},
+		{
+			title: 'Wikipedia:管理员布告板/编辑争议',
+			label: conv({ hans: '编辑争议提报', hant: '編輯爭議提報' }),
+			linkLabel: 'AN3'
+		}
+	];
+	var reportRequest = Promise.all(reportPages.map(function(reportPage) {
+		return api.get({
+			action: 'parse',
+			page: reportPage.title,
+			prop: 'wikitext|sections|revid',
+			redirects: true,
+			format: 'json',
+			formatversion: '2'
+		}).then(function(data) {
+			var requestList = data.parse.wikitext.split(/(?=\n==.+==\s*\n)/);
+			var index = Twinkle.block.callback.findreportRequest(requestList);
+			if (index === -1) {
+				return;
+			}
+			var heading = requestList[index].match(/^==\s*(.+?)\s*==\s*$/m);
+			var anchor = '';
+			data.parse.sections.forEach(function(section) {
+				if (section.index === String(index) || (!anchor && heading && section.line === heading[1])) {
+					anchor = section.anchor;
+				}
+			});
+			var link = '[[Special:PermaLink/' + data.parse.revid + (anchor ? '#' + anchor : '') + '|' + reportPage.linkLabel + ']]';
+			Twinkle.block.reportLinks[reportPage.title] = {
+				label: reportPage.label,
+				value: link
+			};
+			Twinkle.block.seeAlsos[link] = link;
+		}, function() {
+			// Don't block the form if fetching fails
+		});
+	}));
+
 	Twinkle.block.fetchUserInfo(function() {
 		if (Twinkle.block.isRegistered) {
 			var $form = $(result);
@@ -201,12 +253,13 @@ Twinkle.block.callback = function twinkleblockCallback() {
 		var evt = document.createEvent('Event');
 		evt.initEvent('change', true, true);
 
-		if (result.block64 && result.block64.checked) {
-			// Calls the same change_action event once finished
-			result.block64.dispatchEvent(evt);
-		} else {
-			result.actiontype[0].dispatchEvent(evt);
-		}
+		reportRequest.then(function() {
+			if (result.block64 && result.block64.checked) {
+				result.block64.dispatchEvent(evt);
+			} else {
+				result.actiontype[0].dispatchEvent(evt);
+			}
+		});
 	});
 
 	api.get({
@@ -671,6 +724,43 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				}
 			]
 		});
+		Object.keys(Twinkle.block.reportLinks).forEach(function(page) {
+			var reportLink = Twinkle.block.reportLinks[page];
+			field_block_options.append({
+				type: 'checkbox',
+				name: 'report_see_also',
+				event: Twinkle.block.callback.toggle_see_alsos,
+				style: 'display:inline-block; margin-right:5px',
+				list: [
+					{
+						label: reportLink.label,
+						checked: !!Twinkle.block.seeAlsos[reportLink.value],
+						value: reportLink.value
+					}
+				]
+			});
+		});
+		field_block_options.append({
+			type: 'checkbox',
+			name: 'lta_see_also',
+			event: Twinkle.block.callback.toggle_lta_see_also,
+			style: 'display:inline-block; margin-right:5px',
+			list: [
+				{
+					label: conv({ hans: '持续出没的破坏者', hant: '持續出沒的破壞者' }),
+					checked: false,
+					value: 'LTA'
+				}
+			]
+		});
+		field_block_options.append({
+			type: 'select',
+			name: 'lta_page',
+			label: conv({ hans: '选择持续出没的破坏者：', hant: '選擇持續出沒的破壞者：' }),
+			list: [
+				{ label: conv({ hans: '请选择', hant: '請選擇' }), value: '' }
+			]
+		});
 
 		// Yet-another-logevents-doesn't-handle-ranges-well
 		if (blockedUserName === relevantUserName) {
@@ -880,6 +970,12 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		oldfield = $form.find('fieldset[name="field_block_options"]')[0];
 		oldfield.parentNode.replaceChild(field_block_options.render(), oldfield);
 		$form.find('fieldset[name="field_64"]').show();
+
+		// LTA is only available for sock-contribs presets
+		Morebits.QuickForm.setElementVisibility(e.target.form.lta_see_also.parentNode.parentNode, false);
+		Morebits.QuickForm.setElementVisibility(e.target.form.lta_page.parentNode, false);
+		delete Twinkle.block.seeAlsos.LTA;
+		Twinkle.block.callback.update_see_alsos(e.target.form);
 
 
 		$form.find('[name=pagerestrictions]').select2({
@@ -1668,6 +1764,10 @@ Twinkle.block.callback.change_preset = function twinkleblockCallbackChangePreset
 	}
 
 	Twinkle.block.callback.update_form(e, Twinkle.block.blockPresetsInfo[key]);
+	if (form.lta_see_also) {
+		Morebits.QuickForm.setElementVisibility(form.lta_see_also.parentNode.parentNode, ['sock-contribs-anon', 'sock-contribs-reg'].indexOf(key) !== -1);
+		Morebits.QuickForm.setElementVisibility(form.lta_page.parentNode, false);
+	}
 	if (form.template) {
 		form.template.value = Twinkle.block.blockPresetsInfo[key].templateName || key;
 		Twinkle.block.callback.change_template(e);
@@ -1809,26 +1909,101 @@ Twinkle.block.callback.validateTempAccountExpiry = function twinkleblockCallback
 	return true;
 };
 
-Twinkle.block.seeAlsos = [];
+// {"identifer": "text"}
+Twinkle.block.seeAlsos = {};
+Twinkle.block.seeAlsoComment = '';
 Twinkle.block.callback.toggle_see_alsos = function twinkleblockCallbackToggleSeeAlso() {
-	var reason = this.form.reason.value.replace(
-		new RegExp('(<!-- )(参见|參見)' + Twinkle.block.seeAlsos.join('、') + '( -->)'), ''
-	);
-
-	Twinkle.block.seeAlsos = Twinkle.block.seeAlsos.filter(function(el) {
-		return el !== this.value;
-	}.bind(this));
-
 	if (this.checked) {
-		Twinkle.block.seeAlsos.push(this.value);
-	}
-	var seeAlsoMessage = Twinkle.block.seeAlsos.join('、');
-
-	if (!Twinkle.block.seeAlsos.length) {
-		this.form.reason.value = reason;
+		Twinkle.block.seeAlsos[this.value] = this.value;
 	} else {
-		this.form.reason.value = reason + '<!-- ' + conv({ hans: '参见', hant: '參見' }) + seeAlsoMessage + ' -->';
+		delete Twinkle.block.seeAlsos[this.value];
 	}
+	Twinkle.block.callback.update_see_alsos(this.form);
+};
+
+Twinkle.block.callback.update_see_alsos = function twinkleblockCallbackUpdateSeeAlsos(form) {
+	var reason = form.reason.value.replace(Twinkle.block.seeAlsoComment, '');
+
+	var seeAlsoMessage = Object.keys(Twinkle.block.seeAlsos).map(function(key) {
+		return Twinkle.block.seeAlsos[key];
+	}).join('、');
+
+	if (!seeAlsoMessage) {
+		Twinkle.block.seeAlsoComment = '';
+	} else {
+		Twinkle.block.seeAlsoComment = '<!-- ' + conv({ hans: '参见', hant: '參見' }) + seeAlsoMessage + ' -->';
+	}
+	form.reason.value = reason + Twinkle.block.seeAlsoComment;
+};
+
+Twinkle.block.ltaPages = null;
+Twinkle.block.callback.toggle_lta_see_also = function twinkleblockCallbackToggleLtaSeeAlso() {
+	var form = this.form, $select = $(form.lta_page);
+
+	Morebits.QuickForm.setElementVisibility(form.lta_page.parentNode, this.checked);
+	if (!this.checked) {
+		delete Twinkle.block.seeAlsos.LTA;
+		Twinkle.block.callback.update_see_alsos(form);
+		return;
+	}
+
+	// Already populated, just restore the selected one
+	if ($select.children().length > 1) {
+		Twinkle.block.callback.change_lta_page.call(form.lta_page);
+		return;
+	}
+
+	var populate = function() {
+		Twinkle.block.ltaPages.forEach(function(title) {
+			$select.append(new Option(title.replace(/^Wikipedia:持续出没的破坏者\//, ''), title));
+		});
+
+		// Use select2 to make the select menu searchable
+		if (!Twinkle.getPref('oldSelect')) {
+			$select.select2({
+				width: '100%',
+				matcher: Morebits.select2.matchers.optgroupFull,
+				templateResult: Morebits.select2.highlightSearchMatches,
+				language: {
+					searching: Morebits.select2.queryInterceptor
+				}
+			});
+		}
+		$select.on('change', Twinkle.block.callback.change_lta_page);
+	};
+
+	if (Twinkle.block.ltaPages) {
+		populate();
+		return;
+	}
+
+	api.get({
+		action: 'query',
+		list: 'allpages',
+		apnamespace: 4,
+		apprefix: '持续出没的破坏者/',
+		apfilterredir: 'nonredirects',
+		aplimit: 'max',
+		format: 'json'
+	}).then(function(data) {
+		Twinkle.block.ltaPages = data.query.allpages.map(function(page) {
+			return page.title;
+		}).filter(function(title) {
+			return title.replace(/^Wikipedia:持续出没的破坏者\//, '').indexOf('/') === -1;
+		});
+		populate();
+	}, function(msg) {
+		mw.notify(conv({ hans: '获取LTA列表出错：', hant: '取得LTA列表出錯：' }) + msg, { type: 'error' });
+	});
+};
+
+Twinkle.block.callback.change_lta_page = function twinkleblockCallbackChangeLtaPage() {
+	if (this.value) {
+		Twinkle.block.seeAlsos.LTA = '[[' + this.value + '|LTA]]';
+	} else {
+		delete Twinkle.block.seeAlsos.LTA;
+	}
+	Twinkle.block.callback.update_see_alsos(this.form);
 };
 
 // zhwiki: No ds
@@ -1873,7 +2048,7 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 		if (data.useInitialOptions && data[el.name] === undefined) {
 			return;
 		}
-		if (['closevip', 'rfdr'].includes(el.name)) {
+		if (['closevip', 'rfdr', 'report_see_also'].includes(el.name)) {
 			return;
 		}
 
@@ -1886,6 +2061,15 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 	} else {
 		form.reason.value = data.reason || '';
 	}
+
+	Object.keys(Twinkle.block.seeAlsos).forEach(function(key) {
+		if (!Object.keys(Twinkle.block.reportLinks).some(function(page) {
+			return Twinkle.block.reportLinks[page].value === key;
+		})) {
+			delete Twinkle.block.seeAlsos[key];
+		}
+	});
+	Twinkle.block.callback.update_see_alsos(form);
 
 	// Clear and/or set any partial page or namespace restrictions
 	if (form.pagerestrictions) {
@@ -2036,6 +2220,9 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	delete blockoptions.expiry_preset;
 	delete blockoptions.closevip;
 	delete blockoptions.rfdr;
+	delete blockoptions.report_see_also;
+	delete blockoptions.lta_see_also;
+	delete blockoptions.lta_page;
 
 	// Partial API requires this to be gone, not false or 0
 	if (toPartial) {
@@ -2404,6 +2591,17 @@ Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTempla
 
 };
 
+Twinkle.block.callback.findreportRequest = function twinkleblockCallbackFindreportRequest(requestList) {
+	var userName = Morebits.relevantUserName(true);
+	var vipRe = new RegExp('{{\\s*[Vv]andal\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.pageNameRegex(userName) + '\\s*(\\|\\s*hidename\\s*=[^|]+)?}}', 'm');
+	for (var i = 1; i < requestList.length; i++) {
+		if (vipRe.exec(requestList[i])) {
+			return i;
+		}
+	}
+	return -1;
+};
+
 Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(vipPage) {
 	var params = vipPage.getCallbackParameters();
 	var text = vipPage.getPageText();
@@ -2426,22 +2624,19 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 
 	var found = false;
 	var hidename = false;
-	var vipRe = new RegExp('{{\\s*[Vv]andal\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.pageNameRegex(userName) + '\\s*(\\|\\s*hidename\\s*=[^|]+)?}}', 'm');
-	for (var i = 1; i < requestList.length; i++) {
-		if (vipRe.exec(requestList[i])) {
-			hidename = /\|\s*hidename\s*=[^|]+/.test(requestList[i]);
-			requestList[i] = requestList[i].trimRight();
+	var i = Twinkle.block.callback.findreportRequest(requestList);
+	if (i !== -1) {
+		hidename = /\|\s*hidename\s*=[^|]+/.test(requestList[i]);
+		requestList[i] = requestList[i].trimRight();
 
-			var newText = requestList[i].replace(/^(\*\s*处理：)[ \t]*(<!-- 非管理員僅可標記已執行的封禁，針對提報的意見請放在下一行 -->)?[ \t]*$/m, '$1' + comment + '--~~~~');
-			if (requestList[i] === newText) {
-				newText = requestList[i] + '\n* 处理：' + comment + '--~~~~';
-			}
-
-			requestList[i] = newText + '\n';
-
-			found = true;
-			break;
+		var newText = requestList[i].replace(/^(\*\s*处理：)[ \t]*(<!-- 非管理員僅可標記已執行的封禁，針對提報的意見請放在下一行 -->)?[ \t]*$/m, '$1' + comment + '--~~~~');
+		if (requestList[i] === newText) {
+			newText = requestList[i] + '\n* 处理：' + comment + '--~~~~';
 		}
+
+		requestList[i] = newText + '\n';
+
+		found = true;
 	}
 
 	if (!found) {
