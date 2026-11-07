@@ -157,6 +157,9 @@ matches = re.findall(r"value: '([^\n]+?)',", blockPresetsInfo)
 for match in matches:
     templates.add(normalizeTitle(match))
 
+    # CSD F6 does not notify the uploader
+    if match == 'orphaned non-free use':
+        continue
     notice = 'Di-{}-notice'.format(match)
     templates.add(normalizeTitle(notice))
 
@@ -197,12 +200,11 @@ for match in matches:
 
 # can't found from code or core templates
 WHITELIST = set([
-    # on-wiki
-    'Template:Singlenotice',
     # block
     'Template:Sockpuppeteer',
     # image
     'Template:No source no license/auto',
+    'Template:Di-orphaned fair use-notice',  # CSD F6 does not notify the uploader
     # talkback
     'Template:No talkback',
     # tag
