@@ -77,7 +77,7 @@ Twinkle.image.callback = function twinkleimageCallback() {
 			},
 			{
 				label: conv({ hans: '没有被条目使用的非自由著作权文件（CSD F6）', hant: '沒有被條目使用的非自由著作權檔案（CSD F6）' }),
-				value: 'Orphaned non-free use',
+				value: 'orphaned fair use',
 				tooltip: conv({ hans: '本文件为非自由著作权且没有被条目使用', hant: '本檔案為非自由著作權且沒有被條目使用' })
 			},
 			{
@@ -150,7 +150,7 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		case 'no source no license':
 			csdcrit = 'f3 f4';
 			break;
-		case 'Orphaned non-free use':
+		case 'orphaned fair use':
 			csdcrit = 'f6';
 			notify = false;
 			break;
@@ -211,7 +211,7 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 			Twinkle.speedy.callbacks.user.addToLog(params, null);
 		}
 		// No auto-notification, display what was going to be added.
-		if (type !== 'Orphaned non-free use') {
+		if (type !== 'orphaned fair use') {
 			var noteData = document.createElement('pre');
 			noteData.appendChild(document.createTextNode('{{subst:Uploadvionotice|' + Morebits.pageNameNorm + '}}--~~~~'));
 			Morebits.Status.info('提示', [conv({ hans: '这些内容应贴进上传者对话页：', hant: '這些內容應貼進上傳者討論頁：' }), document.createElement('br'), noteData]);
@@ -227,7 +227,7 @@ Twinkle.image.callbacks = {
 		// remove "move to Commons" tag - deletion-tagged files cannot be moved to Commons
 		text = text.replace(/\{\{(mtc|(copy |move )?to ?commons|move to wikimedia commons|copy to wikimedia commons)[^}]*\}\}/gi, '');
 		// Adding discussion
-		if (params.type !== 'Orphaned non-free use') {
+		if (params.type !== 'orphaned fair use') {
 			var wikipedia_page = new Morebits.wiki.Page('Wikipedia:檔案存廢討論/快速刪除提報', conv({ hans: '加入快速删除记录项', hant: '加入快速刪除記錄項' }));
 			wikipedia_page.setFollowRedirect(true);
 			wikipedia_page.setCallbackParameters(params);
@@ -236,8 +236,8 @@ Twinkle.image.callbacks = {
 
 		var tag = '';
 		switch (params.type) {
-			case 'Orphaned non-free use':
-				tag = '{{subst:Orphaned non-free use}}\n';
+			case 'orphaned fair use':
+				tag = '{{subst:orphaned fair use}}\n';
 				break;
 			case 'no license':
 				tag = '{{subst:' + params.templatename + '/auto|1=' + (params.f4_comment ? params.f4_comment.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^*])/gm, '* $1').replace(/^\* $/m, '') : '') + '}}\n';
