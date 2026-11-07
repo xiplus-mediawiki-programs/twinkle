@@ -204,7 +204,6 @@ WHITELIST = set([
     'Template:Sockpuppeteer',
     # image
     'Template:No source no license/auto',
-    'Template:Di-orphaned fair use-notice',  # CSD F6 does not notify the uploader
     # talkback
     'Template:No talkback',
     # tag
