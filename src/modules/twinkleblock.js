@@ -1192,6 +1192,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
  *   expiry: <string - expiry timestamp, can include relative times like "5 months", "2 weeks" etc>
  *   forAnonOnly: <show block option in the interface only if the relevant user is an IP>
  *   forRegisteredOnly: <show block option in the interface only if the relevant user is registered>
+ *   forPermanentOnly: <show block option in the interface only if the relevant user is a permanent account>
  *   label: <string - label for the option of the dropdown in the interface (keep brief)>
  *   noemail: prevent the user from sending email through Special:Emailuser
  *   pageParam: <set if the associated block template accepts a page parameter>
@@ -1240,7 +1241,7 @@ Twinkle.block.blockPresetsInfo = {
 	'checkuserblock-account': {
 		autoblock: true,
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		nocreate: true,
 		nonstandard: true,
 		reason: '{{checkuserblock-account}}',
@@ -1375,7 +1376,7 @@ Twinkle.block.blockPresetsInfo = {
 	'uw-sockblock': {
 		autoblock: true,
 		expiry: '1 week',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		nocreate: true,
 		reason: conv({ hans: '滥用[[WP:SOCK|多个账户]]', hant: '濫用[[WP:SOCK|多個帳號]]' }),
 		summary: conv({ hans: '封禁通知：滥用[[WP:SOCK|多个账户]]', hant: '封鎖通知：濫用[[WP:SOCK|多個帳號]]' }),
@@ -1383,27 +1384,27 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-softerblock': {
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		reason: '{{uw-softerblock}}<!-- ' + conv({ hans: '宣传性用户名、软封禁', hant: '宣傳性使用者名稱、軟封鎖' }) + ' -->',
 		summary: conv({ hans: '封禁通知：您的[[WP:U|用户名]]暗示您的账户代表一个团体、组织或网站', hant: '封鎖通知：您的[[WP:U|使用者名稱]]暗示您的帳號代表一個團體、組織或網站' })
 	},
 	'uw-spamublock': {
 		autoblock: true,
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		nocreate: true,
 		reason: '{{uw-spamublock}}<!-- ' + conv({ hans: '宣传性用户名、宣传性编辑', hant: '宣傳性使用者名稱、宣傳性編輯' }) + ' -->',
 		summary: conv({ hans: '封禁通知：仅[[WP:SOAP|广告宣传]]，同时您的用户名违反[[WP:U|用户名方针]]', hant: '封鎖通知：僅[[WP:SOAP|廣告宣傳]]，同時您的使用者名稱違反[[WP:U|使用者名稱方針]]' })
 	},
 	'uw-ublock': {
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		reason: '{{uw-ublock}}<!-- ' + conv({ hans: '不当用户名、软封禁', hant: '不當使用者名稱、軟封鎖' }) + ' -->',
 		summary: conv({ hans: '封禁通知：您的用户名违反[[WP:U|用户名方针]]', hant: '封鎖通知：您的使用者名稱違反[[WP:U|使用者名稱方針]]' })
 	},
 	'uw-ublock-double': {
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		reason: '{{uw-ublock-double}}<!-- ' + conv({ hans: '用户名与其他用户相似、软封禁', hant: '使用者名稱與其他使用者相似、軟封鎖' }) + ' -->',
 		summary: conv({ hans: '封禁通知：您的[[WP:U|用户名]]与其他维基百科用户过于相似', hant: '封鎖通知：您的[[WP:U|使用者名稱]]與其他維基百科使用者過於相似' })
 	},
@@ -1418,35 +1419,39 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-ublock-wellknown': {
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		reason: '{{uw-ublock-wellknown}}<!-- ' + conv({ hans: '用户名与知名人物相似、软封禁', hant: '使用者名稱與知名人物相似、軟封鎖' }) + ' -->',
 		summary: conv({ hans: '封禁通知：您的[[WP:U|用户名]]与知名人物过于相似', hant: '封鎖通知：您的[[WP:U|使用者名稱]]與知名人物過於相似' })
 	},
 	'uw-uhblock-double': {
 		autoblock: true,
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		nocreate: true,
 		reason: '{{uw-uhblock-double}}<!-- ' + conv({ hans: '用户名试图冒充其他用户、硬封禁', hant: '使用者名稱試圖冒充其他使用者、硬封鎖' }) + ' -->',
 		summary: conv({ hans: '封禁通知：您的[[WP:U|用户名]]试图冒充其他维基百科用户', hant: '封鎖通知：您的[[WP:U|使用者名稱]]試圖冒充其他維基百科使用者' })
 	},
 	'uw-ublock|误导': {
 		expiry: 'infinity',
+		forPermanentOnly: true,
 		reason: conv({ hans: '{{uw-ublock|误导}}', hant: '{{uw-ublock|誤導}}' }),
 		summary: conv({ hans: '封禁通知：误导性用户名', hant: '封鎖通知：誤導性使用者名稱' })
 	},
 	'uw-ublock|宣传': {
 		expiry: 'infinity',
+		forPermanentOnly: true,
 		reason: conv({ hans: '{{uw-ublock|宣传}}', hant: '{{uw-ublock|宣傳}}' }),
 		summary: conv({ hans: '封禁通知：宣传性用户名', hant: '封鎖通知：宣傳性使用者名稱' })
 	},
 	'uw-ublock|攻击|或侮辱性': {
 		expiry: 'infinity',
+		forPermanentOnly: true,
 		reason: conv({ hans: '{{uw-ublock|攻击|或侮辱性}}', hant: '{{uw-ublock|攻擊|或侮辱性}}' }),
 		summary: conv({ hans: '封禁通知：攻击或侮辱性用户名', hant: '封鎖通知：攻擊或侮辱性使用者名稱' })
 	},
 	'uw-ublock|混淆': {
 		expiry: 'infinity',
+		forPermanentOnly: true,
 		reason: '{{uw-ublock|混淆}}',
 		summary: conv({ hans: '封禁通知：令人混淆的用户名', hant: '封鎖通知：令人混淆的使用者名稱' })
 	},
@@ -1470,7 +1475,7 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'Bot block message': {
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		reason: conv({ hans: '机器人故障', hant: '機器人故障' }),
 		summary: conv({ hans: '封禁通知：机器人故障', hant: '封鎖通知：機器人故障' }),
 		sig: '~~~~'
@@ -1659,12 +1664,12 @@ Twinkle.block.blockGroups = [
 	{
 		label: '其他模板',
 		list: [
-			{ label: 'anonblock', value: 'anonblock', forAnonOnly: true },
-			{ label: 'range block', value: 'range block', forAnonOnly: true },
-			{ label: 'school block', value: 'school block', forAnonOnly: true },
-			{ label: 'blocked proxy', value: 'blocked proxy', forAnonOnly: true },
-			{ label: 'CheckUser block', value: 'CheckUser block', forAnonOnly: true },
-			{ label: 'checkuserblock-account', value: 'checkuserblock-account', forRegisteredOnly: true }
+			{ label: 'anonblock', value: 'anonblock'},
+			{ label: 'range block', value: 'range block'},
+			{ label: 'school block', value: 'school block'},
+			{ label: 'blocked proxy', value: 'blocked proxy'},
+			{ label: 'CheckUser block', value: 'CheckUser block'},
+			{ label: 'checkuserblock-account', value: 'checkuserblock-account'}
 		]
 	}
 ];
@@ -1728,6 +1733,8 @@ Twinkle.block.callback.filtered_block_groups = function twinkleblockCallbackFilt
 			var registrationRestrict;
 			if (blockSettings.forRegisteredOnly) {
 				registrationRestrict = Twinkle.block.isRegistered;
+			} else if (blockSettings.forPermanentOnly) {
+				registrationRestrict = Twinkle.block.isRegistered && !Twinkle.block.isTempAccount;
 			} else if (blockSettings.forAnonOnly) {
 				registrationRestrict = !Twinkle.block.isRegistered;
 			} else {
