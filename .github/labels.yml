@@ -22,6 +22,10 @@
   - changed-files:
     - any-glob-to-any-file:
       - src/modules/twinkleblock.js
+"Module: close":
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinkleclose.js
 "Module: config":
   - changed-files:
     - any-glob-to-any-file:
@@ -30,6 +34,10 @@
   - changed-files:
     - any-glob-to-any-file:
       - src/modules/twinklecopyvio.js
+"Module: diff":
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinklediff.js
 "Module: protect":
   - changed-files:
     - any-glob-to-any-file:
@@ -43,6 +51,10 @@
     - any-glob-to-any-file:
       - src/modules/twinklespeedy.js
       - src/modules/twinkleimage.js
+"Module: stub":
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinklestub.js
 "Module: tag":
   - changed-files:
     - any-glob-to-any-file:
