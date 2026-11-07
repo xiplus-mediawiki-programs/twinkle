@@ -1429,16 +1429,6 @@ Twinkle.block.blockPresetsInfo = {
 		summary: conv({ hans: '封禁通知：[[WP:SOCK|使用其他IP地址绕过封禁]]', hant: '封鎖通知：[[WP:SOCK|使用其他IP位址繞過封鎖]]' }),
 		templateName: 'uw-ablock'
 	},
-	'sock-cu-anon': {
-		autoblock: true,
-		expiry: '1 week',
-		forAnonOnly: true,
-		nocreate: true,
-		reasonParam: true,
-		reason: conv({ hans: '确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 用户查核确认', hant: '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 使用者查核確認' }),
-		summary: conv({ hans: '封禁通知：[[WP:SOCK|使用其他IP地址绕过封禁]]', hant: '封鎖通知：[[WP:SOCK|使用其他IP位址繞過封鎖]]' }),
-		templateName: 'uw-ablock'
-	},
 	'sock-contribs-reg': {
 		autoblock: true,
 		expiry: 'infinity',
@@ -1540,7 +1530,6 @@ Twinkle.block.blockGroups = [
 			{ label: conv({ hans: '违心自证，构成扰乱', hant: '違心自證，構成擾亂' }), value: 'point-block' },
 			{ label: conv({ hans: '游戏维基规则', hant: '遊戲維基規則' }), value: 'game-block' },
 			{ label: conv({ hans: '确认为傀儡或真人傀儡 - 根据用户贡献确定', hant: '確認為傀儡或真人傀儡 - 根據使用者貢獻確定' }), value: 'sock-contribs-anon' },
-			{ label: conv({ hans: '确认为傀儡或真人傀儡 - 用户查核确认', hant: '確認為傀儡或真人傀儡 - 使用者查核確認' }), value: 'sock-contribs-anon' },
 			{ label: conv({ hans: '确认为傀儡或真人傀儡 - 根据用户贡献确定', hant: '確認為傀儡或真人傀儡 - 根據使用者貢獻確定' }), value: 'sock-contribs-reg' },
 			{ label: conv({ hans: '确认为傀儡或真人傀儡 - 用户查核确认', hant: '確認為傀儡或真人傀儡 - 使用者查核確認' }), value: 'sock-cu-reg' },
 			{ label: conv({ hans: '滥用多个账户', hant: '濫用多個帳號' }), value: 'uw-sockblock' },
