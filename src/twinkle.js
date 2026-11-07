@@ -80,7 +80,7 @@ Twinkle.defaultConfig = {
 	watchBlockNotices: 'yes',
 	customBlockReasonList: [],
 
-	// Rolback
+	// Rollback
 	openTalkPage: [ ],
 	openTalkPageOnAutoRevert: false,
 	rollbackInPlace: false,
