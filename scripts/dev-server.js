@@ -8,12 +8,15 @@
 
 const http = require('http');
 const fs = require('fs/promises');
+const path = require('path');
+
+const repoRoot = path.join(__dirname, '..');
 
 async function readFiles(filePaths) {
-	return Promise.all(filePaths.map(path => fs.readFile(__dirname + '/../' + path).then(blob => blob.toString())));
+	return Promise.all(filePaths.map(file => fs.readFile(path.join(repoRoot, file)).then(blob => blob.toString())));
 }
 const server = http.createServer(async (request, response) => {
-	const moduleFiles = (await fs.readdir('./src/modules')).filter(f => f.endsWith('.js'));
+	const moduleFiles = (await fs.readdir(path.join(repoRoot, 'src/modules'))).filter(f => f.endsWith('.js'));
 	const jsFiles = ['src/morebits.js', 'src/twinkle.js'].concat(moduleFiles.map(f => 'src/modules/' + f));
 	const cssFiles = ['src/morebits.css', 'src/twinkle.css'];
 
