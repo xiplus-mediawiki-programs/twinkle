@@ -1,48 +1,88 @@
 "Module: twinkle":
-  - src/twinkle.js
-  - src/twinkle.css
-  - src/twinkle-pagestyles.css
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/twinkle.js
+      - src/twinkle.css
+      - src/twinkle-pagestyles.css
 "Module: morebits":
-  - src/morebits.js
-  - src/morebits.css
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/morebits.js
+      - src/morebits.css
 "Module: arv":
-  - src/modules/twinklearv.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinklearv.js
 "Module: batch":
-  - src/modules/twinklebatchundelete.js
-  - src/modules/twinklebatchdelete.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinklebatchundelete.js
+      - src/modules/twinklebatchdelete.js
 "Module: block":
-  - src/modules/twinkleblock.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinkleblock.js
 "Module: config":
-  - src/modules/twinkleconfig.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinkleconfig.js
 "Module: copyvio":
-  - src/modules/twinklecopyvio.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinklecopyvio.js
 "Module: protect":
-  - src/modules/twinkleprotect.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinkleprotect.js
 "Module: rollback":
-  - src/modules/twinklerollback.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinklerollback.js
 "Module: speedy":
-  - src/modules/twinklespeedy.js
-  - src/modules/twinkleimage.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinklespeedy.js
+      - src/modules/twinkleimage.js
 "Module: tag":
-  - src/modules/twinkletag.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinkletag.js
 "Module: talkback":
-  - src/modules/twinkletalkback.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinkletalkback.js
 "Module: unlink":
-  - src/modules/twinkleunlink.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinkleunlink.js
 "Module: warn":
-  - src/modules/twinklewarn.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinklewarn.js
 "Module: welcome":
-  - src/modules/twinklewelcome.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinklewelcome.js
 "Module: xfd":
-  - src/modules/twinklexfd.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/modules/twinklexfd.js
 Tests:
-  - tests/*
-  - scripts/patch-test.js
-  - scripts/server.js
+  - changed-files:
+    - any-glob-to-any-file:
+      - tests/*
+      - scripts/patch-test.js
+      - scripts/server.js
 Docs:
-  - "*.md"
+  - changed-files:
+    - any-glob-to-any-file:
+      - "*.md"
 Gadget:
-  - gadget.txt
+  - changed-files:
+    - any-glob-to-any-file:
+      - gadget.txt
 dependencies:
-  - package.json
-  - package-lock.json
+  - changed-files:
+    - any-glob-to-any-file:
+      - package.json
+      - package-lock.json
