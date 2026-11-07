@@ -45,7 +45,7 @@ const GADGET_FILES = [
     'src/modules/twinklerollback.js',
     'src/modules/twinklespeedy.js',
     'src/modules/twinklestub.js',
-	'src/modules/twinkletag.js',
+    'src/modules/twinkletag.js',
     'src/modules/twinkletalkback.js',
     'src/modules/twinkleunlink.js',
     'src/modules/twinklewarn.js',
@@ -162,7 +162,7 @@ async function main() {
     // Set apiUrl from --site
     let apiUrl = resolveApiUrl(conf.site);
     if (!apiUrl) {
-        console.log(chalk.red('Missing or invalid --site! Pass enwiki, testwiki, or a full MediaWiki API URL, eg. https://en.wikipedia.org/w/api.php'));
+        console.log(chalk.red('Missing or invalid --site! Pass zhwiki, testwiki, or a full MediaWiki API URL, eg. https://zh.wikipedia.org/w/api.php'));
         usage();
     }
 
@@ -187,7 +187,7 @@ async function main() {
             .map(f => f.trim())
             .filter(Boolean)
             // Normalize file paths to be relative to the repo root
-			.map(f => path.relative(repoRoot, path.resolve(process.cwd(), f)).replace(/\\/g, '/'))
+            .map(f => path.relative(repoRoot, path.resolve(process.cwd(), f)).replace(/\\/g, '/'))
             .filter(f => GADGET_FILES.includes(f));
     } else {
         files = [...GADGET_FILES];
@@ -266,10 +266,10 @@ async function main() {
             continue;
         }
 
-		const normalize = s => s.replace(/\r\n/g, '\n').trimEnd();
+        const normalize = s => s.replace(/\r\n/g, '\n').trimEnd();
 
         const fileText = normalize(await fs.readFile(path.join(repoRoot, file), 'utf8'));
-		const wpText = normalize(wikiPage.revisions?.[0]?.content ?? '');
+        const wpText = normalize(wikiPage.revisions?.[0]?.content ?? '');
         const oldSummary = wikiPage.revisions?.[0]?.comment || '';
         const oldTimestamp = wikiPage.revisions?.[0]?.timestamp || '';
         const oldUser = wikiPage.revisions?.[0]?.user || '';
@@ -327,9 +327,9 @@ async function main() {
 
     // If deploying to MediaWiki:Gadgets-definition, check gadget definition file
     if (conf.base === 'MediaWiki:Gadget-') {
-		const gadgetDefFile = path.join(repoRoot, 'gadget.txt');
-		const localGadgetDef = await fs.readFile(gadgetDefFile, 'utf8');
-		let numLines = localGadgetDef.split('\n').filter(Boolean).length;
+        const gadgetDefFile = path.join(repoRoot, 'gadget.txt');
+        const localGadgetDef = await fs.readFile(gadgetDefFile, 'utf8');
+        let numLines = localGadgetDef.split('\n').filter(Boolean).length;
         let wikiGadgetDef = '';
         try {
             const allGadgetDefs = await bot.read('MediaWiki:Gadgets-definition');
