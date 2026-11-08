@@ -1,0 +1,109 @@
+# 需要的 secrets：TELEGRAM_BOT_TOKEN、TELEGRAM_CHAT_ID
+name: Telegram Notify
+
+on:
+  push:
+    branches: [master, telegram-notify-test]
+  issues:
+    types: [opened, closed, reopened]
+  issue_comment:
+    types: [created]
+  # 用 pull_request_target 讓 fork 來的 PR 也拿得到 secrets
+  # （這個 workflow 不會 checkout PR 的程式碼，所以是安全的）
+  pull_request_target:
+    types: [opened, closed, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted]
+  pull_request_review_comment:
+    types: [created]
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        with:
+          script: |
+            // fork 來的 PR 觸發 pull_request_review(_comment) 時拿不到 secrets，直接跳過
+            if (!process.env.TOKEN || !process.env.CHAT_ID) {
+              core.info('Secrets unavailable (likely fork PR), skip.');
+              return;
+            }
+            if (context.actor.endsWith('[bot]')) return;
+
+            const e = context.eventName;
+            const p = context.payload;
+
+            // 用 HTML parse_mode，所有來自使用者的文字都要跳脫
+            const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            const link = (url, text) => `<a href="${esc(url)}">${esc(text)}</a>`;
+            const cut = (s, n = 200) => s.length > n ? s.slice(0, n) + '…' : s;
+            const quote = s => s ? `\n<blockquote>${esc(cut(s))}</blockquote>` : '';
+            const by = ` by ${esc(context.actor)}`;
+
+            let msg;
+            switch (e) {
+              case 'push': {
+                if (!p.commits || p.commits.length === 0) return; // 例如刪除分支
+                const branch = p.ref.replace('refs/heads/', '');
+                const n = p.commits.length;
+                const list = p.commits.slice(0, 10)
+                  .map(c => `${link(c.url, c.id.slice(0, 7))}: ${esc(c.message.split('\n')[0])} by ${esc(c.author.name)}`)
+                  .join('\n');
+                const more = n > 10 ? `\n…and ${n - 10} more` : '';
+                msg = `🔨 ${link(p.compare, `${n} new commit${n > 1 ? 's' : ''}`)} to <b>${esc(branch)}</b>:\n${list}${more}`;
+                break;
+              }
+              case 'issues': {
+                const icon = { opened: '🐛', closed: '✅', reopened: '🔄' }[p.action];
+                msg = `${icon} Issue ${link(p.issue.html_url, `#${p.issue.number}: ${p.issue.title}`)} ${p.action}${by}`;
+                break;
+              }
+              case 'issue_comment':
+                msg = `💬 ${link(p.comment.html_url, `#${p.issue.number}: ${p.issue.title}`)}${by}${quote(p.comment.body)}`;
+                break;
+              case 'pull_request_target': {
+                const pr = p.pull_request;
+                const act = p.action === 'closed' && pr.merged ? 'merged' : p.action;
+                const icon = { opened: '🔌', merged: '🎉', closed: '❌', reopened: '🔄', ready_for_review: '👀' }[act];
+                msg = `${icon} PR ${link(pr.html_url, `#${pr.number}: ${pr.title}`)} ${act.replace(/_/g, ' ')}${by}`;
+                break;
+              }
+              case 'pull_request_review': {
+                // 只有行內留言、沒有總結內文的 review，交給 pull_request_review_comment 通知，避免重複
+                if (p.review.state === 'commented' && !p.review.body) return;
+                const icon = { approved: '✅', changes_requested: '🚧' }[p.review.state] || '💬';
+                msg = `${icon} ${p.review.state.replace(/_/g, ' ')}: ${link(p.review.html_url, `#${p.pull_request.number}: ${p.pull_request.title}`)}${by}${quote(p.review.body)}`;
+                break;
+              }
+              case 'pull_request_review_comment':
+                msg = `💬 ${link(p.comment.html_url, `#${p.pull_request.number}: ${p.pull_request.title}`)}${by}${quote(p.comment.body)}`;
+                break;
+              case 'release':
+                msg = `🏷️ Release ${link(p.release.html_url, p.release.tag_name)} published${by}`;
+                break;
+              default:
+                return;
+            }
+
+            // 內容長度都已限制，不在這裡截斷，避免切壞 HTML 標籤（Telegram 單則上限 4096 字元）
+            const res = await fetch(`https://api.telegram.org/bot${process.env.TOKEN}/sendMessage`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: process.env.CHAT_ID,
+                text: msg,
+                parse_mode: 'HTML',
+                link_preview_options: { is_disabled: true },
+              }),
+            });
+            if (!res.ok) core.setFailed(`Telegram API error: ${res.status} ${await res.text()}`);
