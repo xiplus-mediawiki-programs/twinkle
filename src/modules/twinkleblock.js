@@ -62,6 +62,9 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	Twinkle.block.currentBlockInfo = undefined;
 	Twinkle.block.field_block_options = {};
 	Twinkle.block.field_template_options = {};
+	Twinkle.block.seeAlsos = {};
+	Twinkle.block.seeAlsoComment = '';
+	Twinkle.block.reportLinks = {};
 
 	var Window = new Morebits.SimpleWindow(650, 530);
 	// need to be verbose about who we're blocking
@@ -179,6 +182,55 @@ Twinkle.block.callback = function twinkleblockCallback() {
 	Window.display();
 	result.root = result;
 
+	var reportPages = [
+		{
+			title: 'Wikipedia:当前的破坏',
+			label: conv({ hans: '当前的破坏提报', hant: '當前的破壞提報' }),
+			linkLabel: 'VIP'
+		},
+		{
+			title: 'Wikipedia:管理员布告板/其他不当行为',
+			label: conv({ hans: '其他不当行为提报', hant: '其他不當行為提報' }),
+			linkLabel: 'ANM'
+		},
+		{
+			title: 'Wikipedia:管理员布告板/编辑争议',
+			label: conv({ hans: '编辑争议提报', hant: '編輯爭議提報' }),
+			linkLabel: 'AN3'
+		}
+	];
+	var reportRequest = Promise.all(reportPages.map(function(reportPage) {
+		return api.get({
+			action: 'parse',
+			page: reportPage.title,
+			prop: 'wikitext|sections|revid',
+			redirects: true,
+			format: 'json',
+			formatversion: '2'
+		}).then(function(data) {
+			var requestList = data.parse.wikitext.split(/(?=\n==.+==\s*\n)/);
+			var index = Twinkle.block.callback.findreportRequest(requestList);
+			if (index === -1) {
+				return;
+			}
+			var heading = requestList[index].match(/^==\s*(.+?)\s*==\s*$/m);
+			var anchor = '';
+			data.parse.sections.forEach(function(section) {
+				if (section.index === String(index) || (!anchor && heading && section.line === heading[1])) {
+					anchor = section.anchor;
+				}
+			});
+			var link = '[[Special:PermaLink/' + data.parse.revid + (anchor ? '#' + anchor : '') + '|' + reportPage.linkLabel + ']]';
+			Twinkle.block.reportLinks[reportPage.title] = {
+				label: reportPage.label,
+				value: link
+			};
+			Twinkle.block.seeAlsos[link] = link;
+		}, function() {
+			// Don't block the form if fetching fails
+		});
+	}));
+
 	Twinkle.block.fetchUserInfo(function() {
 		if (Twinkle.block.isRegistered) {
 			var $form = $(result);
@@ -201,12 +253,13 @@ Twinkle.block.callback = function twinkleblockCallback() {
 		var evt = document.createEvent('Event');
 		evt.initEvent('change', true, true);
 
-		if (result.block64 && result.block64.checked) {
-			// Calls the same change_action event once finished
-			result.block64.dispatchEvent(evt);
-		} else {
-			result.actiontype[0].dispatchEvent(evt);
-		}
+		reportRequest.then(function() {
+			if (result.block64 && result.block64.checked) {
+				result.block64.dispatchEvent(evt);
+			} else {
+				result.actiontype[0].dispatchEvent(evt);
+			}
+		});
 	});
 
 	api.get({
@@ -671,6 +724,43 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 				}
 			]
 		});
+		Object.keys(Twinkle.block.reportLinks).forEach(function(page) {
+			var reportLink = Twinkle.block.reportLinks[page];
+			field_block_options.append({
+				type: 'checkbox',
+				name: 'report_see_also',
+				event: Twinkle.block.callback.toggle_see_alsos,
+				style: 'display:inline-block; margin-right:5px',
+				list: [
+					{
+						label: reportLink.label,
+						checked: !!Twinkle.block.seeAlsos[reportLink.value],
+						value: reportLink.value
+					}
+				]
+			});
+		});
+		field_block_options.append({
+			type: 'checkbox',
+			name: 'lta_see_also',
+			event: Twinkle.block.callback.toggle_lta_see_also,
+			style: 'display:inline-block; margin-right:5px',
+			list: [
+				{
+					label: conv({ hans: '持续出没的破坏者', hant: '持續出沒的破壞者' }),
+					checked: false,
+					value: 'LTA'
+				}
+			]
+		});
+		field_block_options.append({
+			type: 'select',
+			name: 'lta_page',
+			label: conv({ hans: '选择持续出没的破坏者：', hant: '選擇持續出沒的破壞者：' }),
+			list: [
+				{ label: conv({ hans: '请选择', hant: '請選擇' }), value: '' }
+			]
+		});
 
 		// Yet-another-logevents-doesn't-handle-ranges-well
 		if (blockedUserName === relevantUserName) {
@@ -881,6 +971,12 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		oldfield.parentNode.replaceChild(field_block_options.render(), oldfield);
 		$form.find('fieldset[name="field_64"]').show();
 
+		// LTA is only available for sock-contribs presets
+		Morebits.QuickForm.setElementVisibility(e.target.form.lta_see_also.parentNode.parentNode, false);
+		Morebits.QuickForm.setElementVisibility(e.target.form.lta_page.parentNode, false);
+		delete Twinkle.block.seeAlsos.LTA;
+		Twinkle.block.callback.update_see_alsos(e.target.form);
+
 
 		$form.find('[name=pagerestrictions]').select2({
 			width: '100%',
@@ -1055,7 +1151,9 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			blockloginfo.push('此' + (Morebits.ip.isRange(relevantUserName) ? conv({ hans: 'IP范围', hant: 'IP範圍' }) : conv({ hans: '用户', hant: '使用者' })) + '曾在');
 			blockloginfo.push($('<b>' + new Morebits.Date(blockAction.timestamp).calendar('utc') + '</b>')[0]);
 			blockloginfo.push('被' + blockAction.user + conv({ hans: '封禁', hant: '封鎖' }));
-			blockloginfo.push($('<b>' + Morebits.string.formatTime(blockAction.params.duration) + '</b>')[0]);
+			if (blockAction.params.duration !== Morebits.string.formatTime(blockAction.params.duration)) {
+				blockloginfo.push($('<b>' + Morebits.string.formatTime(blockAction.params.duration) + '</b>')[0]);
+			}
 			if (lastBlockAction.action === 'unblock') {
 				blockloginfo.push('，' + new Morebits.Date(lastBlockAction.timestamp).calendar('utc') + '解封');
 			} else { // block or reblock
@@ -1096,6 +1194,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
  *   expiry: <string - expiry timestamp, can include relative times like "5 months", "2 weeks" etc>
  *   forAnonOnly: <show block option in the interface only if the relevant user is an IP>
  *   forRegisteredOnly: <show block option in the interface only if the relevant user is registered>
+ *   forPermanentOnly: <show block option in the interface only if the relevant user is a permanent account>
  *   label: <string - label for the option of the dropdown in the interface (keep brief)>
  *   noemail: prevent the user from sending email through Special:Emailuser
  *   pageParam: <set if the associated block template accepts a page parameter>
@@ -1144,7 +1243,7 @@ Twinkle.block.blockPresetsInfo = {
 	'checkuserblock-account': {
 		autoblock: true,
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		nocreate: true,
 		nonstandard: true,
 		reason: '{{checkuserblock-account}}',
@@ -1279,7 +1378,7 @@ Twinkle.block.blockPresetsInfo = {
 	'uw-sockblock': {
 		autoblock: true,
 		expiry: '1 week',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		nocreate: true,
 		reason: conv({ hans: '滥用[[WP:SOCK|多个账户]]', hant: '濫用[[WP:SOCK|多個帳號]]' }),
 		summary: conv({ hans: '封禁通知：滥用[[WP:SOCK|多个账户]]', hant: '封鎖通知：濫用[[WP:SOCK|多個帳號]]' }),
@@ -1287,27 +1386,27 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-softerblock': {
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		reason: '{{uw-softerblock}}<!-- ' + conv({ hans: '宣传性用户名、软封禁', hant: '宣傳性使用者名稱、軟封鎖' }) + ' -->',
 		summary: conv({ hans: '封禁通知：您的[[WP:U|用户名]]暗示您的账户代表一个团体、组织或网站', hant: '封鎖通知：您的[[WP:U|使用者名稱]]暗示您的帳號代表一個團體、組織或網站' })
 	},
 	'uw-spamublock': {
 		autoblock: true,
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		nocreate: true,
 		reason: '{{uw-spamublock}}<!-- ' + conv({ hans: '宣传性用户名、宣传性编辑', hant: '宣傳性使用者名稱、宣傳性編輯' }) + ' -->',
 		summary: conv({ hans: '封禁通知：仅[[WP:SOAP|广告宣传]]，同时您的用户名违反[[WP:U|用户名方针]]', hant: '封鎖通知：僅[[WP:SOAP|廣告宣傳]]，同時您的使用者名稱違反[[WP:U|使用者名稱方針]]' })
 	},
 	'uw-ublock': {
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		reason: '{{uw-ublock}}<!-- ' + conv({ hans: '不当用户名、软封禁', hant: '不當使用者名稱、軟封鎖' }) + ' -->',
 		summary: conv({ hans: '封禁通知：您的用户名违反[[WP:U|用户名方针]]', hant: '封鎖通知：您的使用者名稱違反[[WP:U|使用者名稱方針]]' })
 	},
 	'uw-ublock-double': {
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		reason: '{{uw-ublock-double}}<!-- ' + conv({ hans: '用户名与其他用户相似、软封禁', hant: '使用者名稱與其他使用者相似、軟封鎖' }) + ' -->',
 		summary: conv({ hans: '封禁通知：您的[[WP:U|用户名]]与其他维基百科用户过于相似', hant: '封鎖通知：您的[[WP:U|使用者名稱]]與其他維基百科使用者過於相似' })
 	},
@@ -1322,35 +1421,39 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'uw-ublock-wellknown': {
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		reason: '{{uw-ublock-wellknown}}<!-- ' + conv({ hans: '用户名与知名人物相似、软封禁', hant: '使用者名稱與知名人物相似、軟封鎖' }) + ' -->',
 		summary: conv({ hans: '封禁通知：您的[[WP:U|用户名]]与知名人物过于相似', hant: '封鎖通知：您的[[WP:U|使用者名稱]]與知名人物過於相似' })
 	},
 	'uw-uhblock-double': {
 		autoblock: true,
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		nocreate: true,
 		reason: '{{uw-uhblock-double}}<!-- ' + conv({ hans: '用户名试图冒充其他用户、硬封禁', hant: '使用者名稱試圖冒充其他使用者、硬封鎖' }) + ' -->',
 		summary: conv({ hans: '封禁通知：您的[[WP:U|用户名]]试图冒充其他维基百科用户', hant: '封鎖通知：您的[[WP:U|使用者名稱]]試圖冒充其他維基百科使用者' })
 	},
 	'uw-ublock|误导': {
 		expiry: 'infinity',
+		forPermanentOnly: true,
 		reason: conv({ hans: '{{uw-ublock|误导}}', hant: '{{uw-ublock|誤導}}' }),
 		summary: conv({ hans: '封禁通知：误导性用户名', hant: '封鎖通知：誤導性使用者名稱' })
 	},
 	'uw-ublock|宣传': {
 		expiry: 'infinity',
+		forPermanentOnly: true,
 		reason: conv({ hans: '{{uw-ublock|宣传}}', hant: '{{uw-ublock|宣傳}}' }),
 		summary: conv({ hans: '封禁通知：宣传性用户名', hant: '封鎖通知：宣傳性使用者名稱' })
 	},
 	'uw-ublock|攻击|或侮辱性': {
 		expiry: 'infinity',
+		forPermanentOnly: true,
 		reason: conv({ hans: '{{uw-ublock|攻击|或侮辱性}}', hant: '{{uw-ublock|攻擊|或侮辱性}}' }),
 		summary: conv({ hans: '封禁通知：攻击或侮辱性用户名', hant: '封鎖通知：攻擊或侮辱性使用者名稱' })
 	},
 	'uw-ublock|混淆': {
 		expiry: 'infinity',
+		forPermanentOnly: true,
 		reason: '{{uw-ublock|混淆}}',
 		summary: conv({ hans: '封禁通知：令人混淆的用户名', hant: '封鎖通知：令人混淆的使用者名稱' })
 	},
@@ -1374,7 +1477,7 @@ Twinkle.block.blockPresetsInfo = {
 	},
 	'Bot block message': {
 		expiry: 'infinity',
-		forRegisteredOnly: true,
+		forPermanentOnly: true,
 		reason: conv({ hans: '机器人故障', hant: '機器人故障' }),
 		summary: conv({ hans: '封禁通知：机器人故障', hant: '封鎖通知：機器人故障' }),
 		sig: '~~~~'
@@ -1426,16 +1529,6 @@ Twinkle.block.blockPresetsInfo = {
 		nocreate: true,
 		reasonParam: true,
 		reason: conv({ hans: '确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根据用户贡献确定', hant: '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 根據使用者貢獻確定' }),
-		summary: conv({ hans: '封禁通知：[[WP:SOCK|使用其他IP地址绕过封禁]]', hant: '封鎖通知：[[WP:SOCK|使用其他IP位址繞過封鎖]]' }),
-		templateName: 'uw-ablock'
-	},
-	'sock-cu-anon': {
-		autoblock: true,
-		expiry: '1 week',
-		forAnonOnly: true,
-		nocreate: true,
-		reasonParam: true,
-		reason: conv({ hans: '确认为[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 用户查核确认', hant: '確認為[[WP:SOCK|傀儡]]或[[WP:MEAT|真人傀儡]] - 使用者查核確認' }),
 		summary: conv({ hans: '封禁通知：[[WP:SOCK|使用其他IP地址绕过封禁]]', hant: '封鎖通知：[[WP:SOCK|使用其他IP位址繞過封鎖]]' }),
 		templateName: 'uw-ablock'
 	},
@@ -1540,7 +1633,6 @@ Twinkle.block.blockGroups = [
 			{ label: conv({ hans: '违心自证，构成扰乱', hant: '違心自證，構成擾亂' }), value: 'point-block' },
 			{ label: conv({ hans: '游戏维基规则', hant: '遊戲維基規則' }), value: 'game-block' },
 			{ label: conv({ hans: '确认为傀儡或真人傀儡 - 根据用户贡献确定', hant: '確認為傀儡或真人傀儡 - 根據使用者貢獻確定' }), value: 'sock-contribs-anon' },
-			{ label: conv({ hans: '确认为傀儡或真人傀儡 - 用户查核确认', hant: '確認為傀儡或真人傀儡 - 使用者查核確認' }), value: 'sock-contribs-anon' },
 			{ label: conv({ hans: '确认为傀儡或真人傀儡 - 根据用户贡献确定', hant: '確認為傀儡或真人傀儡 - 根據使用者貢獻確定' }), value: 'sock-contribs-reg' },
 			{ label: conv({ hans: '确认为傀儡或真人傀儡 - 用户查核确认', hant: '確認為傀儡或真人傀儡 - 使用者查核確認' }), value: 'sock-cu-reg' },
 			{ label: conv({ hans: '滥用多个账户', hant: '濫用多個帳號' }), value: 'uw-sockblock' },
@@ -1574,12 +1666,12 @@ Twinkle.block.blockGroups = [
 	{
 		label: '其他模板',
 		list: [
-			{ label: 'anonblock', value: 'anonblock', forAnonOnly: true },
-			{ label: 'range block', value: 'range block', forAnonOnly: true },
-			{ label: 'school block', value: 'school block', forAnonOnly: true },
-			{ label: 'blocked proxy', value: 'blocked proxy', forAnonOnly: true },
-			{ label: 'CheckUser block', value: 'CheckUser block', forAnonOnly: true },
-			{ label: 'checkuserblock-account', value: 'checkuserblock-account', forRegisteredOnly: true }
+			{ label: 'anonblock', value: 'anonblock'},
+			{ label: 'range block', value: 'range block'},
+			{ label: 'school block', value: 'school block'},
+			{ label: 'blocked proxy', value: 'blocked proxy'},
+			{ label: 'CheckUser block', value: 'CheckUser block'},
+			{ label: 'checkuserblock-account', value: 'checkuserblock-account'}
 		]
 	}
 ];
@@ -1643,6 +1735,8 @@ Twinkle.block.callback.filtered_block_groups = function twinkleblockCallbackFilt
 			var registrationRestrict;
 			if (blockSettings.forRegisteredOnly) {
 				registrationRestrict = Twinkle.block.isRegistered;
+			} else if (blockSettings.forPermanentOnly) {
+				registrationRestrict = Twinkle.block.isRegistered && !Twinkle.block.isTempAccount;
 			} else if (blockSettings.forAnonOnly) {
 				registrationRestrict = !Twinkle.block.isRegistered;
 			} else {
@@ -1679,6 +1773,10 @@ Twinkle.block.callback.change_preset = function twinkleblockCallbackChangePreset
 	}
 
 	Twinkle.block.callback.update_form(e, Twinkle.block.blockPresetsInfo[key]);
+	if (form.lta_see_also) {
+		Morebits.QuickForm.setElementVisibility(form.lta_see_also.parentNode.parentNode, ['sock-contribs-anon', 'sock-contribs-reg'].indexOf(key) !== -1);
+		Morebits.QuickForm.setElementVisibility(form.lta_page.parentNode, false);
+	}
 	if (form.template) {
 		form.template.value = Twinkle.block.blockPresetsInfo[key].templateName || key;
 		Twinkle.block.callback.change_template(e);
@@ -1820,26 +1918,101 @@ Twinkle.block.callback.validateTempAccountExpiry = function twinkleblockCallback
 	return true;
 };
 
-Twinkle.block.seeAlsos = [];
+// {"identifer": "text"}
+Twinkle.block.seeAlsos = {};
+Twinkle.block.seeAlsoComment = '';
 Twinkle.block.callback.toggle_see_alsos = function twinkleblockCallbackToggleSeeAlso() {
-	var reason = this.form.reason.value.replace(
-		new RegExp('(<!-- )(参见|參見)' + Twinkle.block.seeAlsos.join('、') + '( -->)'), ''
-	);
-
-	Twinkle.block.seeAlsos = Twinkle.block.seeAlsos.filter(function(el) {
-		return el !== this.value;
-	}.bind(this));
-
 	if (this.checked) {
-		Twinkle.block.seeAlsos.push(this.value);
-	}
-	var seeAlsoMessage = Twinkle.block.seeAlsos.join('、');
-
-	if (!Twinkle.block.seeAlsos.length) {
-		this.form.reason.value = reason;
+		Twinkle.block.seeAlsos[this.value] = this.value;
 	} else {
-		this.form.reason.value = reason + '<!-- ' + conv({ hans: '参见', hant: '參見' }) + seeAlsoMessage + ' -->';
+		delete Twinkle.block.seeAlsos[this.value];
 	}
+	Twinkle.block.callback.update_see_alsos(this.form);
+};
+
+Twinkle.block.callback.update_see_alsos = function twinkleblockCallbackUpdateSeeAlsos(form) {
+	var reason = form.reason.value.replace(Twinkle.block.seeAlsoComment, '');
+
+	var seeAlsoMessage = Object.keys(Twinkle.block.seeAlsos).map(function(key) {
+		return Twinkle.block.seeAlsos[key];
+	}).join('、');
+
+	if (!seeAlsoMessage) {
+		Twinkle.block.seeAlsoComment = '';
+	} else {
+		Twinkle.block.seeAlsoComment = '<!-- ' + conv({ hans: '参见', hant: '參見' }) + seeAlsoMessage + ' -->';
+	}
+	form.reason.value = reason + Twinkle.block.seeAlsoComment;
+};
+
+Twinkle.block.ltaPages = null;
+Twinkle.block.callback.toggle_lta_see_also = function twinkleblockCallbackToggleLtaSeeAlso() {
+	var form = this.form, $select = $(form.lta_page);
+
+	Morebits.QuickForm.setElementVisibility(form.lta_page.parentNode, this.checked);
+	if (!this.checked) {
+		delete Twinkle.block.seeAlsos.LTA;
+		Twinkle.block.callback.update_see_alsos(form);
+		return;
+	}
+
+	// Already populated, just restore the selected one
+	if ($select.children().length > 1) {
+		Twinkle.block.callback.change_lta_page.call(form.lta_page);
+		return;
+	}
+
+	var populate = function() {
+		Twinkle.block.ltaPages.forEach(function(title) {
+			$select.append(new Option(title.replace(/^Wikipedia:持续出没的破坏者\//, ''), title));
+		});
+
+		// Use select2 to make the select menu searchable
+		if (!Twinkle.getPref('oldSelect')) {
+			$select.select2({
+				width: '100%',
+				matcher: Morebits.select2.matchers.optgroupFull,
+				templateResult: Morebits.select2.highlightSearchMatches,
+				language: {
+					searching: Morebits.select2.queryInterceptor
+				}
+			});
+		}
+		$select.on('change', Twinkle.block.callback.change_lta_page);
+	};
+
+	if (Twinkle.block.ltaPages) {
+		populate();
+		return;
+	}
+
+	api.get({
+		action: 'query',
+		list: 'allpages',
+		apnamespace: 4,
+		apprefix: '持续出没的破坏者/',
+		apfilterredir: 'nonredirects',
+		aplimit: 'max',
+		format: 'json'
+	}).then(function(data) {
+		Twinkle.block.ltaPages = data.query.allpages.map(function(page) {
+			return page.title;
+		}).filter(function(title) {
+			return title.replace(/^Wikipedia:持续出没的破坏者\//, '').indexOf('/') === -1;
+		});
+		populate();
+	}, function(msg) {
+		mw.notify(conv({ hans: '获取LTA列表出错：', hant: '取得LTA列表出錯：' }) + msg, { type: 'error' });
+	});
+};
+
+Twinkle.block.callback.change_lta_page = function twinkleblockCallbackChangeLtaPage() {
+	if (this.value) {
+		Twinkle.block.seeAlsos.LTA = '[[' + this.value + '|LTA]]';
+	} else {
+		delete Twinkle.block.seeAlsos.LTA;
+	}
+	Twinkle.block.callback.update_see_alsos(this.form);
 };
 
 // zhwiki: No ds
@@ -1884,7 +2057,7 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 		if (data.useInitialOptions && data[el.name] === undefined) {
 			return;
 		}
-		if (['closevip', 'rfdr'].includes(el.name)) {
+		if (['closevip', 'rfdr', 'report_see_also'].includes(el.name)) {
 			return;
 		}
 
@@ -1897,6 +2070,15 @@ Twinkle.block.callback.update_form = function twinkleblockCallbackUpdateForm(e, 
 	} else {
 		form.reason.value = data.reason || '';
 	}
+
+	Object.keys(Twinkle.block.seeAlsos).forEach(function(key) {
+		if (!Object.keys(Twinkle.block.reportLinks).some(function(page) {
+			return Twinkle.block.reportLinks[page].value === key;
+		})) {
+			delete Twinkle.block.seeAlsos[key];
+		}
+	});
+	Twinkle.block.callback.update_see_alsos(form);
 
 	// Clear and/or set any partial page or namespace restrictions
 	if (form.pagerestrictions) {
@@ -2047,6 +2229,9 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 	delete blockoptions.expiry_preset;
 	delete blockoptions.closevip;
 	delete blockoptions.rfdr;
+	delete blockoptions.report_see_also;
+	delete blockoptions.lta_see_also;
+	delete blockoptions.lta_page;
 
 	// Partial API requires this to be gone, not false or 0
 	if (toPartial) {
@@ -2415,6 +2600,17 @@ Twinkle.block.callback.issue_template = function twinkleblockCallbackIssueTempla
 
 };
 
+Twinkle.block.callback.findreportRequest = function twinkleblockCallbackFindreportRequest(requestList) {
+	var userName = Morebits.relevantUserName(true);
+	var vipRe = new RegExp('{{\\s*[Vv]andal\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.pageNameRegex(userName) + '\\s*(\\|\\s*hidename\\s*=[^|]+)?}}', 'm');
+	for (var i = 1; i < requestList.length; i++) {
+		if (vipRe.exec(requestList[i])) {
+			return i;
+		}
+	}
+	return -1;
+};
+
 Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(vipPage) {
 	var params = vipPage.getCallbackParameters();
 	var text = vipPage.getPageText();
@@ -2437,22 +2633,19 @@ Twinkle.block.callback.closeRequest = function twinkleblockCallbackCloseRequest(
 
 	var found = false;
 	var hidename = false;
-	var vipRe = new RegExp('{{\\s*[Vv]andal\\s*\\|\\s*(1\\s*=\\s*)?' + Morebits.pageNameRegex(userName) + '\\s*(\\|\\s*hidename\\s*=[^|]+)?}}', 'm');
-	for (var i = 1; i < requestList.length; i++) {
-		if (vipRe.exec(requestList[i])) {
-			hidename = /\|\s*hidename\s*=[^|]+/.test(requestList[i]);
-			requestList[i] = requestList[i].trimRight();
+	var i = Twinkle.block.callback.findreportRequest(requestList);
+	if (i !== -1) {
+		hidename = /\|\s*hidename\s*=[^|]+/.test(requestList[i]);
+		requestList[i] = requestList[i].trimRight();
 
-			var newText = requestList[i].replace(/^(\*\s*处理：)[ \t]*(<!-- 非管理員僅可標記已執行的封禁，針對提報的意見請放在下一行 -->)?[ \t]*$/m, '$1' + comment + '--~~~~');
-			if (requestList[i] === newText) {
-				newText = requestList[i] + '\n* 处理：' + comment + '--~~~~';
-			}
-
-			requestList[i] = newText + '\n';
-
-			found = true;
-			break;
+		var newText = requestList[i].replace(/^(\*\s*处理：)[ \t]*(<!-- 非管理員僅可標記已執行的封禁，針對提報的意見請放在下一行 -->)?[ \t]*$/m, '$1' + comment + '--~~~~');
+		if (requestList[i] === newText) {
+			newText = requestList[i] + '\n* 处理：' + comment + '--~~~~';
 		}
+
+		requestList[i] = newText + '\n';
+
+		found = true;
 	}
 
 	if (!found) {
