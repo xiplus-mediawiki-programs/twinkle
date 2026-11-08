@@ -1151,7 +1151,9 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			blockloginfo.push('此' + (Morebits.ip.isRange(relevantUserName) ? conv({ hans: 'IP范围', hant: 'IP範圍' }) : conv({ hans: '用户', hant: '使用者' })) + '曾在');
 			blockloginfo.push($('<b>' + new Morebits.Date(blockAction.timestamp).calendar('utc') + '</b>')[0]);
 			blockloginfo.push('被' + blockAction.user + conv({ hans: '封禁', hant: '封鎖' }));
-			blockloginfo.push($('<b>' + Morebits.string.formatTime(blockAction.params.duration) + '</b>')[0]);
+			if (blockAction.params.duration !== Morebits.string.formatTime(blockAction.params.duration)) {
+				blockloginfo.push($('<b>' + Morebits.string.formatTime(blockAction.params.duration) + '</b>')[0]);
+			}
 			if (lastBlockAction.action === 'unblock') {
 				blockloginfo.push('，' + new Morebits.Date(lastBlockAction.timestamp).calendar('utc') + '解封');
 			} else { // block or reblock
