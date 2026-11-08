@@ -148,7 +148,11 @@ Twinkle.defaultConfig = {
 	afdDefaultCategory: 'delete',
 	afdFameDefaultReason: '沒有足夠的可靠資料來源能夠讓這個條目符合[[Wikipedia:收錄標準]]中的標準',
 	afdSubstubDefaultReason: '過期小小作品',
+
+	// Close
 	XfdClose: Morebits.userIsSysop ? 'all' : 'hide',
+	RfppClose: Morebits.userIsSysop ? 'all' : 'hide',
+	VipClose: Morebits.userIsSysop ? 'all' : 'hide',
 
 	// Copyvio
 	copyvioWatchPage: 'yes',
