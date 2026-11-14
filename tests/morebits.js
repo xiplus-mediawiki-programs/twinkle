@@ -31,4 +31,26 @@ describe('methods', () => {
 	test('isPageRedirect', () => {
 		assert.false(Morebits.isPageRedirect(), 'Is redirect');
 	});
+	test('413', async () => {
+		const ajaxSpy = jest.spyOn($, 'ajax').mockImplementation((ajaxparams) => {
+			return $.Deferred().resolveWith(ajaxparams.context, [{
+				errors: [
+					{ code: 'Xiplus', html: '<p>Xiplus</p>' },
+					{ code: 'Hamish', html: '<p>Hamish</p>' }
+				]
+			}]);
+		});
+		const api = new Morebits.wiki.api('test', {
+			action: 'delete',
+			format: 'json',
+			errorformat: 'html'
+		});
+
+		api.query.format = 'json';
+		api.query.errorformat = 'html';
+		await api.post().catch(() => {});
+		assert.strictEqual(api.getErrorCode(), 'Xiplus', 'First error code');
+		assert.strictEqual(api.getErrorText(), '<p>Xiplus</p><br><p>Hamish</p>', 'Joined error messages');
+		ajaxSpy.mockRestore();
+	});
 });
