@@ -883,6 +883,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 
 
 		$form.find('[name=pagerestrictions]').select2({
+			theme: 'default select2-morebits',
 			width: '100%',
 			placeholder: conv({ hans: '输入要阻止用户编辑的页面', hant: '輸入要阻止使用者編輯的頁面' }),
 			language: {
@@ -931,6 +932,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		});
 
 		$form.find('[name=namespacerestrictions]').select2({
+			theme: 'default select2-morebits',
 			width: '100%',
 			matcher: Morebits.select2.matchers.wordBeginning,
 			language: {
