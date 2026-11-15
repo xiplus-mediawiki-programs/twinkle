@@ -2416,22 +2416,23 @@ Morebits.wiki.api.prototype = {
 			function onAPIsuccess(response, statusText) {
 				this.statusText = statusText;
 				this.response = this.responseXML = response;
-				// Limit errorCode to first error
-				if (this.query.format === 'json') {
-					this.errors = response.errors;
-					this.errorCode = response.errors[0].code;
 
-					var textKey = this.query.errorformat === 'html' ? 'html' : 'text';
-					if (textKey === 'html' || this.query.errorformat === 'plaintext' || this.query.errorformat === 'wikitext') {
-						var errorMessages = response.errors
-							.map(function(err) {
+				if (this.query.format === 'json') {
+					this.errors = (response && response.errors) || [];
+					this.errorCode = undefined;
+					this.errorText = undefined;
+
+					if (this.errors.length) {
+						// Limit errorCode to first error
+						this.errorCode = this.errors[0].code;
+						var textKey = this.query.errorformat === 'html' ? 'html' : 'text';
+						var separator = textKey === 'html' ? '<br>' : '\n';
+						this.errorText = this.errors
+							.map(function (err) {
 								return err[textKey];
 							})
-							.filter(Boolean);
-
-						this.errorText = this.query.errorformat === 'html'
-							? errorMessages.join('<br>')
-							: errorMessages.join('\n');
+							.filter(Boolean)
+							.join(separator);
 					}
 				} else {
 					this.errorCode = $(response).find('errors error').eq(0).attr('code');
