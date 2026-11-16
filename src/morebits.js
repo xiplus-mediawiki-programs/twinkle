@@ -5872,8 +5872,8 @@ Morebits.simpleWindow = function SimpleWindow(width, height) {
 		.css('width', Math.min(parseInt(width || 800, 10), $(window).width()))
 		.css('height', 'auto')
 		.css('max-height', height + 20)
-		.css('top', Math.max(0, window.scrollY + $(window).height() / 2 - (height + 20) / 2)) // Centre it (assume max height)
-		.css('left', Math.max(0, window.scrollX + $(window).width() / 2 - $dialog.width() / 2)); // Centre it
+		.css('top', Math.max(0, window.scrollY + ($(window).height() / 2) - ((height + 20) / 2))) // Centre it (assume max height)
+		.css('left', Math.max(0, window.scrollX + ($(window).width() / 2) - ($dialog.width() / 2))); // Centre it
 
 	$dialog.on('focus', () => this.focus()).on('keydown', (e) => {
 		if (e.key === 'Escape') {
