@@ -4,6 +4,7 @@
 	"private": true,
 	"repository": "Xi-Plus/twinkle",
 	"scripts": {
+		"i18n": "python scripts/i18n.py",
 		"fix-eol": "dos2unix *.js **/*.js *.css **/*.css && git add .",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
