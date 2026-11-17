@@ -199,16 +199,16 @@ Twinkle.stub.article = {};
 Twinkle.stub.article.tags = {
 	'actor-stub': conv({ hans: '演员', hant: '演員' }),
 	'asia-stub': conv({ hans: '亚洲', hant: '亞洲' }),
-	'bio-stub': conv({ hans: '人物', hant: '人物' }),
+	'bio-stub': '人物',
 	'biology-stub': conv({ hans: '生物学', hant: '生物學' }),
 	'chem-stub': conv({ hans: '化学', hant: '化學' }),
 	'europe-stub': conv({ hans: '欧洲', hant: '歐洲' }),
-	'expand list': conv({ hans: '未完成列表', hant: '未完成列表' }),
-	'food-stub': conv({ hans: '食物', hant: '食物' }),
+	'expand list': '未完成列表',
+	'food-stub': '食物',
 	'france-geo-stub': conv({ hans: '法国地理', hant: '法國地理' }),
-	'geo-stub': conv({ hans: '地理位置', hant: '地理位置' }),
+	'geo-stub': '地理位置',
 	'hist-stub': conv({ hans: '历史或历史学', hant: '歷史或歷史學' }),
-	'JP-stub': conv({ hans: '日本', hant: '日本' }),
+	'JP-stub': '日本',
 	'lit-stub': conv({ hans: '文学', hant: '文學' }),
 	'math-stub': conv({ hans: '数学', hant: '數學' }),
 	'med-stub': conv({ hans: '医学', hant: '醫學' }),
@@ -216,14 +216,14 @@ Twinkle.stub.article.tags = {
 	'movie-stub': conv({ hans: '电影', hant: '電影' }),
 	'music-stub': conv({ hans: '音乐', hant: '音樂' }),
 	'physics-stub': conv({ hans: '物理学', hant: '物理學' }),
-	'politic-stub': conv({ hans: '政治', hant: '政治' }),
-	'religion-stub': conv({ hans: '宗教', hant: '宗教' }),
+	'politic-stub': '政治',
+	'religion-stub': '宗教',
 	'science-stub': conv({ hans: '科学', hant: '科學' }),
 	'sport-stub': conv({ hans: '体育', hant: '體育' }),
-	'stub': conv({ hans: '通用小作品', hant: '通用小作品' }),
-	'switzerland-stub': conv({ hans: '瑞士', hant: '瑞士' }),
-	'tech-stub': conv({ hans: '科技', hant: '科技' }),
-	'transp-stub': conv({ hans: '交通', hant: '交通' }),
+	'stub': '通用小作品',
+	'switzerland-stub': '瑞士',
+	'tech-stub': '科技',
+	'transp-stub': '交通',
 	'TV-stub': conv({ hans: '电视', hant: '電視' }),
 	'UK-stub': conv({ hans: '英国', hant: '英國' }),
 	'US-bio-stub': conv({ hans: '美国人物', hant: '美國人物' }),
@@ -238,7 +238,7 @@ Twinkle.stub.article.tags = {
 
 
 Twinkle.stub.article.tagCategories = {
-	[conv({ hans: '通用模板', hant: '通用模板' })]: [
+	['通用模板']: [
 		'stub',
 		'expand list'
 	],
@@ -262,7 +262,7 @@ Twinkle.stub.article.tagCategories = {
 		'religion-stub',
 		'transp-stub'
 	],
-	[conv({ hans: '人物', hant: '人物' })]: [
+	['人物']: [
 		'actor-stub',
 		'bio-stub',
 		'US-bio-stub'

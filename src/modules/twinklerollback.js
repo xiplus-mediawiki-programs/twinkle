@@ -531,7 +531,7 @@ Twinkle.rollback.callbacks = {
 		var lastuser = top.getAttribute('user');
 
 		if (lastrevid < params.revid) {
-			Morebits.Status.error(conv({ hans: '错误', hant: '錯誤' }), [conv({ hans: '从服务器获取的最新修订版本ID ', hant: '從伺服器取得的最新修訂版本ID ' }), Morebits.htmlNode('strong', lastrevid), conv({ hans: ' 小于目前所显示的修订版本ID。这可能意味着当前修订版本已被删除、服务器延迟、或抓取到了坏掉的信息。取消。', hant: ' 小於目前所顯示的修訂版本ID。這可能意味著當前修訂版本已被刪除、伺服器延遲、或擷取到了壞掉的資訊。取消。' })]);
+			Morebits.Status.error(conv({ hans: '错误', hant: '錯誤' }), [conv({ hans: '从服务器获取的最新修订版本ID ', hant: '從伺服器取得的最新修訂版本ID ' }), Morebits.htmlNode('strong', lastrevid), conv({ hans: ' 小于当前所显示的修订版本ID。这可能意味着当前修订版本已被删除、服务器延迟、或抓取到了坏掉的信息。取消。', hant: ' 小於目前所顯示的修訂版本ID。這可能意味著當前修訂版本已被刪除、伺服器延遲、或擷取到了壞掉的資訊。取消。' })]);
 			return;
 		}
 
@@ -539,7 +539,7 @@ Twinkle.rollback.callbacks = {
 		var userNorm = params.user || Twinkle.rollback.hiddenName;
 		var index = 1;
 		if (params.revid !== lastrevid) {
-			Morebits.Status.warn('警告', [conv({ hans: '最新修订版本 ', hant: '最新修訂版本 ' }), Morebits.htmlNode('strong', lastrevid), conv({ hans: ' 与我们的修订版本 ', hant: ' 與我們的修訂版本 ' }), Morebits.htmlNode('strong', params.revid), conv({ hans: '不同', hant: ' 不同' })]);
+			Morebits.Status.warn('警告', [conv({ hans: '最新修订版本 ', hant: '最新修訂版本 ' }), Morebits.htmlNode('strong', lastrevid), conv({ hans: ' 与我们的修订版本 ', hant: ' 與我們的修訂版本 ' }), Morebits.htmlNode('strong', params.revid), ' 不同']);
 			if (lastuser === params.user) {
 				switch (params.type) {
 					case 'vand':

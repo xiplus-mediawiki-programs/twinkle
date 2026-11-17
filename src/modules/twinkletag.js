@@ -701,7 +701,7 @@ Twinkle.tag.article.tagList = [{
 		value: [
 			{ tag: 'Copypaste', description: conv({ hans: '内容可能是从某个来源处拷贝后粘贴', hant: '內容可能是從某個來源處拷貝後貼上' }) },
 			{ tag: 'External links', description: conv({ hans: '使用外部链接的方式可能不符合维基百科的方针或指引', hant: '使用外部連結的方式可能不符合維基百科的方針或指引' }) },
-			{ tag: 'Non-free', description: conv({ hans: '可能过多或不当地使用了受著作权保护的文字、图像或多媒体文件', hant: '可能過多或不當地使用了受版權保護的文字、圖像或多媒體檔案' }) }
+			{ tag: 'Non-free', description: conv({ hans: '可能过多或不当地使用了受版权保护的文字、图像或多媒体文件', hant: '可能過多或不當地使用了受版權保護的文字、圖像或多媒體檔案' }) }
 		]
 	},
 	{
@@ -932,7 +932,7 @@ Twinkle.tag.fileList = [{
 	key: conv({ hans: '维基共享资源相关标签', hant: '維基共享資源相關標籤' }),
 	value: [
 		{
-			label: '{{Copy to Wikimedia Commons}}：' + conv({ hans: '自由著作权文件应该被移动至维基共享资源', hant: '自由版權檔案應該被移動至維基共享資源' }), value: 'Copy to Wikimedia Commons'
+			label: '{{Copy to Wikimedia Commons}}：' + conv({ hans: '自由版权文件应该被移动至维基共享资源', hant: '自由版權檔案應該被移動至維基共享資源' }), value: 'Copy to Wikimedia Commons'
 		},
 		{
 			label: '{{Do not move to Commons}}：' + conv({ hans: '不要移动至维基共享资源', hant: '不要移動至維基共享資源' }),

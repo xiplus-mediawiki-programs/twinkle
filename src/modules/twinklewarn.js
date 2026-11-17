@@ -1000,8 +1000,8 @@ Twinkle.warn.messages = {
 			summary: conv({ hans: '提醒：违反COVID-19条目共识', hant: '提醒：違反COVID-19條目共識' })
 		},
 		'uw-copyright-friendly': {
-			label: conv({ hans: '初次加入侵犯著作权的内容', hant: '初次加入侵犯版權的內容' }),
-			summary: conv({ hans: '提醒：初次加入侵犯著作权的内容', hant: '提醒：初次加入侵犯版權的內容' })
+			label: conv({ hans: '初次加入侵犯版权的内容', hant: '初次加入侵犯版權的內容' }),
+			summary: conv({ hans: '提醒：初次加入侵犯版权的内容', hant: '提醒：初次加入侵犯版權的內容' })
 		},
 		'uw-copyviorewrite': {
 			label: conv({ hans: '在侵权页面直接重写条目', hant: '在侵權頁面直接重寫條目' }),
@@ -1120,12 +1120,12 @@ Twinkle.warn.messages = {
 			summary: conv({ hans: '警告：不恰当地拉票', hant: '警告：不恰當地拉票' })
 		},
 		'uw-copyright': {
-			label: conv({ hans: '侵犯著作权', hant: '侵犯版權' }),
-			summary: conv({ hans: '警告：侵犯著作权', hant: '警告：侵犯版權' })
+			label: conv({ hans: '侵犯版权', hant: '侵犯版權' }),
+			summary: conv({ hans: '警告：侵犯版权', hant: '警告：侵犯版權' })
 		},
 		'uw-copyright-link': {
-			label: conv({ hans: '链接到有著作权的材料', hant: '連結到有版權的材料' }),
-			summary: conv({ hans: '警告：链接到有著作权的材料', hant: '警告：連結到有版權的材料' })
+			label: conv({ hans: '链接到有版权的材料', hant: '連結到有版權的材料' }),
+			summary: conv({ hans: '警告：链接到有版权的材料', hant: '警告：連結到有版權的材料' })
 		},
 		'uw-fakesource': {
 			label: conv({ hans: '虚构数据源或引文', hant: '虛構資料來源或引文' }),

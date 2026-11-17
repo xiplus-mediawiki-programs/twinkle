@@ -83,7 +83,7 @@ Twinkle.image.callback = function twinkleimageCallback() {
 			{
 				label: conv({ hans: '上传者宣称拥有文件，但文件可在其他来源找到（CSD F8）', hant: '上載者宣稱擁有檔案，但檔案可在其他來源找到（CSD F8）' }),
 				value: 'no permission',
-				tooltip: conv({ hans: '涉及版权欺诈的商业图片机构不视为有效的「其他来源」。', hant: '涉及版權欺詐的商業圖片機構不視為有效的「其他來源」。' }),
+				tooltip: conv({ hans: '涉及版权欺诈的商业图片机构不视为有效的“其他来源”。', hant: '涉及版權欺詐的商業圖片機構不視為有效的「其他來源」。' }),
 				subgroup: {
 					name: 'f8_source',
 					type: 'textarea',
@@ -214,7 +214,7 @@ Twinkle.image.callback.evaluate = function twinkleimageCallbackEvaluate(event) {
 		if (type !== 'orphaned non-free use') {
 			var noteData = document.createElement('pre');
 			noteData.appendChild(document.createTextNode('{{subst:Uploadvionotice|' + Morebits.pageNameNorm + '}}--~~~~'));
-			Morebits.Status.info('提示', [conv({ hans: '这些内容应贴进上传者对话页：', hant: '這些內容應貼進上傳者討論頁：' }), document.createElement('br'), noteData]);
+			Morebits.Status.info('提示', [conv({ hans: '这些内容应贴进上传者讨论页：', hant: '這些內容應貼進上傳者討論頁：' }), document.createElement('br'), noteData]);
 		}
 	}
 };

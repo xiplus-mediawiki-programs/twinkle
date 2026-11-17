@@ -534,7 +534,7 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 			},
 			{
 				checked: Twinkle.block.field_block_options.noemail,
-				label: conv({ hans: '电子邮件停用', hant: '電子郵件停用' }),
+				label: conv({ hans: '电子邮件禁用', hant: '電子郵件停用' }),
 				name: 'noemail',
 				value: '1'
 			},
@@ -1078,9 +1078,9 @@ Twinkle.block.callback.change_action = function twinkleblockCallbackChangeAction
 		var valid = Twinkle.block.tempAccountExpiry.getTime() - new Date().getTime();
 		Morebits.Status.init($('div[name="tempaccountexpiry"] span').last()[0]);
 		if (valid > 0) {
-			Morebits.Status.info(conv({ hans: '临时账号到期时间', hant: '臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.calendar('utc'));
+			Morebits.Status.info(conv({ hans: '临时账户到期时间', hant: '臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.calendar('utc'));
 		} else {
-			Morebits.Status.warn(conv({ hans: '（已过期）临时账号到期时间', hant: '（已過期）臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.calendar('utc'));
+			Morebits.Status.warn(conv({ hans: '（已过期）临时账户到期时间', hant: '（已過期）臨時帳號到期時間' }), Twinkle.block.tempAccountExpiry.calendar('utc'));
 		}
 	}
 };
@@ -2117,7 +2117,7 @@ Twinkle.block.callback.evaluate = function twinkleblockCallbackEvaluate(e) {
 			}
 			if (!blockoptions.namespacerestrictions && !blockoptions.pagerestrictions && !blockoptions.actionrestrictions) {
 				if (!blockoptions.noemail && !blockoptions.nocreate) { // Blank entries technically allowed [[phab:T208645]]
-					return alert(conv({ hans: '没有选择页面或命名空间，也没有停用电子邮件或禁止创建账户；请选择至少一个选项以应用部分封禁！', hant: '沒有選擇頁面或命名空間，也沒有停用電子郵件或禁止建立帳號；請選擇至少一個選項以應用部分封鎖！' }));
+					return alert(conv({ hans: '没有选择页面或命名空间，也没有禁用电子邮件或禁止创建账户；请选择至少一个选项以应用部分封禁！', hant: '沒有選擇頁面或命名空間，也沒有停用電子郵件或禁止建立帳號；請選擇至少一個選項以應用部分封鎖！' }));
 				} else if (!confirm(conv({ hans: '您将要进行封禁，但既没有阻止任何页面或命名空间的编辑也没有封禁任何操作，确定要继续？', hant: '您將要進行封鎖，但既沒有阻止任何頁面或命名空間的編輯也沒有封鎖任何操作，確定要繼續？' }))) {
 					return;
 				}

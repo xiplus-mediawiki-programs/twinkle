@@ -177,16 +177,16 @@ Twinkle.config.sections = [
 				label: conv({ hans: '当要打开用户讨论页时', hant: '當要打開使用者討論頁時' }),
 				type: 'enum',
 				enumValues: {
-					window: conv({ hans: '在窗口中，替换成其它用户对话页', hant: '在當前分頁，替換成其它用戶討論頁' }),
+					window: conv({ hans: '在当前标签页，替换成其它用户讨论页', hant: '在當前分頁，替換成其它用戶討論頁' }),
 					tab: conv({ hans: '在新标签页中', hant: '在新分頁中' }),
-					blank: conv({ hans: '在全新的窗口中', hant: '在新視窗中' })
+					blank: conv({ hans: '在新窗口中', hant: '在新視窗中' })
 				}
 			},
 
 			// TwinkleConfig.dialogLargeFont (boolean)
 			{
 				name: 'dialogLargeFont',
-				label: conv({ hans: '在Twinkle对话框中使用大号字体', hant: '在Twinkle對話方塊中使用大號字型' }),
+				label: conv({ hans: '在Twinkle对话框中使用大号字型', hant: '在Twinkle對話方塊中使用大號字型' }),
 				type: 'boolean'
 			},
 

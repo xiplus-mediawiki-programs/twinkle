@@ -313,8 +313,8 @@ Twinkle.batchdelete.deletereasonlist = [
 		value: conv({ hans: '[[Wikipedia:CSD#F7|F7]]: 与[[维基共享资源]]文件重复的文件', hant: '[[Wikipedia:CSD#F7|F7]]: 與[[維基共享資源]]檔案重複的檔案' })
 	},
 	{
-		label: conv({ hans: 'F10: 可被替代的非自由著作权文件', hant: 'F10: 可被替代的非自由版權檔案' }),
-		value: conv({ hans: '[[Wikipedia:CSD#F10|F10]]: 可被替代的非自由著作权文件', hant: '[[Wikipedia:CSD#F10|F10]]: 可被替代的非自由版權檔案' })
+		label: conv({ hans: 'F10: 可被替代的非自由版权文件', hant: 'F10: 可被替代的非自由版權檔案' }),
+		value: conv({ hans: '[[Wikipedia:CSD#F10|F10]]: 可被替代的非自由版权文件', hant: '[[Wikipedia:CSD#F10|F10]]: 可被替代的非自由版權檔案' })
 	},
 	{
 		label: conv({ hans: 'U1: 用户请求删除自己的用户页或其子页面', hant: 'U1: 使用者請求刪除自己的使用者頁面或其子頁面' }),

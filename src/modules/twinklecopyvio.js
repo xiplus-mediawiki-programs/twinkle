@@ -121,7 +121,7 @@ Twinkle.copyvio.callbacks = {
 			} else {
 				var notifytext = '\n{{subst:CopyvioNotice|' + mw.config.get('wgPageName') + '}}';
 				usertalkpage.setAppendText(notifytext);
-				usertalkpage.setEditSummary(conv({ hans: '通知：页面[[', hant: '通知：頁面[[' }) + mw.config.get('wgPageName') + conv({ hans: ']]疑似侵犯著作权', hant: ']]疑似侵犯版權' }));
+				usertalkpage.setEditSummary(conv({ hans: '通知：页面[[', hant: '通知：頁面[[' }) + mw.config.get('wgPageName') + conv({ hans: ']]疑似侵犯版权', hant: ']]疑似侵犯版權' }));
 				usertalkpage.setChangeTags(Twinkle.changeTags);
 				usertalkpage.setCreateOption('recreate');
 				usertalkpage.setWatchlist(Twinkle.getPref('copyvioWatchUser'));
@@ -136,7 +136,7 @@ Twinkle.copyvio.callbacks = {
 		var tag = '{{subst:Copyvio/auto|url=' + params.source.replace(/http/g, '&#104;ttp').replace(/\n+/g, '\n').replace(/^\s*([^*])/gm, '* $1').replace(/^\* $/m, '') + '|OldRevision=' + revisionId + '}}';
 		var text = pageobj.getPageText();
 		var oldcsd = text.match(/{{\s*(db(-\w*)?|d|delete)\s*(\|(?:{{[^{}]*}}|[^{}])*)?}}/i);
-		if (oldcsd && confirm(conv({ hans: '在页面上找到快速删除模板，要保留吗？\n\n当页面同时侵犯著作权又符合快速删除标准时，应该优先走快速删除程序。\n单击“确认”以保留快速删除模板，若您认为快速删除理由不合，单击“取消”以移除快速删除模板。', hant: '在頁面上找到快速刪除模板，要保留嗎？\n\n當頁面同時侵犯版權又符合快速刪除標準時，應該優先走快速刪除程序。\n點擊「確認」以保留快速刪除模板，若您認為快速刪除理由不合，點擊「取消」以移除快速刪除模板。' }))) {
+		if (oldcsd && confirm(conv({ hans: '在页面上找到快速删除模板，要保留吗？\n\n当页面同时侵犯版权又符合快速删除标准时，应该优先走快速删除程序。\n单击“确认”以保留快速删除模板，若您认为快速删除理由不合，单击“取消”以移除快速删除模板。', hant: '在頁面上找到快速刪除模板，要保留嗎？\n\n當頁面同時侵犯版權又符合快速刪除標準時，應該優先走快速刪除程序。\n點擊「確認」以保留快速刪除模板，若您認為快速刪除理由不合，點擊「取消」以移除快速刪除模板。' }))) {
 			tag = oldcsd[0] + '\n' + tag;
 			var oldsalt = text.match(/{{\s*salt\s*(\|(?:{{[^{}]*}}|[^{}])*)?}}/i);
 			if (oldsalt) {
@@ -162,7 +162,7 @@ Twinkle.copyvio.callbacks = {
 		}
 
 		pageobj.setPageText(tag);
-		pageobj.setEditSummary(conv({ hans: '本页面疑似侵犯著作权', hant: '本頁面疑似侵犯版權' }));
+		pageobj.setEditSummary(conv({ hans: '本页面疑似侵犯版权', hant: '本頁面疑似侵犯版權' }));
 		pageobj.setChangeTags(Twinkle.changeTags);
 		pageobj.setWatchlist(Twinkle.getPref('copyvioWatchPage'));
 		// pageobj.setCreateOption('recreate');
