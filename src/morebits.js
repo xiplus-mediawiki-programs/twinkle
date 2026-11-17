@@ -7,7 +7,7 @@
  * - {@link Morebits.wiki.page} - modify pages on the wiki (edit, revert, delete, etc.)
  * - {@link Morebits.date} - enhanced date object processing, sort of a light moment.js
  * - {@link Morebits.quickForm} - generate quick HTML forms on the fly
- * - {@link Morebits.simpleWindow} - a wrapper for jQuery UI Dialog with a custom look and extra features
+ * - {@link Morebits.simpleWindow} - generate dialog windows and modals
  * - {@link Morebits.status} - a rough-and-ready status message displayer, used by the Morebits.wiki classes
  * - {@link Morebits.wikitext} - utilities for dealing with wikitext
  * - {@link Morebits.string} - utilities for manipulating strings
@@ -17,11 +17,10 @@
  * Dependencies:
  * - The whole thing relies on jQuery.  But most wikis should provide this by default.
  * - {@link Morebits.quickForm}, {@link Morebits.simpleWindow}, and {@link Morebits.status} rely on the "morebits.css" file for their styling.
- * - {@link Morebits.simpleWindow} and {@link Morebits.quickForm} tooltips rely on jQuery UI Dialog (from ResourceLoader module name 'jquery.ui').
  * - To create a gadget based on morebits.js, use this syntax in MediaWiki:Gadgets-definition:
- *     - `*GadgetName[ResourceLoader|dependencies=mediawiki.user,mediawiki.util,mediawiki.Title,jquery.ui]|morebits.js|morebits.css|GadgetName.js`
+ *     - `*GadgetName[ResourceLoader|dependencies=mediawiki.user,mediawiki.util,mediawiki.Title]|morebits.js|morebits.css|GadgetName.js`
  * - Alternatively, you can configure morebits.js as a hidden gadget in MediaWiki:Gadgets-definition:
- *     - `*morebits[ResourceLoader|dependencies=mediawiki.user,mediawiki.util,mediawiki.Title,jquery.ui|hidden]|morebits.js|morebits.css`
+ *     - `*morebits[ResourceLoader|dependencies=mediawiki.user,mediawiki.util,mediawiki.Title|hidden]|morebits.js|morebits.css`
  *     and then load ext.gadget.morebits as one of the dependencies for the new gadget.
  *
  * All the stuff here works on all browsers for which MediaWiki provides JavaScript support.
@@ -908,26 +907,47 @@ Morebits.quickForm.element.prototype.compute = function QuickFormElementCompute(
 	return [ node, childContainer ];
 };
 
+Morebits.quickForm.$tooltip = null;
+
 /**
- * Create a jQuery UI-based tooltip.
+ * Create a tooltip.
  *
  * @memberof Morebits.quickForm.element
- * @requires jquery.ui
  * @param {HTMLElement} node - The HTML element beside which a tooltip is to be generated.
  * @param {object} data - Tooltip-related configuration data.
  */
 Morebits.quickForm.element.generateTooltip = function QuickFormElementGenerateTooltip(node, data) {
-	var tooltipButton = node.appendChild(document.createElement('span'));
-	tooltipButton.className = 'morebits-tooltipButton';
-	tooltipButton.title = data.tooltip; // Provides the content for jQuery UI
-	tooltipButton.appendChild(document.createTextNode('?'));
-	$(tooltipButton).tooltip({
-		position: { my: 'left top', at: 'center bottom', collision: 'flipfit' },
-		// Deprecated in UI 1.12, but MW stuck on 1.9.2 indefinitely; see #398 and T71386
-		tooltipClass: 'morebits-ui-tooltip'
+	if (!Morebits.quickForm.$tooltip) {
+		Morebits.quickForm.$tooltip = $('<div>')
+			.attr('id', 'morebits-ui-tooltip')
+			.attr('role', 'tooltip')
+			.addClass('morebits-ui-tooltip')
+			.appendTo('body');
+	}
+	var $tooltip = Morebits.quickForm.$tooltip;
+	var $button = $('<span>')
+		.addClass('morebits-tooltipButton')
+		.text('?')
+		.appendTo(node);
+
+	$button.on('mouseenter', () => {
+		$tooltip.html(data.tooltip).addClass('visible');
+
+		var buttonRect = $button[0].getBoundingClientRect();
+		var tooltipRect = $tooltip[0].getBoundingClientRect();
+
+		var topOffset = buttonRect.bottom + tooltipRect.height < window.innerHeight ?
+			buttonRect.bottom : // It fits at the top of the question mark - place it there
+			Math.max(0, buttonRect.top - tooltipRect.height); // Else, place to the bottom of the question mark
+		var leftOffset = buttonRect.right + tooltipRect.width < window.innerWidth ?
+			buttonRect.right : // It fits at the right of the question mark - place it there
+			Math.max(0, buttonRect.left - tooltipRect.width); // Else, place to the left of the question mark
+		$tooltip.css('top', window.scrollY + topOffset);
+		$tooltip.css('left', window.scrollX + leftOffset);
+	}).on('mouseleave', () => {
+		$tooltip.removeClass('visible');
 	});
 };
-
 
 // Some utility methods for manipulating quickForms after their creation:
 // (None of these work for "dyninput" type fields at present)
@@ -4822,6 +4842,9 @@ Morebits.wiki.preview = function(previewbox) {
 
 		// this makes links open in new tab
 		$(previewbox).find('a').attr('target', '_blank');
+
+		// Integrate with scripts that do things on rendered content, like navpopups
+		mw.hook('wikipage.content').fire($(previewbox));
 	};
 
 	/** Hides the preview box and clears it. */
@@ -5816,69 +5839,82 @@ Morebits.taskManager = function(context) {
 };
 
 /**
- * A simple draggable window, now a wrapper for jQuery UI's dialog feature.
+ * A simple draggable window. No longer uses jQuery UI.
  *
  * @memberof Morebits
  * @class
- * @requires jquery.ui.dialog
  * @param {number} width
  * @param {number} height - The maximum allowable height for the content area.
  */
 Morebits.simpleWindow = function SimpleWindow(width, height) {
-	var content = document.createElement('div');
-	this.content = content;
-	content.className = 'morebits-dialog-content';
-	content.id = 'morebits-dialog-content-' + Math.round(Math.random() * 1e15);
+	var $dialog = $('<div>').addClass('morebits-dialog').attr('role', 'dialog').attr('tabindex', -1);
 
-	this.height = height;
+	var $titleBar = $('<div>').addClass('morebits-dialog-titlebar').append(
+		$('<span>').addClass('morebits-dialog-title'),
+		$('<button>')
+			.addClass('morebits-dialog-close')
+			.text('\u00D7')
+			.on('click', () => this.close())
+	);
 
-	$(this.content).dialog({
-		autoOpen: false,
-		buttons: { 'Placeholder button': function() {} },
-		dialogClass: 'morebits-dialog',
-		width: Math.min(parseInt(window.innerWidth, 10), parseInt(width ? width : 800, 10)),
-		// give jQuery the given height value (which represents the anticipated height of the dialog) here, so
-		// it can position the dialog appropriately
-		// the 20 pixels represents adjustment for the extra height of the jQuery dialog "chrome", compared
-		// to that of the old SimpleWindow
-		height: height + 20,
-		close: function(event) {
-			// dialogs and their content can be destroyed once closed
-			$(event.target).dialog('destroy').remove();
-		},
-		resizeStart: function() {
-			this.scrollbox = $(this).find('.morebits-scrollbox')[0];
-			if (this.scrollbox) {
-				this.scrollbox.style.maxHeight = 'none';
-			}
-		},
-		resizeStop: function() {
-			this.scrollbox = null;
-		},
-		resize: function() {
-			this.style.maxHeight = '';
-			if (this.scrollbox) {
-				this.scrollbox.style.width = '';
-			}
+	var $content = $('<div>')
+		.addClass('morebits-dialog-content')
+		.attr('id', 'morebits-dialog-content-' + Math.round(Math.random() * 1e15));
+
+	var $buttonPane = $('<div>').addClass('morebits-dialog-buttonpane').append(
+		$('<span>').addClass('morebits-dialog-buttons'),
+		$('<span>').addClass('morebits-dialog-footerlinks')
+	);
+
+	var $resizer = $('<div>').addClass('morebits-dialog-resizer');
+
+	$dialog.append($titleBar, $content, $buttonPane, $resizer)
+		.css('width', Math.min(parseInt(width || 800, 10), $(window).width()))
+		.css('height', 'auto')
+		.css('max-height', height + 20)
+		.css('top', Math.max(0, window.scrollY + ($(window).height() / 2) - ((height + 20) / 2))) // Centre it (assume max height)
+		.css('left', Math.max(0, window.scrollX + ($(window).width() / 2) - ($dialog.width() / 2))); // Centre it
+
+	$dialog.on('focus', () => this.focus()).on('keydown', (e) => {
+		if (e.key === 'Escape') {
+			this.close();
 		}
 	});
 
-	var $widget = $(this.content).dialog('widget');
+	// Make dialog draggable and resizable
+	var isDragging = false, isResizing = false, initialX, initialY, initialWidth, initialHeight;
+	$titleBar.on('mousedown', (e) => {
+		isDragging = true;
+		initialX = e.clientX - $dialog.offset().left;
+		initialY = e.clientY - $dialog.offset().top;
+	});
+	$resizer.on('mousedown', (e) => {
+		isResizing = true;
+		$dialog.css('height', $dialog.height());
+		$dialog.css('max-height', 'none');
 
-	// delete the placeholder button (it's only there so the buttonpane gets created)
-	$widget.find('button').each(function(key, value) {
-		value.parentNode.removeChild(value);
+		initialWidth = $dialog.width();
+		initialHeight = $dialog.height();
+		initialX = e.clientX;
+		initialY = e.clientY;
 	});
 
-	// add container for the buttons we add, and the footer links (if any)
-	var buttonspan = document.createElement('span');
-	buttonspan.className = 'morebits-dialog-buttons';
-	var linksspan = document.createElement('span');
-	linksspan.className = 'morebits-dialog-footerlinks';
-	$widget.find('.ui-dialog-buttonpane').append(buttonspan, linksspan);
+	$(document).on('mousemove', (e) => {
+		if (isDragging) {
+			$dialog.css('left', Math.max(0, e.clientX - initialX))
+				.css('top', Math.max(0, e.clientY - initialY));
+		} else if (isResizing) {
+			$dialog.css('width', initialWidth + (e.clientX - initialX))
+				.css('height', initialHeight + (e.clientY - initialY));
+		}
+	}).on('mouseup', () => {
+		isDragging = false;
+		isResizing = false;
+	});
 
-	// resize the scrollbox with the dialog, if one is present
-	$widget.resizable('option', 'alsoResize', '#' + this.content.id + ' .morebits-scrollbox, #' + this.content.id);
+	this.$dialog = $dialog;
+	this.content = $content[0];
+	this.height = height;
 };
 
 Morebits.simpleWindow.prototype = {
@@ -5888,12 +5924,19 @@ Morebits.simpleWindow.prototype = {
 	scriptName: null,
 
 	/**
-	 * Focuses the dialog. This might work, or on the contrary, it might not.
+	 * Bring a dialog to the top, when there are other overlapping dialogs open.
 	 *
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
 	focus: function() {
-		$(this.content).dialog('moveToTop');
+		if (!this.$dialog.hasClass('morebits-dialog-modal')) {
+			$('.morebits-dialog:not(.morebits-dialog-modal)').get()
+				.filter((dialog) => dialog !== this.$dialog[0])
+				.concat(this.$dialog[0])
+				.forEach((dialog, idx) => {
+					dialog.style.zIndex = 501 + idx;
+				});
+		}
 		return this;
 	},
 
@@ -5902,13 +5945,14 @@ Morebits.simpleWindow.prototype = {
 	 * from doing anything more.
 	 *
 	 * @param {event} [event]
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
 	close: function(event) {
 		if (event) {
 			event.preventDefault();
 		}
-		$(this.content).dialog('close');
+		this.setModality(false);
+		this.$dialog.remove();
 		return this;
 	},
 
@@ -5916,24 +5960,27 @@ Morebits.simpleWindow.prototype = {
 	 * Shows the dialog. Calling display() on a dialog that has previously been closed
 	 * might work, but it is not guaranteed.
 	 *
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
 	display: function() {
 		if (this.scriptName) {
-			var $widget = $(this.content).dialog('widget');
-			$widget.find('.morebits-dialog-scriptname').remove();
-			var scriptnamespan = document.createElement('span');
-			scriptnamespan.className = 'morebits-dialog-scriptname';
-			scriptnamespan.textContent = this.scriptName + ' \u00B7 ';  // U+00B7 MIDDLE DOT = &middot;
-			$widget.find('.ui-dialog-title').prepend(scriptnamespan);
+			var $titleBar = this.$dialog.find('.morebits-dialog-title');
+			$titleBar.find('.morebits-dialog-scriptname').remove();
+			$titleBar.prepend($('<span>')
+				.addClass('morebits-dialog-scriptname')
+				.text(this.scriptName + ' \u00B7 ') // U+00B7 MIDDLE DOT = &middot;
+			);
 		}
-
-		var dialog = $(this.content).dialog('open');
-		if (window.setupTooltips && window.pg && window.pg.re && window.pg.re.diff) {  // tie in with NAVPOP
-			dialog.parent()[0].ranSetupTooltipsAlready = false;
-			window.setupTooltips(dialog.parent()[0]);
+		if (this.$dialog.find('.morebits-scrollbox').length) {
+			// quickform needs some extra CSS if it happens to contain a scrollbox.
+			// CSS :has() selector can be used in the future which is easier and more reliable.
+			this.$dialog.find('.quickform').addClass('has-scrollbox');
 		}
-		this.setHeight(this.height);  // init height algorithm
+		this.$dialog.appendTo(document.body);
+		// Put focus on the first form element in the dialog, or on dialog itself.
+		var $firstField = this.$dialog.find('input, select, textarea').first();
+		var $firstFieldOrDialog = $firstField.length ? $firstField : this.$dialog;
+		$firstFieldOrDialog.trigger('focus');
 		return this;
 	},
 
@@ -5941,10 +5988,10 @@ Morebits.simpleWindow.prototype = {
 	 * Sets the dialog title.
 	 *
 	 * @param {string} title
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
 	setTitle: function(title) {
-		$(this.content).dialog('option', 'title', title);
+		this.$dialog.find('.morebits-dialog-title').text(title);
 		return this;
 	},
 
@@ -5953,7 +6000,7 @@ Morebits.simpleWindow.prototype = {
 	 * user script is producing which dialog. For instance, Twinkle modules set this to "Twinkle".
 	 *
 	 * @param {string} name
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
 	setScriptName: function(name) {
 		this.scriptName = name;
@@ -5964,34 +6011,22 @@ Morebits.simpleWindow.prototype = {
 	 * Sets the dialog width.
 	 *
 	 * @param {number} width
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
 	setWidth: function(width) {
-		$(this.content).dialog('option', 'width', width);
+		this.$dialog.css('width', width + 'px');
 		return this;
 	},
 
 	/**
-	 * Sets the dialog's maximum height. The dialog will auto-size to fit its contents,
-	 * but the content area will grow no larger than the height given here.
+	 * Sets the dialog's maximum height. The dialog will auto-size to fit its contents.
 	 *
 	 * @param {number} height
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
 	setHeight: function(height) {
-		this.height = height;
-
-		// from display time onwards, let the browser determine the optimum height,
-		// and instead limit the height at the given value
-		// note that the given height will exclude the approx. 20px that the jQuery UI
-		// chrome has in height in addition to the height of an equivalent "classic"
-		// Morebits.simpleWindow
-		if (parseInt(getComputedStyle($(this.content).dialog('widget')[0], null).height, 10) > window.innerHeight) {
-			$(this.content).dialog('option', 'height', window.innerHeight - 2).dialog('option', 'position', 'top');
-		} else {
-			$(this.content).dialog('option', 'height', 'auto');
-		}
-		$(this.content).dialog('widget').find('.morebits-dialog-content')[0].style.maxHeight = parseInt(this.height - 30, 10) + 'px';
+		this.$dialog.css('height', 'auto');
+		this.$dialog.css('max-height', (height + 20) + 'px');
 		return this;
 	},
 
@@ -6002,7 +6037,7 @@ Morebits.simpleWindow.prototype = {
 	 * Be sure to call this at least once before the dialog is displayed...
 	 *
 	 * @param {HTMLElement} content
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
 	setContent: function(content) {
 		this.purgeContent();
@@ -6014,54 +6049,40 @@ Morebits.simpleWindow.prototype = {
 	 * Adds the given element node to the dialog content.
 	 *
 	 * @param {HTMLElement} content
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
 	addContent: function(content) {
 		this.content.appendChild(content);
 
 		// look for submit buttons in the content, hide them, and add a proxy button to the button pane
-		var thisproxy = this;
-		$(this.content).find('input[type="submit"], button[type="submit"]').each(function(key, value) {
-			value.style.display = 'none';
+		$(this.content).find('input[type="submit"], button[type="submit"]').get().forEach((node) => {
+			node.style.display = 'none';
 			var button = document.createElement('button');
-
-			if (value.hasAttribute('value')) {
-				button.textContent = value.getAttribute('value');
-			} else if (value.textContent) {
-				button.textContent = value.textContent;
-			} else {
-				button.textContent = '提交';
-			}
-
-			button.className = value.className || 'submitButtonProxy';
-			// here is an instance of cheap coding, probably a memory-usage hit in using a closure here
-			button.addEventListener('click', function() {
-				value.click();
-			}, false);
-			thisproxy.buttons.push(button);
+			button.textContent = node.getAttribute('value') || node.textContent || '提交';
+			button.className = node.className || 'submitButtonProxy';
+			button.addEventListener('click', () => node.click(), false);
+			this.buttons.push(button);
 		});
+
 		// remove all buttons from the button pane and re-add them
-		if (this.buttons.length > 0) {
-			$(this.content).dialog('widget').find('.morebits-dialog-buttons').empty().append(this.buttons)[0].removeAttribute('data-empty');
-		} else {
-			$(this.content).dialog('widget').find('.morebits-dialog-buttons')[0].setAttribute('data-empty', 'data-empty');  // used by CSS
-		}
+		this.$dialog.find('.morebits-dialog-buttons')
+			.empty()
+			.append(...this.buttons)
+			// Set data-empty attribute only if there are no buttons. Used by CSS.
+			.attr('data-empty', this.buttons.length ? null : 'data-empty');
 		return this;
 	},
 
 	/**
 	 * Removes all contents from the dialog, barring any footer links.
 	 *
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
 	purgeContent: function() {
 		this.buttons = [];
 		// delete all buttons in the buttonpane
-		$(this.content).dialog('widget').find('.morebits-dialog-buttons').empty();
-
-		while (this.content.hasChildNodes()) {
-			this.content.removeChild(this.content.firstChild);
-		}
+		this.$dialog.find('.morebits-dialog-buttons').empty();
+		$(this.content).empty();
 		return this;
 	},
 
@@ -6073,30 +6094,21 @@ Morebits.simpleWindow.prototype = {
 	 *
 	 * @param {string} text - Display text.
 	 * @param {string} wikiPage - Link target.
-	 * @param {boolean} [prep=false] - Set true to prepend rather than append.
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
-	addFooterLink: function(text, wikiPage, prep) {
-		var $footerlinks = $(this.content).dialog('widget').find('.morebits-dialog-footerlinks');
+	addFooterLink: function(text, wikiPage) {
+		var $footerlinks = this.$dialog.find('.morebits-dialog-footerlinks');
 		if (this.hasFooterLinks) {
 			var bullet = document.createElement('span');
-			bullet.textContent = ' \u2022 ';  // U+2022 BULLET
-			if (prep) {
-				$footerlinks.prepend(bullet);
-			} else {
-				$footerlinks.append(bullet);
-			}
+			bullet.textContent = ' \u2022 '; // U+2022 BULLET
+			$footerlinks.append(bullet);
 		}
 		var link = document.createElement('a');
 		link.setAttribute('href', mw.util.getUrl(wikiPage));
 		link.setAttribute('title', wikiPage);
 		link.setAttribute('target', '_blank');
 		link.textContent = text;
-		if (prep) {
-			$footerlinks.prepend(link);
-		} else {
-			$footerlinks.append(link);
-		}
+		$footerlinks.append(link);
 		this.hasFooterLinks = true;
 		return this;
 	},
@@ -6108,10 +6120,16 @@ Morebits.simpleWindow.prototype = {
 	 *
 	 * @param {boolean} [modal=false] - If set to true, other items on the
 	 * page will be disabled, i.e., cannot be interacted with.
-	 * @returns {Morebits.simpleWindow}
+	 * @return {Morebits.simpleWindow}
 	 */
 	setModality: function(modal) {
-		$(this.content).dialog('option', 'modal', modal);
+		if (modal) {
+			$('<div>').addClass('morebits-dialog-overlay').appendTo(document.body);
+			this.$dialog.addClass('morebits-dialog-modal');
+		} else {
+			$('.morebits-dialog-overlay').remove();
+			this.$dialog.removeClass('morebits-dialog-modal');
+		}
 		return this;
 	}
 };
@@ -6137,6 +6155,7 @@ Morebits.BatchOperation = Morebits.batchOperation;
 Morebits.Date = Morebits.date;
 Morebits.QuickForm = Morebits.quickForm;
 Morebits.QuickForm.Element = Morebits.quickForm.element;
+Morebits.QuickForm.$tooltip = Morebits.quickForm.$tooltip;
 Morebits.SimpleWindow = Morebits.simpleWindow;
 Morebits.Status = Morebits.status;
 Morebits.TaskManager = Morebits.taskManager;
