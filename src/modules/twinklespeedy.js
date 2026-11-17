@@ -887,7 +887,7 @@ Twinkle.speedy.generalList = [
 			{
 				name: 'g21_fyi',
 				type: 'textarea',
-				label: conv({ hans: '符合特征的具体位置和解释：', hant: '符合特徵的具體位置和进一步解釋：' }),
+				label: conv({ hans: '符合特征的具体位置和解释：', hant: '符合特徵的具體位置和解釋：' }),
 				rows: 3,
 				tooltip: conv({ hans: '请指出符合上述特征的具体位置，并在必要时解释为何符合该特征。', hant: '請指出符合上述特徵的具體位置，並在必要時解釋為何符合該特徵。' })
 			}
