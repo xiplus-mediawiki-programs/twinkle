@@ -96,14 +96,40 @@ jobs:
             }
 
             // 內容長度都已限制，不在這裡截斷，避免切壞 HTML 標籤（Telegram 單則上限 4096 字元）
-            const res = await fetch(`https://api.telegram.org/bot${process.env.TOKEN}/sendMessage`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                chat_id: process.env.CHAT_ID,
-                text: msg,
-                parse_mode: 'HTML',
-                link_preview_options: { is_disabled: true },
-              }),
+            // GitHub runner 的 IPv6 常常不通，加上 Node 預設 Happy Eyeballs 每個位址只等 250ms，
+            // 容易兩個位址都 ETIMEDOUT。這裡等同 curl -4：關掉 Happy Eyeballs、DNS 優先取 IPv4，只連 IPv4
+            require('net').setDefaultAutoSelectFamily(false);
+            require('dns').setDefaultResultOrder('ipv4first');
+
+            const body = JSON.stringify({
+              chat_id: process.env.CHAT_ID,
+              text: msg,
+              parse_mode: 'HTML',
+              link_preview_options: { is_disabled: true },
             });
-            if (!res.ok) core.setFailed(`Telegram API error: ${res.status} ${await res.text()}`);
+            // 網路錯誤、429、5xx 重試，最多 3 次
+            for (let i = 1; ; i++) {
+              let res, err;
+              try {
+                res = await fetch(`https://api.telegram.org/bot${process.env.TOKEN}/sendMessage`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body,
+                  signal: AbortSignal.timeout(15000),
+                });
+                if (res.ok) return;
+                if (res.status !== 429 && res.status < 500) {
+                  core.setFailed(`Telegram API error: ${res.status} ${await res.text()}`);
+                  return;
+                }
+                err = `${res.status} ${await res.text()}`;
+              } catch (ex) {
+                err = `${ex.message}${ex.cause ? ` (${ex.cause.code || ex.cause.message})` : ''}`;
+              }
+              if (i >= 3) {
+                core.setFailed(`Telegram request failed after ${i} attempts: ${err}`);
+                return;
+              }
+              core.warning(`Attempt ${i} failed: ${err}, retrying…`);
+              await new Promise(r => setTimeout(r, 2000 * i));
+            }
