@@ -160,8 +160,7 @@ Twinkle.block.callback = function twinkleblockCallback() {
 			list: [{
 				checked: Twinkle.getPref('defaultToBlock64'),
 				label: conv({ hans: '改成封禁/64', hant: '改成封鎖/64' }),
-				value: 'block64',
-				tooltip: Morebits.ip.isRange(Morebits.relevantUserName(true)) ? conv({ hans: '将不会发送模板通知。', hant: '將不會發送模板通知。' }) : conv({ hans: '任何模板将会发送给原始IP：', hant: '任何模板將會發送給原始IP：' }) + Morebits.relevantUserName(true)
+				value: 'block64'
 			}]
 		});
 	}
@@ -359,10 +358,6 @@ Twinkle.block.callback.change_block64 = function twinkleblockCallbackChangeBlock
 	} else {
 		relevantUserName = Morebits.relevantUserName(true);
 	}
-	// No templates for ranges, but if the original user is a single IP, offer the option
-	// (done separately in Twinkle.block.callback.issue_template)
-	var originalIsRange = Morebits.ip.isRange(Morebits.relevantUserName(true));
-	$form.find('[name=actiontype][value=template]').prop('disabled', originalIsRange).prop('checked', !originalIsRange);
 
 	// Refetch/reprocess user info then regenerate the main content
 	var regenerateForm = function() {
