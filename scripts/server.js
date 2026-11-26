@@ -4,6 +4,15 @@ const http = require('http');
 const fs = require('fs');
 
 const server = http.createServer((request, response) => {
+	response.setHeader('Access-Control-Allow-Origin', '*');
+	response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+	response.setHeader('Access-Control-Allow-Headers', '*');
+	response.setHeader('Access-Control-Allow-Private-Network', 'true');
+	if (request.method === 'OPTIONS') {
+		response.writeHead(204);
+		response.end();
+		return;
+	}
 	const filePath = '.' + request.url;
 	let contentType;
 	if (request.url.endsWith('.js')) {

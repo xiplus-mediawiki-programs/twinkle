@@ -16,6 +16,15 @@ async function readFiles(filePaths) {
 	return Promise.all(filePaths.map(file => fs.readFile(path.join(repoRoot, file)).then(blob => blob.toString())));
 }
 const server = http.createServer(async (request, response) => {
+	response.setHeader('Access-Control-Allow-Origin', '*');
+	response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+	response.setHeader('Access-Control-Allow-Headers', '*');
+	response.setHeader('Access-Control-Allow-Private-Network', 'true');
+	if (request.method === 'OPTIONS') {
+		response.writeHead(204);
+		response.end();
+		return;
+	}
 	const moduleFiles = (await fs.readdir(path.join(repoRoot, 'src/modules'))).filter(f => f.endsWith('.js'));
 	const jsFiles = ['src/morebits.js', 'src/twinkle.js'].concat(moduleFiles.map(f => 'src/modules/' + f));
 	const cssFiles = ['src/morebits.css', 'src/twinkle.css'];
