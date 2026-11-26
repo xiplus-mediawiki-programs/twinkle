@@ -5875,7 +5875,7 @@ Morebits.simpleWindow = function SimpleWindow(width, height) {
 		.css('top', Math.max(0, window.scrollY + ($(window).height() / 2) - ((height + 20) / 2))) // Centre it (assume max height)
 		.css('left', Math.max(0, window.scrollX + ($(window).width() / 2) - ($dialog.width() / 2))); // Centre it
 
-	$dialog.on('focus', () => this.focus()).on('keydown', (e) => {
+	$dialog.on('mousedown focusin', () => this.focus()).on('keydown', (e) => {
 		if (e.key === 'Escape') {
 			this.close();
 		}
@@ -5977,6 +5977,7 @@ Morebits.simpleWindow.prototype = {
 			this.$dialog.find('.quickform').addClass('has-scrollbox');
 		}
 		this.$dialog.appendTo(document.body);
+		this.focus();
 		// Put focus on the first form element in the dialog, or on dialog itself.
 		var $firstField = this.$dialog.find('input, select, textarea').first();
 		var $firstFieldOrDialog = $firstField.length ? $firstField : this.$dialog;
