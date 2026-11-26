@@ -410,10 +410,19 @@ th.morebits-mbox-text, td.morebits-mbox-text {
 /* Override select2 silliness */
 .select2-morebits,
 .select2-morebits .select2-results,
-.select2-morebits .select2-results__option[aria-selected=true],
 .select2-morebits .select2-selection__rendered,
+.select2-morebits .select2-selection--single,
 .select2-morebits .select2-selection--multiple,
-.select2-morebits .select2-selection__choice {
+.select2-morebits .select2-selection__choice,
+.select2-morebits .select2-dropdown,
+.select2-morebits .select2-search__field {
     background: var(--background-color-base, #fff) !important;
     color: inherit !important;
+}
+.select2-container--default.select2-morebits .select2-results__option[aria-selected=true] {
+    background-color: var(--background-color-interactive, #eaecf0);
+}
+.select2-container--default.select2-morebits .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--background-color-progressive, #36c);
+    color: var(--color-inverted, #fff);
 }
