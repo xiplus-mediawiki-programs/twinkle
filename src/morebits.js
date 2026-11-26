@@ -5979,7 +5979,7 @@ Morebits.simpleWindow.prototype = {
 		this.$dialog.appendTo(document.body);
 		this.focus();
 		// Put focus on the first form element in the dialog, or on dialog itself.
-		var $firstField = this.$dialog.find('input, select, textarea').first();
+		var $firstField = this.$dialog.find('input, select, textarea').filter(':visible').first();
 		var $firstFieldOrDialog = $firstField.length ? $firstField : this.$dialog;
 		$firstFieldOrDialog.trigger('focus');
 		return this;
