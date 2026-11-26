@@ -366,7 +366,7 @@ Twinkle.block.callback.change_block64 = function twinkleblockCallbackChangeBlock
 		// `dialog('option', 'title')`, but in practice that swallows
 		// the scriptName and requires `.display`ing, which jumps the
 		// window.  It's just a line of text, so this is fine.
-		var titleBar = document.querySelector('.morebits-dialog-title').firstChild.nextSibling;
+		var titleBar = $form.closest('.morebits-dialog').find('.morebits-dialog-title')[0].firstChild.nextSibling;
 		titleBar.nodeValue = titleBar.nodeValue.replace(priorName, relevantUserName);
 
 		// Correct partial state
