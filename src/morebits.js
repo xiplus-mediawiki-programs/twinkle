@@ -5953,6 +5953,7 @@ Morebits.simpleWindow.prototype = {
 		}
 		this.setModality(false);
 		this.$dialog.remove();
+		$('#morebits-ui-tooltip').removeClass('visible');
 		return this;
 	},
 
